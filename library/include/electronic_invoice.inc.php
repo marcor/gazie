@@ -943,6 +943,16 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
                         $el1 = $domDoc->createElement("Natura", $rigo['natura']);
                         $el->appendChild($el1);
                     }
+					if ( !empty($XMLvars->DatiIntento) && $rigo['natura']=='N3.5' ) {
+						$el1 = $domDoc->createElement("AltriDatiGestionali", '');
+                        $el->appendChild($el1);
+						$el2 = $domDoc->createElement("TipoDato", 'INTENTO');
+						$el1->appendChild($el2);
+						$el2 = $domDoc->createElement("RiferimentoTesto",  $XMLvars->DatiIntento['RiferimentoTesto']);
+						$el1->appendChild($el2);
+						$el2 = $domDoc->createElement("RiferimentoData",  $XMLvars->DatiIntento['RiferimentoData']);
+						$el1->appendChild($el2);
+					}
                     if (isset($rigo['descrittivi']) && count($rigo['descrittivi']) > 0) {
                         foreach ($rigo['descrittivi'] as $k => $v) {
                             $el1 = $domDoc->createElement("AltriDatiGestionali", '');
@@ -1024,6 +1034,16 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
                         $el1 = $domDoc->createElement("Natura", $rigo['natura']);
                         $el->appendChild($el1);
                     }
+					if ( !empty($XMLvars->DatiIntento) && $rigo['natura']=='N3.5' ) {
+						$el1 = $domDoc->createElement("AltriDatiGestionali", '');
+                        $el->appendChild($el1);
+						$el2 = $domDoc->createElement("TipoDato", 'INTENTO');
+						$el1->appendChild($el2);
+						$el2 = $domDoc->createElement("RiferimentoTesto",  $XMLvars->DatiIntento['RiferimentoTesto']);
+						$el1->appendChild($el2);
+						$el2 = $domDoc->createElement("RiferimentoData",  $XMLvars->DatiIntento['RiferimentoData']);
+						$el1->appendChild($el2);
+					}
                     if (isset($rigo['descrittivi']) && count($rigo['descrittivi']) > 0) {
                         foreach ($rigo['descrittivi'] as $k => $v) {
                             $el1 = $domDoc->createElement("AltriDatiGestionali", '');
@@ -1071,6 +1091,16 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
                         $el1 = $domDoc->createElement("Natura", $rigo['natura']);
                         $el->appendChild($el1);
                     }
+					if ( !empty($XMLvars->DatiIntento) && $rigo['natura']=='N3.5' ) {
+						$el1 = $domDoc->createElement("AltriDatiGestionali", '');
+                        $el->appendChild($el1);
+						$el2 = $domDoc->createElement("TipoDato", 'INTENTO');
+						$el1->appendChild($el2);
+						$el2 = $domDoc->createElement("RiferimentoTesto",  $XMLvars->DatiIntento['RiferimentoTesto']);
+						$el1->appendChild($el2);
+						$el2 = $domDoc->createElement("RiferimentoData",  $XMLvars->DatiIntento['RiferimentoData']);
+						$el1->appendChild($el2);
+					}
                     if (isset($rigo['descrittivi']) && count($rigo['descrittivi']) > 0) {
                         foreach ($rigo['descrittivi'] as $k => $v) {
                             $el1 = $domDoc->createElement("AltriDatiGestionali", '');
@@ -1117,18 +1147,6 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 // --- FINE CALCOLO TOTALI
 
     // alla fine del ciclo sui righi faccio diverse aggiunte es. causale, bolli, descrizione aggiuntive, e spese di incasso, queste essendo cumulative per diversi eventuali DdT non hanno un riferimento
-    
-    if ( $XMLvars->DatiIntento ) {
-        $benserv = $xpath->query("//FatturaElettronicaBody")->item(0);
-        $el = $domDoc->createElement("AltriDatiGestionali", '');
-        $el1 = $domDoc->createElement("TipoDato", 'INTENTO');
-        $el->appendChild($el1);
-        $el1 = $domDoc->createElement("RiferimentoTesto",  $XMLvars->DatiIntento['RiferimentoTesto']);
-        $el->appendChild($el1);
-        $el1 = $domDoc->createElement("RiferimentoData",  $XMLvars->DatiIntento['RiferimentoData']);
-        $el->appendChild($el1);
-        $benserv->appendChild($el);
-    }
 
     if ($XMLvars->DatiVeicoli) {
         $results = $xpath->query("//FatturaElettronicaBody")->item(0);
