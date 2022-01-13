@@ -66,7 +66,6 @@ if (isset($_POST['Return'])) {
 if (isset ($_POST['download'])) {
 	if (file_exists($file_download)) {
 		header("Location: " . $file_download );
-
 		include $file_download;
 	} else {
 		header("Location: " . $_POST['ritorno']);
@@ -74,6 +73,7 @@ if (isset ($_POST['download'])) {
 	}
 } elseif (isset ($_POST['download2'])){
 	if (file_exists($file_download2)) {
+		header("Location: " . $file_download2 );
 		include $file_download2;
 	} else {
 		header("Location: " . $_POST['ritorno']);
