@@ -29,7 +29,7 @@ if (!$isAjax) {
     $user_error = 'Access denied - not an AJAX request...';
     trigger_error($user_error, E_USER_ERROR);
 }
-if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&isset($_POST['id_tes']))) { 
+if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&isset($_POST['id_tes']))) {
 	require("../../library/include/datlib.inc.php");
 	$calc = new Schedule;
 	$admin_aziend = checkAdmin();
@@ -46,7 +46,7 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 			//cancello i righi iva
 			// se il rigo ha un reverse charge cancello anche il documento fittizio "X" prodotto in fase di contabilizzazione
 			$rs_rev_ch=gaz_dbi_dyn_query("*",$gTables['rigmoi'],"reverse_charge_idtes = ". $i." OR id_tes = ".$i,'reverse_charge_idtes DESC');
-            while ($rev_ch = gaz_dbi_fetch_array($rs_rev_ch)) {
+      while ($rev_ch = gaz_dbi_fetch_array($rs_rev_ch)) {
 				gaz_dbi_del_row($gTables['rigmoi'], 'id_tes', $rev_ch['reverse_charge_idtes']);
 				$rs_rev_rm=gaz_dbi_dyn_query("*",$gTables['rigmoc'],"id_tes = ".$rev_ch['reverse_charge_idtes'],'id_rig'); // riprendo i righi per poter eliminare anche lo scadenzario
 				while ($rev_rm = gaz_dbi_fetch_array($rs_rev_rm)) {
@@ -62,6 +62,8 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 					gaz_dbi_del_row($gTables['tesdoc'], 'id_tes', $idtes_ch['id_tes']);
 					gaz_dbi_del_row($gTables['rigdoc'], 'id_tes', $idtes_ch['id_tes']);
 				}
+        // annullo la contabilizzazione anche alla testata documento che lo contiene
+        gaz_dbi_put_query($gTables['tesdoc'], 'id_con ='.$rev_ch['reverse_charge_idtes'],'id_con',0);
 			}
 			gaz_dbi_del_row($gTables['rigmoi'], 'id_tes', $i);
 
@@ -77,7 +79,7 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 			if ($assets) {
 				gaz_dbi_del_row($gTables['assets'], "id",$assets['id']);
 				// ... ed il relativo articolo in magazzino
-				gaz_dbi_del_row($gTables['artico'], "id_assets",$assets['id']); 
+				gaz_dbi_del_row($gTables['artico'], "id_assets",$assets['id']);
 			}
 		break;
 		case "piacon":
@@ -87,7 +89,7 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 		case "caucon":
 				$i=substr($_POST['ref'],0,3);
 				gaz_dbi_del_row($gTables['caucon'], "codice", $i);
-				//cancello anche i righi 
+				//cancello anche i righi
 				gaz_dbi_del_row($gTables['caucon_rows'], "caucon_cod", $i);
 		break;
 		case "comunicazioni_dati_fatture":
