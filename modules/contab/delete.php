@@ -61,6 +61,18 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 				if ($idtes_ch){
 					gaz_dbi_del_row($gTables['tesdoc'], 'id_tes', $idtes_ch['id_tes']);
 					gaz_dbi_del_row($gTables['rigdoc'], 'id_tes', $idtes_ch['id_tes']);
+          // non esistendo più la fattura reverse perché eliminata sopra elimino anche l'eventuale flusso con il SdI e la tolgo anche da dentro il pacchetto zip
+          $ffr = gaz_dbi_get_row($gTables['fae_flux'], "id_tes_ref", $idtes_ch['id_tes']);
+          if ($ffr) {
+            $zip = new ZipArchive;
+            $res = $zip->open(DATA_DIR.'files/'.$admin_aziend['codice'].'/'.$ffr['filename_zip_package']);
+            if ($res === TRUE) {
+              $zip->deleteName($ffr['filename_ori']);
+              $zip->close();
+            }
+          }
+          // infine cancello anche dalla tabella del db
+					gaz_dbi_del_row($gTables['fae_flux'], 'id_tes_ref', $idtes_ch['id_tes']);
 				}
         // annullo la contabilizzazione anche alla testata documento che lo contiene
         gaz_dbi_put_query($gTables['tesdoc'], 'id_con ='.$rev_ch['reverse_charge_idtes'],'id_con',0);
