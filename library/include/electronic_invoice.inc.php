@@ -461,8 +461,8 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
     $domDoc = new DOMDocument;
 	$domDoc->preserveWhiteSpace = false;
 	$domDoc->formatOutput = true;
-    $ctrl_doc = 0;
-    $ctrl_fat = 0;
+    $ctrl_doc = '';
+    $ctrl_fat = '';
     $n_linea = 1;
     // definisco le variabili dei totali
     $XMLvars->totimp_body = 0;
@@ -489,7 +489,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
     while ($tesdoc = gaz_dbi_fetch_array($testata)) {
         $XMLvars->setXMLvars($gTables, $tesdoc, $tesdoc['id_tes'], $rows, false);
         $cod_destinatario=trim($XMLvars->client['fe_cod_univoco']); // elemento 1.1.4
-		if ($ctrl_fat <>$XMLvars->tesdoc['numfat']) {
+		if ($ctrl_fat <> $XMLvars->tesdoc['numfat']) {
 			// stabilisco quale template dovrò usare ad ogni cambio di fattura
 			if ($XMLvars->docYear <= 2016) { // FAttura Elettronica PA fino al 2016
 				$domDoc->load("../../library/include/template_fae.xml");
@@ -522,7 +522,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 			$XMLvars->DatiDDT[$XMLvars->tesdoc['numdoc']]=array("DataDDT"=>$XMLvars->tesdoc['datemi'],"RiferimentoNumeroLinea"=>array());
         }
 
-        if ($ctrl_doc == 0) {
+        if (empty($ctrl_doc)) {
             $id_progressivo = substr($XMLvars->docRelDate, 2, 2) . $XMLvars->seziva .$XMLvars->fae_reinvii . str_pad($XMLvars->protoc, 6, '0', STR_PAD_LEFT);
             //per il momento sono singole chiamate xpath a regime e' possibile usare un array associativo da passare ad una funzione
             $results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/IdTrasmittente/IdPaese")->item(0);
