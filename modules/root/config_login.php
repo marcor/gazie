@@ -115,7 +115,7 @@ define("EMAIL_SMTP_AUTH", true);
 function getBaseUrl() { // ricavo l'URL del modulo
     // output: /myproject/index.php
     $currentPath = $_SERVER['PHP_SELF'];
-    // output: Array ( [dirname] => /myproject [basename] => index.php [extension] => php [filename] => index ) 
+    // output: Array ( [dirname] => /myproject [basename] => index.php [extension] => php [filename] => index )
     $pathInfo = pathinfo($currentPath);
     // output: localhost
     $hostName = $_SERVER['HTTP_HOST'];

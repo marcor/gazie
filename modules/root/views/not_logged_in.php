@@ -1,7 +1,7 @@
 <?php include('_header.php'); ?>
 
 <form method="post" action="login_user.php" name="loginform">
-    <div class="container">    
+    <div class="container">
         <div id="loginbox" style="margin-top:5%;" class="mainbox mainbox col-sm-offset-4 col-sm-4">
             <div class="panel panel-info" >
                 <div class="panel-heading panel-gazie">
@@ -18,7 +18,7 @@
 					if (is_numeric(substr($table_prefix,-4))) {
 						// se è stato uno studente ad aver fatto il logout lo riporto sulla giusta pagina
 						header("Location: ../school/student_login.php");
-						exit;	
+						exit;
 					}
                     if (isset($login)) {
                         if ($login->errors) {
@@ -35,7 +35,7 @@
                                 echo '</div>';
                             }
                         }
-                    } 
+                    }
                     ?>
                     <div style="padding-bottom: 25px;" class="input-group">
                         <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
@@ -53,7 +53,7 @@
                         </div>
                      <!--     <div class="col-sm-6">
                             <input  style="float:left;"  type="checkbox" id="user_rememberme" name="user_rememberme" value="1" />
-                            <label for="user_rememberme"><?php// echo WORDING_REMEMBER_ME; ?></label>
+                            <label for="user_rememberme"><?php // echo WORDING_REMEMBER_ME; ?></label>
                         </div> -->
                         <div class="col-lg-2">
                             <input style="float:right;" class="btn btn-success"  name="login" type="submit" value="<?php echo WORDING_LOGIN; ?>" >
@@ -64,29 +64,29 @@
                             <a style="float:left;" href="login_register.php"><?php //echo WORDING_REGISTER_NEW_ADMIN; ?></a>
                         </div>-->
                     </div>
-                </div>  
-					<?php if (@checkSchool()) { 
+                </div>
+					<?php if (@checkSchool()) {
 					?>
 						<div style="padding-top:10px" class="panel-body" >
 							<div style="padding-top:10px" class="form-group">
 								<div class="col-sm-12 controls">
-									<a href="../school/student_login.php" > 
+									<a href="../school/student_login.php" >
 										<?php echo WORDING_LOGIN_AS_STUDENT; ?>
 										<img src="../school/school.png">
 									</a>
 								</div>
 							</div>
 
-						</div> 
+						</div>
 					<?php }  ?>
-            </div>  
+            </div>
         </div>
     </div><!-- chiude div container -->
 </form>
 
 
-<?php 
-include('_footer.php'); 
+<?php
+include('_footer.php');
 
 function checkSchool() {
     global $gTables;

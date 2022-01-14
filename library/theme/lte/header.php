@@ -85,7 +85,7 @@ if (isset( $scriptname) && $scriptname != $prev_script && $scriptname != 'admin.
         <link rel="icon" href="data:image/x-icon;base64,<?php echo $ico?>"  type="image/x-icon" />
 		<link rel="icon" sizes="114x114" href="data:image/x-icon;base64,<?php echo $ico114?>"  type="image/x-icon" />
 		<link rel="apple-touch-icon" href="data:image/x-icon;base64,<?php echo $ico114?>"  type="image/x-icon">
-		<link rel="apple-touch-startup-image" href="data:image/x-icon;base64,<?php echo $ico114?>"  type="image/x-icon">		
+		<link rel="apple-touch-startup-image" href="data:image/x-icon;base64,<?php echo $ico114?>"  type="image/x-icon">
 		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="data:image/x-icon;base64,<?php echo $ico114?>"  type="image/x-icon" />
     <link href="../../library/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="../../library/theme/lte/font-awesome/css/font-awesome.min.css">
@@ -94,7 +94,7 @@ if (isset( $scriptname) && $scriptname != $prev_script && $scriptname != 'admin.
     <link rel="stylesheet" href="../../library/theme/lte/adminlte/dist/css/skins/skin-gazie.css"> <!-- _all-skins.min.css">-->
     <link href="../../js/jquery.ui/jquery-ui.css" rel="stylesheet">
 		<script src="../../js/jquery/jquery.js"></script>
-		
+
 
         <?php
         if (!empty($admin_aziend['style']) && file_exists("../../library/theme/lte/scheletons/" . $admin_aziend['style'])) {
@@ -107,13 +107,13 @@ if (isset( $scriptname) && $scriptname != $prev_script && $scriptname != 'admin.
         <link href="../../library/theme/lte/scheletons/<?php echo $style; ?>" rel="stylesheet" type="text/css" />
         <link href="../../library/theme/lte/skins/<?php echo $skin; ?>" rel="stylesheet" type="text/css" />
         <style>
-            .company-color, .company-color-bright, li.user-header { 
-              background-color: #<?php echo $admin_aziend['colore']; ?>; 
+            .company-color, .company-color-bright, li.user-header {
+              background-color: #<?php echo $admin_aziend['colore']; ?>;
               filter: brightness(120%);
               color: black;
             }
-            .company-color-logo { 
-              background-color: #<?php echo $admin_aziend['colore']; ?>; 
+            .company-color-logo {
+              background-color: #<?php echo $admin_aziend['colore']; ?>;
               color: black;
             }
             .company-color-logo:hover {
@@ -137,8 +137,8 @@ if (isset( $scriptname) && $scriptname != $prev_script && $scriptname != 'admin.
 			}
             .ui-dialog-buttonset>button.btn.btn-confirm:first-child {
                 background-color: #f9b54d;
-            }                   
-        </style>  
+            }
+        </style>
 <script>
 $(function() {
 	$("#dialog_menu_alerts").dialog({ autoOpen: false });
@@ -146,7 +146,7 @@ $(function() {
 function menu_alerts_check(mod,title,button,label,link,style){
 	// questa funzione attiva l'alert sulla barra del menù e viene richiamata sia dalla funzione menu_check_from_modules() dal browser tramite setInterval che alla fine della pagina (lato server) quando il controllo fatto dal php tramite $_SESSION['menu_alerts_lastcheck'] è scaduto
     // faccio append solo se già non esiste
-    if (style.length >= 2) { // solo se style è valorizzato faccio l'alert sul menu 
+    if (style.length >= 2) { // solo se style è valorizzato faccio l'alert sul menu
         $("li.blink").html( '<a mod="'+mod+'" class="btn btn-'+style+' dialog_menu_alerts" title="'+title.replace(/(<([^>]+)>)/ig,"")+'" >'+button+'</a>').click(function() {
 			$("p#diatitle").html(title);
 			$( "#dialog_menu_alerts" ).dialog({
@@ -157,9 +157,9 @@ function menu_alerts_check(mod,title,button,label,link,style){
 				show: "blind",
 				hide: "explode",
 				buttons: {
-					'confirm':{ 
-						text: label, 
-						'class':'btn btn-confirm', 
+					'confirm':{
+						text: label,
+						'class':'btn btn-confirm',
 						click:function (event, ui) {
 						$.ajax({
 							data: {'mod':mod },
@@ -170,8 +170,8 @@ function menu_alerts_check(mod,title,button,label,link,style){
 							}
 						});
 					}},
-					delete:{ 
-						text:'Posponi', 
+					delete:{
+						text:'Posponi',
 						'class':'btn btn-danger delete-button',
 						click:function (event, ui) {
 						$.ajax({
@@ -189,13 +189,13 @@ function menu_alerts_check(mod,title,button,label,link,style){
 					}
 				}
 			});
-			$("#dialog_menu_alerts" ).dialog( "open" );  
+			$("#dialog_menu_alerts" ).dialog( "open" );
 		});
-    } 
+    }
 }
 
 function menu_check_from_modules() {
-    // chiamata al server per aggiornare il tempo dell'ultimo controllo    
+    // chiamata al server per aggiornare il tempo dell'ultimo controllo
 	$.ajax({
 		type: 'GET',
 		url: "../root/session_menu_alert_lastcheck.php",
@@ -209,12 +209,12 @@ function menu_check_from_modules() {
           var link = '';
           var mod = '';
           // controllo la presenza di nuove notifiche
-          $.ajax({ 
-            type: 'GET', 
-            url: '../root/get_sync_status_ajax.php', 
-            data: {}, 
+          $.ajax({
+            type: 'GET',
+            url: '../root/get_sync_status_ajax.php',
+            data: {},
             dataType: 'json',
-            success: function (data) { 
+            success: function (data) {
               $.each(data, function(i, v) {
                 // nome modulo
                 title = v['title'];
@@ -228,22 +228,22 @@ function menu_check_from_modules() {
                 menu_alerts_check(mod,title,button,label,link,style);
               });
             }
-          });	        
+          });
         }
 	});
 }
 // setto comunque dei check intervallati dei minuti inseriti in configurazione avanzata azienda 15*60*1000ms perché non è detto che si facciano i refresh, ad es. se il browser rimane fermo sulla stessa pagina per un lungo periodo > $period
-setInterval(menu_check_from_modules,<?php echo intval($period*60000);?>);
+setInterval(menu_check_from_modules,<?php echo intval((int)$period*60000);?>);
 
     $(function () {
-        //twitter bootstrap script		
+        //twitter bootstrap script
         $("#docmodal").click(function () {
-		var module = $(this).attr('module');			
+		var module = $(this).attr('module');
             $.ajax({
                 type: "POST",
                 url: "../../modules/"+module+"/docume_"+module+".php",
                 data: 'mode=modal',// da lasciare perché alcuni moduli usano mode
-                success: function (msg) {                    
+                success: function (msg) {
 					$("#doc_modal .modal-sm").css('width', '80%');
                     $("#doc_modal .modal-body").html(msg);
                 },
@@ -254,7 +254,7 @@ setInterval(menu_check_from_modules,<?php echo intval($period*60000);?>);
         });
     });
 
-</script>				
+</script>
     </head>
     <?php
     // imposto le opzioni del tema caricando le opzioni del database
@@ -280,9 +280,9 @@ setInterval(menu_check_from_modules,<?php echo intval($period*60000);?>);
 
     echo "<body class=\"hold-transition skin-blue sidebar-mini " . $val . "\">";
     ?>
-	
+
     <form method="POST" name="head_form" action="../../modules/root/admin.php">
-		<div style="display:none" id="dialog_menu_alerts" title="">        
+		<div style="display:none" id="dialog_menu_alerts" title="">
 			<p class="ui-state-highlight" id="diatitle"></p>
 		</div>
 		<div id="doc_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -292,7 +292,7 @@ setInterval(menu_check_from_modules,<?php echo intval($period*60000);?>);
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 						<h4 class="modal-title" id="myModalLabel"><?php echo "Documentazione"; ?></h4>
 					</div>
-					<div class="modal-body edit-content small"></div>					
+					<div class="modal-body edit-content small"></div>
 				</div>
 			</div>
 		</div>
@@ -316,17 +316,17 @@ setInterval(menu_check_from_modules,<?php echo intval($period*60000);?>);
                     <!-- Sidebar toggle button-->
                     <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
                         <span class="sr-only">Toggle navigation</span>
-                    </a>    
+                    </a>
                     <div class="navbar-custom-menu">
-                        <ul class="nav navbar-nav">     
-							<li class='blink'></li>												
+                        <ul class="nav navbar-nav">
+							<li class='blink'></li>
                             <?php
                             //leggo se il modulo è abilitato
 							$res_access_mod = gaz_dbi_dyn_query($gTables['admin_module'].'.access', $gTables['module'].' LEFT JOIN '. $gTables['admin_module'].' ON '. $gTables['module'].'.id='. $gTables['admin_module'].'.moduleid',"adminid='".$admin_aziend["user_name"]."' AND company_id=".$admin_aziend['company_id'],'adminid' ,0,1);
                             $row_access_mod = gaz_dbi_fetch_array($res_access_mod);
                             if ($row_access_mod && $row_access_mod['access'] == 3 ) {
                                 //visualizzo la documentazione standard
-								require '../' . $module . '/menu.' . $admin_aziend['lang'] . '.php';								
+								require '../' . $module . '/menu.' . $admin_aziend['lang'] . '.php';
                                 echo '<li><a id="docmodal" href="#myModal" data-toggle="modal" data-target="#doc_modal" title="Documentazione modulo '. $transl[$module]['name'] .'" module="'. $module .'"><i class="fa fa-info-circle"></i><span class="hidden-xs">'.$transl[$module]['name']."</span></a></li>";
                             }
                             ?>
@@ -385,7 +385,7 @@ setInterval(menu_check_from_modules,<?php echo intval($period*60000);?>);
                                                             </h4>
                                                             <p><?php echo substr($r["link"], 0, 38); ?></p>
                                                         </a>
-                                                    </li>  
+                                                    </li>
         <?php
     }
 }
@@ -494,7 +494,7 @@ setInterval(menu_check_from_modules,<?php echo intval($period*60000);?>);
                                             </a>
                                         </div>
                                         <div class="col-xs-8 text-center" align="center">
-                                            <a href="../../modules/root/admin.php"><?php echo $admin_aziend['ragso1'] . "<br>" . $admin_aziend['ragso2']; ?></a> 
+                                            <a href="../../modules/root/admin.php"><?php echo $admin_aziend['ragso1'] . "<br>" . $admin_aziend['ragso2']; ?></a>
 <?php //selectCompany('company_id', $form['company_id'], $form['search']['company_id'], $form['hidden_req'], $script_transl['mesg_co']);  ?>
                                         </div>
                                         <!--<div class="col-xs-4 text-center">
@@ -526,7 +526,7 @@ if (!isset($_SESSION['menu_alerts_lastcheck'])||((round(time()/60)-$_SESSION['me
 } elseif(isset($_SESSION['menu_alerts']) && count($_SESSION['menu_alerts'])>=1) {
         foreach($_SESSION['menu_alerts'] as $k=>$v) {
             // se ho i dati per visualizzare il bottone relativo al modulo sincronizzato faccio il load per crearlo (mod,title,button,label,link,style)
-            if ( is_array($v) && count($v) > 4 ) { // se ho i dati sufficienti creo l'elemento bottone tramite js    
+            if ( is_array($v) && count($v) > 4 ) { // se ho i dati sufficienti creo l'elemento bottone tramite js
                 echo "<script>menu_alerts_check('".$k."','".addslashes($v['title'])."','".addslashes($v['button'])."','".addslashes($v['label'])."','".addslashes($v['link'])."','".$v['style']."');</script>";
             }
         }
@@ -551,6 +551,6 @@ if (!isset($_SESSION['menu_alerts_lastcheck'])||((round(time()/60)-$_SESSION['me
                         <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
                       </div>
                     </div>
-                    <!-- search form--> 
+                    <!-- search form-->
                     <ul class="sidebar-menu">
                         <!--<li class="header">MENU' PRINCIPALE</li>-->
