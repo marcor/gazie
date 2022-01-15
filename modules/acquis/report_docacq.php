@@ -41,7 +41,7 @@ $search_fields = [
     'numero'
         => "numfat LIKE '%%%s%%'",
     'anno'
-        => "YEAR(datfat) = %d",
+        => "YEAR(datreg) = %d",
     'fornitore'
         => $partner_select ? "clfoco = '%s'" : "ragso1 LIKE '%s%%'"
 ];
@@ -172,7 +172,9 @@ function printPdf(urlPrintDoc){
                 <input type="text" placeholder="Cerca Prot." class="input-sm form-control" name="proto" value="<?php if (isset($proto)) print $proto; ?>" maxlength="6" tabindex="1" class="FacetInput">
             </td>
             <td colspan="1" class="FacetFieldCaptionTD">
-                &nbsp;
+<?php
+                gaz_flt_disp_select("anno", "YEAR(datreg) AS anno", $gTables["tesdoc"],  $where_select, "anno DESC");
+?>
             </td>
             <td colspan="1" class="FacetFieldCaptionTD">
 <?php
@@ -183,9 +185,6 @@ function printPdf(urlPrintDoc){
                 <input type="text" placeholder="Cerca Num." class="input-sm form-control" name="numero" value="<?php if (isset($numero)) print $numero; ?>" tabindex="3" class="FacetInput">
             </td>
             <td colspan="1" class="FacetFieldCaptionTD">
-<?php
-                gaz_flt_disp_select("anno", "YEAR(datfat) AS anno", $gTables["tesdoc"],  $where_select, "anno DESC");
-?>
             </td>
             <td colspan="1" class="FacetFieldCaptionTD">
 <?php
