@@ -39,8 +39,7 @@ if (!isset($_POST['ritorno'])) {
     $_POST['ritorno'] = $_SERVER['HTTP_REFERER'];
 }
 
-$form = array();
-
+$form=[];
 function getItemPrice($item, $partner = 0) {
     global $admin_aziend, $gTables;
     $artico = gaz_dbi_get_row($gTables['artico'], 'codice', $item);
@@ -48,57 +47,57 @@ function getItemPrice($item, $partner = 0) {
         $partner = gaz_dbi_get_row($gTables['clfoco'], 'codice', $partner);
         $list = $partner['listin'];
         if (substr($partner['codice'], 0, 3) == $admin_aziend['mascli'] && $list > 0 && $list <= 3) {
-            $price = $artico["preve$list"];
+            $price = ($artico)?$artico["preve$list"]:0.00;
         } else {
-            $price = $artico["preacq"];
+            $price = ($artico)?$artico["preacq"]:0.00;
         }
         $sconto = $partner['sconto'];
     } else { // prezzo articolo
         $sconto = 0;
-        $price = $artico["preve1"];
+        $price = ($artico)?$artico["preve1"]:0.00;
     }
     return CalcolaImportoRigo(1, $price, $sconto, $admin_aziend['decimal_price']);
 }
 
-if ((isset($_POST['Update'])) or ( isset($_GET['Update']))) {
+if ((isset($_POST['Update'])) || ( isset($_GET['Update']))) {
     if (!isset($_GET['id_mov'])) {
         header("Location: " . $_POST['ritorno']);
         exit;
     } else {
-        $_POST['id_mov'] = $_GET['id_mov'];
+        $_POST['id_mov'] = intval($_GET['id_mov']);
     }
     $toDo = 'update';
 } else {
     $toDo = 'insert';
 }
 
-if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo accesso per UPDATE
-    $form['hidden_req'] = '';
-    //recupero il movimento
-    $result = gaz_dbi_get_row($gTables['movmag'], "id_mov", $_GET['id_mov']);
-    $form['id_mov'] = $result['id_mov'];
+if (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo accesso per UPDATE
+  $form['hidden_req'] = '';
+  //recupero il movimento
+  $result = gaz_dbi_get_row($gTables['movmag'], "id_mov", $_GET['id_mov']);
+  $form['id_mov'] = $result['id_mov'];
 	$form['type_mov'] = $result['type_mov'];
-    $form['id_rif'] = $result['id_rif'];
-    $form['caumag'] = $result['caumag'];
-    $form['operat'] = $result['operat'];
-    $form['gioreg'] = substr($result['datreg'], 8, 2);
-    $form['mesreg'] = substr($result['datreg'], 5, 2);
-    $form['annreg'] = substr($result['datreg'], 0, 4);
-    $form['clfoco'] = $result['clfoco'];
-    if (!empty($form['caumag'])) { //controllo quale partner prevede la causale
-        $rs_causal = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
-        $form['clorfo'] = $rs_causal['clifor']; //cliente, fornitore o entrambi
-    } else {
-        $form['clorfo'] = 0; // entrambi
-    }
-    $form['tipdoc'] = $result['tipdoc'];
-    $form['desdoc'] = $result['desdoc'];
-    $form['scochi'] = $result['scochi'];
-    $form['giodoc'] = substr($result['datdoc'], 8, 2);
-    $form['mesdoc'] = substr($result['datdoc'], 5, 2);
-    $form['anndoc'] = substr($result['datdoc'], 0, 4);
+  $form['id_rif'] = $result['id_rif'];
+  $form['caumag'] = $result['caumag'];
+  $form['operat'] = $result['operat'];
+  $form['gioreg'] = substr($result['datreg'], 8, 2);
+  $form['mesreg'] = substr($result['datreg'], 5, 2);
+  $form['annreg'] = substr($result['datreg'], 0, 4);
+  $form['clfoco'] = $result['clfoco'];
+  if (!empty($form['caumag'])) { //controllo quale partner prevede la causale
+      $rs_causal = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
+      $form['clorfo'] = $rs_causal['clifor']; //cliente, fornitore o entrambi
+  } else {
+      $form['clorfo'] = 0; // entrambi
+  }
+  $form['tipdoc'] = $result['tipdoc'];
+  $form['desdoc'] = $result['desdoc'];
+  $form['scochi'] = $result['scochi'];
+  $form['giodoc'] = substr($result['datdoc'], 8, 2);
+  $form['mesdoc'] = substr($result['datdoc'], 5, 2);
+  $form['anndoc'] = substr($result['datdoc'], 0, 4);
 	$form['id_lotmag'] = $result['id_lotmag'];
-    $form['artico'] = $result['artico'];
+  $form['artico'] = $result['artico'];
 	$form['cosear'] = $result['artico'];
 	$item_artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico']);
 	$print_unimis =  $item_artico['unimis'];
@@ -107,7 +106,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 	if (intval($form['SIAN'])>0) { // se movimenta il SIAN carico anche il contenuto relativo al SIAN
 		$camp_artico = gaz_dbi_get_row($gTables['camp_artico'], "codice", $form['cosear']);
 	}
-	$resultsian = gaz_dbi_get_row($gTables['camp_mov_sian'], "id_movmag", $_GET['id_mov']);
+	$resultsian = gaz_dbi_get_row($gTables['camp_mov_sian'], "id_movmag", intval($_GET['id_mov']));
 	if ($resultsian){
 		$form['cod_operazione'] = $resultsian['cod_operazione'];
 		$form['recip_stocc'] = $resultsian['recip_stocc'];
@@ -117,94 +116,93 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 		$result_lotmag = gaz_dbi_get_row($gTables['lotmag'], "id", $result['id_lotmag']);
 		$form['identifier'] = $result_lotmag['identifier'];
 		$form['expiry'] = $result_lotmag['expiry'];
-
 	}
 	$form['lot_or_serial']=$item_artico['lot_or_serial'];
-	 // Antonio Germani - se è presente, recupero il file documento lotto
-    $form['filename'] = "";
-    if (file_exists(DATA_DIR.'files/' . $admin_aziend['company_id']) > 0) {
-        // recupero il filename dal filesystem
-        $dh = opendir(DATA_DIR.'files/' . $admin_aziend['company_id']);
-        while (false !== ($filename = readdir($dh))) {
-            $fd = pathinfo($filename);
-            $r = explode('_', $fd['filename']);
-            if ($r[0] == 'lotmag' && $r[1] == $result['id_lotmag']) {
-                // riassegno il nome file
-                $form['filename'] = $fd['basename'];
-            }
-        }
-    }
-    $form['quanti'] = gaz_format_quantity($result['quanti'], 0, $admin_aziend['decimal_quantity']);
-    $form['prezzo'] = number_format($result['prezzo'], $admin_aziend['decimal_price'], '.', '');
-    $form['scorig'] = $result['scorig'];
-    $form['status'] = $result['status'];
-    $form['search_partner'] = "";
+  // Antonio Germani - se è presente, recupero il file documento lotto
+  $form['filename'] = "";
+  if (file_exists(DATA_DIR.'files/' . $admin_aziend['company_id']) > 0) {
+      // recupero il filename dal filesystem
+      $dh = opendir(DATA_DIR.'files/' . $admin_aziend['company_id']);
+      while (false !== ($filename = readdir($dh))) {
+          $fd = pathinfo($filename);
+          $r = explode('_', $fd['filename']);
+          if ($r[0] == 'lotmag' && $r[1] == $result['id_lotmag']) {
+              // riassegno il nome file
+              $form['filename'] = $fd['basename'];
+          }
+      }
+  }
+  $form['quanti'] = gaz_format_quantity($result['quanti'], 0, $admin_aziend['decimal_quantity']);
+  $form['prezzo'] = number_format($result['prezzo'], $admin_aziend['decimal_price'], '.', '');
+  $form['scorig'] = $result['scorig'];
+  $form['status'] = $result['status'];
+  $form['search_partner'] = "";
 
 	if ($toDo == "update") { // se è un update prendo la quantità scritta nel data base per le disponibilità in uscita
-		$prev_qta = gaz_dbi_get_row($gTables['movmag'], "id_mov", $_GET['id_mov']);
+		$prev_qta = gaz_dbi_get_row($gTables['movmag'], "id_mov", intval($_GET['id_mov']));
 		// la qtà è in questa variabile $prev_qta['quanti'];
 	} else {
 		$prev_qta['quanti']=0;
 	}
-    $form['id_orderman'] = $result['id_orderman'];
-    $form['id_warehouse'] = $result['id_warehouse'];
-    $resultorderman = gaz_dbi_get_row($gTables['orderman'], "id", $form['id_orderman']);
-    if ($form['id_orderman'] > 0) {
-		$form['coseprod']=$resultorderman['description'];
-    } else {
-		$form['coseprod']="";
-    }
+  $form['id_orderman'] = $result['id_orderman'];
+  $form['id_warehouse'] = $result['id_warehouse'];
+  $resultorderman = gaz_dbi_get_row($gTables['orderman'], "id", $form['id_orderman']);
+  if ($form['id_orderman'] > 0) {
+	$form['coseprod']=$resultorderman['description'];
+  } else {
+	$form['coseprod']="";
+  }
 
 } elseif (isset($_POST['Insert']) or isset($_POST['Update'])) {   //      se non e' il primo accesso
-    $form['hidden_req'] = htmlentities($_POST['hidden_req']);
-    //ricarico i registri per il form facendo gli eventuali parsing
-    $form['id_mov'] = intval($_POST['id_mov']);
+  $form['hidden_req'] = htmlentities($_POST['hidden_req']);
+  //ricarico i registri per il form facendo gli eventuali parsing
+  $form['id_mov'] = intval($_POST['id_mov']);
 	//$form['type_mov'] = intval ($_POST['type_mov']);
-    $form['id_rif'] = intval($_POST['id_rif']);
+  $form['id_rif'] = intval($_POST['id_rif']);
 	$form['caumag'] = intval($_POST['caumag']);
 	$form['gioreg'] = intval($_POST['gioreg']);
-    $form['mesreg'] = intval($_POST['mesreg']);
-    $form['annreg'] = intval($_POST['annreg']);
-    $form['clfoco'] = intval($_POST['clfoco']);
-    $form['clorfo'] = intval($_POST['clorfo']); //cliente, fornitore o entrambi
+  $form['mesreg'] = intval($_POST['mesreg']);
+  $form['annreg'] = intval($_POST['annreg']);
+  $form['clfoco'] = intval($_POST['clfoco']);
+  $form['clorfo'] = intval($_POST['clorfo']); //cliente, fornitore o entrambi
 	if ($form['caumag']>97){
 		$form['tipdoc']="INV";
 	} else {
 		$form['tipdoc'] = "MAG";
 	}
-    $form['desdoc'] = substr($_POST['desdoc'], 0, 50);
-    $form['giodoc'] = intval($_POST['giodoc']);
-    $form['mesdoc'] = intval($_POST['mesdoc']);
-    $form['anndoc'] = intval($_POST['anndoc']);
-    $form['scochi'] = floatval(preg_replace("/\,/", '.', $_POST['scochi']));
+  $form['desdoc'] = substr($_POST['desdoc'], 0, 50);
+  $form['giodoc'] = intval($_POST['giodoc']);
+  $form['mesdoc'] = intval($_POST['mesdoc']);
+  $form['anndoc'] = intval($_POST['anndoc']);
+  $form['scochi'] = floatval(preg_replace("/\,/", '.', $_POST['scochi']));
 	$form['id_lotmag'] = $_POST['id_lotmag'];
 	$form['cosear'] = $_POST['cosear'];
-    $form['artico'] = $_POST['artico'];
+  $form['artico'] = $_POST['artico'];
 	$form['lot_or_serial']=$_POST['lot_or_serial'];
 	$form['SIAN']=$_POST['SIAN'];
 	$form['cod_operazione'] = $_POST['cod_operazione'];
 	$form['recip_stocc'] = $_POST['recip_stocc'];
 	$form['recip_stocc_destin'] = $_POST['recip_stocc_destin'];
 	$form['coseprod']= $_POST['coseprod'];
-    $form['id_orderman'] = intval($_POST['id_orderman']);
-    $form['id_warehouse'] = intval($_POST['id_warehouse']);
-	if (isset($_POST['caumag']) && intval($_POST['caumag'])>0 and intval($form['caumag'])<80) {
+  $form['id_orderman'] = intval($_POST['id_orderman']);
+  $form['id_warehouse'] = intval($_POST['id_warehouse']);
+	if (isset($_POST['caumag']) && intval($_POST['caumag'])>0 && intval($form['caumag'])<80) {
 		$causa = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
-        $_POST['operat']= $causa['operat'];
-        $form['clorfo'] = $causa['clifor']; //cliente, fornitore o entrambi
-        if (($causa['clifor'] < 0 and substr($form['clfoco'], 0, 3) == $admin_aziend['masfor']) or ( $causa['clifor'] > 0 and 	substr($form['clfoco'], 0, 3) == $admin_aziend['mascli'])) {
-            $form['clfoco'] = 0;
-            $form['search_partner'] = "";
-        }
-        if ($causa['insdoc'] == 0) {//se la nuova causale non prevede i dati del documento
-            $form['tipdoc'] = "MAG";
-            $form['desdoc'] = "";
-            $form['giodoc'] = date("d");
-            $form['mesdoc'] = date("m");
-            $form['anndoc'] = date("Y");
-            $form['scochi'] = 0;
-            $form['id_rif'] = 0;
-        }
+    $_POST['operat']= $causa['operat'];
+    $form['clorfo'] = $causa['clifor']; //cliente, fornitore o entrambi
+    if (($causa['clifor'] < 0 && substr($form['clfoco'], 0, 3) == $admin_aziend['masfor']) or ( $causa['clifor'] > 0 && 	substr($form['clfoco'], 0, 3) == $admin_aziend['mascli'])) {
+        $form['clfoco'] = 0;
+        $form['search_partner'] = "";
+    }
+    if ($causa['insdoc'] == 0) {//se la nuova causale non prevede i dati del documento
+        $form['tipdoc'] = "MAG";
+        $form['desdoc'] = "";
+        $form['giodoc'] = date("d");
+        $form['mesdoc'] = date("m");
+        $form['anndoc'] = date("Y");
+        $form['scochi'] = 0;
+        $form['id_rif'] = 0;
+    }
 	}
 	if (intval($_POST['caumag'])== 82){
 		$form['operat'] = 1;
@@ -229,54 +227,54 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 			$form['expiry'] = $_POST['expiry'];
 		}
 	}
-    $form['quanti'] = gaz_format_quantity($_POST['quanti'], 0, $admin_aziend['decimal_quantity']);
-    $form['prezzo'] = number_format(preg_replace("/\,/", '.', $_POST['prezzo']), $admin_aziend['decimal_price'], '.', '');
-    $form['scorig'] = floatval(preg_replace("/\,/", '.', $_POST['scorig']));
-    $form['status'] = substr($_POST['status'], 0, 10);
-    $form['search_partner'] = $_POST['search_partner'];
+  $form['quanti'] = gaz_format_quantity($_POST['quanti'], 0, $admin_aziend['decimal_quantity']);
+  $form['prezzo'] = number_format(preg_replace("/\,/", '.', $_POST['prezzo']), $admin_aziend['decimal_price'], '.', '');
+  $form['scorig'] = floatval(preg_replace("/\,/", '.', $_POST['scorig']));
+  $form['status'] = substr($_POST['status'], 0, 10);
+  $form['search_partner'] = $_POST['search_partner'];
 
-    // Se viene inviata la richiesta di conferma della causale la carico con le relative contropartite...
-    /** ENRICO FEDELE */
-    /* Con button non funziona _x */
-    //if (isset($_POST['inscau_x'])) {
-    /** ENRICO FEDELE
-    if (isset($_POST['inscau'])) {
-        $causa = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
-        $form['operat'] = $causa['operat'];
-        $form['clorfo'] = $causa['clifor']; //cliente, fornitore o entrambi
-        if (($causa['clifor'] < 0 and substr($form['clfoco'], 0, 3) == $admin_aziend['masfor']) or ( $causa['clifor'] > 0 and substr($form['clfoco'], 0, 3) == $admin_aziend['mascli'])) {
-            $form['clfoco'] = 0;
-            $form['search_partner'] = "";
-        }
-        if ($causa['insdoc'] == 0) {//se la nuova causale non prevede i dati del documento
-            $form['tipdoc'] = "";
-            $form['desdoc'] = "";
-            $form['giodoc'] = date("d");
-            $form['mesdoc'] = date("m");
-            $form['anndoc'] = date("Y");
-            $form['scochi'] = "";
-            $form['id_rif'] = 0;
-        }
-    }*/
-    if (isset($_POST['newpartner'])) {
-        $anagrafica = new Anagrafica();
-        $partner = $anagrafica->getPartner($_POST['clfoco']);
-        $form['search_partner'] = substr($partner['ragso1'], 0, 4);
-        $form['clfoco'] = 0;
-    }
-    if (isset($_POST['newitem'])) {
-        $result_newart = gaz_dbi_get_row($gTables['artico'], "codice", $_POST['artico']);
-        $form['cosear'] = substr($result_newart['codice'], 0, 4);
-        $form['artico'] = "";
-    }
-    if (isset($_POST['Return'])) {
-        header("Location: " . $_POST['ritorno']);
-        exit;
-    }
-    if ($_POST['hidden_req'] == 'new_price') {
-        $form['prezzo'] = getItemPrice($form['artico'], $form['clfoco']);
-        $form['hidden_req'] = '';
-    }
+  // Se viene inviata la richiesta di conferma della causale la carico con le relative contropartite...
+  /** ENRICO FEDELE */
+  /* Con button non funziona _x */
+  //if (isset($_POST['inscau_x'])) {
+  /** ENRICO FEDELE
+  if (isset($_POST['inscau'])) {
+      $causa = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
+      $form['operat'] = $causa['operat'];
+      $form['clorfo'] = $causa['clifor']; //cliente, fornitore o entrambi
+      if (($causa['clifor'] < 0 && substr($form['clfoco'], 0, 3) == $admin_aziend['masfor']) or ( $causa['clifor'] > 0 && substr($form['clfoco'], 0, 3) == $admin_aziend['mascli'])) {
+          $form['clfoco'] = 0;
+          $form['search_partner'] = "";
+      }
+      if ($causa['insdoc'] == 0) {//se la nuova causale non prevede i dati del documento
+          $form['tipdoc'] = "";
+          $form['desdoc'] = "";
+          $form['giodoc'] = date("d");
+          $form['mesdoc'] = date("m");
+          $form['anndoc'] = date("Y");
+          $form['scochi'] = "";
+          $form['id_rif'] = 0;
+      }
+  }*/
+  if (isset($_POST['newpartner'])) {
+      $anagrafica = new Anagrafica();
+      $partner = $anagrafica->getPartner($_POST['clfoco']);
+      $form['search_partner'] = substr($partner['ragso1'], 0, 4);
+      $form['clfoco'] = 0;
+  }
+  if (isset($_POST['newitem'])) {
+      $result_newart = gaz_dbi_get_row($gTables['artico'], "codice", $_POST['artico']);
+      $form['cosear'] = substr($result_newart['codice'], 0, 4);
+      $form['artico'] = "";
+  }
+  if (isset($_POST['Return'])) {
+      header("Location: " . $_POST['ritorno']);
+      exit;
+  }
+  if ($_POST['hidden_req'] == 'new_price') {
+      $form['prezzo'] = getItemPrice($form['artico'], $form['clfoco']);
+      $form['hidden_req'] = '';
+  }
 
 	if (!empty($_FILES['docfile_']['name'])) { // Antonio Germani - se c'è un nome in $_FILES
 		$prefix = $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'];
@@ -300,14 +298,14 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 	}
 
 	if ($toDo == "update") { // se è un update prendo la quantità scritta nel data base per le disponibilità in uscita
-		$prev_qta = gaz_dbi_get_row($gTables['movmag'], "id_mov", $_GET['id_mov']);
+		$prev_qta = gaz_dbi_get_row($gTables['movmag'], "id_mov", intval($_GET['id_mov']));
 		// la qtà è in questa variabile $prev_qta['quanti'];
 	} else {
 		$prev_qta['quanti']=0;
 	}
 
 	// controllo e WARNING su quantità e lotti
-	if (strlen($form['artico'])>0 && $form['quanti']>0 && ($form['operat']==-1 OR $form['operat']==0)){
+	if (strlen($form['artico'])>0 && $form['quanti']>0 && ($form['operat']==-1 || $form['operat']==0)){
 		$mv = $gForm->getStockValue(false, $form['artico']);
 		$magval = array_pop($mv); // controllo disponibilità in magazzino
     $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
@@ -330,169 +328,156 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 		}
 	}
 
-    if (!empty($_POST['Insert'])) {        //          Se viene inviata la richiesta di conferma totale ...
-        //formatto le date
-        $form['datreg'] = $form['annreg'] . "-" . $form['mesreg'] . "-" . $form['gioreg'];
-        $form['datdoc'] = $form['anndoc'] . "-" . $form['mesdoc'] . "-" . $form['giodoc'];
-		$utsreg = mktime(0, 0, 0, $form['mesreg'], $form['gioreg'], $form['annreg']);
-        $utsdoc = mktime(0, 0, 0, $form['mesdoc'], $form['giodoc'], $form['anndoc']);
-        if (!checkdate($form['mesreg'], $form['gioreg'], $form['annreg']))
-            $msg .= "16+";
-        if (!checkdate($form['mesdoc'], $form['giodoc'], $form['anndoc']))
-            $msg .= "15+";
-        if ($utsdoc > $utsreg) {
-            $msg .= "17+";
-        }
-
-		if ($form['lot_or_serial']==1 AND $form['caumag']<>99){ // se è un articolo con lotti e non è un movimento inventario
-			if (strlen ($form['identifier'])<= 0){
-				$msg .= "21+"; // manca il lotto
-			}
-
-			$checklot = gaz_dbi_get_row($gTables['lotmag']." LEFT JOIN ".$gTables['movmag']." ON ".$gTables['movmag'].".id_mov = id_movmag", 'id', $form['id_lotmag']);
-			if (strtotime($form['datdoc']) < strtotime($checklot['datdoc']) && $form['operat']=="-1"){// non può uscire un lotto prima della data della sua creazione
-				$msg .= "36+";// Il lotto non può uscire in tale data in quanto ancora inesistente
-			}
-		}
-
-		if (intval($form['caumag'])==98 AND intval($form['operat'])==0){ // su storno inventario bisogna indicare se entrata o uscita
-			$msg .= "29+";
-		}
-		if (intval($form['caumag'])==99 AND intval($form['operat'])!==1){ // inventario deve essere entrata
-			$msg .= "30+";
-		}
-		if (intval($form['caumag'])==98 AND $form['prezzo'] <= 0) { // Se storno inventario e non è stato dato un prezzo controllo precedente inventario
-			$rs_last_inventory = gaz_dbi_dyn_query("*", $gTables['movmag'], "artico = '".$form['artico']."' AND caumag = 99 AND datreg <= '" . $form['datreg'] . "'", "datreg DESC, id_mov DESC");
-			$last_inventory = gaz_dbi_fetch_array($rs_last_inventory);
-			if ($last_inventory) {
-				$form['prezzo'] = $last_inventory['prezzo'];// imposto il valore sulla base dell'ultimo inventario 99
-			} else { // se non c'è un inventario 99 non si può fare uno storno 98
-				$msg .= "31+";
-			}
-		}
-        if (empty($form['artico'])) {  //manca l'articolo
-            $msg .= "18+";
-        }
-		if ($form['operat']==1 and $item_artico['good_or_service']==2 and $tipo_composti['val']=="STD") {  //E' un articolo composto che non può essere caricato da movmag
-            $msg .= "22+";
-        }
-        if ($form['quanti'] == 0) {  //la quantit� � zero
-            $msg .= "19+";
-        }
-		if (isset($_GET['id_mov']) && intval($_GET['id_mov'])>0){
-			$result = gaz_dbi_get_row($gTables['movmag'], "id_mov", $_GET['id_mov']);
-			if ($result['type_mov']<>0){ //Antonio Germani è un movimento che va gestito esclusivamente con il modulo Camp
-				$msg .="20+";
-			}
-		}
-		// inizio controllo operazioni particolari SIAN
-		if ($form['SIAN']>0 AND $form['operat']==1 AND $form['cod_operazione']==10 AND $camp_artico['confezione']>0){
-			$msg .="23+";
-		}
-		if ($form['SIAN']>0 AND $form['operat']==1 AND $form['cod_operazione']==10 AND $camp_artico['confezione']==0 AND $form['recip_stocc']==""){
-			$msg .="24+";
-		}
-		if ($form['SIAN']>0 AND $form['operat']==-1 AND $form['cod_operazione']==0 AND $camp_artico['confezione']==0){
-			$msg .="25+";
-		}
-		if ($form['SIAN']>0 AND $form['cod_operazione']==11){
-			$msg .="26+";
-		}
-		if ($form['SIAN']>0 AND $form['operat']==-1 AND $form['cod_operazione']==6 AND $camp_artico['confezione']==0){
-			$msg .="27+";
-		}
-		if ($form['SIAN']>0 AND $form['operat']==-1 AND $form['cod_operazione']==7 AND $camp_artico['confezione']==0 AND $form['recip_stocc']==""){
-			$msg .="24+";
-		}
-		if ($form['SIAN']>0 AND $form['operat']==-1 AND $form['cod_operazione']==8 AND $camp_artico['confezione']==0 AND $form['recip_stocc']==""){
-			$msg .="24+";
-		}
-		if ($form['SIAN']>0 AND $form['operat']==-1 AND $form['cod_operazione']==13 AND $camp_artico['confezione']>0){
-			$msg .="28+";
-		}
-		if ($form['SIAN']>0 AND $form['operat']==-1 AND strlen($form['recip_stocc'])>0){
-			$content = $sil -> getCont($form['recip_stocc'],$form['artico']);
-			if ($content < $form['quanti']){ // se non c'è suffiente olio nel silos selezionato
-			$msg .="32+";
-			}
-		}
-
-        if (empty($msg)) {    //        nessun errore        SALVATAGGIO database
-
-			// Antonio Germani - inizio salvataggio lotto
-			if ($form['lot_or_serial']==1){ // se l'articolo prevede un lotto
-				if (strlen($form['identifier']) == 0) { // se non è stato digitato un lotto lo inserisco d'ufficio come data e ora
-                    $form['identifier'] = date("Ymd Hms");
-                }
-                if (strlen($form['expiry']) == 0) { // se non c'è la scadenza la inserisco a zero d'ufficio
-                    $form['expiry'] = "0000-00-00 00:00:00";
-                }
-				$form['identifier'] = (empty($form['identifier'])) ? '' : filter_var($form['identifier'], FILTER_SANITIZE_STRING); // ne ripulisco il numero da caratteri dannosi
-				// Vedo dove andrà salvato il movimento di magazzino in movmag $id_movmag
-				if ($toDo=="update") {
-					$id_movmag=$_GET['id_mov'];
-				} else {
-					$query = "SHOW TABLE STATUS LIKE '" . $gTables['movmag'] . "'";
-                    unset($row);
-                    $result = gaz_dbi_query($query);
-                    $row = $result->fetch_assoc();
-                    $id_movmag = $row['Auto_increment'];
-				}
-
-				if (($toDo=="insert" AND $form['operat']==1) or (intval($form['id_lotmag']) == 0 and $toDo=="update" AND $form['operat']==1)) { // se è insert OR se è update ma non c'era il lotto creo il rigo lotto memorizzandolo nella tabella lotmag
-						$query = "SHOW TABLE STATUS LIKE '" . $gTables['lotmag'] . "'";
-						unset($check_lot);
-						$check_lot = gaz_dbi_query($query);
-						$row = $check_lot->fetch_assoc();
-						$form['id_lotmag'] = $row['Auto_increment']; // trovo l'ID che avrà il lotto e  salvo il lotto
-						gaz_dbi_query("INSERT INTO " . $gTables['lotmag'] . "(codart,id_movmag,identifier,expiry) VALUES ('" . $form['artico'] . "','" . $id_movmag. "','" . $form['identifier'] . "','" . $form['expiry'] . "')");
-				}
-				if (intval($form['id_lotmag']) > 0 and $toDo=="update" AND $form['operat']==1 ) { // se esiste il lotto e siamo in update lo modifico
-					gaz_dbi_query("UPDATE " . $gTables['lotmag'] . " SET codart = '" . $form['artico'] . "' , identifier = '" . $form['identifier'] . "' , expiry = '" . $form['expiry'] . "' WHERE id = '" . $form['id_lotmag'] . "'");
-				}
-
-				// Antonio Germani - salvo documento/CERTIFICATO del lotto
-				if (substr($form['filename'], 0, 7) <> 'lotmag_') { // se è stato cambiato il file, cioè il nome non inizia con lotmag e, quindi, anche se è un nuovo insert
-                    if (!empty($form['filename'])) { // e se ha un nome impostato nel form
-                        $tmp_file = DATA_DIR."files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $form['filename'];
-                        // sposto il file nella cartella definitiva, rinominandolo e cancellandolo dalla temporanea
-                        $fd = pathinfo($form['filename']);
-                        rename($tmp_file, DATA_DIR."files/" . $admin_aziend['company_id'] . "/lotmag_" . $form['id_lotmag'] . '.' . $fd['extension']);
-                    }
-                } // altrimenti se il file non è cambiato, anche se è update, non faccio nulla
-			} else {
-				$form['id_lotmag']=0;
-			}
-			// fine salvataggio lotti
-
-            $upd_mm = new magazzForm;
-            $new_caumag = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
-            if (!empty($form['artico'])) {
-                $upd_mm->uploadMag($form['id_rif'], $form['tipdoc'],0,0,
-                        $form['datdoc'], $form['clfoco'], $form['scochi'], $form['caumag'], $form['artico'], $form['quanti'], $form['prezzo'], $form['scorig'], $form['id_mov'], $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => $form['operat'], 'desdoc' => $form['desdoc'])
-                );
-				if ($form['SIAN']>0 AND $toDo=="insert"){
-					$form['id_movmag']=$id_movmag;// imposto l'id mov mag e salvo il movimento del SIAN
-					$form['varieta']=$item_artico['quality'];
-					gaz_dbi_table_insert('camp_mov_sian', $form);
-				}
-				if ($form['SIAN']>0 AND $toDo=="update"){
-					// aggiorno il movimento del SIAN
-					$update = array();
-					$update[]="id_movmag";
-					$update[]=$form['id_mov'];
-					$form['varieta']=$item_artico['quality'];
-					gaz_dbi_table_update('camp_mov_sian',$update,$form);
-				}
-
-				// aggiorno id_lotmag nel rigo di movmag
-				$query = "UPDATE " . $gTables['movmag'] . " SET id_lotmag = " . $form['id_lotmag'] . ", id_orderman=".$form['id_orderman']." WHERE id_mov ='" . $id_movmag . "'";
-                gaz_dbi_query($query);
-            }
-            header("Location:report_movmag.php");
-            exit;
-        }
+  if (!empty($_POST['Insert'])) {        //          Se viene inviata la richiesta di conferma totale ...
+    //formatto le date
+    $form['datreg'] = $form['annreg'] . "-" . $form['mesreg'] . "-" . $form['gioreg'];
+    $form['datdoc'] = $form['anndoc'] . "-" . $form['mesdoc'] . "-" . $form['giodoc'];
+    $utsreg = mktime(0, 0, 0, $form['mesreg'], $form['gioreg'], $form['annreg']);
+    $utsdoc = mktime(0, 0, 0, $form['mesdoc'], $form['giodoc'], $form['anndoc']);
+    if (!checkdate($form['mesreg'], $form['gioreg'], $form['annreg'])) $msg .= "16+";
+    if (!checkdate($form['mesdoc'], $form['giodoc'], $form['anndoc'])) $msg .= "15+";
+    if ($utsdoc > $utsreg) { $msg .= "17+"; }
+    if ($form['lot_or_serial']==1 AND $form['caumag']<>99){ // se è un articolo con lotti e non è un movimento inventario
+      if (strlen ($form['identifier'])<= 0){
+        $msg .= "21+"; // manca il lotto
+      }
+      $checklot = gaz_dbi_get_row($gTables['lotmag']." LEFT JOIN ".$gTables['movmag']." ON ".$gTables['movmag'].".id_mov = id_movmag", 'id', $form['id_lotmag']);
+      if (strtotime($form['datdoc']) < strtotime($checklot['datdoc']) && $form['operat']=="-1"){// non può uscire un lotto prima della data della sua creazione
+        $msg .= "36+";// Il lotto non può uscire in tale data in quanto ancora inesistente
+      }
     }
+    if (intval($form['caumag'])==98 AND intval($form['operat'])==0){ // su storno inventario bisogna indicare se entrata o uscita
+      $msg .= "29+";
+    }
+    if (intval($form['caumag'])==99 AND intval($form['operat'])!==1){ // inventario deve essere entrata
+      $msg .= "30+";
+    }
+    if (intval($form['caumag'])==98 AND $form['prezzo'] <= 0) { // Se storno inventario e non è stato dato un prezzo controllo precedente inventario
+      $rs_last_inventory = gaz_dbi_dyn_query("*", $gTables['movmag'], "artico = '".$form['artico']."' AND caumag = 99 AND datreg <= '" . $form['datreg'] . "'", "datreg DESC, id_mov DESC");
+      $last_inventory = gaz_dbi_fetch_array($rs_last_inventory);
+      if ($last_inventory) {
+        $form['prezzo'] = $last_inventory['prezzo'];// imposto il valore sulla base dell'ultimo inventario 99
+      } else { // se non c'è un inventario 99 non si può fare uno storno 98
+        $msg .= "31+";
+      }
+    }
+    if (empty($form['artico'])) {  //manca l'articolo
+      $msg .= "18+";
+    }
+    if ($form['operat']==1 && $item_artico['good_or_service']==2 && $tipo_composti['val']=="STD") {  //E' un articolo composto che non può essere caricato da movmag
+            $msg .= "22+";
+    }
+    if ($form['quanti'] == 0) {  //la quantit� � zero
+      $msg .= "19+";
+    }
+    if (isset($_GET['id_mov']) && intval($_GET['id_mov'])>0){
+      $result = gaz_dbi_get_row($gTables['movmag'], "id_mov", intval($_GET['id_mov']));
+      if ($result['type_mov']<>0){ //Antonio Germani è un movimento che va gestito esclusivamente con il modulo Camp
+        $msg .="20+";
+      }
+    }
+    // inizio controllo operazioni particolari SIAN
+    if ($form['SIAN']>0 AND $form['operat']==1 AND $form['cod_operazione']==10 AND $camp_artico['confezione']>0){
+      $msg .="23+";
+    }
+    if ($form['SIAN']>0 AND $form['operat']==1 AND $form['cod_operazione']==10 AND $camp_artico['confezione']==0 AND $form['recip_stocc']==""){
+      $msg .="24+";
+    }
+    if ($form['SIAN']>0 AND $form['operat']==-1 AND $form['cod_operazione']==0 AND $camp_artico['confezione']==0){
+      $msg .="25+";
+    }
+    if ($form['SIAN']>0 AND $form['cod_operazione']==11){
+      $msg .="26+";
+    }
+    if ($form['SIAN']>0 AND $form['operat']==-1 AND $form['cod_operazione']==6 AND $camp_artico['confezione']==0){
+      $msg .="27+";
+    }
+    if ($form['SIAN']>0 AND $form['operat']==-1 AND $form['cod_operazione']==7 AND $camp_artico['confezione']==0 AND $form['recip_stocc']==""){
+      $msg .="24+";
+    }
+    if ($form['SIAN']>0 AND $form['operat']==-1 AND $form['cod_operazione']==8 AND $camp_artico['confezione']==0 AND $form['recip_stocc']==""){
+      $msg .="24+";
+    }
+    if ($form['SIAN']>0 AND $form['operat']==-1 AND $form['cod_operazione']==13 AND $camp_artico['confezione']>0){
+      $msg .="28+";
+    }
+    if ($form['SIAN']>0 AND $form['operat']==-1 AND strlen($form['recip_stocc'])>0){
+      $content = $sil -> getCont($form['recip_stocc'],$form['artico']);
+      if ($content < $form['quanti']){ // se non c'è suffiente olio nel silos selezionato
+        $msg .="32+";
+      }
+    }
+    if (empty($msg)) { // nessun errore
+      // Antonio Germani - inizio salvataggio lotto
+      if ($form['lot_or_serial']==1){ // se l'articolo prevede un lotto
+        if (strlen($form['identifier']) == 0) { // se non è stato digitato un lotto lo inserisco d'ufficio come data e ora
+          $form['identifier'] = date("Ymd Hms");
+        }
+        if (strlen($form['expiry']) == 0) { // se non c'è la scadenza la inserisco a zero d'ufficio
+          $form['expiry'] = "0000-00-00 00:00:00";
+        }
+        $form['identifier'] = (empty($form['identifier'])) ? '' : filter_var($form['identifier'], FILTER_SANITIZE_STRING); // ne ripulisco il numero da caratteri dannosi
+        // Vedo dove andrà salvato il movimento di magazzino in movmag $id_movmag
+        if ($toDo=="update") {
+          $id_movmag=intval($_GET['id_mov']);
+        } else {
+          $query = "SHOW TABLE STATUS LIKE '" . $gTables['movmag'] . "'";
+          unset($row);
+          $result = gaz_dbi_query($query);
+          $row = $result->fetch_assoc();
+          $id_movmag = $row['Auto_increment'];
+        }
+
+        if (($toDo=="insert" && $form['operat']==1) || (intval($form['id_lotmag']) == 0 && $toDo=="update" && $form['operat']==1)) { // se è insert OR se è update ma non c'era il lotto creo il rigo lotto memorizzandolo nella tabella lotmag
+            $query = "SHOW TABLE STATUS LIKE '" . $gTables['lotmag'] . "'";
+            unset($check_lot);
+            $check_lot = gaz_dbi_query($query);
+            $row = $check_lot->fetch_assoc();
+            $form['id_lotmag'] = $row['Auto_increment']; // trovo l'ID che avrà il lotto e  salvo il lotto
+            gaz_dbi_query("INSERT INTO " . $gTables['lotmag'] . "(codart,id_movmag,identifier,expiry) VALUES ('" . $form['artico'] . "','" . $id_movmag. "','" . $form['identifier'] . "','" . $form['expiry'] . "')");
+        }
+        if (intval($form['id_lotmag']) > 0 && $toDo=="update" && $form['operat']==1 ) { // se esiste il lotto e siamo in update lo modifico
+          gaz_dbi_query("UPDATE " . $gTables['lotmag'] . " SET codart = '" . $form['artico'] . "' , identifier = '" . $form['identifier'] . "' , expiry = '" . $form['expiry'] . "' WHERE id = '" . $form['id_lotmag'] . "'");
+        }
+
+        // Antonio Germani - salvo documento/CERTIFICATO del lotto
+        if (substr($form['filename'], 0, 7) <> 'lotmag_') { // se è stato cambiato il file, cioè il nome non inizia con lotmag e, quindi, anche se è un nuovo insert
+          if (!empty($form['filename'])) { // e se ha un nome impostato nel form
+            $tmp_file = DATA_DIR."files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $form['filename'];
+            // sposto il file nella cartella definitiva, rinominandolo e cancellandolo dalla temporanea
+            $fd = pathinfo($form['filename']);
+            rename($tmp_file, DATA_DIR."files/" . $admin_aziend['company_id'] . "/lotmag_" . $form['id_lotmag'] . '.' . $fd['extension']);
+          }
+        } // altrimenti se il file non è cambiato, anche se è update, non faccio nulla
+      } else {
+        $form['id_lotmag']=0;
+      }
+      // fine salvataggio lotti
+      $upd_mm = new magazzForm;
+      $new_caumag = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
+      if (!empty($form['artico'])) {
+        $id_movmag=$upd_mm->uploadMag($form['id_rif'], $form['tipdoc'],0,0,$form['datdoc'], $form['clfoco'], $form['scochi'], $form['caumag'], $form['artico'], $form['quanti'], $form['prezzo'], $form['scorig'], $form['id_mov'], $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => $form['operat'], 'desdoc' => $form['desdoc']));
+        if ($form['SIAN']>0 AND $toDo=="insert"){
+          $form['id_movmag']=$id_movmag;// imposto l'id mov mag e salvo il movimento del SIAN
+          $form['varieta']=$item_artico['quality'];
+          gaz_dbi_table_insert('camp_mov_sian', $form);
+        }
+        if ($form['SIAN']>0 AND $toDo=="update") {
+          // aggiorno il movimento del SIAN
+          $update = array();
+          $update[]="id_movmag";
+          $update[]=$form['id_mov'];
+          $form['varieta']=$item_artico['quality'];
+          gaz_dbi_table_update('camp_mov_sian',$update,$form);
+        }
+        // aggiorno id_lotmag nel rigo di movmag
+        $query = "UPDATE " . $gTables['movmag'] . " SET id_lotmag = " . $form['id_lotmag'] . ", id_orderman=".$form['id_orderman'].", id_warehouse=".$form['id_warehouse']." WHERE id_mov ='" . $id_movmag . "'";
+        gaz_dbi_query($query);
+      }
+      header("Location:report_movmag.php");
+      exit;
+    }
+  }
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
     $form['hidden_req'] = '';
     //registri per il form della testata
@@ -670,17 +655,17 @@ $messaggio = "";
 $ric_mastro = substr($form['clfoco'], 0, 3);
 echo "\t<input type=\"hidden\" name=\"clfoco\" value=\"" . $form['clfoco'] . "\">\n";
 echo "\t<input type=\"hidden\" name=\"clorfo\" value=\"" . $form['clorfo'] . "\">\n";
-$rs_partner = "(codice between " . $admin_aziend['mascli'] . "000001 and " . $admin_aziend['mascli'] . "999999 or codice between " . $admin_aziend['masfor'] . "000001 and " . $admin_aziend['masfor'] . "999999 )";
+$rs_partner = "(codice between " . $admin_aziend['mascli'] . "000001 AND " . $admin_aziend['mascli'] . "999999 or codice between " . $admin_aziend['masfor'] . "000001 AND " . $admin_aziend['masfor'] . "999999 )";
 if ($form['clorfo'] < 0) { // cliente
-    $rs_partner = "(codice between " . $admin_aziend['mascli'] . "000001 and " . $admin_aziend['mascli'] . "999999 )";
+    $rs_partner = "(codice between " . $admin_aziend['mascli'] . "000001 AND " . $admin_aziend['mascli'] . "999999 )";
 } elseif ($form['clorfo'] > 0) {// fornitore
-    $rs_partner = "(codice between " . $admin_aziend['masfor'] . "000001 and " . $admin_aziend['masfor'] . "999999 )";
+    $rs_partner = "(codice between " . $admin_aziend['masfor'] . "000001 AND " . $admin_aziend['masfor'] . "999999 )";
 }
 if ($form['clfoco'] == 0) {
     if (strlen($form['search_partner']) >= 2) {
 
         $anagrafica = new Anagrafica();
-        $partner = $anagrafica->queryPartners("*", $rs_partner . " and ragso1 like '" . addslashes($form['search_partner']) . "%'", "codice asc, ragso1 asc");
+        $partner = $anagrafica->queryPartners("*", $rs_partner . " AND ragso1 like '" . addslashes($form['search_partner']) . "%'", "codice asc, ragso1 asc");
         if (sizeof($partner) > 0) {
             $clifor = $script_transl[5];
             echo "\t<select name=\"clfoco\" class=\"FacetSelect\" onchange=\"this.form.hidden_req.value='new_price'; this.form.submit();\">\n";
@@ -930,7 +915,7 @@ if ($form['artico'] != "" && intval( $item_artico['lot_or_serial'] && $form['cau
         echo '<input type="hidden" name="id_lotmag" value="">';
         echo '<input type="hidden" name="expiry" value="">';
 }
-if (isset($form['operat']) && strlen($form['artico'])>0 && ($form['operat']==1 and $item_artico['good_or_service']==2 and $tipo_composti['val']=="STD")){
+if (isset($form['operat']) && strlen($form['artico'])>0 && ($form['operat']==1 && $item_artico['good_or_service']==2 && $tipo_composti['val']=="STD")){
 	?>
 	<div class="alert alert-warning alert-dismissible">
 	<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
@@ -962,7 +947,7 @@ if ($form['SIAN']>0 AND $form['operat']<>0){
 					<?php } else {
 						echo '<input type="hidden" value="" name="recip_stocc" />';
 					}
-					if (($form['cod_operazione']==4 AND $form['operat']==-1) OR ($form['cod_operazione']==5 AND $form['operat']==1)) { // se è un movimento aziendale chiedo recipiente destinazione
+					if (($form['cod_operazione']==4 AND $form['operat']==-1) || ($form['cod_operazione']==5 AND $form['operat']==1)) { // se è un movimento aziendale chiedo recipiente destinazione
 						?>
 						<div class="row">
 							<label for="camp_recip_destin" class="col-sm-6 control-label"><?php echo "Recipiente destinazione"; ?></label>

@@ -54,29 +54,17 @@ if (isset($_POST['newdestin'])) {
 }
 
 if (!isset($_POST['ritorno'])) {
-    if (isset($after_newdoc_back)){
-      if ($after_newdoc_back==0){
-        $form['ritorno']="admin_docacq.php?tipdoc=".$_GET['tipdoc']."&Insert";
-      }else{
-        if (substr($_GET['tipdoc'],1,1)=="D"){
-          $form['ritorno']="report_ddtacq.php";
-        }else{
-          $form['ritorno']="report_docacq.php";
-        }
-      }
-    } else{
-      $form['ritorno'] = $_SERVER['HTTP_REFERER'];
-    }
+  $form['ritorno'] = $_SERVER['HTTP_REFERER'];
 } else {
-    $form['ritorno'] = $_POST['ritorno'];
+  $form['ritorno'] = $_POST['ritorno'];
 }
 
-if ((isset($_GET['Update']) and ! isset($_GET['id_tes'])) and ! isset($_GET['tipdoc'])) {
+if ((isset($_GET['Update']) && !isset($_GET['id_tes'])) && !isset($_GET['tipdoc'])) {
     header("Location: " . $form['ritorno']);
     exit;
 }
 
-if ((isset($_POST['Update'])) or ( isset($_GET['Update']))) {
+if ((isset($_POST['Update'])) || ( isset($_GET['Update']))) {
     $toDo = 'update';
 	$class_btn_confirm='btn-warning';
 } else {
@@ -84,7 +72,7 @@ if ((isset($_POST['Update'])) or ( isset($_GET['Update']))) {
 	$class_btn_confirm='btn-success';
 }
 
-if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il primo accesso
+if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il primo accesso
 //qui si dovrebbe fare un parsing di quanto arriva dal browser...
     $form['id_tes'] = intval($_POST['id_tes']);
     $anagrafica = new Anagrafica();
@@ -190,14 +178,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 	if ($form['change_pag'] != $form['pagame']) {  //se è stato cambiato il pagamento
         $new_pag = gaz_dbi_get_row($gTables['pagame'], "codice", $form['pagame']);
         $old_pag = gaz_dbi_get_row($gTables['pagame'], "codice", $form['change_pag']);
-        if (($new_pag['tippag'] == 'B' or $new_pag['tippag'] == 'T' or $new_pag['tippag'] == 'V')
-                and ( $old_pag['tippag'] == 'C' or $old_pag['tippag'] == 'D' or $old_pag['tippag'] == 'O')) { // se adesso devo mettere le spese e prima no
+        if (($new_pag['tippag'] == 'B' || $new_pag['tippag'] == 'T' || $new_pag['tippag'] == 'V')
+                && ( $old_pag['tippag'] == 'C' || $old_pag['tippag'] == 'D' || $old_pag['tippag'] == 'O')) { // se adesso devo mettere le spese e prima no
             $form['numrat'] = $new_pag['numrat'];
             if ($toDo == 'update') {  //se è una modifica mi baso sulle vecchie spese
                 $old_header = gaz_dbi_get_row($gTables['tesdoc'], "id_tes", $form['id_tes']);
-                if ($old_header['speban'] > 0 and $fornitore['speban'] == "S") {
+                if ($old_header['speban'] > 0 && $fornitore['speban'] == "S") {
                     $form['speban'] = 0;
-                } elseif ($old_header['speban'] == 0 and $fornitore['speban'] == "S") {
+                } elseif ($old_header['speban'] == 0 && $fornitore['speban'] == "S") {
                     $form['speban'] = 0;
                 } else {
                     $form['speban'] = 0.00;
@@ -205,8 +193,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             } else { //altrimenti mi avvalgo delle nuove dell'azienda
                 $form['speban'] = 0;
             }
-        } elseif (($new_pag['tippag'] == 'C' or $new_pag['tippag'] == 'D' or $new_pag['tippag'] == 'O')
-                and ( $old_pag['tippag'] == 'B' or $old_pag['tippag'] == 'T' or $old_pag['tippag'] == 'V')) { // se devo togliere le spese
+        } elseif (($new_pag['tippag'] == 'C' || $new_pag['tippag'] == 'D' || $new_pag['tippag'] == 'O')
+                && ( $old_pag['tippag'] == 'B' || $old_pag['tippag'] == 'T' || $old_pag['tippag'] == 'V')) { // se devo togliere le spese
             $form['speban'] = 0.00;
             $form['numrat'] = 1;
         }
@@ -473,14 +461,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 // --- inizio controllo coerenza date-numerazione
         if ($toDo == 'update') {  // controlli in caso di modifica
             if ($form['tipdoc'] == 'DDR' || $form['tipdoc'] == 'DDL') {  //se è un DDL o DDR
-                $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . substr($datemi,0,4) . " and datemi < '$datemi' and ( tipdoc like 'DD_' or tipdoc = 'FAD') and seziva = $sezione", "numdoc desc", 0, 1);
+                $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . substr($datemi,0,4) . " AND datemi < '$datemi' AND ( tipdoc like 'DD_' OR tipdoc = 'FAD') AND seziva = $sezione", "numdoc desc", 0, 1);
                 $result = gaz_dbi_fetch_array($rs_query); //giorni precedenti
-                if ($result and ( $form['numdoc'] < $result['numdoc'])) {
+                if ($result && ( $form['numdoc'] < $result['numdoc'])) {
                     $msg['err'][]= "dtnuan";
                 }
-                $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . substr($datemi,0,4) . " and datemi > '$datemi' and ( tipdoc like 'DD_' or tipdoc = 'FAD') and seziva = $sezione", "numdoc asc", 0, 1);
+                $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . substr($datemi,0,4) . " AND datemi > '$datemi' AND ( tipdoc like 'DD_' OR tipdoc = 'FAD') AND seziva = $sezione", "numdoc asc", 0, 1);
                 $result = gaz_dbi_fetch_array($rs_query); //giorni successivi
-                if ($result and ( $form['numdoc'] > $result['numdoc'])) {
+                if ($result && ( $form['numdoc'] > $result['numdoc'])) {
                     $msg['err'][]= "dtnusc";
                 }
             } elseif ($form['tipdoc'] == 'ADT' || $form['tipdoc'] == 'AFT' || $form['tipdoc'] == 'RDL') { //se è un DDT acquisto non faccio controlli
@@ -505,12 +493,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             }
         } else {    //controlli in caso di inserimento
             if ($form['tipdoc'] == 'DDR' || $form['tipdoc'] == 'DDL') {  //se è un DDT
-                $rs_ultimo_ddt = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . substr($datemi,0,4) . " and tipdoc like 'DD_' and seziva = $sezione", "numdoc desc, datemi desc", 0, 1);
+                $rs_ultimo_ddt = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . substr($datemi,0,4) . " AND tipdoc like 'DD_' AND seziva = $sezione", "numdoc desc, datemi desc", 0, 1);
                 $ultimo_ddt = gaz_dbi_fetch_array($rs_ultimo_ddt);
 				if ($ultimo_ddt){
 					$utsUltimoDdT = mktime(0, 0, 0, substr($ultimo_ddt['datemi'], 5, 2), substr($ultimo_ddt['datemi'], 8, 2), substr($ultimo_ddt['datemi'], 0, 4));
                 }
-				if ($ultimo_ddt and ( $utsUltimoDdT > $utsemi)) {
+				if ($ultimo_ddt && ( $utsUltimoDdT > $utsemi)) {
                     $msg['err'][] = "ddtpre";
                 }
             } elseif ($form['tipdoc'] == 'ADT'  || $form['tipdoc'] == 'AFT' || $form['tipdoc'] == 'RDL') {  //se è un DDT d'acquisto non effettuo controlli sulle date
@@ -523,7 +511,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 					}
 				}
 			} else { //se sono altri documenti AFA AFC
-                $rs_ultimo_tipo = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datreg) = " . substr($form['datreg'],-4) . " AND tipdoc LIKE '" . substr($form['tipdoc'], 0, 2) . "%' and seziva = ".$sezione, "protoc desc, datreg desc, datfat desc", 0, 1);
+                $rs_ultimo_tipo = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datreg) = " . substr($form['datreg'],-4) . " AND tipdoc LIKE '" . substr($form['tipdoc'], 0, 2) . "%' AND seziva = ".$sezione, "protoc desc, datreg desc, datfat desc", 0, 1);
                 $ultimo_tipo = gaz_dbi_fetch_array($rs_ultimo_tipo);
 				if ($ultimo_tipo){
 					$utsUltimoProtocollo = mktime(0, 0, 0, substr($ultimo_tipo['datreg'], 5, 2), substr($ultimo_tipo['datreg'], 8, 2), substr($ultimo_tipo['datreg'], 0, 4));
@@ -535,7 +523,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 					if (substr($form['tipdoc'], 0, 1)=="R"){
 						if (!preg_match("/^id_([0-9]+)$/", $form['clfoco'], $match)) {
 							//controllo se ci sono altri documenti "R__" con lo stesso numero fornitore
-							$rs_stesso_numero = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " .substr($datemi,0,4) . " and tipdoc like '" . substr($form['tipdoc'], 0, 1) . "%' and clfoco = " . $form['clfoco'] . " and numdoc = '" . $form['numdoc'] . "'", "protoc desc, datfat desc, datemi desc", 0, 1);
+							$rs_stesso_numero = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " .substr($datemi,0,4) . " AND tipdoc like '" . substr($form['tipdoc'], 0, 1) . "%' AND clfoco = " . $form['clfoco'] . " AND numdoc = '" . $form['numdoc'] . "'", "protoc desc, datfat desc, datemi desc", 0, 1);
 							$stesso_numero = gaz_dbi_fetch_array($rs_stesso_numero);
 							if ($stesso_numero) {
 								$msg['err'][] = "samedoc";
@@ -544,7 +532,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 					} else {
 						if (!preg_match("/^id_([0-9]+)$/", $form['clfoco'], $match)) {
 							//controllo se ci sono altri documenti con lo stesso numero fornitore
-							$rs_stesso_numero = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " .substr($datemi,0,4) . " and tipdoc like '" . substr($form['tipdoc'], 0, 1) . "%' and clfoco = " . $form['clfoco'] . " and numfat = '" . $form['numfat'] . "'", "protoc desc, datfat desc, datemi desc", 0, 1);
+							$rs_stesso_numero = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " .substr($datemi,0,4) . " AND tipdoc like '" . substr($form['tipdoc'], 0, 1) . "%' AND clfoco = " . $form['clfoco'] . " AND numfat = '" . $form['numfat'] . "'", "protoc desc, datfat desc, datemi desc", 0, 1);
 							$stesso_numero = gaz_dbi_fetch_array($rs_stesso_numero);
 							if ($stesso_numero) {
 								$msg['err'][] = "samedoc";
@@ -573,7 +561,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $msg['err'][] = "norwum";
             }
 			if ($value['SIAN']>0){ // se movimento SIAN Faccio i reletivi controlli
-				if ($value['cod_operazione'] < 0 or $value['cod_operazione']==11){ // controllo se è stato inserito il codice operazione SIAN
+				if ($value['cod_operazione'] < 0 || $value['cod_operazione']==11){ // controllo se è stato inserito il codice operazione SIAN
 					$msgrigo = $i + 1;
 					$msg['err'][] = "nocod_operaz";
 				}
@@ -868,20 +856,20 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $where = "numdoc desc";
                 switch ($form['tipdoc']) {
                   case "DDR":
-                    $sql_documento = "YEAR(datemi) = " . substr($datemi,0,4) . " and ( tipdoc like 'DD_' or tipdoc = 'FAD') and seziva = $sezione";
+                    $sql_documento = "YEAR(datemi) = " . substr($datemi,0,4) . " AND ( tipdoc like 'DD_' OR tipdoc = 'FAD') AND seziva = $sezione";
                     break;
                   case "DDL":
-                    $sql_documento = "YEAR(datemi) = " . substr($datemi,0,4) . " and ( tipdoc like 'DD_' or tipdoc = 'FAD') and seziva = $sezione";
+                    $sql_documento = "YEAR(datemi) = " . substr($datemi,0,4) . " AND ( tipdoc like 'DD_' OR tipdoc = 'FAD') AND seziva = $sezione";
                     break;
                   case "AFA":
-                    $sql_documento = "YEAR(datemi) = " . substr($datemi,0,4) . " and tipdoc like 'AFA' and seziva = $sezione";
+                    $sql_documento = "YEAR(datemi) = " . substr($datemi,0,4) . " AND tipdoc like 'AFA' AND seziva = $sezione";
                     $where = "numfat desc";
                     break;
                   case "ADT":
-                    $sql_documento = "YEAR(datemi) = " . substr($datemi,0,4) . " and tipdoc like 'ADT' and seziva = $sezione";
+                    $sql_documento = "YEAR(datemi) = " . substr($datemi,0,4) . " AND tipdoc like 'ADT' AND seziva = $sezione";
                     break;
                   case "AFC":
-                    $sql_documento = "YEAR(datemi) = " . substr($datemi,0,4) . " and tipdoc = 'AFC' and seziva = $sezione";
+                    $sql_documento = "YEAR(datemi) = " . substr($datemi,0,4) . " AND tipdoc = 'AFC' AND seziva = $sezione";
                     $where = "numfat desc";
                     break;
                   case "RDL": // Antonio Germani aggiunto case RDL perché si creava un "Notice: Undefined variable: sql_documento
@@ -1112,7 +1100,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$old_key]['identifier'] = '';
             $form['rows'][$old_key]['expiry'] = '';
             $form['rows'][$old_key]['filename'] = '';
-            if ($form['in_tiprig'] == 0 and ! empty($form['in_codart'])) {  //rigo normale
+            if ($form['in_tiprig'] == 0 && ! empty($form['in_codart'])) {  //rigo normale
                 $form['rows'][$old_key]['annota'] = $artico['annota'];
                 $form['rows'][$old_key]['pesosp'] = $artico['peso_specifico'];
                 $form['rows'][$old_key]['gooser'] = $artico['good_or_service'];
@@ -1470,7 +1458,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         array_splice($form['rows'], $delri, 1);
         $i--;
     }
-} elseif ((!isset($_POST['Update'])) and ( isset($_GET['Update'])) or ( isset($_GET['Duplicate']))) { //se e' il primo accesso per UPDATE
+} elseif ((!isset($_POST['Update'])) && ( isset($_GET['Update'])) || ( isset($_GET['Duplicate']))) { //se e' il primo accesso per UPDATE
     if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
 		// allineo l'e-commerce con eventuali ordini non ancora caricati
 		$gs=$admin_aziend['synccommerce_classname'];
@@ -1485,7 +1473,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $id_des = $anagrafica->getPartner($tesdoc['id_des']);
     $rs_rig = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = " . $tesdoc['id_tes'], "id_rig asc");
 	$rs_tes =false;
-	if ($tesdoc['ddt_type']=="T" AND !isset($_GET['DDT'])){ // Antonio Germani - se è una fattura con DDT, carico tutti i tesdoc
+	if ($tesdoc['ddt_type']=="T" && !isset($_GET['DDT'])){ // Antonio Germani - se è una fattura con DDT, carico tutti i tesdoc
 	$rs_tes = gaz_dbi_dyn_query("*", $gTables['tesdoc'], " YEAR (datfat) = " . substr($tesdoc['datfat'],0,4). " AND protoc = ".$tesdoc['protoc']. " AND tipdoc = 'AFT'" , "id_tes asc");
 
 	}
@@ -1566,7 +1554,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['change_pag'] = $tesdoc['pagame'];
     $form['speban'] = 0;
     $pagame = gaz_dbi_get_row($gTables['pagame'], "codice", $form['pagame']);
-    if (($pagame['tippag'] == 'B' or $pagame['tippag'] == 'T' or $pagame['tippag'] == 'V') and $fornitore['speban'] == 'S') {
+    if (($pagame['tippag'] == 'B' || $pagame['tippag'] == 'T' || $pagame['tippag'] == 'V') && $fornitore['speban'] == 'S') {
         $form['numrat'] = $pagame['numrat'];
     } else {
         $form['speban'] = 0.00;
@@ -1667,7 +1655,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 
 				// recupero eventuale movimento di tracciabilità ma solo se non è stata richiesta una duplicazione (di un ddt c/lavorazione)
 				if (file_exists( DATA_DIR . 'files/' . $admin_aziend['company_id'] ) > 0) {
-				if (!isset($_GET['Duplicate']) OR $form['tipdoc']=='DDR') {
+				if (!isset($_GET['Duplicate']) || $form['tipdoc']=='DDR') {
 					$result_movmag = gaz_dbi_get_row($gTables['movmag'], "id_mov", $row['id_mag']);
 					$lotmag = gaz_dbi_get_row($gTables['lotmag'], 'id', $result_movmag['id_lotmag']);
 					// recupero il filename dal filesystem e lo sposto sul tmp
@@ -1776,7 +1764,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 
         // recupero eventuale movimento di tracciabilità ma solo se non è stata richiesta una duplicazione (di un ddt c/lavorazione)
 		if (file_exists( DATA_DIR . 'files/' . $admin_aziend['company_id'] ) > 0) {
-		if (!isset($_GET['Duplicate']) OR $form['tipdoc']=='DDR') {
+		if (!isset($_GET['Duplicate']) || $form['tipdoc']=='DDR') {
 			$result_movmag = gaz_dbi_get_row($gTables['movmag'], "id_mov", $row['id_mag']);
       if (!$result_movmag) $result_movmag['id_lotmag']=0;
 			$lotmag = gaz_dbi_get_row($gTables['lotmag'], 'id', $result_movmag['id_lotmag']);
@@ -1828,7 +1816,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 			$gSync->get_sync_status(0);
 		}
 	}
-    $form['tipdoc'] = $_GET['tipdoc'];
+    $form['tipdoc'] = substr($_GET['tipdoc'],0,3);
     $form['address'] = '';
     $form['hidden_req'] = '';
     $form['id_tes'] = "";
@@ -1893,7 +1881,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['cosear'] = "";
     $form['coseprod'] = "";
     if (isset($_GET['seziva'])) {
-        $form['seziva'] = $_GET['seziva'];
+        $form['seziva'] = intval($_GET['seziva']);
     } else {
         $form['seziva'] = 1;
     }
