@@ -88,6 +88,10 @@ $where_select = sprintf("tipdoc LIKE 'AF_' AND seziva = %d", $sezione);
 ?>
 <script>
 $(function() {
+	$( "#dialog_fae" ).dialog({
+		autoOpen: false
+	});
+
 	$("#dialog_delete").dialog({ autoOpen: false });
 	$('.dialog_delete').click(function() {
 		$("p#idcodice").html($(this).attr("ref"));
@@ -132,6 +136,79 @@ function printPdf(urlPrintDoc){
 		});
 	});
 };
+
+function confirFae(link){
+	tes_id = link.id.replace("doc1_", "");
+	$.fx.speeds._default = 500;
+	var dialog_fae_title = $("#dialog_fae_title").attr("title") + $("#doc1_"+tes_id).attr("dialog_fae_numfat");
+    $("#dialog_fae_filename span").html("<a href=\'"+link.href+"\' >"+$("#doc1_"+tes_id).attr("dialog_fae_filename")+"</a>");
+	var numrei = parseInt($("#doc1_"+tes_id).attr("dialog_fae_numrei"))+1;
+    var flux_status = $("#doc1_"+tes_id).attr("dialog_flux_status");
+    var flux_descri = $("#doc1_"+tes_id).attr("dialog_flux_descri");
+    var sdiflux = $("#doc1_"+tes_id).attr("dialog_fae_sdiflux");
+    var zipref = $("#doc1_"+tes_id).attr("zip_ref");
+    sdiflux = (sdiflux)?"&sdiflux="+sdiflux:"";
+    switch (flux_status) {
+        case "PA":
+            $("#dialog_fae_content_PA").addClass("bg-default");
+            $("#dialog_fae_content_PA").show();
+            console.log(flux_status);
+        break;
+        case "DI":
+            $("#dialog_fae_content_DI").addClass("bg-default");
+            $("#dialog_fae_content_DI span").html("<p class=\'text-center\'><a href=\'"+link.href+"&invia"+sdiflux+"\' class=\'btn btn-default\'><b><i class=\'glyphicon glyphicon-send\'></i> Invia solo " + $("#doc1_"+tes_id).attr("dialog_fae_filename")+ "</i> </b></a></p><p><a href=\'"+zipref+"\' class=\'btn btn-warning\'><b><i class=\'glyphicon glyphicon-compressed\'> </i> Impacchetta con eventuali altri precedenti</b></a></p>");
+            $("#dialog_fae_content_DI").show();
+            console.log(flux_status);
+        break;
+        case "ZI":
+            $("#dialog_fae_content_ZI").addClass("bg-default");
+            $("#dialog_fae_content_ZI span").html("<p class=\'text-center\'><a href=\'"+link.href+"&invia"+sdiflux+"\' class=\'btn btn-warning\'><b><i class=\'glyphicon glyphicon-send\'></i> Invia il pacchetto " + $("#doc1_"+tes_id).attr("dialog_fae_filename")+ "</i> </b></a></p><p></p>");
+            $("#dialog_fae_content_ZI").show();
+            console.log(flux_status);
+        break;
+        case "RC":
+            $("#dialog_fae_content_RC").addClass("bg-success text-center");
+            $("#dialog_fae_content_RC").show();
+            console.log(flux_status);
+        break;
+        case "MC":
+            $("#dialog_fae_content_MC").addClass("bg-warning text-center");
+            $("#dialog_fae_content_MC").show();
+            console.log(flux_status);
+        break;
+        case "NS":
+            $("#dialog_fae_content_NS span").html("<p class=\'text-center bg-danger\'>" + flux_descri.replace(/<[^>]*>?/gm, "") + "</p><p class=\'text-center\'> re: <a href=\'"+link.href+"&reinvia"+sdiflux+"\' class=\'btn btn-danger\'><b> " + $("#doc1_"+tes_id).attr("dialog_fae_reinvio")+ "</b> <br/>" + numrei.toString() + "° reinvio </a></p>");
+            $("#dialog_fae_content_NS").show();
+            console.log(flux_status);
+        break;
+        case "RE":
+            $("#dialog_fae_content_RE").addClass("bg-info text-center");
+            $("#dialog_fae_content_RE span").html("<p><a href=\'"+link.href+"&reinvia\' class=\'btn btn-danger\'>" + $("#doc1_"+tes_id).attr("dialog_fae_reinvio")+ " <br/>" + numrei.toString() + "° reinvio </a></p><p>Oppure <a href=\'"+zipref+"&packet\' class=\'btn btn-warning\'><b><i class=\'glyphicon glyphicon-compressed\'> </i></b> Impacchetta con eventuali altri precedenti</a></p>");
+            $("#dialog_fae_content_RE").show();
+            console.log(flux_status);
+        break;
+        case "RZ":
+            $("#dialog_fae_content_RE").addClass("bg-info text-center");
+            $("#dialog_fae_content_RE span").html("<p><a href=\'"+link.href+"&reinvia\' class=\'btn btn-danger\'>" + $("#doc1_"+tes_id).attr("dialog_fae_reinvio")+ " <br/>" + numrei.toString() + "° reinvio </a></p>");
+            $("#dialog_fae_content_RE").show();
+            console.log(flux_status);
+        break;
+        default:
+            console.log("errore: stato "+flux_status+" non identificato");
+    }
+	$("#dialog_fae").dialog({
+	  title: dialog_fae_title,
+      modal: "true",
+      show: "blind",
+      hide: "explode",
+      buttons: {" X ": function() {
+                        $(".dialog_fae_content").hide();
+                        $(this).dialog("close");
+                 }
+               }
+         });
+	$("#dialog_fae").dialog( "open" );
+}
 </script>
 <form method="GET" >
 	<div class="framePdf panel panel-success" style="display: none; position: absolute; left: 5%; top: 100px">
@@ -141,6 +218,17 @@ function printPdf(urlPrintDoc){
 		</div>
 		<iframe id="framePdf"  style="height: 100%; width: 100%" src=""></iframe>
 	</div>
+
+    <div style="display:none" id="dialog_fae">
+        <div style="display:none;" id="dialog_fae_title" title="<?php echo $script_transl['dialog_fae_title']; ?>"></div>
+        <p class="ui-state-highlight" id="dialog_fae_filename"><?php echo $script_transl['dialog_fae_filename']; ?><span></span></p>
+        <?php
+        $statuskeys=array('PA','DI','RE','IN','RC','MC','NS','ZI');
+        foreach ( $statuskeys as $v ) {
+            echo '<p style="display:none;" class="dialog_fae_content" id="dialog_fae_content_'.$v.'">'.$script_transl['dialog_fae_content_'.$v]."<span></span></p>";
+        }
+        ?>
+    </div>
   <input type="hidden" name="info" value="none" />
 	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
         <p><b>documento di acquisto:</b></p>
@@ -218,7 +306,7 @@ function printPdf(urlPrintDoc){
 <?php
 
 //recupero le testate in base alle scelte impostate
-$result = gaz_dbi_dyn_query($gTables['tesdoc'].".protoc,".$gTables['tesdoc'].".datfat,".$gTables['tesdoc'].".numfat,".$gTables['tesdoc'].".tipdoc,".$gTables['tesdoc'].".clfoco,".$gTables['tesdoc'].".id_tes,".$gTables['tesdoc'].".datreg,".$gTables['tesdoc'].".fattura_elettronica_original_name,". $gTables['tesdoc'].".id_con,".$gTables['anagra'].".ragso1,".$gTables['fae_flux'].".flux_descri",$tesdoc_e_partners, $ts->where, $ts->orderby, $ts->getOffset(), $ts->getLimit(),"protoc,datfat");
+$result = gaz_dbi_dyn_query($gTables['tesdoc'].".protoc,".$gTables['tesdoc'].".datfat,".$gTables['tesdoc'].".numfat,".$gTables['tesdoc'].".tipdoc,".$gTables['tesdoc'].".clfoco,".$gTables['tesdoc'].".id_tes,".$gTables['tesdoc'].".datreg,".$gTables['tesdoc'].".fattura_elettronica_original_name,". $gTables['tesdoc'].".id_con,".$gTables['anagra'].".ragso1",$tesdoc_e_partners, $ts->where, $ts->orderby, $ts->getOffset(), $ts->getLimit(),"protoc,datfat");
 $paymov = new Schedule();
 
 // creo un array con gli ultimi documenti dei vari anni (gli unici eliminabili senza far saltare il protocollo del registro IVA)
@@ -291,7 +379,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
   if ($row["id_con"] > 0) {
     // non usando le transazioni devo aggiunger un controllo di effettiva esistenza della testata di movimento contabile, se qualcosa non è andato per il verso giusto elimini il riferimento
     $existtesmov = gaz_dbi_get_row($gTables['tesmov'], 'id_tes', $row['id_con']);
-    $revch = gaz_dbi_get_row($gTables['tesdoc'], 'datfat', $row["datfat"], "AND numfat = '".$row["numfat"]."' AND clfoco = ".$row["clfoco"]." AND tipdoc LIKE 'X__'"); // controllo l'esistenza di una fattura reverse charge per XML
+    $revch = gaz_dbi_get_row($gTables['tesdoc'] . " INNER JOIN " . $gTables['fae_flux'] . " ON " . $gTables['tesdoc'] . ".id_tes=" . $gTables['fae_flux'] . ".id_tes_ref", $gTables['tesdoc'] . ".datfat", $row['datfat'], "AND " . $gTables['tesdoc'] . ".numfat = '".$row['numfat']."' AND " . $gTables['tesdoc'] . ".clfoco = ".$row['clfoco']." AND " . $gTables['tesdoc'] . ".tipdoc LIKE 'X__'", $gTables['tesdoc'] . ".*, " . $gTables['fae_flux'] . ".flux_descri, GROUP_CONCAT(" . $gTables['fae_flux'] . ".flux_status ORDER BY " . $gTables['fae_flux'] . ".received_date DESC) AS refs_flux_status"); // controllo l'esistenza di una fattura reverse charge per XML
     if ($revch){
       $modulo_fae = "../vendit/electronic_invoice.php?id_tes=" . $revch['id_tes'];
       $revch['fae_attuale']="IT" . $admin_aziend['codfis'] . "_".encodeSendingNumber(array('azienda' => $admin_aziend['codice'],
@@ -355,7 +443,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
         $sdititle = 'genera il file '.$revch['fae_attuale'].' o fai il '.intval($revch['fattura_elettronica_reinvii']+1).'° reinvio ';
         break;
       }
-      echo '<a class="btn btn-xs btn-'.$sdihilight.' btn-xml" onclick="confirFae(this);return false;" id="doc1_'.$revch['id_tes'].'" dialog_fae_reinvio="'.$revch['fae_reinvio'].'" dialog_flux_descri="'.$row['flux_descri'].'" dialog_fae_sdiflux="'.$sdi_flux.'" dialog_fae_filename="'.$revch['fae_attuale'].'" dialog_fae_numrei="'.$revch['fattura_elettronica_reinvii'].'" dialog_fae_numfat="'. $revch['tipdoc'].' '. $revch['numfat'].'/'. $revch['seziva'].'" dialog_flux_status="'. $last_flux_status.'" target="_blank" href="'.$modulo_fae.'" zip_ref="'.$zip_ref.'" title="'.$sdititle.'"> '.strtoupper($sdilabel).' </a><a class="btn btn-xs btn-default" title="Visualizza in stile" href="../vendit/electronic_invoice.php?id_tes='.$revch['id_tes'].'&viewxml" target="_blank"><i class="glyphicon glyphicon-eye-open"></i> </a>';
+      echo '<a class="btn btn-xs btn-'.$sdihilight.' btn-xml" onclick="confirFae(this);return false;" id="doc1_'.$revch['id_tes'].'" dialog_fae_reinvio="'.$revch['fae_reinvio'].'" dialog_flux_descri="'.htmlentities($revch['flux_descri']).'" dialog_fae_sdiflux="'.$sdi_flux.'" dialog_fae_filename="'.$revch['fae_attuale'].'" dialog_fae_numrei="'.$revch['fattura_elettronica_reinvii'].'" dialog_fae_numfat="'. $revch['tipdoc'].' '. $revch['numfat'].'/'. $revch['seziva'].'" dialog_flux_status="'. $last_flux_status.'" target="_blank" href="'.$modulo_fae.'" zip_ref="'.$zip_ref.'" title="'.$sdititle.'"> '.strtoupper($sdilabel).' </a><a class="btn btn-xs btn-default" title="Visualizza in stile" href="../vendit/electronic_invoice.php?id_tes='.$revch['id_tes'].'&viewxml" target="_blank"><i class="glyphicon glyphicon-eye-open"></i> </a>';
       if ($revch['fattura_elettronica_reinvii'] > 0) {
           echo '<br/><small>' . $revch['fattura_elettronica_reinvii'] . ($revch['fattura_elettronica_reinvii']==1 ? ' reinvio' : ' reinvii') . '</small><br/>';
       }

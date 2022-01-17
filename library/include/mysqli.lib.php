@@ -178,7 +178,7 @@ function gaz_dbi_get_row($table, $fnm, $fval, $other="", $cell="*") {
    $query = "SELECT $cell FROM $table WHERE $fnm = '$fval' $other";
    $result = gaz_dbi_query($query);
    if (!$result) gaz_die ( $query, "168", __FUNCTION__ );
-   if ($cell != "*") {
+   if (strpos($cell, "*") === FALSE) {
       $row = gaz_dbi_fetch_array($result);
       if ($row) {
          return $row[$cell];
