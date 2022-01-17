@@ -83,7 +83,7 @@ if (isset($_POST['newdestin'])) {
     $_POST['destin'] = "";
 }
 
-if ((isset($_POST['Update'])) or ( isset($_GET['Update']))) {
+if ((isset($_POST['Update'])) || ( isset($_GET['Update']))) {
     $toDo = 'update';
 } else {
     $toDo = 'insert';
@@ -92,7 +92,7 @@ if ((isset($_POST['Update'])) or ( isset($_GET['Update']))) {
 $show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
 $tipo_composti = gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti');
 
-if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il primo accesso
+if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il primo accesso
 
     //qui si dovrebbe fare un parsing di quanto arriva dal browser...
 	if (isset($_POST['button_ok_barcode']) || $_POST['ok_barcode']=="ok"){
@@ -401,11 +401,17 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['hidden_req'] = '';
                 }
                 $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['rows'][$next_row]['codart']);
+                if (!$artico){
+                  $artico['peso_specifico']=0;
+                  $artico['pack_units']=0;
+                  $artico['volume_specifico']=0;
+                  $artico['lot_or_serial']=0;
+                }
                 if ($artico['lot_or_serial'] > 0) {
 					$disp = $lm->dispLotID ($form['rows'][$next_row]['codart'], $form['rows'][$next_row]['id_lotmag'], $form['rows'][$next_row]['id_mag']);
                     $lm->getAvailableLots($form['rows'][$next_row]['codart'], $form['rows'][$next_row]['id_mag']);
 					$ld = $lm->divideLots($form['rows'][$next_row]['quanti']);
-					if ($form['rows'][$next_row]['quanti'] <= $disp AND $ld > 0){ // suddivido la quantità richiesta solo se c'è sufficiente disponibilità altrimenti segnalo e permetto forzatura
+					if ($form['rows'][$next_row]['quanti'] <= $disp && $ld > 0){ // suddivido la quantità richiesta solo se c'è sufficiente disponibilità altrimenti segnalo e permetto forzatura
 						/* ripartisco la quantità introdotta tra i vari lotti disponibili per l'articolo
 						 * e se è il caso creo più righi
 						 */
@@ -470,10 +476,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $utstra = gaz_format_date($form['initra'],2); // mktime
         }
 
-        if (!gaz_format_date($form['initra'],'chk') AND $form['tipdoc'] != 'VCO') {
+        if (!gaz_format_date($form['initra'],'chk') && $form['tipdoc'] != 'VCO') {
             $msg['err'][] = "37";
         }
-        if ($utstra < $utsemi AND $form['tipdoc'] != 'VCO') {
+        if ($utstra < $utsemi && $form['tipdoc'] != 'VCO') {
             $msg['err'][] = "38";
         }
         if (!isset($_POST['rows'])) {
@@ -485,14 +491,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         // --- inizio controllo coerenza date-numerazione
         if ($toDo == 'update') {  // controlli in caso di modifica
             if ($form['tipdoc'] == 'DDT' || $form['tipdoc'] == 'DDV' || $form['tipdoc'] == 'DDY' || $form['tipdoc'] == 'DDS' || $form['tipdoc'] == 'FAD') {  //se è un DDT vs Fattura differita
-                $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . substr($datemi,0,4) . " AND datemi < '$datemi' AND ( tipdoc like 'DD_' or tipdoc = 'FAD') AND seziva = $sezione", "numdoc desc", 0, 1);
+                $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . substr($datemi,0,4) . " AND datemi < '$datemi' AND ( tipdoc like 'DD_' OR tipdoc = 'FAD') AND seziva = $sezione", "numdoc desc", 0, 1);
                 $result = gaz_dbi_fetch_array($rs_query); //giorni precedenti
                 if ($result && ( $form['numdoc'] < $result['numdoc'])) {
                     if ( !$modifica_fatture_ddt ) {
                         $msg['err'][] = "40";
                     }
                 }
-                $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . substr($datemi,0,4) . " AND datemi > '$datemi' AND ( tipdoc like 'DD_' or tipdoc = 'FAD') AND seziva = $sezione", "numdoc asc", 0, 1);
+                $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . substr($datemi,0,4) . " AND datemi > '$datemi' AND ( tipdoc like 'DD_' OR tipdoc = 'FAD') AND seziva = $sezione", "numdoc asc", 0, 1);
                 $result = gaz_dbi_fetch_array($rs_query); //giorni successivi
                 if ($result && ( $form['numdoc'] > $result['numdoc'])) {
                     if ( !$modifica_fatture_ddt ) {
@@ -500,14 +506,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     }
                 }
             } else if ( $form['tipdoc'] == 'CMR' || $form['tipdoc'] == 'FAC' ) {
-                $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . substr($datemi,0,4) . " AND datemi < '$datemi' AND ( tipdoc like 'CMR' or tipdoc = 'FAC') AND seziva = $sezione", "numdoc desc", 0, 1);
+                $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . substr($datemi,0,4) . " AND datemi < '$datemi' AND ( tipdoc like 'CMR' OR tipdoc = 'FAC') AND seziva = $sezione", "numdoc desc", 0, 1);
                 $result = gaz_dbi_fetch_array($rs_query); //giorni precedenti
                 if ($result && ( $form['numdoc'] < $result['numdoc'])) {
                     if ( !$modifica_fatture_ddt ) {
                         $msg['err'][] = "40";
                     }
                 }
-                $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . substr($datemi,0,4) . " AND datemi > '$datemi' AND ( tipdoc like 'CMR' or tipdoc = 'FAC') AND seziva = $sezione", "numdoc asc", 0, 1);
+                $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . substr($datemi,0,4) . " AND datemi > '$datemi' AND ( tipdoc like 'CMR' OR tipdoc = 'FAC') AND seziva = $sezione", "numdoc asc", 0, 1);
                 $result = gaz_dbi_fetch_array($rs_query); //giorni successivi
                 if ($result && ( $form['numdoc'] > $result['numdoc'])) {
                     if ( !$modifica_fatture_ddt ) {
@@ -611,7 +617,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 			}
 			// Antonio Germani - controllo input su rigo SIAN
 			if ($v['SIAN']>0){
-				if ($v['cod_operazione'] < 0 or $v['cod_operazione']==11){ // controllo se è stato inserito il codice operazione SIAN
+				if ($v['cod_operazione'] < 0 || $v['cod_operazione']==11){ // controllo se è stato inserito il codice operazione SIAN
 					$msgrigo = $i + 1;
 					$msg['err'][] = "nocod_operaz";
 				}
@@ -621,32 +627,32 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 				}
 				$clfoco = gaz_dbi_get_row($gTables['clfoco'], "codice", $form["clfoco"]);
 				$anagra = gaz_dbi_get_row($gTables['anagra'], "id", $clfoco["id_anagra"]);
-				if ($anagra['id_SIAN']<=0 AND ($v['cod_operazione']==1 OR $v['cod_operazione']==2 OR $v['cod_operazione']==3 OR $v['cod_operazione']==5 OR $v['cod_operazione']==10)){
+				if ($anagra['id_SIAN']<=0 && ($v['cod_operazione']==1 || $v['cod_operazione']==2 || $v['cod_operazione']==3 || $v['cod_operazione']==5 || $v['cod_operazione']==10)){
 					$msgrigo = $i + 1;
 					$msg['err'][] = "nofor_sian";
 				}
 				$art = gaz_dbi_get_row($gTables['camp_artico'], "codice", $v['codart']);
-				/*if ($v['cod_operazione'] == 4 AND strlen($v['recip_stocc_destin'])==0 AND $art['confezione']==0){
+				/*if ($v['cod_operazione'] == 4 && strlen($v['recip_stocc_destin'])==0 && $art['confezione']==0){
 					$msgrigo = $i + 1;
 					$msg['err'][] = "norecipdestin"; // manca il recipiente di destinazione
 				}*/
-				if (strlen($v['recip_stocc'])==0 AND $art['confezione']==0){
+				if (strlen($v['recip_stocc'])==0 && $art['confezione']==0){
 					$msgrigo = $i + 1;
 					$msg['err'][] = "norecipstocc"; // manca il recipiente di stoccaggio
 				}
-				if ($v['cod_operazione'] == 0 AND $art['confezione']==0){
+				if ($v['cod_operazione'] == 0 && $art['confezione']==0){
 					$msgrigo = $i + 1;
 					$msg['err'][] = "soloconf"; // operazione con solo olio confezionato
 				}
-				if ($v['cod_operazione'] == 0 AND strlen($v['identifier'])==0){
+				if ($v['cod_operazione'] == 0 && strlen($v['identifier'])==0){
 					$msgrigo = $i + 1;
 					$msg['err'][] = "sololotto"; // operazione con solo olio confezionato deve avere il lotto
 				}
-				if ($v['cod_operazione'] == 6 AND $art['confezione']==0){
+				if ($v['cod_operazione'] == 6 && $art['confezione']==0){
 					$msgrigo = $i + 1;
 					$msg['err'][] = "soloconf"; // Cessione omaggio solo confezionato
 				}
-				if ($v['cod_operazione'] == 9 AND $art['confezione']==0){
+				if ($v['cod_operazione'] == 9 && $art['confezione']==0){
 					$msgrigo = $i + 1;
 					$msg['err'][] = "soloconf"; // Cessione omaggio solo confezionato
 				}
@@ -667,7 +673,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 
 				/* commentato per permettere di forzare in quanto l'errore viene comunque segnalato con un warning
 				$disp= $lm -> dispLotID ($v['codart'], $v['id_lotmag'], $idmag);
-				if ($v['quanti']>$disp AND $form['tipdoc']<>"FNC"){
+				if ($v['quanti']>$disp && $form['tipdoc']<>"FNC"){
 					$msg['err'][] = "lotinsuf";
 				}
 				*/
@@ -679,10 +685,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         }
 
 		// dal 2019 non sarà più possibile emettere fatture a clienti che non ci hanno comunicato la PEC o il codice SdI
-		if (isset ($cliente) AND substr($datemi,0,4)>=2019 && strlen($cliente['pec_email'])<5 && strlen(trim($cliente['fe_cod_univoco']))<6 && $form['tipdoc']!='VRI' ){
+		if (isset ($cliente) && substr($datemi,0,4)>=2019 && strlen($cliente['pec_email'])<5 && strlen(trim($cliente['fe_cod_univoco']))<6 && $form['tipdoc']!='VRI' ){
 				//$msg['err'][] = "62";
 		}
-		if (isset ($admin_aziend) AND $rit_ctrl && $admin_aziend['causale_pagam_770']==''){
+		if (isset ($admin_aziend) && $rit_ctrl && $admin_aziend['causale_pagam_770']==''){
 				$msg['err'][] = "63";
         }
         if (count($msg['err']) < 1) {// *** nessun errore ***
@@ -1059,7 +1065,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['round_stamp'] = 0;
         $pagame = gaz_dbi_get_row($gTables['pagame'], "codice", $form['pagame']);
         if (!$pagame) { $pagame=array('tippag' => 'T','numrat'=>1); }
-        if (($pagame['tippag'] == 'B' or $pagame['tippag'] == 'T' or $pagame['tippag'] == 'V') && $cliente['speban'] == 'S') {
+        if (($pagame['tippag'] == 'B' || $pagame['tippag'] == 'T' || $pagame['tippag'] == 'V') && $cliente['speban'] == 'S') {
             $form['speban'] = $admin_aziend['sperib'];
             $form['numrat'] = $pagame['numrat'];
             $form['stamp'] = 0;
@@ -1458,7 +1464,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 }
                 $provvigione = new Agenti;
                 $form['rows'][$next_row]['provvigione'] = $provvigione->getPercent($form['id_agente'], $form['in_codart']);
-                if (!isset($tmpPrezzoNetto_Sconto) or ( $tmpPrezzoNetto_Sconto >= 0)) { // non ho trovato un prezzo netto per il cliente/articolo
+                if (!isset($tmpPrezzoNetto_Sconto) || ( $tmpPrezzoNetto_Sconto >= 0)) { // non ho trovato un prezzo netto per il cliente/articolo
                     if ($form['listin'] == 2) {
                         $form['rows'][$next_row]['prelis'] = number_format($artico['preve2'], $admin_aziend['decimal_price'], '.', '');
                     } elseif ($form['listin'] == 3) {
@@ -1834,7 +1840,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 
 	$countric=array();
 	foreach ($form['rows'] as $i => $v) { // raggruppo e conteggio q.tà richieste per i lotti
-		if ($v['lot_or_serial'] > 0 && $v['id_lotmag'] > 0 AND $form['tipdoc']<>"FNC"){
+		if ($v['lot_or_serial'] > 0 && $v['id_lotmag'] > 0 && $form['tipdoc']<>"FNC"){
 
 			$key=$v['identifier'].$v['codart']; // chiave per il conteggio dei totali raggruppati per lotto
 			if( !array_key_exists($key, $countric) ){ // se la chiave ancora non c'è nell'array
@@ -1876,7 +1882,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 					$count[$key] += $v_lm['rest'];
 				}
 			}
-			if ($countric[$v['identifier'].$v['codart']] > $count[$v['identifier']] AND $form['tipdoc']<>"FNC"){ // confronto con la quantità richiesta
+			if ($countric[$v['identifier'].$v['codart']] > $count[$v['identifier']] && $form['tipdoc']<>"FNC"){ // confronto con la quantità richiesta
 				$msgrigo = $i + 1;
 				$msg['war'][] = "1";
 			}
@@ -1888,7 +1894,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 	}
 
 
-} elseif (((!isset($_POST['Update'])) && ( isset($_GET['Update']))) or ( isset($_GET['Duplicate']))) { //se e' il primo accesso per UPDATE
+} elseif (((!isset($_POST['Update'])) && ( isset($_GET['Update']))) || ( isset($_GET['Duplicate']))) { //se e' il primo accesso per UPDATE
 	if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
 		// allineo l'e-commerce con eventuali ordini non ancora caricati
 		$gs=$admin_aziend['synccommerce_classname'];
@@ -2077,7 +2083,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $movmag = gaz_dbi_get_row($gTables['movmag'], "id_mov", $rigo['id_mag']);
         $form['rows'][$next_row]['id_lotmag'] =($movmag)?$movmag['id_lotmag']:0;
 
-        if ($form['rows'][$next_row]['lot_or_serial'] == 1 AND $form['rows'][$next_row]['id_lotmag']== 0) { // qualora si tratti di una precedente forzatura senza id_lotmag
+        if ($form['rows'][$next_row]['lot_or_serial'] == 1 && $form['rows'][$next_row]['id_lotmag']== 0) { // qualora si tratti di una precedente forzatura senza id_lotmag
           // provo a rimettercelo
           $lm->getAvailableLots($rigo['codart'], $rigo['id_mag']);
           $ld = $lm->divideLots($form['rows'][$next_row]['quanti']);
@@ -2716,10 +2722,10 @@ echo '<td><input class="gazie-tooltip" data-type="product-thumb" data-id="' . $v
             } elseif ($v['lot_or_serial'] == 1){ // se prevede lotti ma non ci sono proprio
 				echo '<div><button class="btn btn-xs btn-danger">Impossibile selezionare i lotti! <br>NB: se si conferma si creeranno errori che dovranno essere corretti manualmente.</button></div>';
 			}
-			if (isset($plck) AND $plck == $k AND is_array($selected_lot)){
+			if (isset($plck) && $plck == $k && is_array($selected_lot)){
 				echo '<div><button class="btn btn-xs btn-danger">ATTENZIONE questo articolo era senza un lotto associato. Quello mostrato è stato messo automaticamente. <br>NB: Si prega di controllare se è corretto.</button></div>';
 			}
-			if ($v['lot_or_serial'] == 1 AND !is_array($selected_lot)){
+			if ($v['lot_or_serial'] == 1 && !is_array($selected_lot)){
 				echo '<div><button class="btn btn-xs btn-danger">ATTENZIONE articolo con lotti ma non ci sono lotti selezionabili.</button></div>';
 			}
 
@@ -2809,6 +2815,7 @@ echo '<td>
 					<td><input type="hidden" name="rows[' . $k . '][sconto]" value="" /></td>
 					<td><input type="hidden" name="rows[' . $k . '][provvigione]" value="" /></td>
 					<td></td>
+					<td></td>
 					<td class="text-right">
 						<input class="gazie-tooltip text-right" data-type="ritenuta" data-id="' . $v['ritenuta'] . '% = ' . gaz_format_number(round($imprig * (($v['ritenuta']) ?: 0) / 100, 2)) . '" data-title="' . $script_transl['ritenuta'] . '" type="text" name="rows[' . $k . '][prelis]" value="' . number_format($v['prelis'], 2, '.', '') . '" maxlength="11"';
 						if ($vp>0) { // solo se scelto in configurazione avanzata azienda si vedrà il dialog per mettere il prezzo iva compresa
@@ -2848,6 +2855,7 @@ echo '<td>
 					<td><input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" /></td>
 					<td></td>
 					<td></td>
+					<td></td>
 					<td></td>\n";
 					echo '<input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
 					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" />
@@ -2872,6 +2880,7 @@ echo '<td>
 					<td><input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" /></td>
 					<td><input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" /></td>
 					<td></td>
+					<td></td>
 					<td align=\"right\">
 						<input style=\"text-align:right\" type=\"text\" name=\"rows[$k][prelis]\" value=\"" . number_format($v['prelis'], 2, '.', '') . "\" align=\"right\" maxlength=\"11\" onchange=\"this.form.submit()\" />
 					</td>
@@ -2895,7 +2904,7 @@ echo '<td>
 			echo '					  <td>
 						<input type="text" name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="100" />
 					</td>
-                    <td colspan="2" class="text-right">Imponibile:<input type="hidden" name="rows[' . $k . '][unimis]" value="" /><input type="hidden" name="rows[' . $k . '][quanti]" value="" /><input type="hidden" name="rows[' . $k . '][sconto]" value="" /></td>
+                    <td colspan="3" class="text-right">Imponibile:<input type="hidden" name="rows[' . $k . '][unimis]" value="" /><input type="hidden" name="rows[' . $k . '][quanti]" value="" /><input type="hidden" name="rows[' . $k . '][sconto]" value="" /></td>
                     <td><input type="text" name="rows[' . $k . '][prelis]" value="' . number_format($v['prelis'], 2, '.', '') . '" maxlength="11" ';
 						if ($vp>0) { // solo se scelto in configurazione avanzata azienda si vedrà il dialog per mettere il prezzo iva compresa
 							echo 'onclick="vatPrice(\''.$k.'\',\''.$v['pervat'].'\');"';
@@ -2903,7 +2912,7 @@ echo '<td>
 						echo ' id="righi_' . $k . '_prelis" onchange="document.docven.last_focus.value=this.id; this.form.submit()" /></td>
 					<td>==></td>';
 					// in caso tiprig=4 questo campo è utilizzato per indicare l'aliquota della cassa previdenziale
-			echo '	<td><input type="text" name="rows[' . $k . '][provvigione]" value="' . $v['provvigione'] . '" maxlength="6" />%</td>	<td class="text-right">	<span class="gazie-tooltip text-right" data-type="ritenuta" data-id="' . $v['ritenuta'] . '% = ' . gaz_format_number(round($imprig * $v['ritenuta']/100, 2)) . '" data-title="' . $script_transl['ritenuta'] . '">'.gaz_format_number($imprig).'</span>
+			echo '	<td><input type="text" name="rows[' . $k . '][provvigione]" value="' . $v['provvigione'] . '" maxlength="6" />%</td>	<td class="text-right">	<span class="gazie-tooltip text-right" data-type="ritenuta" data-id="' . $v['ritenuta'] . '% = ' . gaz_format_number(round(floatval($imprig) * floatval($v['ritenuta'])/100, 2)) . '" data-title="' . $script_transl['ritenuta'] . '">'.gaz_format_number($imprig).'</span>
 					</td>
 					<td class="text-right">
 						' . $v['pervat'] . '%
@@ -2929,7 +2938,7 @@ echo '<td>
 					<td title="' . $script_transl['update'] . $script_transl['thisrow'] . '!">
 						<input class="btn btn-xs btn-success btn-block" type="submit" name="upd_row[' . $k . ']" value="' . $script_transl['typerow'][$v['tiprig']] . '" />
 					</td>
-					<td colspan="9">
+					<td colspan="10">
 						<textarea id="row_' . $k . '" name="row_' . $k . '" class="mceClass">' . $form["row_$k"] . '</textarea>
 					</td>
 					<input type="hidden" value="" name="rows[' . $k . '][descri]" />
@@ -2952,7 +2961,7 @@ echo '<td>
 					</td>
 					<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
 						<input class=\"btn btn-xs btn-secondary btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" /></td>
-					<td colspan=\"8\" title=\"".$script_transl['fae_dati']."\">";
+					<td colspan=\"9\" title=\"".$script_transl['fae_dati']."\">";
 						$gForm->variousSelect('rows['.$k.'][codvat]', $script_transl['fae_dati_value'], $v['codvat'],'');// uso la colonna codvat del database per memorizzare il tipo di dato della fattura elettronica
 
 					echo "
@@ -2981,7 +2990,7 @@ echo '<td>
                         <td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\" >
                             <input class=\"btn btn-xs btn-secondary btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
                         </td>
-			<td colspan=\"8\" title=\"".$script_transl['fae_dati']."\">";
+			<td colspan=\"9\" title=\"".$script_transl['fae_dati']."\">";
 						$gForm->variousSelect('rows['.$k.'][codvat]', $script_transl['fae_dati_value'], $v['codvat'],'');// uso la colonna codvat del database per memorizzare il tipo di dato della fattura elettronica
 					echo "<input type=\"text\" name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"20\" /> riferito a ";
 			$gForm->selRifDettaglioLinea('rows['.$k.'][codric]', $v['codric'], $form['RiferimentoNumeroLinea']); // uso la colonna codric del database per memorizzare il rigo di riferimento al dettaglio linea
@@ -3007,7 +3016,7 @@ echo '<td>
 					<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
 						<input class=\"btn btn-xs btn-secondary btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
 					</td>
-					<td colspan=\"8\" title=\"".$script_transl['fae_dati']."\">";
+					<td colspan=\"9\" title=\"".$script_transl['fae_dati']."\">";
 						$gForm->variousSelect('rows['.$k.'][codvat]', $script_transl['fae_dati_value'], $v['codvat'],'');// uso la colonna codvat del database per memorizzare il tipo di dato della fattura elettronica
 					echo "<input type=\"date\" name=\"rows[$k][descri]\" value=\"".$v['descri']."\" maxlength=\"15\" /> riferito a ";
 			$gForm->selRifDettaglioLinea('rows['.$k.'][codric]', $v['codric'], $form['RiferimentoNumeroLinea']); // uso la colonna codric del database per memorizzare il rigo di riferimento al dettaglio linea
@@ -3033,9 +3042,9 @@ echo '<td>
                         <td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\" >
                             <input class=\"btn btn-xs btn-secondary btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
                         </td>
-			<td colspan=\"8\" title=\"".$script_transl['fae_dati']."\">";
+			<td colspan=\"9\" title=\"".$script_transl['fae_dati']."\">";
 						$gForm->variousSelect('rows['.$k.'][codvat]', $script_transl['fae_dati_value'], $v['codvat'],'');// uso la colonna codvat del database per memorizzare il tipo di dato della fattura elettronica
-					echo "<input type=\"text\" name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\" /> riferito a ";
+					echo "<input type=\"text\" name=\"rows[$k][descri]\" value=\"$descrizione\" /> riferito a ";
 			$gForm->selRifDettaglioLinea('rows['.$k.'][codric]', $v['codric'], $form['RiferimentoNumeroLinea']); // uso la colonna codric del database per memorizzare il rigo di riferimento al dettaglio linea
 			echo "</td>
 			<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" />
@@ -3059,7 +3068,7 @@ echo '<td>
                         <td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\" >
                             <input class=\"btn btn-xs btn-secondary btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
                         </td>
-			<td colspan=\"8\">
+			<td colspan=\"9\">
                             <input type=\"text\" name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\" /> riferita a tutto il documento</td>
 			<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" />
 			<input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" />
@@ -3082,7 +3091,7 @@ echo '<td>
                         <td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\" >
                             <input class=\"btn btn-xs btn-secondary\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
                         </td>
-			<td colspan=\"8\">Fase dello stato di avanzamento
+			<td colspan=\"9\">Fase dello stato di avanzamento
                             <input type=\"number\" step=1 min=1 max=999 name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\" /> </td>
 			<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" />
 			<input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" />
@@ -3104,7 +3113,7 @@ echo '<td>
                 </td>
                 <td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
 						<input class=\"btn btn-xs btn-secondary btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" /></td>
-                <td colspan=\"8\">
+                <td colspan=\"9\">
                     &nbsp;Riferimento testo&nbsp;
                     <input type=\"text\" name=\"rows[$k][descri]\" value=\"$descrizione\" size=\"27\" />
                     &nbsp;data emissione
@@ -3131,7 +3140,7 @@ echo '<td>
                         <td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\" >
                             <input class=\"btn btn-xs btn-secondary btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
                         </td>
-			<td colspan=\"8\">Data prima immatricolazione
+			<td colspan=\"9\">Data prima immatricolazione
                             <input type=\"date\" name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\"  /> KM percorsi:<input type=\"number\" step=1 min=0 max=1000000  name=\"rows[$k][quanti]\" value=\"".$v['quanti']."\" /></td>
 			<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" />
 
@@ -3193,7 +3202,7 @@ echo '<td>
 					<td title="' . $script_transl['update'] . $script_transl['thisrow'] . '!\">
 						<input class="btn btn-xs btn-success btn-block" type="submit" name="upd_row[' . $k . ']" value="' . $script_transl['typerow'][$v['tiprig']] . '" />
 					</td>
-					  <td  colspan="6" >';
+					  <td  colspan="7" >';
             $gForm->selectAsset('rows[' . $k . '][codric]', $v['codric']);
 
             echo '<input type="text" name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="100" />
@@ -3204,7 +3213,7 @@ echo '<td>
                     <input type="hidden" name="rows[' . $k . '][quanti]" value="" />
 					<input type="hidden" name="rows[' . $k . '][sconto]" value="" />
 					<input type="hidden" name="rows[' . $k . '][provvigione]" value="" />
-                    <input class="gazie-tooltip text-right" data-type="ritenuta" data-id="' . $v['ritenuta'] . '% = ' . gaz_format_number(round($imprig * $v['ritenuta'] / 100, 2)) . '" data-title="' . $script_transl['ritenuta'] . '" type="text" name="rows[' . $k . '][prelis]" value="' . number_format($v['prelis'], 2, '.', '') . '" maxlength="11" onchange="this.form.submit()" />
+                    <input type="text" name="rows[' . $k . '][prelis]" value="' . number_format($v['prelis'], 2, '.', '') . '" maxlength="11" onchange="this.form.submit()" />
 					</td>
 					<td class="text-right">
 					</td>
