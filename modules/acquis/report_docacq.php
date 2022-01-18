@@ -379,74 +379,74 @@ while ($row = gaz_dbi_fetch_array($result)) {
   if ($row["id_con"] > 0) {
     // non usando le transazioni devo aggiunger un controllo di effettiva esistenza della testata di movimento contabile, se qualcosa non è andato per il verso giusto elimini il riferimento
     $existtesmov = gaz_dbi_get_row($gTables['tesmov'], 'id_tes', $row['id_con']);
-    $revch = gaz_dbi_get_row($gTables['tesdoc'] . " INNER JOIN " . $gTables['fae_flux'] . " ON " . $gTables['tesdoc'] . ".id_tes=" . $gTables['fae_flux'] . ".id_tes_ref", $gTables['tesdoc'] . ".datfat", $row['datfat'], "AND " . $gTables['tesdoc'] . ".numfat = '".$row['numfat']."' AND " . $gTables['tesdoc'] . ".clfoco = ".$row['clfoco']." AND " . $gTables['tesdoc'] . ".tipdoc LIKE 'X__'", $gTables['tesdoc'] . ".*, " . $gTables['fae_flux'] . ".flux_descri, GROUP_CONCAT(" . $gTables['fae_flux'] . ".flux_status ORDER BY " . $gTables['fae_flux'] . ".received_date DESC) AS refs_flux_status"); // controllo l'esistenza di una fattura reverse charge per XML
-    if ($revch){
-      $modulo_fae = "../vendit/electronic_invoice.php?id_tes=" . $revch['id_tes'];
-      $revch['fae_attuale']="IT" . $admin_aziend['codfis'] . "_".encodeSendingNumber(array('azienda' => $admin_aziend['codice'],
-										     'sezione' => 5,
-										     'anno' => 2009,
-										     'fae_reinvii'=> substr($revch["datreg"],3,1),
-										     'protocollo' => intval($revch["fattura_elettronica_reinvii"]*10000+ $revch["protoc"])), 36).".xml";
-      $revch['fae_reinvio']="IT" . $admin_aziend['codfis'] . "_".encodeSendingNumber(array('azienda' => $admin_aziend['codice'],
-										     'sezione' => 5,
-										     'anno' => 2009,
-										     'fae_reinvii'=> substr($revch["datreg"],3,1),
-										     'protocollo' => intval(($revch["fattura_elettronica_reinvii"]+1)*10000+ $revch["protoc"])), 36).".xml";
+    $revch = gaz_dbi_get_row($gTables['tesdoc'] . " LEFT JOIN " . $gTables['fae_flux'] . " ON " . $gTables['tesdoc'] . ".id_tes=" . $gTables['fae_flux'] . ".id_tes_ref", $gTables['tesdoc'] . ".datfat", $row['datfat'], "AND " . $gTables['tesdoc'] . ".numfat = '".$row['numfat']."' AND " . $gTables['tesdoc'] . ".clfoco = ".$row['clfoco']." AND " . $gTables['tesdoc'] . ".tipdoc LIKE 'X__'", $gTables['tesdoc'] . ".*, " . $gTables['fae_flux'] . ".flux_descri, GROUP_CONCAT(" . $gTables['fae_flux'] . ".flux_status ORDER BY " . $gTables['fae_flux'] . ".received_date DESC) AS refs_flux_status"); // controllo l'esistenza di una fattura reverse charge per XML
+    if (isset($revch) && !empty($revch['id_tes'])) {
+		$modulo_fae = "../vendit/electronic_invoice.php?id_tes=" . $revch['id_tes'];
+		$revch['fae_attuale']="IT" . $admin_aziend['codfis'] . "_".encodeSendingNumber(array('azienda' => $admin_aziend['codice'],
+											 'sezione' => 5,
+											 'anno' => 2009,
+											 'fae_reinvii'=> substr($revch["datreg"],3,1),
+											 'protocollo' => intval($revch["fattura_elettronica_reinvii"]*10000+ $revch["protoc"])), 36).".xml";
+		$revch['fae_reinvio']="IT" . $admin_aziend['codfis'] . "_".encodeSendingNumber(array('azienda' => $admin_aziend['codice'],
+											 'sezione' => 5,
+											 'anno' => 2009,
+											 'fae_reinvii'=> substr($revch["datreg"],3,1),
+											 'protocollo' => intval(($revch["fattura_elettronica_reinvii"]+1)*10000+ $revch["protoc"])), 36).".xml";
 
-      $zipped = (preg_match("/^[A-Z0-9]{13,18}_([a-zA-Z0-9]{5}).zip$/",$revch['fattura_elettronica_zip_package'],$match))?$match[1]:false;
-      if($zipped){ // se è contenuto in un pacchetto di file permetterà sia il download del singolo XML che del pacchetto in cui è contenuto
-        if ($revch['fattura_elettronica_reinvii']==0) {
-            echo '<a class="btn btn-xs btn-success" title="Pacchetto di fatture elettroniche in cui &egrave; contenuta questa fattura" href="../vendit/download_zip_package.php?fn='.$revch['fattura_elettronica_zip_package'].'">'.$zipped.'.zip<i class="glyphicon glyphicon-compressed"></i> </a>';
-        }
-      }
-      if($sdi_flux){ // ho un modulo per la gestione dei flussi con il SdI: posso visualizzare lo stato
-        $zip_ref = 'fae_packaging.php?sdiflux='.$sdi_flux;
-        $last_flux_status = explode(',',$revch['refs_flux_status'])[0];
-        $sdihilight = ( !empty($revch['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][1] : 'default';
-        $sdilabel = ( !empty($revch['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][0] : 'da inviare';
-        if ( $last_flux_status == '' ) { $last_flux_status = 'DI'; }
-        if ( strlen($revch['fattura_elettronica_zip_package'])>10 && $last_flux_status = 'DI') { // il documento è impacchettato e da inviare
-            $revch['fae_attuale']=$revch['fattura_elettronica_zip_package'];
-            $sdihilight = ( !empty($revch['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][1] : 'default';
-            $sdilabel = ( !empty($revch['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][0] : 'ZIP da inviare';
-            $last_flux_status = 'ZI';
-        }
-      } else { //// installazione senza gestore dei flussi con il SdI
-        $last_flux_status =($zipped)?'RZ':'RE'; // gestendo il flusso manualmente darò sempre la possibilità di scegliere se reinviare o scaricare l'xml
-        $zip_ref = 'fae_packaging.php?nolib';
-        $sdihilight = 'default';
-        $sdilabel = 'xml';
-      }
-      switch ($last_flux_status) {
-        case "DI":
-        $sdititle = 'Invia il file '.$revch['fae_attuale'].' o pacchetto';
-        break;
-        case "PC":
-        $sdititle = 'Il file '.$revch['fae_attuale'].' è stato inviato al Sistema di Interscambio, attendere l\'esito ';
-        break;
-        case "RE":
-        $sdititle = 'Invia il file '.$revch['fae_attuale'].' al Sistema di Interscambio ';
-        break;
-        case "IN":
-        $sdititle = 'Il file '.$revch['fae_attuale'].' è stato inviato al Sistema di Interscambio, attendere la risposta di presa in carico ';
-        break;
-        case "RC":
-        $sdititle = 'Il file '.$revch['fae_attuale'].' è stato inviato e consegnato al cliente ';
-        break;
-        case "MC":
-        $sdititle = 'Il file '.$revch['fae_attuale'].' è stato inviato e ma non consegnato al cliente ';
-        break;
-        case "NS":
-        $sdititle = 'Il file '.$revch['fae_attuale'].' è stato Scartato, correggi prima di fare il reinviio ';
-        break;
-        default:
-        $sdititle = 'genera il file '.$revch['fae_attuale'].' o fai il '.intval($revch['fattura_elettronica_reinvii']+1).'° reinvio ';
-        break;
-      }
-      echo '<a class="btn btn-xs btn-'.$sdihilight.' btn-xml" onclick="confirFae(this);return false;" id="doc1_'.$revch['id_tes'].'" dialog_fae_reinvio="'.$revch['fae_reinvio'].'" dialog_flux_descri="'.htmlentities($revch['flux_descri']).'" dialog_fae_sdiflux="'.$sdi_flux.'" dialog_fae_filename="'.$revch['fae_attuale'].'" dialog_fae_numrei="'.$revch['fattura_elettronica_reinvii'].'" dialog_fae_numfat="'. $revch['tipdoc'].' '. $revch['numfat'].'/'. $revch['seziva'].'" dialog_flux_status="'. $last_flux_status.'" target="_blank" href="'.$modulo_fae.'" zip_ref="'.$zip_ref.'" title="'.$sdititle.'"> '.strtoupper($sdilabel).' </a><a class="btn btn-xs btn-default" title="Visualizza in stile" href="../vendit/electronic_invoice.php?id_tes='.$revch['id_tes'].'&viewxml" target="_blank"><i class="glyphicon glyphicon-eye-open"></i> </a>';
-      if ($revch['fattura_elettronica_reinvii'] > 0) {
-          echo '<br/><small>' . $revch['fattura_elettronica_reinvii'] . ($revch['fattura_elettronica_reinvii']==1 ? ' reinvio' : ' reinvii') . '</small><br/>';
-      }
+		$zipped = (preg_match("/^[A-Z0-9]{13,18}_([a-zA-Z0-9]{5}).zip$/",$revch['fattura_elettronica_zip_package'],$match))?$match[1]:false;
+		if ($zipped) { // se è contenuto in un pacchetto di file permetterà sia il download del singolo XML che del pacchetto in cui è contenuto
+			if ($revch['fattura_elettronica_reinvii']==0) {
+				echo '<a class="btn btn-xs btn-success" title="Pacchetto di fatture elettroniche in cui &egrave; contenuta questa fattura" href="../vendit/download_zip_package.php?fn='.$revch['fattura_elettronica_zip_package'].'">'.$zipped.'.zip<i class="glyphicon glyphicon-compressed"></i> </a>';
+			}
+		}
+		if ($sdi_flux) { // ho un modulo per la gestione dei flussi con il SdI: posso visualizzare lo stato
+			$zip_ref = 'fae_packaging.php?sdiflux='.$sdi_flux;
+			$last_flux_status = explode(',',$revch['refs_flux_status'])[0];
+			$sdihilight = ( !empty($revch['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][1] : 'default';
+			$sdilabel = ( !empty($revch['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][0] : 'da inviare';
+			if ( $last_flux_status == '' ) { $last_flux_status = 'DI'; }
+			if ( strlen($revch['fattura_elettronica_zip_package'])>10 && $last_flux_status = 'DI') { // il documento è impacchettato e da inviare
+				$revch['fae_attuale'] = $revch['fattura_elettronica_zip_package'];
+				$sdihilight = ( !empty($revch['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][1] : 'default';
+				$sdilabel = ( !empty($revch['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][0] : 'ZIP da inviare';
+				$last_flux_status = 'ZI';
+			}
+		} else { //// installazione senza gestore dei flussi con il SdI
+			$last_flux_status = ($zipped)?'RZ':'RE'; // gestendo il flusso manualmente darò sempre la possibilità di scegliere se reinviare o scaricare l'xml
+			$zip_ref = 'fae_packaging.php?nolib';
+			$sdihilight = 'default';
+			$sdilabel = 'xml';
+		}
+		switch ($last_flux_status) {
+			case "DI":
+				$sdititle = 'Invia il file '.$revch['fae_attuale'].' o pacchetto';
+				break;
+			case "PC":
+				$sdititle = 'Il file '.$revch['fae_attuale'].' è stato inviato al Sistema di Interscambio, attendere l\'esito ';
+				break;
+			case "RE":
+				$sdititle = 'Invia il file '.$revch['fae_attuale'].' al Sistema di Interscambio ';
+				break;
+			case "IN":
+				$sdititle = 'Il file '.$revch['fae_attuale'].' è stato inviato al Sistema di Interscambio, attendere la risposta di presa in carico ';
+				break;
+			case "RC":
+				$sdititle = 'Il file '.$revch['fae_attuale'].' è stato inviato e consegnato al cliente ';
+				break;
+			case "MC":
+				$sdititle = 'Il file '.$revch['fae_attuale'].' è stato inviato e ma non consegnato al cliente ';
+				break;
+			case "NS":
+				$sdititle = 'Il file '.$revch['fae_attuale'].' è stato Scartato, correggi prima di fare il reinviio ';
+				break;
+			default:
+				$sdititle = 'genera il file '.$revch['fae_attuale'].' o fai il '.intval($revch['fattura_elettronica_reinvii']+1).'° reinvio ';
+				break;
+		}
+		echo '<a class="btn btn-xs btn-'.$sdihilight.' btn-xml" onclick="confirFae(this);return false;" id="doc1_'.$revch['id_tes'].'" dialog_fae_reinvio="'.$revch['fae_reinvio'].'" dialog_flux_descri="'.htmlentities($revch['flux_descri']).'" dialog_fae_sdiflux="'.$sdi_flux.'" dialog_fae_filename="'.$revch['fae_attuale'].'" dialog_fae_numrei="'.$revch['fattura_elettronica_reinvii'].'" dialog_fae_numfat="'. $revch['tipdoc'].' '. $revch['numfat'].'/'. $revch['seziva'].'" dialog_flux_status="'. $last_flux_status.'" target="_blank" href="'.$modulo_fae.'" zip_ref="'.$zip_ref.'" title="'.$sdititle.'"> '.strtoupper($sdilabel).' </a><a class="btn btn-xs btn-default" title="Visualizza in stile" href="../vendit/electronic_invoice.php?id_tes='.$revch['id_tes'].'&viewxml" target="_blank"><i class="glyphicon glyphicon-eye-open"></i> </a>';
+		if ($revch['fattura_elettronica_reinvii'] > 0) {
+			echo '<br/><small>' . $revch['fattura_elettronica_reinvii'] . ($revch['fattura_elettronica_reinvii']==1 ? ' reinvio' : ' reinvii') . '</small><br/>';
+		}
     }
 
     if ($existtesmov){
