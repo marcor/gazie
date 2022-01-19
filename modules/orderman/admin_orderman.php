@@ -1083,12 +1083,13 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 					$excluded_movmag=array();
 					$exc=0;
 					foreach($form['artcomp'] as $artco){// per ogni componente
-
-					  foreach ($form['lot_idmov'][$exc] as $excl_lot){// ciclo i suoi lotti
-						if (!in_array($excl_lot,$excluded_movmag)){// se non c'è già aggiungo movimento magazzino riferito al lotto da escludere
-							$excluded_movmag[]=$excl_lot;
+						if (isset($form['lot_idmov'][$exc])){
+						  foreach ($form['lot_idmov'][$exc] as $excl_lot){// ciclo i suoi lotti
+							if (!in_array($excl_lot,$excluded_movmag)){// se non c'è già aggiungo movimento magazzino riferito al lotto da escludere
+								$excluded_movmag[]=$excl_lot;
+							}
+						  }
 						}
-					  }
 					  if (!in_array($form['id_mov'][$exc],$excluded_movmag)){// se non c'è già aggiungo movimento magazzino da escludere
 						$excluded_movmag[]=$form['id_mov'][$exc];
 					  }
