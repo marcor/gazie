@@ -47,7 +47,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
     if ($result) {
       // Imposto totale valore giacenza by DF
       while ($r = gaz_dbi_fetch_array($result)) {
-        $mv = $gForm->getStockValue(false, $r['codice'], $date, null, $admin_aziend['decimal_price']);
+        $mv = $gForm->getStockValue(false, addslashes($r['codice']), $date, null, $admin_aziend['decimal_price']);
         $magval = array_pop($mv);
         $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0,'v'=>0]:$magval;
         if (isset($magval['q_g']) && round($magval['q_g'],6) == "-0"){ // Antonio Germani - se si crea erroneamente un numero esponenziale negativo forzo la quantità a zero
@@ -117,7 +117,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
               gaz_set_time_limit(30);
               $ctrl_cm = $r['catmer'];
           }
-          $mv = $gForm->getStockValue(false, $r['codice'], $date, null, $admin_aziend['decimal_price']);
+          $mv = $gForm->getStockValue(false, addslashes($r['codice']), $date, null, $admin_aziend['decimal_price']);
           $magval = array_pop($mv);
           $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0,'v'=>0]:$magval;
           if (isset($magval['q_g']) && round($magval['q_g'],6) == "-0"){ // Antonio Germani - se si crea erroneamente un numero esponenziale negativo forzo la quantità a zero
@@ -521,9 +521,9 @@ if (isset($form['a'])) {
           <input type="hidden" value="<?php echo $v['v_g']; ?>" name="a[<?php echo $k; ?>][v_g]" />
           <input class="jq_chk" name="chk<?php echo $k; ?>" <?php echo $form['chk_on' . $k]; ?>  type="checkbox" />
 		</td>
+    <td align="left"><span <?php echo $tooltip; ?>><a class="btn btn-default btn-xs" href="./admin_artico.php?codice=<?php echo $k; ?>" target="_blank"><?php echo $k; ?></a></span></td>
 <?php
-echo '<td align="left"><span ' . $tooltip . '>' . $k . '</span></td>
-      <td align="left"><span ' . $tooltip . '>' . $v['i_d'] . '</span></td>
+echo '<td align="left"><span ' . $tooltip . '>' . $v['i_d'] . '</span></td>
       <td align="center">' . $v['i_u'] . '</td>
       <td align="right">' . gaz_format_quantity($v['v_a'], 0, $admin_aziend['decimal_price']) . '</td>
       <td align="right">
