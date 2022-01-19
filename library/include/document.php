@@ -463,7 +463,7 @@ class DocContabVars {
         $this->virtual_taxstamp = $this->tesdoc['virtual_taxstamp'];
         $this->impbol = 0.00;
         $this->totriport = $this->riporto;
-        $this->speseincasso = $this->tesdoc['speban'] * $this->pagame['numrat'];
+        $this->speseincasso = ((isset($this->tesdoc['speban']))?$this->tesdoc['speban']:0) * ((isset($this->pagame['numrat']))?$this->pagame['numrat']:1);
         $this->cast = array();
         if (!isset($this->castel)) {
             $this->castel = array();

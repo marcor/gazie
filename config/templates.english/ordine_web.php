@@ -60,7 +60,7 @@ class OrdineWeb extends Template
     function body()
     {
         $lines = $this->docVars->getRigo();
-        while (list($key, $rigo) = each($lines)) {
+		foreach ($lines AS $key => $rigo) {
             if ($this->GetY() >= 185) {
                 $this->Cell(186,6,'','T',1);
                 $this->SetFont('helvetica', '', 20);
@@ -178,7 +178,7 @@ class OrdineWeb extends Template
         $this->Cell(62, 6,'Shipping',1,1,'C',1);
         $this->Cell(62, 6,$this->tesdoc['spediz'],1,1,'C');
         $this->Cell(62, 6,'Shipping method',1,1,'C',1);
-        $this->Cell(186,6,$vettor['descri'],1,1,'L');
+        $this->Cell(186,6,((isset($vettor['descri']))?$vettor['descri']:''),1,1,'L');
     }
 
     function Footer()
