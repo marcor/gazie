@@ -493,7 +493,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		// FINE CONTROLLI SU FILE
 
 		if ($f_ex) { // non ho errori  vincolanti sul file posso proporre la visualizzazione
-			/*	Prendo i valori delle ritenute d'acconto che purtroppo sul tracciato ufficiale non viene distinto a livello di linee pertanto devo ricavarmele */
+			//	Prendo i valori delle ritenute d'acconto che purtroppo sul tracciato ufficiale non viene distinto a livello di linee pertanto devo ricavarmele //
 			$tot_ritenute = ($doc->getElementsByTagName("ImportoRitenuta")->length >= 1 ? $doc->getElementsByTagName('ImportoRitenuta')->item(0)->nodeValue : 0 );
 			$ali_ritenute = ($doc->getElementsByTagName("AliquotaRitenuta")->length >= 1 ? $doc->getElementsByTagName('AliquotaRitenuta')->item(0)->nodeValue : 0 );
 			// mi calcolo le eventuali ritenute relative alle casse previdenziali da annotare sotto quando aggiungerò i righi tipo 4
@@ -507,20 +507,13 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			}
 			// calcolo il residuo ritenute che sono costretto a mettere sulla prima linea questa è sicuramente una carenza strutturale del tracciato che non fa alcun riferimento alle linee
 			$res_ritenute=round($tot_ritenute-$ritenute_su_casse,2);
-
-			/* mi serve per tenere traccia della linea con l'importo più grosso in modo da poterci sommare gli eventuali errori di arrotondamento sul totale imponibile
-			 dovuto alla diversità del metodo di calcolo usato in gazie*/
+			// mi serve per tenere traccia della linea con l'importo più grosso in modo da poterci sommare gli eventuali errori di arrotondamento sul totale imponibile dovuto alla diversità del metodo di calcolo usato in gazie
 			$max_val_linea=1;
 			$tot_imponi=0.00;
-			/*
-			INIZIO creazione array dei righi con la stessa nomenclatura usata sulla tabella rigdoc
-			a causa della mancanza di rigore del tracciato ufficiale siamo costretti a crearci un castelletto conti e iva
-			al fine contabilizzare direttamente qui senza passare per la contabilizzazione di GAzie e tentare di creare dei
-			righi documenti la cui somma coincida con il totale imponibile riportato sul tracciato
-			*/
-            // prendo i valori dal documento corrente
-            $curr_doc_cont = $xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]");
-            $cudo=$curr_doc_cont->item(0);
+			// INIZIO creazione array dei righi con la stessa nomenclatura usata sulla tabella rigdoc a causa della mancanza di rigore del tracciato ufficiale siamo costretti a crearci un castelletto conti e iva	al fine contabilizzare direttamente qui senza passare per la contabilizzazione di GAzie e tentare di creare dei	righi documenti la cui somma coincida con il totale imponibile riportato sul tracciato
+      // prendo i valori dal documento corrente
+      $curr_doc_cont = $xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]");
+      $cudo=$curr_doc_cont->item(0);
 			$DettaglioLinee = $cudo->getElementsByTagName('DettaglioLinee');
 			$nl=0;
 			$nl_NumeroLinea = []; // matrice che conterrà i riferimenti tra $nl e il NumeroLinea, da utilizzare per assegnare Numero/DataDDT se presenti
@@ -536,7 +529,6 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					}
 				}
 				$nl_NumeroLinea[$NumLin]=$nl;
-
 				if ($item->getElementsByTagName("CodiceTipo")->length >= 1) {
 					$form['rows'][$nl]['codice_fornitore'] = trim($item->getElementsByTagName('CodiceTipo')->item(0)->nodeValue).'_'.trim($item->getElementsByTagName('CodiceValore')->item(0)->nodeValue);
 				} else {
@@ -610,7 +602,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$form['rows'][$nl]['is_descri'] = ($form['rows'][$nl]['prelis']<0.00001)?1:false;
 
 				$tot_imponi += $form['rows'][$nl]['amount'];
-				if (!empty($form['rows'][$nl]) && !empty($form['rows'][$max_val_linea]) && $form['rows'][$nl]['amount']>$form['rows'][$max_val_linea]['amount']){ // è una linea con valore più alto delle precedenti
+				if (!empty($form['rows'][$nl]) && !empty($form['rows'][$max_val_linea]) && $form['rows'][$nl]['amount']>$form['rows'][$max_val_linea]['amount']){ // è una linea con valore più alto delle precedenti faccio il push
 					$max_val_linea=$nl;
 				}
 				if (round($res_ritenute,2)>=0.01){
@@ -924,6 +916,30 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 							$naturaN6 = $Natura;
 						}
 					}
+          // controllo se lo SdI ha consentito la PORCATA!
+          $ctrlaliquo=(float)$dr->getElementsByTagName('AliquotaIVA')->item(0)->nodeValue;
+          $ctrlimponi=(float)$dr->getElementsByTagName('ImponibileImporto')->item(0)->nodeValue;
+          if ( $ctrlaliquo > 0 ) {
+            $ctrliva=round($ctrlimponi*$ctrlaliquo/100,2);
+            $diffiva=round((float)$dr->getElementsByTagName('Imposta')->item(0)->nodeValue-$ctrliva,2);
+            if ( abs($diffiva) >= 0.01) { // PORCATA! L'IVA NON RISPETTA LE REGOLE, sono costretto ad inserire questo rigo fittizio per indicare l'anomalia ma soprattutto al fine di contabilizzare in accordo con la stessa (porcata)
+              $nl++;
+              $form['rows'][$nl]['tiprig'] = 91;
+              $form['rows'][$nl]['codice_fornitore'] = '';
+              $form['rows'][$nl]['descri'] = 'Storno IVA calcolata in modo errato';
+              $form['rows'][$nl]['unimis'] = '';
+              $form['rows'][$nl]['quanti'] = '';
+              $form['rows'][$nl]['sconto'] = '';
+              $form['rows'][$nl]['ritenuta'] = '';
+              $form['rows'][$nl]['pervat'] = $ctrlaliquo;
+              $form['codart_'.($nl-1)] = '';
+              $form['codvat_'.($nl-1)] = 0;
+              $form['codric_'.($nl-1)] = 0;
+              $form['rows'][$nl]['prelis'] = $diffiva;
+              $form['rows'][$nl]['amount'] = $diffiva;
+            }
+          }
+          // fine controllo e "trattamento" PORCATA, se è stata fatta avrò dei righi tipo 91 che dovrò gestire in contabilizzazione per apportare le dovute modifiche ai valori di IVA, ma anche sulle stampe PDF
 				}
 				if (!isset($_POST['Submit_form']) && $naturaN6 ) { // al primo accesso se sopra ho trovato che è una natura da reverse charge
 					$stdiva = gaz_dbi_get_row($gTables['aliiva'], 'codice', $admin_aziend['preeminent_vat'])['aliquo']; //la percentuale dell'aliquota standard (potrebbe cambiare negli anni)
@@ -932,12 +948,11 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					// riattraverso i righi e ci metto il nuovo codice IVA
 					foreach($form['rows'] as $kn => $vn) {
 						$kp = $kn-1;
-						//$form['codvat_'.$kp]=$cod_reverse;
 					}
 				}
 
 				$totdiff=abs($ImponibileImporto-$tot_imponi);
-				/* Infine aggiungo un eventuale differenza di centesimo di imponibile sul rigo di maggior valore, questo succede perché il tracciato non è rigoroso nei confronti dell'importo totale dell'elemento  */
+				// Infine aggiungo un eventuale differenza di centesimo di imponibile sul rigo di maggior valore, questo succede perché il tracciato non è rigoroso nei confronti dell'importo totale dell'elemento
 				if ($totdiff>=0.01){ // qualora ci sia una differenza di almeno 1 cent la aggiunto (o lo sottraggo al rigo di maggior valore
 					if ($form['rows'][$max_val_linea]['tiprig']==0){ //rigo normale con quantità variabile
 						$form['rows'][$max_val_linea]['prelis']+= ($ImponibileImporto-$tot_imponi)/$form['rows'][$max_val_linea]['quanti'];
@@ -948,13 +963,13 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				}
 			}
 
-            // qui eseguo un controllo per vedere se c'è l'elemento <Arrotondamento> dentro <DatiGeneraliDocumento> e se l'elemento <ImportoTotaleDocumento> non coincide con i righi procedo con l'aggiunta di un rigo fittizio in art.15 (natura esenzione N1)
-            $ImportoTotaleDocumento=$xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiGenerali/DatiGeneraliDocumento/ImportoTotaleDocumento")->item(0)->nodeValue;
+      // qui eseguo un controllo per vedere se c'è l'elemento <Arrotondamento> dentro <DatiGeneraliDocumento> e se l'elemento <ImportoTotaleDocumento> non coincide con i righi procedo con l'aggiunta di un rigo fittizio in art.15 (natura esenzione N1)
+      $ImportoTotaleDocumento=$xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiGenerali/DatiGeneraliDocumento/ImportoTotaleDocumento")->item(0)->nodeValue;
 			if ($xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiGenerali/DatiGeneraliDocumento/Arrotondamento")->length >= 1) {
-                $Arrotondamento=$xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiGenerali/DatiGeneraliDocumento/Arrotondamento")->item(0)->nodeValue;
-                if (abs($ImportoTotaleDocumento-($ImponibileImporto + $ImpostaDocumento)) >= 0.01) { // ho una effettiva differenza tra i totali del castelletto IVA e il totale documennto allora aggiungo un rigo fuori campo IVA N1
-  					$codvat_fc=gaz_dbi_get_row($gTables['aliiva'], "fae_natura", 'N1')['codice'];
-                    $nl++;
+        $Arrotondamento=$xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiGenerali/DatiGeneraliDocumento/Arrotondamento")->item(0)->nodeValue;
+        if (abs($ImportoTotaleDocumento-($ImponibileImporto + $ImpostaDocumento)) >= 0.01) { // ho una effettiva differenza tra i totali del castelletto IVA e il totale documennto allora aggiungo un rigo fuori campo IVA N1
+  				$codvat_fc=gaz_dbi_get_row($gTables['aliiva'], "fae_natura", 'N1')['codice'];
+          $nl++;
 					$form['rows'][$nl]['tiprig'] = 1;
 					$form['rows'][$nl]['codice_fornitore'] = '';
 					$form['rows'][$nl]['descri'] = 'Arrotondamento';
@@ -968,8 +983,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					$form['codric_'.($nl-1)] = $form['codric_'.($nl-2)]; // attribuisco il costo del rigo che lo precede
 					$form['rows'][$nl]['prelis'] = $Arrotondamento;
 					$form['rows'][$nl]['amount'] = $Arrotondamento;
-                }
-            }
+        }
+      }
 
 			// ricavo l'allegato, e se presente metterò un bottone per permettere il download
 			$nf = $doc->getElementsByTagName('NomeAttachment')->item(0);
