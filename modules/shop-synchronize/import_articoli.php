@@ -99,11 +99,23 @@ if (isset($_POST['conferma'])) { // se confermato
 			$_POST['codice'.$ord]=addslashes(substr($_POST['codice'.$ord],0,15)); // Il codice articolo di GAzie è max 15 caratteri
 			
 			// ricongiungo la categoria dell'e-commerce con quella di GAzie, se esiste
-			$category="";
-			if (intval($product->ProductCategoryId)>0){
+			$category=0;
+			if (intval($product->ProductCategoryId)>0){// se l'e-commerce ha inviato una categoria
 				$cat = gaz_dbi_get_row($gTables['catmer'], "ref_ecommerce_id_category", $product->ProductCategoryId);
 				if ($cat){// controllo se esiste in GAzie
 					$category=$cat['codice'];
+				}
+				// se non esiste la categoria in GAzie, la creo				
+				if ($category == 0 OR $category == ""){
+					$rs_ultimo_codice = gaz_dbi_dyn_query("*", $gTables['catmer'], 1 ,'codice desc',0,1);
+					$ultimo_codice = gaz_dbi_fetch_array($rs_ultimo_codice);
+					$cat['codice'] = $ultimo_codice['codice']+1;
+					$cat['ref_ecommerce_id_category'] = $product->ProductCategoryId;
+					$cat['descri'] = $product->ProductCategory;					
+					gaz_dbi_table_insert('catmer',$cat);
+					// assegno l'id categoria al prossimo insert artico
+					$category=$cat['codice'];
+					
 				}
 			}
 			
@@ -284,19 +296,6 @@ if (isset($_POST['conferma'])) { // se confermato
 				
 				if (strlen($_POST['codice'.$ord])<1){// se l'e-commerce non ha inviato un codice me lo creo
 					$_POST['codice'.$ord] = substr($product->Name,0,10)."-".substr($_POST['product_id'.$ord],-4);
-				}
-				
-				// se non esiste la categoria in GAzie, la creo				
-				if ($category == 0 OR $category == ""){
-					$rs_ultimo_codice = gaz_dbi_dyn_query("*", $gTables['catmer'], 1 ,'codice desc',0,1);
-					$ultimo_codice = gaz_dbi_fetch_array($rs_ultimo_codice);
-					$cat['codice'] = $ultimo_codice['codice']+1;
-					$cat['ref_ecommerce_id_category'] = $product->ProductCategoryId;
-					$cat['descri'] = $product->ProductCategory;					
-					gaz_dbi_table_insert('catmer',$cat);
-					// assegno l'id categoria al prossimo insert artico
-					$category=$cat['codice'];
-					
 				}
 				
 				unset($usato);
