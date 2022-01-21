@@ -914,36 +914,36 @@ class magazzForm extends GAzieForm {
     }
 
     function getStockAvailability ($item_code,$id_warehouse=false,$date_ref=false) {
-		$date_ref=($date_ref)?$date_ref:date("Y-m-d");
-		// questa funzione restituisce la quantità disponibile dell'articolo passato come referenza, se non si passa la data si considera quella odierna
-		// restituisce un array con tre indici 'tot' il totale su tutti i magazzini,'val' il valore del magazzino se passato come referenza, altrimenti sarà false, e un array con i valori degli altri magazzini e indice gli id degli altri magazzini, se non passato di tutti
-        global $gTables;
-        $where = "artico = '".$item_code."' AND caumag <= 99 AND datreg <= '".$date_ref."'";
-        $orderby = "datreg ASC, id_mov ASC"; //ordino in base alle date
-		$acc=['tot'=>0,'val'=>false,'oth'=>[]];
-        $rs_movmag = gaz_dbi_dyn_query("operat,id_warehouse,quanti", $gTables['movmag'],$where,$orderby);
-        while ($r = gaz_dbi_fetch_array($rs_movmag)){
-			$qua=$r['operat']*$r['quanti'];
-			$acc['tot']+=$qua;
-            if ($id_warehouse) { // ho passato il magazzino
-				if ($r['id_warehouse']==$id_warehouse){
-					$acc['val']+=$qua;
-				}else{
-					if (isset($acc['oth'][$id_warehouse])){
-						$acc['oth'][$id_warehouse]+=$qua;
-					} else {
-						$acc['oth'][$id_warehouse]=$qua;
-					}
-				}
-            } else { // non ho passato magazzini
-				if (isset($acc['oth'][$id_warehouse])){
-					$acc['oth'][$id_warehouse]+=$qua;
-				} else {
-					$acc['oth'][$id_warehouse]=$qua;
-				}
+      $date_ref=($date_ref)?$date_ref:date("Y-m-d");
+      // questa funzione restituisce la quantità disponibile dell'articolo passato come referenza, se non si passa la data si considera quella odierna
+      // restituisce un array con tre indici 'tot' il totale su tutti i magazzini,'val' il valore del magazzino se passato come referenza, altrimenti sarà false, e un array con i valori degli altri magazzini e indice gli id degli altri magazzini, se non passato di tutti
+      global $gTables;
+      $where = "artico = '".$item_code."' AND caumag <= 99 AND datreg <= '".$date_ref."'";
+      $orderby = "datreg ASC, id_mov ASC"; //ordino in base alle date
+      $acc=['tot'=>0,'val'=>false,'oth'=>[]];
+      $rs_movmag = gaz_dbi_dyn_query("operat,id_warehouse,quanti", $gTables['movmag'],$where,$orderby);
+      while ($r = gaz_dbi_fetch_array($rs_movmag)){
+        $qua=$r['operat']*$r['quanti'];
+        $acc['tot']+=$qua;
+        if ($id_warehouse!==false) { // ho passato il magazzino
+          if ($r['id_warehouse']==$id_warehouse){
+            $acc['val']+=$qua;
+          } else {
+            if (isset($acc['oth'][$id_warehouse])){
+              $acc['oth'][$id_warehouse]+=$qua;
+            } else {
+              $acc['oth'][$id_warehouse]=$qua;
             }
+          }
+        } else { // non ho passato magazzini
+          if (isset($acc['oth'][$id_warehouse])){
+            $acc['oth'][$id_warehouse]+=$qua;
+          } else {
+            $acc['oth'][$id_warehouse]=$qua;
+          }
         }
-        return $acc;
+      }
+      return $acc;
     }
 
     function selectIdWarehouse($name,$val,$ret_type=false,$class='',$codart=false,$dat_ref=false,$quanti=false) {
