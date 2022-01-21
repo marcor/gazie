@@ -2519,7 +2519,7 @@ class Compute {
   }
   function add_value_to_VAT_castle($vat_castle, $value = 0, $vat_rate = 0) {
     global $gTables;
-    $new_castle = array();
+    $new_castle = [];
     $row = 0;
     $this->total_imp = 0;
     $this->total_vat = 0;
@@ -2528,6 +2528,7 @@ class Compute {
     // ho due metodi di calcolo del castelletto IVA:
     // 1 - quando non ho l'aliquota IVA allora uso la ventilazione
     // 2 - in presenza di aliquota IVA e quindi devo aggiungere al castelletto
+    $this->totroundcastle = 0;
     if ($vat_rate == 0) {        // METODO VENTILAZIONE (per mantenere la retrocompatibilit�)
       $total_imp = 0;
       $decalc_imp = 0;
