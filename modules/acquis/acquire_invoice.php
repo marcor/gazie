@@ -683,6 +683,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 							$form['codvat_'.$post_nl] = 'non trovata';
 						}
 					}
+          $map_pervat[floatval($form['rows'][$nl]['pervat'])]=$form['codvat_'.$post_nl]; // mappo aliquote-codici aliquote, potrebbe servirmi per risolvere l'eventuale PORCATA degli arrotondamenti sul castelleto IVA ( tiprig=91 )
+
 				}
 
 			}
@@ -933,7 +935,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
               $form['rows'][$nl]['ritenuta'] = '';
               $form['rows'][$nl]['pervat'] = $ctrlaliquo;
               $form['codart_'.($nl-1)] = '';
-              $form['codvat_'.($nl-1)] = 0;
+              $form['codvat_'.($nl-1)] = $map_pervat[floatval($ctrlaliquo)];
               $form['codric_'.($nl-1)] = 0;
               $form['rows'][$nl]['prelis'] = $diffiva;
               $form['rows'][$nl]['amount'] = $diffiva;
