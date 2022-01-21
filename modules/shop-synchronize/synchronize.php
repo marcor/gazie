@@ -104,8 +104,8 @@ if (isset ($_POST['download'])) {
 		}
 } elseif (isset ($_POST['uploader'])) { 
 	
-	if (file_exists($file_uploader)){ // esportazione/aggiornamento
-		header("Location: " . $file_uploader."?prezzo=".(isset($_POST['prezzo']) ? $_POST['prezzo'] : 0)."&qta=".(isset($_POST['quantita']) ? $_POST['quantita'] : 0)."&descri=".(isset($_POST['descri']) ? $_POST['descri'] : 0)."&img=".(isset($_POST['immagine']) ? $_POST['immagine'] : 0)."&name=".(isset($_POST['name']) ? $_POST['name'] : 0));
+	if (file_exists($file_uploader)){ // esportazione/aggiornamento-inserimento
+		header("Location: " . $file_uploader."?prezzo=".(isset($_POST['prezzo']) ? $_POST['prezzo'] : 0)."&qta=".(isset($_POST['quantita']) ? $_POST['quantita'] : 0)."&descri=".(isset($_POST['descri']) ? $_POST['descri'] : 0)."&img=".(isset($_POST['immagine']) ? $_POST['immagine'] : 0)."&name=".(isset($_POST['name']) ? $_POST['name'] : 0)."&todo=".(isset($_POST['insert']) ? $_POST['insert'] : 'update'));
 		exit;
 	} else {
 		header("Location: " . $_POST['ritorno']);
@@ -159,18 +159,21 @@ if (isset ($_POST['download'])) {
 			<div id="more">
 				<div class="row bg-warning" style="border-top: 1px solid;">
 					<div class="col-sm-12 bg-warning" align="center" >
-							<h3 class="text-primary">ESPORTAZIONE - aggiornamento articoli nell'e-commerce</h3>
-						</div>
-					<div class="col-sm-6  bg-warning" align="left" style="font-size: 18;">
-						<input type="checkbox" name="quantita" value="updqty" checked> Quantit&agrave &nbsp 
+							<h3 class="text-primary">ESPORTAZIONE - aggiornamento/inserimento articoli nell'e-commerce</h3>
+					</div>
+					<div class="col-sm-12  bg-warning" align="left" style="font-size: 18;">
+						UPDATE: <input type="checkbox" name="quantita" value="updqty" checked> Quantit&agrave &nbsp 
 						<input type="checkbox" name="prezzo" value="updprice"> Prezzo &nbsp
 						<input type="checkbox" name="name" value="updnam" > Nome &nbsp
 						<input type="checkbox" name="descrizione" value="upddes" > Descrizione estesa &nbsp
 						<input type="checkbox" name="immagine" value="updimg" > immagine &nbsp
 					</div>
+					<div class="col-sm-12  bg-warning" align="left" style="font-size: 18;">
+						INSERT: <input type="checkbox" name="insert" value="insert" > Se non presente inserisci l'articolo (NB: deve essere attivata la sincronizzazione nel sito web e deve essere un articolo semplice, NO varianti e NO gruppi/parent) &nbsp
+					</div>
 					
 						<div class="col-sm-12  bg-warning">
-							<input type="submit" class="btn btn-danger btn-sm pull-right" name="uploader"  value="Seleziona i prodotti da aggiornare">
+							<input type="submit" class="btn btn-danger btn-sm pull-right" name="uploader"  value="Seleziona i prodotti da aggiornare/inserire">
 						</div>
 			
 				</div>

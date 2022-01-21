@@ -29,7 +29,7 @@
 	  # free to use, Author name and references must be left untouched  #
 	  --------------------------------------------------------------------------
 */
-/* Antonio Germani - ESPORTAZIONE MANUALE (update) DEGLI ARTICOLI DA GAZIE ALL'E-COMMERCE -  GLI ARTICOLI DEVONO GIà ESISTERE NELL'E-COMMERCE ALTRIMENTI NON VERRANNO CONSIDERATI */
+/* Antonio Germani - ESPORTAZIONE MANUALE (update e insert) DEGLI ARTICOLI DA GAZIE ALL'E-COMMERCE -  GLI ARTICOLI DEVONO GIà ESISTERE NELL'E-COMMERCE ALTRIMENTI, se richiesto, verranno iseriti solo se articoli semplici. Varianti e gruppi/parent NON VERRANNO CONSIDERATI */
 
 require("../../library/include/datlib.inc.php");
 require ("../../modules/magazz/lib.function.php");
@@ -105,7 +105,7 @@ if (isset($_POST['conferma'])) { // se confermato
 				// non si connette: password LOG-IN FALSE
 				?>
 				<script>
-				alert("<?php echo "Mancata connessione Sftp con password: impossibile scaricare gli ordini dall\'e-commerce"; ?>");
+				alert("<?php echo "Mancata connessione Sftp con password: impossibile sincronizzare l\'e-commerce"; ?>");
 				location.replace("<?php echo $_POST['ritorno']; ?>");
 				</script>
 				<?php
@@ -125,10 +125,18 @@ if (isset($_POST['conferma'])) { // se confermato
 		$mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
 
 		// controllo se la connessione è OK...
-		if ((!$conn_id) or (!$mylogin)){
+		if ((!$conn_id)){
 			?>
 			<script>
 			alert("<?php echo "Errore: connessione FTP a " . $ftp_host . " non riuscita!"; ?>");
+			location.replace("<?php echo $_POST['ritorno']; ?>");
+			</script>
+			<?php
+		}
+		if ((!$mylogin)){
+			?>
+			<script>
+			alert("<?php echo "Errore: accesso a FTP" . $ftp_host . " non riuscita!"; ?>");
 			location.replace("<?php echo $_POST['ritorno']; ?>");
 			</script>
 			<?php
@@ -164,6 +172,7 @@ if (isset($_POST['conferma'])) { // se confermato
 			$xml_output .= "\t<Product>\n";
 			$xml_output .= "\t<Id>".$_POST['ref_ecommerce_id_product'.$ord]."</Id>\n";
 			$xml_output .= "\t<IdMain>".$_POST['ref_ecommerce_id_main_product'.$ord]."</IdMain>\n";
+			$xml_output .= "\t<ToDo>".$_POST['ToDo'.$ord]."</ToDo>\n";
 			if (intval($_POST['ref_ecommerce_id_main_product'.$ord])>0){
 				if ($_POST['ref_ecommerce_id_product'.$ord]<1){
 					$xml_output .= "\t<Type>parent</Type>\n";
@@ -178,20 +187,20 @@ if (isset($_POST['conferma'])) { // se confermato
 			} else {
 				$xml_output .= "\t<Type>product</Type>\n";
 			}
-      if (isset($_POST['catmer'.$ord]) && intval($_POST['catmer'.$ord])>0){// se GAzie ha una categoria
-        $ecomm_catmer = gaz_dbi_get_row($gTables['catmer'],"codice",intval($_POST['catmer'.$ord]))['ref_ecommerce_id_category'];
-        $xml_output .= "\t<ProductCategory>".$ecomm_catmer."</ProductCategory>\n";
-      }elseif (intval($_POST['ref_ecommerce_id_main_product'.$ord])>0 && $_POST['ref_ecommerce_id_product'.$ord]<1){// se non ce l'ha ed è un parent ci metto quella di una variante
-        $parent_catmer = gaz_dbi_get_row($gTables['artico'],"id_artico_group",intval($_POST['ref_ecommerce_id_main_product'.$ord]))['catmer'];
-        $ecomm_catmer = gaz_dbi_get_row($gTables['catmer'],"codice",intval( $parent_catmer))['ref_ecommerce_id_category'];
-        $xml_output .= "\t<ProductCategory>".$ecomm_catmer."</ProductCategory>\n";
-      }
+			if (isset($_POST['catmer'.$ord]) && intval($_POST['catmer'.$ord])>0){// se GAzie ha una categoria
+				$ecomm_catmer = gaz_dbi_get_row($gTables['catmer'],"codice",intval($_POST['catmer'.$ord]))['ref_ecommerce_id_category'];
+				$xml_output .= "\t<ProductCategory>".$ecomm_catmer."</ProductCategory>\n";
+			}elseif (intval($_POST['ref_ecommerce_id_main_product'.$ord])>0 && $_POST['ref_ecommerce_id_product'.$ord]<1){// se non ce l'ha ed è un parent ci metto quella di una variante
+				$parent_catmer = gaz_dbi_get_row($gTables['artico'],"id_artico_group",intval($_POST['ref_ecommerce_id_main_product'.$ord]))['catmer'];
+				$ecomm_catmer = gaz_dbi_get_row($gTables['catmer'],"codice",intval( $parent_catmer))['ref_ecommerce_id_category'];
+				$xml_output .= "\t<ProductCategory>".$ecomm_catmer."</ProductCategory>\n";
+			}
 			$xml_output .= "\t<Code>".$_POST['codice'.$ord]."</Code>\n";
 			$xml_output .= "\t<BarCode>".$_POST['barcode'.$ord]."</BarCode>\n";
-			if ($_GET['qta']=="updqty"){
+			if ($_GET['qta']=="updqty" || $_GET['todo']!=="insert"){
 				$xml_output .= "\t<AvailableQty>".$_POST['quanti'.$ord]."</AvailableQty>\n";
 			}
-			if ($_GET['prezzo']=="updprice" AND $_POST['web_price'.$ord]>0){
+			if (($_GET['prezzo']=="updprice" || $_GET['todo']=="insert") AND $_POST['web_price'.$ord]>0){
 				// Calcolo il prezzo IVA compresa
 				$aliquo=gaz_dbi_get_row($gTables['aliiva'], "codice", intval($_POST['aliiva'.$ord]))['aliquo'];
 				$web_price_vat_incl= $_POST['web_price'.$ord] +(($_POST['web_price'.$ord]*$aliquo)/100);
@@ -200,30 +209,30 @@ if (isset($_POST['conferma'])) { // se confermato
 				$xml_output .= "\t<PriceVATincl>".$web_price_vat_incl."</PriceVATincl>\n";
 				$xml_output .= "\t<VAT>".$aliquo."</VAT>\n";
 			}
-			if ($_GET['name']=="updnam" AND strlen($_POST['descri'.$ord])>0){
+			if (($_GET['name']=="updnam" || $_GET['todo']=="insert") AND strlen($_POST['descri'.$ord])>0){
 				$xml_output .= "\t<Name>".$_POST['descri'.$ord]."</Name>\n";
 			}
-			if ($_GET['descri']=="upddes" AND strlen($_POST['body_text'.$ord])>0){
+			if (($_GET['descri']=="upddes" || $_GET['todo']=="insert") AND strlen($_POST['body_text'.$ord])>0){
 				$xml_output .= "\t<Description>".preg_replace('/[\x00-\x1f]/','',htmlspecialchars($_POST['body_text'.$ord]))."</Description>\n";
 			}
 			$xml_output .= "\t<WebPublish>".$_POST['web_public'.$ord]."</WebPublish>\n";// 1=attivo su web; 2=attivo e prestabilito; 3=attivo e pubblicato in home; 4=attivo, in home e prestabilito; 5=disattivato su web"
-			if ($_GET['img']=="updimg" AND strlen($_POST['imgurl'.$ord])>0){ // se è da aggiornare e c'è un'immagine HQ
+			if (($_GET['img']=="updimg" || $_GET['todo']=="insert") AND strlen($_POST['imgurl'.$ord])>0){ // se è da aggiornare e c'è un'immagine HQ
 				if (ftp_put($conn_id, $ftp_path_upload."images/".$_POST['imgname'.$ord], $_POST['imgurl'.$ord],  FTP_BINARY)){
 					// ho scritto l'immagine web HQ nella cartella e-commerce
-          ftp_chmod($conn_id, 0664, $ftp_path_upload."images/".$_POST['imgname'.$ord]);// fornisco i permessi necessari all'immagine
+					ftp_chmod($conn_id, 0664, $ftp_path_upload."images/".$_POST['imgname'.$ord]);// fornisco i permessi necessari all'immagine
 					$xml_output .= "\t<ImgUrl>".$web_site_path."images/".$_POST['imgname'.$ord]."</ImgUrl>\n"; // ne scrivo l'url nel file xml
 				} else {
 					// ERRORE chiudo la connessione FTP
-					ftp_quit($conn_id);
+					ftp_quit($conn_id);die;
 					header("Location: " . "../../modules/shop-synchronize/export_articoli.php?success=5");
 					exit;
 				}
 			}
-			if ($_GET['img']=="updimg" AND strlen($_POST['imgblob'.$ord])>0){// se è da aggiornare e c'è un'immagine blob
+			if (($_GET['img']=="updimg" || $_GET['todo']=="insert") AND strlen($_POST['imgblob'.$ord])>0){// se è da aggiornare e c'è un'immagine blob
 				file_put_contents("../../data/files/tmp/img.jpg", base64_decode($_POST['imgblob'.$ord])); // salvo immagine nella cartella temporanea
 				if (ftp_put($conn_id, $ftp_path_upload."images/".str_replace(' ', '_', $_POST['codice'.$ord]).".jpg", "../../data/files/tmp/img.jpg",  FTP_BINARY)){
 					// scrivo l'immagine web blob nella cartella images dell'e-commerce
-          ftp_chmod($conn_id, 0664, $ftp_path_upload."images/".str_replace(' ', '_', $_POST['codice'.$ord]).".jpg");// fornisco i permessi necessari all'immagine
+					ftp_chmod($conn_id, 0664, $ftp_path_upload."images/".str_replace(' ', '_', $_POST['codice'.$ord]).".jpg");// fornisco i permessi necessari all'immagine
 					$xml_output .= "\t<ImgUrl>".$web_site_path."images/".str_replace(' ', '_', $_POST['codice'.$ord]).".jpg</ImgUrl>\n"; // ne scrivo l'url nel file xml
 				} else {
 					// ERRORE chiudo la connessione FTP
@@ -278,23 +287,34 @@ if (isset($_POST['conferma'])) { // se confermato
 	$access=base64_encode($accpass);
 
 	// avvio il file di interfaccia presente nel sito web remoto
-	$headers = get_headers ($urlinterf.'?access='.$access);
-
-	if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o mi dà accesso
-
-	} elseif(intval(substr($headers[0], 9, 3))==400)  {// IL FILE INTERFACCIA NON ESISTE > ESCO
+	
+	$file = fopen ($urlinterf.'?access='.$access, "r");
+	if ( $file ){ // controllo se il file esiste o mi dà accesso
+		while (!feof($file)) { // scorro il file generato dall'interfaccia durante la sua eleborazione
+			$line = fgets($file);			
+			$ln=explode("-",$line);			
+			if (isset($ln) && strlen($ln[3])>0){ // Se l'e-commerce ha restituito l'ID riferito ad un articolo
+				// vado a modificare il riferimenot id e-commerce nell'articolo di GAzie				
+				gaz_dbi_put_row($gTables['artico'], "codice", rtrim($ln[3],"<br>\n"), "ref_ecommerce_id_product", $ln[1]); // tolgo <br>\n perché viene aggiunto dall'ecommerce
+				gaz_dbi_put_row($gTables['artico'], "codice", rtrim($ln[3],"<br>\n"), "web_public", "5");// lo imposto come disattivato
+			}			
+		}
+	
+	} else {// ho avuto problemi 
+		$headers = get_headers ($urlinterf.'?access='.$access);// controllo l'header
+		if(intval(substr($headers[0], 9, 3))==400){
 			// chiudo la connessione FTP
 			ftp_quit($conn_id);
 			header("Location: " . "../../modules/shop-synchronize/export_articoli.php?success=3");
 			exit;
+		}else{
+			// chiudo la connessione FTP
+			ftp_quit($conn_id);
+			header("Location: " . "../../modules/shop-synchronize/export_articoli.php?success=2");
+			exit;	
+		}
 
-	} else {
-		// chiudo la connessione FTP
-		ftp_quit($conn_id);
-		header("Location: " . "../../modules/shop-synchronize/export_articoli.php?success=2");
-		exit;
-	}
-
+	} 
 	// chiudo la connessione FTP
 	ftp_quit($conn_id);
 	header("Location: " . "../../modules/shop-synchronize/export_articoli.php?success=1");
@@ -331,7 +351,8 @@ if (!isset($_GET['success'])){
 			<div class="container-fluid" style="max-width:90%;">
 				<div class="row bg-primary" >
 					<div class="col-sm-12" align="center"><h4>Esportazione di articoli da GAzie</h4>
-						<p align="justify">Gli articoli selezionati verranno aggiornati nell'e-commerce se esistenti, altrimenti verranno ignorati. </p>
+						<p align="justify">Gli articoli selezionati per update verranno aggiornati nell'e-commerce se già esistenti, altrimenti verranno ignorati. </p>
+						<p align="justify">Gli articoli selezionati per insert verranno inseriti nell'e-commerce. </p>
 						<?php
 						if ($_GET['img']=="updimg") {?>
 							<b> Hai selezionato di trasferire le immagini: questa operazione potrebbe richiedere molti minuti di attesa!</b>
@@ -358,7 +379,7 @@ if (!isset($_GET['success'])){
 									<h4 class="modal-title">ATTENZIONE!</h4>
 								</div>
 								<div class="modal-body">
-									<p>Stai per aggiornare definitivamente i prodotti nell'e-commerce. <br>Questa operazione &egrave irreversibile. <br>Sei sicuro di volerlo fare?</p>
+									<p>Stai per sincronizzare definitivamente i prodotti nell'e-commerce. <br>Questa operazione &egrave irreversibile. <br>Sei sicuro di volerlo fare?</p>
 								</div>
 								<div class="modal-footer">
 									<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Annulla</button>
@@ -386,8 +407,19 @@ if (!isset($_GET['success'])){
 					</div>
 				</div>
 				<?php
+			
+				if (isset($_GET['todo'])){					
+				}else{
+					$_GET['todo']="";
+				}	
+		
+				if ($_GET['todo']!=="insert"){
+					$where="web_public >= '1' and good_or_service <> '1'";
+				}else{					
+					$where="good_or_service <> '1'";
+				}
 				// carico in $artico gli articoli che sono presenti in GAzie
-				$artico = gaz_dbi_query ('SELECT ecomm_option_attribute, codice, catmer, barcode, web_price, descri, aliiva, ref_ecommerce_id_product, id_artico_group, web_public, image FROM '.$gTables['artico'].' WHERE web_public = \'1\' and good_or_service <> \'1\' ORDER BY codice');
+				$artico = gaz_dbi_query ('SELECT ecomm_option_attribute, codice, catmer, barcode, web_price, descri, aliiva, ref_ecommerce_id_product, id_artico_group, web_public, image FROM '.$gTables['artico'].' WHERE '.$where.' ORDER BY codice');
 				$n=0;
 				while ($item = gaz_dbi_fetch_array($artico)){ // li ciclo
 					$ref_ecommerce_id_main_product="";
@@ -425,29 +457,36 @@ if (!isset($_GET['success'])){
 							</div>
 							<div class="col-sm-1">
 								<?php
-								if ($_GET['descri']=="upddes"){ // se devo aggiornare il body_text
+								if ($_GET['descri']=="upddes" || $_GET['todo']=="insert"){ // se devo aggiornare il body_text
 									$body = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", "artico_". $item['codice']);
-									echo '<input type="hidden" name="body_text'. $n .'" value="'. preg_replace('/[\x00-\x1f]/','',htmlspecialchars($body['body_text'])) . '">';
+									if (isset($body['body_text'])){
+										echo '<input type="hidden" name="body_text'. $n .'" value="'. preg_replace('/[\x00-\x1f]/','',htmlspecialchars($body['body_text'])) . '">';
+									}
 								}
 								echo '<input type="hidden" name="web_public'. $n .'" value="'. $item['web_public'] . '">';
 								echo '<input type="hidden" name="quanti'. $n .'" value="'. $avqty .'">';
 								echo '<input type="hidden" name="aliiva'. $n .'" value="'. $item['aliiva'] .'">';
-                echo '<input type="hidden" name="catmer'. $n .'" value="'. $item['catmer'] .'">';
+								echo '<input type="hidden" name="catmer'. $n .'" value="'. $item['catmer'] .'">';
 								echo '<input type="hidden" name="web_price'. $n .'" value="'. $item['web_price'] .'">';
 								echo '<input type="hidden" name="ref_ecommerce_id_main_product'. $n .'" value="'. $ref_ecommerce_id_main_product .'">';
 								echo '<input type="hidden" name="ref_ecommerce_id_product'. $n .'" value="'. $item['ref_ecommerce_id_product'] .'">';
+								if (intval($ref_ecommerce_id_main_product)==0 && $item['ref_ecommerce_id_product']==0 && $_GET['todo']=="insert"){// se è un articolo semplice e non esiste nell'e-commerce ed è stato selezionato l'inserimento
+									echo '<input type="hidden" name="ToDo'. $n .'" value="insert">Insert';
+								} else {
+									echo '<input type="hidden" name="ToDo'. $n .'" value="update">Update';
+								}							
 								echo '<input type="hidden" name="ecomm_option_attribute'. $n .'" value="'. htmlspecialchars($item['ecomm_option_attribute']) .'">';
-								if ($_GET['img']=="updimg"){ // se devo aggiornare l'immagine ne trovo l'url di GAzie
+								if ($_GET['img']=="updimg" || $_GET['todo']=="insert"){ // se devo aggiornare o inserire l'immagine ne trovo l'url di GAzie
 									unset ($imgres);
-                  $imgres = gaz_dbi_get_row($gTables['files'], "table_name_ref", "artico", "AND id_ref ='1' AND item_ref = '". $item['codice']."'");
+									$imgres = gaz_dbi_get_row($gTables['files'], "table_name_ref", "artico", "AND id_ref ='1' AND item_ref = '". $item['codice']."'");
 									if (isset($imgres['id_doc']) AND $imgres['id_doc']>0){ // se c'è un'immagine
 										$imgurl=DATA_DIR."files/".$admin_aziend['company_id']."/images/". $imgres['id_doc'] . "." . $imgres['extension'];
-										$imgblob="";echo "Img HQ";
+										$imgblob="";echo ", Img HQ";
 									} else {
 										$imgurl="";
 										$imgres['id_doc']="";
 										$imgres['extension']="";
-										$imgblob=$item['image'];echo "Img blob";
+										$imgblob=$item['image'];echo ", Img blob";
 									}
 									echo '<input type="hidden" name="imgurl'. $n .'" value="'. $imgurl .'">';
 									echo '<input type="hidden" name="imgname'. $n .'" value="'. $imgres['id_doc'] . "." . $imgres['extension'] .'">';
@@ -490,7 +529,7 @@ if (!isset($_GET['success'])){
 								<?php
 
 								echo '<input type="hidden" name="body_text'. $n .'" value="'. preg_replace('/[\x00-\x1f]/','',htmlspecialchars($item['large_descri'])) . '">';
-
+								echo '<input type="hidden" name="ToDo'. $n .'" value="update">Update';// per i parent solo update!!!
 								echo '<input type="hidden" name="web_public'. $n .'" value="'. $item['web_public'] . '">';
 								echo '<input type="hidden" name="quanti'. $n .'" value="">';
 								echo '<input type="hidden" name="aliiva'. $n .'" value="">';

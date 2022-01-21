@@ -424,10 +424,10 @@ class shopsynchronizegazSynchro {
 				$rawres['style'] = 'danger';
 			}
 		}
-    if (isset($rawres)){
-      $_SESSION['menu_alerts']['shop-synchronize']=$rawres;
-      $this->rawres=$rawres;
-    }
+		if (isset($rawres)){
+		  $_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+		  $this->rawres=$rawres;
+		}
 	}
 	function UpsertProduct($d,$toDo="") { // Aggiorna o inserisce articol da GAzie a e-commerce
 		if ($d['web_public'] > 0){ // se pubblicato su web aggiorno l'articolo di magazzino (product)
