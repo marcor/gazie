@@ -35,7 +35,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['datnas_Y'] = intval($_POST['datnas_Y']);
     $form['datnas_M'] = intval($_POST['datnas_M']);
     $form['datnas_D'] = intval($_POST['datnas_D']);
-    $form['fe_cod_univoco'] = strtoupper($form['fe_cod_univoco']);// porto il codice univoco tutto con caratteri maiuscoli 
+    $form['fe_cod_univoco'] = strtoupper($form['fe_cod_univoco']);// porto il codice univoco tutto con caratteri maiuscoli
     foreach ($_POST['search'] as $k => $v) {
         $form['search'][$k] = $v;
     }
@@ -74,23 +74,23 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         if (strlen($form["ragso1"]) < 3) {
             if (!empty($form["legrap_pf_nome"]) && !empty($form["legrap_pf_cognome"]) && $form["sexper"] != 'G') {// setto la ragione sociale con l'eventuale legale rappresentante
                 $form["ragso1"] = strtoupper($form["legrap_pf_cognome"] . ' ' . $form["legrap_pf_nome"]);
-            } else { // altrimenti do errore                
+            } else { // altrimenti do errore
                 $msg .= '0+';
             }
         }
         if (empty($form["indspe"])) {
             $msg .= '1+';
         }
-        // se il cliente è straniero formatto i campi pariva e codis per poter generare una fattura elettronica corretta 
+        // se il cliente è straniero formatto i campi pariva e codis per poter generare una fattura elettronica corretta
         if ($form['country']!='IT') {
             if (strlen($form['pariva']) < 5 && strlen($form['codfis']) < 5) { // non ho scelto nulla, uso il codice cliente del piano dei conti per entrambi
                 $form['pariva']=$real_code;
-                $form['codfis']=$real_code;    
+                $form['codfis']=$real_code;
             } elseif (strlen($form['pariva']) < 5) { // ho scelto solo il codice fiscale, imposto la partita iva allo stesso valore
-                $form['pariva']=$form['codfis'];    
+                $form['pariva']=$form['codfis'];
             } else if (strlen($form['codfis']) < 5) { // ho scelto solo la partita iva, imposto il codice fiscale allo stesso valore
-                $form['codfis']=$form['pariva']; 
-            } 
+                $form['codfis']=$form['pariva'];
+            }
         }
         // faccio i controlli sul codice postale
         $rs_pc = gaz_dbi_get_row($gTables['country'], 'iso', $form["country"]);
@@ -129,7 +129,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             $r_cf = $cf_pi->check_TAXcode($form['codfis'], $form['country']);
         }
         if (!empty($r_pi) || ( $form['sexper']=='G' && intval(substr($form['codfis'],0,1)) < 8 && $form['country']=='IT' && strlen(trim($form['pariva'])) < 11 )) {
-			// se la partita iva è sbagliata o un cliente persona giuridica senza partita iva e non ha un codice fiscale di una associazione 
+			// se la partita iva è sbagliata o un cliente persona giuridica senza partita iva e non ha un codice fiscale di una associazione
             $msg .= "9+";
         }
         if ($form['codpag'] < 1) {
@@ -138,13 +138,13 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         $anagrafica = new Anagrafica();
         if ( gaz_dbi_get_row($gTables['company_config'], 'var', 'consenti_nofisc')['val']==0 ) {
             if (!empty($form['pariva']) && !($form['pariva'] == '00000000000')) {
-                $partner_with_same_pi = $anagrafica->queryPartners('*', "codice <> " . $real_code . " AND codice BETWEEN " . $admin_aziend['mascli'] . "000000 AND " . $admin_aziend['mascli'] . "999999 AND pariva = '" . $form['pariva'] . "'", "pariva DESC", 0, 1);
+                $partner_with_same_pi = $anagrafica->queryPartners('*', "codice <> " . $real_code . " AND codice BETWEEN " . $admin_aziend['mascli'] . "000000 AND " . $admin_aziend['mascli'] . "999999 AND pariva = '" . addslashes($form['pariva']) . "'", "pariva DESC", 0, 1);
                 if ($partner_with_same_pi) {
                     if ($partner_with_same_pi[0]['fe_cod_univoco'] == $form['fe_cod_univoco']) { // c'� gi� un cliente sul piano dei conti ed � anche lo stesso ufficio ( amministrativo della PA )
                         $msg .= "10+";
                     }
                 } elseif ($form['id_anagra'] == 0) { // � un nuovo cliente senza anagrafica
-                    $rs_anagra_with_same_pi = gaz_dbi_query_anagra(array("*"), $gTables['anagra'], array("pariva" => "='" . $form['pariva'] . "'"), array("pariva" => "DESC"), 0, 1);
+                    $rs_anagra_with_same_pi = gaz_dbi_query_anagra(array("*"), $gTables['anagra'], array("pariva" => "='" . addslashes($form['pariva']) . "'"), array("pariva" => "DESC"), 0, 1);
                     $anagra_with_same_pi = gaz_dbi_fetch_array($rs_anagra_with_same_pi);
                     if ($anagra_with_same_pi) { // c'� gi� un'anagrafica con la stessa PI non serve reinserirlo ma avverto
                         // devo attivare tutte le interfacce per la scelta!
@@ -153,7 +153,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
                     }
                 }
             }
-        
+
             if (!empty($r_cf)) {
                 $msg .= "11+";
             }
@@ -202,8 +202,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 			if ($rows>0 && ($toDo == 'insert')) { // c'� gi� uno stesso codice
 				$form['id_SIAN'] ++; // lo aumento di 1
 				$msg .= "21+";
-			} 
-			if ($toDo == 'update') {		 
+			}
+			if ($toDo == 'update') {
 				foreach ($rs_same_code as $row){
 					if ($row['ragso1']!==$form['ragso1'] AND $row['id_SIAN']==$form['id_SIAN']){
 						$form['id_SIAN'] ++; // c'� gi� uno stesso codice lo aumento di 1
@@ -217,7 +217,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             $form['codice'] = $real_code;
             $form['datnas'] = date("Ymd", $uts_datnas);
             if ($toDo == 'insert') {
-                if (!empty($form['fe_cod_univoco']) && $form['fatt_email'] <= 1) { // qui forzo all'utilizzo della PEC i nuovi clienti dalla PA 
+                if (!empty($form['fe_cod_univoco']) && $form['fatt_email'] <= 1) { // qui forzo all'utilizzo della PEC i nuovi clienti dalla PA
                     $form['fatt_email'] = 2;
                 }
                 if ($form['id_anagra'] > 0) {
@@ -331,8 +331,8 @@ $(function() {
 			show: "blind",
 			hide: "explode",
 			buttons: {
-				delete:{ 
-					text:'Elimina', 
+				delete:{
+					text:'Elimina',
 					'class':'btn btn-danger delete-button',
 					click:function (event, ui) {
 					$.ajax({
@@ -350,13 +350,13 @@ $(function() {
 				}
 			}
 		});
-		$("#dialog_delete" ).dialog( "open" );  
+		$("#dialog_delete" ).dialog( "open" );
 	});
     $('#iban,#codfis').keyup(function(){
         this.value = this.value.toUpperCase();
     });
-    
-});    
+
+});
 </script>
 <form method="POST" name="form">
 	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
@@ -416,10 +416,10 @@ if (!empty($msg)) {
   <div class="container-fluid">
   <ul class="nav nav-pills">
     <li class="active"><a data-toggle="pill" href="#home">Anagrafica</a></li>
-    <li><a data-toggle="pill" href="#commer">Impostazioni</a></li>  
+    <li><a data-toggle="pill" href="#commer">Impostazioni</a></li>
     <li style="float: right;"><input class="btn btn-warning" name="Submit" type="submit" value="<?php echo ucfirst($script_transl[$toDo]); ?>"></li>
   </ul>
-            
+
   <div class="tab-content">
     <div id="home" class="tab-pane fade in active">
         <div class="row">
@@ -442,7 +442,7 @@ if (!empty($msg)) {
             <div class="col-md-12">
                 <div class="form-group">
                     <label for="legrap_pf_nome" class="col-sm-4 control-label"><?php echo $script_transl['legrap_pf_nome']; ?> </label>
-                    <input class="col-sm-4" type="text" value="<?php echo $form['legrap_pf_nome']; ?>" name="legrap_pf_nome" maxlength="50"/> 
+                    <input class="col-sm-4" type="text" value="<?php echo $form['legrap_pf_nome']; ?>" name="legrap_pf_nome" maxlength="50"/>
                     <div class="text-right"><input class="col-sm-4" type="text" value="<?php echo $form['legrap_pf_cognome']; ?>" name="legrap_pf_cognome" maxlength="50"/></div>
                 </div>
             </div>
@@ -477,7 +477,7 @@ $gForm->variousSelect('sexper', $script_transl['sexper_value'], $form['sexper'])
             <div class="col-md-12">
                 <div class="form-group">
                     <label for="citspe" class="col-sm-4 control-label"><?php echo $script_transl['citspe']; ?> *</label>
-                    <input class="col-sm-4" type="text" id="search_location" value="<?php echo $form['citspe']; ?>" name="citspe" maxlength="60"/> 
+                    <input class="col-sm-4" type="text" id="search_location" value="<?php echo $form['citspe']; ?>" name="citspe" maxlength="60"/>
                     <div class="text-right"><input class="col-sm-1" type="text" id="search_location-prospe" value="<?php echo $form['prospe']; ?>" name="prospe" maxlength="2"/></div>
                 </div>
             </div>
@@ -945,7 +945,7 @@ $gForm->variousSelect('status', $script_transl['status_value'], $form['status'],
 </div>
 </div>
 <div class="text-center">
-    
+
 </div>
 </div>
 </form>
