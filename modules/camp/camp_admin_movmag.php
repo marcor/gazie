@@ -163,6 +163,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
     $form['hidden_req'] = '';
     $form['mov'] = 0;
     $form['nmov'] = 0;
+	$fito=0;
     //recupero il movimento
     $result = gaz_dbi_get_row($gTables['movmag'], "id_mov", $_GET['id_mov']);
 	$itemart = gaz_dbi_get_row($gTables['artico'], "codice", $result['artico']);
@@ -1093,6 +1094,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
     
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
     $form['hidden_req'] = '';
+	$fito=0;
     //registri per il form della testata
     $form['id_mov'] = 0;
 	$form['id_mov2'] = "";
@@ -2463,8 +2465,14 @@ if (intval($form['nome_colt']) == 0) {
 								echo "<option selected value=\"".$form['adminid']."\">".$form['adminname']."</option>";
 							} 					
 							?>				
-						</select>					
-						<input class="col-sm-1" title="Gestione autorizzazione acquisto e uso fitosanitari" type="button" name="button1" id="patent" rel="gestpatent" value="&#9776" onclick="buttonToggle(this,'&#9776','&#9746');" style="float: right;">
+						</select>
+						<?php
+						if (intval($form['adminid'])>0 && $fito==1){
+							?>
+							<input class="col-sm-1" title="Gestione autorizzazione acquisto e uso fitosanitari" type="button" name="button1" id="patent" rel="gestpatent" value="&#9776" onclick="buttonToggle(this,'&#9776','&#9746');" style="float: right;">
+							<?php
+						}
+						?>
 						<input type="hidden" value="<?php echo $form['adminname']; ?>" name="adminname"/>
 					</div>
 				</div>			
