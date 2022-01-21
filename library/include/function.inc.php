@@ -1389,7 +1389,7 @@ class GAzieMail {
 
     function sendMail($admin_data, $user, $content, $receiver, $mail_message = '') {
 		// su $admin_data['other_email'] ci va un eventuale indirizzo mail diverso da quello in anagrafica
- 
+
 		global $gTables, $debug_active;
 
         require_once "../../library/phpmailer/class.phpmailer.php";
@@ -1398,7 +1398,7 @@ class GAzieMail {
         //
         // Si procede con la costruzione del messaggio.
         //
-		
+
 		if (isset ($receiver['mod_fae']) && strpos($receiver['mod_fae'], 'pec')===0){// se c'è il modulo per invio fae che inizia il suo nome con 'pec' definisco il server smtp con la pec
 			$config_port = gaz_dbi_get_row($gTables['company_config'], 'var', 'pec_smtp_port');
 			$config_secure = gaz_dbi_get_row($gTables['company_config'], 'var', 'pec_smtp_secure');
@@ -1414,16 +1414,16 @@ class GAzieMail {
 			$config_pass = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_password');
 			$config_host = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_server');
 			$mailto = $receiver['e_mail']; //recipient-DESTINATARIO
-		}			
+		}
         // definisco il server SMTP e il mittente
-        $config_mailer = gaz_dbi_get_row($gTables['company_config'], 'var', 'mailer');        
-        $config_notif = gaz_dbi_get_row($gTables['company_config'], 'var', 'return_notification');        
+        $config_mailer = gaz_dbi_get_row($gTables['company_config'], 'var', 'mailer');
+        $config_notif = gaz_dbi_get_row($gTables['company_config'], 'var', 'return_notification');
         $config_replyTo = gaz_dbi_get_row($gTables['company_config'], 'var', 'reply_to');
         // attingo il contenuto del corpo della email dall'apposito campo della tabella configurazione utente
         $user_text = gaz_dbi_get_row($gTables['admin_config'], 'var_name', 'body_send_doc_email', "AND adminid = '{$user['user_name']}'");
         $company_text = gaz_dbi_get_row($gTables['company_config'], 'var', 'company_email_text');
         $admin_data['web_url'] = trim($admin_data['web_url']);
-		
+
         $subject = $admin_data['ragso1'] . " " . $admin_data['ragso2'] . " - Trasmissione " . str_lreplace('.pdf', '', (isset($admin_data['doc_name']))?$admin_data['doc_name']:''); //subject
         // aggiungo al corpo  dell'email
         $body_text = "<div><b>" . ((isset($admin_data['cliente1']))?$admin_data['cliente1']:'') . "</b></div>\n";
@@ -1482,7 +1482,7 @@ class GAzieMail {
 			$config_send_fae = gaz_dbi_get_row($gTables['company_config'], 'var', 'dest_fae_zip_package')['val'];
 			if (strlen($config_send_fae)>0){// se c'è un indirizzo per i pacchetti zip in configurazione azienda
 				$mail->AddCC($config_send_fae, $admin_data['ragso1'] . " " . $admin_data['ragso2']);// Aggiungo secondo Destinatario per conoscenza
-			}			
+			}
 		}
         // Imposto eventuale richiesta di notifica
         if ($config_notif['val'] == 'yes') {
@@ -1494,9 +1494,9 @@ class GAzieMail {
         // Imposto email del destinatario
         $mail->Hostname = $config_host;
         $mail->AddAddress($mailto);//Destinatario
-       		
+
         $mail->AddCC($mittente, $admin_data['ragso1'] . " " . $admin_data['ragso2']);// Aggiungo mittente come destinatario per conoscenza, per avere una copia
-		
+
         // Imposto l'oggetto dell'email
         $mail->Subject = $subject;
         // Imposto il testo HTML dell'email
@@ -2506,127 +2506,136 @@ function decodeFromSendingNumber($num, $b = 62) {
 }
 
 class Compute {
-
-    function payment_taxstamp($value, $percent, $cents_ceil_round = 5) {
-        if ($cents_ceil_round == 0) {
-            $cents_ceil_round = 5;
-        }
-        $cents = 100 * $value * ($percent / 100 + $percent * $percent / 10000);
-        if ($cents_ceil_round < 0) { // quando passo un arrotondamento negativo ritorno il valore di $percent
-            $this->pay_taxstamp = round($percent, 2);
+  function payment_taxstamp($value, $percent, $cents_ceil_round = 5) {
+    if ($cents_ceil_round == 0) {
+      $cents_ceil_round = 5;
+    }
+    $cents = 100 * $value * ($percent / 100 + $percent * $percent / 10000);
+    if ($cents_ceil_round < 0) { // quando passo un arrotondamento negativo ritorno il valore di $percent
+      $this->pay_taxstamp = round($percent, 2);
+    } else {
+      $this->pay_taxstamp = round(ceil($cents / $cents_ceil_round) * $cents_ceil_round / 100, 2);
+    }
+  }
+  function add_value_to_VAT_castle($vat_castle, $value = 0, $vat_rate = 0) {
+    global $gTables;
+    $new_castle = array();
+    $row = 0;
+    $this->total_imp = 0;
+    $this->total_vat = 0;
+    $this->total_exc_with_duty = 0;
+    $this->total_isp = 0; // totale degli inesigibili per split payment PA
+    // ho due metodi di calcolo del castelletto IVA:
+    // 1 - quando non ho l'aliquota IVA allora uso la ventilazione
+    // 2 - in presenza di aliquota IVA e quindi devo aggiungere al castelletto
+    if ($vat_rate == 0) {        // METODO VENTILAZIONE (per mantenere la retrocompatibilit�)
+      $total_imp = 0;
+      $decalc_imp = 0;
+      foreach ($vat_castle as $k => $v) { // attraverso dell'array per calcolare i totali
+          $total_imp += $v['impcast'];
+          $row++;
+      }
+      foreach ($vat_castle as $k => $v) {   // riattraverso l'array del castelletto
+        // per aggiungere proporzionalmente (ventilazione)
+        $vat = gaz_dbi_get_row($gTables['aliiva'], "codice", $k);
+        $new_castle[$k]['codiva'] = $vat['codice'];
+        $new_castle[$k]['periva'] = $vat['aliquo'];
+        $new_castle[$k]['tipiva'] = $vat['tipiva'];
+        $new_castle[$k]['descriz'] = $vat['descri'];
+        $new_castle[$k]['fae_natura'] = $vat['fae_natura'];
+        $row--;
+        if (abs($total_imp) >= 0.01) { // per evitare il divide by zero in caso di imponibile 0
+          if ($row == 0) { // � l'ultimo rigo del castelletto
+            // aggiungo il resto
+            $new_imp = round($total_imp - $decalc_imp + ($value * ($total_imp - $decalc_imp) / $total_imp), 2);
+          } else {
+            $new_imp = round($v['impcast'] + ($value * $v['impcast'] / $total_imp), 2);
+            $decalc_imp += $v['impcast'];
+          }
         } else {
-            $this->pay_taxstamp = round(ceil($cents / $cents_ceil_round) * $cents_ceil_round / 100, 2);
+          $new_imp = $v['impcast'];
         }
-    }
-
-    function add_value_to_VAT_castle($vat_castle, $value = 0, $vat_rate = 0) {
-        global $gTables;
-        $new_castle = array();
-        $row = 0;
-        $this->total_imp = 0;
-        $this->total_vat = 0;
-        $this->total_exc_with_duty = 0;
-        $this->total_isp = 0; // totale degli inesigibili per split payment PA
-        /* ho due metodi di calcolo del castelletto IVA:
-         * 1 - quando non ho l'aliquota IVA allora uso la ventilazione
-         * 2 - in presenza di aliquota IVA e quindi devo aggiungere al castelletto */
-
-        if ($vat_rate == 0) {        // METODO VENTILAZIONE (per mantenere la retrocompatibilit�)
-            $total_imp = 0;
-            $decalc_imp = 0;
-            foreach ($vat_castle as $k => $v) { // attraverso dell'array per calcolare i totali
-                $total_imp += $v['impcast'];
-                $row++;
-            }
-			foreach ($vat_castle as $k => $v) {   // riattraverso l'array del castelletto
-				// per aggiungere proporzionalmente (ventilazione)
-
-				$vat = gaz_dbi_get_row($gTables['aliiva'], "codice", $k);
-				$new_castle[$k]['codiva'] = $vat['codice'];
-				$new_castle[$k]['periva'] = $vat['aliquo'];
-				$new_castle[$k]['tipiva'] = $vat['tipiva'];
-				$new_castle[$k]['descriz'] = $vat['descri'];
-				$new_castle[$k]['fae_natura'] = $vat['fae_natura'];
-				$row--;
-				if (abs($total_imp) >= 0.01) { // per evitare il divide by zero in caso di imponibile 0
-					if ($row == 0) { // � l'ultimo rigo del castelletto
-						// aggiungo il resto
-						$new_imp = round($total_imp - $decalc_imp + ($value * ($total_imp - $decalc_imp) / $total_imp), 2);
-					} else {
-						$new_imp = round($v['impcast'] + ($value * $v['impcast'] / $total_imp), 2);
-						$decalc_imp += $v['impcast'];
-					}
-				} else {
-					$new_imp = $v['impcast'];
-				}
-				$new_castle[$k]['impcast'] = $new_imp;
-				$new_castle[$k]['imponi'] = $new_imp;
-				$this->total_imp += $new_imp; // aggiungo all'accumulatore del totale
-				if ($vat['aliquo'] < 0.01 && $vat['taxstamp'] > 0) { // � senza aliquota ed � soggetto a bolli
-					$this->total_exc_with_duty += $new_imp; // aggiungo all'accumulatore degli esclusi/esenti/non imponibili
-				}
-				if(isset($v['impneg'])){$new_castle[$k]['impneg']=$v['impneg'];}
-				$new_castle[$k]['ivacast'] = round(($new_imp * $vat['aliquo']) / 100, 2);
-				if ($vat['tipiva'] == 'T') { // � un'IVA non esigibile per split payment
-					$this->total_isp += $new_castle[$k]['ivacast']; // aggiungo all'accumulatore
-				}
-				$this->total_vat += $new_castle[$k]['ivacast']; // aggiungo anche l'IVA al totale
-			}
-        } else {  // METODO DELL'AGGIUNTA DIRETTA (nuovo)
-            $match = false;
-            foreach ($vat_castle as $k => $v) { // attraverso dell'array
-                $vat = gaz_dbi_get_row($gTables['aliiva'], "codice", $k);
-                $new_castle[$k]['codiva'] = $vat['codice'];
-                $new_castle[$k]['periva'] = $vat['aliquo'];
-                $new_castle[$k]['tipiva'] = $vat['tipiva'];
-                $new_castle[$k]['descriz'] = $vat['descri'];
-                $new_castle[$k]['fae_natura'] = $vat['fae_natura'];
-                if ($k == $vat_rate) { // SE � la stessa aliquota aggiungo il nuovo valore
-                    $match = true;
-                    $new_imp = $v['impcast'] + $value;
-                    $new_castle[$k]['impcast'] = $new_imp;
-                    $new_castle[$k]['imponi'] = $new_imp;
-                    $new_castle[$k]['ivacast'] = round(($new_imp * $vat['aliquo']) / 100, 2);
-                } else { // � una aliquota che non interessa il valore che devo aggiungere
-                    $new_castle[$k]['impcast'] = $v['impcast'];
-                    $new_castle[$k]['imponi'] = $v['impcast'];
-                    $new_castle[$k]['ivacast'] = round(($v['impcast'] * $vat['aliquo']) / 100, 2);
-                }
-				if (isset($v['impneg'])){
-					$new_castle[$k]['impneg']=$v['impneg'];
-					$new_castle[$k]['ivaneg']=$v['ivaneg'];
-				}
-                if ($vat['aliquo'] < 0.01 && $vat['taxstamp'] > 0) { // � senza IVA ed � soggetto a bolli
-                    $this->total_exc_with_duty += $new_castle[$k]['impcast']; // aggiungo all'accumulatore degli esclusi/esenti/non imponibili
-                }
-                if ($vat['tipiva'] == 'T') { // � un'IVA non esigibile per split payment
-                    $this->total_isp += $new_castle[$k]['ivacast']; // aggiungo all'accumulatore
-                }
-                $this->total_imp += $new_castle[$k]['impcast']; // aggiungo all'accumulatore del totale
-                $this->total_vat += $new_castle[$k]['ivacast']; // aggiungo anche l'IVA al totale
-            }
-            if (!$match && abs($value) >= 0.01) { // non ho trovato una aliquota uguale a quella del nuovo valore se > 0
-                $vat = gaz_dbi_get_row($gTables['aliiva'], "codice", $vat_rate);
-                $new_castle[$vat_rate]['codiva'] = $vat['codice'];
-                $new_castle[$vat_rate]['periva'] = $vat['aliquo'];
-                $new_castle[$vat_rate]['tipiva'] = $vat['tipiva'];
-                $new_castle[$vat_rate]['impcast'] = $value;
-                $new_castle[$vat_rate]['imponi'] = $value;
-                $new_castle[$vat_rate]['ivacast'] = round(($value * $vat['aliquo']) / 100, 2);
-                $new_castle[$vat_rate]['descriz'] = $vat['descri'];
-                $new_castle[$vat_rate]['fae_natura'] = $vat['fae_natura'];
-                if ($vat['aliquo'] < 0.01 && $vat['taxstamp'] > 0) { // � senza IVA ed � soggetto a bolli
-                    $this->total_exc_with_duty += $new_castle[$vat_rate]['impcast']; // aggiungo all'accumulatore degli esclusi/esenti/non imponibili
-                }
-                if ($vat['tipiva'] == 'T') { // � un'IVA non esigibile per split payment
-                    $this->total_isp += $new_castle[$vat_rate]['ivacast']; // aggiungo all'accumulatore
-                }
-                $this->total_imp += $new_castle[$vat_rate]['impcast']; // aggiungo all'accumulatore del totale
-                $this->total_vat += $new_castle[$vat_rate]['ivacast']; // aggiungo anche l'IVA al totale
-            }
+        $new_castle[$k]['impcast'] = $new_imp;
+        $new_castle[$k]['imponi'] = $new_imp;
+        $this->total_imp += $new_imp; // aggiungo all'accumulatore del totale
+        if ($vat['aliquo'] < 0.01 && $vat['taxstamp'] > 0) { // � senza aliquota ed � soggetto a bolli
+          $this->total_exc_with_duty += $new_imp; // aggiungo all'accumulatore degli esclusi/esenti/non imponibili
         }
-        $this->castle = $new_castle;
+        if(isset($v['impneg'])){$new_castle[$k]['impneg']=$v['impneg'];}
+        $new_castle[$k]['ivacast'] = round(($new_imp * $vat['aliquo']) / 100, 2);
+        if ($vat['tipiva'] == 'T') { // � un'IVA non esigibile per split payment
+          $this->total_isp += $new_castle[$k]['ivacast']; // aggiungo all'accumulatore
+        }
+        $this->total_vat += $new_castle[$k]['ivacast']; // aggiungo anche l'IVA al totale
+      }
+    } else {  // METODO DELL'AGGIUNTA DIRETTA (nuovo)
+      $match = false;
+      foreach ($vat_castle as $k => $v) { // attraverso dell'array
+        $vat = gaz_dbi_get_row($gTables['aliiva'], "codice", $k);
+        $new_castle[$k]['codiva'] = $vat['codice'];
+        $new_castle[$k]['periva'] = $vat['aliquo'];
+        $new_castle[$k]['tipiva'] = $vat['tipiva'];
+        $new_castle[$k]['descriz'] = $vat['descri'];
+        $new_castle[$k]['fae_natura'] = $vat['fae_natura'];
+        if ($k == $vat_rate) { // SE è la stessa aliquota aggiungo il nuovo valore
+          $match = true;
+          $new_imp = $v['impcast'] + $value;
+          $new_castle[$k]['impcast'] = $new_imp;
+          $new_castle[$k]['imponi'] = $new_imp;
+          $new_castle[$k]['ivacast'] = round(($new_imp * $vat['aliquo']) / 100, 2);
+        } else { // è una aliquota che non interessa il valore che devo aggiungere
+          $new_castle[$k]['impcast'] = $v['impcast'];
+          $new_castle[$k]['imponi'] = $v['impcast'];
+          $new_castle[$k]['ivacast'] = round(($v['impcast'] * $vat['aliquo']) / 100, 2);
+        }
+        if (isset($v['impneg'])){
+          $new_castle[$k]['impneg']=$v['impneg'];
+          $new_castle[$k]['ivaneg']=$v['ivaneg'];
+        }
+        if ($vat['aliquo'] < 0.01 && $vat['taxstamp'] > 0) { // � senza IVA ed � soggetto a bolli
+            $this->total_exc_with_duty += $new_castle[$k]['impcast']; // aggiungo all'accumulatore degli esclusi/esenti/non imponibili
+        }
+        if ($vat['tipiva'] == 'T') { // è un'IVA non esigibile per split payment
+            $this->total_isp += $new_castle[$k]['ivacast']; // aggiungo all'accumulatore
+        }
+        $this->total_imp += $new_castle[$k]['impcast']; // aggiungo all'accumulatore del totale
+        $this->total_vat += $new_castle[$k]['ivacast']; // aggiungo anche l'IVA al totale
+      }
+      if (!$match && abs($value) >= 0.01) { // non ho trovato una aliquota uguale a quella del nuovo valore se > 0
+        $vat = gaz_dbi_get_row($gTables['aliiva'], "codice", $vat_rate);
+        $new_castle[$vat_rate]['codiva'] = $vat['codice'];
+        $new_castle[$vat_rate]['periva'] = $vat['aliquo'];
+        $new_castle[$vat_rate]['tipiva'] = $vat['tipiva'];
+        $new_castle[$vat_rate]['impcast'] = $value;
+        $new_castle[$vat_rate]['imponi'] = $value;
+        $new_castle[$vat_rate]['ivacast'] = round(($value * $vat['aliquo']) / 100, 2);
+        $new_castle[$vat_rate]['descriz'] = $vat['descri'];
+        $new_castle[$vat_rate]['fae_natura'] = $vat['fae_natura'];
+        if ($vat['aliquo'] < 0.01 && $vat['taxstamp'] > 0) { // � senza IVA ed � soggetto a bolli
+          $this->total_exc_with_duty += $new_castle[$vat_rate]['impcast']; // aggiungo all'accumulatore degli esclusi/esenti/non imponibili
+        }
+        if ($vat['tipiva'] == 'T') { // è un'IVA non esigibile per split payment
+          $this->total_isp += $new_castle[$vat_rate]['ivacast']; // aggiungo all'accumulatore
+        }
+        $this->total_imp += $new_castle[$vat_rate]['impcast']; // aggiungo all'accumulatore del totale
+        $this->total_vat += $new_castle[$vat_rate]['ivacast']; // aggiungo anche l'IVA al totale
+      }
     }
+    $this->castle = $new_castle;
+  }
+  function round_VAT_castle($vat_castle, $valroundvat=[]) {
+    global $gTables;
+    $this->totroundcastle = 0;
+    $new_castle=$vat_castle;
+    foreach ($vat_castle as $k => $v) {   // riattraverso l'array del castelletto
+      if(isset($valroundvat[$k])){
+        $new_castle[$k]['ivacast'] = round($v['ivacast']+$valroundvat[$k],2);
+        $this->total_vat += $valroundvat[$k];
+        $this->totroundcastle += $valroundvat[$k];
+      }
+    }
+    $this->castle = $new_castle;
+  }
 
 }
 

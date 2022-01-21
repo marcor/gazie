@@ -1,6 +1,6 @@
 <?php
 
-/* $
+/*
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
   Copyright (C) 2004-2022 - Antonio De Vincentiis Montesilvano (PE)
@@ -344,6 +344,7 @@ class DocContabVars {
         if ($this->taxstamp < 0.01 && $this->tesdoc['taxstamp'] >= 0.01) {
             $this->taxstamp = $this->tesdoc['taxstamp'];
         }
+        $this->roundcastle = [];
         $this->riporto = 0.00;
         $this->ritenuta = 0.00;
         $results = array();
@@ -422,6 +423,8 @@ class DocContabVars {
                 $rigo['descri'] = $body_text['body_text'];
             } elseif ($rigo['tiprig'] == 3) {
                 $this->riporto += $rigo['prelis'];
+            } elseif ($rigo['tiprig'] == 91) {
+                $this->roundcastle[$rigo['codvat']] = $rigo['prelis'];
             }
 			if ($this->tesdoc['tipdoc']=='AFA' && $rigo['tiprig'] <= 2 && strlen($rigo['descri'])>70  ){
 				/* 	se la descrizione no la si riesce a contenere in un rigo (es.fattura elettronica d'acquisto)
@@ -462,11 +465,12 @@ class DocContabVars {
         $this->tot_ritenute = $this->ritenuta;
         $this->virtual_taxstamp = $this->tesdoc['virtual_taxstamp'];
         $this->impbol = 0.00;
+        $this->totroundcastle = $this->roundcastle;
         $this->totriport = $this->riporto;
         $this->speseincasso = ((isset($this->tesdoc['speban']))?$this->tesdoc['speban']:0) * ((isset($this->pagame['numrat']))?$this->pagame['numrat']:1);
-        $this->cast = array();
+        $this->cast =[];
         if (!isset($this->castel)) {
-            $this->castel = array();
+            $this->castel = [];
         }
         if (!isset($this->totimp_body)) {
             $this->totimp_body = 0;
@@ -489,10 +493,15 @@ class DocContabVars {
         if ($this->impbol >= 0.01 || $this->taxstamp >= 0.01) {
             $calc->add_value_to_VAT_castle($calc->castle, $this->taxstamp + $this->impbol, $this->azienda['taxstamp_vat']);
         }
+        if (count($this->roundcastle)>=1){ // ci sono stati dei tiprig = 91 per arrotondamenti IVA su castelletto
+          $calc->round_VAT_castle($calc->castle,$this->roundcastle);
+        }
         $this->cast = $calc->castle;
         $this->riporto = 0;
+        $this->totroundcastle = $calc->totroundcastle;
         $this->ritenute = 0;
-        $this->castel = array();
+        $this->roundcastle = [];
+        $this->castel = [];
     }
 
     function getExtDoc() {

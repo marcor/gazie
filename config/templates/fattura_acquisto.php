@@ -119,9 +119,9 @@ class FatturaAcquisto extends Template
                 switch($rigo['tiprig']) {
                 case "0":
                     $this->Cell(25, 5, $rigo['codart'], 1, 0, 'L', 0, '', 1);
-                    $this->Cell(80, 5, $rigo['descri'], 1, 0, 'L', 0, '', 1);                  
+                    $this->Cell(80, 5, $rigo['descri'], 1, 0, 'L', 0, '', 1);
                     $this->Cell(7, 5, $rigo['unimis'], 1, 0, 'C');
-                    $this->Cell(16, 5, gaz_format_quantity($rigo['quanti'], 1, $this->decimal_quantity), 1, 0, 'R');                      
+                    $this->Cell(16, 5, gaz_format_quantity($rigo['quanti'], 1, $this->decimal_quantity), 1, 0, 'R');
                     $this->Cell(18, 5, number_format($rigo['prelis'], $this->decimal_price, ',', ''), 1, 0, 'R');
                     if ($rigo['sconto'] > 0) {
                         $this->Cell(8, 5, number_format($rigo['sconto'], 1, ',', ''), 1, 0, 'C');
@@ -242,6 +242,7 @@ class FatturaAcquisto extends Template
         $totivasplitpay = $this->docVars->totivasplitpay;
         $vettor = $this->docVars->vettor;
         $impbol = $this->docVars->impbol;
+        $totroundcastle = $this->docVars->totroundcastle;
         $totriport = $this->docVars->totriport;
         $ritenuta = $this->docVars->tot_ritenute;
         $taxstamp = $this->docVars->taxstamp;
@@ -249,7 +250,7 @@ class FatturaAcquisto extends Template
             $taxstamp = 0;
         }
         //effettuo il calcolo degli importi delle scadenze
-        $totpag = $totimpfat + $taxstamp + $impbol + $totriport + $totivafat - $ritenuta - $totivasplitpay;
+        $totpag = $totimpfat + $taxstamp + $impbol + $totroundcastle + $totriport + $totivafat - $ritenuta - $totivasplitpay;
         $ratpag = CalcolaScadenze($totpag, $this->giorno, $this->mese, $this->anno, $this->pagame['tipdec'], $this->pagame['giodec'], $this->pagame['numrat'], $this->pagame['tiprat'], $this->pagame['mesesc'], $this->pagame['giosuc']);
         if ($ratpag) {
             //allungo l'array fino alla 4^ scadenza
@@ -313,7 +314,7 @@ class FatturaAcquisto extends Template
         }
         $this->SetY(218);
         $this->Cell(130);
-        $totale = $totimpfat + $totivafat + $impbol + $taxstamp;
+        $totale = $totimpfat + $totivafat + $impbol + $taxstamp + $totroundcastle;
         if ($this->tesdoc['id_tes'] > 0) {
             if ($ritenuta > 0) {
                 $this->SetFont('helvetica', 'B', 12);
