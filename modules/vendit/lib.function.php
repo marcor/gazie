@@ -243,7 +243,7 @@ class venditForm extends GAzieForm {
 			$where.= " AND LENGTH(fe_cod_univoco)<>6";
 		}
 		$orderby = "seziva ASC,tipdoc ASC, protoc ASC";
-		$result = gaz_dbi_dyn_query('tesdoc.*, CONCAT(SUBSTRING(tesdoc.tipdoc,1,1),tesdoc.protoc) AS ctrlp, SUBSTRING(tesdoc.tipdoc,1,1) AS ctrlreg ,
+		$result = gaz_dbi_dyn_query('tesdoc.*, CONCAT(tesdoc.seziva,SUBSTRING(tesdoc.tipdoc,1,1),tesdoc.protoc) AS ctrlp, SUBSTRING(tesdoc.tipdoc,1,1) AS ctrlreg ,
 							pay.tippag,pay.numrat,pay.incaut,pay.tipdec,pay.giodec,pay.tiprat,pay.mesesc,pay.giosuc,pay.id_bank,
 							customer.codice, customer.speban AS addebitospese,
 							CONCAT(anagraf.ragso1,\' \',anagraf.ragso2) AS ragsoc, anagraf.citspe, anagraf.prospe, anagraf.capspe, anagraf.country, anagraf.fe_cod_univoco, anagraf.pec_email, anagraf.e_mail, anagraf.country,
