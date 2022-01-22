@@ -174,7 +174,18 @@ $strScript = array("admin_fornit.php" =>
         " Fuori ",
         'tuttitipi' => 'Tutti i tipi',
         'tuttianni' => 'Tutti gli anni',
-        'tutticlienti' => 'Tutti i fornitori'
+        'tutticlienti' => 'Tutti i fornitori',
+        'dialog_fae_title' => 'File XML della fattura: ',
+        'dialog_fae_filename' => 'Scarica il file: ',
+        'dialog_fae_content_PA' => 'Il file per la PA è da scaricare e firmare prima di inviarlo ',
+        'dialog_fae_content_DI' => 'Il file è da inviare. Puoi scegliere di farlo singolarmente oppure impacchettandolo assieme ad eventuali altri precedenti non ancora inviati ',
+        'dialog_fae_content_ZI' => 'Il file è da inviare ma fa parte di un pacchetto ZIP, invialo assieme agli altri',
+        'dialog_fae_content_RE' => 'Solo qualora si voglia procedere ad un reinvio <b class="bg-warning">A CAUSA DI UNO SCARTO</b>, dopo aver corretto gli errori che lo hanno causato, cliccare su questo link per generare un file con nuovo nome:' ,
+        'dialog_fae_content_IN' => 'Il file è stato inviato, attenti la notifica dell\'esito del SdI ',
+        'dialog_fae_content_RC' => '<b><i class="glyphicon glyphicon-thumbs-up"></i> Il file è stato inviato e recapitato <i class="glyphicon glyphicon-ok-circle"></i></b>',
+        'dialog_fae_content_MC' => '<i class="glyphicon glyphicon-hand-right"></i> Il file è stato inviato ma non recapitato, il cliente può comunque prelevarlo dal suo cassetto fiscale. È buona norma inviargli anche il documento cartaceo e/o PDF <i class="glyphicon glyphicon-exclamation-sign"></i>',
+        'dialog_fae_content_NS' => '<i class="glyphicon glyphicon-thumbs-down"></i><b class="bg-danger"> ATTENZIONE!!! </b> <i class="glyphicon glyphicon-ban-circle"></i><br/>Il file è stato <b class="bg-danger">SCARTATO</b> si deve procedere al suo reinvio, ma <b class="bg-warning">solo dopo aver corretto l\'errore</b> sotto notificato:<br/>',
+
     ),
     "admin_docacq.php" =>
     array('title' => 'Inserimento/modifica documenti a fornitori',

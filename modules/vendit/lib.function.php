@@ -249,7 +249,7 @@ class venditForm extends GAzieForm {
 							CONCAT(anagraf.ragso1,\' \',anagraf.ragso2) AS ragsoc, anagraf.citspe, anagraf.prospe, anagraf.capspe, anagraf.country, anagraf.fe_cod_univoco, anagraf.pec_email, anagraf.e_mail, anagraf.country,
 							country.istat_area, flux.flux_status', $from, $where, $orderby);
 		$docs['data'] = [];
-		$ctrlp = 0;
+		$ctrlp = '';
 		$carry = 0;
 		$ivasplitpay = 0;
 		$somma_spese = 0;
@@ -258,7 +258,7 @@ class venditForm extends GAzieForm {
 		$rit = 0;
 		while ($tes = gaz_dbi_fetch_array($result)) {
 			if ($tes['ctrlp'] <> $ctrlp) { // la prima testata della fattura
-				if ($ctrlp > 0 && ($docs['data'][$ctrlp]['tes']['stamp'] >= 0.01 || $docs['data'][$ctrlp]['tes']['taxstamp'] >= 0.01 )) { // non è il primo ciclo faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
+				if (strlen($ctrlp) > 0 && ($docs['data'][$ctrlp]['tes']['stamp'] >= 0.01 || $docs['data'][$ctrlp]['tes']['taxstamp'] >= 0.01 )) { // non è il primo ciclo faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
 					$calc->payment_taxstamp($calc->total_imp + $calc->total_vat + $carry - $rit - $ivasplitpay + $taxstamp, $docs['data'][$ctrlp]['tes']['stamp'], $docs['data'][$ctrlp]['tes']['round_stamp'] * $docs['data'][$ctrlp]['tes']['numrat']);
 					$calc->add_value_to_VAT_castle($docs['data'][$ctrlp]['vat'], $taxstamp + $calc->pay_taxstamp, $admin_aziend['taxstamp_vat']);
 					$docs['data'][$ctrlp]['vat'] = $calc->castle;
@@ -373,7 +373,7 @@ class venditForm extends GAzieForm {
 
 			$ctrlp = $tes['ctrlp'];
 		}
-		if ($ctrlp > 0 && ($docs['data'][$ctrlp]['tes']['stamp'] >= 0.01 || $taxstamp >= 0.01)) { // a chiusura dei cicli faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
+		if (strlen($ctrlp) > 0 && ($docs['data'][$ctrlp]['tes']['stamp'] >= 0.01 || $taxstamp >= 0.01)) { // a chiusura dei cicli faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
 			$calc->payment_taxstamp($calc->total_imp + $calc->total_vat + $carry - $rit - $ivasplitpay + $taxstamp, $docs['data'][$ctrlp]['tes']['stamp'], $docs['data'][$ctrlp]['tes']['round_stamp'] * $docs['data'][$ctrlp]['tes']['numrat']);
 			// aggiungo al castelletto IVA
 			$calc->add_value_to_VAT_castle($docs['data'][$ctrlp]['vat'], $taxstamp + $calc->pay_taxstamp, $admin_aziend['taxstamp_vat']);

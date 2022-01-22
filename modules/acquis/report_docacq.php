@@ -62,15 +62,16 @@ $sortable_headers = array(
 require("../../library/include/header.php");
 $script_transl = HeadMain();
 if (count($_GET)<1) {
-	// ultima fattura ricevuta
-	$rs_last = gaz_dbi_dyn_query('seziva, YEAR(datemi) AS yearde', $gTables['tesdoc'], "tipdoc LIKE 'AF%'", 'datreg DESC, id_tes DESC', 0, 1);
+	// ultima fattura registrata
+	$rs_last = gaz_dbi_dyn_query('seziva, YEAR(datreg) AS yearde', $gTables['tesdoc'], "tipdoc LIKE 'AF%'", 'datreg DESC, id_tes DESC', 0, 1);
 	$last = gaz_dbi_fetch_array($rs_last);
 	if ($last) {
 		$default_where=['sezione' => $last['seziva'], 'tipo' => 'AF_', 'anno'=>$last['yearde']];
-        $_GET['anno']=$last['yearde'];
-	} else {
+    $_GET['anno']=$last['yearde'];
+  } else {
 		$default_where=['sezione' => 1, 'tipo' => 'AF_', 'anno'=> date('Y')];
 	}
+
 } else {
 	$si=(isset($_GET['sezione']))?intval($_GET['sezione']):1;
 	$default_where=['sezione' => $si, 'tipo' => 'AF_'];
@@ -300,27 +301,24 @@ function confirFae(link){
         </tr>
         <tr>
 <?php
-            $ts->output_headers();
+  $ts->output_headers();
 ?>
-        </tr>
+       </tr>
 <?php
-
 //recupero le testate in base alle scelte impostate
 $result = gaz_dbi_dyn_query($gTables['tesdoc'].".protoc,".$gTables['tesdoc'].".datfat,".$gTables['tesdoc'].".numfat,".$gTables['tesdoc'].".tipdoc,".$gTables['tesdoc'].".clfoco,".$gTables['tesdoc'].".id_tes,".$gTables['tesdoc'].".datreg,".$gTables['tesdoc'].".fattura_elettronica_original_name,". $gTables['tesdoc'].".id_con,".$gTables['anagra'].".ragso1",$tesdoc_e_partners, $ts->where, $ts->orderby, $ts->getOffset(), $ts->getLimit(),"protoc,datfat");
 $paymov = new Schedule();
-
 // creo un array con gli ultimi documenti dei vari anni (gli unici eliminabili senza far saltare il protocollo del registro IVA)
 $rs_last_docs = gaz_dbi_query("SELECT id_tes
-            FROM ".$gTables['tesdoc']." AS t1
-            JOIN ( SELECT MAX(protoc) AS max_protoc FROM ".$gTables['tesdoc']." WHERE tipdoc LIKE 'AF_' AND seziva = ".$sezione." GROUP BY YEAR(datreg)) AS t2
-            ON t1.protoc = t2.max_protoc WHERE t1.tipdoc LIKE 'AF_' AND t1.seziva = ".$sezione);
+  FROM ".$gTables['tesdoc']." AS t1
+  JOIN ( SELECT MAX(protoc) AS max_protoc FROM ".$gTables['tesdoc']." WHERE tipdoc LIKE 'AF_' AND seziva = ".$sezione." GROUP BY YEAR(datreg)) AS t2
+  ON t1.protoc = t2.max_protoc WHERE t1.tipdoc LIKE 'AF_' AND t1.seziva = ".$sezione);
 $year_last_protoc_id_tes=[];
 while ($ld = gaz_dbi_fetch_array($rs_last_docs)){
-    $year_last_protoc_id_tes[$ld['id_tes']]=true;
+  $year_last_protoc_id_tes[$ld['id_tes']]=true;
 }
 // fine creazione array con i documenti eliminabili
 $sdi_flux = gaz_dbi_get_row($gTables['company_config'], 'var', 'send_fae_zip_package')['val'];
-
 while ($row = gaz_dbi_fetch_array($result)) {
   // faccio il check per vedere se ci sono righi da trasferire in contabilità di magazzino
   $ck = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes=". $row['id_tes']." AND  LENGTH(TRIM(codart))>=1 AND tiprig=0 AND id_mag=0");
@@ -331,45 +329,45 @@ while ($row = gaz_dbi_fetch_array($result)) {
 	if ($row['id_con'] > 0) {
 		$tesmov = gaz_dbi_get_row($gTables['tesmov'], 'id_tes', $row['id_con']);
     if ($tesmov) {
-        $paymov->getStatus(substr($tesmov['datreg'],0,4).$tesmov['regiva'].$tesmov['seziva']. str_pad($tesmov['protoc'], 9, 0, STR_PAD_LEFT)); // passo il valore formattato di id_tesdoc_ref
-        $paymov_status = $paymov->Status;
-        // riprendo il rigo  della contabilità con il cliente per avere l'importo
-        $importo = gaz_dbi_get_row($gTables['rigmoc'], 'id_tes', $row['id_con'], "AND codcon = ".$row['clfoco']);
+      $paymov->getStatus(substr($tesmov['datreg'],0,4).$tesmov['regiva'].$tesmov['seziva']. str_pad($tesmov['protoc'], 9, 0, STR_PAD_LEFT)); // passo il valore formattato di id_tesdoc_ref
+      $paymov_status = $paymov->Status;
+      // riprendo il rigo  della contabilità con il cliente per avere l'importo
+      $importo = gaz_dbi_get_row($gTables['rigmoc'], 'id_tes', $row['id_con'], "AND codcon = ".$row['clfoco']);
     }
 	}
   $template="";
   $y = substr($row['datfat'], 0, 4);
   if ($row["tipdoc"] == 'AFA') {
-      $tipodoc = "Fattura";
-      $modulo = "stampa_docacq.php?id_tes=" . $row['id_tes']."&template=".$template;
-      $modifi = "admin_docacq.php?Update&id_tes=" . $row['id_tes'];
+    $tipodoc = "Fattura";
+    $modulo = "stampa_docacq.php?id_tes=" . $row['id_tes']."&template=".$template;
+    $modifi = "admin_docacq.php?Update&id_tes=" . $row['id_tes'];
   } elseif ($row["tipdoc"] == 'AFD') {
-      $tipodoc = "Nota Debito";
-      $modulo = "stampa_docacq.php?id_tes=" . $row['id_tes']."&template=".$template;
-      $modifi = "admin_docacq.php?Update&id_tes=" . $row['id_tes'];
+    $tipodoc = "Nota Debito";
+    $modulo = "stampa_docacq.php?id_tes=" . $row['id_tes']."&template=".$template;
+    $modifi = "admin_docacq.php?Update&id_tes=" . $row['id_tes'];
   } elseif ($row["tipdoc"] == 'AFC') {
-      $tipodoc = "Nota Credito";
-      $modulo = "stampa_docacq.php?id_tes=" . $row['id_tes']."&template=".$template;
-      $modifi = "admin_docacq.php?Update&id_tes=" . $row['id_tes'];
+    $tipodoc = "Nota Credito";
+    $modulo = "stampa_docacq.php?id_tes=" . $row['id_tes']."&template=".$template;
+    $modifi = "admin_docacq.php?Update&id_tes=" . $row['id_tes'];
   } elseif ($row["tipdoc"] == 'AFT') {
-      $tipodoc = "Fattura";
-      $modulo = "stampa_docacq.php?id_tes=" . $row['id_tes']."&template=".$template;
-      $modifi = "";
+    $tipodoc = "Fattura";
+    $modulo = "stampa_docacq.php?id_tes=" . $row['id_tes']."&template=".$template;
+    $modifi = "";
 	}
   echo "<tr class=\"FacetDataTD\">";
   if (!empty($modifi)) {
-      echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"" . $modifi . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $row["protoc"] . "</td>";
+    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"" . $modifi . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $row["protoc"] . "</td>";
   } else {
-      echo "<td><button class=\"btn btn-xs btn-default btn-edit disabled\">" . $row["protoc"] . " &nbsp;</button></td>";
+    echo "<td><button class=\"btn btn-xs btn-default btn-edit disabled\">" . $row["protoc"] . " &nbsp;</button></td>";
   }
   echo "<td>" . gaz_format_date($row["datreg"]) . " &nbsp;</td>";
   if (empty($row["fattura_elettronica_original_name"])) {
-      print '<td>'.$tipodoc."</td>\n";
+    print '<td>'.$tipodoc."</td>\n";
   } else {
-      print '<td>';
-      print '<a class="btn btn-xs btn-default btn-xml" target="_blank" href="view_fae.php?id_tes=' . $row["id_tes"] . '">'.$tipodoc.' '.$row["fattura_elettronica_original_name"] . '</a>';
-      print '<a class="btn btn-xs btn-default" href="download_fattura_elettronica.php?id='.$row["id_tes"].'"><i class="glyphicon glyphicon-download"></i></a>';
-      print '</td>';
+    print '<td>';
+    print '<a class="btn btn-xs btn-default btn-xml" target="_blank" href="view_fae.php?id_tes=' . $row["id_tes"] . '">'.$tipodoc.' '.$row["fattura_elettronica_original_name"] . '</a>';
+    print '<a class="btn btn-xs btn-default" href="download_fattura_elettronica.php?id='.$row["id_tes"].'"><i class="glyphicon glyphicon-download"></i></a>';
+    print '</td>';
   }
   echo "<td>" . $row["numfat"] . " &nbsp;</td>";
   echo "<td>" . gaz_format_date($row["datfat"]) . " &nbsp;</td>";
@@ -383,16 +381,15 @@ while ($row = gaz_dbi_fetch_array($result)) {
     if (isset($revch) && !empty($revch['id_tes'])) {
 		$modulo_fae = "../vendit/electronic_invoice.php?id_tes=" . $revch['id_tes'];
 		$revch['fae_attuale']="IT" . $admin_aziend['codfis'] . "_".encodeSendingNumber(array('azienda' => $admin_aziend['codice'],
-											 'sezione' => 5,
-											 'anno' => 2009,
-											 'fae_reinvii'=> substr($revch["datreg"],3,1),
-											 'protocollo' => intval($revch["fattura_elettronica_reinvii"]*10000+ $revch["protoc"])), 36).".xml";
+			'sezione' => 5,
+			'anno' => 2009,
+			'fae_reinvii'=> substr($revch["datreg"],3,1),
+			'protocollo' => intval($revch["fattura_elettronica_reinvii"]*10000+ $revch["protoc"])), 36).".xml";
 		$revch['fae_reinvio']="IT" . $admin_aziend['codfis'] . "_".encodeSendingNumber(array('azienda' => $admin_aziend['codice'],
-											 'sezione' => 5,
-											 'anno' => 2009,
-											 'fae_reinvii'=> substr($revch["datreg"],3,1),
-											 'protocollo' => intval(($revch["fattura_elettronica_reinvii"]+1)*10000+ $revch["protoc"])), 36).".xml";
-
+			'sezione' => 5,
+			'anno' => 2009,
+			'fae_reinvii'=> substr($revch["datreg"],3,1),
+			'protocollo' => intval(($revch["fattura_elettronica_reinvii"]+1)*10000+ $revch["protoc"])), 36).".xml";
 		$zipped = (preg_match("/^[A-Z0-9]{13,18}_([a-zA-Z0-9]{5}).zip$/",$revch['fattura_elettronica_zip_package'],$match))?$match[1]:false;
 		if ($zipped) { // se è contenuto in un pacchetto di file permetterà sia il download del singolo XML che del pacchetto in cui è contenuto
 			if ($revch['fattura_elettronica_reinvii']==0) {
