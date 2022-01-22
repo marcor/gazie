@@ -884,14 +884,14 @@ if ($form['artico'] != "" && intval( $item_artico['lot_or_serial'] && $form['cau
 			<div id="lm_dialog" class="collapse" >
 			<?php
 			if ((count($lm->available) >= 1)) {
-				foreach ($lm->available as $v_lm) {
+				foreach ($lm->available as $v_lm) {					
 					if ($v_lm['id'] <> $form['id_lotmag']) {
 						echo '<div>Cambia con:<button class="btn btn-xs btn-warning" type="text" onclick="this.form.submit();" name="id_lotmag" value="'.$v_lm['id'].'">'
 						. $v_lm['id']. ' lotto n.:' . $v_lm['identifier'];
 						if ($v_lm['expiry']>0){
 							echo ' scadenza:' . gaz_format_date($v_lm['expiry']);
 						}
-						echo ' disponibili:' . gaz_format_quantity($count[$v_lm['identifier']])
+						echo ' disponibili:' . gaz_format_quantity($v_lm['rest'])
 						. '</button></div>';
 					}
 				}
