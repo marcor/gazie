@@ -404,6 +404,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $bodytext = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", 'artico_' . $form['codice']);
     $form['body_text'] = ($bodytext)?$bodytext['body_text']:'';
 } else { //se e' il primo accesso per INSERT
+	$autoincrement_id_ecomm = gaz_dbi_get_row($gTables['company_config'], 'var', 'autoincrement_id_ecomm')['val'];// acquisico impostazione per autoincremento ID ref ecommerce
     $form = gaz_dbi_fields('artico');
     /** ENRICO FEDELE */
     if ($modal === false) {
@@ -434,9 +435,13 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     // eventuale descrizione amplia
     $form['body_text'] = '';
     // propongo il primo ID libero per l'ecommerce
-    $max_ref_ecommerce_id_product = gaz_dbi_query("select ref_ecommerce_id_product from ".$gTables['artico']." ORDER BY ref_ecommerce_id_product DESC LIMIT 1");
-    $max_id = gaz_dbi_fetch_array($max_ref_ecommerce_id_product);
-    $form['ref_ecommerce_id_product'] = ++$max_id[0];
+	if ($autoincrement_id_ecomm==1){// se è stato impostato in configurazione avanzata azienda
+		$max_ref_ecommerce_id_product = gaz_dbi_query("select ref_ecommerce_id_product from ".$gTables['artico']." ORDER BY ref_ecommerce_id_product DESC LIMIT 1");
+		$max_id = gaz_dbi_fetch_array($max_ref_ecommerce_id_product);
+		$form['ref_ecommerce_id_product'] = ++$max_id[0];
+	} else {// altrimenti lascio non impostato
+		$form['ref_ecommerce_id_product']="";
+	}
     // ripropongo le ultime unità di misura più utilizzate
     $rs_unimis = gaz_dbi_query("SELECT unimis, COUNT(unimis) c FROM ".$gTables['artico']." GROUP BY unimis ORDER BY c DESC LIMIT 1");
     $unimis = gaz_dbi_fetch_array($rs_unimis);
