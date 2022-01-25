@@ -25,13 +25,15 @@
  */
 require("../../library/include/datlib.inc.php");
 require("../../modules/magazz/lib.function.php");
+require("../../library/include/check.inc.php");
+$ctrl_cf = new check_VATno_TAXcode();
 $admin_aziend = checkAdmin();
 $msg = array('err' => array(), 'war' => array());
 $anagrafica = new Anagrafica();
 $gForm = new venditForm();
 $magazz = new magazzForm();
 $class="btn-danger";
-$addvalue=" nonostante l'avviso";
+$addvalue="";
 
 $show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
 $tipo_composti = gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti');
@@ -380,9 +382,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $msg['err'][] = "cashlimit";
             }
         }
-        if (!empty($form['fiscal_code'])) {  // controllo codice fiscale
-            require("../../library/include/check.inc.php");
-            $ctrl_cf = new check_VATno_TAXcode();
+        if (!empty($form['fiscal_code'])) {  // controllo codice fiscale          
             $rs_cf = $ctrl_cf->check_TAXcode($form['fiscal_code']);
             if (!empty($rs_cf)) {
                 $msg['err'][] = "codfis";
@@ -816,7 +816,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 			if (strtotime($datem) < strtotime($uldtfile) && $war<>"warning"){
 				$msg['war'][] = "siandate";
 				$class="btn-danger";
-				$addvalue=" nonostante l'avviso";
+				$addvalue=" nonostante l'avviso SIAN";
 				$war="warning";//per evitare di avvisare più volte nel caso di più righi con lo stesso problema
 			}
 		}
@@ -830,7 +830,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 					if ($n>1){
 						$msg['war'][] = "doppioIDlot";
 						$class="btn-danger";
-						$addvalue=" nonostante l'avviso";
+						$addvalue=" nonostante l'avviso lotti";
 					}
 				}
 			}
@@ -861,7 +861,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['numfat'] = $tesdoc['numfat'];
     $form['clfoco'] = $tesdoc['clfoco'];
     // uso impropriamente la colonna spediz per mettere il codice fiscale inserito manualmente
-    $form['fiscal_code'] = $tesdoc['spediz'];
+    // controllo se $tesdoc'spediz' è un codice fiscale
+	$rs_cf = $ctrl_cf->check_TAXcode($tesdoc['spediz']);
+	if (!empty($rs_cf)) {// non è codice fiscale
+		$form['fiscal_code'] = "";
+	} else {// è un codice fiscale
+		$form['fiscal_code'] = $tesdoc['spediz'];
+	}    
     $form['search']['clfoco'] =($cliente)?substr($cliente['ragso1'], 0, 6):'';
     $form['id_agente'] = $tesdoc['id_agente'];
     $provvigione = new Agenti;
