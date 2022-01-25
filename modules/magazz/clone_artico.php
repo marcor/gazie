@@ -35,7 +35,7 @@ if (!isset($_POST['ritorno'])) {
 }
 
 if (isset($_GET['codice']) and ! isset($_POST['back'])) {
-    $new_codice = substr($_GET['codice'], 0, 13) . '_2';
+    $new_codice = substr($_GET['codice'], 0, 30) . '_2';
     // controllo che l'articolo non sia stato gi� duplicato
     $rs_articolo = gaz_dbi_dyn_query('codice', $gTables['artico'], "codice = '" . $new_codice . "'", "codice DESC", 0, 1);
     $risultato = gaz_dbi_fetch_array($rs_articolo);
@@ -49,7 +49,7 @@ if (isset($_GET['codice']) and ! isset($_POST['back'])) {
         echo "</form>\n";
         require("../../library/include/footer.php");
     } else { // se non � mai stato duplicato posso farlo
-        $originalArtico = gaz_dbi_get_row($gTables['artico'], 'codice', substr($_GET['codice'], 0, 15)); //prelevo l'originale
+        $originalArtico = gaz_dbi_get_row($gTables['artico'], 'codice', substr($_GET['codice'], 0, 32)); //prelevo l'originale
         $originalArtico['codice'] = $new_codice;
         gaz_dbi_table_insert('artico', $originalArtico);
         header("Location: admin_artico.php?codice=" . $new_codice . "&Update");

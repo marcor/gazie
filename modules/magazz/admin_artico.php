@@ -101,7 +101,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
   $form['web_public_init'] = $_POST['web_public_init'];
   $form['var_id'] = (isset($_POST['var_id']))?$_POST['var_id']:'';
   $form['var_name'] = (isset($_POST['var_name']))?$_POST['var_name']:'';
-  $form['ref_code'] = substr($_POST['ref_code'], 0, 15);
+  $form['ref_code'] = substr($_POST['ref_code'], 0,32);
   // i prezzi devono essere arrotondati come richiesti dalle impostazioni aziendali
   $form["preacq"] = number_format($form['preacq'], $admin_aziend['decimal_price'], '.', '');
   $form["preve1"] = number_format($form['preve1'], $admin_aziend['decimal_price'], '.', '');
@@ -829,7 +829,7 @@ if ($modal_ok_insert === true) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="preve1" class="col-sm-4 control-label"><?php echo $script_transl['preve1']; ?></label>
-                            <input type="number" step="any" min="0" id="preve1" name="preve1" value="<?php echo $form['preve1']; ?>"  maxlength="15" />
+                            <input type="number" step="any" min="0" id="preve1" name="preve1" value="<?php echo $form['preve1']; ?>"  maxlength="32" />
     <?php echo $script_transl['preve1_sc']; ?>
                             <input type="text" readonly="true" id="preve1_sc" name="preve1_sc" value="<?php echo gaz_format_number($form['preve1'] * (1 - $form['sconto'] / 100)); ?>" />
                         </div>
