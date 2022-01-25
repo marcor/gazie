@@ -1025,11 +1025,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
     }
 
 // Se viene inviata la richiesta di conferma rigo
-//if (isset($_POST['in_submit_x'])) {
-    /** ENRICO FEDELE */
-    /* con button non funziona _x */
     if (isset($_POST['in_submit'])) {
-        /** ENRICO FEDELE */
         $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['in_codart']);
         if (!$artico) {
           $artico['peso_specifico']=0;
@@ -1057,14 +1053,9 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
         }
         $form['volume'] += $form['in_quanti'] * $artico['volume_specifico'];
 // fine addizione peso,pezzi,volume
-        /** fine modifica FP */
-        /** inizio modifica FP 27/10/2015
-         * carico gli indirizzi di destinazione dalla tabella gaz_destina
-         */
         $idAnagrafe = (isset($fornitore['id_anagra']))?$fornitore['id_anagra']:0;
         $rs_query_destinazioni = gaz_dbi_dyn_query("*", $gTables['destina'], "id_anagra='$idAnagrafe'");
         $array_destinazioni = gaz_dbi_fetch_all($rs_query_destinazioni);
-        /** fine modifica FP */
         if (substr($form['in_status'], 0, 6) == "UPDROW") { //se è un rigo da modificare
             $old_key = intval(substr($form['in_status'], 6));
             $form['rows'][$old_key]['tiprig'] = $form['in_tiprig'];
@@ -1165,6 +1156,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$i]['recip_stocc_destin'] = "";
             $form['rows'][$i]['expiry'] = '';
             $form['rows'][$i]['filename'] = '';
+            $form['rows'][$i]['quality'] = '';
             if ($form['in_tiprig'] == 0) {  //rigo normale
                 $form['rows'][$i]['codart'] = $form['in_codart'];
                 $form['rows'][$i]['codice_fornitore'] = $artico['codice_fornitore']; //M1 aggiunto a mano
@@ -1198,9 +1190,6 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                   }
                 }
                 $form['rows'][$i]['sconto'] = $form['in_sconto'];
-                /** inizio modifica FP 09/10/2015
-                 * se non ho inserito uno sconto nella maschera prendo quello standard registrato nell'articolo
-                 */
                 $in_sconto = $form['in_sconto'];
                 if ($in_sconto != "#") {
                     $form['rows'][$i]['sconto'] = $in_sconto;
@@ -1210,8 +1199,6 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                         $msgtoast = $form['rows'][$i]['codart'] . ": sconto da anagrafe articoli";
                     }
                 }
-                /* fine modifica FP */
-
                 $form['rows'][$i]['prelis'] = floatval(preg_replace("/\,/", '.', $artico['preacq']));
                 $form['rows'][$i]['codvat'] = $admin_aziend['preeminent_vat'];
                 $iva_azi = gaz_dbi_get_row($gTables['aliiva'], "codice", $admin_aziend['preeminent_vat']);
@@ -1238,7 +1225,6 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                 $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
                 $form['rows'][$i]['scorta'] = $artico['scorta'];
                 $form['rows'][$i]['quamag'] = $magval['q_g'];
-
             } elseif ($form['in_tiprig'] == 1) { //forfait
                 $form['rows'][$i]['codart'] = "";
                 $form['rows'][$i]['annota'] = "";
@@ -1246,10 +1232,10 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$i]['gooser'] = 0;
                 $form['rows'][$i]['unimis'] = "";
                 $form['rows'][$i]['lot_or_serial'] = '';
-				$form['rows'][$i]['cod_operazione'] = 11;
-				$form['rows'][$i]['recip_stocc'] = "";
-				$form['rows'][$i]['recip_stocc_destin'] = "";
-				$form['rows'][$i]['SIAN'] = 0;
+                $form['rows'][$i]['cod_operazione'] = 11;
+                $form['rows'][$i]['recip_stocc'] = "";
+                $form['rows'][$i]['recip_stocc_destin'] = "";
+                $form['rows'][$i]['SIAN'] = 0;
                 $form['rows'][$i]['quanti'] = 0;
                 $form['rows'][$i]['prelis'] = 0;
                 $form['rows'][$i]['codric'] = $form['in_codric'];
@@ -1270,10 +1256,10 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$i]['pesosp'] = 0;
                 $form['rows'][$i]['gooser'] = 0;
                 $form['rows'][$i]['lot_or_serial'] = '';
-				$form['rows'][$i]['cod_operazione'] = 11;
-				$form['rows'][$i]['recip_stocc'] = "";
-				$form['rows'][$i]['recip_stocc_destin'] = "";
-				$form['rows'][$i]['SIAN'] = 0;
+                $form['rows'][$i]['cod_operazione'] = 11;
+                $form['rows'][$i]['recip_stocc'] = "";
+                $form['rows'][$i]['recip_stocc_destin'] = "";
+                $form['rows'][$i]['SIAN'] = 0;
                 $form['rows'][$i]['unimis'] = "";
                 $form['rows'][$i]['quanti'] = 0;
                 $form['rows'][$i]['prelis'] = 0;
@@ -1287,10 +1273,10 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$i]['pesosp'] = 0;
                 $form['rows'][$i]['gooser'] = 0;
                 $form['rows'][$i]['lot_or_serial'] = '';
-				$form['rows'][$i]['cod_operazione'] = 11;
-				$form['rows'][$i]['recip_stocc'] = "";
-				$form['rows'][$i]['recip_stocc_destin'] = "";
-				$form['rows'][$i]['SIAN'] = 0;
+                $form['rows'][$i]['cod_operazione'] = 11;
+                $form['rows'][$i]['recip_stocc'] = "";
+                $form['rows'][$i]['recip_stocc_destin'] = "";
+                $form['rows'][$i]['SIAN'] = 0;
                 $form['rows'][$i]['unimis'] = "";
                 $form['rows'][$i]['quanti'] = 0;
                 $form['rows'][$i]['prelis'] = $form['in_prelis'];
@@ -1308,7 +1294,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$i]['unimis'] = "";
                 $form['rows'][$i]['quanti'] = 0;
                 $form['rows'][$i]['prelis'] = 0;
-				$form['rows'][$i]['provvigione'] = $form['in_provvigione'];
+                $form['rows'][$i]['provvigione'] = $form['in_provvigione'];
                 $form['rows'][$i]['codric'] = $admin_aziend['c_payroll_tax'];
                 $form['rows'][$i]['sconto'] = 0;
                 $form['rows'][$i]['codvat'] = $admin_aziend['preeminent_vat'];
@@ -1320,15 +1306,15 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                     $form['rows'][$i]['pervat'] = $iva_row['aliquo'];
                     $form['rows'][$i]['tipiva'] = $iva_row['tipiva'];
                 }
-				$form['rows'][$i]['ritenuta'] = $form['in_ritenuta'];
-				// carico anche la descrizione corrispondente dal file xml
-	            $xml = simplexml_load_file('../../library/include/fae_tipo_cassa.xml');
-				foreach ($xml->record as $v) {
-					$selected = '';
-					if ($v->field[0] == $form['rows'][$i]['codart']) {
-						$form['rows'][$i]['descri']= 'Contributo '.strtolower($v->field[1]);
-					}
-				}
+                $form['rows'][$i]['ritenuta'] = $form['in_ritenuta'];
+                // carico anche la descrizione corrispondente dal file xml
+                      $xml = simplexml_load_file('../../library/include/fae_tipo_cassa.xml');
+                foreach ($xml->record as $v) {
+                  $selected = '';
+                  if ($v->field[0] == $form['rows'][$i]['codart']) {
+                    $form['rows'][$i]['descri']= 'Contributo '.strtolower($v->field[1]);
+                  }
+                }
             } elseif ($form['in_tiprig'] > 5 && $form['in_tiprig'] < 9) { //testo
                 $form["row_$i"] = "";
                 $form['rows'][$i]['codart'] = "";
@@ -1336,10 +1322,10 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$i]['pesosp'] = 0;
                 $form['rows'][$i]['gooser'] = 0;
                 $form['rows'][$i]['lot_or_serial'] = '';
-				$form['rows'][$i]['SIAN'] = 0;
-				$form['rows'][$i]['cod_operazione'] = 11;
-				$form['rows'][$i]['recip_stocc'] = "";
-				$form['rows'][$i]['recip_stocc_destin'] = "";
+                $form['rows'][$i]['SIAN'] = 0;
+                $form['rows'][$i]['cod_operazione'] = 11;
+                $form['rows'][$i]['recip_stocc'] = "";
+                $form['rows'][$i]['recip_stocc_destin'] = "";
                 $form['rows'][$i]['unimis'] = "";
                 $form['rows'][$i]['quanti'] = 0;
                 $form['rows'][$i]['prelis'] = 0;
@@ -1484,11 +1470,11 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_tiprig'] = 0;
     /*    $form['in_artsea'] = $admin_aziend['artsea']; */
     $form['in_codart'] = "";
-	$form['in_quality'] = "";
-	$form['SIAN']= 0;
-	$form['cod_operazione']=11;
-	$form['recip_stocc']="";
-	$form['recip_stocc_destin']="";
+    $form['in_quality'] = "";
+    $form['SIAN']= 0;
+    $form['cod_operazione']=11;
+    $form['recip_stocc']="";
+    $form['recip_stocc_destin']="";
     $form['in_codice_fornitore'] = '';
     $form['in_pervat'] = 0;
     $form['in_ritenuta'] = 0;
@@ -1510,11 +1496,11 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
         }
     }
     $form['in_id_mag'] = 0;
-	// adesso metto uno ma dovrò proporre il magazzino di riferimento dell'utente
-	$magmodule = gaz_dbi_get_row($gTables['module'], "name",'magazz');
-	$magadmin_module = gaz_dbi_get_row($gTables['admin_module'], "moduleid",$magmodule['id']," AND adminid='{$admin_aziend['user_name']}' AND company_id=" . $admin_aziend['company_id']);
-	$magcustom_field=json_decode($magadmin_module['custom_field']);
-	$form["in_id_warehouse"] = (isset($magcustom_field->user_id_warehouse))?$magcustom_field->user_id_warehouse:0;
+    // adesso metto uno ma dovrò proporre il magazzino di riferimento dell'utente
+    $magmodule = gaz_dbi_get_row($gTables['module'], "name",'magazz');
+    $magadmin_module = gaz_dbi_get_row($gTables['admin_module'], "moduleid",$magmodule['id']," AND adminid='{$admin_aziend['user_name']}' AND company_id=" . $admin_aziend['company_id']);
+    $magcustom_field=json_decode($magadmin_module['custom_field']);
+    $form["in_id_warehouse"] = (isset($magcustom_field->user_id_warehouse))?$magcustom_field->user_id_warehouse:0;
     $form['in_id_order'] = 0;
     $form['in_id_orderman'] = 0;
     $form['in_annota'] = "";
@@ -1523,7 +1509,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_scorta'] = 0;
     $form['in_quamag'] = 0;
     $form['in_lot_or_serial'] = 0;
-	$form['in_SIAN'] = 0;
+    $form['in_SIAN'] = 0;
     $form['in_status'] = "INSERT";
 // fine rigo input
     $form['rows'] = array();
@@ -1538,9 +1524,9 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
     if ($tesdoc['id_con'] > 0) {
         $msg['war'][] = 'accounted';
     }
-	$form['datreg']=gaz_format_date($tesdoc['datreg'], false, false);
-	$form['datfat']=gaz_format_date($tesdoc['datfat'], false, false);
-	$form['datemi']=gaz_format_date($tesdoc['datemi'], false, false);
+    $form['datreg']=gaz_format_date($tesdoc['datreg'], false, false);
+    $form['datfat']=gaz_format_date($tesdoc['datfat'], false, false);
+    $form['datemi']=gaz_format_date($tesdoc['datemi'], false, false);
     $form['giotra'] = substr($tesdoc['initra'], 8, 2);
     $form['mestra'] = substr($tesdoc['initra'], 5, 2);
     $form['anntra'] = substr($tesdoc['initra'], 0, 4);
@@ -1562,16 +1548,11 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
     }
     $form['banapp'] = $tesdoc['banapp'];
     $form['vettor'] = $tesdoc['vettor'];
-
-    /** inizio modifica FP 09/01/2016
-     * modifica piede ddt
-     */
     $form['net_weight'] = $tesdoc['net_weight'];
     $form['gross_weight'] = $tesdoc['gross_weight'];
     $form['units'] = $tesdoc['units'];
     $form['volume'] = $tesdoc['volume'];
     $array_destinazioni = array();
-    /** fine modifica FP */
     $form['listin'] = $tesdoc['listin'];
     $form['spediz'] = $tesdoc['spediz'];
     $form['portos'] = $tesdoc['portos'];
@@ -1697,8 +1678,8 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$i]['descri'] = $row['descri'];
         $form['rows'][$i]['tiprig'] = $row['tiprig'];
         $form['rows'][$i]['codart'] = $row['codart'];
-		$form['rows'][$i]['quality'] = ($articolo)?$articolo['quality']:'';
-		$form['rows'][$i]['codice_fornitore'] = $row['codice_fornitore'];//M1 aggiunto a mano
+        $form['rows'][$i]['quality'] = ($articolo)?$articolo['quality']:'';
+        $form['rows'][$i]['codice_fornitore'] = $row['codice_fornitore'];//M1 aggiunto a mano
         $form['rows'][$i]['pervat'] = $row['pervat'];
         $form['rows'][$i]['ritenuta'] = $row['ritenuta'];
         $form['rows'][$i]['unimis'] = $row['unimis'];
@@ -1708,14 +1689,14 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$i]['codvat'] = $row['codvat'];
         $form['rows'][$i]['codric'] = $row['codric'];
         $form['rows'][$i]['id_mag'] = $row['id_mag'];
-		$form['rows'][$i]['id_warehouse'] = 0;
-		if ($row['id_mag']>0){ // dovrò riprendere l'id del magazzino dal relativo movmag
-			$movmag = gaz_dbi_get_row($gTables['movmag'], "id_mov", $row['id_mag']);
-			if ($movmag&&$movmag['id_warehouse']>0){
-				$form['rows'][$i]['id_warehouse'] = $movmag['id_warehouse'];
-			}
-		}
-		$form['rows'][$i]['id_rig'] = $row['id_rig'];
+        $form['rows'][$i]['id_warehouse'] = 0;
+        if ($row['id_mag']>0){ // dovrò riprendere l'id del magazzino dal relativo movmag
+          $movmag = gaz_dbi_get_row($gTables['movmag'], "id_mov", $row['id_mag']);
+          if ($movmag&&$movmag['id_warehouse']>0){
+            $form['rows'][$i]['id_warehouse'] = $movmag['id_warehouse'];
+          }
+        }
+        $form['rows'][$i]['id_rig'] = $row['id_rig'];
         $form['rows'][$i]['id_order'] = $row['id_order'];
         $form['rows'][$i]['provvigione'] = $row['provvigione'];// in caso tiprig=4 questo campo è utilizzato per indicare l'aliquota della cassa
         $form['in_id_orderman'] = $row['id_orderman'];
@@ -1733,16 +1714,16 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$i]['gooser'] = $articolo['good_or_service'];
         $form['rows'][$i]['lot_or_serial'] = $articolo['lot_or_serial'];
         $form['rows'][$i]['SIAN'] = $articolo['SIAN'];
-		$form['rows'][$i]['quality'] = $articolo['quality'];
-		if ($form['rows'][$i]['SIAN']>0){
-			$camp_mov_sian = gaz_dbi_get_row($gTables['camp_mov_sian'], "id_movmag", $form['rows'][$i]['id_mag']);
-			$form['rows'][$i]['cod_operazione'] = ($camp_mov_sian['cod_operazione']=="P")?"12":$camp_mov_sian['cod_operazione'];
-			$form['rows'][$i]['recip_stocc'] = $camp_mov_sian['recip_stocc'];
-			$form['rows'][$i]['recip_stocc_destin'] = $camp_mov_sian['recip_stocc_destin'];
-		}
+        $form['rows'][$i]['quality'] = $articolo['quality'];
+        if ($form['rows'][$i]['SIAN']>0){
+          $camp_mov_sian = gaz_dbi_get_row($gTables['camp_mov_sian'], "id_movmag", $form['rows'][$i]['id_mag']);
+          $form['rows'][$i]['cod_operazione'] = ($camp_mov_sian['cod_operazione']=="P")?"12":$camp_mov_sian['cod_operazione'];
+          $form['rows'][$i]['recip_stocc'] = $camp_mov_sian['recip_stocc'];
+          $form['rows'][$i]['recip_stocc_destin'] = $camp_mov_sian['recip_stocc_destin'];
+        }
       } else {
         $form['rows'][$i]['codart']='';
-		$form['rows'][$i]['quality']='';
+        $form['rows'][$i]['quality']='';
         $form['rows'][$i]['scorta']=0;
         $form['rows'][$i]['quamag']=0;
         $form['rows'][$i]['pesosp']=0;
@@ -1751,34 +1732,33 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$i]['SIAN']='';
         $form['rows'][$i]['annota']='';
       }
-		$form['rows'][$i]['filename'] = '';
-		$form['rows'][$i]['identifier'] = '';
-		$form['rows'][$i]['expiry'] = '';
-		$form['rows'][$i]['status'] = "UPDATE";
-		if ($form['rows'][$i]['SIAN']>0){
-			$camp_mov_sian = gaz_dbi_get_row($gTables['camp_mov_sian'], "id_movmag", $form['rows'][$i]['id_mag']);
-			$form['rows'][$i]['cod_operazione'] = ($camp_mov_sian['cod_operazione']=="P")?"12":$camp_mov_sian['cod_operazione'];
-			$form['rows'][$i]['recip_stocc'] = $camp_mov_sian['recip_stocc'];
-			$form['rows'][$i]['recip_stocc_destin'] = $camp_mov_sian['recip_stocc_destin'];
-		}
-
-        // recupero eventuale movimento di tracciabilità ma solo se non è stata richiesta una duplicazione (di un ddt c/lavorazione)
-		if (file_exists( DATA_DIR . 'files/' . $admin_aziend['company_id'] ) > 0) {
-		if (!isset($_GET['Duplicate']) || $form['tipdoc']=='DDR') {
-			$result_movmag = gaz_dbi_get_row($gTables['movmag'], "id_mov", $row['id_mag']);
-      if (!$result_movmag) $result_movmag['id_lotmag']=0;
-			$lotmag = gaz_dbi_get_row($gTables['lotmag'], 'id', $result_movmag['id_lotmag']);
-      if (!$lotmag) $lotmag=['identifier'=>'','id'=>0,'expiry'=>0];
-			// recupero il filename dal filesystem e lo sposto sul tmp
-			$dh = opendir( DATA_DIR . 'files/' . $admin_aziend['company_id'] );
-			while (false !== ($filename = readdir($dh))) {
-				$fd = pathinfo($filename);
-				$r = explode('_', $fd['filename']);
-				if ($r[0] == 'lotmag' && $r[1] == $lotmag['id']) {
-					// riassegno il nome file
-					$form['rows'][$i]['filename'] = $fd['basename'];
-				}
-			}
+      $form['rows'][$i]['filename'] = '';
+      $form['rows'][$i]['identifier'] = '';
+      $form['rows'][$i]['expiry'] = '';
+      $form['rows'][$i]['status'] = "UPDATE";
+      if ($form['rows'][$i]['SIAN']>0){
+        $camp_mov_sian = gaz_dbi_get_row($gTables['camp_mov_sian'], "id_movmag", $form['rows'][$i]['id_mag']);
+        $form['rows'][$i]['cod_operazione'] = ($camp_mov_sian['cod_operazione']=="P")?"12":$camp_mov_sian['cod_operazione'];
+        $form['rows'][$i]['recip_stocc'] = $camp_mov_sian['recip_stocc'];
+        $form['rows'][$i]['recip_stocc_destin'] = $camp_mov_sian['recip_stocc_destin'];
+      }
+      // recupero eventuale movimento di tracciabilità ma solo se non è stata richiesta una duplicazione (di un ddt c/lavorazione)
+      if (file_exists( DATA_DIR . 'files/' . $admin_aziend['company_id'] ) > 0) {
+        if (!isset($_GET['Duplicate']) || $form['tipdoc']=='DDR') {
+          $result_movmag = gaz_dbi_get_row($gTables['movmag'], "id_mov", $row['id_mag']);
+          if (!$result_movmag) $result_movmag['id_lotmag']=0;
+          $lotmag = gaz_dbi_get_row($gTables['lotmag'], 'id', $result_movmag['id_lotmag']);
+          if (!$lotmag) $lotmag=['identifier'=>'','id'=>0,'expiry'=>0];
+          // recupero il filename dal filesystem e lo sposto sul tmp
+          $dh = opendir( DATA_DIR . 'files/' . $admin_aziend['company_id'] );
+          while (false !== ($filename = readdir($dh))) {
+            $fd = pathinfo($filename);
+            $r = explode('_', $fd['filename']);
+            if ($r[0] == 'lotmag' && $r[1] == $lotmag['id']) {
+              // riassegno il nome file
+              $form['rows'][$i]['filename'] = $fd['basename'];
+            }
+          }
 			$form['rows'][$i]['identifier'] = $lotmag['identifier'];
 			$form['rows'][$i]['id_lotmag'] = $lotmag['id'];
 			if (intval($lotmag['expiry'])>0){
@@ -1841,10 +1821,9 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
 // inizio rigo di input
     $form['in_descri'] = "";
     $form['in_tiprig'] = 0;
-    /*    $form['in_artsea'] = $admin_aziend['artsea']; */
     $form['in_codart'] = "";
-	$form['in_quality'] = "";
-	$form['in_SIAN'] = 0;
+    $form['in_quality'] = "";
+    $form['in_SIAN'] = 0;
     $form['in_codice_fornitore'] = '';
     $form['in_pervat'] = "";
     $form['in_ritenuta'] = 0;
@@ -1859,11 +1838,11 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
         $form['in_codric'] = $admin_aziend['purchases_return'];
     }
     $form['in_id_mag'] = 0;
-	// dal custom field di admin_module relativo al magazzino trovo il magazzino di default
-	$magmodule = gaz_dbi_get_row($gTables['module'], "name",'magazz');
-	$magadmin_module = gaz_dbi_get_row($gTables['admin_module'], "moduleid",$magmodule['id']," AND adminid='{$admin_aziend['user_name']}' AND company_id=" . $admin_aziend['company_id']);
-	$magcustom_field=json_decode($magadmin_module['custom_field']);
-	$form["in_id_warehouse"] = (isset($magcustom_field->user_id_warehouse))?$magcustom_field->user_id_warehouse:0;
+    // dal custom field di admin_module relativo al magazzino trovo il magazzino di default
+    $magmodule = gaz_dbi_get_row($gTables['module'], "name",'magazz');
+    $magadmin_module = gaz_dbi_get_row($gTables['admin_module'], "moduleid",$magmodule['id']," AND adminid='{$admin_aziend['user_name']}' AND company_id=" . $admin_aziend['company_id']);
+    $magcustom_field=json_decode($magadmin_module['custom_field']);
+    $form["in_id_warehouse"] = (isset($magcustom_field->user_id_warehouse))?$magcustom_field->user_id_warehouse:0;
     $form['in_id_order'] = 0;
     $form['in_id_orderman'] = 0;
     $form['in_annota'] = "";
@@ -1872,9 +1851,9 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_scorta'] = 0;
     $form['in_quamag'] = 0;
     $form['in_lot_or_serial'] = '';
-	$form['cod_operazione'] = 11;
-	$form['recip_stocc'] = "";
-	$form['recip_stocc_destin'] = "";
+    $form['cod_operazione'] = 11;
+    $form['recip_stocc'] = "";
+    $form['recip_stocc_destin'] = "";
     $form['in_status'] = "INSERT";
 // fine rigo input
     $form['search']['clfoco'] = '';
@@ -1894,16 +1873,11 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
     $form['change_pag'] = "";
     $form['banapp'] = "";
     $form['vettor'] = "";
-
-    /** inizio modifica FP 09/01/2016
-     * modifica piede ddt
-     */
     $form['net_weight'] = 0;
     $form['gross_weight'] = 0;
     $form['units'] = 0;
     $form['volume'] = 0;
     $array_destinazioni = array();
-    /** fine modifica FP */
     $form['listin'] = "";
     $form['destin'] = "";
     $form['id_des'] = 0;
@@ -1937,13 +1911,6 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
     $ddtchecked=0;
 }
 require("../../library/include/header.php");
-/** Mi pare che jquery in questa pagina venga caricato per la seconda volta
- * non è il caso di caricare differenti versioni di jquery perchè si possono generare conflitti
- * forse è il caso di caricare tutti i js utili per il sistema in un solo posto, nell'header
- * così è più semplice tenere traccia di quello che si carica, il sistema è organico e coerente e manutenibile
- * La versione scaricata dal repository di questa pagina dà due errori javascript, che inibiscono il caricamento della finestra modale
- * commentando i due script di seguito e inibendone il caricamento, rimane ancora un errore attivo, ma il caricamento della modale funziona
- */
 $script_transl = HeadMain(0, array(
     'calendarpopup/CalendarPopup',
     'custom/autocomplete',
@@ -2700,6 +2667,23 @@ echo '<input type="hidden" value="' . $strArrayDest . '" name="rs_destinazioni">
 						$resprow[$k][6]['value'] = ''; //quanti
 						$resprow[$k][7]['value'] = 'Imponibile'; //prelis
 						$resprow[$k][8]['value'] = '=>'; //sconto
+						break;
+					case "6":
+						// in caso di rigo testo
+						$resprow[$k][1]['value'] = '<button name="upd_row[' . $k . ']" class="btn btn-info btn-xs"
+						title="' . $script_transl['update'] . $script_transl['thisrow'] . '"
+						type="submit"><i class="glyphicon glyphicon-refresh"></i> testo </button>';
+						$resprow[$k][2]['value'] = ''; //magazzino
+						$resprow[$k][3]['value'] = ''; //codice_fornitore
+            $resprow[$k][4]['value'] = '<textarea id="row_'.$k.'" name="row_'.$k.'" class="mceClass" style="width:100%;height:100px;">'.$form["row_$k"].'</textarea>'; // descri
+						$resprow[$k][5]['value'] = ''; //unimis
+						$resprow[$k][6]['value'] = ''; //quanti
+						$resprow[$k][7]['value'] = ''; //prelis
+						$resprow[$k][8]['value'] = ''; //sconto
+						$resprow[$k][9]['value'] = ''; //quanti
+						$resprow[$k][10]['value'] = ''; //prelis
+						$resprow[$k][11]['value'] = '';
+						$resprow[$k][12]['value'] = '';
 						break;
 				}
 				$ctrl_orderman=$v['id_orderman'];
