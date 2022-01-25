@@ -1305,9 +1305,11 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					//$cond_pag = $xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiPagamento/CondizioniPagamento")->item(0)->nodeValue;
 					//$dat_scad = $xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiPagamento/DettaglioPagamento/DataScadenzaPagamento")->item(0)->nodeValue;
 					//$imp_scad = $xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiPagamento/DettaglioPagamento/ImportoPagamento")->item(0)->nodeValue;
-					$fae_mode = $xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiPagamento/DettaglioPagamento/ModalitaPagamento")->item(0)->nodeValue;
-					$pagame = gaz_dbi_get_row($gTables['pagame'], "fae_mode", $fae_mode);
-					$form['pagame'] = ($pagame)?$pagame['codice']:0;
+					if ($xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiPagamento/DettaglioPagamento/ModalitaPagamento")->item(0)){
+						$fae_mode = $xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiPagamento/DettaglioPagamento/ModalitaPagamento")->item(0)->nodeValue;
+						$pagame = gaz_dbi_get_row($gTables['pagame'], "fae_mode", $fae_mode);
+					}
+					$form['pagame'] = (isset($pagame))?$pagame['codice']:0;
 					$form['new_acconcile']=0;
 				}
 			}
