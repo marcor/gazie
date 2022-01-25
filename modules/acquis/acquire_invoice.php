@@ -229,8 +229,11 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		$form['seziva'] = intval($_POST['seziva']);
 		$form['in_id_warehouse'] = intval($_POST['in_id_warehouse']);
 	}
+	
 	if (isset($_POST['Submit_file']) || isset($_POST['fae_from_sync'])) { // conferma invio upload file
-
+		if (isset($_POST['fae_from_sync'])){
+			$_POST['fae_original_name']=$_POST['fae_original_name'.intval($_POST['fae_from_sync'])];
+		}
         if (!empty($_FILES['userfile']['name'])) {
 
             if (!( $_FILES['userfile']['type'] == "application/pkcs7-mime" || $_FILES['userfile']['type'] == "application/pkcs7" || $_FILES['userfile']['type'] == "text/xml")) {
@@ -1627,7 +1630,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
 								<p>
 								<?php echo $faesync['title']," ";?>
 								<input type="submit" name="fae_from_sync" class="btn btn-default" value="<?php echo $faesync['id_doc'],".",$faesync['extension'];?>">
-								<input type="hidden" name="fae_original_name" class="btn btn-default" value="<?php echo $faesync['title'];?>">
+								<input type="hidden" name="fae_original_name<?php echo $faesync['id_doc'];?>" class="btn btn-default" value="<?php echo $faesync['title'];?>">
 								</p>
 
 
