@@ -203,6 +203,7 @@ function confirFae(link){
             console.log(flux_status);
         break;
         case "NS":
+        case "NEEC02":
             $("#dialog_fae_content_NS span").html("<p class=\'text-center bg-danger\'>" + flux_descri.replace(/<[^>]*>?/gm, "") + "</p><p class=\'text-center\'> re: <a href=\'"+link.href+"&reinvia"+sdiflux+"\' class=\'btn btn-danger\'><b> " + $("#doc1_"+tes_id).attr("dialog_fae_reinvio")+ "</b> <br/>" + numrei.toString() + "° reinvio </a></p>");
             $("#dialog_fae_content_NS").show();
             console.log(flux_status);
@@ -673,7 +674,7 @@ if ( is_bool($paymov_status) || $paymov_status['style'] == $flt_info || $flt_inf
                                 $sdititle = 'Il file '.$r['fae_attuale'].' è stato accettato dalla PA cliente ';
                                 break;
                                 case "NEEC02":
-                                $sdititle = 'Il file '.$r['fae_attuale'].' è stato rifiutato dalla PA cliente ';
+                                $sdititle = 'Il file '.$r['fae_attuale'].' è stato rifiutato dalla PA cliente, fai verifiche prima di fare il reinviio ';
                                 break;
                                 case "NS":
                                 $sdititle = 'Il file '.$r['fae_attuale'].' è stato Scartato, correggi prima di fare il reinviio ';
