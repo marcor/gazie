@@ -456,7 +456,7 @@ class invoiceXMLvars {
 
 }
 
-function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false, $name_ziparchive = false) {
+function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false, $name_ziparchive = false, $returnDocument=false) {
     $XMLvars = new invoiceXMLvars();
     $domDoc = new DOMDocument;
 	$domDoc->preserveWhiteSpace = false;
@@ -1563,6 +1563,9 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 		}
 		return $domDoc->saveXML();
 	} else {
+                if($returnDocument){
+                    return ["nome_file" => $nome_file . ".xml", "documento" => $domDoc->saveXML()];
+                } else{
 		$verifica = gaz_dbi_get_row($gTables['fae_flux'], 'filename_ori', $nome_file . ".xml");
 		if ($verifica == false) {
 			$valori = array('filename_ori' => $nome_file . ".xml",
@@ -1582,9 +1585,10 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
             'flux_descri' => '');
 			fae_fluxInsert($valori);
 		}
-		header("Content-type: text/plain");
-		header("Content-Disposition: attachment; filename=" . $nome_file . ".xml");
-		print $domDoc->saveXML();
+                    header("Content-type: text/plain");
+                    header("Content-Disposition: attachment; filename=" . $nome_file . ".xml");
+                    print $domDoc->saveXML();
+                }
 	}
 }
 
