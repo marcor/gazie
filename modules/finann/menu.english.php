@@ -38,7 +38,8 @@ $transl['finann'] = array('name' => "Year End",
                                          4 =>array("View and print Balance sheet IV directive CEE","Balance sheet CEE"),
                                          5 =>array("Data for the revaluation of balance sheet","Balance sheet revaluation data"),
                                          6 =>array("View and print Book of depreciable assets","Depreciable assets book"),
-                                         7 =>array("Entering of assets depreciation","Entering of assets depreciation")
+                                         7 =>array("Entering of assets depreciation","Entering of assets depreciation"),
+                                         8 =>array("Controllo movimenti scadenzario orfani","Controllo movimenti scadenzario orfani")
                                        )
                          );
 ?>

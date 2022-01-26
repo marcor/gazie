@@ -1,4 +1,5 @@
 UPDATE `gaz_config` SET `cvalue` = '146' WHERE `id` =2;
+INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='report_control.php'), 'error_paymov.php', '', '', 8, '', 10  FROM `gaz_menu_script`;
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 ALTER TABLE `gaz_XXXartico`	CHANGE COLUMN `codice_fornitore` `codice_fornitore` VARCHAR(50) NOT NULL COMMENT 'Da intendersi come "codice produttore" ovvero univoco per il medesimo prodotto, indipendentemente dal canale/fornitore utilizzato per l\'approvigionamento. I codici utilizzati dai singoli fornitori vanno eventualmente indicati su rigdoc-rigbro' AFTER `id_artico_group`;
 CREATE TABLE IF NOT EXISTS `gaz_XXXartico_position` (
