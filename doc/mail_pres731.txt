@@ -1,7 +1,0 @@
-Titolo:
-Aurora aurum in ore habet.
-
-Presentazione:
-Rilascio essenzialmente motivato dall'urgenza di correggere il bug sull'interfaccia articoli, ma colgo l'occasione per delle migliorie sui preventivi a clienti: consento la scelta della stampa dei documenti su carta prestampata dalla tipografia (sistema utilizzabile anche per altri documenti) e la possibilità di impostare in configurazione avanzata azienda i valori tempi di consegna, giorni di validità e stampa totali.
-
-Antonio de Vincentiis, Montesilvano, 29 gennaio 2020

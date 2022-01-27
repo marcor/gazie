@@ -1,9 +1,0 @@
-Titolo:
-Si nos coleos haberemus.
-
-Presentazione:
-Questo rilascio, che non apporta modifiche alla struttura e/o al contenuto del database, è fatto per rendere "elegante" il file XML della fattura elettronica generata da GAzie, la rappresentazione degli sconti sui righi è stata messa in "cascata" (così chiama il metodo l'A.d.E. ) con lo lo sconto di chiusura della fattura evitando di scrivere gli inguardabili righi di storno della versione precedente.
-
-Rinnovo gli auguri per questo 2019 che sarà senza dubbio un "giro di boa".
-	   
-Antonio de Vincentiis, Montesilvano, 1 gennaio 2019

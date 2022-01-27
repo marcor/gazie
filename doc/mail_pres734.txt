@@ -1,7 +1,0 @@
-Titolo:
-Non omne quod licet honestum est.
-
-Presentazione:
-La versione che rilascio è motivata dalla nuova funzionalità che in fase di acquisizione delle fatture elettroniche d'acquisto intercetta le eventuali scadenze dei pagamenti presenti sul tracciato XML ed apre le partite con i valori di scadenza (elemento <DataScadenzaPagamento>) e importo ( elemento <ImportoPagamento> ) e solo in caso di loro assenza procede all'apertura della relativa partita fornitore basando il calcolo delle rate sulla modalità di pagamento presente in anagrafica fornitore.    
-   
-Antonio de Vincentiis, Montesilvano, 29 Ottobre 2020

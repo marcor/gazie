@@ -1,8 +1,7 @@
 <div class="panel panel-info col-md-12" >
   <div class="box-header company-color">
-    <div class="box-title"><b>Situazione della fatturazione</b>
-      <a class="pull-right dialog_grid" id_bread="<?php echo $grr['id_bread']; ?>" style="cursor:pointer;"><i class="glyphicon glyphicon-cog"></i></a>
-    </div>
+    <b>Situazione della fatturazione</b>
+    <a class="pull-right dialog_grid" id_bread="<?php echo $grr['id_bread']; ?>" style="cursor:pointer;"><i class="glyphicon glyphicon-cog"></i></a>
 	</div>
   <div class="box-body">
     <table id="invoicing" class="table table-bordered table-striped dataTable"
