@@ -52,43 +52,6 @@ $strScript = array(
         /** ENRICO FEDELE */
         'status_value' => array(0 => 'APERTA', 1 => 'CHIUSA', 2 => 'ESPOSTA', 3 => 'SCADUTA', 9 => 'ANTICIPO'),
         'total_open' => 'Totale partite aperte'
-    ),
-    "admin_cdc.php" =>
-    array('title' => 'Parametri Camera di Compensazione',
-        'ins_this' => 'Inserisci una nuova causale contabile ',
-        'upd_this' => 'Modifica Parametri Camera di Compensazione',
-        'mesg' => array('La ricerca non ha dato risultati!',
-            'Inserire almeno 2 caratteri!',
-            'Cambia cliente/fornitore'
-        ),
-        'err' => array('codice_emp' => 'Inserire un codice valido!',
-            'descri' => '&Egrave; necessario inserire una descrizione!',
-            'codice_exi' => 'Codice causale esistente!',
-            'clfoco_ref' => "C'&egrave; almeno un rigo con conto non definito!",
-            'CHI' => 'Codice riservato alla CHIUSURA AUTOMATICA CONTI!',
-            'APE' => 'Codice riservato alla APERTURA AUTOMATICA CONTI!',
-            'AMM' => 'Codice riservato al RILEVAMENTO AMMORTAMENTI DI FINE ANNO!'
-        ),
-        'head' => 'Conti movimentati ',
-        'cdc_id' => 'Codice partner *',
-        'cdc_token' => 'Token di autenticazione *',
-        'insdoc' => 'Inserimento dati documento di riferimento',
-        'insdoc_value' => array(0 => 'No', 1 => 'Si'),
-        'regiva' => 'Registro I.V.A.',
-        'regiva_value' => array(0 => 'Nessuno', 2 => 'Fatture di Vendita', 4 => 'Corrispettivi', 6 => 'Fatture d\'Acquisto', 9 => 'Versamenti IVA'),
-        'operat' => 'Operatore',
-        'operat_value' => array(0 => 'Non opera', 1 => 'Somma', 2 => 'Sottrae'),
-        'pay_schedule' => 'Partite aperte (scadenzario)',
-        'pay_schedule_value' => array(0 => 'Non opera', 1 => 'Documento vendita/acquisto (apre)', 2 => 'Pagamento (chiude)'),
-        'clfoco_mastro' => 'Mastro',
-        'clfoco_sub' => 'Sottoconto',
-        'tipim' => 'Tipo importo',
-        'tipim_value' => array('' => '', 'A' => 'Totale', 'B' => 'Imponibile', 'C' => 'Imposta'),
-        'daav' => 'DARE/AVERE',
-        'daav_value' => array('D' => 'DARE', 'A' => 'AVERE'),
-        'report' => 'Lista delle causali contabili',
-        'del_this' => 'Causale contabile ',
-        'add_row' => 'Salva i parametri'
-    ),
+    )
 );
 ?>

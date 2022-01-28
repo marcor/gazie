@@ -23,11 +23,12 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
-$transl['orderman'] = array('name' => "Commesse",
-    'title' => "Gestione commesse",
-    'm2' => array(1 => array("Lista delle commesse", "Lista delle commesse")
+$transl['cdc'] = array('name' => "Camera di Compensazione",
+    'title' => "Gestione delle compensazioni finanziarie",
+    'm2' => array(
+        1 => array("Invio fatture a Camera di Compensazione", "Compensazioni"),
     ),
-    'm3' => array(1 => array("Nuova commessa", "Nuovo commessa")
+    'm3' => array(
     )
 );
 ?>
