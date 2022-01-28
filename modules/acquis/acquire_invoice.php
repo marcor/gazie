@@ -1299,6 +1299,20 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					$where[]=$form['fattura_elettronica_original_name'];
 					$set['status']=1;
 					gaz_dbi_table_update("files", $where, $set);
+					
+					//Antonio Germani: caso di 2 o più aziende installate in GAzie con stessa partita IVA e stessa PEC per comunicare con ADE
+					// dopo aver impostato lo status di acquisita su questa azienda, devo togliere eventuali fae.xml caricati  anche nelle altre aziende.
+					// Quindi, vedo se ci sono altre aziende con stessa partita iva togliendo l'azienda attuale
+					$codice_aziends = gaz_dbi_dyn_query("codice", $gTables['aziend'], "pariva = ".$admin_aziend['pariva']." AND codice <> ".$admin_aziend['codice'] , "codice ASC");
+					foreach($codice_aziends as $codice){// le ciclo e cerco in tabella file per ciascuna delle altre aziende se c'è nella colonna 'title' la 'fattura_elettronica_original_name'
+						unset($duplicated);
+						$check_duplicated= gaz_dbi_dyn_query("id_doc","gaz_".sprintf('%03d',$codice['codice'])."files","title = '".$form['fattura_elettronica_original_name']."'");
+						$duplicated=gaz_dbi_fetch_array($check_duplicated);						
+						if ($duplicated){// se c'è lo cancello
+							gaz_dbi_del_row( "gaz_".sprintf('%03d',$codice['codice'])."files", "title", $form['fattura_elettronica_original_name']);
+						}						
+					}
+					
 				}
 
 				header('Location: report_docacq.php?sezione='.$form['seziva']);
