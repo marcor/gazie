@@ -26,29 +26,33 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 
-if (isset($_GET['fn'])) {
+if (isset($_GET['fn'])) { 
+	$gMail = new GAzieMail();
     $user = gaz_dbi_get_row($gTables['admin'], "user_name", $_SESSION["user_name"]);
     $fn=substr($_GET['fn'],0,37);
     $file_url = DATA_DIR."files/".$admin_aziend['codice']."/".$fn;
     $content = new StdClass;
     $content->name = $fn;
     $content->urlfile = $file_url; // se passo l'url GAzieMail allega un file del file system e non da stringa
-    $dest_fae_zip_package['e_mail'] = gaz_dbi_get_row($gTables['company_config'], 'var', 'dest_fae_zip_package')['val'];
+    $dest_fae_zip_package['e_mail'] = gaz_dbi_get_row($gTables['company_config'], 'var', 'dest_fae_zip_package')['val']; 
 	$module_fae_zip_package = gaz_dbi_get_row($gTables['company_config'], 'var', 'send_fae_zip_package')['val'];
 	if (strpos($module_fae_zip_package, 'pec')===0){// se è stato impostato un modulo per l'invio degli zip FAE e inizia il suo nome con 'pec'
-		$dest_fae_zip_package['mod_fae']=$module_fae_zip_package;//It's enabled
+		$dest_fae_zip_package['mod_fae']=$module_fae_zip_package;//It's enabled	
+		if (strlen($dest_fae_zip_package['e_mail'])<4){
+			$dest_fae_zip_package['e_mail'] = gaz_dbi_get_row($gTables['company_config'], 'var', 'pecsdi_sdi_email')['val'];
+		}
 	}else{
 		$dest_fae_zip_package['mod_fae']='';//disabled
-	}
-
-    if (!empty($dest_fae_zip_package['e_mail'])) {
-        $gMail = new GAzieMail();
+	}	
+    if (strlen($dest_fae_zip_package['e_mail'])>4) {       
         if ($gMail->sendMail($admin_aziend, $user, $content, $dest_fae_zip_package)){
             // se la mail è stata trasmessa con successo aggiorno lo stato sulla tabella dei flussi
             gaz_dbi_put_query($gTables['fae_flux'], "filename_zip_package = '" . $fn."'", "flux_status", "@");
             echo "<p>INVIO FATTURE ELETTRONICHE RIUSCITO!!!</p>";
         }
-    }
+    } else{
+		echo "Invio impossibile manca indirizzo e-mail";
+	}
     
 }
 ?>

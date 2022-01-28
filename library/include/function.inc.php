@@ -1406,7 +1406,7 @@ class GAzieMail {
 			$config_pass = gaz_dbi_get_row($gTables['company_config'], 'var', 'pec_smtp_psw');
 			$config_host = gaz_dbi_get_row($gTables['company_config'], 'var', 'pec_smtp_server');
 			$admin_data['other_email'] = $admin_data['pec'];
-			$mailto = $admin_data['other_email']; //recipient-DESTINATARIO
+			$mailto = $receiver['e_mail']; //recipient-DESTINATARIO			
 		} else {// altrimenti prendo la configurazione smtp semplice
 			$config_port = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_port');
 			$config_secure = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_secure');
@@ -1415,6 +1415,7 @@ class GAzieMail {
 			$config_host = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_server');
 			$mailto = $receiver['e_mail']; //recipient-DESTINATARIO
 		}
+		
         // definisco il server SMTP e il mittente
         $config_mailer = gaz_dbi_get_row($gTables['company_config'], 'var', 'mailer');
         $config_notif = gaz_dbi_get_row($gTables['company_config'], 'var', 'return_notification');
@@ -1479,9 +1480,9 @@ class GAzieMail {
         }
 		if (isset ($receiver['mod_fae']) && strpos($receiver['mod_fae'], 'pec')===0){// se c'è il modulo per invio fae che inizia il suo nome con 'pec' cambio il mittente come da impostazioni specifiche
 			$mittente=$admin_data['pec'];
-			$config_send_fae = gaz_dbi_get_row($gTables['company_config'], 'var', 'dest_fae_zip_package')['val'];
+			$config_send_fae = gaz_dbi_get_row($gTables['company_config'], 'var', 'pecsdi_sdi_email')['val'];
 			if (strlen($config_send_fae)>0){// se c'è un indirizzo per i pacchetti zip in configurazione azienda
-				$mail->AddCC($config_send_fae, $admin_data['ragso1'] . " " . $admin_data['ragso2']);// Aggiungo secondo Destinatario per conoscenza
+				$mail->AddAddress($config_send_fae, $admin_data['ragso1'] . " " . $admin_data['ragso2']);// Aggiungo PEC SDI come Destinatario 
 			}
 		}
         // Imposto eventuale richiesta di notifica
@@ -1495,8 +1496,9 @@ class GAzieMail {
         $mail->Hostname = $config_host;
         $mail->AddAddress($mailto);//Destinatario
 
-        $mail->AddCC($mittente, $admin_data['ragso1'] . " " . $admin_data['ragso2']);// Aggiungo mittente come destinatario per conoscenza, per avere una copia
-
+		
+		//$mail->AddCC($mittente, $admin_data['ragso1'] . " " . $admin_data['ragso2']);// Aggiungo mittente come destinatario per conoscenza, per avere una copia
+		
         // Imposto l'oggetto dell'email
         $mail->Subject = $subject;
         // Imposto il testo HTML dell'email

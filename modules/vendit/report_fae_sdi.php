@@ -27,6 +27,7 @@ $admin_aziend = checkAdmin();
 $cemail = gaz_dbi_get_row($gTables['company_config'], 'var', 'cemail');
 $dest_fae_zip_package = gaz_dbi_get_row($gTables['company_config'], 'var', 'dest_fae_zip_package');
 $send_fae_zip_package = gaz_dbi_get_row($gTables['company_config'], 'var', 'send_fae_zip_package');
+$pecsdi_sdi_email = gaz_dbi_get_row($gTables['company_config'], 'var', 'pecsdi_sdi_email');
 
 
 if (!isset($_POST['ritorno'])) {
@@ -248,7 +249,7 @@ echo '<form method="GET">';
 echo "<input type=\"hidden\" value=\"".$form['ritorno']."\" name=\"ritorno\" />\n";
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['title'];
 echo "</div>\n";
-if (strlen($cemail['val'])>5 || strlen($dest_fae_zip_package['val'])>5) {
+if (strlen($cemail['val'])>5 || strlen($dest_fae_zip_package['val'])>5 || strlen($pecsdi_sdi_email['val'])>5) {
 	$yes_mail = ' enabled ';
 }
 if (isset($send_fae_zip_package['val']) && strlen($send_fae_zip_package['val'])>5) {
