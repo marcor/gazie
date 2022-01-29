@@ -30,7 +30,14 @@ $send_fae_zip_package = gaz_dbi_get_row($gTables['company_config'], 'var', 'send
 
 if ( file_exists('../'.$send_fae_zip_package.'/sync.function.php') ) { // modalità gazSynchro
   $classnamesdiflux = $send_fae_zip_package.'gazSynchro';
+  require_once('../'.$send_fae_zip_package.'/sync.function.php');
   $sdifluxSync = new $classnamesdiflux();
+  $year = date("Y");
+  $sdifluxSync->get_sync_status($year.'-01-01');
+  // non stampo nulla in quanto le notifiche avvengono sulla barra del menu
+  //print_r($sdifluxSync->rawres);
+  // torno sul report
+  header("Location: " . $_SERVER['HTTP_REFERER']);
 
 } elseif(file_exists('../../library/'.$send_fae_zip_package.'/SendFaE.php'))  { // modalità catsrl
 	$where1 = " id_SDI!=0 AND (flux_status='@' OR flux_status='@@' OR flux_status='IN' OR (filename_ori LIKE '%.xml.p7m' AND (flux_status='MC' OR flux_status='RC'))) ";
