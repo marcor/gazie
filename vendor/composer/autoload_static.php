@@ -10,8 +10,8 @@ class ComposerStaticInit783a7e6f30b1179982f49db97e0f90ee
         'ec07570ca5a812141189b1fa81503674' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
-        '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
         '2cffec82183ee1cea088009cef9a6fc3' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier.composer.php',
+        '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
         'decc78cc4436b1292c6c0d151b19445c' => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib/bootstrap.php',
     );
 
@@ -47,6 +47,7 @@ class ComposerStaticInit783a7e6f30b1179982f49db97e0f90ee
             'PhpParser\\' => 10,
             'PhpOffice\\PhpSpreadsheet\\' => 25,
             'ParagonIE\\ConstantTime\\' => 23,
+            'PHPMailer\\PHPMailer\\' => 20,
         ),
         'M' => 
         array (
@@ -62,6 +63,17 @@ class ComposerStaticInit783a7e6f30b1179982f49db97e0f90ee
         'C' => 
         array (
             'Complex\\' => 8,
+            'Com\\Tecnick\\Unicode\\Data\\' => 25,
+            'Com\\Tecnick\\Unicode\\' => 20,
+            'Com\\Tecnick\\Pdf\\Page\\' => 21,
+            'Com\\Tecnick\\Pdf\\Image\\' => 22,
+            'Com\\Tecnick\\Pdf\\Graph\\' => 22,
+            'Com\\Tecnick\\Pdf\\Font\\' => 21,
+            'Com\\Tecnick\\Pdf\\Encrypt\\' => 24,
+            'Com\\Tecnick\\Pdf\\' => 16,
+            'Com\\Tecnick\\File\\' => 17,
+            'Com\\Tecnick\\Color\\' => 18,
+            'Com\\Tecnick\\Barcode\\' => 20,
         ),
     );
 
@@ -73,8 +85,8 @@ class ComposerStaticInit783a7e6f30b1179982f49db97e0f90ee
         'phpDocumentor\\Reflection\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
-            1 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
-            2 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
+            1 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
+            2 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
         ),
         'ZipStream\\' => 
         array (
@@ -125,6 +137,10 @@ class ComposerStaticInit783a7e6f30b1179982f49db97e0f90ee
         array (
             0 => __DIR__ . '/..' . '/paragonie/constant_time_encoding/src',
         ),
+        'PHPMailer\\PHPMailer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
+        ),
         'MyCLabs\\Enum\\' => 
         array (
             0 => __DIR__ . '/..' . '/myclabs/php-enum/src',
@@ -148,6 +164,50 @@ class ComposerStaticInit783a7e6f30b1179982f49db97e0f90ee
         'Complex\\' => 
         array (
             0 => __DIR__ . '/..' . '/markbaker/complex/classes/src',
+        ),
+        'Com\\Tecnick\\Unicode\\Data\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/tecnickcom/tc-lib-unicode-data/src',
+        ),
+        'Com\\Tecnick\\Unicode\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/tecnickcom/tc-lib-unicode/src',
+        ),
+        'Com\\Tecnick\\Pdf\\Page\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/tecnickcom/tc-lib-pdf-page/src',
+        ),
+        'Com\\Tecnick\\Pdf\\Image\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/tecnickcom/tc-lib-pdf-image/src',
+        ),
+        'Com\\Tecnick\\Pdf\\Graph\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/tecnickcom/tc-lib-pdf-graph/src',
+        ),
+        'Com\\Tecnick\\Pdf\\Font\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/tecnickcom/tc-lib-pdf-font/src',
+        ),
+        'Com\\Tecnick\\Pdf\\Encrypt\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/tecnickcom/tc-lib-pdf-encrypt/src',
+        ),
+        'Com\\Tecnick\\Pdf\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/tecnickcom/tc-lib-pdf/src',
+        ),
+        'Com\\Tecnick\\File\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/tecnickcom/tc-lib-file/src',
+        ),
+        'Com\\Tecnick\\Color\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/tecnickcom/tc-lib-color/src',
+        ),
+        'Com\\Tecnick\\Barcode\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/tecnickcom/tc-lib-barcode/src',
         ),
     );
 

@@ -64,7 +64,6 @@ final class Mailbox implements MailboxInterface
         return $this->info->delimiter;
     }
 
-    #[\ReturnTypeWillChange]
     public function count()
     {
         $return = \imap_num_msg($this->resource->getStream());

@@ -7,6 +7,14 @@
         "phpunit/phpunit": "^9.5.4",
         "phpseclib/phpseclib": "^3.0.8",
         "phpoffice/phpspreadsheet": "^1.17.1",
-        "ddeboer/imap":"^1.12.1"
-    }
+        "ddeboer/imap":"^1.12.1",
+        "tecnickcom/tc-lib-pdf": "dev-main",
+        "phpmailer/phpmailer": "^6.5"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:tecnickcom/tc-lib-pdf.git"
+        }
+    ]
 }
