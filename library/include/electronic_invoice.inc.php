@@ -1016,13 +1016,13 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
           $XMLvars->SpeseIncassoTrasporti += number_format(round($rigo['importo']+$sc_su_imp['importo_sconto'],2), 2, '.', '');
 					$el->appendChild($el1);
           if (isset($rigo['descrittivi'])) {
-              // se ho dei righi descrittivi associati li posso aggiungere fino a che la lunghezza non superi 1000 caratteri quindi ne posso aggiungere al massimo 15*60
-              foreach ($rigo['descrittivi'] as $k => $v) {
-                  if ($k < 16) {
-                      $rigo['descri'] .= $v; // ogni $v è lungo al massimo 60 caratteri
-                      unset($rigo['descrittivi'][$k]); // lo tolgo in modo da mettere un eventuale accesso sotto
-                  }
+            // se ho dei righi descrittivi associati li posso aggiungere fino a che la lunghezza non superi 1000 caratteri quindi ne posso aggiungere al massimo 15*60
+            foreach ($rigo['descrittivi'] as $k => $v) {
+              if ($k < 16) {
+                $rigo['descri'] .= $v; // ogni $v è lungo al massimo 60 caratteri
+                unset($rigo['descrittivi'][$k]); // lo tolgo in modo da mettere un eventuale accesso sotto
               }
+            }
           }
           $el1 = $domDoc->createElement("Descrizione", substr($rigo['descri'], -1000));
           $el->appendChild($el1);
@@ -1033,16 +1033,16 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
           $el1 = $domDoc->createElement("AliquotaIVA", number_format($rigo['pervat'], 2, '.', ''));
           $el->appendChild($el1);
           if ($rigo['ritenuta'] > 0) {
-              $el1 = $domDoc->createElement("Ritenuta", 'SI');
-              $el->appendChild($el1);
+            $el1 = $domDoc->createElement("Ritenuta", 'SI');
+            $el->appendChild($el1);
           }
           if ($rigo['pervat'] <= 0) {
-              $el1 = $domDoc->createElement("Natura", $rigo['natura']);
-              $el->appendChild($el1);
+            $el1 = $domDoc->createElement("Natura", $rigo['natura']);
+            $el->appendChild($el1);
           }
 					if ( !empty($XMLvars->DatiIntento) && $rigo['natura']=='N3.5' ) {
 						$el1 = $domDoc->createElement("AltriDatiGestionali", '');
-                        $el->appendChild($el1);
+            $el->appendChild($el1);
 						$el2 = $domDoc->createElement("TipoDato", 'INTENTO');
 						$el1->appendChild($el2);
 						$el2 = $domDoc->createElement("RiferimentoTesto",  $XMLvars->DatiIntento['RiferimentoTesto']);
@@ -1051,14 +1051,14 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 						$el1->appendChild($el2);
 					}
           if (isset($rigo['descrittivi']) && count($rigo['descrittivi']) > 0) {
-              foreach ($rigo['descrittivi'] as $k => $v) {
-                  $el1 = $domDoc->createElement("AltriDatiGestionali", '');
-                  $el->appendChild($el1);
-                  $el2 = $domDoc->createElement("TipoDato", 'txt' . $k);
-                  $el1->appendChild($el2);
-                  $el2 = $domDoc->createElement("RiferimentoTesto", $v);
-                  $el1->appendChild($el2);
-              }
+            foreach ($rigo['descrittivi'] as $k => $v) {
+              $el1 = $domDoc->createElement("AltriDatiGestionali", '');
+              $el->appendChild($el1);
+              $el2 = $domDoc->createElement("TipoDato", 'txt' . $k);
+              $el1->appendChild($el2);
+              $el2 = $domDoc->createElement("RiferimentoTesto", $v);
+              $el1->appendChild($el2);
+            }
           }
           $benserv->appendChild($el);
           $nl = true;
@@ -1080,15 +1080,15 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
   $totpar = $XMLvars->totimpfat + $XMLvars->totriport + $XMLvars->totivafat; //totale della fattura al lordo della RDA e dell'IVA
   $totpag = $totpar - $XMLvars->tot_ritenute - $XMLvars->ivasplitpay; // totale a pagare
   if ($XMLvars->impbol >= 0.01 && ($XMLvars->virtual_taxstamp == 1 || $XMLvars->virtual_taxstamp == 2)) { // se si è scelto di assolvere il bollo sia in modo fisico che virtuale
-      $totpag = $totpag + $XMLvars->impbol;
-      $totpar = $totpar + $XMLvars->impbol;
+    $totpag = $totpag + $XMLvars->impbol;
+    $totpar = $totpar + $XMLvars->impbol;
   }
   $ex = new Expiry;
   $ratpag = $ex->CalcExpiry($totpag, $XMLvars->tesdoc["datfat"], $XMLvars->pagame['tipdec'], $XMLvars->pagame['giodec'], $XMLvars->pagame['numrat'], $XMLvars->pagame['tiprat'], $XMLvars->pagame['mesesc'], $XMLvars->pagame['giosuc']);
   if ($XMLvars->pagame['numrat'] > 1) {
-      $cond_pag = 'TP01';
+    $cond_pag = 'TP01';
   } else {
-      $cond_pag = 'TP02';
+    $cond_pag = 'TP02';
   }
   // --- FINE CALCOLO TOTALI
   // alla fine del ciclo sui righi faccio diverse aggiunte es. causale, bolli, descrizione aggiuntive, e spese di incasso, queste essendo cumulative per diversi eventuali DdT non hanno un riferimento
