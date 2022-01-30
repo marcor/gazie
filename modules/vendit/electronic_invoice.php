@@ -54,7 +54,7 @@ if (isset($_GET['reinvia'])) {   //se viene richiesto un reinvio con altro nome 
       $sdifluxSync = new $classnamesdiflux();
       // invio tramite i metodi della classe per la sincronizzazione con SdI
       $sdifluxSync->SendFaE();
-      $res=$sdifluxSync->SendFaE($where);
+      $res=$sdifluxSync->SendFaE($_GET);
       if (strlen($res)>1){ // invio non riuscito
         print '<br/>'.$res;
         exit;
@@ -65,7 +65,6 @@ if (isset($_GET['reinvia'])) {   //se viene richiesto un reinvio con altro nome 
       require('../../library/'.$namelib.'/SendFaE.php');
       // invio tramite le funzioni  della classe per la sincronizzazione con SdI
     }
-
   }
 } else if (isset($_GET['invia'])) {
   if (isset($_GET['sdiflux'])) {  // qualora sia richiesto il reinvio ed è presente una libreria o un modulo per la gestione dei flussi SdI
@@ -76,7 +75,7 @@ if (isset($_GET['reinvia'])) {   //se viene richiesto un reinvio con altro nome 
       $classnamesdiflux = $namelib.'gazSynchro';
       $sdifluxSync = new $classnamesdiflux();
       // invio tramite i metodi della classe per la sincronizzazione con SdI
-      $res=$sdifluxSync->SendFaE($where);
+      $res=$sdifluxSync->SendFaE($_GET);
       if (strlen($res)>1){ // invio non riuscito
         print '<br/>'.$res;
         exit;
