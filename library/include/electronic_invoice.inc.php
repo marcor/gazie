@@ -55,21 +55,20 @@ class invoiceXMLvars {
         $this->codici .= 'C.F. ' . $admin_aziend['codfis'] . ' ';
     }
     if ($admin_aziend['pariva']) {
-        $this->codici .= 'P.I. ' . $admin_aziend['pariva'] . ' ';
+      $this->codici .= 'P.I. ' . $admin_aziend['pariva'] . ' ';
     }
     if ($tesdoc['template'] == 'FatturaImmediata') {
-        $this->sempl_accom = true;
+      $this->sempl_accom = true;
     } else {
-        $this->sempl_accom = false;
+      $this->sempl_accom = false;
     }
     $this->intesta4 = $admin_aziend['e_mail'];
     $this->intesta5 = $admin_aziend['sexper'];
     if ($admin_aziend['sexper'] == 'G') {
-        $this->TipoRitenuta = 'RT02';
+      $this->TipoRitenuta = 'RT02';
     } else {
-        $this->TipoRitenuta = 'RT01';
+      $this->TipoRitenuta = 'RT01';
     }
-
     $this->colore = $admin_aziend['colore'];
     $this->decimal_quantity = $admin_aziend['decimal_quantity'];
     $this->decimal_price = $admin_aziend['decimal_price'];
@@ -87,37 +86,37 @@ class invoiceXMLvars {
     $this->rs_agente = ($this->id_agente)?$anagrafica->getPartner($this->id_agente['id_fornitore']):false;
     $this->name_agente =($this->rs_agente)?substr($this->rs_agente['ragso1'] . " " . $this->rs_agente['ragso2'], 0, 47):'';
     if ((isset($tesdoc['id_des_same_company'])) and ( $tesdoc['id_des_same_company'] > 0)) {
-        $this->partner_dest = gaz_dbi_get_row($gTables['destina'], 'codice', $tesdoc['id_des_same_company']);
-        $this->destinazione = substr($this->partner_dest['unita_locale1'] . " " . $this->partner_dest['unita_locale2'], 0, 45);
-        $this->destinazione .= "\n" . substr($this->partner_dest['indspe'], 0, 45);
-        $this->destinazione .= "\n" . substr($this->partner_dest['capspe'] . " " . $this->partner_dest['citspe'] . " (" . $this->partner_dest['prospe'] . ")", 0, 45);
+      $this->partner_dest = gaz_dbi_get_row($gTables['destina'], 'codice', $tesdoc['id_des_same_company']);
+      $this->destinazione = substr($this->partner_dest['unita_locale1'] . " " . $this->partner_dest['unita_locale2'], 0, 45);
+      $this->destinazione .= "\n" . substr($this->partner_dest['indspe'], 0, 45);
+      $this->destinazione .= "\n" . substr($this->partner_dest['capspe'] . " " . $this->partner_dest['citspe'] . " (" . $this->partner_dest['prospe'] . ")", 0, 45);
     } elseif ((isset($tesdoc['id_des'])) and ( $tesdoc['id_des'] > 0)) {
-        $this->partner_dest = $anagrafica->getPartnerData($tesdoc['id_des']);
-        $this->destinazione = substr($this->partner_dest['ragso1'] . " " . $this->partner_dest['ragso2'], 0, 45);
-        $this->destinazione .= "\n" . substr($this->partner_dest['indspe'], 0, 45);
-        $this->destinazione .= "\n" . substr($this->partner_dest['capspe'] . " " . $this->partner_dest['citspe'] . " (" . $this->partner_dest['prospe'] . ")", 0, 45);
+      $this->partner_dest = $anagrafica->getPartnerData($tesdoc['id_des']);
+      $this->destinazione = substr($this->partner_dest['ragso1'] . " " . $this->partner_dest['ragso2'], 0, 45);
+      $this->destinazione .= "\n" . substr($this->partner_dest['indspe'], 0, 45);
+      $this->destinazione .= "\n" . substr($this->partner_dest['capspe'] . " " . $this->partner_dest['citspe'] . " (" . $this->partner_dest['prospe'] . ")", 0, 45);
     } else {
-        if (isset($tesdoc['destin']) and is_array($tesdoc['destin'])) {
-            $this->destinazione = $tesdoc['destin'];
-        } elseif (isset($tesdoc['destin']) and is_string($tesdoc['destin'])) {
-            $destino = preg_split("/[\r\n]+/i", $tesdoc['destin'], 3);
-            $this->destinazione = substr($destino[0], 0, 45);
-            foreach ($destino as $key => $value) {
-                if ($key == 1) {
-                    $this->destinazione .= "\n" . substr($value, 0, 45) . "\n";
-                } elseif ($key > 1) {
-                    $this->destinazione .= substr(preg_replace("/[\r\n]+/i", ' ', $value), 0, 45);
-                }
-            }
-        } else {
-            $this->destinazione = '';
+      if (isset($tesdoc['destin']) and is_array($tesdoc['destin'])) {
+        $this->destinazione = $tesdoc['destin'];
+      } elseif (isset($tesdoc['destin']) and is_string($tesdoc['destin'])) {
+        $destino = preg_split("/[\r\n]+/i", $tesdoc['destin'], 3);
+        $this->destinazione = substr($destino[0], 0, 45);
+        foreach ($destino as $key => $value) {
+          if ($key == 1) {
+            $this->destinazione .= "\n" . substr($value, 0, 45) . "\n";
+          } elseif ($key > 1) {
+            $this->destinazione .= substr(preg_replace("/[\r\n]+/i", ' ', $value), 0, 45);
+          }
         }
+      } else {
+         $this->destinazione = '';
+      }
     }
     $this->vettore = false;
     if ($tesdoc['vettor']>0){
       $this->vettore = gaz_dbi_get_row($gTables['vettor'].' LEFT JOIN '.$gTables['anagra'].' ON '.$gTables['vettor'].'.id_anagra = '.$gTables['anagra'].".id", "codice", $tesdoc['vettor']);
     }
-        $this->fiscal_rapresentative = false;
+    $this->fiscal_rapresentative = false;
     if ($this->client['fiscal_rapresentative_id']>0){
       $this->fiscal_rapresentative = gaz_dbi_get_row($gTables['anagra'], "id", $this->client['fiscal_rapresentative_id']);
     }
@@ -255,7 +254,7 @@ class invoiceXMLvars {
         // se ho avuto dei righi descrittivi che hanno preceduto  questo allora li inputo a questo rigo
         if (isset($righiDescrittivi[0])) {
             foreach ($righiDescrittivi[0] as $v) {
-                $righiDescrittivi[$nr][] = $v; // faccio il push su un array indicizzato con $nr (numero rigo)
+              $righiDescrittivi[$nr][] = $v; // faccio il push su un array indicizzato con $nr (numero rigo)
             }
         }
         unset($righiDescrittivi[0]); // svuoto l'array per prepararlo ad eventuali nuovi righi descrittivi
@@ -277,10 +276,10 @@ class invoiceXMLvars {
           $rigo['sconto_su_imponibile'][$rigo['id_rig']]=array('tipo'=>$t,'importo_sconto'=>$sconto_su_imponibile,'scorig'=>floatval($rigo['sconto']),'scotes'=>floatval($this->tesdoc['sconto']),'perc_sconto'=>$perc_sconto,'rigo'=>$rigo);
         }
         if (!isset($this->castel[$rigo['codvat']])) {
-            $this->castel[$rigo['codvat']] = 0;
+          $this->castel[$rigo['codvat']] = 0;
         }
         if (!isset($this->body_castle[$rigo['codvat']])) {
-            $this->body_castle[$rigo['codvat']]['impcast'] = 0;
+          $this->body_castle[$rigo['codvat']]['impcast'] = 0;
         }
         $this->body_castle[$rigo['codvat']]['impcast'] += $v_for_castle;
         $this->castel[$rigo['codvat']] += $v_for_castle;
@@ -296,10 +295,10 @@ class invoiceXMLvars {
         $righiDescrittivi[0][] = htmlspecialchars($rigo['descri'], ENT_XML1 | ENT_QUOTES, 'UTF-8', true);
       } elseif ($rigo['tiprig'] == 4) { // cassa previdenziale
         if (!isset($this->castel[$rigo['codvat']])) {
-            $this->castel[$rigo['codvat']] = 0;
+          $this->castel[$rigo['codvat']] = 0;
         }
         if (!isset($this->body_castle[$rigo['codvat']])) {
-            $this->body_castle[$rigo['codvat']]['impcast'] = 0;
+          $this->body_castle[$rigo['codvat']]['impcast'] = 0;
         }
         $rigo['importo'] = round($rigo['provvigione']*$rigo['prelis']/100,2);
         $v_for_castle = $rigo['importo'] ;
@@ -310,29 +309,29 @@ class invoiceXMLvars {
         $this->totimp_doc += $v_for_castle;
         // aggiungo all'accumulatore l'eventuale iva non esigibile (split payment PA)
         if ($rigo['tipiva'] == 'T') {
-            $this->ivasplitpay += round(($v_for_castle * $rigo['pervat']) / 100, 2);
+          $this->ivasplitpay += round(($v_for_castle * $rigo['pervat']) / 100, 2);
         }
         /* con codart valorizzo l'elemento <TipoCassa> e creo l'array che mi servirà per generare gli elementi <DatiCassaPrevidenziale> */
         if (!isset($this->cassa_prev[$rigo['codart']])) { // se il tipo cassa non ce l'ho
-            $this->cassa_prev[$rigo['codart']] = array('AlCassa'=>$rigo['provvigione'],'ImportoContributoCassa'=>$rigo['importo'],'ImponibileCassa'=>$rigo['prelis'],'AliquotaIVA'=>$rigo['pervat'],'Ritenuta'=>$rigo['ritenuta'],'Natura'=>$rigo['natura']);
+          $this->cassa_prev[$rigo['codart']] = array('AlCassa'=>$rigo['provvigione'],'ImportoContributoCassa'=>$rigo['importo'],'ImponibileCassa'=>$rigo['prelis'],'AliquotaIVA'=>$rigo['pervat'],'Ritenuta'=>$rigo['ritenuta'],'Natura'=>$rigo['natura']);
         } else { // ho già l'elemento <TipoCassa>
           $this->cassa_prev[$rigo['codart']]['ImponibileCassa'] +=$rigo['prelis'];
           $this->cassa_prev[$rigo['codart']]['ImportoContributoCassa'] +=$rigo['importo'];
         }
       } elseif ($rigo['tiprig'] == 6 || $rigo['tiprig'] == 8) { // testo
-                $body_text = gaz_dbi_get_row($this->gTables['body_text'], "id_body", $rigo['id_body_text']);
-                $dom->loadHTML($body_text['body_text']);
-                $rigo['descri'] = strip_tags($dom->saveXML());
-                $res = explode("\n", wordwrap($rigo['descri'], 60, "\n"));
-                // faccio il push ricorsivo su un array ancora da indicizzare (0)
-                foreach ($res as $v) {
-                    $ctrl_v = trim($v);
-                    if (!empty($ctrl_v)) {
-                        $righiDescrittivi[0][] = $v;
-                    }
-                }
+        $body_text = gaz_dbi_get_row($this->gTables['body_text'], "id_body", $rigo['id_body_text']);
+        $dom->loadHTML($body_text['body_text']);
+        $rigo['descri'] = strip_tags($dom->saveXML());
+        $res = explode("\n", wordwrap($rigo['descri'], 60, "\n"));
+        // faccio il push ricorsivo su un array ancora da indicizzare (0)
+        foreach ($res as $v) {
+          $ctrl_v = trim($v);
+          if (!empty($ctrl_v)) {
+            $righiDescrittivi[0][] = $v;
+          }
+        }
       } elseif ($rigo['tiprig'] == 3) {  // var.totale fattura
-                $this->riporto += $rigo['prelis'];
+        $this->riporto += $rigo['prelis'];
       } elseif ($rigo['tiprig']>10 && $rigo['tiprig']<17) {
         if ($rigo['codric']>0){
           $this->IdRig_NumeroLinea[$id_rig_ref[$rigo['codric']]]=$rigo['id_rig']; // qui riferirò l'id_rig del rigo da riportare sull'accumulatore per 2.1.X con l'id_rig del normale
@@ -378,21 +377,21 @@ class invoiceXMLvars {
     // se finiti i righi ho incontrato dei descrittivi che non sono stati imputati a dei righi normali perché successivi a questi allora li imputo all'ultimo normale incontrato
     if (isset($righiDescrittivi[0])) {
         foreach ($righiDescrittivi[0] as $v) {
-            $righiDescrittivi[$last_normal_row][] = $v; // faccio il push su un array indicizzato con $nr (numero rigo)
+          $righiDescrittivi[$last_normal_row][] = $v; // faccio il push su un array indicizzato con $nr (numero rigo)
         }
     }
     unset($righiDescrittivi[0]);
     // se ho dei trasporti lo aggiungo ai righi del relativo DdT
     if ($this->trasporto >= 0.1) {
-        $rigo_T = array('id_rig'=>0,'tiprig'=>'T','descri'=>'TRASPORTO','importo'=>$this->trasporto,'pervat'=>$this->expense_pervat['aliquo'],'ritenuta'=>0,'natura'=>$this->expense_pervat['fae_natura']);
-        $results[$nr] = $rigo_T;
-        $nr++;
+      $rigo_T = array('id_rig'=>0,'tiprig'=>'T','descri'=>'TRASPORTO','importo'=>$this->trasporto,'pervat'=>$this->expense_pervat['aliquo'],'ritenuta'=>0,'natura'=>$this->expense_pervat['fae_natura']);
+      $results[$nr] = $rigo_T;
+      $nr++;
     }
     foreach ($results as $k => $v) { // associo l'array dei righi descrittivi con quello del righo corrispondente
-        $r[$k] = $v;
-        if (isset($righiDescrittivi[$k])) {
-            $r[$k]['descrittivi'] = $righiDescrittivi[$k];
-        }
+      $r[$k] = $v;
+      if (isset($righiDescrittivi[$k])) {
+        $r[$k]['descrittivi'] = $righiDescrittivi[$k];
+      }
     }
     // fine imputazione descrittivi
     return $r;
@@ -497,17 +496,17 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
       // inizializzo la variabile per Causale 2.1.1.11 e se il regime fiscale è RF02 (contribuenti minimi) o RF19 (regime forfettario) allora indico le relative diciture
       $XMLvars->Causale=array();
       if ($XMLvars->regime_fiscale=='RF02') {
-          $XMLvars->Causale[]= "Operazione effettuata ai sensi dell'art.1 comma 100 Legge 244/2007. Compenso non assoggettato a ritenuta d'acconto ai sensi dell'art.27 del DL 98 del 06.07.2011";
+        $XMLvars->Causale[]= "Operazione effettuata ai sensi dell'art.1 comma 100 Legge 244/2007. Compenso non assoggettato a ritenuta d'acconto ai sensi dell'art.27 del DL 98 del 06.07.2011";
       } elseif ($XMLvars->regime_fiscale=='RF19') {
-          $XMLvars->Causale[]= "Operazione effettuata ai sensi dell'art.1 commi da 54 a 89 Legge 190/2014 e successive modifiche. Compenso non assoggettato a ritenuta d'acconto ai sensi dall'art.1 comma 67 Legge n.190/2014";
+        $XMLvars->Causale[]= "Operazione effettuata ai sensi dell'art.1 commi da 54 a 89 Legge 190/2014 e successive modifiche. Compenso non assoggettato a ritenuta d'acconto ai sensi dall'art.1 comma 67 Legge n.190/2014";
       }
 			$xpath = new DOMXPath($domDoc);
 		}
     // controllo se ho un ufficio diverso da quello di base
     if (isset($tesdoc['id_des_same_company']) && $tesdoc['id_des_same_company'] > 0) {
-        $dest = gaz_dbi_get_row($gTables['destina'], 'codice', $tesdoc['id_des_same_company']);
-        $cod_destinatario=trim($dest['fe_cod_ufficio']); // elemento 1.1.4
-        $XMLvars->client['fe_cod_univoco']=$cod_destinatario;
+      $dest = gaz_dbi_get_row($gTables['destina'], 'codice', $tesdoc['id_des_same_company']);
+      $cod_destinatario=trim($dest['fe_cod_ufficio']); // elemento 1.1.4
+      $XMLvars->client['fe_cod_univoco']=$cod_destinatario;
     }
 		// se c'è un ddt di origine ogni testata creerà un riferimento in <DatiDDT>
     if ($XMLvars->ddt_data) { // se c'è un ddt di origine ogni testata faccio il push sull'accumulatore per creare il blocco <DatiDDT>
