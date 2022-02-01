@@ -227,7 +227,7 @@ class venditForm extends GAzieForm {
 		return substr($row['filename_zip_package'],-9,5);
 	}
 
-	function getFAEunpacked($include_fe_PA = true) { // FUNZIONE CHE CONTROLLA LO STATO DELLE FATTURE DA IMPACCHETTARE PER INVIARE ALLO SDI
+	function getFAEunpacked($include_fe_PA = true,$idtes=0) { // FUNZIONE CHE CONTROLLA LO STATO DELLE FATTURE DA IMPACCHETTARE PER INVIARE ALLO SDI
 		global $gTables, $admin_aziend;
 		$calc = new Compute;
 		$from = $gTables['tesdoc'] . ' AS tesdoc
@@ -241,6 +241,9 @@ class venditForm extends GAzieForm {
 				  AND (tipdoc LIKE 'F__'  OR (tipdoc = 'VCO' AND numfat > 0) OR (tipdoc LIKE 'X__') )";
 		if (!$include_fe_PA) {
 			$where.= " AND LENGTH(fe_cod_univoco)<>6";
+		}
+		if (intval($idtes>0)){
+			$where.= " AND id_tes = '".$idtes."'";
 		}
 		$orderby = "seziva ASC,tipdoc ASC, protoc ASC";
 		$result = gaz_dbi_dyn_query('tesdoc.*, CONCAT(tesdoc.seziva,SUBSTRING(tesdoc.tipdoc,1,1),tesdoc.protoc) AS ctrlp, SUBSTRING(tesdoc.tipdoc,1,1) AS ctrlreg ,
