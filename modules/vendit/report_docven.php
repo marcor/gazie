@@ -27,7 +27,7 @@ $admin_aziend = checkAdmin();
 $pdf_to_modal = gaz_dbi_get_row($gTables['company_config'], 'var', 'pdf_reports_send_to_modal')['val'];
 $partner_select = !gaz_dbi_get_row($gTables['company_config'], 'var', 'partner_select_mode')['val'];
 $tesdoc_e_partners = $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id LEFT JOIN ' . $gTables['fae_flux'] . " ON " . $gTables['tesdoc'] . ".id_tes = " . $gTables['fae_flux'] . '.id_tes_ref';
-$dest_fae_zip_package = gaz_dbi_get_row($gTables['company_config'], 'var', 'dest_fae_zip_package');
+
 //function print_querytime($prev) {
 //    list($usec, $sec) = explode(" ", microtime());
 //    $this_time = ((float) $usec + (float) $sec);
@@ -118,7 +118,6 @@ $(function() {
 });
 function confirMail(link){
    tes_id = link.id.replace("doc_", "");
-   //alert(tes_id);
    $.fx.speeds._default = 500;
    targetUrl = $("#doc_"+tes_id).attr("url");
    $("p#mail_adrs").html($("#doc_"+tes_id).attr("mail"));
@@ -141,40 +140,6 @@ function confirMail(link){
    $("#dialog" ).dialog( "open" );
 }
 
-function confirMailSDI(link) {
-   na_fi = link.id.replace("fn", "");
-   $.fx.speeds._default = 500;
-   
-   id_tes = $("#fn"+na_fi).attr("tes_id");;
-   //alert(id_tes);
-   $("p#mail_adrs").html($("#fn"+na_fi).attr("mail"));
-   $("p#mail_attc").html($("#fn"+na_fi).attr("namedoc"));
-   $( "#dialog_SDI" ).dialog({
-		modal: "true",
-		show: "blind",
-		hide: "explode",
-		buttons: {
-		  "invia": { 
-				text:"INVIA a SDI", 
-				"class":"btn btn-danger delete-button",
-				click:function (event, ui) {
-				$.ajax({
-					data: {id_tes:id_tes},
-					type: "POST",
-					url: "../vendit/ajax_fae_packaging.php",
-					success: function(output){
-						//alert(output);
-						window.location.href = output;
-					}
-				});
-			}},
-		  " ' . $script_transl['cancel'] . ' ": function() {
-			$(this).dialog("close");
-		  }
-		}
-   });
-   $("#dialog_SDI" ).dialog( "open" );
-}
 function confirPecSdi(link){
    codice = link.id.replace("doc3_", "");
    $.fx.speeds._default = 500;
@@ -205,7 +170,6 @@ function confirFae(link){
     $("#dialog_fae_filename span").html("<a href=\'"+link.href+"\' >"+$("#doc1_"+tes_id).attr("dialog_fae_filename")+"</a>");
 	var numrei = parseInt($("#doc1_"+tes_id).attr("dialog_fae_numrei"))+1;
     var flux_status = $("#doc1_"+tes_id).attr("dialog_flux_status");
-	ALERT(flux_status);
     var flux_descri = $("#doc1_"+tes_id).attr("dialog_flux_descri");
     var sdiflux = $("#doc1_"+tes_id).attr("dialog_fae_sdiflux");
     var zipref = $("#doc1_"+tes_id).attr("zip_ref");
@@ -349,12 +313,6 @@ function printPdf(urlPrintDoc){
         <p class="ui-state-highlight" id="iddescri"></p>
 	</div>
     <div style="display:none" id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">
-        <p id="mail_alert1"><?php echo $script_transl['mail_alert1']; ?></p>
-        <p class="ui-state-highlight" id="mail_adrs"></p>
-        <p id="mail_alert2"><?php echo $script_transl['mail_alert2']; ?></p>
-        <p class="ui-state-highlight" id="mail_attc"></p>
-    </div>
-	<div style="display:none" id="dialog_SDI" title="<?php echo $script_transl['mail_alert0']; ?>">
         <p id="mail_alert1"><?php echo $script_transl['mail_alert1']; ?></p>
         <p class="ui-state-highlight" id="mail_adrs"></p>
         <p id="mail_alert2"><?php echo $script_transl['mail_alert2']; ?></p>
@@ -725,15 +683,10 @@ if ( is_bool($paymov_status) || $paymov_status['style'] == $flt_info || $flt_inf
                                 $sdititle = 'genera il file '.$r['fae_attuale'].' o fai il '.intval($r['fattura_elettronica_reinvii']+1).'° reinvio ';
                                 break;
                             }
-							if ($last_flux_status=="DI" && !empty($sdilabel)){ // echo "<pre>id tes:",$r["id_tes"],"-dest:",$dest_fae_zip_package['val'],"<br>",print_r($r);
-								echo '<a '.$yes_mail.'class="btn btn-xs btn-info btn-email" onclick="confirMailSDI(this);return false;" id="fn' . substr($r["fae_attuale"],0,-4) . '" tes_id="'.$r["id_tes"].'" href="#" title="Mailto: ' . $dest_fae_zip_package['val'] . '"
-									mail="' . $dest_fae_zip_package['val'] . '" namedoc="'.$r["fae_attuale"].'">Invia <i class="glyphicon glyphicon-envelope"></i></a>';
-							}else{
-								echo (empty($sdilabel)?'':'<a class="btn btn-xs btn-'.$sdihilight.' btn-xml" onclick="confirFae(this);return false;" id="doc1_'.$r['id_tes'].'" dialog_fae_reinvio="'.$r['fae_reinvio'].'" dialog_flux_descri="'.htmlentities($r['flux_descri']).'" dialog_fae_sdiflux="'.$sdi_flux.'" dialog_fae_filename="'.$r['fae_attuale'].'" dialog_fae_numrei="'.$r['fattura_elettronica_reinvii'].'" dialog_fae_numfat="'. $r['tipdoc'].' '. $r['numfat'].'/'. $r['seziva'].'" dialog_flux_status="'. $last_flux_status.'" target="_blank" href="'.$modulo_fae.'" zip_ref="'.$zip_ref.'" title="'.$sdititle.'"> '.strtoupper($sdilabel).' </a>').'<a class="btn btn-xs btn-default" title="Visualizza in stile" href="electronic_invoice.php?id_tes='.$r['id_tes'].'&viewxml" target="_blank"><i class="glyphicon glyphicon-eye-open"></i> </a>';
-								if ($r['fattura_elettronica_reinvii'] > 0) {
-									echo '<br/><small>' . $r['fattura_elettronica_reinvii'] . ($r['fattura_elettronica_reinvii']==1 ? ' reinvio' : ' reinvii') . '</small><br/>';
-								}
-							}
+                            echo (empty($sdilabel)?'':'<a class="btn btn-xs btn-'.$sdihilight.' btn-xml" onclick="confirFae(this);return false;" id="doc1_'.$r['id_tes'].'" dialog_fae_reinvio="'.$r['fae_reinvio'].'" dialog_flux_descri="'.htmlentities($r['flux_descri']).'" dialog_fae_sdiflux="'.$sdi_flux.'" dialog_fae_filename="'.$r['fae_attuale'].'" dialog_fae_numrei="'.$r['fattura_elettronica_reinvii'].'" dialog_fae_numfat="'. $r['tipdoc'].' '. $r['numfat'].'/'. $r['seziva'].'" dialog_flux_status="'. $last_flux_status.'" target="_blank" href="'.$modulo_fae.'" zip_ref="'.$zip_ref.'" title="'.$sdititle.'"> '.strtoupper($sdilabel).' </a>').'<a class="btn btn-xs btn-default" title="Visualizza in stile" href="electronic_invoice.php?id_tes='.$r['id_tes'].'&viewxml" target="_blank"><i class="glyphicon glyphicon-eye-open"></i> </a>';
+                            if ($r['fattura_elettronica_reinvii'] > 0) {
+                                echo '<br/><small>' . $r['fattura_elettronica_reinvii'] . ($r['fattura_elettronica_reinvii']==1 ? ' reinvio' : ' reinvii') . '</small><br/>';
+                            }
                             echo '</td>';
                         }
 					} else {
