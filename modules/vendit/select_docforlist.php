@@ -46,30 +46,37 @@ function getLastDocument($tipo, $sezione, $anno) {
    switch ($tipo) {
       case 0:  // tutti
          $where = "tipdoc LIKE 'F__' AND YEAR(datfat) = $anno";
+         $orderby= "datfat DESC, protoc DESC";
          break;
       case 1:  //fattura differita
          $where = "tipdoc = 'FAD' AND YEAR(datfat) = $anno";
+         $orderby= "datfat DESC, protoc DESC";
          break;
       case 2:  //fattura immediata
          $where = "(tipdoc = 'FAI' OR tipdoc = 'FAA' ) AND YEAR(datfat) = $anno";
+         $orderby= "datfat DESC, protoc DESC";
          break;
       case 3: //nota di credito
          $where = "tipdoc = 'FNC' AND YEAR(datfat) = $anno";
+         $orderby= "datfat DESC, protoc DESC";
          break;
       case 4: //nota di debito
          $where = "tipdoc = 'FND' AND YEAR(datfat) = $anno";
+         $orderby= "datfat DESC, protoc DESC";
          break;
       case 5: //parcella
          $where = "tipdoc = 'FAP' AND YEAR(datfat) = $anno";
+         $orderby= "datfat DESC, protoc DESC";
          break;
       case 6: //ddt
          $where = "tipdoc LIKE 'DD_' AND YEAR(datemi) = $anno";
+         $orderby= "datemi DESC, numdoc DESC";
          break;
       case 7: //corrispettivo
          $where = "tipdoc LIKE 'VCO' AND YEAR(datemi) = $anno";
+         $orderby= "datemi DESC, numdoc DESC";
          break;
    }
-   $orderby=($tipo==6)?'datemi DESC, numdoc DESC':'datfat DESC, numfat DESC';
    $rs_lastdoc = gaz_dbi_dyn_query("*", $gTables['tesdoc'], $where . " AND seziva = $sezione", $orderby, 0, 1);
    $last = gaz_dbi_fetch_array($rs_lastdoc);
    if ($last) {
@@ -81,7 +88,6 @@ function getLastDocument($tipo, $sezione, $anno) {
       $last['numero'] = 1;
       $last['data_fine'] = date("Y-m-d");
    }
-//   return array('protoc' => intval($last['protoc']), 'numero' => intval($last['numero']), 'template' => $last['template'], 'datfin' => $last['data_fine']);
    return array('protoc' => $last['protoc'], 'numero' => $last['numero'], 'datfin' => $last['data_fine']);
 }
 

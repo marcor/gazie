@@ -110,18 +110,20 @@ $pdf->SetFont('helvetica', '', 7);
 
 $ctrlAgente = 0;
 $ctrlDoc = 0;
-$tot_prov = 0.00;
-$totprov = 0.00;
-$totfat = 0;
-$tot_impo = 0;
+$totalegeneraleprovvigioni = 0.00;
+$totalegeneralefatturato = 0;
+$totaleprovvigioni = 0.00;
+$totalefatturato = 0;
 while ($row = gaz_dbi_fetch_array($result)) {
    $pdf->setRiporti($aRiportare);
    if ($ctrlAgente != $row['id_agente']) {
       if ($ctrlAgente > 0) {
-         $pdf->SetFont('helvetica', 'B', 8);
-         $pdf->Cell($aRiportare['top'][0]['lun'], 4, 'Totale provvigioni: ', 1, 0, 'R');
-         $pdf->Cell($aRiportare['top'][1]['lun'], 4, $aRiportare['top'][1]['nam'], 1, 0, 'R');
-         $pdf->SetFont('helvetica', '', 7);
+        $pdf->SetFont('helvetica', 'B', 8);
+        $pdf->Cell($aRiportare['top'][0]['lun'], 4, 'Totale provvigioni: ', 1, 0, 'R');
+        $pdf->Cell($aRiportare['top'][1]['lun'], 4, $aRiportare['top'][1]['nam'], 1, 0, 'R');
+        $pdf->SetFont('helvetica', '', 7);
+        $totaleprovvigioni = 0.00;
+        $totalefatturato = 0;
       }
       $agente = getNewAgente($row['id_agente']);
       $item_head['bot'] = array(array('lun' => 50, 'nam' => $agente['indspe']),
@@ -142,21 +144,21 @@ while ($row = gaz_dbi_fetch_array($result)) {
    }
    $row_importo = CalcolaImportoRigo($row['quanti'], $row['prelis'], array($row['scochi'], $row['sconto']));
    $row_provvig = round($row_importo * $row['provvigione'] / 100, 3);
-   $tot_impo += $row_importo;
-   $tot_prov += $row_provvig;
-   $aRiportare['top'][1]['fat'] = gaz_format_number($tot_impo);
-   $aRiportare['bot'][1]['fat'] = gaz_format_number($tot_impo);
-   $aRiportare['top'][1]['nam'] = gaz_format_number($tot_prov);
-   $aRiportare['bot'][1]['nam'] = gaz_format_number($tot_prov);
+   $totalegeneralefatturato += $row_importo;
+   $totalegeneraleprovvigioni += $row_provvig;
+   $aRiportare['top'][1]['fat'] = gaz_format_number($totalegeneralefatturato);
+   $aRiportare['bot'][1]['fat'] = gaz_format_number($totalegeneralefatturato);
+   $aRiportare['top'][1]['nam'] = gaz_format_number($totalegeneraleprovvigioni);
+   $aRiportare['bot'][1]['nam'] = gaz_format_number($totalegeneraleprovvigioni);
    if ($ctrlDoc != $row['id_tes']) {
-	  if ($totfat>0) {
+	  if ($totalefatturato>0) {
 		$pdf->SetFont('helvetica', 'B', 8);
 		$pdf->Cell(141, 5, 'Totali Fattura: ', 0, 0, 'R');
-		$pdf->Cell(20, 5, gaz_format_number($totfat), 0, 0, 'R');
-		$pdf->Cell(27, 5, gaz_format_number($totprov), 0, 1, 'R');
+		$pdf->Cell(20, 5, gaz_format_number($totalefatturato), 0, 0, 'R');
+		$pdf->Cell(27, 5, gaz_format_number($totaleprovvigioni), 0, 1, 'R');
 		$pdf->SetFont('helvetica', '', 7);
-		$totfat = 0;
-		$totprov = 0;
+		$totalefatturato = 0;
+		$totaleprovvigioni = 0;
 	  };
       $tmpDescr = $strScript['admin_docven.php']['doc_name'][$row['tipdoc']];
       if ($row['tipdoc'] == 'FAD') {
@@ -175,15 +177,15 @@ while ($row = gaz_dbi_fetch_array($result)) {
    $pdf->Cell(20, 4, gaz_format_number($row_importo), 1, 0, 'R');
    $pdf->Cell(11, 4, gaz_format_number($row['provvigione']), 1, 0, 'R');
    $pdf->Cell(16, 4, gaz_format_number($row_provvig), 1, 1, 'R');
-   $totfat +=  $row_importo;
-   $totprov +=  $row_provvig;
+   $totalefatturato +=  $row_importo;
+   $totaleprovvigioni +=  $row_provvig;
    $ctrlAgente = $row['id_agente'];
    $ctrlDoc = $row['id_tes'];
 }
 $pdf->SetFont('helvetica', 'B', 8);
-$pdf->Cell(141, 5, 'Totali Fattura: ', 0, 0, 'R');
-$pdf->Cell(20, 5, gaz_format_number($totfat), 0, 0, 'R');
-$pdf->Cell(27, 5, gaz_format_number($totprov), 0, 1, 'R');
+$pdf->Cell(141, 5, 'Totali Fatture: ', 0, 0, 'R');
+$pdf->Cell(20, 5, gaz_format_number($totalefatturato), 0, 0, 'R');
+$pdf->Cell(27, 5, gaz_format_number($totaleprovvigioni), 0, 1, 'R');
 
 $pdf->SetFont('helvetica', '', 10);
 $pdf->Cell(141, 8, 'Totali provvigioni: ', 0, 0, 'R');

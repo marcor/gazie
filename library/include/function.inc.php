@@ -1406,7 +1406,7 @@ class GAzieMail {
 			$config_pass = gaz_dbi_get_row($gTables['company_config'], 'var', 'pec_smtp_psw');
 			$config_host = gaz_dbi_get_row($gTables['company_config'], 'var', 'pec_smtp_server');
 			$admin_data['other_email'] = $admin_data['pec'];
-			$mailto = $receiver['e_mail']; //recipient-DESTINATARIO			
+			$mailto = $receiver['e_mail']; //recipient-DESTINATARIO
 		} else {// altrimenti prendo la configurazione smtp semplice
 			$config_port = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_port');
 			$config_secure = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_secure');
@@ -1415,7 +1415,7 @@ class GAzieMail {
 			$config_host = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_server');
 			$mailto = $receiver['e_mail']; //recipient-DESTINATARIO
 		}
-		
+
         // definisco il server SMTP e il mittente
         $config_mailer = gaz_dbi_get_row($gTables['company_config'], 'var', 'mailer');
         $config_notif = gaz_dbi_get_row($gTables['company_config'], 'var', 'return_notification');
@@ -1424,11 +1424,9 @@ class GAzieMail {
         $user_text = gaz_dbi_get_row($gTables['admin_config'], 'var_name', 'body_send_doc_email', "AND adminid = '{$user['user_name']}'");
         $company_text = gaz_dbi_get_row($gTables['company_config'], 'var', 'company_email_text');
         $admin_data['web_url'] = trim($admin_data['web_url']);
-		if (!empty($admin_data['other_email']) && strlen($admin_data['other_email'])>=10){
-			$mailto = $admin_data['other_email']; //recipient
-		} else {
-			$mailto = $partner['e_mail']; //recipient
-		}
+        if (!empty($admin_data['other_email']) && strlen($admin_data['other_email'])>=10){
+          $mailto = $admin_data['other_email']; //recipient
+        }
         $subject = $admin_data['ragso1'] . " " . $admin_data['ragso2'] . " - Trasmissione " . str_lreplace('.pdf', '', (isset($admin_data['doc_name']))?$admin_data['doc_name']:''); //subject
         // aggiungo al corpo  dell'email
         $body_text = "<div><b>" . ((isset($admin_data['cliente1']))?$admin_data['cliente1']:'') . "</b></div>\n";
@@ -1486,7 +1484,7 @@ class GAzieMail {
 			$mittente=$admin_data['pec'];
 			$config_send_fae = gaz_dbi_get_row($gTables['company_config'], 'var', 'pecsdi_sdi_email')['val'];
 			if (strlen($config_send_fae)>0){// se c'è un indirizzo per i pacchetti zip in configurazione azienda
-				$mail->AddAddress($config_send_fae, $admin_data['ragso1'] . " " . $admin_data['ragso2']);// Aggiungo PEC SDI come Destinatario 
+				$mail->AddAddress($config_send_fae, $admin_data['ragso1'] . " " . $admin_data['ragso2']);// Aggiungo PEC SDI come Destinatario
 			}
 		}
         // Imposto eventuale richiesta di notifica
@@ -1499,10 +1497,12 @@ class GAzieMail {
         // Imposto email del destinatario
         $mail->Hostname = $config_host;
         $mail->AddAddress($mailto);//Destinatario
+        if (strlen($user['user_email'])>=10) { // quando l'utente che ha inviato la mail ha un suo indirizzo il reply avviene su di lui
+          $usermail = $user['user_email'];
+          $mail->AddCC($usermail, $admin_data['ragso1'] . " " . $admin_data['ragso2']); // Aggiungo mittente come destinatario per conoscenza, per avere una copia
+        }
 
-		
-		//$mail->AddCC($mittente, $admin_data['ragso1'] . " " . $admin_data['ragso2']);// Aggiungo mittente come destinatario per conoscenza, per avere una copia
-		
+
         // Imposto l'oggetto dell'email
         $mail->Subject = $subject;
         // Imposto il testo HTML dell'email

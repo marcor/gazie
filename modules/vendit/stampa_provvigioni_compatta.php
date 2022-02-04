@@ -107,18 +107,25 @@ $pdf->SetFont('helvetica', '', 7);
 
 $ctrlAgente = 0;
 $ctrlDoc = 0;
+$totgen_prov = 0.00;
+$totgen_fatt = 0.00;
 $tot_prov = 0.00;
 $tot_fatt = 0.00;
 while ($row = gaz_dbi_fetch_array($result)) {
    $pdf->setRiporti($aRiportare);
    if ($ctrlAgente != $row['id_agente']) {
       if ($ctrlAgente > 0) {
-         $pdf->SetFont('helvetica', 'B', 8);
-         $pdf->Cell($aRiportare['top'][0]['lun'], 4, 'Totale provvigioni: ', 1, 0, 'R');
-         $pdf->Cell($aRiportare['top'][1]['lun'], 4, $aRiportare['top'][1]['nam'], 1, 0, 'R');
-         $pdf->Cell(11, 4, "", 1, 0, 'R');
-         $pdf->Cell($aRiportare['top'][3]['lun'], 4, $aRiportare['top'][3]['nam'], 1, 0, 'R');
-         $pdf->SetFont('helvetica', '', 8);
+        $pdf->SetFont('helvetica', 'B', 8);
+        $pdf->Cell($aRiportare['top'][0]['lun'], 4, 'Totale provvigioni: ', 1, 0, 'R');
+        $pdf->Cell($aRiportare['top'][1]['lun'], 4, $aRiportare['top'][1]['nam'], 1, 0, 'R');
+        $pdf->Cell(11, 4, "", 1, 0, 'R');
+        $pdf->Cell($aRiportare['top'][3]['lun'], 4, $aRiportare['top'][3]['nam'], 1, 0, 'R');
+        $pdf->SetFont('helvetica', '', 8);
+        $totgen_prov += $tot_prov;
+        $totgen_fatt += $tot_fatt;
+        $tot_prov = 0.00;
+        $tot_fatt = 0.00;
+
       }
       $agente = getNewAgente($row['id_agente']);
       $item_head['bot'] = array(array('lun' => 50, 'nam' => $agente['indspe']),
@@ -165,5 +172,16 @@ $pdf->Cell(11, 4, "", 1, 0, 'R');
 $pdf->Cell(20, 4, $aRiportare['top'][3]['nam'], 1, 0, 'R');
 $pdf->SetFont('helvetica', '', 8);
 $pdf->setRiporti('');
+if ($_GET['id_agente'] == 0) { // se non ho scelto l'agente stampo il totale generale
+  $totgen_prov += $tot_prov;
+  $totgen_fatt += $tot_fatt;
+  $pdf->SetFillColor(255,160,160);
+  $pdf->Ln(20);
+  $pdf->SetFont('helvetica', 'B', 8);
+  $pdf->Cell($aRiportare['top'][0]['lun'], 4, 'TOTALE GENERALE: ', 1, 0, 'R',1);
+  $pdf->Cell($aRiportare['top'][1]['lun'], 4, gaz_format_number($totgen_fatt), 1, 0, 'R',1);
+  $pdf->Cell(11, 4, "", 1, 0, 'R',1);
+  $pdf->Cell($aRiportare['top'][3]['lun'], 4, gaz_format_number($totgen_prov), 1, 0, 'R',1);
+}
 $pdf->Output();
 ?>
