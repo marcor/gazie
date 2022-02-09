@@ -59,13 +59,24 @@ $sqlquery = "SELECT seziva,datreg,regiva,codiva,aliquo," . $gTables['tesmov'] . 
 		. $gTables['aliiva'] . ".tipiva," . $gTables['aliiva'] . ".descri,
        SUM((imponi*(operat = 1) - imponi*(operat = 2))*(-2*(regiva = 6)+1)) AS imponibile,
        SUM((impost*(operat = 1) - impost*(operat = 2))*(-2*(regiva = 6)+1)) AS imposta,
-       impost*(regiva = 9) AS vers 
+       0 AS vers 
 	   FROM " . $gTables['rigmoi'] . "
        LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoi'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes
        LEFT JOIN " . $gTables['aliiva'] . " ON " . $gTables['rigmoi'] . ".codiva = " . $gTables['aliiva'] . ".codice
-       WHERE datliq BETWEEN $datainizio and $datafine
+       WHERE regiva<>9 AND datliq BETWEEN $datainizio and $datafine
        GROUP BY seziva,regiva,codiva,vers
-       ORDER BY seziva,regiva,aliquo DESC";
+	   UNION
+	   SELECT seziva,datreg,regiva,codiva,aliquo," . $gTables['tesmov'] . ".id_tes," 
+		. $gTables['aliiva'] . ".tipiva," . $gTables['aliiva'] . ".descri,
+       0 AS imponibile,
+       0 AS imposta,
+       impost AS vers 
+	   FROM " . $gTables['rigmoi'] . "
+       LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoi'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes
+       LEFT JOIN " . $gTables['aliiva'] . " ON " . $gTables['rigmoi'] . ".codiva = " . $gTables['aliiva'] . ".codice
+       WHERE regiva=9 AND datliq BETWEEN $datainizio and $datafine
+       GROUP BY seziva,regiva,codiva,id_tes
+       ORDER BY seziva,regiva,aliquo DESC,datreg";
 $result = gaz_dbi_query($sqlquery);
 $topCarry = array(array('lenght' => 118, 'name' => 'da riporto : ', 'frame' => 'B', 'fill' => 0, 'font' => 8),
     array('lenght' => 20, 'name' => '', 'frame' => 1, 'fill' => 1),
@@ -258,15 +269,24 @@ if ($saldo_totale > 0 || $_GET['cr'] > 0 || $_GET['ad'] > 0) { // se ho da pagar
 }
 
 if (sizeof($versamenti)>0) { 
-  $pdf->SetFont('helvetica','',9);
-  foreach($versamenti as $k=>$v) {
-	// ritrovo il conto con il quale ho eseguito il pagamento
-	$rc=gaz_dbi_get_row($gTables['rigmoc'], "darave ='A' AND id_tes", $v['id_tes']); 
-	$ac=gaz_dbi_get_row($gTables['clfoco'], "codice", $rc['codcon']); 
-    $pdf->Ln(6);
-    $pdf->Cell(100,6,$script_transl['pay_date'].gaz_format_date($v['datreg']).$script_transl['co'].$ac['descri'],0,0,'L',0,'',1);
-    $pdf->Cell(29, 6, gaz_format_number($v['vers']), 0, 1, 'R');
-  }
+	$tot_versamenti = 0;
+	foreach($versamenti as $k=>$v) {
+		$tot_versamenti+= $v['vers'];
+	}
+    $pdf->Cell(44, 6);
+	$pdf->Cell(54, 6, strtoupper($script_transl['tot'].' VERSAMENTI'), 'LTB', 0, 'L', 1);
+	$pdf->Cell(5, 6, $admin_aziend['symbol'], 'TB', 0, 'L', 1);
+	$pdf->Cell(26, 6, gaz_format_number($tot_versamenti-$_GET['ad']), 'RTB', 1, 'R', 1);
+
+	$pdf->SetFont('helvetica','',9);
+	foreach($versamenti as $k=>$v) {
+		// ritrovo il conto con il quale ho eseguito il pagamento
+		$rc=gaz_dbi_get_row($gTables['rigmoc'], "darave ='A' AND id_tes", $v['id_tes']); 
+		$ac=gaz_dbi_get_row($gTables['clfoco'], "codice", $rc['codcon']); 
+		$pdf->Ln(6);
+		$pdf->Cell(100,6,$script_transl['pay_date'].gaz_format_date($v['datreg']).$script_transl['co'].$ac['descri'],0,0,'L',0,'',1);
+		$pdf->Cell(29, 6, gaz_format_number($v['vers']), 0, 1, 'R');
+	}
 }
 
 
