@@ -658,7 +658,7 @@ $select_agente->output();
                 <div class="form-group">
                     <label for="cosric" class="col-sm-4 control-label"><?php echo $script_transl['cosric']; ?> </label>
     <?php
-$gForm->selectAccount('cosric', $form['cosric'], 4);
+$gForm->selectAccount('cosric', $form['cosric'], 3);
     ?>
                 </div>
             </div>
