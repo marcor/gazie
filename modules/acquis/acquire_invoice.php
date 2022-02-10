@@ -664,17 +664,17 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					if ($xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiBeniServizi/DatiRiepilogo/EsigibilitaIVA")->length >= 1) {
 						$yes_split = $xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiBeniServizi/DatiRiepilogo/EsigibilitaIVA")->item(0)->nodeValue;
 					}
+					@$Natura = $item->getElementsByTagName('Natura')->item(0)->nodeValue;
 					if ($yes_split == 'S') {
 						$rs_split_vat = gaz_dbi_dyn_query("*", $gTables['aliiva'], "aliquo=" . $form['rows'][$nl]['pervat'] . " AND tipiva='T'", "codice ASC", 0, 1);
 						$split_vat = gaz_dbi_fetch_array($rs_split_vat);
 						$form['codvat_'.$post_nl] = $split_vat['codice'];
 					} elseif ( $partner_with_same_pi &&  $partner_with_same_pi[0]['aliiva'] >=1) { // di defautl utilizzo l'eventuale aliquota della anagrafica del fornitore
 						$form['codvat_'.$post_nl] = $partner_with_same_pi[0]['aliiva'];
-					} elseif ( $expect_vat['aliquo'] == $form['rows'][$nl]['pervat']) { // coincide con le aspettative
+					} elseif ( empty($Natura) && $expect_vat['aliquo'] == $form['rows'][$nl]['pervat']) { // coincide con le aspettative
 						$form['codvat_'.$post_nl] = $expect_vat['codice'];
 					} else { // non è quella che mi aspettavo allora provo a trovarne una tra quelle con la stessa aliquota
 						$filter_vat = "aliquo=" . $form['rows'][$nl]['pervat'];
-						@$Natura = $item->getElementsByTagName('Natura')->item(0)->nodeValue;
 						if (!empty($Natura)) {
 							$filter_vat.= " AND fae_natura='" . $Natura . "'";
 						}
@@ -684,6 +684,11 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 							$form['codvat_'.$post_nl] = $last_codvat['codice'];
 						} else {
 							$form['codvat_'.$post_nl] = 'non trovata';
+						}
+					}
+					if (empty($form['codvat_'.$post_nl])) {
+						if ( $expect_vat['aliquo'] == $form['rows'][$nl]['pervat']) { // coincide con le aspettative
+							$form['codvat_'.$post_nl] = $expect_vat['codice'];
 						}
 					}
           $map_pervat[floatval($form['rows'][$nl]['pervat'])]=$form['codvat_'.$post_nl]; // mappo aliquote-codici aliquote, potrebbe servirmi per risolvere l'eventuale PORCATA degli arrotondamenti sul castelleto IVA ( tiprig=91 )
@@ -817,11 +822,11 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					$form['codric_'.$post_nl] = $form['partner_cost'];
 					$expect_vat = gaz_dbi_get_row($gTables['aliiva'], 'codice', $form['partner_vat']);
 					// analizzo le possibilità
-					if ( $expect_vat['aliquo'] == $form['rows'][$nl]['pervat']) { // coincide con le aspettative
+					@$Natura = $item->getElementsByTagName('Natura')->item(0)->nodeValue;
+					if ( empty($Natura) && $expect_vat['aliquo'] == $form['rows'][$nl]['pervat']) { // coincide con le aspettative
 						$form['codvat_'.$post_nl] = $expect_vat['codice'];
 					} else { // non è quella che mi aspettavo allora provo a trovarne una tra quelle con la stessa aliquota
 						$filter_vat = "aliquo=" . $form['rows'][$nl]['pervat'];
-						@$Natura = $item->getElementsByTagName('Natura')->item(0)->nodeValue;
 						if (!empty($Natura)) {
 							$filter_vat.= " AND fae_natura='" . $Natura . "'";
 						}
@@ -832,6 +837,9 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 						} else {
 							$form['codvat_'.$post_nl] = 'non trovata';
 						}
+					}
+					if ( empty($form['codvat_'.$post_nl]) && $expect_vat['aliquo'] == $form['rows'][$nl]['pervat']) { // coincide con le aspettative
+						$form['codvat_'.$post_nl] = $expect_vat['codice'];
 					}
 				}
 			}
