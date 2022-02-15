@@ -1529,7 +1529,11 @@ echo "</script>\n";
 					if (isset($_POST['Insert'])) {
 						$urldoc = '';
 					} else if ($form['registroiva'] == 2 || $form['registroiva'] == 4) {
-						$urldoc = '../vendit/admin_docven.php?Update&id_tes='.$form['id_doc'];
+						if ($form['codcausale'] == 'FAD') {
+							$urldoc = '../vendit/report_docven.php?sezione=' . $testata['seziva'] . '&protoc=' . $testata['protoc'] . '&anno=' . intval(substr($testata['datdoc'], 0, 4)) . '&info=none';
+						} else {
+							$urldoc = '../vendit/admin_docven.php?Update&id_tes='.$form['id_doc'];
+						}
 					} else if ($form['registroiva'] == 6) {
 						$urldoc = '../acquis/admin_docacq.php?Update&id_tes='.$form['id_doc'];
 					}
