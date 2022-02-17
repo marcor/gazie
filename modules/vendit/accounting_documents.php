@@ -93,11 +93,11 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
 			$accpaymov['no']='Partita riferita a questa Nota Credito';
             switch ($tes['tipdoc']) {
                 case "FAI":case "FAP":case "FAA":case "FAF":
-				$bol=$admin_aziend['taxstamp_account'];
+				$bol=$admin_aziend['boleff'];
 				$classv='success';
 				break;
 				case "FAD":
-				$bol=$admin_aziend['taxstamp_account'];
+				$bol=$admin_aziend['boleff'];
 				$classv='success disabled';
 				$title='Puoi editare solo i DdT relativi';
 				break;
@@ -119,7 +119,7 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
 				}
 				break;
 				case "FND":
-				$bol=$admin_aziend['taxstamp_account'];
+				$bol=$admin_aziend['boleff'];
 				$classv='info';
 				break;
                 default:
