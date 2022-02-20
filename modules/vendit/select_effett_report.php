@@ -66,7 +66,7 @@ function getLimit($reprint=false)
     return $acc;
 }
 
-function getData($date_ini,$date_fin,$num_ini,$num_fin,$reprint='N',$banacc)
+function getData($date_ini,$date_fin,$num_ini,$num_fin,$reprint='N',$banacc=0)
 {
         global $gTables,$admin_aziend;
         $m=array();

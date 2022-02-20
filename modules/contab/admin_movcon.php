@@ -225,11 +225,11 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                 }
                 $pay = gaz_dbi_get_row($gTables['pagame'], "codice", $form['pagame']);
                 // in caso di pagamento immediato dovrò settare l'importo di chiusura ed il relativo conto
-                if ($pay['pagaut'] > 1 && ($form['registroiva'] >= 6 && $form['registroiva'] <= 9) && $form['operatore'] == 1) { // è un documento di acquisto pagato immediatamente (es.contanti-assegno-bancomat-carta)  
+                if ($pay['pagaut'] > 1 && ($form['registroiva'] >= 6 && $form['registroiva'] <= 9) && $form['operatore'] == 1) { // è un documento di acquisto pagato immediatamente (es.contanti-assegno-bancomat-carta)
                     $payacc = gaz_dbi_get_row($gTables['clfoco'], "codice", $pay['pagaut']);
                     $form['pay_closure'] = $payacc['codice'];
                     $form['pay_importo'] = $form['importorc'][$i];
-                } elseif ($pay['incaut'] > 1 && ($form['registroiva'] >= 1 && $form['registroiva'] <= 5) && $form['operatore'] == 1) { // è un documento di vendita con pagamento immediato 
+                } elseif ($pay['incaut'] > 1 && ($form['registroiva'] >= 1 && $form['registroiva'] <= 5) && $form['operatore'] == 1) { // è un documento di vendita con pagamento immediato
                     $payacc = gaz_dbi_get_row($gTables['clfoco'], "codice", $pay['incaut']);
                     $form['pay_closure'] = $payacc['codice'];
                     $form['pay_importo'] = $form['importorc'][$i];
@@ -258,7 +258,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
             } else {
                 $form['paymov'][$i]['new'] = array('id' => 'new', 'id_tesdoc_ref' => 'new', 'amount' => '0.00', 'expiry' => '');
             }
-            /* controllo se il pagamento del cliente/fornitore prevede che vengano 
+            /* controllo se il pagamento del cliente/fornitore prevede che vengano
                eseguite le scritture di chiusura e nel caso setto il valore giusto */
         }
         if ($loadCosRic == 1 && substr($form['conto_rc' . $i], 0, 1) == 4 && $partner['cosric'] > 0 && $form['registroiva'] > 0) {  //e' un  cliente agisce sui ricavi
@@ -479,7 +479,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                 $imponi += $form['imponi_ri'][$i];
                 $impost += $form['impost_ri'][$i];
             } //fine calcolo
-			
+
             for ($rc = 0; $rc < $_POST['rigcon']; $rc++) { //mi ripasso le contropartite inserite e ci introduco l'eventuale giusto valore
 				$rs_caucon_rows = gaz_dbi_dyn_query("*", $gTables['caucon_rows'], "caucon_cod = '" . $form['codcausale']."'", "n_order");
 				while ($caucon_rows = gaz_dbi_fetch_array($rs_caucon_rows)) { //contropartite in causale
@@ -550,7 +550,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
         $ctrl_ritenute = 0.00; // per aggiungere le ritenute al valore cliente/fornitore e fare il controllo
         $ctrl_mov_con = 0.00;
         $acc_partner_mov = array();
-		$fattura_allegata = false; 
+		$fattura_allegata = false;
         //calcolo i totali dare e avere per poter eseguire il controllo
         for ($i = 0; $i < $_POST['rigcon']; $i++) {
             $_POST['importorc'][$i] = preg_replace("/\,/", '.', $_POST['importorc'][$i]);
@@ -563,7 +563,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
             }
             if ($_POST['registroiva'] == 4){ // il movimento riguarda il registro  IVA corrispettivi
 				if (substr($_POST['conto_rc' . $i], 0, 3) == $admin_aziend['mascli'] || substr($_POST['conto_rc' . $i], 0, 3) == $admin_aziend['masfor'] || (preg_match("/^id_([0-9]+)$/", $_POST['conto_rc' . $i], $match))) { // in caso di scontrino intestato faccio il push al valore massimo
-					$fattura_allegata = true; 
+					$fattura_allegata = true;
 					if ($ctrl_mov_con <= $_POST['importorc'][$i]) {
 						$ctrl_mov_con = number_format($_POST['importorc'][$i], 2, '.', '');
 					}
@@ -571,14 +571,14 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                     $ctrl_mov_con += number_format($_POST['importorc'][$i], 2, '.', '');
 				}
 			} elseif (substr($_POST['conto_rc' . $i], 0, 3) == $admin_aziend['mascli'] || substr($_POST['conto_rc' . $i], 0, 3) == $admin_aziend['masfor'] || (preg_match("/^id_([0-9]+)$/", $_POST['conto_rc' . $i], $match))) {
-                // ... ed anche in caso di cliente/fornitore eseguo il push del valore massimo   
+                // ... ed anche in caso di cliente/fornitore eseguo il push del valore massimo
                 if ($ctrl_mov_con <= $_POST['importorc'][$i]) {
                     $ctrl_mov_con = number_format($_POST['importorc'][$i], 2, '.', '');
                 }
             }
 			if ($_POST['conto_rc' . $i] == $admin_aziend['c_ritenute'] || $_POST['conto_rc' . $i] == $admin_aziend['c_ritenute_autonomi']) {
 				$ctrl_ritenute +=$_POST['importorc'][$i];
-				
+
 			}
             if ($_POST['darave_rc'][$i] == "D") {
                 $ctrl_tot_D += $_POST['importorc'][$i];
@@ -638,7 +638,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
             if ($ctrldatreg < $ctrldatdoc) {
                 $msg .= "12+";
             }
-            // controllo se ci documenti con lo stesso numero e anno dello stesso cliente/fornitore (duplicato) tranne che per gli scontrini 
+            // controllo se ci documenti con lo stesso numero e anno dello stesso cliente/fornitore (duplicato) tranne che per gli scontrini
             if ($_POST['cod_partner'] > 0 && $_POST['codcausale']!='VCO') {
                 $dupli = gaz_dbi_record_count($gTables['tesmov'], "caucon = '" . substr($_POST['codcausale'], 0, 3) . "' AND numdoc = '" . trim(substr($_POST['numdocumen'], 0, 20)) . "' AND seziva = " . intval($_POST['sezioneiva']) . " AND clfoco = " . intval($_POST['cod_partner']) . " AND YEAR(datdoc) = " . intval(substr($_POST['datdoc'], -4)));
                 if ($dupli > 1 || ($dupli == 1 && $toDo == 'insert')) {
@@ -673,7 +673,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                             $account_new = $anagrafica->anagra_to_clfoco($new_clfoco, substr($_POST['mastro_rc'][$i], 0, 3),$form['pagame']);
                         }
                         rigmocUpdate(array('id_rig', $row_con['id_rig']), array('id_tes' => intval($_POST['id_testata']), 'darave' => substr($_POST['darave_rc'][$i], 0, 1), 'codcon' => $account_new, 'import' => floatval($_POST['importorc'][$i])));
-                        // questa era troppo lenta nelle macchine molto lente 
+                        // questa era troppo lenta nelle macchine molto lente
                         //gaz_dbi_table_update('rigmoc',array('id_rig',$row_con['id_rig']),array('id_tes'=>intval($_POST['id_testata']),'darave'=>substr($_POST['darave_rc'][$i],0,1),'codcon'=>$account_new,'import'=>floatval($_POST['importorc'][$i])));
                         // MODIFICO PURE I RELATIVI MOVIMENTI DI PARTITE APERTE (in paymov)
                         $calc->setRigmocEntries($row_con['id_rig']);
@@ -682,7 +682,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                             // HO DELLE PARTITE POSTATE SU QUESTO RIGO
                             $new_paymov = array_values($form['paymov'][$i]);
                             $count_newpaymov = count($new_paymov);
-                            if ($count_oldpaymov > 0) { // ...e se prima li avevo anche : li devo aggiornare    
+                            if ($count_oldpaymov > 0) { // ...e se prima li avevo anche : li devo aggiornare
                                 $j = 0;
                                 foreach ($calc->RigmocEntries as $v) { // attraverso il vecchio array
                                     if ($j <= ($count_newpaymov - 1)) { //  se non è un rigo eccedente lo modifico mantenendo il vecchio indice
@@ -715,7 +715,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                                         $calc->updatePaymov($new_paymov[$j]);
                                     }
                                 }
-                            } else { // prima non li avevo quindi adesso devo introdurre TUTTI I NUOVI 
+                            } else { // prima non li avevo quindi adesso devo introdurre TUTTI I NUOVI
                                 foreach ($new_paymov as $k => $v) { // attraverso il nuovo array
                                     $j = $k;
                                     if ($v['amount'] >= 0.01) { // nuovo rigo solo se è stato valorizzato
@@ -752,7 +752,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                                 }
                             }
                         }
-                        // se su questo rigo ci sono rimasti 
+                        // se su questo rigo ci sono rimasti
                     } else { //altrimenti elimino i righi e le relative partite
                         gaz_dbi_del_row($gTables['rigmoc'], "id_rig", $row_con['id_rig']);
                         // ...elimino pure eventuali relativi movimenti di partite aperte
@@ -819,8 +819,21 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                         $vv['impost'] = floatval($_POST['impost_ri'][$i]);
                         $vv['reverse_charge_idtes'] = intval($_POST['reverse_charge_ri'][$i]);
                         $vv['operation_type'] = substr($_POST['operation_type_ri'][$i], 0, 15);
-						if ($form['registroiva']==9){$vv['tipiva']='V';}
+                        if ($form['registroiva']==9){$vv['tipiva']='V';}
                         gaz_dbi_table_update('rigmoi', array('id_rig', $row_iva['id_rig']), $vv);
+             						if ($i==0) { // sul primo rigo IVA inserisco un documento fittizio in tesdoc al fine di generare un XML dal registro con il sezionale (normalmente 9) del Reverse Charge
+                          // stabilisco il tipo di documento per lo SdI (TD16,TD17,TD18,TD19,TD20) e lo insterisco sulla colonna status di tesdoc
+                          $status='TD16'; // operazioni interne (italiani)
+                          if ($partnersel['country']<>'IT') {
+                            $istat_area = gaz_dbi_get_row($gTables['country'], "iso", $partnersel['country'])['istat_area'];
+                            $status='TD17'; // acquisto servizi dall'estero
+                            if ($istat_area==11&&$vv['operation_type']<>'SERVIZ') { // è un intra  ma devo vedere se sono beni altrimenti lascio TD17
+                              $status='TD18';
+                            }
+                          }
+                          // adesso faccio l'update di tesdoc con tipdoc XFA portando all'eventuale nuovo valore di status
+                          gaz_dbi_query("UPDATE " . $gTables['tesdoc'] . " SET status = '" . $status . "' WHERE `id_con` = ". $vv['reverse_charge_idtes']." AND `tipdoc` LIKE 'X%'");
+                        }
                     } else { //altrimenti lo elimino
                         gaz_dbi_del_row($gTables['rigmoi'], "id_rig", $row_iva['id_rig']);
                     }
@@ -837,7 +850,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                     $vv['impost'] = floatval($_POST['impost_ri'][$i]);
                     $vv['reverse_charge_idtes'] = intval($_POST['reverse_charge_ri'][$i]);
                     $vv['operation_type'] = substr($_POST['operation_type_ri'][$i], 0, 15);
-					if ($form['registroiva']==9){$vv['tipiva']='V';}
+                    if ($form['registroiva']==9){$vv['tipiva']='V';}
                      rigmoiInsert($vv);
                 }
                 //modifico la testata
@@ -884,13 +897,13 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                     $vv['imponi'] = floatval($_POST['imponi_ri'][$i]);
                     $vv['impost'] = floatval($_POST['impost_ri'][$i]);
                     $vv['operation_type'] = substr($_POST['operation_type_ri'][$i], 0, 15);
-					if ($form['registroiva']==9){$vv['tipiva']='V';}
+                    if ($form['registroiva']==9){$vv['tipiva']='V';}
                     $reverse_charge_iva = 0;
                     if (substr($form['reverse_charge_ri'][$i],0,2) == 'N6') { // dovrò inserire una testata per il reverse charge
                         // per prima cosa dovrò controllare se c'è il cliente con la stessa anagrafica
                         $partner = $anagrafica->getPartner(intval($_POST['cod_partner']));
                         $rc_cli = gaz_dbi_get_row($gTables['clfoco'], "codice LIKE '" . $admin_aziend['mascli'] . "%' AND id_anagra ", $partner['id']);
-                        if ($rc_cli) { // ho già il cliente 
+                        if ($rc_cli) { // ho già il cliente
                         } else { // non ho il cliente lo dovrò creare sul piano dei conti
                             $new_cli = $anagrafica->getPartnerData($partner['id']);
                             $rc_cli['codice'] = $anagrafica->anagra_to_clfoco($new_cli, $admin_aziend['mascli'],$form['pagame']);
@@ -901,7 +914,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                             'seziva' => $admin_aziend['reverse_charge_sez'],
                             'numdoc' => substr($_POST['numdocumen'], 0, 20),
                             'datdoc' => $datadoc,
-							'datliq' => $dataliq,
+                            'datliq' => $dataliq,
                             'clfoco' => $rc_cli['codice'],
                             'regiva' => 2,
                             'operat' => 1
@@ -933,12 +946,12 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                         rigmoiInsert($rcv);
                         // mi servirà per detrarre l'imposta relativa al rigo del reverse charge dall'apertura della partita
                         $reverse_charge_iva += $rcv['impost'];
-                        // inserisco i tre righi contabili della fattura che va sul registro IVA vendite    
+                        // inserisco i tre righi contabili della fattura che va sul registro IVA vendite
                         rigmocInsert(array('id_tes' => $rc_lastid, 'darave' => 'D', 'codcon' => $rc_cli['codice'], 'import' => $rcv['imponi'] + $rcv['impost']));
                         rigmocInsert(array('id_tes' => $rc_lastid, 'darave' => 'A', 'codcon' => $rc_cli['codice'], 'import' => $rcv['imponi']));
                         rigmocInsert(array('id_tes' => $rc_lastid, 'darave' => 'A', 'codcon' => $admin_aziend['ivaven'], 'import' => $rcv['impost']));
 
-                        // infine creo un movimento di storno dell'IVA    
+                        // infine creo un movimento di storno dell'IVA
                         rigmocInsert(array('id_tes' => $rc_lastid, 'darave' => 'D', 'codcon' => $newValue['clfoco'], 'import' => $rcv['impost']));
                         rigmocInsert(array('id_tes' => $rc_lastid, 'darave' => 'A', 'codcon' => $rc_cli['codice'], 'import' => $rcv['impost']));
 
@@ -948,9 +961,9 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
 							if ($partner['country']<>'IT') {
 								$istat_area = gaz_dbi_get_row($gTables['country'], "iso", $partner['country'])['istat_area'];
 								$status='TD17'; // acquisto servizi dall'estero
-								if ($istat_area==11&&$rcv['operation_type']<>'SERVIZ') { // è un intra  ma devo vedere se sono beni altrimenti lascio TD17 
+								if ($istat_area==11&&$rcv['operation_type']<>'SERVIZ') { // è un intra  ma devo vedere se sono beni altrimenti lascio TD17
 									$status='TD18';
-								} 
+								}
 							}
 							$tesdocVal = ['tipdoc' => 'XFA',
 								'template' => 'FatturaAcquisto',
@@ -973,7 +986,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
 								$tesdocVal['tipdoc'] = 'XNC';
 								$tesdocVal['operat'] = 2;
 							}
-							$last_id_tes_tesdoc=tesdocInsert($tesdocVal); 
+							$last_id_tes_tesdoc=tesdocInsert($tesdocVal);
 							$rigdocVal = ['id_tes'=> $last_id_tes_tesdoc,
 								'tiprig' => 1,
 								'descri' => (substr($_POST['codcausale'], 0, 3)=='AFC')?'NOTA CREDITO PER ':'FATTURA DI '
@@ -987,20 +1000,20 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
 						$rigdocVal['prelis'] = substr($_POST['codcausale'], 0, 3)=='AFC'?-abs($rcv['imponi']):$rcv['imponi'];
 						$rigdocVal['pervat'] = $rcv['periva'];
 						rigdocInsert($rigdocVal);
-						
+
                     }
                     // infine inserisco il relativo rigo iva
                     rigmoiInsert($vv);
                 }
                 //inserisco i righi contabili
-                $last_open_id_tesdoc_ref = 0; // lo userò per inserire una eventuale chiusura 
+                $last_open_id_tesdoc_ref = 0; // lo userò per inserire una eventuale chiusura
                 for ($i = 0; $i < $_POST['rigcon']; $i++) {
                     $account = substr($_POST['conto_rc' . $i], 0, 12);
                     $ad = substr($_POST['darave_rc'][$i], 0, 1);
                     if (preg_match("/^id_([0-9]+)$/", $account, $match)) { // è un partner da inserire sul piano dei conti
                         $new_clfoco = $anagrafica->getPartnerData($match[1], 1);
                         $_POST['conto_rc' . $i] = $anagrafica->anagra_to_clfoco($new_clfoco, substr($_POST['mastro_rc'][$i], 0, 3),$form['pagame']);
-                        // modifico la testata precedentemente introdotta per aggiungerci 
+                        // modifico la testata precedentemente introdotta per aggiungerci
                         gaz_dbi_table_update('tesmov', array('id_tes', $ultimo_id), array('clfoco' => $_POST['conto_rc' . $i]));
                     }
                     rigmocInsert(array('id_tes' => $ultimo_id, 'darave' => $ad, 'codcon' => intval($_POST['conto_rc' . $i]), 'import' => floatval($_POST['importorc'][$i])));
@@ -1048,7 +1061,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                                     $new_paymov[$j]['expiry'] = gaz_format_date($new_paymov[$j]['expiry'], true);
                                     $calc->updatePaymov($new_paymov[$j]);
                                 }
-                                // aggiorno il riferimento all'ultima partita aperta, servirà per chiudere con lo stesso se dovessi avere id_tesdoc_ref=new 
+                                // aggiorno il riferimento all'ultima partita aperta, servirà per chiudere con lo stesso se dovessi avere id_tesdoc_ref=new
                                 $last_open_id_tesdoc_ref = $new_paymov[$j]['id_tesdoc_ref'];
                             } else {  // chiusura partita
                                 if ($new_paymov[$j]['id_tesdoc_ref'] == 'new' && $last_open_id_tesdoc_ref > 1) {
@@ -1057,10 +1070,10 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                                 } elseif (is_numeric($new_paymov[$j]['id_tesdoc_ref'])&&$new_paymov[$j]['id_tesdoc_ref']>200400000000000) {
 									// lascio il riferimento alla partita scelta dall'utente
                                 } else {
-                                    $new_paymov[$j]['id_tesdoc_ref'] = $form['date_reg_Y'] . str_pad($last_id_rig,11,'0',STR_PAD_LEFT);								
+                                    $new_paymov[$j]['id_tesdoc_ref'] = $form['date_reg_Y'] . str_pad($last_id_rig,11,'0',STR_PAD_LEFT);
 								}
                                 $new_paymov[$j]['id_rigmoc_pay'] = $last_id_rig;
-                                if (!isset($new_paymov[$j]['amount']) || $new_paymov[$j]['amount'] < 0.01) { // se no ho una partita impostata manualmente uso i dati del rigo 
+                                if (!isset($new_paymov[$j]['amount']) || $new_paymov[$j]['amount'] < 0.01) { // se no ho una partita impostata manualmente uso i dati del rigo
                                     $new_paymov[$j]['expiry'] = $newValue['datreg'];
                                     $new_paymov[$j]['amount'] = floatval($_POST['importorc'][$i]);
                                 } else {
@@ -1073,7 +1086,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                     // qui controllo se il conto è una immobilizzazione movimentata dal libro cespiti
                     $am = gaz_dbi_get_row($gTables['assets'], 'acc_fixed_assets', $account);
                     if ($am && $ad == 'D') {
-                        /* lo è, quindi sto aggiungendo un valore al costo storico del bene ammortizzabile 
+                        /* lo è, quindi sto aggiungendo un valore al costo storico del bene ammortizzabile
                           allora scrivo un incremento (type_mov=10) anche sul libro cespiti
                          */
                         $new_am = $am; // uso gli stessi valori del bene originario
@@ -1087,7 +1100,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                         gaz_dbi_table_insert('assets', $new_am);
                     }
                 }
-                // qui inserisco l'eventuale movimento di pagamento 
+                // qui inserisco l'eventuale movimento di pagamento
                 if ($form['pay_closure'] >= 1) {
                     if (substr($form['cod_partner'], 0, 3) == $admin_aziend['mascli']) { // un cliente
                         rigmocInsert(array('id_tes' => $ultimo_id, 'darave' => 'D', 'codcon' => $form['pay_closure'], 'import' => $form['pay_importo']));
@@ -1098,7 +1111,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                     }
                 }
             }
-            if ($toDo == 'insert') {
+           if ($toDo == 'insert') {
                 header("Location: admin_movcon.php?Insert&new=".$ultimo_id); // ritorno su questo script per inserirne un altro
             } else {
                 header("Location: " . $form['ritorno']);
@@ -1170,7 +1183,7 @@ echo '<script type="text/javascript">
            $( "#search_insert_conto" ).autocomplete({
 			source: "../../modules/root/search.php",
 			minLength: 2,
-			html: true, 
+			html: true,
 			open: function(event, ui) {
 				$(".ui-autocomplete").css("z-index", 1000);
 			},
@@ -1569,7 +1582,7 @@ echo "</script>\n";
                                 <label for="datdoc" class="col-sm-6 control-label"><?php echo $script_transl['date_doc']; ?></label>
                                 <input class="col-sm-6" type="text" class="form-control" id="datdoc" name="datdoc" value="<?php echo $form['datdoc']; ?>">
                             </div>
-                        </div>                    
+                        </div>
                     </div><!-- chiude tab-pane  -->
                 </div><!-- chiude tab-content  -->
                 <?php
@@ -1590,7 +1603,7 @@ echo "</script>\n";
 						}
 						?>
                     </div><!-- chiude tab-content  -->
-                    <?php 
+                    <?php
 				} else {
                     ?>
                     <input type="hidden" name="pagame" value="<?php echo $form['pagame']; ?>" />
@@ -1615,8 +1628,8 @@ echo "</script>\n";
     <input type="hidden" name="reverse_charge" value="<?php echo $form['reverse_charge']; ?>" />
     <?php
 //inserimento movimento iva
-	if($form['registroiva'] == 9){ // ho un versamento IVA  
-		  // rigo di input non utilizzato	
+	if($form['registroiva'] == 9){ // ho un versamento IVA
+		  // rigo di input non utilizzato
 		  echo '<input type="hidden" value="' . $_POST['rigiva'] . '" name="rigiva">';
 		  echo '<input type="hidden" name="insert_imponi" value="' . $form['insert_imponi']. '">';
           echo '<input type="hidden" name="insert_codiva" value="' . $form['insert_codiva'] . '">';
@@ -1685,7 +1698,7 @@ echo "</script>\n";
 						<div class="form-group col-md-6 col-lg-1 nopadding">
                              <button type="submit" class="btn btn-default btn-sm" name="adi" title="<?php echo $script_transl['addrow']; ?>" <?php echo $tabsmt; ?> ><i class="glyphicon glyphicon-ok"></i></button>
                         </div>
-                    </div>                    
+                    </div>
                 </div><!-- chiude tab-pane  -->
             </div><!-- chiude tab-content  -->
         </div><!-- chiude container  -->
@@ -1693,33 +1706,33 @@ echo "</script>\n";
         $resprow[0] = array();
         echo '<input type="hidden" value="' . $_POST['rigiva'] . '" name="rigiva">';
         for ($i = 0; $i < $_POST['rigiva']; $i++) {
-            $rigoi = gaz_dbi_get_row($gTables['aliiva'], "codice", $form['codiva_ri'][$i]);
-            echo '<input type="hidden" name="id_rig_ri[' . $i . ']" value="' . $form['id_rig_ri'][$i] . '">';
-            echo '<input type="hidden" name="codiva_ri[' . $i . ']" value="' . $form['codiva_ri'][$i] . '">';
-            echo '<input type="hidden" name="reverse_charge_ri[' . $i . ']" value="' . $form['reverse_charge_ri'][$i] . '">';
-            echo '<input type="hidden" name="operation_type_ri[' . $i . ']" value="' . $form['operation_type_ri'][$i] . '">';
-            if (!isset($form['imponi_ri'][$i])) {
-                $form['imponi_ri'][$i] = "";
-            }
-            if (!isset($form['impost_ri'][$i])) {
-                $form['impost_ri'][$i] = "";
-            }
-            if (!isset($form['codiva_ri'][$i])) {
-                $form['codiva_ri'][$i] = "";
-            }
-            // creo l'array da passare alla funzione per la creazione della tabella responsive
-            $resprow[$i] = array(
-                array('head' => $script_transl["taxable"], 'class' => 'text-right numeric',
-                    'value' => '<input type="number" step="0.01" name="imponi_ri[' . $i . ']" value="' . sprintf("%01.2f", preg_replace("/\,/", '.', $form['imponi_ri'][$i])) . '" maxlength="13" onchange="this.form.submit()" />'),
-                array('head' => $script_transl["vat"], 'class' => 'text-center',
-                    'value' => $rigoi["descri"]),
-                array('head' => $script_transl["operation_type"], 'class' => 'text-center',
-                    'value' => $form['operation_type_ri'][$i]),
-                array('head' => $script_transl["tax"], 'class' => 'text-right numeric',
-                    'value' => '<input type="number" step="0.01" name="impost_ri[' . $i . ']" value="' . sprintf("%01.2f", preg_replace("/\,/", '.', $form['impost_ri'][$i])) . '" maxlength="13" />'),
-                array('head' => $script_transl["delete"], 'class' => 'text-center',
-                    'value' => '<button type="submit" class="btn btn-default btn-sm btn-elimina" name="dei[' . $i . ']" title="' . $script_transl['delrow'] . '"><i class="glyphicon glyphicon-remove"></i></button>')
-            );
+          $operation_type_dropdown = $gForm->selectFromXML('../../library/include/operation_type.xml', 'operation_type_ri[' . $i . ']', 'operation_type_ri['.$i.']', $form['operation_type_ri'][$i], true, '', '',null,'',false);
+          $rigoi = gaz_dbi_get_row($gTables['aliiva'], "codice", $form['codiva_ri'][$i]);
+          echo '<input type="hidden" name="id_rig_ri[' . $i . ']" value="' . $form['id_rig_ri'][$i] . '">';
+          echo '<input type="hidden" name="codiva_ri[' . $i . ']" value="' . $form['codiva_ri'][$i] . '">';
+          echo '<input type="hidden" name="reverse_charge_ri[' . $i . ']" value="' . $form['reverse_charge_ri'][$i] . '">';
+          if (!isset($form['imponi_ri'][$i])) {
+              $form['imponi_ri'][$i] = "";
+          }
+          if (!isset($form['impost_ri'][$i])) {
+              $form['impost_ri'][$i] = "";
+          }
+          if (!isset($form['codiva_ri'][$i])) {
+              $form['codiva_ri'][$i] = "";
+          }
+          // creo l'array da passare alla funzione per la creazione della tabella responsive
+          $resprow[$i] = array(
+              array('head' => $script_transl["taxable"], 'class' => 'text-right numeric',
+                  'value' => '<input type="number" step="0.01" name="imponi_ri[' . $i . ']" value="' . sprintf("%01.2f", preg_replace("/\,/", '.', $form['imponi_ri'][$i])) . '" maxlength="13" onchange="this.form.submit()" />'),
+              array('head' => $script_transl["vat"], 'class' => 'text-center',
+                  'value' => $rigoi["descri"]),
+              array('head' => $script_transl["operation_type"], 'class' => 'text-center',
+                  'value' => $operation_type_dropdown),
+              array('head' => $script_transl["tax"], 'class' => 'text-right numeric',
+                  'value' => '<input type="number" step="0.01" name="impost_ri[' . $i . ']" value="' . sprintf("%01.2f", preg_replace("/\,/", '.', $form['impost_ri'][$i])) . '" maxlength="13" />'),
+              array('head' => $script_transl["delete"], 'class' => 'text-center',
+                  'value' => '<button type="submit" class="btn btn-default btn-sm btn-elimina" name="dei[' . $i . ']" title="' . $script_transl['delrow'] . '"><i class="glyphicon glyphicon-remove"></i></button>')
+          );
         }
         $gForm->gazResponsiveTable($resprow, 'gaz-responsive-table');
     } else {
@@ -1754,7 +1767,7 @@ echo "</script>\n";
     echo "\t<td class=\"bg-info\">\n";
     $gForm->variousSelect('insert_darave', $script_transl['daav_value'], $form['insert_darave'], 'FacetSelect', false);
     echo "\t </td>\n";
-    echo '  <td class="bg-info" align="right"> 
+    echo '  <td class="bg-info" align="right">
 			<button type="submit" class="btn btn-default btn-sm" name="add" title="' . $script_transl['addrow'] . '"><i class="glyphicon glyphicon-ok"></i></button>
 		</td>
 	  </tr>';

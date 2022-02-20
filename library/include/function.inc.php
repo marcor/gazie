@@ -1788,35 +1788,41 @@ class GAzieForm {
     }
 
     // funzione per la generazione di una select box da file XML
-    function selectFromXML($nameFileXML, $name, $key, $val, $empty = false, $val_hiddenReq = '', $class = 'FacetSelect', $addOption = null, $style='') {
-        $refresh = '';
-        if (file_exists($nameFileXML)) {
-            $xml = simplexml_load_file($nameFileXML);
-        } else {
-            exit('Failed to open: ' . $nameFileXML);
-        }
-        if (!empty($val_hiddenReq)) {
-            $refresh = "onchange=\"this.form.hidden_req.value='$val_hiddenReq'; this.form.submit();\"";
-        }
-        echo "\t <select id=\"$name\" name=\"$name\" class=\"$class\" $refresh $style >\n";
-        if ($empty) {
-            echo "\t\t <option value=\"\"></option>\n";
-        }
-        foreach ($xml->record as $v) {
-            $selected = '';
-            if ($v->field[0] == $val) {
-                $selected = "selected";
-            }
-            echo "\t\t <option value=\"" . $v->field[0] . "\" $selected >&nbsp;" . $v->field[0] . " - " . $v->field[1] . "</option>\n";
-        }
-        if ($addOption) {
-            echo "\t\t <option value=\"" . $addOption['value'] . "\"";
-            if ($addOption['value'] == $val) {
-                echo " selected ";
-            }
-            echo ">" . $addOption['descri'] . "</option>\n";
-        }
-        echo "\t </select>\n";
+    function selectFromXML($nameFileXML, $name, $key, $val, $empty = false, $val_hiddenReq = '', $class = 'FacetSelect', $addOption = null, $style='', $echo=true) {
+      $acc='';
+      $refresh = '';
+      if (file_exists($nameFileXML)) {
+          $xml = simplexml_load_file($nameFileXML);
+      } else {
+          exit('Failed to open: ' . $nameFileXML);
+      }
+      if (!empty($val_hiddenReq)) {
+          $refresh = "onchange=\"this.form.hidden_req.value='$val_hiddenReq'; this.form.submit();\"";
+      }
+      $acc .= "\t <select id=\"$name\" name=\"$name\" class=\"$class\" $refresh $style >\n";
+      if ($empty) {
+          $acc .= "\t\t <option value=\"\"></option>\n";
+      }
+      foreach ($xml->record as $v) {
+          $selected = '';
+          if ($v->field[0] == $val) {
+              $selected = "selected";
+          }
+          $acc .= "\t\t <option value=\"" . $v->field[0] . "\" $selected >&nbsp;" . $v->field[0] . " - " . $v->field[1] . "</option>\n";
+      }
+      if ($addOption) {
+          $acc .= "\t\t <option value=\"" . $addOption['value'] . "\"";
+          if ($addOption['value'] == $val) {
+              $acc .= " selected ";
+          }
+          $acc .= ">" . $addOption['descri'] . "</option>\n";
+      }
+      $acc .= "\t </select>\n";
+      if ($echo){
+        echo $acc;
+      } else {
+        return $acc;
+      }
     }
 
     function selectAccount($name, $val, $type = 1, $val_hiddenReq = '', $tabidx = false, $class = 'FacetSelect', $opt = 'style="max-width: 550px;"', $mas_only = true, $echo=false) {
