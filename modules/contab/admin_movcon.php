@@ -818,6 +818,9 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                         $vv['imponi'] = floatval($_POST['imponi_ri'][$i]);
                         $vv['impost'] = floatval($_POST['impost_ri'][$i]);
                         $vv['reverse_charge_idtes'] = intval($_POST['reverse_charge_ri'][$i]);
+                        if ($i==0 && $vv['reverse_charge_idtes'] == 0 && $row_iva['reverse_charge_idtes'] >= 1 ) { // eseguo un controllo per non perdere il riferimento incrociato al vecchio  "reverse_charge_idtes" nel caso l'utente abbia eliminato il rigo IVA e poi riaggiunto allora riprendo il vecchio
+                          $vv['reverse_charge_idtes'] = $row_iva['reverse_charge_idtes'];
+                        }
                         $vv['operation_type'] = substr($_POST['operation_type_ri'][$i], 0, 15);
                         if ($form['registroiva']==9){$vv['tipiva']='V';}
                         gaz_dbi_table_update('rigmoi', array('id_rig', $row_iva['id_rig']), $vv);
@@ -1111,7 +1114,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                     }
                 }
             }
-           if ($toDo == 'insert') {
+            if ($toDo == 'insert') {
                 header("Location: admin_movcon.php?Insert&new=".$ultimo_id); // ritorno su questo script per inserirne un altro
             } else {
                 header("Location: " . $form['ritorno']);
