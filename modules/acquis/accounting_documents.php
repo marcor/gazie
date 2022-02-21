@@ -627,7 +627,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                     paymovInsert($paymov_value);
                 }
             }
-            if ( $tot_reverse_charge >= 0.01 ) {
+    if ( $tot_reverse_charge >= 0.01 ) {
                 // ho accumulato un reverse charge creo un movimento contabile e IVA per documento di vendita sul sezionale scelto in configurazione azienda, entro il 2023 inserirò da qui anche i dati in gaz_NNNtesdoc e rigdoc per poter generare il relativo XML da trasmette all'AdE
 
                 // per prima cosa dovrò controllare se c'è il cliente con la stessa anagrafica
@@ -677,14 +677,13 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 					'operat' => 1
 				);
 			}
-                $rctes_id =tesmovInsert($newValue);
-
+      $rctes_id =tesmovInsert($newValue);
 			// inserisco un documento fittizio in tesdoc al fine di generare un XML dal registro con il sezionale (normalmente 9) del Reverse Charge
 			// stabilisco il tipo di documento per lo SdI (TD16,TD17,TD18,TD19,TD20) e lo insterisco sulla colonna status di tesdoc
 			$status='TD16'; // operazioni interne (italiani)
 			if ($v['tes']['country']<>'IT') {
 				$status='TD17'; // acquisto servizi dall'estero
-				if ($v['tes']['istat_area']==11&&$v['tes']['operation_type']<>'SERVIZ') { // è un intra  ma devo vedere se sono beni altrimenti lascio TD17
+				if ( $v['tes']['istat_area'] == 11 && $vv['operation_type'] <> 'SERVIZ' ) { // è un intra  ma devo vedere se sono beni altrimenti lascio TD17
 					$status='TD18';
 				}
 			}
@@ -706,7 +705,6 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 				'status' => $status
 			];
 
-
 			if ($v['tes']['tipdoc'] == 'AFC') {
 				$tesdocVal['tipdoc'] = 'XNC';
 				$tesdocVal['operat'] = 2;
@@ -718,7 +716,6 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 				'descri' => ($v['tes']['tipdoc']=='AFC')?'NOTA CREDITO PER ':'FATTURA DI '
 			];
 			$rigdocVal['descri'] .= 'ACQUISTO n.'.$v['tes']['numfat'].' del '.gaz_format_date($v['tes']['datfat']);
-
                 // inserisco i righi IVA
                 $acc_iva=0.00;
                 $acc_imp=0.00;
@@ -758,13 +755,12 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 				rigmocInsert(array('id_tes' => $rctes_id, 'darave' => 'D', 'codcon' => $v['tes']['clfoco'], 'import' => $acc_iva));
 				rigmocInsert(array('id_tes' => $rctes_id, 'darave' => 'A', 'codcon' => $rc_cli['codice'], 'import' => $acc_iva));
 			}
+      // faccio l'update del riferimento sui righi inseriti per il movimento padre
+      gaz_dbi_put_row($gTables['rigmoi'], 'id_tes', $tes_id, 'reverse_charge_idtes', $rctes_id);
+    }
 
-                // faccio l'update del riferimento sui righi inseriti per il movimento padre
-                gaz_dbi_put_row($gTables['rigmoi'], 'id_tes', $tes_id, 'reverse_charge_idtes', $rctes_id);
-            }
-
-        }
-		  if ($form['type'] == 'AF') {
+    }
+      if ($form['type'] == 'AF') {
 				header("Location: ../../modules/acquis/report_docacq.php");
  			} else {
 				header("Location: ../../modules/vendit/report_docven.php");
