@@ -24,11 +24,15 @@
  */
 $config = new UserConfig;
 
-$pdb=gaz_dbi_get_row($gTables['company_config'], 'var', 'menu_alerts_check')['val'];
-$period=($pdb==0)?60:$pdb;
-if ( isset( $maintenance ) && $maintenance != FALSE ) header("Location: ../../modules/root/maintenance.php");
+$pdb = gaz_dbi_get_row($gTables['company_config'], 'var', 'menu_alerts_check')['val'];
+$period = ($pdb == 0)? 60 : $pdb;
 
 require("../../library/theme/lte/function.php");
+
+if ( isset( $maintenance ) && $maintenance!=FALSE && $maintenance!=$_SESSION['user_email'] ) {
+	header("Location: ../../modules/root/maintenance.php");
+	exit();
+}
 
 if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
     $_SESSION['lastpage'] = $_SERVER["REQUEST_URI"];
