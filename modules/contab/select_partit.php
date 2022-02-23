@@ -50,7 +50,7 @@ function getMovements($account_ini, $account_fin, $date_ini, $date_fin) {
     while ($r = gaz_dbi_fetch_array($rs)) {
         $r['tt'] = '';
         if ($account_ini == $account_fin || $account_fin == 0) {
-            // INIZIO crezione tabella per la visualizzazione sul tootip di tutto il movimento e facccio la somma del totale movimento 
+            // INIZIO crezione tabella per la visualizzazione sul tootip di tutto il movimento e facccio la somma del totale movimento
             $res_rig = gaz_dbi_dyn_query("*", $gTables['rigmoc'], 'id_tes=' . $r["id_tes"], 'id_rig');
             $r['tt'] = '<table><th colspan=3 >' . $r['tesdes'] . '</th>';
             $tot = 0.00;
@@ -61,9 +61,9 @@ function getMovements($account_ini, $account_fin, $date_ini, $date_fin) {
               if ($rr['darave'] == 'D') {
                   $tot += $rr['import'];
               }
-              // faccio l'upload di tesmov quando incontro un rigo con testata senza riferimento al partner pur avendo un rigo con un cliente o fornitore 
+              // faccio l'upload di tesmov quando incontro un rigo con testata senza riferimento al partner pur avendo un rigo con un cliente o fornitore
               if ($r['codpart']==0 && (substr($rr['codcon'],0,3) == $admin_aziend['mascli'] || substr($rr['codcon'],0,3) == $admin_aziend['masfor'] )){
-                if ( $refclfoco == 0 ) { 
+                if ( $refclfoco == 0 ) {
                   gaz_dbi_query("UPDATE ".$gTables['tesmov']." SET clfoco = ".$rr['codcon']." WHERE id_tes = ".$r['id_tes']);
                 } elseif ( $refclfoco  != $rr['codcon'] ) { // se ho troppi partner non posso riferirli
                   gaz_dbi_query("UPDATE ".$gTables['tesmov']." SET clfoco = 0 WHERE id_tes = ".$r['id_tes']);
@@ -189,17 +189,12 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
             $form['search']['account_ini'] = $extreme_account['descri'];
         }
     }
-    if (isset($_POST['push_sbm'])) {
-        $query = 'SELECT MAX(codice) AS max, descri ' .
-                'FROM ' . $gTables['clfoco'] .
-                " WHERE codice NOT LIKE '%000000' AND codice LIKE '" . substr($form['master_fin'], 0, 3) . "%'";
-        $rs_extreme_accont = gaz_dbi_query($query);
-        $extreme_account = gaz_dbi_fetch_array($rs_extreme_accont);
-        if ($extreme_account) {
-            $form['account_fin'] = $extreme_account['max'];
-            $form['search']['account_fin'] = $extreme_account['descri'];
-        }
+    if (isset($_POST['copy_to_fin'])) {
+      $form['master_fin'] = $form['master_ini'];
+      $form['account_fin'] =$form['account_ini'];
+      $form['search']['account_fin'] = $form['search']['account_ini'];
     }
+
     if (isset($_POST['selfin'])) {
         $form['master_fin'] = $form['master_ini'];
         $form['account_fin'] = $form['account_ini'];
@@ -281,21 +276,6 @@ function setDate(name) {
   cal.showCalendar('anchor', mdy);
 }
 
-// nuova funzione inserita da Zanella69 per la copia delle select conti iniziali sui conti finali
-
-function copy(conto){
-	var fr=conto.form;
-  fr.master_fin.value=fr.master_ini.value;
-	fr.account_fin.options.length=0;
-	var master=fr.account_ini.options;
-	for (i=0; i<master.length; i++){
-    if (fr.account_ini.selectedIndex==i) {
-  		fr.account_fin.options[i]=new Option(master[i].text, master[i].value, false, true)
-    } else {
-  		fr.account_fin.options[i]=new Option(master[i].text, master[i].value, false, false)
-		}
-	}
-}
 </script>
 ";
 echo "<form method=\"POST\" name=\"select\">\n";
@@ -336,9 +316,9 @@ echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['master_fin'] . "</td
 $gForm->selMasterAcc('master_fin', $form['master_fin'], 'master_fin');
 echo "</td>\n";
 echo "<td rowspan=\"2\">";
-echo '<input type="button" onclick="copy(this)" value="';
+echo '<button type="submit" name="copy_to_fin">';
 echo $script_transl['selfin'];
-echo '">';
+echo '</button>';
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
