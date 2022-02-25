@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /*
  --------------------------------------------------------------------------
                             GAzie - Gestione Azienda
@@ -51,9 +51,6 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
        }
        if (empty($form['descri'])) {
           $msg .= "2+";
-       }
-       if ($form['codice'] <= 0 || $form['codice'] > 999) {
-          $msg .= "0+";
        }
        if ($form['codabi'] <= 0) {
           $msg .= "3+";
