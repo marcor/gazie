@@ -197,6 +197,7 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
     $form['pagame'] = "";
     $form['destin'] = '';
     $form['id_des'] = 0;
+    $form['search']['id_des'] = 0;
     $form['id_des_same_company'] = 0;
     $form['caumag'] = '';
     $form['id_agente'] = 0;
@@ -209,6 +210,7 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
     $form['gross_weight'] = 0;
     $form['units'] = 0;
     $form['volume'] = 0;
+    $form['tipdoc'] = 'VOR';
     if (isset($_GET['id_tes'])) { //se � stato richiesto un ordine specifico lo carico
         $form['id_tes'] = intval($_GET['id_tes']);
         $testate = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $form['id_tes']);
