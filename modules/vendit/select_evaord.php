@@ -118,7 +118,7 @@ function caricaCliente(&$form) {
 				// Antonio Germani - controllo la giacenza in magazzino e gli ordini già ricevuti
 				$mv = $upd_mm->getStockValue(false, $rigo['codart']);
 				$magval = array_pop($mv);
-        $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
+				$magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
 				$form['righi'][$_POST['num_rigo']]['giac'] = $magval['q_g'];
 				$form['righi'][$_POST['num_rigo']]['ordin'] = $upd_mm->get_magazz_ordinati($rigo['codart'], "VOR");
 
@@ -169,6 +169,7 @@ function setOrdineEvaso($righi)
 if (!isset($_POST['ritorno'])) {
     $_POST['ritorno'] = $_SERVER['HTTP_REFERER'];
 }
+
 if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il controllo di presenza ordini evadibili
     $_POST['num_rigo'] = 0;
     $form['hidden_req'] = '';
@@ -210,7 +211,7 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
     $form['gross_weight'] = 0;
     $form['units'] = 0;
     $form['volume'] = 0;
-    $form['tipdoc'] = 'VOR';
+    $form['tipdoc'] = '';
     if (isset($_GET['id_tes'])) { //se � stato richiesto un ordine specifico lo carico
         $form['id_tes'] = intval($_GET['id_tes']);
         $testate = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $form['id_tes']);
@@ -289,8 +290,8 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
 			}
 			// Antonio Germani - controllo la giacenza in magazzino e gli ordini già ricevuti
 			$mv = $upd_mm->getStockValue(false, $rigo['codart']);
-      $magval = array_pop($mv);
-      $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
+			$magval = array_pop($mv);
+			$magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
 			$form['righi'][$_POST['num_rigo']]['giac'] = $magval['q_g'];
 			$form['righi'][$_POST['num_rigo']]['ordin'] = $upd_mm->get_magazz_ordinati($rigo['codart'], "VOR");
 
@@ -394,9 +395,9 @@ if (isset($_POST['clfoco']) || isset($_GET['clfoco'])) {
     $form['clfoco'] = 0;
 }
 
-if (isset($_POST['ddt']) || isset($_POST['cmr']))
-{ //conferma dell'evasione di un ddt
+if (isset($_POST['ddt']) || isset($_POST['cmr'])){ //conferma dell'evasione di un ddt
     //controllo i campi
+	
     $dataemiss = $_POST['datemi_Y'] . "-" . $_POST['datemi_M'] . "-" . $_POST['datemi_D'];
     $utsDataemiss = mktime(0, 0, 0, $_POST['datemi_M'], $_POST['datemi_D'], $_POST['datemi_Y']);
     $iniziotrasporto = $_POST['initra_Y'] . "-" . $_POST['initra_M'] . "-" . $_POST['initra_D'];
@@ -471,7 +472,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr']))
             $form['tipdoc'] = 'CMR';
         } else {
             $form['ddt_type'] = 'T';
-            //$form['tipdoc'] = 'DDT';  // tolto perchè lo prende dall'elenco a discesa
+            $form['tipdoc'] = $_POST['tipdoc'];  // RIMESSO perchè NON lo prende dall'elenco a discesa e poi deve essere valorizzato con il $_POST e non con $form
         }
         $form['template'] = "FatturaSemplice";
         $form['id_con'] = '';
@@ -1351,6 +1352,7 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
 			<td class=\"FacetDataTD\">
 				<input type=\"text\" value=\"" . $form['units'] . "\" name=\"units\" maxlength=\"6\"  />
 			</td></tr>\n";
+			
         $tidoc_selectable = array("DDT" => "D.d.T. di Vendita", "DDY" => "D.d.T. da non fatturare automaticamente","DDS" => "Notula Servizio (no fat.15 mese succ.)");
         echo "<tr><td class=\"FacetFieldCaptionTD\">" . "Tipo documento" . "</td><td class=\"FacetDataTD\">";
         $gForm->variousSelect('tipdoc', $tidoc_selectable, $form['tipdoc'], 'FacetFormHeaderFont', true, 'tipdoc');
