@@ -91,6 +91,11 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
   }
 } elseif ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo accesso per UPDATE
     $campi = gaz_dbi_get_row($gTables['campi'],"codice",$_GET['codice']);
+	if (strlen($campi['used_from_modules'])==0){
+		$form['used_from_modules']=$module;	
+	}else{
+		$form['used_from_modules']=$campi['used_from_modules'];	
+	}
     $form['ritorno'] = $_POST['ritorno'];
     $form['codice'] = $campi['codice'];
     $form['descri'] = $campi['descri'];
@@ -117,6 +122,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 	$form['giorno_decadimento'] ='0000-00-00 00:00:00';
 	$form['codice_prodotto_usato'] ='';
 	$form['id_mov'] ='';
+	$form['used_from_modules']=$module;
 }
 require("../../library/include/header.php");
 $script_transl = HeadMain();
@@ -128,6 +134,7 @@ if ($toDo == 'update') {
 print "<form method=\"POST\" enctype=\"multipart/form-data\">\n";
 print "<input type=\"hidden\" name=\"".ucfirst($toDo)."\" value=\"\">\n";
 print "<input type=\"hidden\" value=\"".$_POST['ritorno']."\" name=\"ritorno\">\n";
+print "<input type=\"hidden\" value=\"".$form['used_from_modules']."\" name=\"used_from_modules\">\n";
 print "<div align=\"center\" class=\"FacetFormHeaderFont\">$title</div>";
 print "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" class=\"FacetFormTABLE\" align=\"center\">\n";
 if (!empty($msg)) {
