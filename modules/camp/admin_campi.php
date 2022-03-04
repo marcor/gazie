@@ -34,7 +34,6 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 $msg = "";
 
-echo "modulo:",$module;
 if ((isset($_POST['Update'])) or (isset($_GET['Update']))) {
     $toDo = 'update';
 } else {
