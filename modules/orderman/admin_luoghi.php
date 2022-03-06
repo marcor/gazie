@@ -171,21 +171,28 @@ echo "<tr><td>";
 ?>
      <input type="hidden" value="" name="nome_colt" />
 	 <input type="hidden" value="" name="id_colture"/>
-	 </td></tr> 
+	 </td>
+</tr> 
+<tr>
+	<td class="FacetFieldCaptionTD"><?php echo $script_transl[3]; ?>
+	</td>
+	<td class="FacetDataTD">
+		<input type="text" name="annota" value="<?php echo $form['annota']; ?>" maxlength="50"  >
+	</td>
+</tr>
+<tr>
+	<td class="FacetFieldCaptionTD">
+	</td>
+	<td class="FacetDataTD" align="right">
+		<input type="submit" name="Return" value="<?php echo $script_transl['return']; ?>">
 <?php
-
-
-print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[3]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"annota\" value=\"".$form['annota']."\" maxlength=\"50\"  />\n";
-print "</select></td></tr><tr><td class=\"FacetFieldCaptionTD\"\n";
-print "</td><td class=\"FacetDataTD\" align=\"right\">\n";
-print "<input type=\"submit\" name=\"Return\" value=\"".$script_transl['return']."\">\n";
 if ($toDo == 'update') {
-   print '<input type="submit" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="'.ucfirst($script_transl['update']).'!"></td></tr><tr></tr>';
+   print '<input type="submit" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="'.ucfirst($script_transl['update']).'!"></td></tr>';
 } else {
-   print '<input type="submit" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="'.ucfirst($script_transl['insert']).'!"></td></tr><tr></tr>';
+   print '<input type="submit" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="'.ucfirst($script_transl['insert']).'!"></td></tr>';
 }
-print "</td></tr></table>\n";
-?>
+?>	
+</table>
 </form>
 <?php
 require("../../library/include/footer.php");

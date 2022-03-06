@@ -1690,7 +1690,7 @@ print "<td class=\"FacetDataTD\"><input type=\"number\" name=\"day_of_validity\"
 /*Antonio Germani LUOGO di produzione  */
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[7] . "</td><td class=\"FacetDataTD\">\n";
 // SELECT luogo di produzione da campi
-$gForm->selectFromDB('campi', 'campo_impianto','codice', $form['campo_impianto'], 'codice', 1, ' - ','descri','TRUE','FacetSelect' , null, '', "used_from_modules IN ('".$module."') OR used_from_modules='' OR used_from_modules='NULL' ");
+$gForm->selectFromDB('campi', 'campo_impianto','codice', $form['campo_impianto'], 'codice', 1, ' - ','descri','TRUE','FacetSelect' , null, '');
 echo "</td></tr>";
 
 // Antonio Germani selezione responsabile o addetto alla produzione fra l'elenco staff

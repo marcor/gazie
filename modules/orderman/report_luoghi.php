@@ -134,7 +134,8 @@ $recordnav -> output();
 	$linkHeaders -> output();
 ?>
         	</tr>
-        </thead></form>
+        </thead>
+		
         <tbody>
 <?php
 
@@ -162,30 +163,37 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			
 			<td align="center">
 			<?php 
+			$used_from=explode(',',$a_row['used_from_modules']);			
 			if (intval ($a_row['campo_impianto'])>0) {
 				?>
 				<button title="Luogo non cancellabile perche' ha movimenti di magazzino" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-remove"></i></button>
 				<?php
-			} else {
+			} elseif (count($used_from)==1 AND ($used_from[0]=="orderman" OR  $used_from[0]=="" OR $used_from[0]=="NULL")){ // posso cancellare perché non ci sono moduli specifici associati
 				?>
 				<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $a_row["codice"];?>" luodes="<?php echo $a_row["descri"]; ?>">
 					<i class="glyphicon glyphicon-remove"></i>
 				</a>
 				<?php
+			} else {
+				?>
+				<button title="Luogo non cancellabile perche' ci sono dei moduli specifici associati" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-remove"></i></button>
+				<?php
 			}
 			echo "</td></tr>";
 }
 ?>
-<tr class=\"FacetFieldCaptionTD\">
-<form method="post" action="stampa_luoghi.php">
-         <td colspan="7" align="right"><input type="submit" name="print" value="<?php echo $script_transl['print'];?>">
-         
-         
-         </td>
-         </tr>
+		</tbody>
+	</table>
 
-    		</tbody>
-        </table></form>
-    <?php
+</form>
+<form method="post" action="stampa_luoghi.php">
+	<table>
+		<tr class="FacetFieldCaptionTD">
+			<td colspan="7" align="right"><input type="submit" name="print" value="<?php echo $script_transl['print'];?>">  
+            </td>
+        </tr>    		
+    </table>
+</form>
+<?php
 require("../../library/include/footer.php");
 ?>
