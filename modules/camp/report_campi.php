@@ -122,6 +122,7 @@ $recordnav -> output();
             </tr>
             <tr>
 <?php
+	$where .= " AND (used_from_modules LIKE '%".$module."%' OR used_from_modules='' OR used_from_modules='NULL' )"; // visualizzo solo i campi specifici o generici
 	$result = gaz_dbi_dyn_query ('*', $gTables['campi'], $where, $orderby, $limit, $passo);
 	// creo l'array (header => campi) per l'ordinamento dei record
 	$headers_campi = array("Codice"      => "codice",
@@ -138,7 +139,7 @@ $recordnav -> output();
 	$linkHeaders -> output();
 ?>
         	</tr>
-        </thead></form>
+        </thead>
         <tbody>
 <?php
 
@@ -185,16 +186,18 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 <?php
 }
 ?>
-<tr class=\"FacetFieldCaptionTD\">
+		</tbody>
+	</table>
+</form>
+		
 <form method="post" action="stampa_campi.php">
-         <td colspan="7" align="right"><input type="submit" name="print" value="<?php echo $script_transl['print'];?>">
-         
-         
-         </td>
-         </tr>
-
-    		</tbody>
-        </table></form>
-    <?php
+	<table>
+		<tr class=\"FacetFieldCaptionTD\">
+			<td colspan="7" align="right"><input type="submit" name="print" value="<?php echo $script_transl['print'];?>">
+			</td>
+		</tr>
+	</table>
+</form>
+<?php
 require("../../library/include/footer.php");
 ?>

@@ -69,7 +69,9 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
               // controllo che il file non sia più; grande di 300kb
           if ( $_FILES['userfile']['size'] > 307200)
               $msg .= '9+';
-       }
+       }else{
+		   $form['userfile']="";
+	   }
 
        if ($toDo == 'insert') { // e' un inserimento, controllo se il codice esiste
           $rs_ctrl = gaz_dbi_get_row($gTables['campi'],'codice',$form['codice']);
