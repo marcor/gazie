@@ -45,10 +45,11 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
   }
 
   if ($form['hidden_req'] == 'toggle') { // e' stato accettato il link ad una anagrafica esistente
-      $rs_a = gaz_dbi_get_row($gTables['anagra'], 'id', $form['id_anagra']);
-      $form = array_merge($form, $rs_a);
-	$form['ragso1']=$rs_a['legrap_pf_cognome'];
-	$form['ragso2']=$rs_a['legrap_pf_nome'];
+    $rs_a = gaz_dbi_get_row($gTables['anagra'], 'id', $form['id_anagra']);
+    $form = array_merge($form, $rs_a);
+    $form['ragso1'] = empty($rs_a['legrap_pf_cognome']) ? $rs_a['ragso1'] : $rs_a['legrap_pf_cognome'];
+    $form['ragso2'] = empty($rs_a['legrap_pf_nome'])?$rs_a['ragso1']:$rs_a['legrap_pf_nome'];
+    $form['hidden_req'] = '';
   }
 
   if (isset($_POST['Submit'])) { // conferma tutto
@@ -57,7 +58,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $rs_same_code = gaz_dbi_dyn_query('*', $gTables['clfoco'], " codice = " . $real_code, "codice", 0, 1);
     $same_code = gaz_dbi_fetch_array($rs_same_code);
     // inizio controllo campi
-    if ($same_code && $toDo == 'insert') { // c'� gi� uno stesso codice ed e' un inserimento
+    if ($same_code && $toDo == 'insert') { // c'è già uno stesso codice ed e' un inserimento
       $form['codice'] ++; // lo aumento di 1
       $msg .= "18+";
     }
@@ -100,12 +101,12 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         }
         if (!($form['codfis'] == "") && !($form['codfis'] == "00000000000") && $toDo == 'insert') {
           $partner_with_same_cf = $anagrafica->queryPartners('*', "codice <> " . $real_code . " AND codice BETWEEN " . $admin_aziend['mas_staff'] . "000000 AND " . $admin_aziend['mas_staff'] . "999999 AND codfis = '" . $form['codfis'] . "'", "codfis DESC", 0, 1);
-          if ($partner_with_same_cf) { // c'� gi� un lavoratore sul piano dei conti
+          if ($partner_with_same_cf) { // c'è già un lavoratore sul piano dei conti
             $msg .= "12+";
           } elseif ($form['id_anagra'] == 0) { // � un nuovo lavoratore senza anagrafica
             $rs_anagra_with_same_cf = gaz_dbi_dyn_query('*', $gTables['anagra'], " codfis = '" . $form['codfis'] . "'", "codfis DESC", 0, 1);
             $anagra_with_same_cf = gaz_dbi_fetch_array($rs_anagra_with_same_cf);
-            if ($anagra_with_same_cf) { // c'� gi� un'anagrafica con lo stesso CF non serve reinserirlo ma avverto
+            if ($anagra_with_same_cf) { // c'è già un'anagrafica con lo stesso CF non serve reinserirlo ma avverto
               // devo attivare tutte le interfacce per la scelta!
               $anagra = $anagra_with_same_cf;
               $msg .= '16+';
@@ -260,7 +261,7 @@ if (!empty($msg)) {
         echo "\t </td>\n";
         echo "<td colspan=\"2\"><div onmousedown=\"toggleContent('id_anagra')\" class=\"FacetDataTDred\">";
         echo ' &dArr; ' . $script_transl['link_anagra'] . " &dArr;</div>\n";
-        echo "<div style=\"display: ;\" class=\"selectContainer\" id=\"id_anagra\" onclick=\"selectValue('" . $anagra['id'] . "');\" >\n";
+        echo "<div  style=\"z-index:1000;\" class=\"selectContainer\" id=\"id_anagra\" onclick=\"selectValue('" . $anagra['id'] . "');\" >\n";
         echo "<div class=\"selectHeader\"> ID = " . $anagra['id'] . "</div>\n";
         echo '<table cellspacing="0" cellpadding="0" width="100%" class="selectTable">';
         echo "\n<tr class=\"odd\"><td>" . $script_transl['ragso1'] . " </td><td> " . $anagra['ragso1'] . "</td></tr>\n";
@@ -309,7 +310,7 @@ if (!empty($msg)) {
             <div class="col-md-12">
                 <div class="form-group">
                     <label for="id_contract" class="col-sm-4 control-label"><?php echo $script_transl['id_contract']; ?> </label>
-                    <input class="col-sm-8" type="text" value="<?php echo $form['id_contract']; ?>" name="id_contract" maxlength="4"/>
+                    <input class="col-sm-8" type="text" value="<?php echo $form['id_contract']; ?>" name="id_contract" maxlength="9"/>
                 </div>
             </div>
         </div><!-- chiude row  -->
