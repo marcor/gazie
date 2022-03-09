@@ -214,7 +214,7 @@ $(function() {
 	$("#dialog_packet").dialog({ autoOpen: false });
 	$('.dialog_packet').click(function() {
 		$("p#idcodice").html("<a title='scarica il pacchetto' class='btn btn-xs btn-warning ' href='fae_acq_packaging.php?name=" + $(this).attr('ref') + "'><i class='glyphicon glyphicon-compressed'></i>"+ $(this).attr('ref') +"</a>");		
-		$("#dialog_fae_email").html("<p class='text-center'><a href='fae_acq_packaging.php?name=" + $(this).attr('ref') + "&email=TRUE' class='btn btn-warning'><b><i class='glyphicon glyphicon-send'></i> Invia il pacchetto </i> </b></a></p><p></p>");
+		$("#dialog_fae_email").html("<p class='text-center'><a href='fae_acq_packaging.php?name=" + $(this).attr('ref') + "&email=email' class='btn btn-warning'><b><i class='glyphicon glyphicon-send'></i> Invia il pacchetto </i> </b></a></p><p></p>");
 		var id = $(this).attr('ref');
 		$( "#dialog_packet" ).dialog({
 			minHeight: 1,

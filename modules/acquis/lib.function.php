@@ -195,7 +195,7 @@ function getLastOrdPrice($codart,$supplier) {
 	}
     return $r;
 }
-function CreateZipFAEacq($resultFAE){// crea un file .zip contenente i file che gli vengono passati nell'array $resultFAE
+function CreateZipFAEacq($resultFAE,$email=""){// crea un file .zip contenente i file che gli vengono passati nell'array $resultFAE
 	global $gTables, $admin_aziend;
 	if (count($resultFAE) > 0) {
 		$zip = new ZipArchive;
@@ -211,10 +211,12 @@ function CreateZipFAEacq($resultFAE){// crea un file .zip contenente i file che 
 			}
 			$zip->close();			
 			$file_url = $zipnameurl;
-			if(file_exists($zipnameurl)) {
+			if(file_exists($zipnameurl) && $email=="") {
 				header("Location: download_acq_zip_package.php?fn=".$zipname);				
+			}elseif(file_exists($zipnameurl) && $email=="email") {
+				header("Location: send_fae_acq_package.php?fn=".$zipname);				
 			} else {
-				echo "Il paccketto non esiste. Errore creazione zip";					
+				echo "Il pacchetto non esiste. Errore creazione zip";					
 			}		
 		} else {
 			echo "Inizio creazione zip fallita";
