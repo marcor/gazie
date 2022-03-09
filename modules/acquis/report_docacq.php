@@ -210,6 +210,41 @@ function confirFae(link){
          });
 	$("#dialog_fae").dialog( "open" );
 }
+$(function() {	
+	$("#dialog_packet").dialog({ autoOpen: false });
+	$('.dialog_packet').click(function() {
+		$("p#idcodice").html("<a title='scarica il pacchetto' class='btn btn-xs btn-warning ' href='fae_acq_packaging.php?name=" + $(this).attr('ref') + "'><i class='glyphicon glyphicon-compressed'></i>"+ $(this).attr('ref') +"</a>");		
+		$("#dialog_fae_email").html("<p class='text-center'><a href='fae_acq_packaging.php?name=" + $(this).attr('ref') + "&email=TRUE' class='btn btn-warning'><b><i class='glyphicon glyphicon-send'></i> Invia il pacchetto </i> </b></a></p><p></p>");
+		var id = $(this).attr('ref');
+		$( "#dialog_packet" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{
+					text:'Elimina il pacchetto',
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'packacq','ref':id},
+						type: 'POST',
+						url: '../acquis/delete.php',
+						success: function(output){
+		                    //alert(output);
+							window.location.replace("./report_docacq.php");
+						}
+					});
+				}},				
+				"Esci": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		$("#dialog_packet" ).dialog( "open" );
+	});
+});
 </script>
 <form method="GET" >
 	<div class="framePdf panel panel-success" style="display: none; position: absolute; left: 5%; top: 100px">
@@ -237,6 +272,12 @@ function confirFae(link){
         <p class="ui-state-highlight" id="idcodice"></p>
         <p>Fornitore</p>
         <p class="ui-state-highlight" id="iddescri"></p>
+	</div>
+	<div style="display:none" id="dialog_packet" title="Pacchetto di fatture di acquisto">
+        <p><b>Scarica il pacchetto:</b></p>        
+        <p class="ui-state-highlight" id="idcodice"></p> 
+		<p><b>Invia il pacchetto</b></p>        
+        <p class="ui-state-highlight" id="dialog_fae_email"></p> 
 	</div>
     <div align="center" class="FacetFormHeaderFont">
         <?php echo $script_transl['title']; ?>
@@ -306,7 +347,7 @@ function confirFae(link){
        </tr>
 <?php
 //recupero le testate in base alle scelte impostate
-$result = gaz_dbi_dyn_query($gTables['tesdoc'].".protoc,".$gTables['tesdoc'].".datfat,".$gTables['tesdoc'].".numfat,".$gTables['tesdoc'].".tipdoc,".$gTables['tesdoc'].".clfoco,".$gTables['tesdoc'].".id_tes,".$gTables['tesdoc'].".datreg,".$gTables['tesdoc'].".fattura_elettronica_original_name,". $gTables['tesdoc'].".id_con,".$gTables['anagra'].".ragso1",$tesdoc_e_partners, $ts->where, $ts->orderby, $ts->getOffset(), $ts->getLimit(),"protoc,datfat");
+$result = gaz_dbi_dyn_query($gTables['tesdoc'].".protoc,".$gTables['tesdoc'].".datfat,".$gTables['tesdoc'].".numfat,".$gTables['tesdoc'].".tipdoc,".$gTables['tesdoc'].".clfoco,".$gTables['tesdoc'].".id_tes,".$gTables['tesdoc'].".datreg,".$gTables['tesdoc'].".fattura_elettronica_zip_package,".$gTables['tesdoc'].".fattura_elettronica_original_name,". $gTables['tesdoc'].".id_con,".$gTables['anagra'].".ragso1",$tesdoc_e_partners, $ts->where, $ts->orderby, $ts->getOffset(), $ts->getLimit(),"protoc,datfat");
 $paymov = new Schedule();
 // creo un array con gli ultimi documenti dei vari anni (gli unici eliminabili senza far saltare il protocollo del registro IVA)
 $rs_last_docs = gaz_dbi_query("SELECT id_tes
@@ -453,6 +494,15 @@ while ($row = gaz_dbi_fetch_array($result)) {
     }
   } else {
     echo "<a class=\"btn btn-xs btn-default btn-cont\" href=\"accounting_documents.php?type=AF&last=" . $row["protoc"] . "\">Contabilizza</a>";
+  }
+  if (strlen($row['fattura_elettronica_zip_package'])>4){// se è stato creato un pacchetto .zip
+	//echo "<a title=\"scarica il pacchetto\" class=\"btn btn-xs btn-warning \" href=\"fae_acq_packaging.php?name=" . $row['fattura_elettronica_zip_package'] . "\"><i class=\"glyphicon glyphicon-compressed\"></i> ".substr($row['fattura_elettronica_zip_package'],0,19)."</a>";
+	?>
+	<a class="btn btn-xs btn-default btn-elimina dialog_packet" title="Apri il popup del pacchetto" ref="<?php echo $row['fattura_elettronica_zip_package'];?>">
+		<i class="glyphicon glyphicon-compressed"></i>
+		<?php echo substr($row['fattura_elettronica_zip_package'],0,19); ?>
+	</a>
+	<?php
   }
   if ($check) { // ho qualche rigo da traferire
     echo " <a class=\"btn btn-xs btn-default btn-warning\" href=\"../magazz/genera_movmag.php\">Movimenta magazzino</a> ";

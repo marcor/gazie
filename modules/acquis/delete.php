@@ -29,7 +29,7 @@ if (!$isAjax) {
     trigger_error($user_error, E_USER_ERROR);
 }
 
-if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type']) && isset($_POST['id_tes']) && is_numeric($_POST['id_tes']))) {
+if ((isset($_POST['type']) && isset($_POST['ref'])) OR (isset($_POST['type']) && isset($_POST['id_tes']) && is_numeric($_POST['id_tes']))) {
 	require("../../library/include/datlib.inc.php");
 	require("../../modules/magazz/lib.function.php");
 	$upd_mm = new magazzForm;
@@ -173,6 +173,10 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type']) && i
 		case "supplier_schedule":
 			$paymov= new Schedule;
 			$paymov->deleteClosedPaymov(intval($_POST['ref']));
+      break;
+	  case "packacq":
+			$name=$_POST['ref'];			
+			gaz_dbi_query("UPDATE " . $gTables['tesdoc'] . " SET fattura_elettronica_zip_package = '' WHERE fattura_elettronica_zip_package = '".$name."'");			
       break;
 	}
 }

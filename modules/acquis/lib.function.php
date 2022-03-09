@@ -195,5 +195,30 @@ function getLastOrdPrice($codart,$supplier) {
 	}
     return $r;
 }
-
+function CreateZipFAEacq($resultFAE){// crea un file .zip contenente i file che gli vengono passati nell'array $resultFAE
+	global $gTables, $admin_aziend;
+	if (count($resultFAE) > 0) {
+		$zip = new ZipArchive;
+		$zipname = substr(date("Y-m-d-h-i-s")."_".str_replace(" ","-",$admin_aziend['ragso1']), 0, 39).".zip";// il nome del pacchetto
+		$zipnameurl=DATA_DIR."files/tmp/".$zipname;
+		$res = $zip->open($zipnameurl, ZipArchive::CREATE);
+		if ($res === TRUE) {				
+			foreach ($resultFAE as $resFAE){
+				$fn_ori = DATA_DIR.'files/'.$admin_aziend['codice'].'/'.$resFAE['fattura_elettronica_original_name'];			
+				$zip->addFile($fn_ori,$resFAE['fattura_elettronica_original_name']);
+				// aggiorno la testata della FAE
+				gaz_dbi_query("UPDATE " . $gTables['tesdoc'] . " SET fattura_elettronica_zip_package = '".$zipname."' WHERE fattura_elettronica_original_name = '".$resFAE['fattura_elettronica_original_name']."'");
+			}
+			$zip->close();			
+			$file_url = $zipnameurl;
+			if(file_exists($zipnameurl)) {
+				header("Location: download_acq_zip_package.php?fn=".$zipname);				
+			} else {
+				echo "Il paccketto non esiste. Errore creazione zip";					
+			}		
+		} else {
+			echo "Inizio creazione zip fallita";
+		}		
+	} 
+}
 ?>
