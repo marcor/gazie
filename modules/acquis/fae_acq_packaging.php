@@ -31,10 +31,13 @@ if (!ini_get('safe_mode')) { //se me lo posso permettere...
 $msg = '';
 $gForm = new GAzieForm();
 
-function getFAEunpacked(){// prende tutte le fae di acquisto non impacchettate
+function getFAEunpacked($date=""){// prende tutte le fae di acquisto non impacchettate
 	global $gTables, $admin_aziend;
 	$from = $gTables['tesdoc'];
 	$where = "(fattura_elettronica_zip_package IS NULL OR fattura_elettronica_zip_package = '') AND (tipdoc LIKE 'AF_')";
+	if (intval($date>0)){
+		$where .= " AND datfat <= '". $date ."'";
+	}
 	$orderby = "datfat ASC, protoc ASC";
 	$resultFAE = gaz_dbi_dyn_query("*", $from, $where, $orderby);	
 	return gaz_dbi_fetch_all($resultFAE);
@@ -48,11 +51,17 @@ function getFAEpacked($name){// prende le fae di acquisto impacchettate con il n
 	return gaz_dbi_fetch_all($resultFAE);
 }
 
-if (isset($_GET['name'])){
-	$resultFAE=getFAEpacked(substr($_GET['name'],0,100));
+if (isset($_POST['reset'])){
+	unset($_POST);
+	$msg="";
 	
-}else{
+}
+if (isset($_GET['name'])){
+	$resultFAE=getFAEpacked(substr($_GET['name'],0,100));	
+}elseif (!isset($_POST['packet'])){
 	$resultFAE=getFAEunpacked();
+} else{
+	$resultFAE=getFAEunpacked($_POST['this_date_Y']."-".$_POST['this_date_M']."-".$_POST['this_date_D']);
 }
 
 if (!isset($_POST['packet']) && !isset($_GET['name'])) { //al primo accesso allo script
@@ -69,16 +78,24 @@ if (!isset($_POST['packet']) && !isset($_GET['name'])) { //al primo accesso allo
 	
 } else {    // accessi successivi o se c'è una richiesta esterna GET	
 	
-		if (count($resultFAE) > 0 && !isset($_GET['email'])) {
-			CreateZipFAEacq($resultFAE);		
-		}
-		if (count($resultFAE) > 0 && isset($_GET['email'])){
-			CreateZipFAEacq($resultFAE,$_GET['email']);
-		}
+	if (count($resultFAE) > 0 && !isset($_GET['email'])) {
+		CreateZipFAEacq($resultFAE);		
+	}
+	if (count($resultFAE) > 0 && isset($_GET['email'])){
+		CreateZipFAEacq($resultFAE,$_GET['email']);
+	}
+	if (isset($_GET['email'])){
 		exit;
+	}
 }
+
+if(count($resultFAE)==0){
+	$msg="Non ci sono fatture da impacchettare";
+}
+
 require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup'));
+
 echo "<script type=\"text/javascript\">
 var cal = new CalendarPopup();
 var calName = '';
@@ -102,16 +119,15 @@ function setDate(name) {
 
 <form method="POST">
 	<div align="center" class="FacetFormHeaderFont"> Impacchetta fatture di acquisto
-
 	</div>
 	<table class="Tsmall">
 		<?php
 		
-		if(count($resultFAE)==0){
+		if($msg!==""){
 			?>
 			<tr>
 				<td>
-				<p>Non ci sono fattura da impacchettare</p>
+				<p><?php echo $msg; ?></p>
 				</td>
 			</tr>
 			<?php
@@ -124,42 +140,31 @@ function setDate(name) {
 				echo $form['first_date_D'],"-", $form['first_date_M'],"-", $form['first_date_Y'];
 				?>
 				</td>
-
 			</tr>
 			<tr>
-				<td class="text-right">Fino al al</td>
+				<td class="text-right">Fino al </td>
 				<td>
 				<?php
 				$gForm->CalendarPopup('this_date', $form['latest_date_D'], $form['latest_date_M'], $form['latest_date_Y'], 't', 1);
 				?>
 				</td>
 			</tr>
-
-
-			<tr class="FacetDataTD">
-				<td><input type="submit" name="return" value="Indietro">
-				</td>
-				<td align="right"><input class="btn btn-warning" type="submit" name="packet" value="Crea pacchetto .zip">
-				</td>
-			</tr>
 			<?php
 		}
 		?>
+		<tr class="FacetDataTD">
+			<td><input type="submit" name="reset" value="Reset">
+			</td>
+			<?php
+			if(count($resultFAE)>0){
+				?>
+				<td align="right"><input class="btn btn-warning" type="submit" name="packet" value="Crea pacchetto .zip">					
+				</td>
+				<?php
+			}
+			?>
+		</tr>		
 	</table>
-
-
-
-
-
-
-<?php
-if (!empty($msg)) {
-    echo '<tr><td colspan="3" class="FacetDataTDred">' . $gForm->outputErrors($msg, $script_transl['errors']) . "</td></tr>\n";
-}
-
-?>
-
-
 </form>
 <?php
 require("../../library/include/footer.php");
