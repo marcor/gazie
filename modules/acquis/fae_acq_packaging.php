@@ -34,7 +34,7 @@ $gForm = new GAzieForm();
 function getFAEunpacked($date=""){// prende tutte le fae di acquisto non impacchettate
 	global $gTables, $admin_aziend;
 	$from = $gTables['tesdoc'];
-	$where = "(fattura_elettronica_zip_package IS NULL OR fattura_elettronica_zip_package = '') AND (tipdoc LIKE 'AF_')";
+	$where = "(fattura_elettronica_zip_package IS NULL OR fattura_elettronica_zip_package = '') AND (tipdoc LIKE 'AF_') AND (fattura_elettronica_original_name LIKE '______%')";
 	if (intval($date>0)){
 		$where .= " AND datfat <= '". $date ."'";
 	}

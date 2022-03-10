@@ -202,7 +202,7 @@ function CreateZipFAEacq($resultFAE,$email=""){// crea un file .zip contenente i
 		$zipname = substr(date("Y-m-d-h-i-s")."_".str_replace(" ","-",$admin_aziend['ragso1']), 0, 39).".zip";// il nome del pacchetto
 		$zipnameurl=DATA_DIR."files/tmp/".$zipname;
 		$res = $zip->open($zipnameurl, ZipArchive::CREATE);
-		if ($res === TRUE) {				
+		if ($res === TRUE) {			
 			foreach ($resultFAE as $resFAE){
 				$fn_ori = DATA_DIR.'files/'.$admin_aziend['codice'].'/'.$resFAE['fattura_elettronica_original_name'];			
 				$zip->addFile($fn_ori,$resFAE['fattura_elettronica_original_name']);
