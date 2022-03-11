@@ -31,7 +31,7 @@ function lastDocNumber($year, $type = 'FAI', $vat_section = 1) {
                          AND seziva = $vat_section", "protoc DESC", 0, 1);
     $last = gaz_dbi_fetch_array($last_pro);
     if ($last) {
-        $rtn['uts'] = $last['uts'];
+		$rtn['uts'] = strtotime(date('Y-m-d', $last['uts']));
         $rtn['protoc'] = $last['protoc'] + 1;
     } else {
         $rtn['protoc'] = 1;
