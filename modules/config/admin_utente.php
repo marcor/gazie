@@ -639,8 +639,14 @@ if ($user_data["Abilit"] == 9) {
     <div class="col-xs-12 text-center"><input name="Submit" class="btn btn-warning" type="submit" value="<?php echo ucfirst($script_transl[$toDo]); ?>"></div>
 </div>
 </form>
-<?php
+<?php 
+if ($admin_aziend['Abilit']==9){
+	?>
+	<div  class="panel panel-default  table-responsive gaz-table-form">
+	<iframe src="../../modules/root/set_config_data.php?iframe=TRUE" title="Configurazione globale" width="100%" height="1330"  frameBorder="0"> 
+	</iframe>
+	</div>
+	<?php
+}
 require("../../library/include/footer.php");
 ?>
-
-
