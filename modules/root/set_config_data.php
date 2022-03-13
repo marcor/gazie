@@ -30,7 +30,7 @@ if (count($_POST) > 0) {
     foreach ($_POST as $key => $value) {
         gaz_dbi_put_row($gTables['config'], 'variable', $key, 'cvalue', $value);
     }
-    header("Location: config.php?ok");
+    header("Location: set_config_data.php?ok");
 }
 
 require("../../library/include/header.php");
