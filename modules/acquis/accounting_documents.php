@@ -237,13 +237,14 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
     }
     // la presenza di scadenze provenienti dall'XML mi crea l'array che valorizzerà paymov
     $rspm = gaz_dbi_dyn_query('*', $gTables['expdoc'], " id_tes = " . $tes['id_tes']);
+    $dtfa = new DateTime($tes['datfat']);
     while ($r = gaz_dbi_fetch_array($rspm)) {
-        $doc[$tes['protoc']]['pay'][] = $r;
-        // se ho una ModalitaPagamento contanti (MP01) non apro la partita
-        if ($r['ModalitaPagamento'] == 'MP01') {
-            $contanti = gaz_dbi_get_row($gTables['pagame'], 'fae_mode', 'MP01','AND incaut > 100000000');
-            $tes['incaut']=($contanti)?$contanti['incaut']:0;
-        }
+      $doc[$tes['protoc']]['pay'][] = $r;
+      $dtex = new DateTime($r['DataScadenzaPagamento']);
+      if ($r['ModalitaPagamento'] == 'MP01' && $dtex <= $dtfa ) { // se ho una ModalitaPagamento contanti (MP01) e la scadenza coincide con la data della fattura non apro la partita e faccio la chiusura automatica per cassa
+        $contanti = gaz_dbi_get_row($gTables['pagame'], 'fae_mode', 'MP01','AND incaut > 100000000');
+        $tes['incaut']=($contanti)?$contanti['incaut']:0;
+      }
     }
     $doc[$tes['protoc']]['accpaymov'] = $accpaymov;
     $doc[$tes['protoc']]['title'] = $title;
