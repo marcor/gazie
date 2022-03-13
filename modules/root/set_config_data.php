@@ -36,6 +36,30 @@ if (count($_POST) > 0) {
 require("../../library/include/header.php");
 $script_transl = HeadMain();
 $result = gaz_dbi_dyn_query("*", $gTables['config'], 1, ' id ASC', 0, 1000);
+if ($_GET['iframe']="TRUE"){
+	?>
+	<style>
+	.content-header {
+		display:none;
+	} 
+	.main-sidebar {
+		display:none;
+	}
+	.main-header{
+		display:none;
+	}
+	.navbar {
+		display:none;
+	}
+	.breadcrumb {
+		display:none;
+	}
+	.divlarge{
+		width: 100%;
+	}
+	</style>
+	<?php
+}
 ?>
 <div align="center" class="FacetFormHeaderFont">
     <?php echo $script_transl['title']; ?>
