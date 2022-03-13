@@ -93,7 +93,7 @@ $strScript = array("admin.php" =>
 		'inscalot' => 'Lotti in scadenza',
 		'scalot' => 'Lotti scaduti'
     ),
-    "config.php" =>
+    "set_config_data.php" =>
     array("title" => "Configurazione principale di GAzie",),
     "login_admin.php" =>
     array(/* 0 */ "La nuova password dev'essere lunga almeno ",
