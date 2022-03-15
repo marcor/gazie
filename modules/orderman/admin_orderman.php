@@ -438,12 +438,10 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 
 			if (intval($res['clfoco'])==0) { // se NON è un ordine cliente esistente e quindi fu generato automaticamente da orderman
 			$result = gaz_dbi_del_row($gTables['tesbro'], "id_tes", $form['id_tesbro']); // cancello tesbro
-			//$result = gaz_dbi_del_row($gTables['orderman'], "id", intval($_GET['codice'])); // cancello orderman/produzione
 			$result = gaz_dbi_del_row($gTables['rigbro'], "id_tes", $form['id_tesbro']); // cancello rigbro
 			$form['order']=0;
 			} else { // se invece è un ordine cliente devo lasciarlo e solo sganciarlo da orderman
 			gaz_dbi_query ("UPDATE " . $gTables['tesbro'] . " SET id_orderman = '' WHERE id_tes ='".$form['id_tesbro']."'") ; // sgancio tesbro da orderman
-			//$result = gaz_dbi_del_row($gTables['orderman'], "id", intval($_GET['codice'])); // cancello orderman/produzione
 			}
 		
             // in ogni caso riporto l'auto_increment all'ultimo valore disponibile
