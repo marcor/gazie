@@ -546,6 +546,7 @@ function inviaDatiManuali($idtesDaInviare, $partiteAperte, $admin_aziend) {
                         $descrTipoFattura = "VENDITA";
                         $partitaIvaCreditore = $admin_aziend['pariva'];
                         $partitaIvaDebitore = $mv['pariva'];
+                        $numdoc = $numdoc . '/' . $mv["seziva"]; // nelle fatture elettroniche emesse da Gazie, viene aggiunta la sezione IVA
                     } else {
                         $tipoFattura = "a";
                         $descrTipoFattura = "ACQUISTO";
