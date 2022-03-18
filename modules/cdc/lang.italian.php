@@ -34,7 +34,8 @@ $strScript = array(
         'errors' => array('La data  non &egrave; corretta!',
             'Non sono stati trovati movimenti!'
         ),
-        'confirm_entry' => 'Invia a Camera di Compensazione',
+        'confirm_entry' => 'Invia in compensazione le fatture elettroniche selezionate',
+        'confirm_manual_entry' => 'Invia in compensazione SOLO dati essenziali',
         'tutti' => 'Seleziona tutte ',
         'precisazione' => 'Puoi anche usare direttamente <a href="https://fe.cameracompensazione.it" target="_blank">Camera di Compensazione</a>',
         'accettazione' => ' <b>Per continuare</b> devi accettare <a href="https://webapp.cameracompensazione.it/termini-condizioni.html" target="_blank">Termini e condizioni</a> e <a href="https://webapp.cameracompensazione.it/privacy-policy.html" target="_blank">Privacy Policy</a> ',
