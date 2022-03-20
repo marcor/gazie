@@ -132,6 +132,9 @@ function printPdf(urlPrintDoc){
 		$('#framePdf').attr('src',urlPrintDoc);
 		$('#framePdf').css({'height': '100%'});
 		$('.framePdf').css({'display': 'block','width': '90%', 'height': '80%', 'z-index':'2000'});
+    $("html, body").delay(100).animate({scrollTop: $('#framePdf').offset().top},'slow', function() {
+        $("#framePdf").focus();
+    });
 		$('#closePdf').on( "click", function() {
 			$('.framePdf').css({'display': 'none'});
 		});

@@ -56,8 +56,8 @@ $sortable_headers = array("Codice ID"      => "id",
 $tablejoin = $gTables['orderman'];
 
 $ts = new TableSorter(
-    $tablejoin, 
-    $passo, 
+    $tablejoin,
+    $passo,
     ['id'=>'desc']);
 ?>
 <script>
@@ -75,8 +75,8 @@ $(function() {
 			show: "blind",
 			hide: "explode",
 			buttons: {
-				delete:{ 
-					text:'Elimina', 
+				delete:{
+					text:'Elimina',
 					'class':'btn btn-danger delete-button',
 					click:function (event, ui) {
 					$.ajax({
@@ -94,7 +94,7 @@ $(function() {
 				}
 			}
 		});
-		$("#dialog_delete" ).dialog( "open" );  
+		$("#dialog_delete" ).dialog( "open" );
 	});
 
 	$("#dialog_stato_lavorazione").dialog({ autoOpen: false });
@@ -107,7 +107,7 @@ $(function() {
         $('#sel_stato_lavorazione').on('change', function () {
             //ways to retrieve selected option and text outside handler
             new_stato_lavorazione = this.value;
-        });        
+        });
 		$( "#dialog_stato_lavorazione" ).dialog({
 			minHeight: 1,
 			width: "auto",
@@ -115,8 +115,8 @@ $(function() {
 			show: "blind",
 			hide: "explode",
 			buttons: {
-				delete:{ 
-					text:'Modifica', 
+				delete:{
+					text:'Modifica',
 					'class':'btn btn-danger delete-button',
 					click:function (event, ui) {
 					$.ajax({
@@ -135,19 +135,22 @@ $(function() {
 				}
 			}
 		});
-		$("#dialog_stato_lavorazione" ).dialog( "open" );  
+		$("#dialog_stato_lavorazione" ).dialog( "open" );
 	});
-    
+
 });
 function printPdf(urlPrintDoc){
-	$(function(){			
+	$(function(){
 		$('#framePdf').attr('src',urlPrintDoc);
 		$('#framePdf').css({'height': '100%'});
 		$('.framePdf').css({'display': 'block','width': '90%', 'height': '80%', 'z-index':'2000'});
+    $("html, body").delay(100).animate({scrollTop: $('#framePdf').offset().top},'slow', function() {
+        $("#framePdf").focus();
+    });
 		$('#closePdf').on( "click", function() {
 			$('.framePdf').css({'display': 'none'});
-		});	
-	});	
+		});
+	});
 };
 </script>
 <div align="center" class="FacetFormHeaderFont">Elenco produzioni</div>
@@ -234,9 +237,9 @@ while ($r = gaz_dbi_fetch_array($result)) {
 			<td align="center"><?php echo $r['add_info'];?></td>
 			<?php $d_row = gaz_dbi_get_row($gTables['rigbro'], "id_rig", $r['id_rigbro']);?>
 			<td align="center"><?php echo ($d_row)?$d_row['codart']:'';?></td>
-			
+
 			<!-- Colonna quantità prodotta -->
-			<?php 
+			<?php
 			$e_row = gaz_dbi_get_row($gTables['movmag'], "id_orderman", $r['id'], "AND operat = 1");
 			if ($e_row && $d_row ){
 				$f_row = gaz_dbi_get_row($gTables['lotmag'], "id_movmag", $e_row['id_mov']);
@@ -247,7 +250,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 				?><td></td><?php
 			}
 
-		
+
 			if (isset($f_row) && strlen($f_row['identifier'])>0) {
 				echo '<td align="center">'.$f_row['identifier'].' - '.gaz_format_date($f_row['expiry']).'</td>';
 			} else {
@@ -262,14 +265,14 @@ while ($r = gaz_dbi_fetch_array($result)) {
 			<!-- Antonio Germani Vado a leggere la descrizione del campo connesso alla produzione -->
 			<?php $c_row = gaz_dbi_get_row($gTables['campi'], "codice", $r['campo_impianto']);?>
 			<td align="center"><?php echo $r['campo_impianto'], " ",(($c_row)?$c_row['descri']:'');?></td>
-			
+
 			<!-- Colonna stato lavorazione -->
 			<td>
 				<a class="btn btn-xs <?php echo $stato_btn; ?> dialog_stato_lavorazione" refsta="<?php echo $r['id']; ?>" prodes="<?php echo $r['description']; ?>" prosta="<?php echo $r['stato_lavorazione']; ?>">
 				<i class="glyphicon glyphicon-compressed"></i><?php echo $stato_lavorazione[$r['stato_lavorazione']]; ?>
 				</a>
 			</td>
-			
+
 			<!-- Colonna stampa distinta -->
 			<?php
 			if ($r['order_type']=="IND" or $r['order_type']=="ART"){
