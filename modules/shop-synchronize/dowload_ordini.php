@@ -236,7 +236,7 @@ if (isset($_POST['conferma'])) { // se confermato
 
 					// prima di inserire il nuovo articolo controllo se il suo codice è stato già usato
 					unset($usato);
-					$usato = gaz_dbi_get_row($gTables['artico'], "codice", $_POST['codice'.$ord.$row]);// controllo se il codice è già stato usato in GAzie
+					$usato = gaz_dbi_get_row($gTables['artico'], "codice", substr($_POST['codice'.$ord.$row],0,15));// controllo se il codice è già stato usato in GAzie
 					if ($usato){ // se il codice è già in uso lo modifico accodandoci l'ID
 						$_POST['codice'.$ord.$row]=substr($_POST['codice'.$ord.$row],0,10)."-".substr($_POST['refid'.$ord.$row],0,4);
 					}
