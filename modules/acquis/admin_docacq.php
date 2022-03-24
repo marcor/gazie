@@ -140,20 +140,28 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
 						$_POST['rows'][$i]['codric'] = intval($row['codric']);
 						$_POST['rows'][$i]['provvigione'] = floatval($row['provvigione']);
 						$_POST['rows'][$i]['id_mag'] = intval($row['id_mag']);
-						$_POST['rows'][$i]['id_warehouse'] = intval($row['id_warehouse']);
 						$_POST['rows'][$i]['id_order'] = intval($row['id_order']);
 						$_POST['rows'][$i]['id_orderman'] = intval($row['id_orderman']);
 						$_POST['rows'][$i]['id_rig'] = intval($row['id_rig']);
-						$value = gaz_dbi_get_row($gTables['artico'], "codice", substr($row['codart'], 0,32));
-						$_POST['rows'][$i]['quality'] = strval($value['quality']);
-						$_POST['rows'][$i]['annota'] = substr($value['annota'], 0, 50);
-						$_POST['rows'][$i]['pesosp'] = floatval($value['peso_specifico']);
-						$_POST['rows'][$i]['gooser'] = intval($value['good_or_service']);
-						$_POST['rows'][$i]['quamag'] = floatval($value['quality']);
-						$_POST['rows'][$i]['scorta'] = floatval($value['scorta']);
-						$_POST['rows'][$i]['lot_or_serial'] = intval($value['lot_or_serial']);
-						$_POST['rows'][$i]['SIAN'] = intval($value['SIAN']);
-						if (intval($value['lot_or_serial'])>0 AND intval($row['id_rig'])>0){
+            // dati da movimento di magazzino
+            $row['id_warehouse']=0;
+						if($row['id_mag']>0){
+              $movmag = gaz_dbi_get_row($gTables['movmag'], "id_mov", $row['id_mag']);
+              $row['id_warehouse'] = $movmag ? $movmag['id_warehouse'] : 0;
+            }
+						$_POST['rows'][$i]['id_warehouse'] = $row['id_warehouse'];
+            $_POST['in_id_warehouse']=$row['id_warehouse'];
+            // dati da anagrafica articolo
+						$artico = gaz_dbi_get_row($gTables['artico'], "codice", substr($row['codart'], 0,32));
+						$_POST['rows'][$i]['quality'] = strval($artico['quality']);
+						$_POST['rows'][$i]['annota'] = substr($artico['annota'], 0, 50);
+						$_POST['rows'][$i]['pesosp'] = floatval($artico['peso_specifico']);
+						$_POST['rows'][$i]['gooser'] = intval($artico['good_or_service']);
+						$_POST['rows'][$i]['quamag'] = floatval($artico['quality']);
+						$_POST['rows'][$i]['scorta'] = floatval($artico['scorta']);
+						$_POST['rows'][$i]['lot_or_serial'] = intval($artico['lot_or_serial']);
+						$_POST['rows'][$i]['SIAN'] = intval($artico['SIAN']);
+						if (intval($artico['lot_or_serial'])>0 AND intval($row['id_rig'])>0){
 							$lotres = gaz_dbi_get_row($gTables['lotmag'], "id_rigdoc", intval($row['id_rig']));
 							$_POST['rows'][$i]['id_lotmag'] = $lotres['id'];
 							$_POST['rows'][$i]['identifier'] = $lotres['identifier'];
@@ -2225,7 +2233,8 @@ echo '<input type="hidden" value="' . $strArrayDest . '" name="rs_destinazioni">
 							?>
 							<div class="col-sm-12 col-xs-12" style="border-bottom: 1px solid;">
 								<div class="col-sm-4 col-xs-4">
-									<?php echo $item['numdoc'];
+									<?php
+                  echo '<a class="btn btn-xs btn-success" href="admin_docacq.php?id_tes='.$item['id_tes'].'&amp;Update&amp;DDT" title="Modifica il DdT di acquisto">  <i class="glyphicon glyphicon-edit"></i>&nbsp;'.$item['numdoc'].'</a>';
 									echo '<input type="hidden" name="id_tes'. $n .'" value="'. $item['id_tes'] . '">';
 									?>
 								</div>
