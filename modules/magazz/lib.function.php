@@ -868,7 +868,7 @@ class magazzForm extends GAzieForm {
       global $gTables, $admin_aziend;
       // ritorna un array con gli acquisti aggregati per fornitore
       // trovo i fornitori
-      $rs=gaz_dbi_query("SELECT mm1.clfoco, mm1.desdoc, unimis,mm1.quanti,mm1.scorig,mm1.prezzo, ".$gTables['rigdoc'] .".id_tes AS docref, ".$gTables['rigdoc'] .".codice_fornitore, CONCAT(".$gTables['anagra'] .".ragso1,".$gTables['anagra'] .".ragso2) AS supplier FROM " . $gTables['movmag'] . " mm1 LEFT JOIN ".$gTables['clfoco'] ." ON mm1.clfoco = ".$gTables['clfoco'] .".codice LEFT JOIN ".$gTables['anagra'] ." ON ".$gTables['clfoco'] .".id_anagra = ".$gTables['anagra'] .".id LEFT JOIN ".$gTables['rigdoc'] ." ON mm1.id_rif = ".$gTables['rigdoc'] .".id_rig
+      $rs=gaz_dbi_query("SELECT mm1.clfoco, mm1.desdoc, unimis,mm1.quanti,mm1.scorig,mm1.prezzo, ".$gTables['rigdoc'] .".id_tes AS docref, ".$gTables['rigdoc'] .".codice_fornitore, CONCAT(".$gTables['anagra'] .".ragso1,".$gTables['anagra'] .".ragso2) AS supplier , ".$gTables['tesdoc'] .".tipdoc FROM " . $gTables['movmag'] . " mm1 LEFT JOIN ".$gTables['clfoco'] ." ON mm1.clfoco = ".$gTables['clfoco'] .".codice LEFT JOIN ".$gTables['anagra'] ." ON ".$gTables['clfoco'] .".id_anagra = ".$gTables['anagra'] .".id LEFT JOIN ".$gTables['rigdoc'] ." ON mm1.id_rif = ".$gTables['rigdoc'] .".id_rig LEFT JOIN ".$gTables['tesdoc'] ." ON ".$gTables['rigdoc'] .".id_tes = ".$gTables['tesdoc'] .".id_tes
       WHERE mm1.artico = '".$codart."' AND mm1.clfoco LIKE '". $admin_aziend['masfor'] ."%'
       ORDER BY mm1.datdoc DESC");
       $table='';
@@ -876,6 +876,9 @@ class magazzForm extends GAzieForm {
       while ($r = gaz_dbi_fetch_array($rs)) {
         if(!isset($acc[$r['clfoco']])){
           $acc[$r['clfoco']]=$r;
+          if ($r['tipdoc'] == 'AFT' || $r['tipdoc'] == 'ADT') { // se è un DdT il link dovrà passare "DDT"
+            $r['docref'] .= '&DDT';
+          }
           $r['desvalue']=$r['unimis'].' '.floatval($r['quanti']).' x € '.floatval($r['prezzo']).(($r['scorig']>0.01)?(' sconto:'.floatval($r['scorig']).'% '):('')).' = '.round($r['quanti']*$r['prezzo']*(100-$r['scorig'])/100,2);
           // creo una tabella direttamente stampabile
           $table .= '<div class="col-xs-1"></div><div class="col-xs-11 row"><div class="col-sm-4">'.$r['supplier'].'</div><div class="col-sm-4"><a class="btn btn-default btn-xs" href="../acquis/admin_docacq.php?Update&id_tes='.$r['docref'].'">'.$r['desdoc'].'</a></div><div class="col-sm-4"><b>'.$r['codice_fornitore'].'</b> '.$r['desvalue'].'</div></div>';
