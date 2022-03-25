@@ -118,39 +118,39 @@ class acquisForm extends GAzieForm {
 		$acc .= '</div>';
 		return $acc;
 	}
-   
 
-   function concile_id_order_row($varname,$val_codart,$val_selected,$class='small') {
-      global $gTables;
-	  $acc='';
-	  // riprendo tutti i righi degli ordini relativi all'articolo e controllo che siano stati ricevuti
-	  $query = 'SELECT * FROM `'.$gTables['rigbro']."` LEFT JOIN `".$gTables['tesbro']."` AS ".$gTables['rigbro'].".id_tes=".$gTables['tesbro'].".id_tes WHERE `tiprig` <=1 AND `codart` ='".$val_codart."' ORDER BY ".$gTables['rigbro'].".id_rig";
-      $result = gaz_dbi_query($query);
-      while ($r = gaz_dbi_fetch_array($result)) {
-	  }
-      $acc .= '<select id="'.$varname.'" name="'.$varname.'" class="'.$class.'">';
-      $acc .= '<option value="" style="background-color:#5bc0de;">senza riferimento</option>';
-      $result = gaz_dbi_query($query);
-      while ($r = gaz_dbi_fetch_array($result)) {
-          $selected = '';
-          $setstyle = '';
-          if ($r['id_rig'] == $val_selected) {
-              $selected = " selected ";
-              $setstyle = ' style="background-color:#5cb85c;" ';
-          }
-          $acc .= '<option class="small" value="'.$r['id_rig'].'"'.$selected.$setstyle.'>'.$r['codice'].'-'.substr($r['descri'],0,30).'</option>';
-      }
-      $acc .= '</select>';
-	  return $acc;
-   }
-   
-   	function getOrderStatus($idtes){
+
+  function concile_id_order_row($varname,$val_codart,$val_selected,$class='small') {
+     global $gTables;
+	 $acc='';
+	 // riprendo tutti i righi degli ordini relativi all'articolo e controllo che siano stati ricevuti
+	 $query = 'SELECT * FROM `'.$gTables['rigbro']."` LEFT JOIN `".$gTables['tesbro']."` AS ".$gTables['rigbro'].".id_tes=".$gTables['tesbro'].".id_tes WHERE `tiprig` <=1 AND `codart` ='".$val_codart."' ORDER BY ".$gTables['rigbro'].".id_rig";
+     $result = gaz_dbi_query($query);
+     while ($r = gaz_dbi_fetch_array($result)) {
+	 }
+     $acc .= '<select id="'.$varname.'" name="'.$varname.'" class="'.$class.'">';
+     $acc .= '<option value="" style="background-color:#5bc0de;">senza riferimento</option>';
+     $result = gaz_dbi_query($query);
+     while ($r = gaz_dbi_fetch_array($result)) {
+         $selected = '';
+         $setstyle = '';
+         if ($r['id_rig'] == $val_selected) {
+             $selected = " selected ";
+             $setstyle = ' style="background-color:#5cb85c;" ';
+         }
+         $acc .= '<option class="small" value="'.$r['id_rig'].'"'.$selected.$setstyle.'>'.$r['codice'].'-'.substr($r['descri'],0,30).'</option>';
+     }
+     $acc .= '</select>';
+	 return $acc;
+  }
+
+  function getOrderStatus($idtes){
 		global $gTables;
 		$acc[0]=false;
 		$acc[1]=[];
 		$acc[2]=false;
         $remains=false; // Almeno un rigo e' rimasto da evadere.
-        $processed=false; // Almeno un rigo e' gia' stato evaso.  
+        $processed=false; // Almeno un rigo e' gia' stato evaso.
         $rb_r=gaz_dbi_dyn_query('*',$gTables['rigbro'],"id_tes=" . $idtes . " AND tiprig <=1",'id_tes DESC');
         while($rb=gaz_dbi_fetch_array($rb_r) ) {
             $da_evadere=$rb['quanti'];
@@ -160,7 +160,7 @@ class acquisForm extends GAzieForm {
 				$acc[2][$rd['id_tes']]='y';
                 $evaso+=$rd['quanti'];
                 $processed=true;
-            }    
+            }
             if($evaso<$da_evadere ){
 				$acc[1][]=$rb['id_rig'];
                 $remains=true;
@@ -179,6 +179,28 @@ class acquisForm extends GAzieForm {
 		return $acc;
 	}
 
+ 	function CodiceFornitoreFromCodart($codart,$clfoco) { // restituisce il codice_fornitore di un articolo acquistato in precedenza dallo stesso fornitore, serve in fase di inserimento DdT manuale per consentire la successiva riconciliazione quando arriverà la fattura
+		global $gTables;
+    $rs_codice_fornitore=gaz_dbi_dyn_query('codice_fornitore',$gTables['rigdoc'].' LEFT JOIN '.$gTables['tesdoc'].' ON '.$gTables['rigdoc'].'.id_tes = '.$gTables['tesdoc'].'.id_tes',"codart='" . $codart . "' AND codice_fornitore <> '' AND tipdoc LIKE 'A%' AND ".$gTables['tesdoc'].'.clfoco = '.$clfoco,'id_rig DESC',0,1);
+    $res=gaz_dbi_fetch_array($rs_codice_fornitore);
+    if ($res){
+      return $res;
+    } else {
+      return false;
+    }
+	}
+
+ 	function CodartFromCodiceFornitore($codice_fornitore,$clfoco) { // restituisce il codice articolo (codart) di un articolo acquistato in precedenza dallo stesso fornitore, serve in fase di acquisizione delle fattura elettroniche che non hanno
+		global $gTables;
+    $rs_codart=gaz_dbi_dyn_query('codart',$gTables['rigdoc'].' LEFT JOIN '.$gTables['tesdoc'].' ON '.$gTables['rigdoc'].'.id_tes = '.$gTables['tesdoc'].'.id_tes',"codice_fornitore='" . $codice_fornitore . "' AND codart <> '' AND tipdoc LIKE 'A%' AND ".$gTables['tesdoc'].'.clfoco = '.$clfoco,'id_rig DESC',0,1);
+    $res = gaz_dbi_fetch_array($rs_codart);
+    if ($res){
+      return $res;
+    } else {
+      return false;
+    }
+	}
+
 }
 
 function getLastOrdPrice($codart,$supplier) {
@@ -189,9 +211,9 @@ function getLastOrdPrice($codart,$supplier) {
           LEFT JOIN " . $gTables['tesbro'] . " ON " . $gTables['rigbro'] . ".id_tes =" . $gTables['tesbro'] . ".id_tes
           WHERE tipdoc = 'AOR' AND codart = '" . $codart . "' AND prelis >= 0.00001 AND clfoco = '" . $supplier . "' ORDER BY datemi DESC LIMIT 1";
     $result = gaz_dbi_query($sqlquery);
-	$row = gaz_dbi_fetch_array($result); 
+	$row = gaz_dbi_fetch_array($result);
 	if($row){
-		$r=$row;	
+		$r=$row;
 	}
     return $r;
 }
@@ -202,25 +224,25 @@ function CreateZipFAEacq($resultFAE,$email=""){// crea un file .zip contenente i
 		$zipname = substr(date("Y-m-d-h-i-s")."_".str_replace(" ","-",$admin_aziend['ragso1']), 0, 39).".zip";// il nome del pacchetto
 		$zipnameurl=DATA_DIR."files/tmp/".$zipname;
 		$res = $zip->open($zipnameurl, ZipArchive::CREATE);
-		if ($res === TRUE) {			
+		if ($res === TRUE) {
 			foreach ($resultFAE as $resFAE){
-				$fn_ori = DATA_DIR.'files/'.$admin_aziend['codice'].'/'.$resFAE['fattura_elettronica_original_name'];			
+				$fn_ori = DATA_DIR.'files/'.$admin_aziend['codice'].'/'.$resFAE['fattura_elettronica_original_name'];
 				$zip->addFile($fn_ori,$resFAE['fattura_elettronica_original_name']);
 				// aggiorno la testata della FAE
 				gaz_dbi_query("UPDATE " . $gTables['tesdoc'] . " SET fattura_elettronica_zip_package = '".$zipname."' WHERE fattura_elettronica_original_name = '".$resFAE['fattura_elettronica_original_name']."'");
 			}
-			$zip->close();			
+			$zip->close();
 			$file_url = $zipnameurl;
 			if(file_exists($zipnameurl) && $email=="") {
-				header("Location: download_acq_zip_package.php?fn=".$zipname);				
+				header("Location: download_acq_zip_package.php?fn=".$zipname);
 			}elseif(file_exists($zipnameurl) && $email=="email") {
-				header("Location: send_fae_acq_package.php?fn=".$zipname);				
+				header("Location: send_fae_acq_package.php?fn=".$zipname);
 			} else {
-				echo "Il pacchetto non esiste. Errore creazione zip";					
-			}		
+				echo "Il pacchetto non esiste. Errore creazione zip";
+			}
 		} else {
 			echo "Inizio creazione zip fallita";
-		}		
-	} 
+		}
+	}
 }
 ?>
