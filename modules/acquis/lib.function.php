@@ -181,7 +181,7 @@ class acquisForm extends GAzieForm {
 
  	function CodiceFornitoreFromCodart($codart,$clfoco) { // restituisce il codice_fornitore di un articolo acquistato in precedenza dallo stesso fornitore, serve in fase di inserimento DdT manuale per consentire la successiva riconciliazione quando arriverà la fattura
 		global $gTables;
-    $rs_codice_fornitore=gaz_dbi_dyn_query('codice_fornitore',$gTables['rigdoc'].' LEFT JOIN '.$gTables['tesdoc'].' ON '.$gTables['rigdoc'].'.id_tes = '.$gTables['tesdoc'].'.id_tes',"codart='" . $codart . "' AND codice_fornitore <> '' AND tipdoc LIKE 'A%' AND ".$gTables['tesdoc'].'.clfoco = '.$clfoco,'id_rig DESC',0,1);
+    $rs_codice_fornitore=gaz_dbi_dyn_query('codice_fornitore',$gTables['rigdoc'].' LEFT JOIN '.$gTables['tesdoc'].' ON '.$gTables['rigdoc'].'.id_tes = '.$gTables['tesdoc'].'.id_tes',"codart='" . $codart . "' AND codice_fornitore <> '' AND tipdoc LIKE 'A%' AND ".$gTables['tesdoc'].'.clfoco = '.intval($clfoco),'id_rig DESC',0,1);
     $res=gaz_dbi_fetch_array($rs_codice_fornitore);
     if ($res){
       return $res;
@@ -192,7 +192,7 @@ class acquisForm extends GAzieForm {
 
  	function CodartFromCodiceFornitore($codice_fornitore,$clfoco) { // restituisce il codice articolo (codart) di un articolo acquistato in precedenza dallo stesso fornitore, serve in fase di acquisizione delle fattura elettroniche che non hanno
 		global $gTables;
-    $rs_codart=gaz_dbi_dyn_query('codart',$gTables['rigdoc'].' LEFT JOIN '.$gTables['tesdoc'].' ON '.$gTables['rigdoc'].'.id_tes = '.$gTables['tesdoc'].'.id_tes',"codice_fornitore='" . $codice_fornitore . "' AND codart <> '' AND tipdoc LIKE 'A%' AND ".$gTables['tesdoc'].'.clfoco = '.$clfoco,'id_rig DESC',0,1);
+    $rs_codart=gaz_dbi_dyn_query('codart',$gTables['rigdoc'].' LEFT JOIN '.$gTables['tesdoc'].' ON '.$gTables['rigdoc'].'.id_tes = '.$gTables['tesdoc'].'.id_tes',"codice_fornitore='" . $codice_fornitore . "' AND codart <> '' AND tipdoc LIKE 'A%' AND ".$gTables['tesdoc'].'.clfoco = '.intval($clfoco),'id_rig DESC',0,1);
     $res = gaz_dbi_fetch_array($rs_codart);
     if ($res){
       return $res;
