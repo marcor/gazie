@@ -25,6 +25,7 @@
 require("../../library/include/datlib.inc.php");
 require("../../modules/magazz/lib.function.php");
 $admin_aziend = checkAdmin();
+$gForm = new acquisForm();
 $msg = array('err' => array(), 'war' => array());
 $tipdoc_conv=array('TD01'=>'AFA','TD02'=>'AFA','TD03'=>'AFA','TD04'=>'AFC','TD05'=>'AFD','TD06'=>'AFA','TD08'=>'AFC','TD24'=>'AFT','TD25'=>'AFT','TD27'=>'AFA');
 
@@ -229,7 +230,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		$form['seziva'] = intval($_POST['seziva']);
 		$form['in_id_warehouse'] = intval($_POST['in_id_warehouse']);
 	}
-	
+
 	if (isset($_POST['Submit_file']) || isset($_POST['fae_from_sync'])) { // conferma invio upload file
 		if (isset($_POST['fae_from_sync'])){
 			$_POST['fae_original_name']=$_POST['fae_original_name'.intval($_POST['fae_from_sync'])];
@@ -539,8 +540,10 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				}
 				// Elimino spazi dal codice fornitore creato
 				$form['rows'][$nl]['codice_fornitore'] = preg_replace("/\s+/","_",$form['rows'][$nl]['codice_fornitore']);
-				// vedo se ho un codice_fornitore in gaz_artico
-				$artico = gaz_dbi_get_row($gTables['artico'], 'codice_fornitore', $form['rows'][$nl]['codice_fornitore']);
+				// vedo se ho uno stesso codice_fornitore già acquisito in precedenti documenti tramite la funzione specifica, se si lo propongo
+        $codart = $gForm->CodartFromCodiceFornitore($form['rows'][$nl]['codice_fornitore'],$form['clfoco']);
+        $codice_articolo = $codart ? $codart['codart'] : '';
+				$artico = gaz_dbi_get_row($gTables['artico'], 'codice', $codice_articolo);
 				$form['rows'][$nl]['codart'] = ($artico && !empty($form['rows'][$nl]['codice_fornitore']))?$artico['codice']:'';
 				$form['rows'][$nl]['search_codart'] = ($artico && !empty($form['rows'][$nl]['codice_fornitore']))?$artico['descri']:'';
 				$form['rows'][$nl]['descri'] = $item->getElementsByTagName('Descrizione')->item(0)->nodeValue;
@@ -1307,7 +1310,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					$where[]=$form['fattura_elettronica_original_name'];
 					$set['status']=1;
 					gaz_dbi_table_update("files", $where, $set);
-					
+
 					//Antonio Germani: caso di 2 o più aziende installate in GAzie con stessa partita IVA e stessa PEC per comunicare con ADE
 					// dopo aver impostato lo status di acquisita su questa azienda, devo togliere eventuali fae.xml caricati  anche nelle altre aziende.
 					// Quindi, vedo se ci sono altre aziende con stessa partita iva togliendo l'azienda attuale
@@ -1315,12 +1318,12 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					foreach($codice_aziends as $codice){// le ciclo e cerco in tabella file per ciascuna delle altre aziende se c'è nella colonna 'title' la 'fattura_elettronica_original_name'
 						unset($duplicated);
 						$check_duplicated= gaz_dbi_dyn_query("id_doc","gaz_".sprintf('%03d',$codice['codice'])."files","title = '".$form['fattura_elettronica_original_name']."'");
-						$duplicated=gaz_dbi_fetch_array($check_duplicated);						
+						$duplicated=gaz_dbi_fetch_array($check_duplicated);
 						if ($duplicated){// se c'è lo cancello
 							gaz_dbi_del_row( "gaz_".sprintf('%03d',$codice['codice'])."files", "title", $form['fattura_elettronica_original_name']);
-						}						
+						}
 					}
-					
+
 				}
 
 				header('Location: report_docacq.php?sezione='.$form['seziva']);
@@ -1345,7 +1348,6 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 
 require('../../library/include/header.php');
 $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup'));
-$gForm = new acquisForm();
 echo "<script type=\"text/javascript\">
 var cal = new CalendarPopup();
 var calName = '';
