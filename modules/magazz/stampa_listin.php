@@ -25,6 +25,7 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
+$libFunc = new magazzForm();
 if ($admin_aziend['decimal_quantity'] > 4) {
    $admin_aziend['decimal_quantity'] = 4;
 }
@@ -171,7 +172,7 @@ switch ($_GET['ts']) {
 			 $pdf->Cell(25, 4, 'Prezzo', 1, 0, 'C', true);
 			 $pdf->Cell(25, 4, 'Esistenza', 1, 0, 'C', true);
 			 $pdf->Cell(15, 4, '% I.V.A.', 1, 1, 'C', true);
-			 
+
 		  }
 		  /* Alterno il colore delle righe per maggiore leggibilità */
 		  $color == $color1 ? $color = $color2 : $color = $color1;
@@ -207,7 +208,7 @@ switch ($_GET['ts']) {
 			   array('lun' => 20, 'nam' => 'Prezzo'),
 			   array('lun' => 20, 'nam' => 'Sconto'),
 			   array('lun' => 20, 'nam' => 'Prezzo finito'),
-			   array('lun' => 20, 'nam' => 'Importo'),
+			   array('lun' => 20, 'nam' => 'IVA comp.'),
 			   array('lun' => 50, 'nam' => 'Categoria'),
 		   )
 	   );
@@ -228,14 +229,14 @@ switch ($_GET['ts']) {
 	   $pdf->SetFont('helvetica', '', 10);
 	   /** ENRICO FEDELE */
 	   while ($row = gaz_dbi_fetch_array($result)) {
-		  $mv = $gForm->getStockValue(false, $row['codice']);
-		  $magval = array_pop($mv);
-      $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
-	//      $pdf->SetFont('helvetica', '', 10);
 		  switch ($_GET['li']) {
 			 case '0':
-				$price = $row['preacq'];
-				$row['unimis'] = $row['uniacq'];
+        $lastbuys= $libFunc->getLastBuys($row['codice'],false);
+        $klb=key($lastbuys);
+        // per gli acquisti mi baso sul prezzo dell'ultimo acquisto, se non c'è prendo dall'anagrafica
+				$price = $klb?$lastbuys[$klb]['prezzo']:$row['preacq'];
+				$row['unimis'] = $klb?$lastbuys[$klb]['unimis']:$row['uniacq'];
+				$row['sconto'] = $klb?$lastbuys[$klb]['scorig']:0;
 				break;
 			 case '1':
 				$price = $row['preve1'];
