@@ -1142,138 +1142,139 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					$v['exist_ddt']="";
 				}
 				$ctrl_ddt='';
-				foreach ($form['rows'] as $i => $v) { // inserisco i righi
+				if ($anomalia != "AnomaliaExistDdt"){
+					foreach ($form['rows'] as $i => $v) { // inserisco i righi
+					 $form['rows'][$i]['status']="INSERT";
+						$post_nl=$i-1;
 
-				 $form['rows'][$i]['status']="INSERT";
-					$post_nl=$i-1;
+						if (abs($v['prelis'])<0.00001) { // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo
+							$form['rows'][$i]['tiprig']=2;
+						}
+						if ($form['tipdoc']=="AFC" && $ImportoTotaleDocumento <= -0.01 ) { // capita a volte che dei software malfatti sulle note credito indichino i valori in negativo... allora per renderli compatibili con la contabilizzazione di GAzie invertiamo il segno
+								$form['rows'][$i]['prelis']=-$v['prelis'];
+						}
+						// questo mi servirà sotto se è stata richiesta la creazione di un articolo nuovo
+						if (empty(trim($v['codice_fornitore']))) { // non ho il codice del fornitore me lo invento accodando al precedente prefisso dipendente dal codice del fornitore un hash a 8 caratteri della descrizione
+							$new_codart=$prefisso_codici_articoli_fornitore.'_'.crc32($v['descri']);
+						} else { // ho il codice articolo del fornitore sul tracciato ma potrei averlo cambiato
+							$new_codart=$prefisso_codici_articoli_fornitore.'_'.substr($v['codice_fornitore'],-11);
+						}
 
-					if (abs($v['prelis'])<0.00001) { // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo
-						$form['rows'][$i]['tiprig']=2;
-					}
-					if ($form['tipdoc']=="AFC" && $ImportoTotaleDocumento <= -0.01 ) { // capita a volte che dei software malfatti sulle note credito indichino i valori in negativo... allora per renderli compatibili con la contabilizzazione di GAzie invertiamo il segno
-                            $form['rows'][$i]['prelis']=-$v['prelis'];
-					}
-					// questo mi servirà sotto se è stata richiesta la creazione di un articolo nuovo
-					if (empty(trim($v['codice_fornitore']))) { // non ho il codice del fornitore me lo invento accodando al precedente prefisso dipendente dal codice del fornitore un hash a 8 caratteri della descrizione
-						$new_codart=$prefisso_codici_articoli_fornitore.'_'.crc32($v['descri']);
-					} else { // ho il codice articolo del fornitore sul tracciato ma potrei averlo cambiato
-						$new_codart=$prefisso_codici_articoli_fornitore.'_'.substr($v['codice_fornitore'],-11);
-					}
+						if (isset($v['exist_ddt']) AND $anomalia != "AnomaliaDDT=FAT" AND $form['tipdoc']!=="AFC") { // se ci sono DDT collegabili alla FAE e non è una nota credito AFC
+							if ($ctrl_ddt!=$v['NumeroDDT']) {
+								// Antonio Germani - controllo se esiste tesdoc di questo ddt usando la funzione existDdT
+								$exist_artico_tesdoc=existDdT($v['NumeroDDT'],$v['DataDDT'],$form['clfoco'],$v['codart']);
 
-					if (isset($v['exist_ddt']) AND $anomalia != "AnomaliaDDT=FAT" AND $form['tipdoc']!=="AFC") { // se ci sono DDT collegabili alla FAE e non è una nota credito AFC
-						if ($ctrl_ddt!=$v['NumeroDDT']) {
-							// Antonio Germani - controllo se esiste tesdoc di questo ddt usando la funzione existDdT
-							$exist_artico_tesdoc=existDdT($v['NumeroDDT'],$v['DataDDT'],$form['clfoco'],$v['codart']);
+								if ($exist_artico_tesdoc){// se esiste cancello tesdoc e ne cancello tutti i rigdoc e i relativi movmag
+									$rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = '{$exist_artico_tesdoc['id_tes']}'","id_tes desc");
 
-							if ($exist_artico_tesdoc){// se esiste cancello tesdoc e ne cancello tutti i rigdoc e i relativi movmag
-								$rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = '{$exist_artico_tesdoc['id_tes']}'","id_tes desc");
+									gaz_dbi_del_row($gTables['tesdoc'], "id_tes", $exist_artico_tesdoc['id_tes']);
+									while ($a_row = gaz_dbi_fetch_array($rs_righidel)) {
+										  gaz_dbi_del_row($gTables['rigdoc'], "id_rig", $a_row['id_rig']);
+										  gaz_dbi_del_row($gTables['movmag'], "id_mov", $a_row['id_mag']);
+									}
+								}
+								// creo un nuovo tesdoc AFT
+								if ($exist_artico_tesdoc['tipdoc']=="RDL"){
+									$ddt_type="L";
+								} else {
+									$ddt_type="T";
+								}
+								$form['tipdoc']="AFT";$form['ddt_type']=$ddt_type;$form['numdoc']=$v['NumeroDDT'];$form['datemi']=$v['DataDDT'];
+								if ($anomalia=="Anomalia"){
+									$form['status']="DdtAnomalo";
+								}
+								$ultimo_id =tesdocInsert($form); // Antonio Germani - creo fattura differita
+								$fn = DATA_DIR . 'files/' . $admin_aziend["codice"] . '/'.$ultimo_id.'.inv';
+								file_put_contents($fn,$form['fattura_elettronica_original_content']);
+							}
+							$ctrl_ddt=$v['NumeroDDT'];
+						}
+						$form['rows'][$i]['id_tes'] = $ultimo_id;
 
-								gaz_dbi_del_row($gTables['tesdoc'], "id_tes", $exist_artico_tesdoc['id_tes']);
-								while ($a_row = gaz_dbi_fetch_array($rs_righidel)) {
-									  gaz_dbi_del_row($gTables['rigdoc'], "id_rig", $a_row['id_rig']);
-									  gaz_dbi_del_row($gTables['movmag'], "id_mov", $a_row['id_mag']);
+						// per A.GERMANI: se decommento rigo 1007 acquisisce quella fattura anomala (ddt + fattura immediata...  GRRR... ) ma duplica i righi del ddt inserito manualmente
+						// secondo me le segnalazioni di anomalie si devono spostare più in basso (a livello rigo), in particolare si dovrebbe fare qualcosa sopra (righi 621-675)
+						// dove vengono fatti i controlli in presenza di elementi DDT
+
+						//$form['rows'][$i]['id_tes'] = ( $form['rows'][$i]['exist_ddt']['id_tes'] >= 1 && $ultimo_id == 0 ) ? $form['rows'][$i]['exist_ddt']['id_tes'] : $ultimo_id;
+
+						// i righi postati hanno un indice diverso
+						$form['rows'][$i]['codart'] = preg_replace("/[^A-Za-z0-9_]i/",'',$_POST['codart_'.$post_nl]);
+						$form['rows'][$i]['codric'] = intval($_POST['codric_'.$post_nl]);
+						$form['rows'][$i]['warehouse'] = intval($_POST['warehouse_'.$post_nl]);
+						$form['rows'][$i]['codvat'] = intval($_POST['codvat_'.$post_nl]);
+						$aliiva=$form['rows'][$i]['codvat'];
+						$exist_new_codart=gaz_dbi_get_row($gTables['artico'], "codice", $new_codart);
+						if ($exist_new_codart && substr($v['codart'],0,6)!='Insert') { // il codice esiste lo uso, ma prima controllo se l'ho volutamente cambiato sul form
+							if( $exist_new_codart['codice'] != $form['rows'][$i]['codart'] ){ // ho scelto un codice diverso
+								$other_artico=gaz_dbi_get_row($gTables['artico'], "codice", $form['rows'][$i]['codart']);
+								$form['rows'][$i]['good_or_service']=$other_artico['good_or_service'];
+								//aggiorno l'articolo con questo codice fornitore
+								gaz_dbi_put_row($gTables['artico'], 'codice', $other_artico['codice'], 'codice_fornitore', $v['codice_fornitore']);
+							} else {
+								$form['rows'][$i]['codart']=$exist_new_codart['codice'];
+								$form['rows'][$i]['good_or_service']=$exist_new_codart['good_or_service'];
+							}
+						} else { // il codice nuovo ricavato non esiste creo l'articolo basandomi sui dati in fattura
+							if ($exist_new_codart) { // il fornitore ha la pessima abitudine di usare lo stesso codice articolo per diversi articoli me lo invento con un hash a 8 caratteri della descrizione nella speranza che almeno questa sia cambiata...
+								$new_codart=$prefisso_codici_articoli_fornitore.'_'.crc32($v['descri'].$form['datreg'].$form['protoc']);
+							}
+							$v['catmer'] = 1; // di default utilizzo la prima categoria merceologica, sarebbe da farla selezionare all'operatore...
+							$form['rows'][$i]['good_or_service']=0;
+							if (isset($v['codart'])){
+								switch ($v['codart']) {
+									case 'Insert_New': // inserisco il nuovo articolo in gaz_XXXartico senza lotti o matricola
+									$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'catmer'=>$v['catmer'],'codice_fornitore'=>$v['codice_fornitore'],'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'uniacq'=>$v['unimis'],'aliiva'=>$aliiva);
+									gaz_dbi_table_insert('artico', $artico);
+									$form['rows'][$i]['codart'] = $new_codart;
+									break;
+									case 'Insert_W_lot': // inserisco il nuovo articolo in gaz_XXXartico con lotti
+									$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'catmer'=>$v['catmer'],'codice_fornitore'=>$v['codice_fornitore'],'lot_or_serial'=>1,'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'uniacq'=>$v['unimis'],'aliiva'=>$aliiva);
+									gaz_dbi_table_insert('artico', $artico);
+									$form['rows'][$i]['codart'] = $new_codart;
+									break;
+									case 'Insert_W_matr': //  inserisco il nuovo articolo in gaz_XXXartico con matricola
+									$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'catmer'=>$v['catmer'],'codice_fornitore'=>$v['codice_fornitore'],'lot_or_serial'=>2,'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'uniacq'=>$v['unimis'],'aliiva'=>$aliiva);
+									gaz_dbi_table_insert('artico', $artico);
+									$form['rows'][$i]['codart'] = $new_codart;
+									break;
+									default: //  negli altri casi controllo se devo inserire il riferimento ad una bolla
 								}
 							}
-							// creo un nuovo tesdoc AFT
-							if ($exist_artico_tesdoc['tipdoc']=="RDL"){
-								$ddt_type="L";
-							} else {
-								$ddt_type="T";
+						}
+						// alla fine se ho un codice articolo e il tipo rigo è normale aggiorno l'articolo con il nuovo prezzo d'acquisto e con l'ultimo fornitore
+						if (strlen($form['rows'][$i]['codart'])>2&&$form['rows'][$i]['tiprig']==0) {
+							tableUpdate('artico',array('clfoco','preacq'),$form['rows'][$i]['codart'],array('preacq'=>CalcolaImportoRigo(1,$form['rows'][$i]['prelis'],array($form['rows'][$i]['sconto'])),'clfoco'=>$form['clfoco']));
+						}
+
+						// inserisco il rigo rigdoc
+						$id_rif=rigdocInsert($form['rows'][$i]);
+						if ($form['rows'][$i]['good_or_service']==0 && strlen($form['rows'][$i]['codart'])>0 && $form['tipdoc']!=="AFC"){ // se l'articolo prevede di movimentare il magazzino e non è una nota credito
+							// Antonio Germani - creo movimento di magazzino sempre perché, se c'erano, sono stati cancellati
+							if (isset($v['NumeroDDT']) && $v['NumeroDDT']>0){ // se c'è un ddt
+								$rowmag=array("caumag"=>$form['caumag'],"type_mov"=>"0","operat"=>"1","datreg"=>$form['datreg'],"tipdoc"=>"ADT",
+								"desdoc"=>"D.d.t. di acquisto n.".$v['NumeroDDT']."/".$form['seziva']." prot. ".$form['protoc']."/".$form['seziva'],
+								"datdoc"=>$form['datemi'],"clfoco"=>$form['clfoco'],"id_rif"=>$id_rif,"artico"=>$form['rows'][$i]['codart'],"id_warehouse"=>$form['rows'][$i]['warehouse'],"quanti"=>$form['rows'][$i]['quanti'],
+								"prezzo"=>$form['rows'][$i]['prelis'],"scorig"=>$form['rows'][$i]['sconto'],'synccommerce_classname'=>$admin_aziend['synccommerce_classname']);
+							} else { // se non c'è DDT
+								$rowmag=array("caumag"=>$form['caumag'],"type_mov"=>"0","operat"=>"1","datreg"=>$form['datreg'],"tipdoc"=>"ADT",
+								"desdoc"=>"Fattura di acquisto n.".$form['numfat']."/".$form['seziva']." prot. ".$form['protoc']."/".$form['seziva'],
+								"datdoc"=>$form['datfat'],"clfoco"=>$form['clfoco'],"id_rif"=>$id_rif,"artico"=>$form['rows'][$i]['codart'],"id_warehouse"=>$form['rows'][$i]['warehouse'],"quanti"=>$form['rows'][$i]['quanti'],
+								"prezzo"=>$form['rows'][$i]['prelis'],"scorig"=>$form['rows'][$i]['sconto'],'synccommerce_classname'=>$admin_aziend['synccommerce_classname']);
 							}
-							$form['tipdoc']="AFT";$form['ddt_type']=$ddt_type;$form['numdoc']=$v['NumeroDDT'];$form['datemi']=$v['DataDDT'];
-							if ($anomalia=="Anomalia"){
-								$form['status']="DdtAnomalo";
-							}
-							$ultimo_id =tesdocInsert($form); // Antonio Germani - creo fattura differita
-                            $fn = DATA_DIR . 'files/' . $admin_aziend["codice"] . '/'.$ultimo_id.'.inv';
-                            file_put_contents($fn,$form['fattura_elettronica_original_content']);
+
+							$id_mag=movmagInsert($rowmag);
+
+							// aggiorno idmag nel rigdoc
+							gaz_dbi_query("UPDATE " . $gTables['rigdoc'] . " SET id_mag = " . $id_mag . " WHERE `id_rig` = $id_rif ");
 						}
-						$ctrl_ddt=$v['NumeroDDT'];
+
 					}
-					$form['rows'][$i]['id_tes'] = $ultimo_id;
-
-					// per A.GERMANI: se decommento rigo 1007 acquisisce quella fattura anomala (ddt + fattura immediata...  GRRR... ) ma duplica i righi del ddt inserito manualmente
-					// secondo me le segnalazioni di anomalie si devono spostare più in basso (a livello rigo), in particolare si dovrebbe fare qualcosa sopra (righi 621-675)
-					// dove vengono fatti i controlli in presenza di elementi DDT
-
-					//$form['rows'][$i]['id_tes'] = ( $form['rows'][$i]['exist_ddt']['id_tes'] >= 1 && $ultimo_id == 0 ) ? $form['rows'][$i]['exist_ddt']['id_tes'] : $ultimo_id;
-
-					// i righi postati hanno un indice diverso
-					$form['rows'][$i]['codart'] = preg_replace("/[^A-Za-z0-9_]i/",'',$_POST['codart_'.$post_nl]);
-					$form['rows'][$i]['codric'] = intval($_POST['codric_'.$post_nl]);
-					$form['rows'][$i]['warehouse'] = intval($_POST['warehouse_'.$post_nl]);
-					$form['rows'][$i]['codvat'] = intval($_POST['codvat_'.$post_nl]);
-					$aliiva=$form['rows'][$i]['codvat'];
-					$exist_new_codart=gaz_dbi_get_row($gTables['artico'], "codice", $new_codart);
-					if ($exist_new_codart && substr($v['codart'],0,6)!='Insert') { // il codice esiste lo uso, ma prima controllo se l'ho volutamente cambiato sul form
-						if( $exist_new_codart['codice'] != $form['rows'][$i]['codart'] ){ // ho scelto un codice diverso
-							$other_artico=gaz_dbi_get_row($gTables['artico'], "codice", $form['rows'][$i]['codart']);
-							$form['rows'][$i]['good_or_service']=$other_artico['good_or_service'];
-							//aggiorno l'articolo con questo codice fornitore
-							gaz_dbi_put_row($gTables['artico'], 'codice', $other_artico['codice'], 'codice_fornitore', $v['codice_fornitore']);
-						} else {
-							$form['rows'][$i]['codart']=$exist_new_codart['codice'];
-							$form['rows'][$i]['good_or_service']=$exist_new_codart['good_or_service'];
-						}
-					} else { // il codice nuovo ricavato non esiste creo l'articolo basandomi sui dati in fattura
-						if ($exist_new_codart) { // il fornitore ha la pessima abitudine di usare lo stesso codice articolo per diversi articoli me lo invento con un hash a 8 caratteri della descrizione nella speranza che almeno questa sia cambiata...
-							$new_codart=$prefisso_codici_articoli_fornitore.'_'.crc32($v['descri'].$form['datreg'].$form['protoc']);
-						}
-						$v['catmer'] = 1; // di default utilizzo la prima categoria merceologica, sarebbe da farla selezionare all'operatore...
-						$form['rows'][$i]['good_or_service']=0;
-						if (isset($v['codart'])){
-							switch ($v['codart']) {
-								case 'Insert_New': // inserisco il nuovo articolo in gaz_XXXartico senza lotti o matricola
-								$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'catmer'=>$v['catmer'],'codice_fornitore'=>$v['codice_fornitore'],'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'uniacq'=>$v['unimis'],'aliiva'=>$aliiva);
-								gaz_dbi_table_insert('artico', $artico);
-								$form['rows'][$i]['codart'] = $new_codart;
-								break;
-								case 'Insert_W_lot': // inserisco il nuovo articolo in gaz_XXXartico con lotti
-								$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'catmer'=>$v['catmer'],'codice_fornitore'=>$v['codice_fornitore'],'lot_or_serial'=>1,'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'uniacq'=>$v['unimis'],'aliiva'=>$aliiva);
-								gaz_dbi_table_insert('artico', $artico);
-								$form['rows'][$i]['codart'] = $new_codart;
-								break;
-								case 'Insert_W_matr': //  inserisco il nuovo articolo in gaz_XXXartico con matricola
-								$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'catmer'=>$v['catmer'],'codice_fornitore'=>$v['codice_fornitore'],'lot_or_serial'=>2,'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'uniacq'=>$v['unimis'],'aliiva'=>$aliiva);
-								gaz_dbi_table_insert('artico', $artico);
-								$form['rows'][$i]['codart'] = $new_codart;
-								break;
-								default: //  negli altri casi controllo se devo inserire il riferimento ad una bolla
-							}
-						}
+					// se l'array delle scadenze ha dati li inserisco nell'apposita tabella facendo riferimento sempre all'ultimi id_tes inserito
+					foreach ($accexpdoc as $ved) { // attraverso
+						$ved['id_tes']=$ultimo_id;
+						expdocInsert($ved);
 					}
-					// alla fine se ho un codice articolo e il tipo rigo è normale aggiorno l'articolo con il nuovo prezzo d'acquisto e con l'ultimo fornitore
-					if (strlen($form['rows'][$i]['codart'])>2&&$form['rows'][$i]['tiprig']==0) {
-						tableUpdate('artico',array('clfoco','preacq'),$form['rows'][$i]['codart'],array('preacq'=>CalcolaImportoRigo(1,$form['rows'][$i]['prelis'],array($form['rows'][$i]['sconto'])),'clfoco'=>$form['clfoco']));
-					}
-
-					// inserisco il rigo rigdoc
-					$id_rif=rigdocInsert($form['rows'][$i]);
-					if ($form['rows'][$i]['good_or_service']==0 && strlen($form['rows'][$i]['codart'])>0 && $form['tipdoc']!=="AFC"){ // se l'articolo prevede di movimentare il magazzino e non è una nota credito
-						// Antonio Germani - creo movimento di magazzino sempre perché, se c'erano, sono stati cancellati
-						if (isset($v['NumeroDDT']) && $v['NumeroDDT']>0){ // se c'è un ddt
-							$rowmag=array("caumag"=>$form['caumag'],"type_mov"=>"0","operat"=>"1","datreg"=>$form['datreg'],"tipdoc"=>"ADT",
-							"desdoc"=>"D.d.t. di acquisto n.".$v['NumeroDDT']."/".$form['seziva']." prot. ".$form['protoc']."/".$form['seziva'],
-							"datdoc"=>$form['datemi'],"clfoco"=>$form['clfoco'],"id_rif"=>$id_rif,"artico"=>$form['rows'][$i]['codart'],"id_warehouse"=>$form['rows'][$i]['warehouse'],"quanti"=>$form['rows'][$i]['quanti'],
-							"prezzo"=>$form['rows'][$i]['prelis'],"scorig"=>$form['rows'][$i]['sconto'],'synccommerce_classname'=>$admin_aziend['synccommerce_classname']);
-						} else { // se non c'è DDT
-							$rowmag=array("caumag"=>$form['caumag'],"type_mov"=>"0","operat"=>"1","datreg"=>$form['datreg'],"tipdoc"=>"ADT",
-							"desdoc"=>"Fattura di acquisto n.".$form['numfat']."/".$form['seziva']." prot. ".$form['protoc']."/".$form['seziva'],
-							"datdoc"=>$form['datfat'],"clfoco"=>$form['clfoco'],"id_rif"=>$id_rif,"artico"=>$form['rows'][$i]['codart'],"id_warehouse"=>$form['rows'][$i]['warehouse'],"quanti"=>$form['rows'][$i]['quanti'],
-							"prezzo"=>$form['rows'][$i]['prelis'],"scorig"=>$form['rows'][$i]['sconto'],'synccommerce_classname'=>$admin_aziend['synccommerce_classname']);
-						}
-
-						$id_mag=movmagInsert($rowmag);
-
-						// aggiorno idmag nel rigdoc
-						gaz_dbi_query("UPDATE " . $gTables['rigdoc'] . " SET id_mag = " . $id_mag . " WHERE `id_rig` = $id_rif ");
-					}
-
-				}
-				// se l'array delle scadenze ha dati li inserisco nell'apposita tabella facendo riferimento sempre all'ultimi id_tes inserito
-				foreach ($accexpdoc as $ved) { // attraverso
-					$ved['id_tes']=$ultimo_id;
-					expdocInsert($ved);
 				}
 
 				if ($anomalia=="AnomaliaExistDdt" AND isset($form['clfoco'])){ // se c'è una anomalia, cioè la FAE ha ddt senza i riferimenti ai prodotti, ma i ddt sono già presenti in GAzie
