@@ -1172,7 +1172,6 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$i]['pesosp'] = $artico['peso_specifico'];
                 $form['rows'][$i]['gooser'] = $artico['good_or_service'];
                 $form['rows'][$i]['descri'] = $artico['descri'];
-                $form['rows'][$i]['unimis'] = $artico['uniacq'];
                 $form['rows'][$i]['quality'] = $artico['quality'];
                 $form['rows'][$i]['lot_or_serial'] = $artico['lot_or_serial'];
                 $form['rows'][$i]['SIAN'] = $artico['SIAN'];
@@ -1197,18 +1196,17 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                     }
                   }
                 }
-                $form['rows'][$i]['sconto'] = $form['in_sconto'];
-                $in_sconto = $form['in_sconto'];
-                if ($in_sconto != "#") {
-                    $form['rows'][$i]['sconto'] = $in_sconto;
-                } else {
-                    $form['rows'][$i]['sconto'] = $artico['sconto'];
-                    if ($artico['sconto'] != 0) {
-                        $msgtoast = $form['rows'][$i]['codart'] . ": sconto da anagrafe articoli";
-                    }
-                }
-                $form['rows'][$i]['prelis'] = floatval(preg_replace("/\,/", '.', $artico['preacq']));
+                // attingo il prezzo dall'ultimo acquisto, se non c'è prendo dall'anagrafica
+                $lastbuys= $magazz->getLastBuys($form['in_codart'],false);
+                $klb=key($lastbuys);
+                $form['rows'][$i]['unimis'] = $klb?$lastbuys[$klb]['unimis']:$artico['uniacq'];
+                $form['rows'][$i]['prelis'] = $klb?$lastbuys[$klb]['prezzo']:$artico['preacq'];
                 $form['rows'][$i]['codvat'] = $admin_aziend['preeminent_vat'];
+                if ($form['in_sconto'] >= 0.01 ) {
+                    $form['rows'][$i]['sconto'] = $form['in_sconto'];
+                } else {
+                  $form['rows'][$i]['sconto'] = $klb?$lastbuys[$klb]['scorig']:$artico['sconto'];
+                }
                 $iva_azi = gaz_dbi_get_row($gTables['aliiva'], "codice", $admin_aziend['preeminent_vat']);
                 $form['rows'][$i]['pervat'] = $iva_azi['aliquo'];
                 if ($artico['aliiva'] > 0) {
