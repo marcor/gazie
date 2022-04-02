@@ -515,9 +515,9 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			$max_val_linea=1;
 			$tot_imponi=0.00;
 			// INIZIO creazione array dei righi con la stessa nomenclatura usata sulla tabella rigdoc a causa della mancanza di rigore del tracciato ufficiale siamo costretti a crearci un castelletto conti e iva	al fine contabilizzare direttamente qui senza passare per la contabilizzazione di GAzie e tentare di creare dei	righi documenti la cui somma coincida con il totale imponibile riportato sul tracciato
-      // prendo i valori dal documento corrente
-      $curr_doc_cont = $xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]");
-      $cudo=$curr_doc_cont->item(0);
+			// prendo i valori dal documento corrente
+			$curr_doc_cont = $xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]");
+			$cudo=$curr_doc_cont->item(0);
 			$DettaglioLinee = $cudo->getElementsByTagName('DettaglioLinee');
 			$nl=0;
 			$nl_NumeroLinea = []; // matrice che conterrà i riferimenti tra $nl e il NumeroLinea, da utilizzare per assegnare Numero/DataDDT se presenti
@@ -541,8 +541,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				// Elimino spazi dal codice fornitore creato
 				$form['rows'][$nl]['codice_fornitore'] = preg_replace("/\s+/","_",$form['rows'][$nl]['codice_fornitore']);
 				// vedo se ho uno stesso codice_fornitore già acquisito in precedenti documenti tramite la funzione specifica, se si lo propongo
-        $codart = $gForm->CodartFromCodiceFornitore($form['rows'][$nl]['codice_fornitore'],$form['clfoco']);
-        $codice_articolo = $codart ? $codart['codart'] : '';
+				$codart = $gForm->CodartFromCodiceFornitore($form['rows'][$nl]['codice_fornitore'],$form['clfoco']);
+				$codice_articolo = $codart ? $codart['codart'] : '';
 				$artico = gaz_dbi_get_row($gTables['artico'], 'codice', $codice_articolo);
 				$form['rows'][$nl]['codart'] = ($artico && !empty($form['rows'][$nl]['codice_fornitore']))?$artico['codice']:'';
 				$form['rows'][$nl]['search_codart'] = ($artico && !empty($form['rows'][$nl]['codice_fornitore']))?$artico['descri']:'';
@@ -556,7 +556,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				}
 				$form['rows'][$nl]['unimis'] =  ($item->getElementsByTagName('UnitaMisura')->length >= 1 ? $item->getElementsByTagName('UnitaMisura')->item(0)->nodeValue :	'');
 				$form['rows'][$nl]['prelis'] = $item->getElementsByTagName('PrezzoUnitario')->item(0)->nodeValue;
-
+				$form['rows'][$nl]['idrigddt'] = false; //inizializzo il rigo di riferimento al ddt che servirà per eventuale conciliazione righi
+				$form['rows'][$nl]['rigddt'] = ""; //inizializzo la descrizione di riferimento al ddt (codice, articolo e descrizione) che servirà per eventuale conciliazione righi
 				// Antonio Germani prendo il tipo di cessione prestazione che mi servirà per le eccezioni delle anomalie
 				$form['rows'][$nl]['tipocessprest'] = $item->getElementsByTagName('TipoCessionePrestazione')->length >= 1 ? $item->getElementsByTagName('TipoCessionePrestazione')->item(0)->nodeValue : '';
 
@@ -619,12 +620,13 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				}
 				$post_nl = $nl-1;
 				if (empty($_POST['Submit_file']) && !isset($_POST['Select_doc'])) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati dall'utente
-
 					$form['codart_'.$post_nl] = preg_replace("/[^A-Za-z0-9_]i/", '',(isset($_POST['codart_'.$post_nl]))?substr($_POST['codart_'.$post_nl],0,15):'');
 					if ($_POST['hidden_req']=='change_codart_'.$post_nl){
 						$form['codart_'.$post_nl] ='';
 					}
 					$form['rows'][$nl]['codart']=$form['codart_'.$post_nl];
+					$form['rows'][$nl]['idrigddt'] = isset($_POST['idrigddt_'.$post_nl])?$_POST['idrigddt_'.$post_nl]:false; 	
+					$form['rows'][$nl]['rigddt'] = isset($_POST['rigddt_'.$post_nl])?$_POST['rigddt_'.$post_nl]:'';
 					$form['search_codart_'.$post_nl] = isset($_POST['search_codart_'.$post_nl])?substr($_POST['search_codart_'.$post_nl],0,35):'';
 					$form['rows'][$nl]['search_codart']=$form['search_codart_'.$post_nl];
 					$form['codric_'.$post_nl] = (isset($_POST['codric_'.$post_nl]))?intval($_POST['codric_'.$post_nl]):'';
@@ -694,7 +696,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 							$form['codvat_'.$post_nl] = $expect_vat['codice'];
 						}
 					}
-          $map_pervat[floatval($form['rows'][$nl]['pervat'])]=$form['codvat_'.$post_nl]; // mappo aliquote-codici aliquote, potrebbe servirmi per risolvere l'eventuale PORCATA degli arrotondamenti sul castelleto IVA ( tiprig=91 )
+					$map_pervat[floatval($form['rows'][$nl]['pervat'])]=$form['codvat_'.$post_nl]; // mappo aliquote-codici aliquote, potrebbe servirmi per risolvere l'eventuale PORCATA degli arrotondamenti sul castelleto IVA ( tiprig=91 )
 
 				}
 
@@ -707,45 +709,62 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$ddt=$doc->getElementsByTagName('DatiDDT');
 				$ctrl_NumeroDDT='';
 				$acc_DataDDT='';
-
+				$ins_ddt=array();
+				$copy_ins_ddt=array();
 				foreach ($ddt as $vd) { // attraverso DatiDDT
 					$vr=$vd->getElementsByTagName('RiferimentoNumeroLinea');
 					$numddt=preg_replace('/\D/', '',$vd->getElementsByTagName('NumeroDDT')->item(0)->nodeValue);
 					$dataddt=$vd->getElementsByTagName('DataDDT')->item(0)->nodeValue;
+					$result=gaz_dbi_dyn_query("*", $gTables['tesdoc']. " LEFT JOIN " . $gTables['rigdoc'] . " ON " . $gTables['tesdoc'] . ".id_tes = " . $gTables['rigdoc'] . ".id_tes", "(tipdoc='ADT' OR tipdoc='RDL') AND clfoco = '".$form['clfoco']."' AND datemi='".$dataddt."' AND numdoc='".$numddt."'", "id_rig ASC");
+					foreach($result as $res){
+						array_push($ins_ddt,$res);// creo un array con tutti i righi di tutti i ddt già inseriti in gazie; servirà in caso di anomalia per riassegnare i righi
+					}
 					foreach ($vr as $vdd) { // attraverso RiferimentoNumeroLinea
-            if (isset($nl_NumeroLinea[$vdd->nodeValue])){//se esiste la linea indicata dal 'RiferimentoNumeroLinea'
-              $nl = $nl_NumeroLinea[$vdd->nodeValue];
-              if ($numddt!=$ctrl_NumeroDDT){ // è cambiato controllo, se il rigo che precede questo è un descritto e non ha un riferimento a ddt lo assegno a questo
-                if (isset($form['rows'][$nl-1]['is_descri'])&&$form['rows'][$nl-1]['is_descri']){
-                  $form['rows'][$nl-1]['NumeroDDT']=$numddt;
-                  $form['rows'][$nl-1]['DataDDT']=$dataddt;
-                  $form['rows'][$nl-1]['exist_ddt']=false;
-                  // è stato assegnato ad un DdT lo rimuovo dall'array $nl_NumeroLinea
-                  unset($nl_NumeroLinea[$form['rows'][$nl-1]['numrig']]);
-                }
-              }
-              if (isset($form['clfoco'])&&existDdT($numddt,$dataddt,$form['clfoco'])){
-                $form['rows'][$nl]['exist_ddt']=existDdT($numddt,$dataddt,$form['clfoco']);
+						if (isset($nl_NumeroLinea[$vdd->nodeValue])){//se esiste la linea indicata dal 'RiferimentoNumeroLinea'
+							$nl = $nl_NumeroLinea[$vdd->nodeValue];
+							if ($numddt!=$ctrl_NumeroDDT){ // è cambiato controllo, se il rigo che precede questo è un descritto e non ha un riferimento a ddt lo assegno a questo
+								if (isset($form['rows'][$nl-1]['is_descri'])&&$form['rows'][$nl-1]['is_descri']){
+									$form['rows'][$nl-1]['NumeroDDT']=$numddt;
+									$form['rows'][$nl-1]['DataDDT']=$dataddt;
+									$form['rows'][$nl-1]['exist_ddt']=false;
+									// è stato assegnato ad un DdT lo rimuovo dall'array $nl_NumeroLinea
+									unset($nl_NumeroLinea[$form['rows'][$nl-1]['numrig']]);
+								}
+							}
+							if (isset($form['clfoco'])&&existDdT($numddt,$dataddt,$form['clfoco'])){
+								$form['rows'][$nl]['exist_ddt']=existDdT($numddt,$dataddt,$form['clfoco']);
 
-              } else {
-                $form['rows'][$nl]['exist_ddt']=false;
-              }
-              $form['rows'][$nl]['NumeroDDT']=$numddt;
-              $form['rows'][$nl]['DataDDT']=$dataddt;
-              // è stato assegnato ad un DdT lo rimuovo dall'array $nl_NumeroLinea in modo da poter, eventualmente trattare questi successivamente
-              unset($nl_NumeroLinea[$form['rows'][$nl]['numrig']]);
-              $ctrl_NumeroDDT=$numddt;
-            }
+							} else {
+								$form['rows'][$nl]['exist_ddt']=false;
+							}
+							$form['rows'][$nl]['NumeroDDT']=$numddt;
+							$form['rows'][$nl]['DataDDT']=$dataddt;
+							// è stato assegnato ad un DdT lo rimuovo dall'array $nl_NumeroLinea in modo da poter, eventualmente trattare questi successivamente
+							unset($nl_NumeroLinea[$form['rows'][$nl]['numrig']]);
+							$ctrl_NumeroDDT=$numddt;
+						}
 					}
 					$ctrl_NumeroDDT=$numddt;
 					$ctrl_DataDDT=$dataddt;
 				}
-
+				$copy_ins_ddt=$ins_ddt;// copio l'array creato sopra per averne due
 				foreach($nl_NumeroLinea as $k=>$v){ // in questo mi ritrovo i righi non assegnati ai ddt specifici (potrebbero essere anche tutti), alcune fatture malfatte non specificano i righi!
 					// in $v ho l'indice del rigo non assegnato questa è una anomalia e la segnalo
 					$anomalia="Anomalia";
 					if (isset($form['clfoco'])&&existDdT($numddt,$dataddt,$form['clfoco'])){
 						$anomalia="AnomaliaExistDdt";
+						
+						$r=0;// faccio una prima assegnazione dei righi dei ddt alla FAE							
+						foreach ($ins_ddt as $rig){			
+							if (floatval($rig['quanti']) == floatval($form['rows'][$v]['quanti'])){
+								$form['rows'][$v]['idrigddt'] = $rig['id_rig']; //attribuisco il rigo di riferimento al ddt che servirà per eventuale conciliazione righi
+								$form['rows'][$v]['rigddt'] = $rig['descri']; //attribuisco la descrizione di riferimento al ddt (codice, articolo e descrizione) che servirà per eventuale conciliazione righi
+								$del=$r;														
+							}
+							$r++;break;					
+						}
+						unset ($ins_ddt[$del]);// rimuovo l'elemento prescelto sopra dall'array in modo da abbreviare i tempi per i successivi passaggi
+						
 					}
 					$form['rows'][$v]['NumeroDDT']=$numddt;
 					$form['rows'][$v]['DataDDT']=$dataddt;
@@ -759,6 +778,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					}
 				}
 			}
+					
 			$linekeys=array_keys($form['rows']);
 			$nl=end($linekeys); // trovo l'ultima linea, mi servirà per accodare CassaPrevidenziale, sconti, ecc
 
@@ -1512,27 +1532,30 @@ if ($toDo=='insert' || $toDo=='update' ) {
 							$tipddt="Ddt";
 						}
 						$ctrl_ddt=$v['NumeroDDT'];
-						$rowshead[$k]='<td colspan=13><b> da '.$tipddt.' n.'.$v['NumeroDDT'].' del '.gaz_format_date($v['DataDDT']).' '.$exist_ddt.'</b></td>';
+						$rowshead[$k]='<td colspan=14><b> da '.$tipddt.' n.'.$v['NumeroDDT'].' del '.gaz_format_date($v['DataDDT']).' '.$exist_ddt.'</b></td>';
 
 						if ($anomalia!=""){ // La FAE non ha i riferimenti linea nei ddt
 							if ($anomalia == "AnomaliaDDT=FAT"){
-								$rowshead[$k]='<td colspan=13><p class="text-warning"><b>> ANOMALIA FAE: questa fattura fa riferimento ad un DDT che ha il suo numero e stessa data. E\' da considerarsi come accompagnatoria. <</b></p><p>GAzie acquisirà questo documento come fattura semplice AFA.</p></td>';
+								$rowshead[$k]='<td colspan=14><p class="text-warning"><b>> ANOMALIA FAE: questa fattura fa riferimento ad un DDT che ha il suo numero e stessa data. E\' da considerarsi come accompagnatoria. <</b></p><p>GAzie acquisirà questo documento come fattura semplice AFA.</p></td>';
 							} else if ($anomalia=="AnomaliaExistDdt"){
-							$rowshead[$k]='<td colspan=13><p class="text-warning"><b>> ANOMALIA FAE: questa fattura riporta DDT con i collegamenti ai righi degli articoli anomali o mancanti <</b></p><p>GAzie è in grado di rimediare a patto che i DDT già inseriti non differiscano dalla FAE.</p></td>';
+							$rowshead[$k]='<td colspan=14><p class="text-warning"><b>> ANOMALIA FAE: questa fattura riporta DDT con i collegamenti ai righi degli articoli anomali o mancanti <</b></p><p>GAzie è in grado di rimediare a patto che i DDT già inseriti non differiscano dalla FAE.</p></td>';
 							} else {
-								$rowshead[$k]='<td colspan=13><p class="text-warning"><b>> ANOMALIA FAE: questa fattura riporta DDT senza però collegare gli articoli ai rispettivi DDT <</b></p><p>Se è presente più di un DDT, prima di inserire la FAE, si consiglia di inserire manualmente i DDT altrimenti verrà creato automaticamente un unico ddt di raggruppamento anomalo.</p></td>';
+								$rowshead[$k]='<td colspan=14><p class="text-warning"><b>> ANOMALIA FAE: questa fattura riporta DDT senza però collegare gli articoli ai rispettivi DDT <</b></p><p>Se è presente più di un DDT, prima di inserire la FAE, si consiglia di inserire manualmente i DDT altrimenti verrà creato automaticamente un unico ddt di raggruppamento anomalo.</p></td>';
 							}
 						}
 					}
 				} else if (!empty($ctrl_ddt)){
 					$ctrl_ddt='';
-					$rowshead[$k]='<td colspan=13> senza riferimento a DdT</td>';
+					$rowshead[$k]='<td colspan=14> senza riferimento a DdT</td>';
 				}
 
 				if ($new_acconcile>100000000){
 					$form['codric_'.$k]=$new_acconcile;
 				}
-
+				?>
+				<input type="hidden" name="idrigddt_'.$k+1.'" value="<?php echo $form['rows'][$k+1]['idrigddt'];?>" >
+				<input type="hidden" name="rigddt_'.$k+1.'" value="<?php echo $form['rows'][$k+1]['rigddt'];?>" >
+				<?php
 				$codric_dropdown = $gForm->selectAccount('codric_'.$k, $form['codric_'.$k], array('sub',1,3), '', false, "col-sm-12 small",'style="max-width: 350px;"', false, true);
 				$whareh_dropdown = $magazz->selectIdWarehouse('warehouse_'.$k,(isset($form['warehouse_'.$k]))?$form['warehouse_'.$k]:0,true,'col-xs-12',$form['codart_'.$k],$datdoc,($docOperat[$tipdoc]*-floatval($v['quanti'])));
 				$codvat_dropdown = $gForm->selectFromDB('aliiva', 'codvat_'.$k, 'codice', $form['codvat_'.$k], 'aliquo', true, '-', 'descri', '', 'col-sm-12 small', null, 'style="max-width: 350px;"', false, true);
@@ -1589,9 +1612,13 @@ if ($toDo=='insert' || $toDo=='update' ) {
 					array('head' => 'Ritenuta', 'class' => 'text-center numeric',
 						'value' => $v['ritenuta'], 'type' => '')
 				);
-
+				
+				$rowsfoot[$k]='<td colspan=14 class="bg-warning">'.$v['idrigddt'].' - '.$v['rigddt'].'</td>';
+						
+				
+				// $rowsfoot[$k]='<td colspan=14 class="bg-warning">QUI DENTRO POSSO SCRIVERE QUELLO CHE VOGLIO ED USARE I TAG HTML O NON VALORIZZARLO AFFATTO</td>';
 			}
-			$gForm->gazResponsiveTable($resprow, 'gaz-responsive-table', $rowshead);
+			$gForm->gazResponsiveTable($resprow,'gaz-responsive-table',$rowshead,$rowsfoot);
 	?>	   <div class="col-sm-6">
 	<?php
 			if ($nf){
