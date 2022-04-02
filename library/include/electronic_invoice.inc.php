@@ -1085,7 +1085,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
   }
   $ex = new Expiry;
   if ($XMLvars->totriport <= -0.01){  // se la fattura contiene dei righi di tipo 3 la cui somma è negativa ( ad esempio quando si vuole stornare dalle rate uno o più note credito
-    $totpag -= $XMLvars->totriport;
+    $totpag += $XMLvars->totriport;
   }
   $ratpag = $ex->CalcExpiry($totpag, $XMLvars->tesdoc["datfat"], $XMLvars->pagame['tipdec'], $XMLvars->pagame['giodec'], $XMLvars->pagame['numrat'], $XMLvars->pagame['tiprat'], $XMLvars->pagame['mesesc'], $XMLvars->pagame['giosuc']);
   // echo  "<pre>",print_r($ratpag),echo  "</pre>";
