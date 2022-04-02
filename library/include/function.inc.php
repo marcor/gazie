@@ -1716,14 +1716,18 @@ class GAzieForm {
         echo "<input type=\"checkbox\" name=\"$name\" title=\"$title\" value=\"$name\" $selected $refresh>\n";
     }
 
-    function selectNumber($name, $val, $msg = false, $min = 0, $max = 1, $class = 'FacetSelect', $val_hiddenReq = '', $style = '') {
+    function selectNumber($name, $val, $msg = false, $min = 0, $max = 1, $class = 'FacetSelect', $val_hiddenReq = '', $style = '', $echo=false, $exclude="") {
         global $script_transl;
+		$acc="";
         $refresh = '';
         if (!empty($val_hiddenReq)) {
             $refresh = "onchange=\"this.form.hidden_req.value='$val_hiddenReq'; this.form.submit();\"";
         }
-        echo "<select  name=\"$name\" id=\"$name\" class=\"$class\" $refresh $style>\n";
+        $acc .="<select  name=\"$name\" id=\"$name\" class=\"$class\" $refresh $style>\n";
         for ($i = $min; $i <= $max; $i++) {
+			if ($exclude != "" && $i==$exclude ){
+				continue;
+			}
             $selected = '';
             $message = $i;
             if ($val == $i) {
@@ -1735,9 +1739,14 @@ class GAzieForm {
             if ($msg && $i == 1) {
                 $message = $script_transl['yes'];
             }
-            echo "<option value=\"$i\"$selected>$message</option>\n";
+            $acc .= "<option value=\"$i\"$selected>$message</option>\n";
         }
-        echo "</select>\n";
+        $acc .= "</select>\n";
+		if ($echo){
+			return $acc;
+		} else {
+			echo $acc;
+		}
     }
 
     function selectFromDB($table, $name, $key, $val, $order = false, $empty = false, $bridge = '', $key2 = '', $val_hiddenReq = '', $class = 'FacetSelect', $addOption = null, $style = '', $where = false, $echo=false) {
