@@ -1896,14 +1896,14 @@ class GAzieForm {
 		}
     }
 
-    function selTypeRow($name, $val, $class = 'FacetDataTDsmall',$pers_type=false) {
+    function selTypeRow($name, $val, $class = 'FacetDataTDsmall',$pers_type=false, $bridge = true) {
         global $script_transl;
 		if ($pers_type){
 			$tr=$pers_type;
 		} else {
 			$tr=$script_transl['typerow'];
 		}
-        $this->variousSelect($name, $tr, $val, $class, true);
+        $this->variousSelect($name, $tr, $val, $class, $bridge);
     }
 
     function selSearchItem($name, $val, $class = 'FacetDataTDsmall') {
