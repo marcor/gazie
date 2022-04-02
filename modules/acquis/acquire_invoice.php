@@ -38,6 +38,8 @@ $f_ex=false; // visualizza file
 
 $send_fae_zip_package = gaz_dbi_get_row($gTables['company_config'], 'var', 'send_fae_zip_package');
 
+//echo "<pre>",print_r($_POST),"</pre>";
+
 function tryBase64Decode($s)
 {
 	// Check if there are valid base64 characters
@@ -556,8 +558,6 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				}
 				$form['rows'][$nl]['unimis'] =  ($item->getElementsByTagName('UnitaMisura')->length >= 1 ? $item->getElementsByTagName('UnitaMisura')->item(0)->nodeValue :	'');
 				$form['rows'][$nl]['prelis'] = $item->getElementsByTagName('PrezzoUnitario')->item(0)->nodeValue;
-				$form['rows'][$nl]['idrigddt'] = false; //inizializzo il rigo di riferimento al ddt che servirà per eventuale conciliazione righi
-				$form['rows'][$nl]['rigddt'] = ""; //inizializzo la descrizione di riferimento al ddt (codice, articolo e descrizione) che servirà per eventuale conciliazione righi
 				// Antonio Germani prendo il tipo di cessione prestazione che mi servirà per le eccezioni delle anomalie
 				$form['rows'][$nl]['tipocessprest'] = $item->getElementsByTagName('TipoCessionePrestazione')->length >= 1 ? $item->getElementsByTagName('TipoCessionePrestazione')->item(0)->nodeValue : '';
 
@@ -625,8 +625,6 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 						$form['codart_'.$post_nl] ='';
 					}
 					$form['rows'][$nl]['codart']=$form['codart_'.$post_nl];
-					$form['rows'][$nl]['idrigddt'] = isset($_POST['idrigddt_'.$post_nl])?$_POST['idrigddt_'.$post_nl]:false; 	
-					$form['rows'][$nl]['rigddt'] = isset($_POST['rigddt_'.$post_nl])?$_POST['rigddt_'.$post_nl]:'';
 					$form['search_codart_'.$post_nl] = isset($_POST['search_codart_'.$post_nl])?substr($_POST['search_codart_'.$post_nl],0,35):'';
 					$form['rows'][$nl]['search_codart']=$form['search_codart_'.$post_nl];
 					$form['codric_'.$post_nl] = (isset($_POST['codric_'.$post_nl]))?intval($_POST['codric_'.$post_nl]):'';
@@ -709,8 +707,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$ddt=$doc->getElementsByTagName('DatiDDT');
 				$ctrl_NumeroDDT='';
 				$acc_DataDDT='';
-				$ins_ddt=array();
-				$copy_ins_ddt=array();
+				$ins_ddt=[];
 				foreach ($ddt as $vd) { // attraverso DatiDDT
 					$vr=$vd->getElementsByTagName('RiferimentoNumeroLinea');
 					$numddt=preg_replace('/\D/', '',$vd->getElementsByTagName('NumeroDDT')->item(0)->nodeValue);
@@ -747,24 +744,10 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					$ctrl_NumeroDDT=$numddt;
 					$ctrl_DataDDT=$dataddt;
 				}
-				$copy_ins_ddt=$ins_ddt;// copio l'array creato sopra per averne due
 				foreach($nl_NumeroLinea as $k=>$v){ // in questo mi ritrovo i righi non assegnati ai ddt specifici (potrebbero essere anche tutti), alcune fatture malfatte non specificano i righi!
-					// in $v ho l'indice del rigo non assegnato questa è una anomalia e la segnalo
-					$anomalia="Anomalia";
+					$anomalia="Anomalia";					// in $v ho l'indice del rigo non assegnato questa è una anomalia e la segnalo
 					if (isset($form['clfoco'])&&existDdT($numddt,$dataddt,$form['clfoco'])){
 						$anomalia="AnomaliaExistDdt";
-						
-						$r=0;// faccio una prima assegnazione dei righi dei ddt alla FAE							
-						foreach ($ins_ddt as $rig){			
-							if (floatval($rig['quanti']) == floatval($form['rows'][$v]['quanti'])){
-								$form['rows'][$v]['idrigddt'] = $rig['id_rig']; //attribuisco il rigo di riferimento al ddt che servirà per eventuale conciliazione righi
-								$form['rows'][$v]['rigddt'] = $rig['descri']; //attribuisco la descrizione di riferimento al ddt (codice, articolo e descrizione) che servirà per eventuale conciliazione righi
-								$del=$r;														
-							}
-							$r++;break;					
-						}
-						unset ($ins_ddt[$del]);// rimuovo l'elemento prescelto sopra dall'array in modo da abbreviare i tempi per i successivi passaggi
-						
 					}
 					$form['rows'][$v]['NumeroDDT']=$numddt;
 					$form['rows'][$v]['DataDDT']=$dataddt;
@@ -777,8 +760,53 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 						$form['rows'][$v]['exist_ddt']=false;
 					}
 				}
+        // in caso di anomalia exist ddt devo riattraversare
+        if ($anomalia=="AnomaliaExistDdt") {
+          $changeid=false;
+          foreach($form['rows'] as $kd=>$vd){
+            if (!isset($_POST['changeid_1'])) {// sono al primo passaggio
+              $match=false;
+              $r=0;// faccio una prima assegnazione dei righi dei ddt alla FAE
+							foreach ($ins_ddt as $rig) {
+                // print '<br> yes'.$rig['quanti'];
+								if (floatval($rig['quanti']) == floatval($vd['quanti'])){
+                  $match=true;
+									$form['idrigddt_'.$kd] = $rig['id_rig']; //attribuisco il rigo di riferimento al ddt che servirà per eventuale conciliazione righi
+									$form['rigddt_'.$kd] = $rig['descri']; //attribuisco la descrizione di riferimento al ddt (codice, articolo e descrizione) che servirà per eventuale conciliazione righi
+									$form['changeid_'.$kd] = $kd; //attribuisco il rigo di riferimento al ddt che servirà per eventuale conciliazione righi
+									$del=$r;
+                  unset ($ins_ddt[$del]);// rimuovo l'elemento prescelto sopra dall'array in modo da abbreviare i tempi per i successivi passaggi
+                  break;
+								}
+								$r++;
+							}
+              if (!$match){ // non ho trvato alcun rigo sul ddt inserito
+								$form['idrigddt_'.$kd] = 0; // nessun rigo di riferimento al ddt
+								$form['rigddt_'.$kd] = 'Questo rigo verrà creato in quanto non trovato sul DdT inserito';
+								$form['changeid_'.$kd] = $kd; //attribuisco il rigo di riferimento al ddt che servirà per eventuale conciliazione righi
+              }
+						} else {// sono nei passaggi successivi
+							$form['idrigddt_'.$kd] = $_POST['idrigddt_'.$kd];
+							$form['rigddt_'.$kd] = $_POST['rigddt_'.$kd];
+							$form['changeid_'.$kd] = $_POST['changeid_'.$kd];
+              if ($_POST['hidden_req']=='changeid_'.$kd) {
+                $changeid = [$kd,$form['changeid_'.$kd]];
+              }
+						}
+          }
+          if ($changeid) {
+						$form['idrigddt_'.$changeid[0]] = $_POST['idrigddt_'.$changeid[1]];
+						$form['rigddt_'.$changeid[0]] = $_POST['rigddt_'.$changeid[1]];
+						$form['changeid_'.$changeid[0]] = $_POST['changeid_'.$changeid[1]];
+						$form['idrigddt_'.$changeid[1]] = $_POST['idrigddt_'.$changeid[0]];
+						$form['rigddt_'.$changeid[1]] = $_POST['rigddt_'.$changeid[0]];
+						$form['changeid_'.$changeid[1]] = $_POST['changeid_'.$changeid[0]];
+            $msg['war'][] = 'shiftrow';
+          }
+        }
+
 			}
-					
+
 			$linekeys=array_keys($form['rows']);
 			$nl=end($linekeys); // trovo l'ultima linea, mi servirà per accodare CassaPrevidenziale, sconti, ecc
 
@@ -1553,13 +1581,14 @@ if ($toDo=='insert' || $toDo=='update' ) {
 					$form['codric_'.$k]=$new_acconcile;
 				}
 				?>
-				<input type="hidden" name="idrigddt_'.$k+1.'" value="<?php echo $form['rows'][$k+1]['idrigddt'];?>" >
-				<input type="hidden" name="rigddt_'.$k+1.'" value="<?php echo $form['rows'][$k+1]['rigddt'];?>" >
+				<input type="text" name="idrigddt_<?php echo ($k+1);?>" value="<?php echo $form['idrigddt_'.($k+1)];?>" >
+				<input type="text" name="rigddt_<?php echo ($k+1);?>" value="<?php echo $form['rigddt_'.($k+1)];?>" >
 				<?php
 				$codric_dropdown = $gForm->selectAccount('codric_'.$k, $form['codric_'.$k], array('sub',1,3), '', false, "col-sm-12 small",'style="max-width: 350px;"', false, true);
 				$whareh_dropdown = $magazz->selectIdWarehouse('warehouse_'.$k,(isset($form['warehouse_'.$k]))?$form['warehouse_'.$k]:0,true,'col-xs-12',$form['codart_'.$k],$datdoc,($docOperat[$tipdoc]*-floatval($v['quanti'])));
 				$codvat_dropdown = $gForm->selectFromDB('aliiva', 'codvat_'.$k, 'codice', $form['codvat_'.$k], 'aliquo', true, '-', 'descri', '', 'col-sm-12 small', null, 'style="max-width: 350px;"', false, true);
-				$codart_select = $gForm->concileArtico('codart_'.$k,(isset($form['search_codart_'.$k]))?$form['search_codart_'.$k]:'',$form['codart_'.$k]);
+				$codart_select = $gForm->concileArtico('codart_'.($k+1),(isset($form['search_codart_'.($k+1)]))?$form['search_codart_'.$k]:'',$form['codart_'.$k]);
+				$changeid_dropdown = $gForm->selectNumber('changeid_'. ($k+1), ($k+1), $msg = false, 0, count($form['rows']), $class = 'bg-warning', 'changeid_'. ($k+1), $style = '', true, ($k+1));
 				//forzo i valori diversi dalla descrizione a vuoti se è descrittivo
 				if (abs($v['prelis'])<0.00001){ // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo
 					$v['codice_fornitore'] = '';
@@ -1612,10 +1641,17 @@ if ($toDo=='insert' || $toDo=='update' ) {
 					array('head' => 'Ritenuta', 'class' => 'text-center numeric',
 						'value' => $v['ritenuta'], 'type' => '')
 				);
-				
-				$rowsfoot[$k]='<td colspan=14 class="bg-warning">'.$v['idrigddt'].' - '.$v['rigddt'].'</td>';
-						
-				
+
+				$rowsfoot[$k]= '<td colspan=4 class="bg-warning"><b>Rigo DdT</b> <small>(ID:'.$form['idrigddt_'.($k+1)].')</small><span class="bg-info">seleziona per spostare su altro rigo:' .$changeid_dropdown. '</span></td><td colspan=9 class="bg-warning row">'.$form['rigddt_'.($k+1)].'</td>';
+
+				/*
+				$rowsfoot[$k]='<td colspan=14 class="bg-warning">'.$v['idrigddt'].' - '.$v['rigddt'].'
+				|| rigo FAE assegnato: <input type="text" name="change_idrig" value="'. $k+1 . '">
+				<input name="change_id" class="btn " id="preventDuplicate" onClick="this.form.submit();" type="submit" value="change">
+				<button type="button" name="change_id" id="chang_idrig" onclick="this.form.submit();"><i class="glyphicon glyphicon-retweet"></i></button>
+				</td>';
+				*/
+
 				// $rowsfoot[$k]='<td colspan=14 class="bg-warning">QUI DENTRO POSSO SCRIVERE QUELLO CHE VOGLIO ED USARE I TAG HTML O NON VALORIZZARLO AFFATTO</td>';
 			}
 			$gForm->gazResponsiveTable($resprow,'gaz-responsive-table',$rowshead,$rowsfoot);

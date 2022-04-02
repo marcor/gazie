@@ -637,7 +637,8 @@ $strScript = array("admin_fornit.php" =>
             'no_suppl' => 'Ho già questa anagrafica ma è un nuovo fornitore',
             'no_anagr' => "Di questo nuovo fornitore non ho l'anagrafica, utilizzerò questi dati per crearla",
             'no_db' => "Di questo file è stato fatto solo l'upload ma non è stata confermata la registrazione",
-			'file_exists' => 'Un file con questo nome è stato già stato acquisito'
+            'file_exists' => 'Un file con questo nome è stato già stato acquisito',
+            'shiftrow' => "Un rigo è stato spostato ",
         ),
         'err' => array(
             'filmim' => 'Il file deve essere nel formato XML o P7M',
