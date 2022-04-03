@@ -543,7 +543,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				// Elimino spazi dal codice fornitore creato
 				$form['rows'][$nl]['codice_fornitore'] = preg_replace("/\s+/","_",$form['rows'][$nl]['codice_fornitore']);
 				// vedo se ho uno stesso codice_fornitore già acquisito in precedenti documenti tramite la funzione specifica, se si lo propongo
-				$codart = $gForm->CodartFromCodiceFornitore($form['rows'][$nl]['codice_fornitore'],$form['clfoco']);
+				$codart = $gForm->CodartFromCodiceFornitore($form['rows'][$nl]['codice_fornitore'],(isset($form['clfoco'])?$form['clfoco']:false));
 				$codice_articolo = $codart ? $codart['codart'] : '';
 				$artico = gaz_dbi_get_row($gTables['artico'], 'codice', $codice_articolo);
 				$form['rows'][$nl]['codart'] = ($artico && !empty($form['rows'][$nl]['codice_fornitore']))?$artico['codice']:'';
@@ -1580,15 +1580,18 @@ if ($toDo=='insert' || $toDo=='update' ) {
 				if ($new_acconcile>100000000){
 					$form['codric_'.$k]=$new_acconcile;
 				}
-				?>
-				<input type="text" name="idrigddt_<?php echo ($k+1);?>" value="<?php echo $form['idrigddt_'.($k+1)];?>" >
-				<input type="text" name="rigddt_<?php echo ($k+1);?>" value="<?php echo $form['rigddt_'.($k+1)];?>" >
-				<?php
 				$codric_dropdown = $gForm->selectAccount('codric_'.$k, $form['codric_'.$k], array('sub',1,3), '', false, "col-sm-12 small",'style="max-width: 350px;"', false, true);
 				$whareh_dropdown = $magazz->selectIdWarehouse('warehouse_'.$k,(isset($form['warehouse_'.$k]))?$form['warehouse_'.$k]:0,true,'col-xs-12',$form['codart_'.$k],$datdoc,($docOperat[$tipdoc]*-floatval($v['quanti'])));
 				$codvat_dropdown = $gForm->selectFromDB('aliiva', 'codvat_'.$k, 'codice', $form['codvat_'.$k], 'aliquo', true, '-', 'descri', '', 'col-sm-12 small', null, 'style="max-width: 350px;"', false, true);
 				$codart_select = $gForm->concileArtico('codart_'.($k+1),(isset($form['search_codart_'.($k+1)]))?$form['search_codart_'.$k]:'',$form['codart_'.$k]);
-				$changeid_dropdown = $gForm->selectNumber('changeid_'. ($k+1), ($k+1), $msg = false, 0, count($form['rows']), $class = 'bg-warning', 'changeid_'. ($k+1), $style = '', true, ($k+1));
+        if ($anomalia=="AnomaliaExistDdt"){
+          $changeid_dropdown = $gForm->selectNumber('changeid_'. ($k+1), ($k+1), $msg = false, 0, count($form['rows']), $class = 'bg-warning', 'changeid_'. ($k+1), $style = '', true, ($k+1));
+          echo '<input type="hidden" name="idrigddt_'. ($k+1).'" value="'.$form['idrigddt_'.($k+1)].'" >
+          <input type="hidden" name="rigddt_'. ($k+1).'" value="'.$form['rigddt_'.($k+1)].'" >';
+          $rowsfoot[$k]= '<td colspan=4 class="bg-warning"><b>Rigo DdT</b> <small>(ID:'.$form['idrigddt_'.($k+1)].')</small><span class="bg-info">seleziona per spostare su altro rigo:' .$changeid_dropdown. '</span></td><td colspan=9 class="bg-warning row">'.$form['rigddt_'.($k+1)].'</td>';
+				} else {
+          $rowsfoot[$k]=false;
+        }
 				//forzo i valori diversi dalla descrizione a vuoti se è descrittivo
 				if (abs($v['prelis'])<0.00001){ // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo
 					$v['codice_fornitore'] = '';
@@ -1641,18 +1644,6 @@ if ($toDo=='insert' || $toDo=='update' ) {
 					array('head' => 'Ritenuta', 'class' => 'text-center numeric',
 						'value' => $v['ritenuta'], 'type' => '')
 				);
-
-				$rowsfoot[$k]= '<td colspan=4 class="bg-warning"><b>Rigo DdT</b> <small>(ID:'.$form['idrigddt_'.($k+1)].')</small><span class="bg-info">seleziona per spostare su altro rigo:' .$changeid_dropdown. '</span></td><td colspan=9 class="bg-warning row">'.$form['rigddt_'.($k+1)].'</td>';
-
-				/*
-				$rowsfoot[$k]='<td colspan=14 class="bg-warning">'.$v['idrigddt'].' - '.$v['rigddt'].'
-				|| rigo FAE assegnato: <input type="text" name="change_idrig" value="'. $k+1 . '">
-				<input name="change_id" class="btn " id="preventDuplicate" onClick="this.form.submit();" type="submit" value="change">
-				<button type="button" name="change_id" id="chang_idrig" onclick="this.form.submit();"><i class="glyphicon glyphicon-retweet"></i></button>
-				</td>';
-				*/
-
-				// $rowsfoot[$k]='<td colspan=14 class="bg-warning">QUI DENTRO POSSO SCRIVERE QUELLO CHE VOGLIO ED USARE I TAG HTML O NON VALORIZZARLO AFFATTO</td>';
 			}
 			$gForm->gazResponsiveTable($resprow,'gaz-responsive-table',$rowshead,$rowsfoot);
 	?>	   <div class="col-sm-6">
