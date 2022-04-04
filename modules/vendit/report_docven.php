@@ -202,9 +202,9 @@ function confirFae(link){
             $("#dialog_fae_content_MC").show();
             console.log(flux_status);
         break;
-        case "NS":
+        case "NS":	
         case "NEEC02":
-            $("#dialog_fae_content_NS span").html("<p class=\'text-center bg-danger\'>" + flux_descri.replace(/<[^>]*>?/gm, "") + "</p><p class=\'text-center\'> re: <a href=\'"+link.href+"&reinvia"+sdiflux+"\' class=\'btn btn-danger\'><b> " + $("#doc1_"+tes_id).attr("dialog_fae_reinvio")+ "</b> <br/>" + numrei.toString() + "° reinvio </a></p>");
+            $("#dialog_fae_content_NS span").html("<p class=\'text-center bg-danger\'>" + flux_descri.replace(/<[^>]*>?/gm, "") + "</p><p class=\'text-center\'> re: <a href=\'"+link.href+"&id_tes="+tes_id+"&reinvia=reinvia"+sdiflux+"\' class=\'btn btn-danger\'><b> " + $("#doc1_"+tes_id).attr("dialog_fae_reinvio")+ "</b> <br/>" + numrei.toString() + "° reinvio </a></p>");
             $("#dialog_fae_content_NS").show();
             console.log(flux_status);
         break;
@@ -282,9 +282,6 @@ function printPdf(urlPrintDoc){
 		$('#framePdf').attr('src',urlPrintDoc);
 		$('#framePdf').css({'height': '100%'});
 		$('.framePdf').css({'display': 'block','width': '90%', 'height': '80%', 'z-index':'2000'});
-    $("html, body").delay(100).animate({scrollTop: $('#framePdf').offset().top},'slow', function() {
-        $("#framePdf").focus();
-    });
 		$('#closePdf').on( "click", function() {
 			$('.framePdf').css({'display': 'none'});
 		});
