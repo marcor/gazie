@@ -428,6 +428,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		$val_err = libxml_get_errors(); // se l'xml è valido restituisce 1
 		libxml_clear_errors();
 		if (empty($val_err)){
+			
 			/* INIZIO CONTROLLO NUMERO DATA, ovvero se nonostante il nome del file sia diverso il suo contenuto è già stato importato e già c'è uno con lo stesso tipo_documento-numero_documento-anno-fornitore
 			*/
 			$tipdoc=$tipdoc_conv[$xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiGenerali/DatiGeneraliDocumento/TipoDocumento")->item(0)->nodeValue];
@@ -448,6 +449,13 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					$codfis=$codiva;
 				}
 			}
+			
+			// prendo tutti i ddt di acquisto di questo fornitore presenti in GAzie
+			$r_ddt=gaz_dbi_dyn_query("*", $gTables['tesdoc']. " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id", "tipdoc='ADT' AND (pariva = '".$codiva."' OR codfis = '".$codfis."')", "id_tes", 0);
+			while($rd = $r_ddt->fetch_array()){
+				$rddt[] = $rd;
+			}
+			
 			$r_invoice=gaz_dbi_dyn_query("*", $gTables['tesdoc']. " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id", "tipdoc='".$tipdoc."' AND (pariva = '".$codiva."' OR codfis = '".$codfis."') AND datfat='".$datdoc."' AND numfat='".$numdoc."'", "id_tes", 0, 1);
 			$exist_invoice=gaz_dbi_fetch_array($r_invoice);
 			if ($exist_invoice) { // esiste un file che pur avendo un nome diverso è già stato acquisito ed ha lo stesso numero e data
@@ -708,10 +716,12 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$ctrl_NumeroDDT='';
 				$acc_DataDDT='';
 				$ins_ddt=[];
-				foreach ($ddt as $vd) { // attraverso DatiDDT
+				$fae_ddt=[];// inizializzo contatore dei ddt presenti in FAE
+				foreach ($ddt as $vd) { // attraverso DatiDDT				
 					$vr=$vd->getElementsByTagName('RiferimentoNumeroLinea');
 					$numddt=preg_replace('/\D/', '',$vd->getElementsByTagName('NumeroDDT')->item(0)->nodeValue);
 					$dataddt=$vd->getElementsByTagName('DataDDT')->item(0)->nodeValue;
+					array_push($fae_ddt,array("numddt"=>$numddt,"dataddt"=>$dataddt));// aggiungo il ddt al contatore ddt FAE
 					$result=gaz_dbi_dyn_query("*", $gTables['tesdoc']. " LEFT JOIN " . $gTables['rigdoc'] . " ON " . $gTables['tesdoc'] . ".id_tes = " . $gTables['rigdoc'] . ".id_tes", "(tipdoc='ADT' OR tipdoc='RDL') AND clfoco = '".$form['clfoco']."' AND datemi='".$dataddt."' AND numdoc='".$numddt."'", "id_rig ASC");
 					foreach($result as $res){
 						array_push($ins_ddt,$res);// creo un array con tutti i righi di tutti i ddt già inseriti in gazie; servirà in caso di anomalia per riassegnare i righi
@@ -744,6 +754,20 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					$ctrl_NumeroDDT=$numddt;
 					$ctrl_DataDDT=$dataddt;
 				}
+	
+				foreach ($ddt as $vd) { // attraverso nuovamente i DatiDDT FAE per controllare se restano orfani dei ddt già inseriti in GAzie
+					$numddt=preg_replace('/\D/', '',$vd->getElementsByTagName('NumeroDDT')->item(0)->nodeValue);
+					$dataddt=$vd->getElementsByTagName('DataDDT')->item(0)->nodeValue;
+					$n=0;
+					foreach ($rddt as $rdd) {// ciclo i ddt già registrati in GAzie				
+						if ($rdd['datemi']==$dataddt && $rdd['numdoc']==$numddt){
+							unset ($rddt[$n]);
+						}
+						$n++;						
+					}					
+				}		
+				// se count($rddt) è maggiore di zero dovrò segnalare che ci sono ddt orfani
+		
 				foreach($nl_NumeroLinea as $k=>$v){ // in questo mi ritrovo i righi non assegnati ai ddt specifici (potrebbero essere anche tutti), alcune fatture malfatte non specificano i righi!
 					$anomalia="Anomalia";					// in $v ho l'indice del rigo non assegnato questa è una anomalia e la segnalo
 					if (isset($form['clfoco'])&&existDdT($numddt,$dataddt,$form['clfoco'])){
@@ -804,7 +828,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
             $msg['war'][] = 'shiftrow';
           }
         }
-
+//echo"<pre>",print_r($form['rows']),"</pre>";
 			}
 
 			$linekeys=array_keys($form['rows']);
@@ -1543,6 +1567,19 @@ if ($toDo=='insert' || $toDo=='update' ) {
 		</div>
 	</div>
 	<?php
+			if (count($rddt)>1){
+				echo '<td colspan=14><p class="text-warning"><b>>>> ATTENZIONE: controllare perché questi ddt non sono stati ancora fatturati:</b></p><p>';
+				foreach ($rddt as $rd){
+					echo "Numero: ",$rd['numdoc']," del ",$rd['datemi'];
+				}
+				'</p></td>';
+			} elseif (count($rddt)>0){
+				echo '<td colspan=14><p class="text-warning"><b>>>> ATTENZIONE: controllare perché questo ddt non è stato ancora fatturato:</b></p><p>';
+				foreach ($rddt as $rd){
+					echo "Numero: ",$rd['numdoc']," del ",$rd['datemi'];
+				}
+				'</p></td>';
+			}
 			$rowshead=array();
 			$ctrl_ddt='';
 			$exist_movmag=false;
@@ -1584,14 +1621,14 @@ if ($toDo=='insert' || $toDo=='update' ) {
 				$whareh_dropdown = $magazz->selectIdWarehouse('warehouse_'.$k,(isset($form['warehouse_'.$k]))?$form['warehouse_'.$k]:0,true,'col-xs-12',$form['codart_'.$k],$datdoc,($docOperat[$tipdoc]*-floatval($v['quanti'])));
 				$codvat_dropdown = $gForm->selectFromDB('aliiva', 'codvat_'.$k, 'codice', $form['codvat_'.$k], 'aliquo', true, '-', 'descri', '', 'col-sm-12 small', null, 'style="max-width: 350px;"', false, true);
 				$codart_select = $gForm->concileArtico('codart_'.($k+1),(isset($form['search_codart_'.($k+1)]))?$form['search_codart_'.$k]:'',$form['codart_'.$k]);
-        if ($anomalia=="AnomaliaExistDdt"){
-          $changeid_dropdown = $gForm->selectNumber('changeid_'. ($k+1), ($k+1), $msg = false, 0, count($form['rows']), $class = 'bg-warning', 'changeid_'. ($k+1), $style = '', true, ($k+1));
-          echo '<input type="hidden" name="idrigddt_'. ($k+1).'" value="'.$form['idrigddt_'.($k+1)].'" >
-          <input type="hidden" name="rigddt_'. ($k+1).'" value="'.$form['rigddt_'.($k+1)].'" >';
-          $rowsfoot[$k]= '<td colspan=4 class="bg-warning"><b>Rigo DdT</b> <small>(ID:'.$form['idrigddt_'.($k+1)].')</small><span class="bg-info">seleziona per spostare su altro rigo:' .$changeid_dropdown. '</span></td><td colspan=9 class="bg-warning row">'.$form['rigddt_'.($k+1)].'</td>';
-				} else {
-          $rowsfoot[$k]=false;
-        }
+				if ($anomalia=="AnomaliaExistDdt"){
+				  $changeid_dropdown = $gForm->selectNumber('changeid_'. ($k+1), ($k+1), $msg = false, 0, count($form['rows']), $class = 'bg-warning', 'changeid_'. ($k+1), $style = '', true, ($k+1));
+				  echo '<input type="hidden" name="idrigddt_'. ($k+1).'" value="'.$form['idrigddt_'.($k+1)].'" >
+				  <input type="hidden" name="rigddt_'. ($k+1).'" value="'.$form['rigddt_'.($k+1)].'" >';
+				  $rowsfoot[$k]= '<td colspan=4 class="bg-warning"><b>Rigo DdT</b> <small>(ID:'.$form['idrigddt_'.($k+1)].')</small><span class="bg-info">seleziona per spostare su altro rigo:' .$changeid_dropdown. '</span></td><td colspan=9 class="bg-warning row">'.$form['rigddt_'.($k+1)].'</td>';
+						} else {
+				  $rowsfoot[$k]=false;
+				}
 				//forzo i valori diversi dalla descrizione a vuoti se è descrittivo
 				if (abs($v['prelis'])<0.00001){ // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo
 					$v['codice_fornitore'] = '';
@@ -1644,7 +1681,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
 					array('head' => 'Ritenuta', 'class' => 'text-center numeric',
 						'value' => $v['ritenuta'], 'type' => '')
 				);
-			}
+			}			
 			$gForm->gazResponsiveTable($resprow,'gaz-responsive-table',$rowshead,$rowsfoot);
 	?>	   <div class="col-sm-6">
 	<?php
