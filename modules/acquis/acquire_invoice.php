@@ -716,12 +716,12 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$ctrl_NumeroDDT='';
 				$acc_DataDDT='';
 				$ins_ddt=[];
-				$fae_ddt=[];// inizializzo contatore dei ddt presenti in FAE
+				
 				foreach ($ddt as $vd) { // attraverso DatiDDT				
 					$vr=$vd->getElementsByTagName('RiferimentoNumeroLinea');
 					$numddt=preg_replace('/\D/', '',$vd->getElementsByTagName('NumeroDDT')->item(0)->nodeValue);
 					$dataddt=$vd->getElementsByTagName('DataDDT')->item(0)->nodeValue;
-					array_push($fae_ddt,array("numddt"=>$numddt,"dataddt"=>$dataddt));// aggiungo il ddt al contatore ddt FAE
+					
 					$result=gaz_dbi_dyn_query("*", $gTables['tesdoc']. " LEFT JOIN " . $gTables['rigdoc'] . " ON " . $gTables['tesdoc'] . ".id_tes = " . $gTables['rigdoc'] . ".id_tes", "(tipdoc='ADT' OR tipdoc='RDL') AND clfoco = '".$form['clfoco']."' AND datemi='".$dataddt."' AND numdoc='".$numddt."'", "id_rig ASC");
 					foreach($result as $res){
 						array_push($ins_ddt,$res);// creo un array con tutti i righi di tutti i ddt già inseriti in gazie; servirà in caso di anomalia per riassegnare i righi
