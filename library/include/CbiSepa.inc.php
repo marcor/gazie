@@ -25,9 +25,9 @@
  */
 
 class CbiSepa {
-    
+
     function setCbiPayReqVars($gTables,$head) {
-		// qui setto tutti i valori per l'intestazione 
+		// qui setto tutti i valori per l'intestazione
         $this->azienda = gaz_dbi_get_row($gTables['aziend'], 'codice', $_SESSION['company_id']);
         $this->bank = gaz_dbi_get_row($gTables['clfoco'].' LEFT JOIN '.$gTables['banapp'].' ON '.$gTables['clfoco'].'.banapp = '.$gTables['banapp'].".codice", $gTables['clfoco'].'.codice',$head['bank']);
         $this->OthrId = (intval($this->azienda['pariva'])>=100)?$this->azienda['pariva']:$this->azienda['codfis'];
@@ -35,17 +35,17 @@ class CbiSepa {
         $this->MsgId = dechex(rand(100,999).date('siHdmY')).'-';
 		$this->CtgyPurpCd = (isset($head['CtgyPurpCd']) && strlen($head['CtgyPurpCd']) == 4) ? $head['CtgyPurpCd'] : false;
 		// INTC  IntraCompanyPayment  Intra-company payment
-		// INTE  Interest  Payment of interest. 
-		// PENS  PensionPayment  Payment of pension. 
-		// SALA  SalaryPayment  Payment of salaries. 
-		// SSBE  SocialSecurityBenefit  Payment of child benefit, family allowance. 
-		// SUPP  SupplierPayment  Payment to a supplier. 
-		// TAXS  TaxPayment  Payment of taxes. 
+		// INTE  Interest  Payment of interest.
+		// PENS  PensionPayment  Payment of pension.
+		// SALA  SalaryPayment  Payment of salaries.
+		// SSBE  SocialSecurityBenefit  Payment of child benefit, family allowance.
+		// SUPP  SupplierPayment  Payment to a supplier.
+		// TAXS  TaxPayment  Payment of taxes.
 		// TREA  TreasuryPayment  Treasury transaction
 		// OTHR  Other
 		$this->FileName = (isset($head['FileName']) && strlen($head['FileName']) >= 16) ? $head['FileName'] : 'XMLCBIpay'.date('Ymdhis');
     }
-    
+
     function create_XML_CBIPaymentRequest($gTables,$head,$data,$save_id_doc=false) {
         // in $data dovrò passare tutti i dati necessari per la creazione degli elementi <CdtTrfTxInf>
         // le chiavi sono: EndToEndId (id univoco) ,InstdAmt (importo), Nm (descrizione creditore), IBAN (iban accredito), Ustrd (descrizione debito pagato) ognuno creerà il relativo elemento dentro <CdtTrfTxInf>
@@ -58,39 +58,41 @@ class CbiSepa {
         $this->setCbiPayReqVars($gTables,$head);
         $domDoc->load("../../library/include/template_CBIPaymentRequest.xml");
         $xpath = new DOMXPath($domDoc);
-        $results = $xpath->query("//GrpHdr/MsgId")->item(0);
+        $rootNamespace = $domDoc->lookupNamespaceUri($domDoc->namespaceURI);
+        $xpath->registerNamespace('x', $rootNamespace);
+        $results = $xpath->query("//x:GrpHdr/x:MsgId")->item(0);
         $attrVal = $domDoc->createTextNode($this->MsgId);
         $results->appendChild($attrVal);
-        $results = $xpath->query("//GrpHdr/CreDtTm")->item(0);
+        $results = $xpath->query("//x:GrpHdr/x:CreDtTm")->item(0);
         $attrVal = $domDoc->createTextNode($this->CreDtTm);
         $results->appendChild($attrVal);
-        $results = $xpath->query("//GrpHdr/InitgPty/Nm")->item(0);
+        $results = $xpath->query("//x:GrpHdr/x:InitgPty/x:Nm")->item(0);
         $attrVal = $domDoc->createTextNode($this->bank['descri']);
         $results->appendChild($attrVal);
-        $results = $xpath->query("//GrpHdr/InitgPty/Id/OrgId/Othr/Id")->item(0);
+        $results = $xpath->query("//x:GrpHdr/x:InitgPty/x:Id/x:OrgId/x:Othr/x:Id")->item(0);
         $attrVal = $domDoc->createTextNode($this->bank['cuc_code']);
         $results->appendChild($attrVal);
-        $results = $xpath->query("//PmtInf/PmtInfId")->item(0);
+        $results = $xpath->query("//x:PmtInf/x:PmtInfId")->item(0);
         $attrVal = $domDoc->createTextNode($this->MsgId);
         $results->appendChild($attrVal);
-        $results = $xpath->query("//PmtInf/ReqdExctnDt")->item(0);
+        $results = $xpath->query("//x:PmtInf/x:ReqdExctnDt")->item(0);
         $attrVal = $domDoc->createTextNode(substr($this->CreDtTm,0,10));
         $results->appendChild($attrVal);
-        $results = $xpath->query("//PmtInf/Dbtr/Nm")->item(0);
+        $results = $xpath->query("//x:PmtInf/x:Dbtr/x:Nm")->item(0);
         $attrVal = $domDoc->createTextNode($this->bank['descri']);
         $results->appendChild($attrVal);
-        $results = $xpath->query("//PmtInf/Dbtr/Id/OrgId/Othr/Id")->item(0);
+        $results = $xpath->query("//x:PmtInf/x:Dbtr/x:Id/x:OrgId/x:Othr/x:Id")->item(0);
         $attrVal = $domDoc->createTextNode($this->OthrId);
         $results->appendChild($attrVal);
-        $results = $xpath->query("//PmtInf/DbtrAcct/Id/IBAN")->item(0);
+        $results = $xpath->query("//x:PmtInf/x:DbtrAcct/x:Id/x:IBAN")->item(0);
         $attrVal = $domDoc->createTextNode($this->bank['iban']);
         $results->appendChild($attrVal);
-        $results = $xpath->query("//PmtInf/DbtrAgt/FinInstnId/ClrSysMmbId/MmbId")->item(0);
+        $results = $xpath->query("//x:PmtInf/x:DbtrAgt/x:FinInstnId/x:ClrSysMmbId/x:MmbId")->item(0);
         $attrVal = $domDoc->createTextNode(str_pad($this->bank['codabi'],5,'0',STR_PAD_LEFT));
         $results->appendChild($attrVal);
         // creo gli elementi dei singoli bonifici
         foreach($data as $v){
-            $PmtInf = $xpath->query("//PmtInf")->item(0);
+            $PmtInf = $xpath->query("//x:PmtInf")->item(0);
             $el = $domDoc->createElement("CdtTrfTxInf", "");
                 $el1 = $domDoc->createElement("PmtId", "");
                     $el2 = $domDoc->createElement("InstrId", $NbOfTxs);
@@ -124,13 +126,13 @@ class CbiSepa {
                     $el1->appendChild($el2);
                 $el->appendChild($el1);
             $PmtInf->appendChild($el);
-            $NbOfTxs++;	
+            $NbOfTxs++;
             $CtrlSum += $v['InstdAmt'];
         }
-        $results = $xpath->query("//GrpHdr/NbOfTxs")->item(0);
+        $results = $xpath->query("//x:GrpHdr/x:NbOfTxs")->item(0);
         $attrVal = $domDoc->createTextNode($NbOfTxs-1);
         $results->appendChild($attrVal);
-        $results = $xpath->query("//GrpHdr/CtrlSum")->item(0);
+        $results = $xpath->query("//x:GrpHdr/x:CtrlSum")->item(0);
         $attrVal = $domDoc->createTextNode(number_format(round($CtrlSum,2),2,'.',''));
         $results->appendChild($attrVal);
         $cont=$domDoc->saveXML();
@@ -139,7 +141,7 @@ class CbiSepa {
         header("Content-Disposition: attachment; filename=".$this->FileName.".xml");
         print $cont;
     }
-    
+
 }
 
 ?>
