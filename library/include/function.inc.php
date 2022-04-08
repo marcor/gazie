@@ -1678,13 +1678,14 @@ class GAzieForm {
 			</a>';
     }
 
-    function variousSelect($name, $transl, $sel, $class = 'FacetSelect', $bridge = true, $refresh = '', $maxlenght = false, $style = '',$empty=false) {
-        if (!empty($refresh)) {
+    function variousSelect($name, $transl, $sel, $class = 'FacetSelect', $bridge = true, $refresh = '', $maxlenght = false, $style = '',$empty=false, $echo=false) {
+        $acc="";
+		if (!empty($refresh)) {
             $refresh = "onchange=\"this.form.hidden_req.value='$refresh'; this.form.submit();\"";
         }
-        echo "<select name=\"$name\" id=\"$name\" class=\"$class\" $refresh $style>\n";
+        $acc .= "<select name=\"$name\" id=\"$name\" class=\"$class\" $refresh $style>\n";
         if ($empty) {
-            echo "\t\t <option value=\"$empty\"></option>\n";
+            $acc .= "\t\t <option value=\"$empty\"></option>\n";
         }
 
         foreach ($transl as $i => $val) {
@@ -1700,9 +1701,14 @@ class GAzieForm {
             if ($sel == $i) {
                 $selected = ' selected ';
             }
-            echo "<option value=\"$i\"$selected>$k $val</option>\n";
+            $acc .= "<option value=\"$i\"$selected>$k $val</option>\n";
         }
-        echo "</select>\n";
+        $acc .= "</select>\n";
+		 if ($echo){
+			return $acc;
+		  } else {
+			echo $acc;
+		  }
     }
 
     function selCheckbox($name, $sel, $title = '', $refresh = '', $class = 'FacetSelect') {
