@@ -780,7 +780,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 						}
 						$n++;						
 					}					
-						
+				}		
 					// se count($rddt) è maggiore di zero dovrò segnalare che ci sono ddt orfani
 			
 					foreach($nl_NumeroLinea as $k=>$v){ // in questo mi ritrovo i righi non assegnati ai ddt specifici (potrebbero essere anche tutti), alcune fatture malfatte non specificano i righi!
@@ -788,56 +788,62 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 						if (isset($form['clfoco'])&&existDdT($numddt,$dataddt,$form['clfoco'])){
 							$anomalia="AnomaliaExistDdt";
 						}
-						$form['rows'][$v]['NumeroDDT']=$numddt;
-						$form['rows'][$v]['DataDDT']=$dataddt;
-						if ($form['rows'][$v]['tipocessprest']=="AC"){ // Antonio Germani - le spese fanno eccezione e quindi tolgo l'anomalia
-							$anomalia="";
-						}
-						
-						if (isset($form['clfoco'])&&existDdT($numddt,$dataddt,$form['clfoco'])){						
-							$form['rows'][$v]['exist_ddt']=existDdT($numddt,$dataddt,$form['clfoco']);
-						} else {
-							$form['rows'][$v]['exist_ddt']=false;
-							$msg['err'][] = 'Not_all-ddt';
-							$rowsfoot=[];
-							$anomalia="Not_all-ddt-inserted";break;
+						if (!isset ($form['rows'][$v]['exist_ddt']) || !is_array($form['rows'][$v]['exist_ddt'])){// se exist_ddt è stato già valorizzato passo al prossimo rigo
+							$form['rows'][$v]['NumeroDDT']=$numddt;
+							$form['rows'][$v]['DataDDT']=$dataddt;
+							if ($form['rows'][$v]['tipocessprest']=="AC"){ // Antonio Germani - le spese fanno eccezione e quindi tolgo l'anomalia
+								$anomalia="";
+							}
+							
+							if (isset($form['clfoco'])&&existDdT($numddt,$dataddt,$form['clfoco'])){						
+								$form['rows'][$v]['exist_ddt']=existDdT($numddt,$dataddt,$form['clfoco']);
+							} else {
+								$form['rows'][$v]['exist_ddt']=false;
+								$msg['err'][] = 'Not_all-ddt';// non sono stati inseriti tutti i ddt a cui si riferisce la fattura
+								$rowsfoot=[];
+								$anomalia="Not_all-ddt-inserted";break;
+							}
 						}
 					}
-				}			
-					
+							
+				//echo "<pre>",print_r($form['rows']);
 				// in caso di anomalia exist ddt devo riattraversare
 				if ($anomalia=="AnomaliaExistDdt") {
 				  $changeid=false;
 				  foreach($form['rows'] as $kd=>$vd){ 
 					if (!isset($_POST['confirmid_1'])) {// sono al primo passaggio
-					  $match=false;
-					  $r=0;// faccio una prima assegnazione dei righi dei ddt alla FAE
-									foreach ($ins_ddt as $rig) {
-						// print '<br> yes'.$rig['quanti'];
-										if (floatval($rig['quanti']) == floatval($vd['quanti'])){
-						  $match=true;
-											$form['idrigddt_'.$kd] = $rig['id_rig']; //attribuisco il rigo di riferimento al ddt che servirà per eventuale conciliazione righi
-											$form['rigddt_'.$kd] = $rig['descri']; //attribuisco la descrizione di riferimento al ddt (codice, articolo e descrizione) che servirà per eventuale conciliazione righi
-											$form['confirmid_'.$kd] = $kd; //attribuisco il rigo di riferimento al ddt che servirà per eventuale conciliazione righi
-											$del=$r;
-						  unset ($ins_ddt[$del]);// rimuovo l'elemento prescelto sopra dall'array in modo da abbreviare i tempi per i successivi passaggi
-						  break;
-										}
-										$r++;
-									}
-					  if (!$match){ // non ho trovato alcun rigo sul ddt inserito
-										$form['idrigddt_'.$kd] = 0; // nessun rigo di riferimento al ddt
-										$form['rigddt_'.$kd] = 'Questo rigo verrà creato in quanto non trovato sul DdT inserito';
-										$form['confirmid_'.$kd] = $kd; //attribuisco il rigo di riferimento al ddt che servirà per eventuale conciliazione righi
-					  }
-								} else {// sono nei passaggi successivi
-									$form['idrigddt_'.$kd] = $_POST['idrigddt_'.$kd];
-									$form['rigddt_'.$kd] = $_POST['rigddt_'.$kd];
-									$form['confirmid_'.$kd] = $_POST['confirmid_'.$kd];
-									  if ($_POST['hidden_req']=='confirmid_'.$kd) {
-										$changeid = [$kd,$form['confirmid_'.$kd]];
-									  }
-								}
+						$match=false;
+						$r=0;// faccio una prima assegnazione dei righi dei ddt alla FAE
+						foreach ($ins_ddt as $rig) {
+							//echo "<pre>",print_r($rig),"</pre>";
+							// print '<br> yes'.$rig['quanti'];
+							if (floatval($rig['quanti']) == floatval($vd['quanti'])){
+								$match=true;
+								$form['idrigddt_'.$kd] = $rig['id_rig']; //attribuisco il rigo di riferimento al ddt che servirà per eventuale conciliazione righi
+								$form['rigddt_'.$kd] = $rig['descri']; //attribuisco la descrizione di riferimento al ddt (codice, articolo e descrizione) che servirà per eventuale conciliazione righi
+								$form['confirmid_'.$kd] = $rig['descri']; //attribuisco il rigo di riferimento al ddt che servirà per eventuale conciliazione righi
+								$form['rows'][$kd]['exist_ddt']['id_tes']=$rig['id_tes'];// attribuisco i riferimenti all'array exist_ddt
+								$form['rows'][$kd]['exist_ddt']['numdoc']= $rig['numdoc'];// attribuisco i riferimenti all'array exist_ddt
+								
+								$del=$r;
+								unset ($ins_ddt[$del]);// rimuovo l'elemento prescelto sopra dall'array in modo da abbreviare i tempi per i successivi passaggi
+								break;
+							}
+							$r++;
+						}
+						if (!$match){ // non ho trovato alcun rigo sul ddt inserito
+							$form['idrigddt_'.$kd] = 0; // nessun rigo di riferimento al ddt
+							$form['rigddt_'.$kd] = 'Questo rigo verrà creato in quanto non trovato sul DdT inserito';
+							$form['confirmid_'.$kd] = $kd; //attribuisco il rigo di riferimento al ddt che servirà per eventuale conciliazione righi
+						}
+					} else {// sono nei passaggi successivi
+						$form['idrigddt_'.$kd] = $_POST['idrigddt_'.$kd];
+						$form['rigddt_'.$kd] = $_POST['rigddt_'.$kd];
+						$form['confirmid_'.$kd] = $_POST['confirmid_'.$kd];
+						  if ($_POST['hidden_req']=='confirmid_'.$kd) {
+							$changeid = [$kd,$form['confirmid_'.$kd]];
+						  }
+					}
 				  }
 				  if ($changeid) {
 								$form['idrigddt_'.$changeid[0]] = $_POST['idrigddt_'.$changeid[1]];
