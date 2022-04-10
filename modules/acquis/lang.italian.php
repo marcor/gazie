@@ -671,7 +671,7 @@ $strScript = array("admin_fornit.php" =>
         'operation_type' => 'Tipo oper.',
         'conto' => 'Conto',
         'new_acconcile'=>'Cambia conti sui righi con:',
-        'confirmin' => array('NO' =>'Seleziona per inserimento immediato','SI' => 'Confermo inserimento rigo in un ddt'),
+        'confirm' => array('NO' =>'Seleziona per inserimento immediato','SI' => 'Confermo inserimento rigo in un ddt'),
 	),
     "admin_broacq.php" =>
     array('title' => 'Inserimento/modifica documenti a fornitori',
