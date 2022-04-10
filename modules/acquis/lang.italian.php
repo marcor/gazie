@@ -650,7 +650,8 @@ $strScript = array("admin_fornit.php" =>
             'no_pagame' => 'Non hai selezionato la modalità di pagamento',
             'no_codric' => 'Non hai selezionato il codice conto di costo',
             'no_codvat' => 'Non hai selezionato l\'aliquota IVA',
-            'same_content' => 'Una fattura di questo fornitore, contenente lo stesso numero e data fattura, è già stato acquisito'
+            'same_content' => 'Una fattura di questo fornitore, contenente lo stesso numero e data fattura, è già stato acquisito',
+			'Not_all-ddt' => 'Non tutti i ddt sono stati inseriti. Questa FAE xml è mal formata e per poterla acquisire è necessario aver già inserito tutti i DDT. Non puoi inserirne solo alcuni. In alternativa, inserisci la FAE manualmente.'
         ),
         'head_text1' => "La fatture elettronica: ",
         'head_text2' => " che stai per acquisire è visibile in fondo.<br/> In questo form ti proponiamo di imputare i costi secondo quanto contenuto sugli archivi, e ti invitiamo a controllare ed eventualmente apportare le modifiche opportune. Avrai comunque la possibilità di modificarla sia prima che dopo averla contabilizzata agendo attraverso le apposite interfacce. Dopo l'acquisizione verrai portato sulla lista delle fatture di acquisto già inserite",
