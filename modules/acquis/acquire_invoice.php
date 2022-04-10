@@ -727,7 +727,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 						$ins_row['codric']=330000004;//A.Germani al momento metto conto acquisti ... da rivedere
 						unset($ins_row['exist_ddt']);// tolgo dati inutili						
 						rigdocInsert($ins_row);
-						unset ($_POST['changeid_1']);// lo riporto al primo passaggio ... da rivedere !!!
+						unset ($_POST['confirmid_1']);// lo riporto al primo passaggio ... da rivedere !!!
 						
 						unset ($_POST['confirm_ins']);
 						$_POST['hidden_req']="";
@@ -802,7 +802,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
         if ($anomalia=="AnomaliaExistDdt") {
           $changeid=false;
           foreach($form['rows'] as $kd=>$vd){ 
-            if (!isset($_POST['changeid_1'])) {// sono al primo passaggio
+            if (!isset($_POST['confirmid_1'])) {// sono al primo passaggio
               $match=false;
               $r=0;// faccio una prima assegnazione dei righi dei ddt alla FAE
 							foreach ($ins_ddt as $rig) {
@@ -811,7 +811,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
                   $match=true;
 									$form['idrigddt_'.$kd] = $rig['id_rig']; //attribuisco il rigo di riferimento al ddt che servirà per eventuale conciliazione righi
 									$form['rigddt_'.$kd] = $rig['descri']; //attribuisco la descrizione di riferimento al ddt (codice, articolo e descrizione) che servirà per eventuale conciliazione righi
-									$form['changeid_'.$kd] = $kd; //attribuisco il rigo di riferimento al ddt che servirà per eventuale conciliazione righi
+									$form['confirmid_'.$kd] = $kd; //attribuisco il rigo di riferimento al ddt che servirà per eventuale conciliazione righi
 									$del=$r;
                   unset ($ins_ddt[$del]);// rimuovo l'elemento prescelto sopra dall'array in modo da abbreviare i tempi per i successivi passaggi
                   break;
@@ -821,24 +821,24 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
               if (!$match){ // non ho trovato alcun rigo sul ddt inserito
 								$form['idrigddt_'.$kd] = 0; // nessun rigo di riferimento al ddt
 								$form['rigddt_'.$kd] = 'Questo rigo verrà creato in quanto non trovato sul DdT inserito';
-								$form['changeid_'.$kd] = $kd; //attribuisco il rigo di riferimento al ddt che servirà per eventuale conciliazione righi
+								$form['confirmid_'.$kd] = $kd; //attribuisco il rigo di riferimento al ddt che servirà per eventuale conciliazione righi
               }
 						} else {// sono nei passaggi successivi
 							$form['idrigddt_'.$kd] = $_POST['idrigddt_'.$kd];
 							$form['rigddt_'.$kd] = $_POST['rigddt_'.$kd];
-							$form['changeid_'.$kd] = $_POST['changeid_'.$kd];
-							  if ($_POST['hidden_req']=='changeid_'.$kd) {
-								$changeid = [$kd,$form['changeid_'.$kd]];
+							$form['confirmid_'.$kd] = $_POST['confirmid_'.$kd];
+							  if ($_POST['hidden_req']=='confirmid_'.$kd) {
+								$changeid = [$kd,$form['confirmid_'.$kd]];
 							  }
 						}
           }
           if ($changeid) {
 						$form['idrigddt_'.$changeid[0]] = $_POST['idrigddt_'.$changeid[1]];
 						$form['rigddt_'.$changeid[0]] = $_POST['rigddt_'.$changeid[1]];
-						$form['changeid_'.$changeid[0]] = $_POST['changeid_'.$changeid[1]];
+						$form['confirmid_'.$changeid[0]] = $_POST['confirmid_'.$changeid[1]];
 						$form['idrigddt_'.$changeid[1]] = $_POST['idrigddt_'.$changeid[0]];
 						$form['rigddt_'.$changeid[1]] = $_POST['rigddt_'.$changeid[0]];
-						$form['changeid_'.$changeid[1]] = $_POST['changeid_'.$changeid[0]];
+						$form['confirmid_'.$changeid[1]] = $_POST['confirmid_'.$changeid[0]];
             $msg['war'][] = 'shiftrow';
           }
         }
@@ -1635,19 +1635,20 @@ if ($toDo=='insert' || $toDo=='update' ) {
 				$whareh_dropdown = $magazz->selectIdWarehouse('warehouse_'.$k,(isset($form['warehouse_'.$k]))?$form['warehouse_'.$k]:0,true,'col-xs-12',$form['codart_'.$k],$datdoc,($docOperat[$tipdoc]*-floatval($v['quanti'])));
 				$codvat_dropdown = $gForm->selectFromDB('aliiva', 'codvat_'.$k, 'codice', $form['codvat_'.$k], 'aliquo', true, '-', 'descri', '', 'col-sm-12 small', null, 'style="max-width: 350px;"', false, true);
 				$codart_select = $gForm->concileArtico('codart_'.($k+1),(isset($form['search_codart_'.($k+1)]))?$form['search_codart_'.$k]:'',$form['codart_'.$k]);
+				
 				if ($anomalia=="AnomaliaExistDdt"){//echo "<pre>",print_r($form),"</pre>";
-					if ($form['idrigddt_'.$k+1]==0){// se non ho rigo ddt di riferimento
-						
-						$confirm_insertion=$gForm->variousSelect('confirm_ins', $script_transl['confirm'],'NO' , '', '', base64_encode(json_encode($v)), '', '', '', true); 
-						echo '<input type="hidden" name="changeid_'. ($k+1).'" value="" >
+					if ($form['idrigddt_'.$k+1]==0){// se non ho rigo ddt di riferimento						
+						$confirm_insertion=$gForm->variousSelect('confirm_ins', $script_transl['confirmin'],'NO' , '', '', base64_encode(json_encode($v)), '', '', '', true); 
+						echo '<input type="hidden" name="confirmid_'. ($k+1).'" value="" >
 						<input type="hidden" name="idrigddt_'. ($k+1).'" value="'.$form['idrigddt_'.($k+1)].'" >
 						<input type="hidden" name="rigddt_'. ($k+1).'" value="'.$form['rigddt_'.($k+1)].'" >';
 						$rowsfoot[$k]= '<td colspan=4 class="bg-warning"><b>Rigo DdT</b> <small>(ID:'.$form['idrigddt_'.($k+1)].')</small><span class="bg-info">' .$confirm_insertion. '</span></td><td colspan=9 class="bg-warning row">Questo rigo verrà creato in quanto non trovato sul DdT inserito</td>';
 					} else {
-						$changeid_dropdown = $gForm->selectNumber('changeid_'. ($k+1), ($k+1), $msg = false, 0, count($form['rows']), $class = 'bg-warning', 'changeid_'. ($k+1), $style = '', true, ($k+1));
+						$modifi = "admin_docacq.php?id_tes=".$form['rows'][$k+1]['exist_ddt']['id_tes']."&Update&DDT";
+						$ddt_button="<a class=\"btn btn-xs btn-default btn-edit\" title=\"Modifica il DDT\" href=\"" . $modifi . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-edit\"></i>". $form['rows'][$k+1]['exist_ddt']['numdoc'];
 						echo '<input type="hidden" name="idrigddt_'. ($k+1).'" value="'.$form['idrigddt_'.($k+1)].'" >
 						<input type="hidden" name="rigddt_'. ($k+1).'" value="'.$form['rigddt_'.($k+1)].'" >';
-						$rowsfoot[$k]= '<td colspan=4 class="bg-warning"><b>Rigo DdT</b> <small>(ID:'.$form['idrigddt_'.($k+1)].')</small><span class="bg-info">seleziona per spostare su altro rigo:' .$changeid_dropdown. '</span></td><td colspan=9 class="bg-warning row">'.$form['rigddt_'.($k+1)].'</td>';
+						$rowsfoot[$k]= '<td colspan=4 class="bg-warning"><b>Rigo DdT</b> <small>(ID:'.$form['idrigddt_'.($k+1)].')</small><span class="bg-info">Controlla che il rigo DDT sia corretto o modificalo' .$ddt_button. '</span></td><td colspan=9 class="bg-warning row">'.$form['rigddt_'.($k+1)].'</td>';
 					}
 						
 				}
