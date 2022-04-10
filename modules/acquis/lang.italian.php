@@ -653,10 +653,10 @@ $strScript = array("admin_fornit.php" =>
             'same_content' => 'Una fattura di questo fornitore, contenente lo stesso numero e data fattura, è già stato acquisito'
         ),
         'head_text1' => "La fatture elettronica: ",
-		'head_text2' => " che stai per acquisire è visibile in fondo.<br/> In questo form ti proponiamo di imputare i costi secondo quanto contenuto sugli archivi, e ti invitiamo a controllare ed eventualmente apportare le modifiche opportune. Avrai comunque la possibilità di modificarla sia prima che dopo averla contabilizzata agendo attraverso le apposite interfacce. Dopo l'acquisizione verrai portato sulla lista delle fatture di acquisto già inserite",
+        'head_text2' => " che stai per acquisire è visibile in fondo.<br/> In questo form ti proponiamo di imputare i costi secondo quanto contenuto sugli archivi, e ti invitiamo a controllare ed eventualmente apportare le modifiche opportune. Avrai comunque la possibilità di modificarla sia prima che dopo averla contabilizzata agendo attraverso le apposite interfacce. Dopo l'acquisizione verrai portato sulla lista delle fatture di acquisto già inserite",
         'seziva' => 'Sezione IVA',
         'datreg' => 'Data Registrazione',
-		'pagame'=>'Modalità di pagamento',
+        'pagame'=>'Modalità di pagamento',
         'nrow' => 'Rigo',
         'codart' => 'Codice',
         'descri' => 'Descrizione',
@@ -669,8 +669,8 @@ $strScript = array("admin_fornit.php" =>
         'tax' => 'I.V.A.',
         'operation_type' => 'Tipo oper.',
         'conto' => 'Conto',
-		'new_acconcile'=>'Cambia conti sui righi con:',
-		'confirm' => array('NO' =>'Seleziona per inserimento immediato','SI' => 'Confermo inserimento rigo in un ddt'),
+        'new_acconcile'=>'Cambia conti sui righi con:',
+        'confirmin' => array('NO' =>'Seleziona per inserimento immediato','SI' => 'Confermo inserimento rigo in un ddt'),
 	),
     "admin_broacq.php" =>
     array('title' => 'Inserimento/modifica documenti a fornitori',
