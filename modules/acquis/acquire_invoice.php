@@ -757,7 +757,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					// in $nl ho l'indice del rigo non assegnato ad alcun DdT
           if ( count($acc_DataDDT) >= 2 ){ // se la fattura contiene più DDT allora obbligo l'utente a riferirli bene
             // qui distinguo se sono al primo refresh dopo l'upload del file
-            if (empty($_POST['Submit_file']) && !isset($_POST['Select_doc'])) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati dall'utente
+            if ( empty($_POST['Submit_file']) && !isset($_POST['Select_doc']) && !isset($_POST['resetDdT']) ) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati  dall'utente a meno che sia stato chiesto un reset
               if ($_POST['hidden_req']=='concileDdT') { // l'utente ha scelto il DdT di riferimento mancante
                 if (substr($_POST['numddt_'.($nl-1)],-7) == '_tolast' ){
                   $numddt_tolast=substr($_POST['numddt_'.($nl-1)],0,-7);
@@ -1180,6 +1180,9 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					$v['exist_ddt']="";
 				}
 				$ctrl_ddt='';
+        usort($form['rows'], function($a, $b) {
+          return $a['NumeroDDT'] <=> $b['NumeroDDT'];
+        });
 				foreach ($form['rows'] as $i => $v) { // inserisco i righi
 				 $form['rows'][$i]['status']="INSERT";
 					$post_nl=$i-1;
@@ -1618,13 +1621,14 @@ if ($toDo=='insert' || $toDo=='update' ) {
 	?>
 			</div>
 			<div class="col-sm-10">
-				<div class="col-sm-10 text-danger bg-warning text-right"><b>
 					<?php
 					if ($anomalia!=""){ // La FAE non ha i riferimenti linea nei ddt
-						echo $anomalia;
-					}
+						echo '<div class="col-sm-10 text-danger bg-warning text-right"><b>'.$anomalia.'</b>';
+					} elseif ( count($acc_DataDDT) >= 2 && empty($anomalia) ) {
+            echo '<div class="col-sm-10 text-default bg-info text-left"><input name="resetDdT" type="submit" class="btn btn-warning" value="Annulla scelte DdT">';
+          }
 					?>
-				</b></div>
+				</div>
 				<div class="col-sm-2 text-left">
 					<input name="Submit_form" type="submit"
           <?php
