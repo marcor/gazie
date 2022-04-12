@@ -712,6 +712,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			//Se la fattura è derivante da un DdT aggiungo i relativi  elementi  all'array dei righi
 			$anomalia="";
       $numddt="";
+			$resetDdT=false;
 			if ($doc->getElementsByTagName('DatiDDT')->length>=1) {
 				// quando ci sono dei DdT capita che il rigo che precede sia la descrizione del seguente allora faccio un primo attraversamento dei riferimenti ai righi perchè capita che alcuni righi descrittivi che precedono siano comunque riferiti a ddt
 				$DatiDDT=$doc->getElementsByTagName('DatiDDT');
@@ -794,6 +795,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
           $form['rows'][$nl]['exist_ddt']=false;
           if (empty($anomalia) && !$form['rows'][$nl]['NumeroDDT']){
             $anomalia = 'Anomalia fattura con DdT senza riferimenti sui righi, non è possibile la conferma fino a quando non vengono selezionati tutti';
+            $resetDdT=true;
           }
           $first=false;
 				}
@@ -806,6 +808,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
         }
         if (empty($anomalia) && count($acc_DataDDT) > count($ddtused)){
             $anomalia = 'Anomalia non tutti i DdT indicati sul tracciato sono stati utilizzati';
+            $resetDdT=true;
         }
         // fine controllo
 			}
@@ -1611,7 +1614,9 @@ if ($toDo=='insert' || $toDo=='update' ) {
 
 			}
 			$gForm->gazResponsiveTable($resprow, 'gaz-responsive-table', $rowshead);
-	?>	   <div class="col-sm-2">
+	?>
+  <div class="row">
+      <div class="col-sm-2">
 	<?php
 			if ($nf){
 	?>
@@ -1620,16 +1625,20 @@ if ($toDo=='insert' || $toDo=='update' ) {
 			}
 	?>
 			</div>
-			<div class="col-sm-10">
-					<?php
-					if ($anomalia!=""){ // La FAE non ha i riferimenti linea nei ddt
-						echo '<div class="col-sm-10 text-danger bg-warning text-right"><b>'.$anomalia.'</b>';
-					} elseif ( count($acc_DataDDT) >= 2 && empty($anomalia) ) {
-            echo '<div class="col-sm-10 text-default bg-info text-left"><input name="resetDdT" type="submit" class="btn btn-warning" value="Annulla scelte DdT">';
-          }
-					?>
-				</div>
-				<div class="col-sm-2 text-left">
+			<?php
+      if ($resetDdT) {
+        echo '<div class="col-sm-1"><input name="resetDdT" type="submit" class="btn btn-warning" value="Annulla scelte DdT"></div>';
+      } else {
+        echo '<div class="col-sm-1"></div>';
+      }
+			if (!empty($anomalia)) { // La FAE non ha i riferimenti linea nei ddt
+				echo '<div class="col-sm-7 text-danger bg-warning text-right"><b>'.$anomalia.'</b></div>';
+			} else {
+ 				echo '<div class="col-sm-7 text-danger bg-warning text-right"></div>';
+
+      }	?>
+
+				<div class="col-sm-1 text-left">
 					<input name="Submit_form" type="submit"
           <?php
 					if ($anomalia!=""){ // La FAE non ha i riferimenti linea nei ddt
@@ -1639,6 +1648,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
           class="btn btn-warning" value="<?php echo $script_transl['submit']; ?>" />
 				</div>
 			</div>
+		</div>
 	</form>
 	<br>
 	<?php
