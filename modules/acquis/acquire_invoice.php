@@ -189,13 +189,14 @@ function existDdT($numddt,$dataddt,$clfoco,$codart="%%") {
 
 
 function concileDdT($name,$sel,$acc_DataDDT) {
+  $nurow=explode('_',$name);
   $acc = '<select name="'.$name.'" id="'.$name.'" class="bg-warning text-danger" onchange="this.form.hidden_req.value=\'concileDdT\'; this.form.submit();">
           <option value="" > ------------------------------------- </option>';
   foreach ($acc_DataDDT as $val) {
       $selected = ($sel == $val['Numero']) ? ' selected ' : '';
       $selected_tolast = ($sel == $val['Numero'].'_tolast') ? ' selected ' : '';
-      $acc .= '<option value="'.$val['Numero'].'" '.$selected.'>DdT n.'.$val['Numero'].' del '.gaz_format_date($val['Data']).' (solo questo rigo) </option>
-               <option value="'.$val['Numero'].'_tolast" '.$selected_tolast.'>DdT n.'.$val['Numero'].' del '.gaz_format_date($val['Data']).' (questo ed i successivi) </option>';
+      $acc .= '<option class="bg-default text-default" value="'.$val['Numero'].'" '.$selected.'>DdT n.'.$val['Numero'].' del '.gaz_format_date($val['Data']).' (solo su rigo '.($nurow[1]+1).') </option>
+               <option class="bg-info text-default" value="'.$val['Numero'].'_tolast" '.$selected_tolast.'>DdT n.'.$val['Numero'].' del '.gaz_format_date($val['Data']).' (su rigo '.($nurow[1]+1).' e successivi) </option>';
   }
   $acc .= "</select>\n";
   return $acc;
@@ -727,7 +728,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					foreach ($RiferimentoNumeroLinea as $valRiferimentoNumeroLinea) { // attraverso RiferimentoNumeroLinea
             if (isset($nl_NumeroLinea[$valRiferimentoNumeroLinea->nodeValue])){//se esiste la linea indicata dal 'RiferimentoNumeroLinea'
               $nl = $nl_NumeroLinea[$valRiferimentoNumeroLinea->nodeValue];
-              if ($numddt!=$ctrl_NumeroDDT){ // è cambiato controllo, se il rigo che precede questo è un descritto e non ha un riferimento a ddt lo assegno a questo
+              if ($numddt!=$ctrl_NumeroDDT){ // è cambiato controllo, se il rigo che precede questo è un descritto e non ha un riferimento a ddt glielo assegno
                 if (isset($form['rows'][$nl-1]['is_descri'])&&$form['rows'][$nl-1]['is_descri']){
                   $form['rows'][$nl-1]['NumeroDDT']=$numddt;
                   $form['rows'][$nl-1]['DataDDT']=$dataddt;
@@ -1549,7 +1550,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
             echo '<input type="hidden" name="'.'numddt_'.$k.'" value="'.$form['numddt_'.$k].'" />';
           } else { // qui segnalo le anomalie e faccio le richieste di intervento dell'utente
             $ctrl_ddt='';
-            $rowshead[$k]='<td colspan=14 class="bg-danger text-danger">'.concileDdT('numddt_'.$k,$form['numddt_'.$k],$acc_DataDDT).' su questo rigo '.$k.' manca il riferimento al numero di DdT indicato sulla fattura, &egrave; richiesta la selezione</td>';
+            $rowshead[$k]='<td colspan=14 class="bg-danger text-danger">'.concileDdT('numddt_'.$k,$form['numddt_'.$k],$acc_DataDDT).' Sul rigo '.($k+1).' manca il riferimento al numero di DdT indicato sulla fattura, &egrave; richiesta la selezione</td>';
           }
         }
 				if ($new_acconcile>100000000){
