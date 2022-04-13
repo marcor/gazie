@@ -725,6 +725,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					$dataddt=$valDatiDDT->getElementsByTagName('DataDDT')->item(0)->nodeValue;
           // faccio il push sull'accumulatore dei DataDDT con stesso numero-data
           $acc_DataDDT[$numddt]=['Numero'=>$numddt,'Data'=>$dataddt];
+          $existDdT=existDdT($numddt,$dataddt,$form['clfoco']);
+          $acc_DataDDT[$numddt]=['Numero'=>$numddt,'Data'=>$dataddt,'Exist'=>$existDdT];
 					foreach ($RiferimentoNumeroLinea as $valRiferimentoNumeroLinea) { // attraverso RiferimentoNumeroLinea
             if (isset($nl_NumeroLinea[$valRiferimentoNumeroLinea->nodeValue])){//se esiste la linea indicata dal 'RiferimentoNumeroLinea'
               $nl = $nl_NumeroLinea[$valRiferimentoNumeroLinea->nodeValue];
@@ -737,8 +739,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
                   unset($nl_NumeroLinea[$form['rows'][$nl-1]['numrig']]);
                 }
               }
-              if (isset($form['clfoco'])&&existDdT($numddt,$dataddt,$form['clfoco'])){
-                $form['rows'][$nl]['exist_ddt']=existDdT($numddt,$dataddt,$form['clfoco']);
+              if (isset($form['clfoco'])&&$existDdT){
+                $form['rows'][$nl]['exist_ddt']=$existDdT;
               } else {
                 $form['rows'][$nl]['exist_ddt']=false;
               }
@@ -793,7 +795,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
             $form['rows'][$nl]['DataDDT']=$dataddt;
             $form['numddt_'.($nl-1)]=$numddt;
           }
-          $form['rows'][$nl]['exist_ddt']=false;
+          $form['rows'][$nl]['exist_ddt']=isset($acc_DataDDT[$form['numddt_'.($nl-1)]]['Exist'])?$acc_DataDDT[$form['numddt_'.($nl-1)]]['Exist']:false;
           if (empty($anomalia) && !$form['rows'][$nl]['NumeroDDT']){
             $anomalia = 'Anomalia fattura con DdT senza riferimenti sui righi, non è possibile la conferma fino a quando non vengono selezionati tutti';
             $resetDdT=true;
