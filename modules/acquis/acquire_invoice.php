@@ -1216,7 +1216,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 								}
 							}
 							// creo un nuovo tesdoc AFT
-							if ($exist_artico_tesdoc['tipdoc']=="RDL"){
+							if ($exist_artico_tesdoc && $exist_artico_tesdoc['tipdoc']=="RDL"){
 								$ddt_type="L";
 							} else {
 								$ddt_type="T";
@@ -1234,10 +1234,10 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					$form['rows'][$i]['id_tes'] = $ultimo_id;
 
 					// i righi postati hanno un indice diverso
-					$form['rows'][$i]['codart'] = preg_replace("/[^A-Za-z0-9_]i/",'',$_POST['codart_'.$post_nl]);
-					$form['rows'][$i]['codric'] = intval($_POST['codric_'.$post_nl]);
-					$form['rows'][$i]['warehouse'] = intval($_POST['warehouse_'.$post_nl]);
-					$form['rows'][$i]['codvat'] = intval($_POST['codvat_'.$post_nl]);
+					$form['rows'][$i]['codart'] = preg_replace("/[^A-Za-z0-9_]i/",'',$_POST['codart_'.($post_nl+1)]);
+					$form['rows'][$i]['codric'] = intval($_POST['codric_'.($post_nl+1)]);
+					$form['rows'][$i]['warehouse'] = intval($_POST['warehouse_'.($post_nl+1)]);
+					$form['rows'][$i]['codvat'] = intval($_POST['codvat_'.($post_nl+1)]);
 					$aliiva=$form['rows'][$i]['codvat'];
 					$exist_new_codart=gaz_dbi_get_row($gTables['artico'], "codice", $new_codart);
 					if ($exist_new_codart && substr($v['codart'],0,6)!='Insert') { // il codice esiste lo uso, ma prima controllo se l'ho volutamente cambiato sul form
