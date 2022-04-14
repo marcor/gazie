@@ -761,6 +761,11 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                             gaz_dbi_table_insert('camp_mov_sian', $value_sian);
                           }
                         }
+                      if ( strlen($form['rows'][$i]['codart']) >= 1 ) { // se l'articolo è in magazzino (codart è valorizzato) aggiorno l'anagrafica articolo movimentato con l'ultimo costo in anagrafica articolo, presumibilmente questo
+                        $rlb = $magazz->getLastBuys($form['rows'][$i]['codart']);
+                        $rlbk = key($rlb);
+                        gaz_dbi_put_row( $gTables['artico'], 'codice', $form['rows'][$i]['codart'], 'preacq', round($rlb[$rlbk]['prezzo']*(100-$rlb[$rlbk]['scorig'])/100,8) );
+                      }
                     } else { //altrimenti lo elimino
                       if ($val_old_row['id_mag'] > 0) {  //se c'era stato un movimento di magazzino lo azzero
                         $magazz->uploadMag('DEL', $form['tipdoc'], '', '', '', '', '', '', '', '', '', '', $val_old_row['id_mag'], $admin_aziend['stock_eval_method']);
@@ -813,6 +818,11 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                             rename($tmp_file, DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/lotmag_' . $last_lotmag_id . '.' . $fd['extension']);
                         }
                     }
+                  if ( strlen($form['rows'][$i]['codart']) >= 1 ) { // se l'articolo è in magazzino (codart è valorizzato) aggiorno l'anagrafica articolo movimentato con l'ultimo costo in anagrafica articolo, presumibilmente questo
+                    $rlb = $magazz->getLastBuys($form['rows'][$i]['codart']);
+                    $rlbk=key($rlb);
+                    gaz_dbi_put_row( $gTables['artico'], 'codice', $form['rows'][$i]['codart'], 'preacq', round($rlb[$rlbk]['prezzo']*(100-$rlb[$rlbk]['scorig'])/100,8) );
+                  }
                 }
 //modifico la testata con i nuovi dati...
                 $old_head = gaz_dbi_get_row($gTables['tesdoc'], 'id_tes', $form['id_tes']);
@@ -833,7 +843,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                 foreach (glob( DATA_DIR . 'files/tmp/' . $prefix . '_*.*') as $fn) {
                     unlink($fn);
                 }
-               header('Location: ' . $form['ritorno']);
+                header('Location: ' . $form['ritorno']);
                 exit;
             } else { // e' un'inserimento
               if ($ddtchecked>0){ // se ci sono DDT a riferimento fattura
@@ -966,6 +976,11 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                     $value_sian['id_movmag']=$last_movmag_id;
                     $value_sian['varieta']=$form['rows'][$i]['quality'];
                     gaz_dbi_table_insert('camp_mov_sian', $value_sian);
+                  }
+                  if ( strlen($form['rows'][$i]['codart']) >= 1 ) { // se l'articolo è in magazzino (codart è valorizzato) aggiorno l'anagrafica articolo movimentato con l'ultimo costo in anagrafica articolo, presumibilmente questo
+                    $rlb = $magazz->getLastBuys($form['rows'][$i]['codart']);
+                    $rlbk=key($rlb);
+                    gaz_dbi_put_row( $gTables['artico'], 'codice', $form['rows'][$i]['codart'], 'preacq', round($rlb[$rlbk]['prezzo']*(100-$rlb[$rlbk]['scorig'])/100,8) );
                   }
                 }
 
