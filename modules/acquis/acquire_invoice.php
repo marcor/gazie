@@ -817,9 +817,6 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			}
 			$linekeys=array_keys($form['rows']);
 			$nl=end($linekeys); // trovo l'ultima linea, mi servirà per accodare CassaPrevidenziale, sconti, ecc
-			if ($numdoc==$numddt AND $datdoc==$dataddt){ // se fattura e ddt hanno stesso numero e data modifico l'anomalia
-				$anomalia = "AnomaliaDDT=FAT";
-			}
 			// QUI TRATTERO' gli elementi <DatiCassaPrevidenziale> come righi accodandoli ad essi su rigdoc (tipdoc=4)
 			foreach ($DatiCassaPrevidenziale as $item) { // attraverso per trovare gli elementi cassa previdenziale
 				$nl++;
@@ -1175,15 +1172,11 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					}
 				}
 				// Inizio scrittura DB
-				if ($doc->getElementsByTagName('DatiDDT')->length<1 || $anomalia == "AnomaliaDDT=FAT" || $form['tipdoc']=="AFC"){ // se non ci sono ddt vuol dire che è una fattura immediata AFA
-					//oppure se c'è anomalia è accompagnatoria e la trattiamo sempre come AFA
+				if ($doc->getElementsByTagName('DatiDDT')->length<1 || $form['tipdoc']=="AFC"){ // se non ci sono ddt vuol dire che è una fattura immediata AFA
 					//oppure se è una nota credito AFC non devo considerare eventuali DDT a riferimento
 					$ultimo_id=tesdocInsert($form); // Antonio Germani - creo fattura immediata senza ddt
                     $fn = DATA_DIR . 'files/' . $admin_aziend["codice"] . '/'.$ultimo_id.'.inv';
                     file_put_contents($fn,$form['fattura_elettronica_original_content']);
-				}
-				if ($anomalia == "AnomaliaDDT=FAT"){ // se è da considerare accompagnatoria azzero la presenza del DdT
-					$v['exist_ddt']="";
 				}
 				$ctrl_ddt='';
         usort($form['rows'], function($a, $b) {
@@ -1204,7 +1197,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					} else { // ho il codice articolo del fornitore sul tracciato ma potrei averlo cambiato
 						$new_codart=$prefisso_codici_articoli_fornitore.'_'.substr($v['codice_fornitore'],-11);
 					}
-					if (isset($v['exist_ddt']) AND $anomalia != "AnomaliaDDT=FAT" AND $form['tipdoc']!=="AFC") { // se ci sono DDT collegabili alla FAE e non è una nota credito AFC
+					if (isset($v['exist_ddt']) && $form['tipdoc']!=="AFC") { // se ci sono DDT collegabili alla FAE e non è una nota credito AFC
 						if ($ctrl_ddt!=$v['NumeroDDT']) {
 							// Antonio Germani - controllo se esiste tesdoc di questo ddt usando la funzione existDdT
 							$exist_artico_tesdoc=existDdT($v['NumeroDDT'],$v['DataDDT'],$form['clfoco'],$v['codart']);
@@ -1224,9 +1217,6 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 								$ddt_type="T";
 							}
 							$form['tipdoc']="AFT";$form['ddt_type']=$ddt_type;$form['numdoc']=$v['NumeroDDT'];$form['datemi']=$v['DataDDT'];
-							if ($anomalia=="Anomalia"){
-								$form['status']="DdtAnomalo";
-							}
 							$ultimo_id =tesdocInsert($form); // Antonio Germani - creo fattura differita
 							$fn = DATA_DIR . 'files/' . $admin_aziend["codice"] . '/'.$ultimo_id.'.inv';
 							file_put_contents($fn,$form['fattura_elettronica_original_content']);
