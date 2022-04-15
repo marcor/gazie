@@ -259,7 +259,7 @@ function printPdf(urlPrintDoc){
           echo '<td class="text-center">'. gaz_format_date($r["datemi"]). " &nbsp;</td>";
           echo "<td>" . $r["ragso1"] . "&nbsp;</td>";
           if (intval(preg_replace("/[^0-9]/","",$r['numfat']))>=1){
-            echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" style=\"cursor:pointer;\" ".($pdf_to_modal==0?'href="stampa_docacq.php?id_tes=' . $r["id_tes"] .'" target="_blank"':"onclick=\"printPdf('stampa_docacq.php?id_tes=" . $r["id_tes"] ."')\"")."><i class=\"glyphicon glyphicon-print\" title=\"Stampa fattura n. " . $r["numfat"] . " PDF\"></i> fatt. n. " . $r["numfat"] . "</a></td>";
+            echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" style=\"cursor:pointer;\" ".($pdf_to_modal==0?'href="stampa_docacq.php?id_tes=' . $r["id_tes"] .'&template=FatturaAcquisto" target="_blank"':"onclick=\"printPdf('stampa_docacq.php?id_tes=" . $r["id_tes"] ."')\"")."><i class=\"glyphicon glyphicon-print\" title=\"Stampa fattura n. " . $r["numfat"] . " PDF\"></i> fatt. n. " . $r["numfat"] . "</a></td>";
           } else {
             echo "<td>" . $r["status"] . " &nbsp;</td>";
           }
