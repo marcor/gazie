@@ -798,9 +798,9 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
           $form['rows'][$nl]['exist_ddt']=isset($acc_DataDDT[$form['numddt_'.($nl-1)]]['Exist'])?$acc_DataDDT[$form['numddt_'.($nl-1)]]['Exist']:false;
           if (empty($anomalia) && !$form['rows'][$nl]['NumeroDDT']){
             $anomalia = 'Anomalia fattura con DdT senza riferimenti sui righi, non è possibile la conferma fino a quando non vengono selezionati tutti';
-            $resetDdT=true;
           }
           $first=false;
+          $resetDdT=true;
 				}
         // ricontrollo per segnalare anomalia nel caso in cui non tutti i ddt siano stati utilizzati dai righi
         $ddtused=[];
@@ -1541,13 +1541,13 @@ if ($toDo=='insert' || $toDo=='update' ) {
             if ($ctrl_ddt!=$v['NumeroDDT']) { // salto DdT
               $exist_ddt='';
               if ($v['exist_ddt']){ // ho un ddt d'acquisto già inserito
-                $exist_ddt='<span class="warning">- questo DdT &egrave; gi&agrave; stato inserito <a class="btn btn-xs btn-success" href="admin_docacq.php?id_tes='. $v['exist_ddt']['id_tes'] . '&Update"><i class="glyphicon glyphicon-edit"></i>&nbsp;'.$v['exist_ddt']['id_tes'].'</a></span>';
+                $exist_ddt='<span class="warning"> gi&agrave; inserito in data '.gaz_format_date($v['exist_ddt']['datreg']).' <a class="btn btn-xs btn-success" href="admin_docacq.php?id_tes='. $v['exist_ddt']['id_tes'] . '&Update"><i class="glyphicon glyphicon-edit"></i>&nbsp;'.$v['exist_ddt']['id_tes'].'</a></span>';
                 $tipddt=$v['exist_ddt']['tipdoc'];
               } else {
                 $tipddt="Ddt";
               }
               $ctrl_ddt=$v['NumeroDDT'];
-              $rowshead[$k]='<td colspan=14><b> da '.$tipddt.' n.'.$v['NumeroDDT'].' del '.gaz_format_date($v['DataDDT']).' '.$exist_ddt.'</b></td>';
+              $rowshead[$k]='<td colspan=14><b>da DdT n.'.$v['NumeroDDT'].' del '.gaz_format_date($v['DataDDT']).' '.$exist_ddt.'</b></td>';
             }
             echo '<input type="hidden" name="'.'numddt_'.$k.'" value="'.$form['numddt_'.$k].'" />';
           } else { // qui segnalo le anomalie e faccio le richieste di intervento dell'utente
