@@ -1200,7 +1200,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					if (isset($v['exist_ddt']) && $form['tipdoc']!=="AFC") { // se ci sono DDT collegabili alla FAE e non è una nota credito AFC
 						if ($ctrl_ddt!=$v['NumeroDDT']) {
 							// Antonio Germani - controllo se esiste tesdoc di questo ddt usando la funzione existDdT
-							$exist_artico_tesdoc=existDdT($v['NumeroDDT'],$v['DataDDT'],$form['clfoco'],$v['codart']);
+							$exist_artico_tesdoc=existDdT($v['NumeroDDT'],$v['DataDDT'],$form['clfoco']);
 							if ($exist_artico_tesdoc){// se esiste cancello tesdoc e ne cancello tutti i rigdoc e i relativi movmag
 								$rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = '{$exist_artico_tesdoc['id_tes']}'","id_tes desc");
 
@@ -1248,7 +1248,9 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 						}
 						$v['catmer'] = 1; // di default utilizzo la prima categoria merceologica, sarebbe da farla selezionare all'operatore...
 						$form['rows'][$i]['good_or_service']=0;
-						if (isset($v['codart'])){
+            // controllo se ho scelto di creare un nuovo articolo su diversi righi
+						$exist_artico=gaz_dbi_get_row($gTables['artico'], "codice", $new_codart);
+						if ( isset($v['codart']) && !$exist_artico ){
 							switch ($v['codart']) {
 								case 'Insert_New': // inserisco il nuovo articolo in gaz_XXXartico senza lotti o matricola
 								$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'catmer'=>$v['catmer'],'codice_fornitore'=>$v['codice_fornitore'],'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'uniacq'=>$v['unimis'],'aliiva'=>$aliiva);
@@ -1269,7 +1271,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 							}
 						}
 					}
-					// alla fine se ho un codice articolo e il tipo rigo è normale aggiorno l'articolo con il nuovo prezzo d'acquisto e con l'ultimo fornitore
+					// alla fine se ho un codice articolo e il tipo rigo è normale aggiorno l'ultimo costo con il nuovo prezzo d'acquisto e con l'ultimo fornitore
 					if (strlen($form['rows'][$i]['codart'])>2&&$form['rows'][$i]['tiprig']==0) {
 						tableUpdate('artico',array('clfoco','preacq'),$form['rows'][$i]['codart'],array('preacq'=>CalcolaImportoRigo(1,$form['rows'][$i]['prelis'],array($form['rows'][$i]['sconto'])),'clfoco'=>$form['clfoco']));
 					}
@@ -1303,36 +1305,6 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					expdocInsert($ved);
 				}
 
-/* Antonio DV: tolgo questa parte di codice in quanto non deve esistere più la dicitura "Anomalia" ma si costringerà l'utente ad indicare il DDT di riferimento per ogni rigo
-
-				if ($anomalia=="AnomaliaExistDdt" AND isset($form['clfoco'])){ // se c'è una anomalia, cioè la FAE ha ddt senza i riferimenti ai prodotti, ma i ddt sono già presenti in GAzie
-					$DatiDDT=$doc->getElementsByTagName('DatiDDT');
-					foreach ($DatiDDT as $valDatiDDT) { // Ciclo nuovamente i DDt della FAE
-
-						$dataddt=$valDatiDDT->getElementsByTagName('DataDDT')->item(0)->nodeValue;
-						$numddt=preg_replace ('/\D/', '',$valDatiDDT->getElementsByTagName('NumeroDDT')->item(0)->nodeValue);
-						$exist=existDdT($numddt,$dataddt,$form['clfoco']);// controllo se esiste il tesdoc
-						if ($exist){ // se esiste, modifico il tesdoc per trasformarlo in ddt connesso a fae
-							$updt=array();
-							if ($exist['tipdoc']=="RDL"){
-								$ddt_type="L";
-							} else {
-								$ddt_type="T";
-							}
-							if ($exist['protoc']==0){ // se non ha già un protocollo ne ricavo il primo disponibile
-								$updt['protoc']=getLastProtocol($form['tipdoc'],substr($form['datreg'],-4),$form['seziva'])['last_protoc'];
-							}
-							$updt['tipdoc']="AFT";$updt['ddt_type']=$ddt_type;$updt['numfat']=$form['numfat'];$updt['datfat']=$form['datfat'];
-							$updt['fattura_elettronica_zip_package']=$form['fattura_elettronica_zip_package'];
-							$updt['fattura_elettronica_original_name']=$form['fattura_elettronica_original_name'];
-                            $fn = DATA_DIR . 'files/' . $admin_aziend["codice"] . '/'.$exist['id_tes'].'.inv';
-                            file_put_contents($fn,$form['fattura_elettronica_original_content']);
-							//$updt['fattura_elettronica_original_content']=$form['fattura_elettronica_original_content'];
-							tesdocUpdate(array('id_tes', $exist['id_tes']), $updt);
-						}
-					}
-				}
-*/
 				if (in_array($send_fae_zip_package['val'],$sync_mods)){
 					$where = array();
 					$where[]="title";
@@ -1354,8 +1326,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					}
 
 				}
-
-				header('Location: report_docacq.php?sezione='.$form['seziva']);
+        header('Location: report_docacq.php?sezione='.$form['seziva']);
 				exit;
 			} else { // non ho confermato, sono alla prima entrata dopo l'upload del file
 				if (!isset($form['pagame'])) {
