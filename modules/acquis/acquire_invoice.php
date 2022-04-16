@@ -629,6 +629,9 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				}
 				$post_nl = $nl-1;
 				if (empty($_POST['Submit_file']) && !isset($_POST['Select_doc'])) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati dall'utente
+					if (isset($_POST['resetDdT_'.$post_nl])){
+            $_POST['numddt_'.$post_nl]='';
+					}
 
 					$form['codart_'.$post_nl] = preg_replace("/[^A-Za-z0-9_]i/", '',(isset($_POST['codart_'.$post_nl]))?substr($_POST['codart_'.$post_nl],0,15):'');
 					if ($_POST['hidden_req']=='change_codart_'.$post_nl){
@@ -1547,7 +1550,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
 				// creo l'array da passare alla funzione per la creazione della tabella responsive
 				$resprow[$k] = array(
 					array('head' => $script_transl["nrow"], 'class' => '',
-						'value' => $k+1),
+						'value' => ($k+1)),
 					array('head' => $script_transl["codart"], 'class' => '',
 						'value' => $v['codice_fornitore']),
 					array('head' => 'Articolo', 'class' => '',
@@ -1575,7 +1578,9 @@ if ($toDo=='insert' || $toDo=='update' ) {
 					array('head' => 'Ritenuta', 'class' => 'text-center numeric',
 						'value' => $v['ritenuta'], 'type' => '')
 				);
-
+        if ($resetDdT) {
+          array_unshift($resprow[$k], ['head' =>'DdT', 'class' => '',	'value' => '<input type="submit" value="" name="resetDdT_'.$k.'" title="annulla la scelta del DdT di riferimento per questo rigo" class="bg-danger" style="background-image: url(../../library/images/link_break.png); background-size:100% 100%; width:100%; height:100%; " >']);
+        }
 			}
 			$gForm->gazResponsiveTable($resprow, 'gaz-responsive-table', $rowshead);
 	?>
