@@ -1498,7 +1498,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
 			foreach ($form['rows'] as $k => $v) {
 				$k--;
 				if (isset($v['NumeroDDT'])) { // ho i riferimenti ai DdT
-          if ($v['NumeroDDT']) { // ho i riferimenti ai DdT
+          if ( $v['NumeroDDT'] && empty($anomalia) ) { // ho i riferimenti ai DdT
             if ($ctrl_ddt!=$v['NumeroDDT']) { // salto DdT
               $exist_ddt='';
               if ($v['exist_ddt']){ // ho un ddt d'acquisto già inserito
