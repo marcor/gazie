@@ -55,8 +55,8 @@ $sortable_headers = array  (
 $tablejoin = $gTables['artico']. " LEFT JOIN " . $gTables['catmer'] . " ON " . $gTables['artico'] . ".catmer = " . $gTables['catmer'] . ".codice";
 
 $ts = new TableSorter(
-    $tablejoin, 
-    $passo, 
+    $tablejoin,
+    $passo,
     ['last_modified'=>'desc'],
     ['asset' => 0]);
 ?>
@@ -74,8 +74,8 @@ $(function() {
 			show: "blind",
 			hide: "explode",
 			buttons: {
-				delete:{ 
-					text:'Elimina', 
+				delete:{
+					text:'Elimina',
 					'class':'btn btn-danger delete-button',
 					click:function (event, ui) {
 					$.ajax({
@@ -93,8 +93,8 @@ $(function() {
 				}
 			}
 		});
-		$("#dialog_delete" ).dialog( "open" );  
-	});	
+		$("#dialog_delete" ).dialog( "open" );
+	});
 	$( "#suggest_codice_artico" ).autocomplete({
 		source: "../../modules/root/search.php?opt=suggest_codice_artico",
 		minLength: 3,
@@ -108,31 +108,31 @@ $(function() {
 			$(this).closest("form").submit();
 		}
 	});
-    
+
 });
-function getorders(artico) {	
+function getorders(artico) {
 	$("#idartico").append("articolo: "+artico);
-  $("#dialog_orders").attr("title","Ordini da clienti aperti");  
+  $("#dialog_orders").attr("title","Ordini da clienti aperti");
 	$.get("ajax_request.php?opt=orders",
 		{term: artico},
 		function (data) {
-			var j=0;			
+			var j=0;
 				$.each(data, function(i, value) {
-				j++;	
+				j++;
 				$(".list_orders").append("<tr><td><a>"+value.descri+"</a>&nbsp; </td><td align='right'>&nbsp;  <button> Ordine n."+ value.numdoc +" del "+ value.datemi + " </button></td></tr>");
 				$(".list_orders").click(function () {
 					window.open('../vendit/admin_broven.php?Update&id_tes='+ value.id_tes);
-				});				
+				});
 				});
 				if (j==0){
 					$(".list_orders").append('<tr><td class="bg-danger">********* Non ci sono ordini *********</td></tr>');
-				}					
-		}, "json"  
-	);		  
-	$( function() {		
+				}
+		}, "json"
+	);
+	$( function() {
     var dialog
-	,	
-	dialog = $("#dialog_orders").dialog({		
+	,
+	dialog = $("#dialog_orders").dialog({
 		modal: true,
 		show: "blind",
 		hide: "explode",
@@ -140,8 +140,8 @@ function getorders(artico) {
 		buttons: {
 			Chiudi: function() {
 				$(this).dialog('close');
-			}			
-		},		 
+			}
+		},
 		close: function(){
 				$("p#idartico").empty();
 				$("div.list_orders tr").remove();
@@ -150,38 +150,38 @@ function getorders(artico) {
 	});
 	});
 };
-function getgroup(artico) {	
-	$("#idgroup").append("Gruppo");	
-    $("#dialog_group").attr("title","Gruppo articoli per varianti ID "+artico);  
+function getgroup(artico) {
+	$("#idgroup").append("Gruppo");
+    $("#dialog_group").attr("title","Gruppo articoli per varianti ID "+artico);
 	$.get("ajax_request.php?opt=group",
 		{term: artico},
 		function (data) {
-            var j=0;			
+            var j=0;
 			$.each(data, function(i, value) {
                 j++;
-                if (j==1) {	
+                if (j==1) {
                     $(".list_group").append("<tr><td>"+value.descri+"&nbsp;&nbsp;</td></tr><tr><td>&nbsp;</td></tr>");
                     $("#idvar").append("composto dalle seguenti varianti:");
                     $(".list_variants").append("<tr><td>Codice&nbsp;</td><td>Descrizione</td></tr>");
                 } else {
                     $(".list_variants").append("<tr><td> "+(j-1)+") "+value.codice+"&nbsp;</td><td>"+value.descri+"</td></tr>");
-                }				
+                }
 			});
 			if (j==0){
 				$(".list_orders").append('<tr><td class="bg-danger">********* Non ci sono varianti in questo gruppo articoli*********</td></tr>');
-			}					
-		}, "json"  
-	);		  
-	$( function() {		
-        var dialog,	
-        dialog = $("#dialog_group").dialog({		
+			}
+		}, "json"
+	);
+	$( function() {
+        var dialog,
+        dialog = $("#dialog_group").dialog({
             modal: true,
             show: "blind",
             hide: "explode",
             width: "auto",
             buttons: {
                 Modifica:{
-                    text:'Modifica il gruppo', 
+                    text:'Modifica il gruppo',
 					'class':'btn btn-warning',
 					click:function (event, ui) {
                         window.open('../magazz/admin_group.php?Update&id_artico_group='+ artico);
@@ -189,8 +189,8 @@ function getgroup(artico) {
                 },
                 Chiudi: function() {
                     $(this).dialog('close');
-                }			
-            },		 
+                }
+            },
             close: function(){
 				$("p#idgroup").empty();
 				$("p#idvar").empty();
@@ -201,29 +201,29 @@ function getgroup(artico) {
         });
 	});
 };
-function getlastbuys(artico) {	
+function getlastbuys(artico) {
 	$("#idartico").append("articolo: "+artico);
   $("#dialog_orders").attr("title","Ultimi acquisti da fornitori");
 	$.get("ajax_request.php?opt=lastbuys",
 		{term: artico},
 		function (data) {
-			var j=0;			
+			var j=0;
 				$.each(data, function(i, value) {
-				j++;	
+				j++;
 				$(".list_orders").append("<tr><td> "+value.supplier+"&nbsp; </td><td> &nbsp;<button>"+ value.desdoc + " </button> &nbsp;</td><td> &nbsp;"+value.desvalue+" </td></tr>");
 				$(".list_orders").click(function () {
 					window.open('../acquis/admin_docacq.php?Update&id_tes='+ value.docref);
-				});				
+				});
 				});
 				if (j==0){
 					$(".list_orders").append('<tr><td class="bg-danger">********* Non ci sono acquisti *********</td></tr>');
-				}					
-		}, "json"  
-	);		  
-	$( function() {		
+				}
+		}, "json"
+	);
+	$( function() {
     var dialog
-	,	
-	dialog = $("#dialog_orders").dialog({		
+	,
+	dialog = $("#dialog_orders").dialog({
 		modal: true,
 		show: "blind",
 		hide: "explode",
@@ -231,8 +231,8 @@ function getlastbuys(artico) {
 		buttons: {
 			Chiudi: function() {
 				$(this).dialog('close');
-			}			
-		},		 
+			}
+		},
 		close: function(){
 				$("p#idartico").empty();
 				$("div.list_orders tr").remove();
@@ -259,13 +259,13 @@ $ts->output_navbar();
         <p>Descrizione</p>
         <p class="ui-state-highlight" id="iddescri"></p>
 	</div>
-	<div style="display:none; min-width:150px; " id="dialog_orders" title="">		
-		<p class="ui-state-highlight" id="idartico"></p>        
+	<div style="display:none; min-width:150px; " id="dialog_orders" title="">
+		<p class="ui-state-highlight" id="idartico"></p>
 		<div class="list_orders">
 		</div>
 	</div>
-	<div style="display:none; min-width:350px; " id="dialog_group" title="">		
-		<p class="ui-state-highlight" id="idgroup"></p>        
+	<div style="display:none; min-width:350px; " id="dialog_group" title="">
+		<p class="ui-state-highlight" id="idgroup"></p>
 		<div class="list_group">
 		</div>
 		<p class="ui-state-highlight" id="idvar"></p>
@@ -307,6 +307,9 @@ echo '<tr>';
 $ts->output_headers();
 echo '</tr>';
 while ($r = gaz_dbi_fetch_array($result)) {
+  // se l'articolo è stato movimentato non consento l'eliminazione
+  $rs_artmov = gaz_dbi_query("SELECT SUM(artmov) AS artmov FROM ( SELECT COUNT(*) AS artmov FROM ".$gTables['movmag']." WHERE artico = '".$r['codice']."' UNION ALL SELECT COUNT(*) AS artmov FROM ".$gTables['rigdoc']." WHERE codart = '".$r['codice']."' UNION ALL SELECT COUNT(*) AS artmov FROM ".$gTables['rigbro']." WHERE codart = '".$r['codice']."' ) AS artmov");
+  $artmov = gaz_dbi_fetch_array($rs_artmov)[0];
 	// da configurazione azienda
 	$show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
 	$tipo_composti = gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti');
@@ -344,10 +347,10 @@ while ($r = gaz_dbi_fetch_array($result)) {
     if (!$iva) $iva=array('aliquo'=>0);
 	switch ($r['web_public']) {// 1=attivo su web; 2=attivo e prestabilito; 3=attivo e pubblicato in home; 4=attivo, in home e prestabilito; 5=disattivato su web
 		case "0":
-			$ecomGlobe="";			
+			$ecomGlobe="";
 			break;
 		case "1":
-			$ecomGlobe="class='glyphicon glyphicon-globe' style='color:rgba(26, 209, 44);' title='Attivato su e-commerce'";		
+			$ecomGlobe="class='glyphicon glyphicon-globe' style='color:rgba(26, 209, 44);' title='Attivato su e-commerce'";
 			break;
 		case "2":
 			$ecomGlobe="class='glyphicon glyphicon-globe' style='color:rgba(255, 203, 71);' title='Attivato e prestabilito su e-commerce'";
@@ -360,7 +363,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 			break;
 		case "5":
 			$ecomGlobe="class='glyphicon glyphicon-globe' title='Disattivato su e-commerce'";
-			break;	
+			break;
 	}
     echo "<tr>\n";
     echo '<td>
@@ -402,12 +405,16 @@ while ($r = gaz_dbi_fetch_array($result)) {
 		$lor=(intval($r['lot_or_serial'])==1)?'Lot':'Ser';
 	?>
 	<a class="btn <?php echo $classcol; ?> btn-xs" href="javascript:;" onclick="window.open('<?php echo "../../modules/magazz/mostra_lotti.php?codice=".$r['codice'];?>', 'titolo', 'menubar=no, toolbar=no, width=800, height=400, left=80%, top=80%, resizable, status, scrollbars=1, location');"><?php echo $lor; ?> <i class="glyphicon glyphicon-tag"></i></a>
-	<?php 
-    }	
+	<?php
+    }
     echo "</td>\n";
     echo '<td class="text-center"><a class="btn btn-xs btn-default" href="clone_artico.php?codice='.$r["codice"].'"> <i class="glyphicon glyphicon-export"></i></a>';
 	echo "</td>\n";
-    echo '<td class="text-center"><a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="'. $r['codice'].'" artico="'. $r['descri'].'"> <i class="glyphicon glyphicon-remove"></i></a>';
+    echo '<td class="text-center"><a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="'. $r['codice'].'" artico="'. $r['descri'].'"';
+    if ( $artmov >= 1 ){
+     echo ' disabled title="Articolo non è eliminabile perché movimentato "';
+    }
+    echo '> <i class="glyphicon glyphicon-remove"></i></a>';
 	echo "</td>\n";
     echo "</tr>\n";
 }

@@ -1200,21 +1200,24 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					} else { // ho il codice articolo del fornitore sul tracciato ma potrei averlo cambiato
 						$new_codart=$prefisso_codici_articoli_fornitore.'_'.substr($v['codice_fornitore'],-11);
 					}
+          $movmag_datreg=$form['datreg'];
 					if (isset($v['exist_ddt']) && $form['tipdoc']!=="AFC") { // se ci sono DDT collegabili alla FAE e non è una nota credito AFC
 						if ($ctrl_ddt!=$v['NumeroDDT']) {
 							// Antonio Germani - controllo se esiste tesdoc di questo ddt usando la funzione existDdT
-							$exist_artico_tesdoc=existDdT($v['NumeroDDT'],$v['DataDDT'],$form['clfoco']);
-							if ($exist_artico_tesdoc){// se esiste cancello tesdoc e ne cancello tutti i rigdoc e i relativi movmag
-								$rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = '{$exist_artico_tesdoc['id_tes']}'","id_tes desc");
-
-								gaz_dbi_del_row($gTables['tesdoc'], "id_tes", $exist_artico_tesdoc['id_tes']);
+							$exist_tesdoc=existDdT($v['NumeroDDT'],$v['DataDDT'],$form['clfoco']);
+              // registro il DdT in data di emissione, se già presente conservo quella dei movimenti di magazzino che andrò ad eliminare (vedi sotto)
+              $movmag_datreg=$v['DataDDT'];
+							if ($exist_tesdoc){// se esiste cancello tesdoc e ne cancello tutti i rigdoc e i relativi movmag, ma mi mantengo le date di registrazione
+								$rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = '{$exist_tesdoc['id_tes']}'","id_tes desc");
+								gaz_dbi_del_row($gTables['tesdoc'], "id_tes", $exist_tesdoc['id_tes']);
 								while ($a_row = gaz_dbi_fetch_array($rs_righidel)) {
+                    $movmag_datreg = gaz_dbi_get_row($gTables['movmag'], "id_mov", $a_row['id_mag'])['datreg'];
 									  gaz_dbi_del_row($gTables['rigdoc'], "id_rig", $a_row['id_rig']);
 									  gaz_dbi_del_row($gTables['movmag'], "id_mov", $a_row['id_mag']);
 								}
 							}
 							// creo un nuovo tesdoc AFT
-							if ($exist_artico_tesdoc && $exist_artico_tesdoc['tipdoc']=="RDL"){
+							if ($exist_tesdoc && $exist_tesdoc['tipdoc']=="RDL"){
 								$ddt_type="L";
 							} else {
 								$ddt_type="T";
@@ -1284,12 +1287,12 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					if ($form['rows'][$i]['good_or_service']==0 && strlen($form['rows'][$i]['codart'])>0 && $form['tipdoc']!=="AFC"){ // se l'articolo prevede di movimentare il magazzino e non è una nota credito
 						// Antonio Germani - creo movimento di magazzino sempre perché, se c'erano, sono stati cancellati
 						if (isset($v['NumeroDDT']) && $v['NumeroDDT']>0){ // se c'è un ddt
-							$rowmag=array("caumag"=>$form['caumag'],"type_mov"=>"0","operat"=>"1","datreg"=>$form['datreg'],"tipdoc"=>"ADT",
+							$rowmag=array("caumag"=>$form['caumag'],"type_mov"=>"0","operat"=>"1","datreg"=>$movmag_datreg,"tipdoc"=>"ADT",
 							"desdoc"=>"D.d.t. di acquisto n.".$v['NumeroDDT']."/".$form['seziva']." prot. ".$form['protoc']."/".$form['seziva'],
 							"datdoc"=>$form['datemi'],"clfoco"=>$form['clfoco'],"id_rif"=>$id_rif,"artico"=>$form['rows'][$i]['codart'],"id_warehouse"=>$form['rows'][$i]['warehouse'],"quanti"=>$form['rows'][$i]['quanti'],
 							"prezzo"=>$form['rows'][$i]['prelis'],"scorig"=>$form['rows'][$i]['sconto'],'synccommerce_classname'=>$admin_aziend['synccommerce_classname']);
 						} else { // se non c'è DDT
-							$rowmag=array("caumag"=>$form['caumag'],"type_mov"=>"0","operat"=>"1","datreg"=>$form['datreg'],"tipdoc"=>"ADT",
+							$rowmag=array("caumag"=>$form['caumag'],"type_mov"=>"0","operat"=>"1","datreg"=>$movmag_datreg,"tipdoc"=>"ADT",
 							"desdoc"=>"Fattura di acquisto n.".$form['numfat']."/".$form['seziva']." prot. ".$form['protoc']."/".$form['seziva'],
 							"datdoc"=>$form['datfat'],"clfoco"=>$form['clfoco'],"id_rif"=>$id_rif,"artico"=>$form['rows'][$i]['codart'],"id_warehouse"=>$form['rows'][$i]['warehouse'],"quanti"=>$form['rows'][$i]['quanti'],
 							"prezzo"=>$form['rows'][$i]['prelis'],"scorig"=>$form['rows'][$i]['sconto'],'synccommerce_classname'=>$admin_aziend['synccommerce_classname']);
