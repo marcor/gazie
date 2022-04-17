@@ -1722,7 +1722,7 @@ class GAzieForm {
         echo "<input type=\"checkbox\" name=\"$name\" title=\"$title\" value=\"$name\" $selected $refresh>\n";
     }
 
-    function selectNumber($name, $val, $msg = false, $min = 0, $max = 1, $class = 'FacetSelect', $val_hiddenReq = '', $style = '', $echo=false, $exclude=false) {
+    function selectNumber($name, $val, $msg = false, $min = 0, $max = 1, $class = 'FacetSelect', $val_hiddenReq = '', $style = '', $echo=false, $exclude="") {
       global $script_transl;
       $acc="";
       $refresh = '';
