@@ -103,7 +103,7 @@ if (isset($_POST['conferma'])) { // se confermato
             }
 				} else {// se non è italiano imposto il codice univoco con x e se non c'è imposto il codice fiscale con il codice cliente
 					$lang="0";
-					$_POST['fe_cod_univoco'.$ord]="xxxxxxx";
+					$_POST['fe_cod_univoco'.$ord]="XXXXXXX";
 					if (strlen($_POST['codfis'.$ord])==0){
 						$_POST['codfis'.$ord] = $_POST['ref_ecommerce_id_customer'.$ord]."privato";// riempio il campo codice fiscale con un numero di almeno 7 cifre
 					}

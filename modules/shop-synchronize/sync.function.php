@@ -860,7 +860,7 @@ class shopsynchronizegazSynchro {
                 }
 							} else { // se non è italiano imposto il codice univoco con x e il codice fiscale con il codice cliente e-commerce
 								$lang="0";
-								$order->CustomerCodeFattEl = "xxxxxxx";
+								$order->CustomerCodeFattEl = "XXXXXXX";
 								if (strlen($order->CustomerFiscalCode)==0){
 									$order->CustomerFiscalCode =  $order->CustomerCode."privato";// riempio il campo codice fiscale con un numero di almeno 7 cifre
 								}
