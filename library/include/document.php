@@ -542,21 +542,22 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
         'OrdineWeb' => 'ordine_web',
         'FatturaSemplice' => 'fattura_semplice',
         'FatturaAllegata' => 'fattura_allegata',
-		'Scontrino' => 'scontrino',
+        'Scontrino' => 'scontrino',
         'OrdineFornitore' => 'ordine_fornitore',
         'OrdineAcquistoProduzioni' => 'ordine_acquisto_produzioni',
         'PreventivoFornitore' => 'preventivo_fornitore',
         'InformativaPrivacy' => 'informativa_privacy',
         'RichiestaPecSdi' => 'richiesta_pecsdi',
-		'NominaResponsabile'=>'nomina_responsabile',
-		'NominaResponsabileEsterno'=>'nomina_responsabile_esterno',
-		'NominaIncaricatoInterno'=>'nomina_incaricato_interno',
-		'RegolamentoPrivacy'=>'privacy_regol',
+        'NominaResponsabile'=>'nomina_responsabile',
+        'NominaResponsabileEsterno'=>'nomina_responsabile_esterno',
+        'NominaIncaricatoInterno'=>'nomina_incaricato_interno',
+        'RegolamentoPrivacy'=>'privacy_regol',
         'DDT' => 'ddt',
         'Etichette' => 'etichette',
         'CMR' => 'cmr',
-		'Ticket'=>'ticket',
-		'Maintenance'=>'maintenance'
+        'Ticket'=>'ticket',
+        'Maintenance'=>'maintenance',
+        'BookingSummary' => 'booking_summary'
     );
 	// Antonio Germani - seleziono quale template utilizzare per le ricevute fiscali in base alla configurazione azienda
 	if ($templateName=='Received'){
@@ -638,11 +639,12 @@ function createMultiDocument($results, $templateName, $gTables, $dest = false, $
         'OrdineWeb' => 'ordine_web',
         'FatturaSemplice' => 'fattura_semplice',
         'FatturaAllegata' => 'fattura_allegata',
-		'Scontrino' => 'scontrino',
+        'Scontrino' => 'scontrino',
         'OrdineFornitore' => 'ordine_fornitore',
         'PreventivoFornitore' => 'preventivo_fornitore',
         'InformativaPrivacy' => 'informativa_privacy',
-        'DDT' => 'ddt'
+        'DDT' => 'ddt',
+        'BookingSummary' => 'booking_summary'
     );
     $config = new Config;
     $configTemplate = new configTemplate;
