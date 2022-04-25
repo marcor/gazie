@@ -1272,6 +1272,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $next_row = 0;
     while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
         $articolo = gaz_dbi_get_row($gTables['artico'], "codice", $rigo['codart']);
+
         if ($rigo['id_body_text'] > 0) { //se ho un rigo testo
             $text = gaz_dbi_get_row($gTables['body_text'], "id_body", $rigo['id_body_text']);
             $form["row_$next_row"] = $text['body_text'];
@@ -1280,10 +1281,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$next_row]['tiprig'] = $rigo['tiprig'];
         $form['rows'][$next_row]['id_doc'] = $rigo['id_doc'];
         $form['rows'][$next_row]['codart'] = $rigo['codart'];
-		$form['rows'][$next_row]['good_or_service'] = $articolo['good_or_service'];
+        $form['rows'][$next_row]['good_or_service'] = (isset($articolo['good_or_service']))?$articolo['good_or_service']:1;
         $form['rows'][$next_row]['pervat'] = $rigo['pervat'];
         $iva_row = gaz_dbi_get_row($gTables['aliiva'], 'codice', $rigo['codvat']);
-        $form['rows'][$next_row]['tipiva'] = $iva_row['tipiva'];
+        $form['rows'][$next_row]['tipiva'] = (isset($iva_row['tipiva']))?$iva_row['tipiva']:'';
         $form['rows'][$next_row]['ritenuta'] = $rigo['ritenuta'];
         $form['rows'][$next_row]['unimis'] = $rigo['unimis'];
         $form['rows'][$next_row]['prelis'] = number_format($rigo['prelis'], $admin_aziend['decimal_price'], '.', '');
@@ -1293,14 +1294,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$next_row]['codric'] = $rigo['codric'];
         $form['rows'][$next_row]['provvigione'] = $rigo['provvigione'];
         $form['rows'][$next_row]['id_mag'] = $rigo['id_mag'];
-        $form['rows'][$next_row]['annota'] = $articolo['annota'];
+        $form['rows'][$next_row]['annota'] = (isset($articolo['annota']))?$articolo['annota']:'';
         $mv = $upd_mm->getStockValue(false, $rigo['codart'], "", $admin_aziend['stock_eval_method']);
         $magval = array_pop($mv);
         $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
 
-        $form['rows'][$next_row]['scorta'] = $articolo['scorta'];
+        $form['rows'][$next_row]['scorta'] = (isset($articolo['scorta']))?$articolo['scorta']:'';
         $form['rows'][$next_row]['quamag'] = $magval['q_g'];
-        $form['rows'][$next_row]['pesosp'] = $articolo['peso_specifico'];
+        $form['rows'][$next_row]['pesosp'] = (isset($articolo['peso_specifico']))?$articolo['peso_specifico']:'';
         $form['rows'][$next_row]['extdoc'] = '';
         $form['rows'][$next_row]['status'] = "UPDATE";
 		// recupero il filename dal filesystem e lo sposto sul tmp
@@ -1752,10 +1753,10 @@ foreach ($form['rows'] as $k => $v) {
     ;
 
     echo "<input type=\"hidden\" value=\"" . $v['codart'] . "\" name=\"rows[$k][codart]\">\n";
-	echo "<input type=\"hidden\" value=\"" . $v['good_or_service'] . "\" name=\"rows[$k][good_or_service]\">\n";
+    echo "<input type=\"hidden\" value=\"" . ((isset($v['good_or_service']))?$v['good_or_service']:1) . "\" name=\"rows[$k][good_or_service]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['status'] . "\" name=\"rows[$k][status]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['tiprig'] . "\" name=\"rows[$k][tiprig]\">\n";
-    echo "<input type=\"hidden\" value=\"" . $v['id_doc'] . "\" name=\"rows[$k][id_doc]\">\n";
+    echo "<input type=\"hidden\" value=\"" . ((isset($v['id_doc']))?$v['id_doc']:0) . "\" name=\"rows[$k][id_doc]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['codvat'] . "\" name=\"rows[$k][codvat]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['pervat'] . "\" name=\"rows[$k][pervat]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['tipiva'] . "\" name=\"rows[$k][tipiva]\">\n";
@@ -1766,7 +1767,7 @@ foreach ($form['rows'] as $k => $v) {
     echo "<input type=\"hidden\" value=\"" . $v['scorta'] . "\" name=\"rows[$k][scorta]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['quamag'] . "\" name=\"rows[$k][quamag]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['pesosp'] . "\" name=\"rows[$k][pesosp]\">\n";
-    echo "<input type=\"hidden\" value=\"" . $v['extdoc'] . "\" name=\"rows[$k][extdoc]\">\n";
+    echo "<input type=\"hidden\" value=\"" . ((isset($v['extdoc']))?$v['extdoc']:'') . "\" name=\"rows[$k][extdoc]\">\n";
     //stampo i rows in modo diverso a secondo del tipo
     echo "<tr>";
     switch ($v['tiprig']) {
