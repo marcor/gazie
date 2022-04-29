@@ -149,6 +149,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
        }
     }
     if ($msg == "") {// nessun errore
+
       if ($toDo == 'update') { // e' una modifica
          $old_rows = gaz_dbi_dyn_query("*", $gTables['provvigioni'], "id_agente = ".$form['id_agente'],"id_provvigione asc");
          $i=0;
@@ -165,6 +166,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
          //qualora i nuovi righi fossero di pi� dei vecchi inserisco l'eccedenza
          for ($i = $i; $i <= $count; $i++) {
              $form['righi'][$i]['id_agente'] = $form['id_agente'];
+
              provvigioniInsert($form['righi'][$i]);
          }
          //modifico la testata con i nuovi dati...
@@ -207,6 +209,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     // ...e della testata
     $form['id_agente'] = $agenti['id_agente'];
     $form['seach_clfoco'] = substr($fornitore['ragso1'],0,10);
+    $form['search']['clfoco'] = '';
     $form['clfoco'] = $agenti['id_fornitore'];
     $form['base_percent'] = $agenti['base_percent'];
     $next_row = 0;
@@ -334,7 +337,7 @@ echo "</td><td class=\"FacetColumnTD\">$script_transl[9] : <input type=\"text\" 
 /** ENRICO FEDELE */
 /* glyph-icon */
 echo '  </td>
-		<td class="FacetColumnTD" align="right"> 
+		<td class="FacetColumnTD" align="right">
 			<button type="submit" class="btn btn-default btn-sm" name="in_submit" title="'.$script_transl['submit'].$script_transl['thisrow'].'" tabindex="6"><i class="glyphicon glyphicon-ok"></i></button>
 		</td>
 	  </tr>';
@@ -354,9 +357,9 @@ foreach ($form['righi'] as $key => $value) {
                   <input type=\"hidden\" value=\"\" name=\"righi[$key][cod_articolo]\" />\n
                   <input class=\"FacetDataTD\" type=\"submit\" name=\"upd_row[$key]\" value=\"".$value['cod_catmer']."\" />
                   ".$catmer['descri']."</td><td></td>\n";*/
-				echo '<td></td><td>
+            echo '<td></td><td>
 						<input type="hidden" value="'.$value['cod_catmer'].'" name="righi['.$key.'][cod_catmer]">
-						<input type="hidden" value="" name="righi['.$key.'][cod_articolo]" />						  
+						<input type="hidden" value="'.$value['cod_articolo'].'" name="righi['.$key.'][cod_articolo]" />
 						<button name="upd_row['.$key.']" class="btn btn-xs btn-success btn-block" type="submit">
 							<i class="glyphicon glyphicon-refresh"></i>&nbsp;'.$catmer['descri'].'
 						</button>
@@ -364,12 +367,12 @@ foreach ($form['righi'] as $key => $value) {
 					  ';
         } else {
             $artico = gaz_dbi_get_row($gTables['artico'],'codice',$value['cod_articolo']);
-				echo '<td>
+            echo '<td>
                     <input type="text" value="'.$value['cod_articolo']." - ".$artico["descri"].'" name="art'.$key.'" class="FacetInput" disabled>
                         </td>
                         <td>
 						<input type="hidden" value="'.$value['cod_articolo'].'" name="righi['.$key.'][cod_articolo]">
-						<input type="hidden" value="" name="righi['.$key.'][cod_catmer]" />						  
+						<input type="hidden" value="" name="righi['.$key.'][cod_catmer]" />
 						<button name="upd_row['.$key.']" class="btn btn-xs btn-success btn-block" type="submit">
 							<i class="glyphicon glyphicon-refresh"></i>&nbsp;'.$catmer['descri'].'
 						</button>
@@ -381,7 +384,7 @@ foreach ($form['righi'] as $key => $value) {
                   ".$artico['descri']."</td>\n";*/
         }
         echo "<td><input type=\"text\" name=\"righi[$key][percentuale]\" value=\"".$value['percentuale']."\" maxlength=\"5\"  class=\"FacetInput\"></td>\n";
-        
+
 		//echo "<td align=\"right\"><input type=\"image\" name=\"del[$key]\" src=\"../../library/images/xbut.gif\" title=\"".$script_transl['delete'].$script_transl['thisrow']."!\" /></td></tr>\n";
 
 		/** ENRICO FEDELE */
