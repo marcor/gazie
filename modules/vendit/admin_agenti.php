@@ -97,7 +97,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
        }
     }
    if (isset($_POST['in_submit'])) {
-   if ((!empty($form['in_cod_articolo']) || $form['in_cod_catmer'] > 0) && $form['in_percentuale'] > 0) {
+   if ((!empty($form['in_cod_articolo']) || $form['in_cod_catmer'] > 0) && $form['in_percentuale'] >= 0) {
     if (substr($form['in_status'],0,6) == "UPDROW"){ //se � un rigo da modificare
          $old_key = intval(substr($form['in_status'],6));
          $form['righi'][$old_key]['id_provvigione'] = $form['id_provvigione'];
@@ -121,9 +121,9 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     // fine reinizializzo rigo input
     $form['cosear'] = '';
     $next_row++;
-   } else {  // dati insufficenti per aggiungere un rigo
+  } else {  // dati insufficenti per aggiungere un rigo
        $msg .= "12+";
-   }
+  }
   }
   // Se viene inviata la richiesta di conferma totale ...
   if (isset($_POST['ins'])) {
@@ -357,7 +357,7 @@ foreach ($form['righi'] as $key => $value) {
                   <input type=\"hidden\" value=\"\" name=\"righi[$key][cod_articolo]\" />\n
                   <input class=\"FacetDataTD\" type=\"submit\" name=\"upd_row[$key]\" value=\"".$value['cod_catmer']."\" />
                   ".$catmer['descri']."</td><td></td>\n";*/
-            echo '<td></td><td>
+            echo '<td>Categoria:</td><td>
 						<input type="hidden" value="'.$value['cod_catmer'].'" name="righi['.$key.'][cod_catmer]">
 						<input type="hidden" value="'.$value['cod_articolo'].'" name="righi['.$key.'][cod_articolo]" />
 						<button name="upd_row['.$key.']" class="btn btn-xs btn-success btn-block" type="submit">
@@ -367,14 +367,12 @@ foreach ($form['righi'] as $key => $value) {
 					  ';
         } else {
             $artico = gaz_dbi_get_row($gTables['artico'],'codice',$value['cod_articolo']);
-            echo '<td>
-                    <input type="text" value="'.$value['cod_articolo']." - ".$artico["descri"].'" name="art'.$key.'" class="FacetInput" disabled>
-                        </td>
-                        <td>
+            echo '<td>Articolo:</td>
+            <td>
 						<input type="hidden" value="'.$value['cod_articolo'].'" name="righi['.$key.'][cod_articolo]">
 						<input type="hidden" value="" name="righi['.$key.'][cod_catmer]" />
 						<button name="upd_row['.$key.']" class="btn btn-xs btn-success btn-block" type="submit">
-							<i class="glyphicon glyphicon-refresh"></i>&nbsp;'.$catmer['descri'].'
+							<i class="glyphicon glyphicon-refresh"></i>&nbsp;'.$value['cod_articolo']." - ".$artico["descri"].'
 						</button>
 					  </td>';   //FP: da formattare meglio
 					  /*
