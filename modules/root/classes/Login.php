@@ -186,7 +186,7 @@ class Login
 		// if database connection opened
 		if ($this->databaseConnection()) {
 			// database query, getting all the info of the selected user
-			$query_user = $this->db_connection->prepare('SELECT *, SHA2(CONVERT(AES_DECRYPT(UNHEX(aes_key), UNHEX(SHA2(user_password_hash, 512))) USING utf8), 512) AS aes_key_pass FROM ' . DB_TABLE_PREFIX . '_admin WHERE user_name = :user_name');
+			$query_user = $this->db_connection->prepare('SELECT *, SHA2(CONVERT(AES_DECRYPT(UNHEX(aes_key), UNHEX(SHA2(user_password_hash, 512))) USING utf8), 512) AS aes_key_pass FROM ' . DB_TABLE_PREFIX . '_admin WHERE user_name = :user_name COLLATE utf8_bin');
 			$query_user->bindValue(':user_name', $user_name, PDO::PARAM_STR);
 			$query_user->execute();
 			// get result row (as an object)
@@ -253,8 +253,8 @@ class Login
 					$result_row = $sth->fetchObject();
 
 					if (isset($result_row->user_id)) {
-						// INIZIO ---- ripresa del valore del tema (g6,g7,lte) 
-						$rt = $this->db_connection->prepare('SELECT var_value FROM ' . DB_TABLE_PREFIX . '_admin_config WHERE var_name = \'theme\' AND adminid = :user_name');
+						// INIZIO ---- ripresa del valore del tema (g6,g7,lte)
+						$rt = $this->db_connection->prepare('SELECT var_value FROM ' . DB_TABLE_PREFIX . '_admin_config WHERE var_name = \'theme\' AND adminid = :user_name COLLATE utf8_bin');
 						$rt->bindValue(':user_name', $result_row->user_name, PDO::PARAM_STR);
 						$rt->execute();
 						// get result row (as an object)
@@ -262,12 +262,12 @@ class Login
 						$_SESSION['theme'] = $rt_row->var_value;
 						// FINE ---- ripresa del valore del tema (g6,g7,lte)
 
-						/*  se sul file config/config/gconfig.php scelgo di comunicare ad un hosting d'appoggio 
+						/*  se sul file config/config/gconfig.php scelgo di comunicare ad un hosting d'appoggio
 							il mio eventuale nuovo IP DINAMICO del router ADSL faccio un ping ad esso così altri utenti
 							che sono a conoscenza del meccanismo possono richiederlo e successivamente essere ridiretti
 							qui tramite HTTPS */
 						if (SET_DYNAMIC_IP != '') {
-							@ini_set('default_socket_timeout',3); 
+							@ini_set('default_socket_timeout',3);
 							@file_get_contents(SET_DYNAMIC_IP);
 						}
 
@@ -341,8 +341,8 @@ class Login
 
 			// if this user not exists
 			if (! isset($result_row->user_id)) {
-				// se la password risulta essere sbagliata ed ho un il vecchio nome della colonna "Password" propongo di aggiornare il database 
-				$query_us = $this->db_connection->prepare('SELECT * FROM ' . DB_TABLE_PREFIX . '_admin WHERE user_name = :user_name');
+				// se la password risulta essere sbagliata ed ho un il vecchio nome della colonna "Password" propongo di aggiornare il database
+				$query_us = $this->db_connection->prepare('SELECT * FROM ' . DB_TABLE_PREFIX . '_admin WHERE user_name = :user_name COLLATE utf8_bin');
 				$query_us->bindValue(':user_name', trim($user_name), PDO::PARAM_STR);
 				$query_us->execute();
 				// get result row (as an object)
@@ -369,8 +369,8 @@ class Login
 			} else if ($result_row->user_active != 1) {
 				$this->errors[] = MESSAGE_ACCOUNT_NOT_ACTIVATED;
 			} else {
-				// INIZIO ---- ripresa del valore del tema (g6,g7,lte) 
-				$rt = $this->db_connection->prepare('SELECT var_value FROM ' . DB_TABLE_PREFIX . '_admin_config WHERE var_name = \'theme\' AND adminid = :user_name');
+				// INIZIO ---- ripresa del valore del tema (g6,g7,lte)
+				$rt = $this->db_connection->prepare('SELECT var_value FROM ' . DB_TABLE_PREFIX . '_admin_config WHERE var_name = \'theme\' AND adminid = :user_name COLLATE utf8_bin');
 				$rt->bindValue(':user_name', $result_row->user_name, PDO::PARAM_STR);
 				$rt->execute();
 				// get result row (as an object)
@@ -378,12 +378,12 @@ class Login
 				$_SESSION['theme'] = $rt_row->var_value;
 				// FINE ---- ripresa del valore del tema (g6,g7,lte)
 
-				/*  se sul file config/config/gconfig.php scelgo di comunicare ad un hosting d'appoggio 
+				/*  se sul file config/config/gconfig.php scelgo di comunicare ad un hosting d'appoggio
 				il mio eventuale nuovo IP DINAMICO del router ADSL faccio un ping ad esso così altri utenti
 				che sono a conoscenza del meccanismo possono richiederlo e successivamente essere ridiretti
 				qui tramite HTTPS */
 				if (SET_DYNAMIC_IP != '') {
-					@ini_set('default_socket_timeout',3); 
+					@ini_set('default_socket_timeout',3);
 					@file_get_contents(SET_DYNAMIC_IP);
 				}
 
