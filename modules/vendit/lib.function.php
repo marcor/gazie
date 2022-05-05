@@ -229,6 +229,9 @@ class venditForm extends GAzieForm {
 
 	function getFAEunpacked($include_fe_PA = true) { // FUNZIONE CHE CONTROLLA LO STATO DELLE FATTURE DA IMPACCHETTARE PER INVIARE ALLO SDI
 		global $gTables, $admin_aziend;
+    // controllo se impacchettare le fatture derivanti da corrispettivi non anonimi
+    $fae_ticket_pack = gaz_dbi_get_row($gTables['company_config'], 'var', 'fae_ticket_pack');
+    $packVCO = ($fae_ticket_pack['val']==0)?"":"OR (tipdoc = 'VCO' AND numfat > 0)";
 		$calc = new Compute;
 		$from = $gTables['tesdoc'] . ' AS tesdoc
 				 LEFT JOIN ' . $gTables['pagame'] . ' AS pay ON tesdoc.pagame=pay.codice
@@ -238,7 +241,7 @@ class venditForm extends GAzieForm {
 				 LEFT JOIN ' . $gTables['fae_flux'] . ' AS flux ON tesdoc.id_tes = flux.id_tes_ref ';
 		$where = "(fattura_elettronica_zip_package IS NULL OR fattura_elettronica_zip_package = '')
 				  AND (flux_status = '' OR flux_status = 'DI' OR flux_status IS NULL)
-				  AND (tipdoc LIKE 'F__'  OR (tipdoc = 'VCO' AND numfat > 0) OR (tipdoc LIKE 'X__') )";
+				  AND (tipdoc LIKE 'F__'  ".$packVCO." OR (tipdoc LIKE 'X__') )";
 		if (!$include_fe_PA) {
 			$where.= " AND LENGTH(fe_cod_univoco)<>6";
 		}
