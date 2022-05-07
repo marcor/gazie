@@ -1844,7 +1844,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
   $form['in_prelis'] = 0;
   $form['in_sconto'] = '#';
   $form['in_quanti'] = 0;
-  $form['in_codvat'] = 0;
+  $form['in_codvat'] = $cliente['aliiva'];
   $form['in_codric'] = $admin_aziend['impven'];
   $form['in_id_mag'] = 0;
 	// adesso metto uno ma dovrò proporre il magazzino di riferimento dell'utente
