@@ -1195,7 +1195,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_sconto'] = '#';
     /* fine modifica FP */
     $form['in_quanti'] = 0;
-    $form['in_codvat'] = 0;
+    $form['in_codvat'] = $cliente['aliiva'];
     $form['in_codric'] = substr($admin_aziend['impven'], 0, 3);
     $form['in_id_mag'] = 0;
     $form['in_annota'] = "";
