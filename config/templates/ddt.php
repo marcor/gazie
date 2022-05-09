@@ -127,12 +127,12 @@ class DDT extends Template_con_scheda
 						$h=16;
 						$x = $this->GetX();
 						$y = $this->GetY();
-						$this->Cell(35,$h,$rigo['codart'],1,1,'L', 0, '', 0,false, '', 'T');					
+						$this->Cell(35,$h,$rigo['codart'],1,1,'L', 0, '', 0,false, '', 'T');
 						$this->write1DBarcode($rigo['barcode'], 'EAN13', '', $y+4, '', 11, 0.33, $style, 'M');
 						$this->SetXY($x+35,$y);
 					} else {
 						$this->Cell(35,$h,$rigo['codart'],1,0,'L');
-					}                   
+					}
                     $this->Cell(82,$h,$rigo['descri'],1,0,'L',0,'',1);
                     $tipodoc = substr($this->tesdoc["tipdoc"], 0, 1);
                     $this->Cell(10,$h,$rigo['unimis'],1,0,'L');
@@ -174,6 +174,10 @@ class DDT extends Template_con_scheda
                     $this->Cell(35,6,'','L');
                     $this->Cell(117, 6, "Codice Commessa/Convenzione: " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
                     $this->Cell(35,6,'','R',1);
+                } elseif ($rigo['tiprig'] == 17) {
+                    $this->Cell(35,6,'','L');
+                    $this->Cell(117, 6, "Riferimento Amministrazione: " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
+                    $this->Cell(35,6,'','R',1);
                 } elseif ($rigo['tiprig'] == 21) {
                     $this->Cell(35,6,'','L');
                     $this->Cell(117, 6, "Causale: " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
@@ -207,7 +211,7 @@ class DDT extends Template_con_scheda
                         $this->Cell(25,6);
                         $this->Cell(10,6,'','R',1);
                     }
-                }               
+                }
        }
     }
 
@@ -253,10 +257,10 @@ class DDT extends Template_con_scheda
         }
 		//Antonio Germani - Se richiesto nella scheda cliente stampo il totale iva compresa
         if ($this->docVars->client['stapre'] == 'T') {
-            $this->Cell(109,5,'Pagamento - Banca','LTR',0,'C',1);          
+            $this->Cell(109,5,'Pagamento - Banca','LTR',0,'C',1);
             $this->Cell(78,5,'TOTALE A PAGARE (segue fattura)','LTR',1,'C',1);
             $this->Cell(109,6,$this->pagame['descri'].' '.$this->banapp['descri'],'LBR',0,'C',0,'',1);
-            
+
             // calcolo il totale che il cliente dovrà pagare per questo documento
             // utile per esempio su consegna merce con pagamento alla consegna o comunque per ricevere il pagamento anticipatamente
             $this->docVars->setTotal();
@@ -271,13 +275,13 @@ class DDT extends Template_con_scheda
             $totriport = $this->docVars->totriport;
             $ritenuta = $this->docVars->tot_ritenute;
             $taxstamp = $this->docVars->taxstamp;
-            $totale = $totimpfat + $totivafat + $impbol + $taxstamp;  
-            
-            $this->SetFont('helvetica', 'B', 12);        
+            $totale = $totimpfat + $totivafat + $impbol + $taxstamp;
+
+            $this->SetFont('helvetica', 'B', 12);
             $this->Cell(78,6, "€ ". gaz_format_number($totale),'LBR',1,'C',0,'',1);
             $this->SetFont('helvetica','',9);
         } else {
-		
+
             $this->Cell(187,5,'Pagamento - Banca','LTR',1,'C',1);
             $this->Cell(187,5,$this->pagame['descri'].' '.$this->banapp['descri'],'LBR',1,'C',0,'',1);
         }

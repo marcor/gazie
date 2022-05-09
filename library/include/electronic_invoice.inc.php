@@ -358,7 +358,9 @@ class invoiceXMLvars {
             $this->DatiVari[1][$id_rig_ref[$rigo['codric']]][$weight_tiprig[$rigo['tiprig']]]=$rigo['descri'];
           break;
         }
-      } elseif ($rigo['tiprig'] == 21) {  // Causale
+      } elseif ($rigo['tiprig'] == 17) {  // 2.2.1.15 RiferimentoAmministrazione
+        $this->RiferimentoAmministrazione=$rigo['descri'];
+      }elseif ($rigo['tiprig'] == 21) {  // Causale
         $this->Causale[]=$rigo['descri'];
       } elseif ($rigo['tiprig'] == 25) {  // DatiSAL
         $this->DatiSAL[]=$rigo['descri']; //faccio il push sull'array
@@ -494,12 +496,14 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 				$XMLvars->FormatoTrasmissione='FPA';
 			}
       // inizializzo la variabile per Causale 2.1.1.11 e se il regime fiscale è RF02 (contribuenti minimi) o RF19 (regime forfettario) allora indico le relative diciture
-      $XMLvars->Causale=array();
+      $XMLvars->Causale=[];
       if ($XMLvars->regime_fiscale=='RF02') {
         $XMLvars->Causale[]= "Operazione effettuata ai sensi dell'art.1 comma 100 Legge 244/2007. Compenso non assoggettato a ritenuta d'acconto ai sensi dell'art.27 del DL 98 del 06.07.2011";
       } elseif ($XMLvars->regime_fiscale=='RF19') {
         $XMLvars->Causale[]= "Operazione effettuata ai sensi dell'art.1 commi da 54 a 89 Legge 190/2014 e successive modifiche. Compenso non assoggettato a ritenuta d'acconto ai sensi dall'art.1 comma 67 Legge n.190/2014";
       }
+      // inizializzo 2.2.1.15 RiferimentoAmministrazione
+      $XMLvars->RiferimentoAmministrazione=false;
 			$xpath = new DOMXPath($domDoc);
 		}
     // controllo se ho un ufficio diverso da quello di base
@@ -893,6 +897,10 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
             $el1 = $domDoc->createElement("Natura", $rigo['natura']);
             $el->appendChild($el1);
           }
+					if ( $XMLvars->RiferimentoAmministrazione ) {
+            $el1 = $domDoc->createElement("RiferimentoAmministrazione", $XMLvars->RiferimentoAmministrazione);
+            $el->appendChild($el1);
+					}
 					if ( !empty($XMLvars->DatiIntento) && $rigo['natura']=='N3.5' ) {
 						$el1 = $domDoc->createElement("AltriDatiGestionali", '');
             $el->appendChild($el1);

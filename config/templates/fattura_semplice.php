@@ -202,6 +202,11 @@ class FatturaSemplice extends Template {
                     $this->Cell(80, 5, "Codice Commessa/Convenzione: " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
                     $this->Cell(81, 5, '', 'R', 1);
                     break;
+                case "17":
+                    $this->Cell(25, 5, '', 'L');
+                    $this->Cell(80, 5, "Riferimento Amministrazione: " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
+                    $this->Cell(81, 5, '', 'R', 1);
+                    break;
                 case "21":
                     $this->Cell(25, 5, '', 'L');
                     $this->Cell(80, 5, "Causale: " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
