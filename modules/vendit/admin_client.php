@@ -461,7 +461,7 @@ $gForm->variousSelect('sexper', $script_transl['sexper_value'], $form['sexper'])
             <div class="col-md-12">
                 <div class="form-group">
                     <label for="indspe" class="col-sm-4 control-label"><?php echo $script_transl['indspe']; ?> *</label>
-                    <input class="col-sm-8" type="text" value="<?php echo $form['indspe']; ?>" name="indspe" maxlength="50"/>
+                    <input class="col-sm-8" type="text" value="<?php echo $form['indspe']; ?>" name="indspe" maxlength="60"/>
                 </div>
             </div>
         </div><!-- chiude row  -->

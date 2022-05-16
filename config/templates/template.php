@@ -197,7 +197,13 @@ class Template extends TCPDI {
             }
             $this->SetFont('helvetica', '', 10);
             $this->Cell(115);
-            $this->Cell(75, 5, $this->cliente3, 0, 1, 'L', 0, '', 1);
+            if (strlen($this->cliente3) > 50) {
+                $this->SetFont('helvetica', '', 7);
+                $this->Cell(75, 5, $this->cliente3, 0, 1, 'L', 0, '', 1);
+                $this->SetFont('helvetica', '', 10);
+            } else {
+                $this->Cell(75, 5, $this->cliente3, 0, 1, 'L', 0, '', 1);
+            }
             $this->Cell(115);
             $this->Cell(75, 5, $this->cliente4, 0, 1, 'L', 0, '', 1);
 /* QUESTO NON SO CHI LO HA FATTO MA MI VEDO COSTRETTO A COMMENTARLO PERCHE' VA AD ACCAVALLARSI CON IL CORPO
