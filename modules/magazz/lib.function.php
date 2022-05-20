@@ -865,6 +865,8 @@ class magazzForm extends GAzieForm {
     }
 
     function getLastBuys($codart, $rettable=false) {
+      $acc=[];
+      if (strlen(trim($codart)) < 1 ) return $acc;
       global $gTables, $admin_aziend;
       // ritorna un array con gli acquisti aggregati per fornitore
       // trovo i fornitori
@@ -872,7 +874,6 @@ class magazzForm extends GAzieForm {
       WHERE mm1.artico = '".$codart."' AND mm1.clfoco LIKE '". $admin_aziend['masfor'] ."%'
       ORDER BY mm1.datdoc DESC");
       $table='';
-      $acc=[];
       while ($r = gaz_dbi_fetch_array($rs)) {
         if(!isset($acc[$r['clfoco']])){
           $acc[$r['clfoco']]=$r;
