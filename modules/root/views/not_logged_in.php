@@ -2,7 +2,7 @@
 
 <form method="post" action="login_user.php" name="loginform">
     <div class="container">
-        <div id="loginbox" style="margin-top:5%;" class="mainbox mainbox col-sm-offset-4 col-sm-4">
+        <div id="loginbox" style="margin-top:5%;" class="mainbox animated fadeInDown col-sm-offset-4 col-sm-4">
             <div class="panel panel-info" >
                 <div class="panel-heading panel-gazie">
                     <div class="panel-title">

@@ -7,7 +7,7 @@ body {
     background-attachment : fixed;
     /* impostare qua la dimensione dei caratteri*/
     font-size: 14px;
-	padding-bottom: 70px;	
+	padding-bottom: 70px;
 }
 
 input, select {
@@ -49,7 +49,7 @@ table {
 }
 
 table.Tlarge {
-    border : solid 1px;    
+    border : solid 1px;
 }
 .table {
     margin-bottom: 5px;
@@ -513,8 +513,8 @@ input[type="text"]:focus, textarea:focus, select:focus {
 .navbar-right{margin-right: 0;}
 
 
-.dash-tabs > li.active > a, 
-.dash-tabs > li.active > a:hover, 
+.dash-tabs > li.active > a,
+.dash-tabs > li.active > a:hover,
 .dash-tabs > li.active > a:focus {
     cursor: default;
     border: 0;
@@ -662,15 +662,15 @@ label {
     min-height: 0px;
 }
 
-.form-horizontal .form-group .form-control, 
+.form-horizontal .form-group .form-control,
 .form-horizontal .form-group div select,
-.form-horizontal .form-group select { 
+.form-horizontal .form-group select {
     margin: 2px 0px 0px 0px;
     padding: 2px 2px 2px 2px;
 }
 
 .form-horizontal .form-group .text-left,
-.form-horizontal .form-group label { 
+.form-horizontal .form-group label {
     margin: 3px 0px 0px 0px;
     padding: 2px 2px 2px 2px;
     font-size: 80%;
@@ -743,11 +743,11 @@ label {
     padding: 2px 6px;
 }
 
-.table > tbody > tr > td, 
-.table > tbody > tr > th, 
-.table > tfoot > tr > td, 
-.table > tfoot > tr > th, 
-.table > thead > tr > td, 
+.table > tbody > tr > td,
+.table > tbody > tr > th,
+.table > tfoot > tr > td,
+.table > tfoot > tr > th,
+.table > thead > tr > td,
 .table > thead > tr > th{
     padding: 1px;
 }
@@ -767,10 +767,10 @@ label {
     min-height: 260px;
 }
 #fornitori span {
-    display:none; 
+    display:none;
 }
 #clienti span {
-    display:none; 
+    display:none;
 }
 
 @media only screen and (max-width: 991px) {
@@ -851,8 +851,8 @@ label {
 ************** JQUERY UI **************
 ***************************************/
 
-.ui-widget { 
-    font-size: 12px; 
+.ui-widget {
+    font-size: 12px;
 }
 .ui-state-default,
 .ui-widget-content .ui-state-default,
@@ -875,12 +875,45 @@ label {
 }
 .tooltip-inner {
     min-width: 150px;
-    max-width: 100%; 
+    max-width: 100%;
 }
 .tab-content > .tab-pane > div.row:nth-of-type(2n+1) {
 	background-color: #f9f9f9;
 }
 form table.GazFormDeleteTable {
-  margin: auto; 
+  margin: auto;
   width: 400px;
+}
+.animated {
+  -webkit-animation-duration: 2s;
+  animation-duration: 2s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+}
+@-webkit-keyframes fadeInDown {
+  0% {
+    opacity: 0;
+    -webkit-transform: translateY(-100px);
+  }
+  100% {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+  }
+}
+@keyframes fadeInDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-100px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.fadeInDown {
+  -webkit-animation-name: fadeInDown;
+  animation-name: fadeInDown;
+}
+#loginbox div.panel.panel-info {
+  box-shadow: 0 30px 60px 0 rgba(0,0,0,.3);
 }
