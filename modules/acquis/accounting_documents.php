@@ -333,8 +333,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['year_ini'] = substr($extreme['ini']['date'], 0, 4);
     $form['year_fin'] = substr($extreme['fin']['date'], 0, 4);
     $form['hidden_req'] = '';
-	$uts_this_date =time();
-	$rs = getDocumentsAccounts($form['type'], $form['vat_section'], strftime("%Y%m%d", $uts_this_date), $form['profin']);
+    $rs = getDocumentsAccounts($form['type'], $form['vat_section'], date('Ymd'), $form['profin']);
 } else {    // accessi successivi
   $form['type'] = substr($_POST['type'], 0, 2);
   $form['vat_section'] = intval($_POST['vat_section']);
@@ -375,8 +374,8 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['year_fin'] = substr($extreme['fin']['date'], 0, 4);
   }
   $form['hidden_req'] = '';
-  $uts_this_date = mktime(0, 0, 0, $form['this_date_M'], $form['this_date_D'], $form['this_date_Y']);
-	$rs = getDocumentsAccounts($form['type'], $form['vat_section'], strftime("%Y%m%d", $uts_this_date), $form['profin']);
+  $uts = new DateTime('@'.mktime(12,0,0,$form['this_date_M'],$form['this_date_D'],$form['this_date_Y']));
+	$rs = getDocumentsAccounts($form['type'], $form['vat_section'], $uts->format('Ymd'), $form['profin']);
   if (isset($_POST['gosubmit']) && count($msg['err'])==0) {   //confermo la contabilizzazione
     if (!empty($rs) && count($rs)>0) {
         require("lang." . $admin_aziend['lang'] . ".php");

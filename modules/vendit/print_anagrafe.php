@@ -27,8 +27,8 @@ require("../../library/include/datlib.inc.php");
 
 $admin_aziend = checkAdmin();
 
-
-$luogo_data = $admin_aziend['citspe'] . ", lì " . ucwords(strftime("%d %B %Y", mktime(0, 0, 0, date("m"), date("d"), date("Y"))));
+$gazTimeFormatter->setPattern('dd MMMM YYYY');
+$luogo_data = $admin_aziend['citspe'] . ", lì " . ucwords($gazTimeFormatter->format($gazTime));
 
 $form['id_agente'] = (isset($_GET['id_agente']) ? intval($_GET['id_agente']) : '');
 $form['clifor'] = (isset($_GET['clifor']) ? substr($_GET['clifor'],-1) : '');
@@ -68,10 +68,10 @@ $config = new Config;
 $pdf->AddPage();
 $pdf->SetFont('helvetica','',9);
 
-$rs = gaz_dbi_dyn_query("*, CONCAT(ragso1,SPACE(1),ragso2) AS ragioneSociale, CONCAT (indspe, SPACE(1), citspe, ' (',prospe,')') AS sede, CONCAT(telefo, SPACE(1), cell, SPACE(1), fax) AS telefono, e_mail, pariva, codfis, pagame.descri AS payment", $gTables['clfoco'] . " clfoco 
-LEFT JOIN " . $gTables['pagame'] . " pagame ON clfoco.codpag = pagame.codice 
-LEFT JOIN " . $gTables['anagra'] . " anagra ON anagra.id = clfoco.id_anagra 
-LEFT JOIN " . $gTables['provinces'] . " provinces ON anagra.prospe = provinces.abbreviation 
+$rs = gaz_dbi_dyn_query("*, CONCAT(ragso1,SPACE(1),ragso2) AS ragioneSociale, CONCAT (indspe, SPACE(1), citspe, ' (',prospe,')') AS sede, CONCAT(telefo, SPACE(1), cell, SPACE(1), fax) AS telefono, e_mail, pariva, codfis, pagame.descri AS payment", $gTables['clfoco'] . " clfoco
+LEFT JOIN " . $gTables['pagame'] . " pagame ON clfoco.codpag = pagame.codice
+LEFT JOIN " . $gTables['anagra'] . " anagra ON anagra.id = clfoco.id_anagra
+LEFT JOIN " . $gTables['provinces'] . " provinces ON anagra.prospe = provinces.abbreviation
 LEFT JOIN " . $gTables['regions'] . " regions ON provinces.id_region = regions.id", $where, $orderby);
 
 $pdf->SetFillColor(240, 240, 240);

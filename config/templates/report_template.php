@@ -29,6 +29,7 @@ require('../../library/tcpdf/tcpdf.php');
 class Report_template extends TCPDF {
 
     function setVars($admin_aziend, $altri_dati = '') {
+        global $gazTimeFormatter,$gazTime;
         $this->logo = $admin_aziend['image'];
         if (!empty($admin_aziend['web_url'])) {
             $this->link = $admin_aziend['web_url'];
@@ -41,9 +42,10 @@ class Report_template extends TCPDF {
         $this->intesta3 = 'Tel.' . $admin_aziend['telefo'] . ' C.F.:' . $admin_aziend['codfis'] . ' P.I.:' . $admin_aziend['pariva'];
         $this->intesta4 = $admin_aziend['e_mail'];
         if (isset($altri_dati['luogo_data'])) { // se viene passata il valore di luogo_data
-            $this->luogo = $altri_dati['luogo_data'];
+          $this->luogo = $altri_dati['luogo_data'];
         } else {  // altrimenti uso quello di default
-            $this->luogo = $admin_aziend['citspe'] . ", lì " . date("d ") . ucfirst(strftime("%B", mktime(0, 0, 0, date("m")))) . date(" Y");
+          $gazTimeFormatter->setPattern('dd MMMM YYYY');
+          $this->luogo = $admin_aziend['citspe'] . ", lì " . $gazTimeFormatter->format($gazTime);
         }
         $this->SetCreator('GAzie - ' . $this->intesta1);
         if (isset($altri_dati['title'])) { // se viene passato il titolo

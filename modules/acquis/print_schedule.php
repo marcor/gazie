@@ -35,19 +35,10 @@ if (!isset($_GET['orderby'])) {
     exit;
 }
 require("../../config/templates/report_template.php");
-/* ENRICO FEDELE */
-/* strftime effettivamente formatta sulla base della lingua del server, ma se l'italiano non è installato, comunque la data sarà in inglese
-  stessa cosa dicasi per il fuso orario (sul mio NAS non so perchè se stampo l'ora, mi rendo conto che il fuso orario è quello cinese!!!
-  mi chiedo perchè è stato usato mktime invete di lasciare che sia il sistema a prendere data/ora correnti con time(), forse per tentare di
-  bypassare il problema del fuso orario?
-  Per avere sicuramente data e ora nella lingua impostata dall'utente, occorrerebbe predisporre degli apposity array di localizzazione
-  $date = array("month" => array(1=> "Gennaio", 2 => "Febbraio", ...., 12 => "Dicembre"),
-  "day"	 => array(1=> "Lunedì",  2 => "Martedì", ...., 7 => "Domenica"));
-  da richiamare poi con $date["month"][date("n")]
-  $date["day"][date("N")]
- */
-$luogo_data = $admin_aziend['citspe'] . ", lì " . ucwords(strftime("%d %B %Y", mktime(0, 0, 0, date("m"), date("d"), date("Y"))));
-/* ENRICO FEDELE */
+
+$gazTimeFormatter->setPattern('dd MMMM YYYY');
+$luogo_data = $admin_aziend['citspe'] . ", lì " . ucwords($gazTimeFormatter->format($gazTime));
+
 $item_head = array('top' => array(array('lun' => 80, 'nam' => 'Descrizione'),
         array('lun' => 25, 'nam' => 'Numero Conto')
     )
@@ -132,15 +123,15 @@ if (sizeof($scdl->Entries) > 0) {
             $border_paymov = 1;
             $scdl->getStatus($paymov);
             $r = $scdl->Status;
-            if ($r['sta'] == 1) { // CHIUSA   
+            if ($r['sta'] == 1) { // CHIUSA
                 $pdf->SetFillColor(230, 255, 230);
-            } elseif ($r['sta'] == 2) { // ESPOSTA  
+            } elseif ($r['sta'] == 2) { // ESPOSTA
                 $pdf->SetFillColor(255, 245, 185);
-            } elseif ($r['sta'] == 3) { // SCADUTA  
+            } elseif ($r['sta'] == 3) { // SCADUTA
                 $pdf->SetFillColor(255, 160, 160);
-            } elseif ($r['sta'] == 9) { // PAGAMENTO ANTICIPATO 
+            } elseif ($r['sta'] == 9) { // PAGAMENTO ANTICIPATO
                 $pdf->SetFillColor(190, 190, 255);
-            } else { // APERTA  
+            } else { // APERTA
                 $pdf->SetFillColor(230, 255, 230);
             }
         }

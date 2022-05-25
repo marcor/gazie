@@ -213,10 +213,10 @@ function confirFae(link){
          });
 	$("#dialog_fae").dialog( "open" );
 }
-$(function() {	
+$(function() {
 	$("#dialog_packet").dialog({ autoOpen: false });
 	$('.dialog_packet').click(function() {
-		$("p#idcodice").html("<a title='scarica il pacchetto' class='btn btn-xs btn-warning ' href='fae_acq_packaging.php?name=" + $(this).attr('ref') + "'><i class='glyphicon glyphicon-compressed'></i>"+ $(this).attr('ref') +"</a>");		
+		$("p#idcodice").html("<a title='scarica il pacchetto' class='btn btn-xs btn-warning ' href='fae_acq_packaging.php?name=" + $(this).attr('ref') + "'><i class='glyphicon glyphicon-compressed'></i>"+ $(this).attr('ref') +"</a>");
 		$("#dialog_fae_email").html("<p class='text-center'><a href='fae_acq_packaging.php?name=" + $(this).attr('ref') + "&email=email' class='btn btn-warning'><b><i class='glyphicon glyphicon-send'></i> Invia il pacchetto </i> </b></a></p><p></p>");
 		var id = $(this).attr('ref');
 		$( "#dialog_packet" ).dialog({
@@ -239,7 +239,7 @@ $(function() {
 							window.location.replace("./report_docacq.php");
 						}
 					});
-				}},				
+				}},
 				"Esci": function() {
 					$(this).dialog("close");
 				}
@@ -277,10 +277,10 @@ $(function() {
         <p class="ui-state-highlight" id="iddescri"></p>
 	</div>
 	<div style="display:none" id="dialog_packet" title="Pacchetto di fatture di acquisto">
-        <p><b>Scarica il pacchetto:</b></p>        
-        <p class="ui-state-highlight" id="idcodice"></p> 
-		<p><b>Invia il pacchetto</b></p>        
-        <p class="ui-state-highlight" id="dialog_fae_email"></p> 
+        <p><b>Scarica il pacchetto:</b></p>
+        <p class="ui-state-highlight" id="idcodice"></p>
+		<p><b>Invia il pacchetto</b></p>
+        <p class="ui-state-highlight" id="dialog_fae_email"></p>
 	</div>
     <div align="center" class="FacetFormHeaderFont">
         <?php echo $script_transl['title']; ?>
@@ -498,7 +498,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
   } else {
     echo "<a class=\"btn btn-xs btn-default btn-cont\" href=\"accounting_documents.php?type=AF&last=" . $row["protoc"] . "\">Contabilizza</a>";
   }
-  if (strlen($row['fattura_elettronica_zip_package'])>4){// se è stato creato un pacchetto .zip
+  if ($row['fattura_elettronica_zip_package'] != '' && strlen($row['fattura_elettronica_zip_package']) > 4){// se è stato creato un pacchetto .zip
 	//echo "<a title=\"scarica il pacchetto\" class=\"btn btn-xs btn-warning \" href=\"fae_acq_packaging.php?name=" . $row['fattura_elettronica_zip_package'] . "\"><i class=\"glyphicon glyphicon-compressed\"></i> ".substr($row['fattura_elettronica_zip_package'],0,19)."</a>";
 	?>
 	<a class="btn btn-xs btn-default btn-elimina dialog_packet" title="Apri il popup del pacchetto" ref="<?php echo $row['fattura_elettronica_zip_package'];?>">

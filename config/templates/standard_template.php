@@ -28,6 +28,7 @@ require('../../library/tcpdf/tcpdf.php');
 class Standard_template extends TCPDF {
 
     public function setVars($admin_aziend, $title = false, $luogo_data = 1, $n_page = true) {
+        global $gazTimeFormatter,$gazTime;
         $this->title = $title;
         $this->logo = $admin_aziend['image'];
         $this->colore = $admin_aziend['colore'];
@@ -41,11 +42,12 @@ class Standard_template extends TCPDF {
         $this->intesta3 = 'Tel.' . $admin_aziend['telefo'] . ' C.F. ' . $admin_aziend['codfis'] . ' P.I. ' . $admin_aziend['pariva'];
         $this->intesta4 = $admin_aziend['e_mail'];
         if ($luogo_data === 1) { // se viene passato a 1 stampo luogo_data di systema
-            $this->luogo = $admin_aziend['citspe'] . ", lì " . date("d ") . ucfirst(strftime("%B", mktime(0, 0, 0, date("m")))) . date(" Y");
+          $gazTimeFormatter->setPattern('dd MMMM YYYY');
+          $this->luogo = $admin_aziend['citspe'] . ", lì " . $gazTimeFormatter->format($gazTime);
         } elseif (!empty($luogo_data)) {  // opp. uso quello passato
-            $this->luogo = $luogo_data;
+          $this->luogo = $luogo_data;
         } else {  // altrimenti non lo stampo
-            $this->luogo = '';
+          $this->luogo = '';
         }
         $this->SetCreator('GAzie' . $this->intesta1);
         $this->SetTitle($this->title);
