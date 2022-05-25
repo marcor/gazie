@@ -53,14 +53,17 @@ $datafin = date("Ymd",$utsfin);
 $descrDataini = date("d-m-Y",$utsini);
 $descrDatafin = date("d-m-Y",$utsfin);
 $luogo_data=$admin_aziend['citspe'].", lì ";
+$gazTimeFormatter->setPattern('dd MMMM YYYY');
 if (isset($_GET['ds'])) {
-   $giosta = substr($_GET['ds'],0,2);
-   $messta = substr($_GET['ds'],2,2);
-   $annsta = substr($_GET['ds'],4,4);
-   $utssta= mktime(0,0,0,$messta,$giosta,$annsta);
-   $luogo_data .= ucwords(strftime("%d %B %Y",$utssta));
+  $giosta = substr($_GET['ds'],0,2);
+  $messta = substr($_GET['ds'],2,2);
+  $annsta = substr($_GET['ds'],4,4);
+  $utssta= mktime(0,0,0,$messta,$giosta,$annsta);
+  $utsstaobj = new DateTime('@'.$utssta);
+  $gazTimeFormatter->setPattern('dd MMMM YYYY');
+  $luogo_data .= ucwords($gazTimeFormatter->format($utsstaobj));
 } else {
-   $luogo_data .=ucwords(strftime("%d %B %Y", mktime (0,0,0,date("m"),date("d"),date("Y"))));
+  $luogo_data .=ucwords($gazTimeFormatter->format(new DateTime()));
 }
 $where = " codcon BETWEEN ".$_GET['codice']." AND ".$_GET['codfin']." AND".
          " datreg BETWEEN '".$dataini."' AND '".$datafin."'";
@@ -156,7 +159,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
 			$movSaldo = $extreme_account['saldo'];
 		}
 		// FINE RICERCA SALDO PRECEDENTE
-		if (abs($movSaldo)>=0.01) {
+		if ($movSaldo && abs($movSaldo)>=0.01) {
 			$pdf->Cell(166,4,'SALDO PRECEDENTE',1,0,'R');
 			$pdf->Cell(20,4,gaz_format_number($movSaldo),1,1,'R');
 		}
