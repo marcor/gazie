@@ -2372,11 +2372,11 @@ if ($form['tipdoc'] == "DDT") {
     echo "\t </select>\n";
 // select del mese
     echo "\t <select name=\"mesord\" class=\"FacetSelect\" >\n";
+    $gazTimeFormatter->setPattern('MMMM');
     for ($counter = 1; $counter <= 12; $counter++) {
         $selected = "";
-        if ($counter == $form['mesord'])
-            $selected = "selected";
-        $nome_mese = ucwords(strftime("%B", mktime(0, 0, 0, $counter, 1, 0)));
+        if ($counter == $form['mesord']) $selected = "selected";
+        $nome_mese = $gazTimeFormatter->format(new DateTime("2000-".$counter."-01"));
         echo "\t\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
     }
     echo "\t </select>\n";

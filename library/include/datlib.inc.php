@@ -68,10 +68,13 @@ if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
 }
 
 if ($gazie_locale != "") {
-    setlocale(LC_TIME, $gazie_locale);
+  setlocale(LC_TIME, $gazie_locale);
 } else {
-    setlocale(LC_TIME, $local['cvalue']);
+  $gazie_locale = $local['cvalue'];
+  setlocale(LC_TIME, $local['cvalue']);
 }
+$gazTime =  new DateTime();
+$gazTimeFormatter = new IntlDateFormatter($gazie_locale,IntlDateFormatter::FULL,IntlDateFormatter::FULL);
 
 $id = 1;
 if (isset($_SESSION['company_id'])) {

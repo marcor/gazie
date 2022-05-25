@@ -1,5 +1,6 @@
 <?php
-$t = strftime("%H");
+$gazTimeFormatter->setPattern('H');
+$t = $gazTimeFormatter->format($gazTime);
 if ($t > 4 && $t <= 13) {
     $msg = $script_transl['morning'];
 } elseif ($t > 13 && $t <= 17) {
@@ -21,9 +22,9 @@ if ($t > 4 && $t <= 13) {
         </a>
     </div>
     <div>
-        <?php echo $script_transl['access'] . $admin_aziend['Access'] . $script_transl['pass'] . gaz_format_date($admin_aziend['datpas']) ?> 
+        <?php echo $script_transl['access'] . $admin_aziend['Access'] . $script_transl['pass'] . gaz_format_date($admin_aziend['datpas']) ?>
     </div>
     <div>
-		<a class="btn btn-info btn-block" href="../config/print_privacy_regol.php" class="button"> <?php echo $script_transl['user_regol'];?></a> 
+		<a class="btn btn-info btn-block" href="../config/print_privacy_regol.php" class="button"> <?php echo $script_transl['user_regol'];?></a>
 	</div>
 </div>

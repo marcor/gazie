@@ -25,249 +25,238 @@
  */
 
 class DocContabVars {
-
     function setData($gTables, $tesdoc, $testat, $tableName, $ecr = false) {
-        $this->ecr = $ecr;
-        $this->gTables = $gTables;
-        $admin_aziend = gaz_dbi_get_row($gTables['aziend'], 'codice', $_SESSION['company_id']);
+      global $gazie_locale;
+      $this->gazTimeFormatter = new IntlDateFormatter($gazie_locale,IntlDateFormatter::FULL,IntlDateFormatter::FULL);
+      $this->ecr = $ecr;
+      $this->gTables = $gTables;
+      $admin_aziend = gaz_dbi_get_row($gTables['aziend'], 'codice', $_SESSION['company_id']);
+      $this->layout_pos_logo_on_doc = gaz_dbi_get_row($gTables['company_config'], 'var', 'layout_pos_logo_on_doc')['val'];
+      $this->descriptive_last_row = trim(gaz_dbi_get_row($gTables['company_config'], 'var', 'descriptive_last_row')['val']);
+      $this->descriptive_last_ddt = gaz_dbi_get_row($gTables['company_config'], 'var', 'descriptive_last_ddt')['val'];
+      $this->show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit')['val'];
+      $this->user = gaz_dbi_get_row($gTables['admin'], "user_name", $_SESSION["user_name"]);
+      $this->pagame = gaz_dbi_get_row($gTables['pagame'], "codice", $tesdoc['pagame']);
+      if (isset($tesdoc['caumag']) && (!is_null($tesdoc['caumag']))) {
+          $this->caumag = gaz_dbi_get_row($gTables['caumag'], "codice", $tesdoc['caumag']);
+      }
+      $banapp = gaz_dbi_get_row($gTables['banapp'], "codice", $tesdoc['banapp']);
+      $this->banapp =($banapp)?$banapp:array('descri'=>'');
+      $anagrafica = new Anagrafica();
+      $this->banacc =($this->pagame)?$anagrafica->getPartner($this->pagame['id_bank']):'';
+      $vettor = gaz_dbi_get_row($gTables['vettor'], "codice", $tesdoc['vettor']);
+      $this->vettor =($vettor)?$vettor:array('ragione_sociale'=>'','indirizzo'=>'','citta'=>'','provincia'=>'');
+      $this->tableName = $tableName;
+      $this->intesta1 = $admin_aziend['ragso1'];
+      $this->intesta1bis = $admin_aziend['ragso2'];
+      $this->intesta2 = $admin_aziend['indspe'] . ' ' . sprintf("%05d", $admin_aziend['capspe']) . ' ' . $admin_aziend['citspe'] . ' (' . $admin_aziend['prospe'] . ')';
+      $this->intesta3 = 'Tel.' . $admin_aziend['telefo'] . ' ';
+      $this->aziendTel = $admin_aziend['telefo'];
+      $this->aziendFax = $admin_aziend['fax'];
+      $this->codici = '';
+      if ($admin_aziend['codfis'] != '') {
+          $this->codici .= 'C.F. ' . $admin_aziend['codfis'] . ' ';
+      }
+      if ($admin_aziend['pariva']) {
+          $this->codici .= 'P.I. ' . $admin_aziend['pariva'] . ' ';
+      }
+      if (strlen($admin_aziend['REA_ufficio'])>1 && strlen($admin_aziend['REA_numero'])>3 ) {
+          $this->codici .= 'R.E.A. ' . $admin_aziend['REA_ufficio'].' '.$admin_aziend['REA_numero'];
+      }
+      $this->intesta4 = $admin_aziend['e_mail'];
+      $this->intesta5 = $admin_aziend['sexper'];
+      $this->colore = $admin_aziend['colore'];
+      $this->decimal_quantity = $admin_aziend['decimal_quantity'];
+      $this->decimal_price = $admin_aziend['decimal_price'];
+      $this->logo = $admin_aziend['image'];
+      $this->link = $admin_aziend['web_url'];
+      // leggo la sede legale dell'azienda
+      $this->sedelegale = $admin_aziend['sedleg'];
+      $this->perbollo = 0;
+      $this->iva_bollo = gaz_dbi_get_row($gTables['aliiva'], "codice", $admin_aziend['taxstamp_vat']);
+      $this->client = $anagrafica->getPartner($tesdoc['clfoco']);
+      if(!$this->client){
+        $this->client=['ragso1'=>'Anonimo','ragso2'=>'','pec_email'=>'','fe_cod_univoco'=>'','fe_cod_univoco'=>'','indspe'=>'','citspe'=>'','country'=>'IT','capspe'=>'','prospe'=>'','pariva'=>'','pariva'=>'','codfis'=>'','sedleg'=>'','fiscal_rapresentative_id'=>''];
+      }
+      if ( $this->client['country']!=="IT" ) {
+          $this->descri_partner = 'Customer';
+      } else {
+          $this->descri_partner = 'Cliente';
+      }
 
-        //*+ DC - 16/01/2018
-        $this->layout_pos_logo_on_doc = gaz_dbi_get_row($gTables['company_config'], 'var', 'layout_pos_logo_on_doc')['val'];
-        //*- DC - 16/01/2018
-
-        $this->descriptive_last_row = trim(gaz_dbi_get_row($gTables['company_config'], 'var', 'descriptive_last_row')['val']);
-        $this->descriptive_last_ddt = gaz_dbi_get_row($gTables['company_config'], 'var', 'descriptive_last_ddt')['val'];
-		$this->show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit')['val'];
-        $this->user = gaz_dbi_get_row($gTables['admin'], "user_name", $_SESSION["user_name"]);
-        $this->pagame = gaz_dbi_get_row($gTables['pagame'], "codice", $tesdoc['pagame']);
-
-        if (isset($tesdoc['caumag']) && (!is_null($tesdoc['caumag']))) {
-            /** inizio modifica FP 22/10/15 */
-            $this->caumag = gaz_dbi_get_row($gTables['caumag'], "codice", $tesdoc['caumag']);
-            /** fine modifica FP */
-        }
-        $banapp = gaz_dbi_get_row($gTables['banapp'], "codice", $tesdoc['banapp']);
-        $this->banapp =($banapp)?$banapp:array('descri'=>'');
-        $anagrafica = new Anagrafica();
-        $this->banacc =($this->pagame)?$anagrafica->getPartner($this->pagame['id_bank']):'';
-        $vettor = gaz_dbi_get_row($gTables['vettor'], "codice", $tesdoc['vettor']);
-        $this->vettor =($vettor)?$vettor:array('ragione_sociale'=>'','indirizzo'=>'','citta'=>'','provincia'=>'');
-        $this->tableName = $tableName;
-        $this->intesta1 = $admin_aziend['ragso1'];
-        $this->intesta1bis = $admin_aziend['ragso2'];
-        $this->intesta2 = $admin_aziend['indspe'] . ' ' . sprintf("%05d", $admin_aziend['capspe']) . ' ' . $admin_aziend['citspe'] . ' (' . $admin_aziend['prospe'] . ')';
-        $this->intesta3 = 'Tel.' . $admin_aziend['telefo'] . ' ';
-        $this->aziendTel = $admin_aziend['telefo'];
-        $this->aziendFax = $admin_aziend['fax'];
-        $this->codici = '';
-        if ($admin_aziend['codfis'] != '') {
-            $this->codici .= 'C.F. ' . $admin_aziend['codfis'] . ' ';
-        }
-        if ($admin_aziend['pariva']) {
-            $this->codici .= 'P.I. ' . $admin_aziend['pariva'] . ' ';
-        }
-        if (strlen($admin_aziend['REA_ufficio'])>1 && strlen($admin_aziend['REA_numero'])>3 ) {
-            $this->codici .= 'R.E.A. ' . $admin_aziend['REA_ufficio'].' '.$admin_aziend['REA_numero'];
-        }
-        $this->intesta4 = $admin_aziend['e_mail'];
-        $this->intesta5 = $admin_aziend['sexper'];
-        $this->colore = $admin_aziend['colore'];
-        $this->decimal_quantity = $admin_aziend['decimal_quantity'];
-        $this->decimal_price = $admin_aziend['decimal_price'];
-        $this->logo = $admin_aziend['image'];
-        $this->link = $admin_aziend['web_url'];
-        // leggo la sede legale dell'azienda
-        $this->sedelegale = $admin_aziend['sedleg'];
-        $this->perbollo = 0;
-        $this->iva_bollo = gaz_dbi_get_row($gTables['aliiva'], "codice", $admin_aziend['taxstamp_vat']);
-        $this->client = $anagrafica->getPartner($tesdoc['clfoco']);
-		if(!$this->client){
-			$this->client=['ragso1'=>'Anonimo','ragso2'=>'','pec_email'=>'','fe_cod_univoco'=>'','fe_cod_univoco'=>'','indspe'=>'','citspe'=>'','country'=>'IT','capspe'=>'','prospe'=>'','pariva'=>'','pariva'=>'','codfis'=>'','sedleg'=>'','fiscal_rapresentative_id'=>''];
-		}
-        if ( $this->client['country']!=="IT" ) {
-            $this->descri_partner = 'Customer';
+      if (substr($tesdoc['clfoco'], 0, 3) == $admin_aziend['masfor']) {
+          $this->descri_partner = 'Fornitore';
+      }
+      $this->codice_partner = intval(substr($tesdoc['clfoco'], 3, 6));
+      $this->cod_univoco = $this->client['fe_cod_univoco'];
+      $this->pec_cliente = $this->client['pec_email'];
+      $this->cliente1 = $this->client['ragso1'];
+      $this->cliente2 = $this->client['ragso2'];
+      $this->cliente3 = $this->client['indspe'];
+      if (!empty($this->client['citspe'])) {
+        if ($this->client['country'] == 'IT') {
+          $this->client['capspe'] = sprintf("%05d",$this->client['capspe']);
+          $this->cliente4 = (($this->client['capspe']=='00000') ? '' : $this->client['capspe'].' ') . strtoupper($this->client['citspe']) . ' ' . strtoupper($this->client['prospe']);
         } else {
-            $this->descri_partner = 'Cliente';
+          $this->cliente4 = (empty($this->client['capspe']) ? '' : $this->client['capspe'].' ') . strtoupper($this->client['citspe']) . ' ' . strtoupper($this->client['prospe']);
         }
-
-        if (substr($tesdoc['clfoco'], 0, 3) == $admin_aziend['masfor']) {
-            $this->descri_partner = 'Fornitore';
-        }
-        $this->codice_partner = intval(substr($tesdoc['clfoco'], 3, 6));
-        $this->cod_univoco = $this->client['fe_cod_univoco'];
-        $this->pec_cliente = $this->client['pec_email'];
-        $this->cliente1 = $this->client['ragso1'];
-        $this->cliente2 = $this->client['ragso2'];
-        $this->cliente3 = $this->client['indspe'];
-        if (!empty($this->client['citspe'])) {
-			if ($this->client['country'] == 'IT') {
-				$this->client['capspe'] = sprintf("%05d",$this->client['capspe']);
-				$this->cliente4 = (($this->client['capspe']=='00000') ? '' : $this->client['capspe'].' ') . strtoupper($this->client['citspe']) . ' ' . strtoupper($this->client['prospe']);
-			} else {
-				$this->cliente4 = (empty($this->client['capspe']) ? '' : $this->client['capspe'].' ') . strtoupper($this->client['citspe']) . ' ' . strtoupper($this->client['prospe']);
+      } else {
+          $this->cliente4 = '';
+      }
+      $country = gaz_dbi_get_row($gTables['country'], "iso", $this->client['country']);
+      if ($this->client['country'] != 'IT') {
+          $this->cliente4b = strtoupper($country['istat_name']);
+      } else {
+          $this->cliente4b = 'Italy';
+      }
+      if (!empty($this->client['pariva'])) {
+          $this->cliente5 = 'P.I. ' . $this->client['pariva'] . ' ';
+      } else {
+          $this->cliente5 = '';
+      }
+      if ( $this->client['country']!="IT" && $this->client['country']!="" ) {
+          $this->cliente5 = 'vat num. ' . $this->client['country'] .$this->client['codfis'];
+      } else if (!empty($this->client['pariva'])) { //se c'e' la partita iva
+          if (!empty($this->client['codfis']) and $this->client['codfis'] == $this->client['pariva']) {
+              $this->cliente5 = 'C.F. e P.I. ' . $this->client['country'] . $this->client['codfis'];
+          } elseif (!empty($this->client['codfis']) and $this->client['codfis'] != $this->client['pariva']) {
+              $this->cliente5 = 'C.F. ' . $this->client['codfis'] . ' P.I. ' . $this->client['country'] . $this->client['pariva'];
+          } else { //per es. se non c'e' il codice fiscale
+              $this->cliente5 = ' P.I. ' . $this->client['country'] . $this->client['pariva'];
+          }
+      } else { //se  NON c'e' la partita iva
+          $this->cliente5 = '';
+          if (!empty($this->client['codfis'])) {
+              $this->cliente5 = 'C.F. ' . $this->client['codfis'];
+          }
+      }
+      // variabile e' sempre un array
+      $this->id_agente = gaz_dbi_get_row($gTables['agenti'], 'id_agente', $tesdoc['id_agente']);
+      $this->rs_agente = ($this->id_agente)?$anagrafica->getPartner($this->id_agente['id_fornitore']):'';
+      $this->name_agente = ($this->id_agente)?substr($this->rs_agente['ragso1'] . " " . $this->rs_agente['ragso2'], 0, 47):'';
+      if ((isset($tesdoc['id_des_same_company'])) and ( $tesdoc['id_des_same_company'] > 0)) {
+          $this->partner_dest = gaz_dbi_get_row($gTables['destina'], 'codice', $tesdoc['id_des_same_company']);
+          $this->destinazione = substr($this->partner_dest['unita_locale1'] . " " . $this->partner_dest['unita_locale2'], 0, 45);
+          $this->destinazione .= "\n" . substr($this->partner_dest['indspe'], 0, 45);
+          $this->destinazione .= "\n" . substr($this->partner_dest['capspe'] . " " . $this->partner_dest['citspe'] . " (" . $this->partner_dest['prospe'] . ")", 0, 45);
+      } elseif ((isset($tesdoc['id_des'])) and ( $tesdoc['id_des'] > 0)) {
+          $this->partner_dest = $anagrafica->getPartnerData($tesdoc['id_des']);
+          $this->destinazione = substr($this->partner_dest['ragso1'] . " " . $this->partner_dest['ragso2'], 0, 45);
+          $this->destinazione .= "\n" . substr($this->partner_dest['indspe'], 0, 45);
+          $this->destinazione .= "\n" . substr($this->partner_dest['capspe'] . " " . $this->partner_dest['citspe'] . " (" . $this->partner_dest['prospe'] . ")", 0, 45);
+      } else {
+          if (isset($tesdoc['destin']) and is_array($tesdoc['destin'])) {
+              $this->destinazione = $tesdoc['destin'];
+          } elseif (isset($tesdoc['destin']) and is_string($tesdoc['destin'])) {
+              $destino = preg_split("/[\r\n]+/i", $tesdoc['destin'], 3);
+              $this->destinazione = substr($destino[0], 0, 45);
+              foreach ($destino as $key => $value) {
+                  if ($key == 1) {
+                      $this->destinazione .= "\n" . substr($value, 0, 45) . "\n";
+                  } elseif ($key > 1) {
+                      $this->destinazione .= substr(preg_replace("/[\r\n]+/i", ' ', $value), 0, 45);
+                  }
+              }
+          } else {
+              $this->destinazione = '';
+          }
+      }
+      $this->clientSedeLegale = ((trim($this->client['sedleg']) != '') ? preg_split("/\n/", trim($this->client['sedleg'])) : array());
+      $this->fiscal_rapresentative = false;
+      if ($this->client['fiscal_rapresentative_id'] > 0) {
+         $this->fiscal_rapresentative = gaz_dbi_get_row($gTables['anagra'], "id", $this->client['fiscal_rapresentative_id']);
+      }
+      if (isset($tesdoc['c_a'])) {
+          $this->c_Attenzione = $tesdoc['c_a'];
+      } else {
+          $this->c_Attenzione = '';
+      }
+      //$this->client = $anagrafica->getPartner($tesdoc['clfoco']);
+      $this->tesdoc = $tesdoc;
+      $this->min = substr($tesdoc['initra'], 14, 2);
+      $this->ora = substr($tesdoc['initra'], 11, 2);
+      $this->day = substr($tesdoc['initra'], 8, 2);
+      $this->month = substr($tesdoc['initra'], 5, 2);
+      $this->year = substr($tesdoc['initra'], 0, 4);
+      $this->trasporto = $tesdoc['traspo'];
+      $this->testat = $testat;
+      $this->docRelNum = $this->tesdoc["numdoc"];    // Numero del documento relativo
+      $this->docRelDate = $this->tesdoc["datemi"];    // Data del documento relativo
+      $this->fae_reinvii = '';
+      if (isset($tesdoc['fattura_elettronica_reinvii'])) {
+        $this->fae_reinvii = $this->tesdoc["fattura_elettronica_reinvii"];
+      }
+      $this->efattura='';
+      switch ($tesdoc["tipdoc"]) {
+          case "FAD":
+          case "FAI":
+          case "FAA":
+          case "FAF":
+          case "FAP":
+          case "FAQ":
+          case "FNC":
+          case "FND":
+              $this->docRelNum = $this->tesdoc["numfat"];
+              $this->docRelDate = $this->tesdoc["datfat"];
+			// in caso di fattura elettronica ricavo il nome del file
+			if (substr($tesdoc['datfat'], 0, 4)>=2019 ) { // dal 2019 valorizzo il nome della e-fattura
+				// faccio l'encode in base 36 per ricavare il progressivo unico di invio
+				$data = array('azienda' => $admin_aziend['codice'],
+							  'anno' => $this->docRelDate,
+      						  'sezione' => $this->tesdoc["seziva"],
+							  'fae_reinvii'=> $this->fae_reinvii,
+							  'protocollo' => $this->tesdoc["protoc"]);
+				$this->efattura = encodeSendingNumber($data, 36);
 			}
-        } else {
-            $this->cliente4 = '';
-        }
-        $country = gaz_dbi_get_row($gTables['country'], "iso", $this->client['country']);
-        if ($this->client['country'] != 'IT') {
-            $this->cliente4b = strtoupper($country['istat_name']);
-        } else {
-            $this->cliente4b = 'Italy';
-        }
-        if (!empty($this->client['pariva'])) {
-            $this->cliente5 = 'P.I. ' . $this->client['pariva'] . ' ';
-        } else {
-            $this->cliente5 = '';
-        }
-        if ( $this->client['country']!="IT" && $this->client['country']!="" ) {
-            $this->cliente5 = 'vat num. ' . $this->client['country'] .$this->client['codfis'];
-        } else if (!empty($this->client['pariva'])) { //se c'e' la partita iva
-            if (!empty($this->client['codfis']) and $this->client['codfis'] == $this->client['pariva']) {
-                $this->cliente5 = 'C.F. e P.I. ' . $this->client['country'] . $this->client['codfis'];
-            } elseif (!empty($this->client['codfis']) and $this->client['codfis'] != $this->client['pariva']) {
-                $this->cliente5 = 'C.F. ' . $this->client['codfis'] . ' P.I. ' . $this->client['country'] . $this->client['pariva'];
-            } else { //per es. se non c'e' il codice fiscale
-                $this->cliente5 = ' P.I. ' . $this->client['country'] . $this->client['pariva'];
-            }
-        } else { //se  NON c'e' la partita iva
-            $this->cliente5 = '';
-            if (!empty($this->client['codfis'])) {
-                $this->cliente5 = 'C.F. ' . $this->client['codfis'];
-            }
-        }
-        // variabile e' sempre un array
-        $this->id_agente = gaz_dbi_get_row($gTables['agenti'], 'id_agente', $tesdoc['id_agente']);
-        $this->rs_agente = ($this->id_agente)?$anagrafica->getPartner($this->id_agente['id_fornitore']):'';
-        $this->name_agente = ($this->id_agente)?substr($this->rs_agente['ragso1'] . " " . $this->rs_agente['ragso2'], 0, 47):'';
-        if ((isset($tesdoc['id_des_same_company'])) and ( $tesdoc['id_des_same_company'] > 0)) {
-            $this->partner_dest = gaz_dbi_get_row($gTables['destina'], 'codice', $tesdoc['id_des_same_company']);
-            $this->destinazione = substr($this->partner_dest['unita_locale1'] . " " . $this->partner_dest['unita_locale2'], 0, 45);
-            $this->destinazione .= "\n" . substr($this->partner_dest['indspe'], 0, 45);
-            $this->destinazione .= "\n" . substr($this->partner_dest['capspe'] . " " . $this->partner_dest['citspe'] . " (" . $this->partner_dest['prospe'] . ")", 0, 45);
-        } elseif ((isset($tesdoc['id_des'])) and ( $tesdoc['id_des'] > 0)) {
-            $this->partner_dest = $anagrafica->getPartnerData($tesdoc['id_des']);
-            $this->destinazione = substr($this->partner_dest['ragso1'] . " " . $this->partner_dest['ragso2'], 0, 45);
-            $this->destinazione .= "\n" . substr($this->partner_dest['indspe'], 0, 45);
-            $this->destinazione .= "\n" . substr($this->partner_dest['capspe'] . " " . $this->partner_dest['citspe'] . " (" . $this->partner_dest['prospe'] . ")", 0, 45);
-        } else {
-            if (isset($tesdoc['destin']) and is_array($tesdoc['destin'])) {
-                $this->destinazione = $tesdoc['destin'];
-            } elseif (isset($tesdoc['destin']) and is_string($tesdoc['destin'])) {
-                $destino = preg_split("/[\r\n]+/i", $tesdoc['destin'], 3);
-                $this->destinazione = substr($destino[0], 0, 45);
-                foreach ($destino as $key => $value) {
-                    if ($key == 1) {
-                        $this->destinazione .= "\n" . substr($value, 0, 45) . "\n";
-                    } elseif ($key > 1) {
-                        $this->destinazione .= substr(preg_replace("/[\r\n]+/i", ' ', $value), 0, 45);
-                    }
-                }
-            } else {
-                $this->destinazione = '';
-            }
-        }
+              break;
+          case "VCO":
+              $this->docRelNum = $this->tesdoc["numfat"];
+              $this->docRelDate = $this->tesdoc["datfat"];
+			// in caso di fattura elettronica ricavo il nome del file
+			if (substr($tesdoc['datfat'], 0, 4)>=2019 ) { // dal 2019 valorizzo il nome della e-fattura
+				// faccio l'encode in base 36 per ricavare il progressivo unico di invio
+				$data = array('azienda' => $admin_aziend['codice'],
+							  'anno' => $this->docRelDate,
+      						  'sezione' => $this->tesdoc["seziva"],
+							  'fae_reinvii'=> $this->fae_reinvii+4, // sulle fatture allegate allo scontrino per non far coincidere il progressivo unico invio
+							  'protocollo' => $this->tesdoc["numfat"]);
+				$this->efattura = "IT" . $admin_aziend['codfis'] . "_".encodeSendingNumber($data, 36).'.xml';
+			}
+              $ecr = gaz_dbi_get_row($gTables['cash_register'], "id_cash", $tesdoc['id_contract']);
+			$this->destinazione = '-';
 
-        $this->clientSedeLegale = ((trim($this->client['sedleg']) != '') ? preg_split("/\n/", trim($this->client['sedleg'])) : array());
-
-        $this->fiscal_rapresentative = false;
-        if ($this->client['fiscal_rapresentative_id'] > 0) {
-           $this->fiscal_rapresentative = gaz_dbi_get_row($gTables['anagra'], "id", $this->client['fiscal_rapresentative_id']);
-        }
-        if (isset($tesdoc['c_a'])) {
-            $this->c_Attenzione = $tesdoc['c_a'];
-        } else {
-            $this->c_Attenzione = '';
-        }
-        //$this->client = $anagrafica->getPartner($tesdoc['clfoco']);
-        $this->tesdoc = $tesdoc;
-        $this->min = substr($tesdoc['initra'], 14, 2);
-        $this->ora = substr($tesdoc['initra'], 11, 2);
-        $this->day = substr($tesdoc['initra'], 8, 2);
-        $this->month = substr($tesdoc['initra'], 5, 2);
-        $this->year = substr($tesdoc['initra'], 0, 4);
-        $this->trasporto = $tesdoc['traspo'];
-        $this->testat = $testat;
-
-        $this->docRelNum = $this->tesdoc["numdoc"];    // Numero del documento relativo
-        $this->docRelDate = $this->tesdoc["datemi"];    // Data del documento relativo
-		$this->fae_reinvii = '';
-        if (isset($tesdoc['fattura_elettronica_reinvii'])) {
-			$this->fae_reinvii = $this->tesdoc["fattura_elettronica_reinvii"];
-		}
-		$this->efattura='';
-
-        switch ($tesdoc["tipdoc"]) {
-            case "FAD":
-            case "FAI":
-            case "FAA":
-            case "FAF":
-            case "FAP":
-            case "FAQ":
-            case "FNC":
-            case "FND":
-                $this->docRelNum = $this->tesdoc["numfat"];
-                $this->docRelDate = $this->tesdoc["datfat"];
-				// in caso di fattura elettronica ricavo il nome del file
-				if (substr($tesdoc['datfat'], 0, 4)>=2019 ) { // dal 2019 valorizzo il nome della e-fattura
-					// faccio l'encode in base 36 per ricavare il progressivo unico di invio
-					$data = array('azienda' => $admin_aziend['codice'],
-								  'anno' => $this->docRelDate,
-        						  'sezione' => $this->tesdoc["seziva"],
-								  'fae_reinvii'=> $this->fae_reinvii,
-								  'protocollo' => $this->tesdoc["protoc"]);
-					$this->efattura = encodeSendingNumber($data, 36);
-				}
-                break;
-            case "VCO":
-                $this->docRelNum = $this->tesdoc["numfat"];
-                $this->docRelDate = $this->tesdoc["datfat"];
-				// in caso di fattura elettronica ricavo il nome del file
-				if (substr($tesdoc['datfat'], 0, 4)>=2019 ) { // dal 2019 valorizzo il nome della e-fattura
-					// faccio l'encode in base 36 per ricavare il progressivo unico di invio
-					$data = array('azienda' => $admin_aziend['codice'],
-								  'anno' => $this->docRelDate,
-        						  'sezione' => $this->tesdoc["seziva"],
-								  'fae_reinvii'=> $this->fae_reinvii+4, // sulle fatture allegate allo scontrino per non far coincidere il progressivo unico invio
-								  'protocollo' => $this->tesdoc["numfat"]);
-					$this->efattura = "IT" . $admin_aziend['codfis'] . "_".encodeSendingNumber($data, 36).'.xml';
-				}
-                $ecr = gaz_dbi_get_row($gTables['cash_register'], "id_cash", $tesdoc['id_contract']);
-				$this->destinazione = '-';
-
-                $this->ecr=($ecr)?$ecr['descri']:'';
-                break;
-            case "DDT":
-            case "DDL":
-            case "DDR":
-            case "DDV":
-            case "DDY":
-            case "DDS":
-            default:
-                $this->docRelNum = $this->tesdoc["numdoc"];    // Numero del documento relativo
-                $this->docRelDate = $this->tesdoc["datemi"];    // Data del documento relativo
-        }
-        $this->withoutPageGroup = false;
-        if ( $this->client['country']!=="IT") {
-            $this->pers_title = 'Dear';
-        } else {
-            $this->pers_title = 'Spett.le';
-        }
-		$admin_aziend['other_email']='';
-		// se ho la mail in testata documento la inserisco sui dati aziendali per poterla passare alla funzione sendMail
-		if (isset($tesdoc["email"])&&strlen($tesdoc["email"])>10){
-			$admin_aziend['other_email']=$tesdoc["email"];
-		}
-        $this->azienda = $admin_aziend;
-		if ($tesdoc['tipdoc'] == 'AFA' || $tesdoc['tipdoc'] == 'AFT') {
-			$clfoco = gaz_dbi_get_row($gTables['clfoco'], "codice", $tesdoc['clfoco']);
-			$this->iban = $clfoco['iban'];
-		}
-        $this->artico_doc = array(); // accumulatore referenze ai documenti degli articoli eventualemente da allegare
-		// ATTRIBUISCO UN EVENTUALE REGIME FISCALE DIVERSO DALLA CONFIGURAZIONE AZIENDA SE LA SEZIONE IVA E' LEGATO AD ESSO TRAMITE IL RIGO var='sezione_regime_fiscale' IN gaz_XXXcompany_config
-		$this->regime_fiscale=$this->azienda['fiscal_reg'];
-		if ($fr=getRegimeFiscale($this->tesdoc["seziva"])) $this->regime_fiscale=$fr;
-
+              $this->ecr=($ecr)?$ecr['descri']:'';
+              break;
+          case "DDT":
+          case "DDL":
+          case "DDR":
+          case "DDV":
+          case "DDY":
+          case "DDS":
+          default:
+              $this->docRelNum = $this->tesdoc["numdoc"];    // Numero del documento relativo
+              $this->docRelDate = $this->tesdoc["datemi"];    // Data del documento relativo
+      }
+      $this->withoutPageGroup = false;
+      if ( $this->client['country']!=="IT") {
+          $this->pers_title = 'Dear';
+      } else {
+          $this->pers_title = 'Spett.le';
+      }
+      $admin_aziend['other_email']='';
+      // se ho la mail in testata documento la inserisco sui dati aziendali per poterla passare alla funzione sendMail
+      if (isset($tesdoc["email"])&&strlen($tesdoc["email"])>10){
+        $admin_aziend['other_email']=$tesdoc["email"];
+      }
+          $this->azienda = $admin_aziend;
+      if ($tesdoc['tipdoc'] == 'AFA' || $tesdoc['tipdoc'] == 'AFT') {
+        $clfoco = gaz_dbi_get_row($gTables['clfoco'], "codice", $tesdoc['clfoco']);
+        $this->iban = $clfoco['iban'];
+      }
+          $this->artico_doc = array(); // accumulatore referenze ai documenti degli articoli eventualemente da allegare
+      // ATTRIBUISCO UN EVENTUALE REGIME FISCALE DIVERSO DALLA CONFIGURAZIONE AZIENDA SE LA SEZIONE IVA E' LEGATO AD ESSO TRAMITE IL RIGO var='sezione_regime_fiscale' IN gaz_XXXcompany_config
+      $this->regime_fiscale=$this->azienda['fiscal_reg'];
+      if ($fr=getRegimeFiscale($this->tesdoc["seziva"])) $this->regime_fiscale=$fr;
     }
 
     function initializeTotals() {
@@ -530,7 +519,7 @@ class DocContabVars {
 
 }
 
-function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $dest = false, $lang_template=false) {
+function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $dest = false, $lang_template=false,) {
     $templates = array('Received' => 'received',
         'CartaIntestata' => 'carta_intestata',
         'Lettera' => 'lettera',

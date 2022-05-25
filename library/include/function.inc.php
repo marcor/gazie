@@ -772,6 +772,7 @@ class SelectBox {
         }
         $result = gaz_dbi_query($query);
         while ($a_row = gaz_dbi_fetch_array($result)) {
+          if (isset($a_row[$index1])){
             $selected = "";
             if ($a_row[$key] == $this->selected) {
                 $selected = "selected";
@@ -784,6 +785,7 @@ class SelectBox {
                 if ( strpos( $query, 'banapp' )) echo sprintf("%'.05d\n", $a_row["codabi"])." ".sprintf("%'.05d\n", $a_row["codcab"])."  ";
                 echo substr($a_row[$index1], 0, 38) . $bridge . substr($a_row[$index2], 0, 35) . "</option>\n";
             }
+          }
         }
         echo "\t </select>\n";
     }
@@ -1613,68 +1615,70 @@ class GAzieForm {
     }
 
     function Calendar($name, $day, $month, $year, $class = 'FacetSelect', $refresh = '') {
-        if (!empty($refresh)) {
-            $refresh = "onchange=\"this.form.hidden_req.value='$refresh'; this.form.submit();\"";
-        }
+      global $gazTimeFormatter;
+      $gazTimeFormatter->setPattern('MMMM');
+      if (!empty($refresh)) {
+          $refresh = "onchange=\"this.form.hidden_req.value='$refresh'; this.form.submit();\"";
+      }
 
-        echo "\t <select name=\"" . $name . "_D\" id=\"" . $name . "_D\" class=\"$class\" $refresh>\n";
-        for ($i = 1; $i <= 31; $i++) {
-            $selected = "";
-            if ($i == $day) {
-                $selected = "selected";
-            }
-            echo "\t\t <option value=\"$i\" $selected >$i</option>\n";
-        }
-        echo "\t </select>\n";
-        echo "\t <select name=\"" . $name . "_M\" id=\"" . $name . "_M\" class=\"$class\" $refresh>\n";
-        for ($i = 1; $i <= 12; $i++) {
-            $selected = "";
-            if ($i == $month) {
-                $selected = "selected";
-            }
-            $month_name = ucwords(strftime("%B", mktime(0, 0, 0, $i, 1, 0)));
-            echo "\t\t <option value=\"$i\"  $selected >$month_name</option>\n";
-        }
-        echo "\t </select>\n";
-        echo "\t <select name=\"" . $name . "_Y\" id=\"" . $name . "_Y\" class=\"$class\" $refresh>\n";
-        for ($i = $year - 10; $i <= $year + 10; $i++) {
-            $selected = "";
-            if ($i == $year) {
-                $selected = "selected";
-            }
-            echo "\t\t <option value=\"$i\"  $selected >$i</option>\n";
-        }
-        echo "\t </select>\n";
+      echo "\t <select name=\"" . $name . "_D\" id=\"" . $name . "_D\" class=\"$class\" $refresh>\n";
+      for ($i = 1; $i <= 31; $i++) {
+          $selected = "";
+          if ($i == $day) {
+              $selected = "selected";
+          }
+          echo "\t\t <option value=\"$i\" $selected >$i</option>\n";
+      }
+      echo "\t </select>\n";
+      echo "\t <select name=\"" . $name . "_M\" id=\"" . $name . "_M\" class=\"$class\" $refresh>\n";
+      for ($i = 1; $i <= 12; $i++) {
+          $selected = "";
+          if ($i == $month) {
+              $selected = "selected";
+          }
+          $month_name = ucwords($gazTimeFormatter->format(new DateTime("2000-".$i."-01")));
+          echo "\t\t <option value=\"$i\"  $selected >$month_name</option>\n";
+      }
+      echo "\t </select>\n";
+      echo "\t <select name=\"" . $name . "_Y\" id=\"" . $name . "_Y\" class=\"$class\" $refresh>\n";
+      for ($i = $year - 10; $i <= $year + 10; $i++) {
+          $selected = "";
+          if ($i == $year) {
+              $selected = "selected";
+          }
+          echo "\t\t <option value=\"$i\"  $selected >$i</option>\n";
+      }
+      echo "\t </select>\n";
     }
 
     function CalendarPopup($name, $day, $month, $year, $class = 'FacetSelect', $refresh = '') {
-        global $script_transl;
-        if (!empty($refresh)) {
-            $refresh = ' onchange="this.form.hidden_req.value=\'' . $refresh . '\'; this.form.submit();"';
-        }
-
-        echo '<select name="' . $name . '_D" id="' . $name . '_D" class="' . $class . '"' . $refresh . '>';
-        for ($i = 1; $i <= 31; $i++) {
-            $selected = "";
-            if ($i == $day) {
-                $selected = ' selected=""';
-            }
-            echo '		<option value="' . $i . '"' . $selected . '>' . $i . '</option>';
-        }
-        echo '	</select>
-	  			<select name="' . $name . '_M" id="' . $name . '_M" class="' . $class . '"' . $refresh . '>';
-        for ($i = 1; $i <= 12; $i++) {
-            $selected = "";
-            if ($i == $month) {
-                $selected = ' selected=""';
-            }
-            $month_name = ucwords(strftime("%B", mktime(0, 0, 0, $i, 1, 0)));
-            echo '		<option value="' . $i . '"' . $selected . '>' . $month_name . '</option>';
-        }
-        echo '</select>
-	  		<input type="text" name="' . $name . '_Y" id="' . $name . '_Y" value="' . $year . '" class="' . $class . '"  maxlength="4" size="4"' . $refresh . ' />
-	  		<a class="btn btn-default btn-sm" href="#" onClick="setDate(\'' . $name . '\'); return false;" title="' . $script_transl['changedate'] . '" name="anchor" id="anchor">
-				<i class="glyphicon glyphicon-calendar"></i>
+      global $script_transl,$gazTimeFormatter;
+      $gazTimeFormatter->setPattern('MMMM');
+      if (!empty($refresh)) {
+          $refresh = ' onchange="this.form.hidden_req.value=\'' . $refresh . '\'; this.form.submit();"';
+      }
+      echo '<select name="' . $name . '_D" id="' . $name . '_D" class="' . $class . '"' . $refresh . '>';
+      for ($i = 1; $i <= 31; $i++) {
+          $selected = "";
+          if ($i == $day) {
+              $selected = ' selected=""';
+          }
+          echo '		<option value="' . $i . '"' . $selected . '>' . $i . '</option>';
+      }
+      echo '	</select>
+	  		<select name="' . $name . '_M" id="' . $name . '_M" class="' . $class . '"' . $refresh . '>';
+      for ($i = 1; $i <= 12; $i++) {
+          $selected = "";
+          if ($i == $month) {
+              $selected = ' selected=""';
+          }
+          $month_name = ucwords($gazTimeFormatter->format(new DateTime("2000-".$i."-01")));
+          echo '		<option value="' . $i . '"' . $selected . '>' . $month_name . '</option>';
+      }
+      echo '</select>
+	  	<input type="text" name="' . $name . '_Y" id="' . $name . '_Y" value="' . $year . '" class="' . $class . '"  maxlength="4" size="4"' . $refresh . ' />
+	  	<a class="btn btn-default btn-sm" href="#" onClick="setDate(\'' . $name . '\'); return false;" title="' . $script_transl['changedate'] . '" name="anchor" id="anchor">
+			<i class="glyphicon glyphicon-calendar"></i>
 			</a>';
     }
 
@@ -2783,7 +2787,7 @@ class Schedule {
             $clfoco = $this->target;
         }
         if (!$date) {
-            $date = strftime("%Y-%m-%d", mktime(0, 0, 0, date("m"), date("d"), date("Y")));
+            $date = date('Y-m-d');
         }
         // prima trovo la eventuale ultima apertura dei conti
         $sqllastAPE = "SELECT " . $gTables['tesmov'] . ".* ," . $gTables['rigmoc'] . ".import, " . $gTables['rigmoc'] . ".darave, '0' AS progressivo
@@ -3059,7 +3063,7 @@ class Schedule {
             $clfoco = $this->target;
         }
         if (!$date) {
-            $date = strftime("%Y-%m-%d", mktime(0, 0, 0, date("m"), date("d"), date("Y")));
+            $date = date("Y-m-d");
         }
         $sqlquery = "SELECT " . $gTables['paymov'] . ".*, " . $gTables['tesmov'] . ".* ," . $gTables['rigmoc'] . ".*
             FROM " . $gTables['paymov'] . " LEFT JOIN " . $gTables['rigmoc'] . " ON (" . $gTables['paymov'] . ".id_rigmoc_pay + " . $gTables['paymov'] . ".id_rigmoc_doc) = " . $gTables['rigmoc'] . ".id_rig "
