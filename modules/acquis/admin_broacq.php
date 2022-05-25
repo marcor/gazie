@@ -1076,9 +1076,10 @@ echo "\t </select>\n";
 echo "\t <select name=\"mesemi\" class=\"FacetSelect\" >\n";
 for ($counter = 1; $counter <= 12; $counter++) {
     $selected = "";
+    $gazTimeFormatter->setPattern('MMMM');
     if ($counter == $form['mesemi'])
         $selected = "selected";
-    $nome_mese = ucwords(strftime("%B", mktime(0, 0, 0, $counter, 1, 0)));
+        $nome_mese = $gazTimeFormatter->format(new DateTime("2000-".$counter."-01"));
     echo "\t\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
 }
 echo "\t </select>\n";

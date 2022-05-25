@@ -75,90 +75,89 @@ class Expiry {
 
   // calcolo date
   protected function _Date($c) {
-           if ($c==1) { // alla prima scadenza si devono aggiungere i giorni di decorrenza
-              switch($this->effect) {
-                     case "D": //caso in cui la scadenza fa riferimento alla data della fattura
-                        $uts = new DateTime('@'.mktime(0,0,0,$this->month,$this->day+$this->start_day,$this->year));
-                        $this->ctrl_day = $uts->format('dd');
-                        $this->ctrl_month = $uts->format('mm');
-                        $this->ctrl_year = $uts->format('yyyy');
-                     break;
-                     case "G": //caso in cui la scadenza fa riferimento ad un giorno fisso impostato sul relativo campo
-                        $uts = new DateTime('@'.mktime(0,0,0,$this->month,$this->day+$this->start_day,$this->year));
-                        $this->ctrl_day = $uts->format('dd');
-                        $this->ctrl_month = $uts->format('mm');
-                        $this->ctrl_year = $uts->format('yyyy');
-                        if ($this->fix_day<$this->ctrl_day) { // salto un mese se va a cadere in un giorno precedente
-                            $this->ctrl_month++;
-                        }
-                        $uts = new DateTime('@'.mktime(0,0,0,$this->ctrl_month,$this->fix_day,$this->ctrl_year));
-                        $this->ctrl_day = $uts->format('dd');
-                        $this->ctrl_month = $uts->format('mm');
-                        $this->ctrl_year = $uts->format('yyyy');
-                     break;
-                     case "F": //caso in cui la scadenza deve far riferimento al fine mese rispetto alla data della fattura
-                        // prima porto il riferimento al primo finemese
-                        $uts = new DateTime('@'.mktime(0,0,0,$this->ctrl_month+1,0,$this->ctrl_year));
-                        $this->ctrl_day = $uts->format('dd');
-                        $this->ctrl_month = $uts->format('mm');
-                        $this->ctrl_year = $uts->format('yyyy');
-                        // poi aumento dei giorni di decorrenza (-2 per compensare febbraio)
-                        $uts = new DateTime('@'.mktime(0,0,0,$this->ctrl_month,$this->ctrl_day+$this->start_day-2,$this->ctrl_year));
-                        $this->ctrl_month = $uts->format('mm');
-                        $this->ctrl_year = $uts->format('yyyy');
-                        // quindi riporto a fine mese
-                        $uts = new DateTime('@'.mktime(0,0,0,$this->ctrl_month+1,0,$this->ctrl_year));
-                        $this->ctrl_day = $uts->format('dd');
-                        $this->ctrl_month = $uts->format('mm');
-                        $this->ctrl_year = $uts->format('yyyy');
-                        if ($this->fix_day>0){   // eventualmente vado al giorno successivo
-                           $uts = new DateTime('@'.mktime(0,0,0,$this->ctrl_month+1,$this->fix_day,$this->ctrl_year));
-                           $this->ctrl_day = $uts->format('dd');
-                           $this->ctrl_month = $uts->format('mm');
-                           $this->ctrl_year = $uts->format('yyyy');
-                        }
-                     break;
-              }
-              if ($this->foll_month>0 && $this->foll_month==$this->ctrl_month) {
-                 $this->ctrl_month++;
-              }
-           } else {  // le scadenze successive
-              switch($this->periodicity) {
-                case "Q":  // quindicinale
-                    if ($c%2==0) {
-                        $n_m=0;
-                        $this->ctrl_day += 15;
-                    } else {
-                        $n_m=1;
-                        $this->ctrl_day -= 15;
-                    }
-                break;
-                case "M":$n_m= 1;break;  // mensile
-                case "B":$n_m= 2;break;  // bimestrale
-                case "T":$n_m= 3;break;  // trimestrale
-                case "U":$n_m= 4;break;  // quadrimestrale
-                case "E":$n_m= 6;break;  // semestrale
-                case "A":$n_m=12;break;  // annuale
-              }
-              $this->ctrl_month+=$n_m;
-              if ($this->effect=='F' && $this->periodicity!='Q' && $this->fix_day==0) { // quando si deve andare a fine mese
-                    $this->ctrl_day=0;
-                    $this->ctrl_month++;
-              }
-              $uts = new DateTime('@'.mktime(0,0,0,$this->ctrl_month,$this->ctrl_day,$this->ctrl_year));
-              $this->ctrl_day = $uts->format('dd');
-              $this->ctrl_month = $uts->format('mm');
-              $this->ctrl_year = $uts->format('yyyy');
-              if ($this->foll_month>0 && $this->foll_month==$this->ctrl_month) {
-                 $this->ctrl_month++;
-              }
-           }
-           $uts = new DateTime('@'.mktime(0,0,0,$this->ctrl_month,$this->ctrl_day,$this->ctrl_year));
-           $this->ctrl_day = $uts->format('dd');
-           $this->ctrl_month = $uts->format('mm');
-           $this->ctrl_year = $uts->format('yyyy');
-           return $this->ctrl_day.'-'.$this->ctrl_month.'-'.$this->ctrl_year;
+    if ($c==1) { // alla prima scadenza si devono aggiungere i giorni di decorrenza
+      switch($this->effect) {
+        case "D": //caso in cui la scadenza fa riferimento alla data della fattura
+          $uts = new DateTime('@'.mktime(0,0,0,$this->month,$this->day+$this->start_day,$this->year));
+          $this->ctrl_day = $uts->format('d');
+          $this->ctrl_month = $uts->format('m');
+          $this->ctrl_year = $uts->format('Y');
+        break;
+        case "G": //caso in cui la scadenza fa riferimento ad un giorno fisso impostato sul relativo campo
+          $uts = new DateTime('@'.mktime(0,0,0,$this->month,$this->day+$this->start_day,$this->year));
+          $this->ctrl_day = $uts->format('d');
+          $this->ctrl_month = $uts->format('m');
+          $this->ctrl_year = $uts->format('Y');
+          if ($this->fix_day<$this->ctrl_day) { // salto un mese se va a cadere in un giorno precedente
+              $this->ctrl_month++;
+          }
+          $uts = new DateTime('@'.mktime(0,0,0,$this->ctrl_month,$this->fix_day,$this->ctrl_year));
+          $this->ctrl_day = $uts->format('d');
+          $this->ctrl_month = $uts->format('m');
+          $this->ctrl_year = $uts->format('Y');
+        break;
+        case "F": //caso in cui la scadenza deve far riferimento al fine mese rispetto alla data della fattura
+          // prima porto il riferimento al primo finemese
+          $uts = new DateTime('@'.mktime(0,0,0,$this->ctrl_month+1,0,$this->ctrl_year));
+          $this->ctrl_day = $uts->format('d');
+          $this->ctrl_month = $uts->format('m');
+          $this->ctrl_year = $uts->format('Y');
+          // poi aumento dei giorni di decorrenza (-2 per compensare febbraio)
+          $uts = new DateTime('@'.mktime(0,0,0,$this->ctrl_month,$this->ctrl_day+$this->start_day-2,$this->ctrl_year));
+          $this->ctrl_month = $uts->format('m');
+          $this->ctrl_year = $uts->format('Y');
+          // quindi riporto a fine mese
+          $uts = new DateTime('@'.mktime(0,0,0,$this->ctrl_month+1,0,$this->ctrl_year));
+          $this->ctrl_day = $uts->format('d');
+          $this->ctrl_month = $uts->format('m');
+          $this->ctrl_year = $uts->format('Y');
+          if ($this->fix_day>0){   // eventualmente vado al giorno successivo
+            $uts = new DateTime('@'.mktime(0,0,0,$this->ctrl_month+1,$this->fix_day,$this->ctrl_year));
+            $this->ctrl_day = $uts->format('d');
+            $this->ctrl_month = $uts->format('m');
+            $this->ctrl_year = $uts->format('Y');
+          }
+        break;
+      }
+      if ($this->foll_month>0 && $this->foll_month==$this->ctrl_month) {
+        $this->ctrl_month++;
+      }
+    } else {  // le scadenze successive
+      switch($this->periodicity) {
+        case "Q":  // quindicinale
+          if ($c%2==0) {
+              $n_m=0;
+              $this->ctrl_day += 15;
+          } else {
+              $n_m=1;
+              $this->ctrl_day -= 15;
+          }
+        break;
+        case "M":$n_m= 1;break;  // mensile
+        case "B":$n_m= 2;break;  // bimestrale
+        case "T":$n_m= 3;break;  // trimestrale
+        case "U":$n_m= 4;break;  // quadrimestrale
+        case "E":$n_m= 6;break;  // semestrale
+        case "A":$n_m=12;break;  // annuale
+      }
+      $this->ctrl_month+=$n_m;
+      if ($this->effect=='F' && $this->periodicity!='Q' && $this->fix_day==0) { // quando si deve andare a fine mese
+        $this->ctrl_day=0;
+        $this->ctrl_month++;
+      }
+      $uts = new DateTime('@'.mktime(0,0,0,$this->ctrl_month,$this->ctrl_day,$this->ctrl_year));
+      $this->ctrl_day = $uts->format('d');
+      $this->ctrl_month = $uts->format('m');
+      $this->ctrl_year = $uts->format('Y');
+      if ($this->foll_month>0 && $this->foll_month==$this->ctrl_month) {
+        $this->ctrl_month++;
+      }
+    }
+    $uts = new DateTime('@'.mktime(0,0,0,$this->ctrl_month,$this->ctrl_day,$this->ctrl_year));
+    $this->ctrl_day = $uts->format('d');
+    $this->ctrl_month = $uts->format('m');
+    $this->ctrl_year = $uts->format('Y');
+    return $this->year.'-'.$this->ctrl_month.'-'.$this->ctrl_day;
   }
-  // fine calcolo date
 }
 ?>

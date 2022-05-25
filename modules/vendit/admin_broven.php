@@ -1607,12 +1607,13 @@ if ($form['tipdoc'] == 'VOG') {
     echo '				</select>';
     // select del mese
     echo '				<select name="mesemi" class="FacetSelect">';
+    $gazTimeFormatter->setPattern('MMMM');
     for ($counter = 1; $counter <= 12; $counter++) {
         $selected = "";
         if ($counter == $form['mesemi']) {
             $selected = ' selected=""';
         }
-        $nome_mese = ucwords(strftime("%B", mktime(0, 0, 0, $counter, 1, 0)));
+        $nome_mese = $gazTimeFormatter->format(new DateTime("2000-".$counter."-01"));
         echo '					<option value="' . $counter . '"' . $selected . '>' . $nome_mese . '</option>';
     }
     echo '				</select>';
