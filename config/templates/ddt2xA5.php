@@ -27,8 +27,8 @@
 /*
      !!!!!!!!!!!!!!!  ATTENZIONE !!!!!!!!!!!!!!!!!!!!!
 QUESTO  TEMPLATE NON E' ATTIVO DI DEFAULT MA BASTA RINOMINARLO
-in "ddt.php" SOVRASCRIVENDO L'ORIGINALE PER AVER DUE DOCUMENTI 
-DI TRASPORTO AFFIANCATI SU UN SOLO FOGLIO DI CARTA A4 
+in "ddt.php" SOVRASCRIVENDO L'ORIGINALE PER AVER DUE DOCUMENTI
+DI TRASPORTO AFFIANCATI SU UN SOLO FOGLIO DI CARTA A4
 */
 
 
@@ -38,28 +38,29 @@ class DDT extends Template_2xA5
 {
     function setTesDoc()
     {
-        $this->tesdoc = $this->docVars->tesdoc;
-        $this->giorno = substr($this->tesdoc['datemi'],8,2);
-        $this->mese = substr($this->tesdoc['datemi'],5,2);
-        $this->anno = substr($this->tesdoc['datemi'],0,4);
-		if ($this->tesdoc['datfat']){
-			$nomemese = ucwords(strftime("%B", mktime (0,0,0,substr($this->tesdoc['datemi'],5,2),1,0)));
-		} else {
-			$nomemese = '';
-		}
-        $this->sconto = $this->tesdoc['sconto'];
-        $this->trasporto = $this->tesdoc['traspo'];
-        if ($this->tesdoc['tipdoc'] == 'DDR') {
-            $descri='D.d.T. per Reso n.';
-        } elseif ($this->tesdoc['tipdoc'] == 'DDL') {
-            $descri='D.d.T. c/lavorazione n.';
-        } elseif ($this->tesdoc['ddt_type'] == 'V') {
-            $descri='D.d.T. cessione in c/visione n.';
-        } elseif ($this->tesdoc['ddt_type'] == 'Y') {
-            $descri='D.d.T. cessione per triangolazione n.';
-        } else {
-            $descri='Documento di Trasporto n.';
-        }
+      $this->tesdoc = $this->docVars->tesdoc;
+      $this->giorno = substr($this->tesdoc['datemi'],8,2);
+      $this->mese = substr($this->tesdoc['datemi'],5,2);
+      $this->anno = substr($this->tesdoc['datemi'],0,4);
+      if ($this->tesdoc['datfat']){
+        $this->docVars->gazTimeFormatter->setPattern('MMMM');
+        $nomemese = ucwords($this->docVars->gazTimeFormatter->format(new DateTime($this->tesdoc['datemi'])));
+      } else {
+        $nomemese = '';
+      }
+      $this->sconto = $this->tesdoc['sconto'];
+      $this->trasporto = $this->tesdoc['traspo'];
+      if ($this->tesdoc['tipdoc'] == 'DDR') {
+          $descri='D.d.T. per Reso n.';
+      } elseif ($this->tesdoc['tipdoc'] == 'DDL') {
+          $descri='D.d.T. c/lavorazione n.';
+      } elseif ($this->tesdoc['ddt_type'] == 'V') {
+          $descri='D.d.T. cessione in c/visione n.';
+      } elseif ($this->tesdoc['ddt_type'] == 'Y') {
+          $descri='D.d.T. cessione per triangolazione n.';
+      } else {
+          $descri='Documento di Trasporto n.';
+      }
 		if ($this->tesdoc['numdoc']>0){
 			$numdoc = $this->tesdoc['numdoc'].'/'.$this->tesdoc['seziva'];
 		} else {
@@ -196,7 +197,7 @@ class DDT extends Template_2xA5
                         $this->Cell(17,6);
                         $this->Cell(7,6,'','R',1);
                     }
-                }               
+                }
        }
     }
 

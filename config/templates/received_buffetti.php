@@ -39,29 +39,29 @@ class Received extends Template_2xA5
 {
     function setTesDoc()
     {
-        $this->tesdoc = $this->docVars->tesdoc;
-        $this->giorno = substr($this->tesdoc['datemi'],8,2);
-        $this->mese = substr($this->tesdoc['datemi'],5,2);
-        $this->anno = substr($this->tesdoc['datemi'],0,4);
-		if ($this->tesdoc['datfat']){
-			$nomemese = ucwords(strftime("%B", mktime (0,0,0,substr($this->tesdoc['datemi'],5,2),1,0)));
-		} else {
-			$nomemese = '';
-		}
-        $this->sconto = $this->tesdoc['sconto'];
-        $this->trasporto = $this->tesdoc['traspo'];
-        $this->virtual_taxstamp=$this->tesdoc['virtual_taxstamp'];
-        $this->taxstamp=$this->tesdoc['taxstamp'];
-        $descri='Ricevuta fiscale n.';
-        
-		if ($this->tesdoc['numdoc']>0){
-			$numdoc = $this->tesdoc['numdoc'].'/'.$this->tesdoc['seziva'];
-		} else {
-			$numdoc = ' _ _ _ _ _ _ _';
-		}
-        $this->tipdoc = $descri.$numdoc.' del '.$this->giorno.' '.$nomemese.' '.$this->anno;
-		$this->datdoc = $this->giorno.' '.$nomemese.' '.$this->anno;
-        $this->totddt = 0.00;
+      $this->tesdoc = $this->docVars->tesdoc;
+      $this->giorno = substr($this->tesdoc['datemi'],8,2);
+      $this->mese = substr($this->tesdoc['datemi'],5,2);
+      $this->anno = substr($this->tesdoc['datemi'],0,4);
+      if ($this->tesdoc['datfat']){
+        $this->docVars->gazTimeFormatter->setPattern('MMMM');
+        $nomemese = ucwords($this->docVars->gazTimeFormatter->format(new DateTime($this->tesdoc['datemi'])));
+      } else {
+        $nomemese = '';
+      }
+      $this->sconto = $this->tesdoc['sconto'];
+      $this->trasporto = $this->tesdoc['traspo'];
+      $this->virtual_taxstamp=$this->tesdoc['virtual_taxstamp'];
+      $this->taxstamp=$this->tesdoc['taxstamp'];
+      $descri='Ricevuta fiscale n.';
+      if ($this->tesdoc['numdoc']>0){
+        $numdoc = $this->tesdoc['numdoc'].'/'.$this->tesdoc['seziva'];
+      } else {
+        $numdoc = ' _ _ _ _ _ _ _';
+      }
+      $this->tipdoc = $descri.$numdoc.' del '.$this->giorno.' '.$nomemese.' '.$this->anno;
+      $this->datdoc = $this->giorno.' '.$nomemese.' '.$this->anno;
+      $this->totddt = 0.00;
     }
 
     function newPage() {
@@ -195,13 +195,13 @@ class Received extends Template_2xA5
            }
         }
 		*/
-		
-        if (!empty($this->descriptive_last_row) ) { // aggiungo alla fine un eventuale rigo descrittivo dalla configurazione avanzata azienda 
+
+        if (!empty($this->descriptive_last_row) ) { // aggiungo alla fine un eventuale rigo descrittivo dalla configurazione avanzata azienda
                 $this->Cell(133,5,$this->descriptive_last_row,1,0,'L',0,'',1);
 				$this->Cell(14);
 				$this->Cell(133,5,$this->descriptive_last_row,1,1,'L',0,'',1);
 		}
-		
+
         if ($this->taxstamp >= 0.01 ) {
             if ($this->virtual_taxstamp == 2 || $this->virtual_taxstamp == 3) {
                 $this->Cell(70,8,'','L',0,0);
@@ -240,15 +240,15 @@ class Received extends Template_2xA5
         $y = $this->GetY();
         $this->Rect(10,$y,133,155-$y); //questa marca le linee dx e sx del documento
         $this->Rect(157,$y,133,155-$y); //questa marca le linee dx e sx del documento
-       
-        /* 
+
+        /*
 		// bolli tratte
         if ($impbol > 0) {
           $this->Cell(40,4, gaz_format_number($impbol),'LBR', 0,'C');
         } else {
           $this->Cell(40,4,'','LBR');
         }
-        
+
 		$this->Cell(14);
         if ($impbol > 0) {
           $this->Cell(40,4, gaz_format_number($impbol),'LBR', 0,'C');
@@ -262,7 +262,7 @@ class Received extends Template_2xA5
         foreach ($this->docVars->cast as $key => $value) {
 			$this->Setx(0);
                 if ($this->tesdoc['id_tes'] > 0) {
-                   
+
                    $this->Cell(30,4, gaz_format_number($value['impcast']).' ', 0, 0, 'R',0,'',1);
 				   $this->Cell(2);
                    $this->Cell(8,4, intval($value['periva']),0,0,'R',0,'',1);
@@ -362,7 +362,7 @@ class Received extends Template_2xA5
            $this->Cell(33,9,'',0,1);
         }
 	}
-	
+
     function Footer()
     {
     }

@@ -27,14 +27,15 @@ class PreventivoCliente extends Template
 {
     function setTesDoc()
     {
-        $this->tesdoc = $this->docVars->tesdoc;
-        $this->giorno = substr($this->tesdoc['datemi'],8,2);
-        $this->mese = substr($this->tesdoc['datemi'],5,2);
-        $this->anno = substr($this->tesdoc['datemi'],0,4);
-        $this->nomemese = ucwords(strftime("%B", mktime (0,0,0,substr($this->tesdoc['datemi'],5,2),1,0)));
-        $this->sconto = $this->tesdoc['sconto'];
-        $this->trasporto = $this->tesdoc['traspo'];
-        $this->tipdoc = 'Preventivo a Cliente n.'.$this->tesdoc['numdoc'].'/'.$this->tesdoc['seziva'].' del '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
+      $this->tesdoc = $this->docVars->tesdoc;
+      $this->giorno = substr($this->tesdoc['datemi'],8,2);
+      $this->mese = substr($this->tesdoc['datemi'],5,2);
+      $this->anno = substr($this->tesdoc['datemi'],0,4);
+      $this->docVars->gazTimeFormatter->setPattern('MMMM');
+      $this->nomemese = ucwords($this->docVars->gazTimeFormatter->format(new DateTime($this->tesdoc['datemi'])));
+      $this->sconto = $this->tesdoc['sconto'];
+      $this->trasporto = $this->tesdoc['traspo'];
+      $this->tipdoc = 'Preventivo a Cliente n.'.$this->tesdoc['numdoc'].'/'.$this->tesdoc['seziva'].' del '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
     }
 
     function newPage() {
@@ -77,7 +78,7 @@ class PreventivoCliente extends Template
                     $this->Cell(7,  6, $rigo['unimis'],1,0,'C');
                     $this->Cell(16, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
                     $this->Cell(18, 6, number_format($rigo['prelis'],$this->decimal_price,',',''),1,0,'R');
-                   
+
                     if ($rigo['sconto']>0) {
                        $this->Cell(8, 6,  number_format($rigo['sconto'],1,',',''),1,0,'C');
                     } else {

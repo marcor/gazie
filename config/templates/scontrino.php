@@ -31,16 +31,17 @@ class Scontrino extends Template
 
     function setTesDoc()
     {
-        $this->tesdoc = $this->docVars->tesdoc;
-        $this->giorno = substr($this->tesdoc['datfat'],8,2);
-        $this->mese = substr($this->tesdoc['datfat'],5,2);
-        $this->anno = substr($this->tesdoc['datfat'],0,4);
-        $this->data = strftime("%d-%m-%Y", mktime (0,0,0,substr($this->tesdoc['datemi'],5,2),substr($this->tesdoc['datemi'],8,2),substr($this->tesdoc['datemi'],0,4)));
-        $this->sconto = $this->tesdoc['sconto'];
-        $this->tipdoc = 'Copia non fiscale dello Scontrino n.'.$this->tesdoc['numdoc'].' del '.$this->data;
-        $this->descriptive_last_row = $this->docVars->descriptive_last_row;
-		$this->efattura = '';
-		$this->ecr = $this->docVars->ecr;
+      $this->tesdoc = $this->docVars->tesdoc;
+      $this->giorno = substr($this->tesdoc['datfat'],8,2);
+      $this->mese = substr($this->tesdoc['datfat'],5,2);
+      $this->anno = substr($this->tesdoc['datfat'],0,4);
+      $this->docVars->gazTimeFormatter->setPattern('dd MMMM YYYY');
+      $this->data = $this->docVars->gazTimeFormatter->format(new DateTime($this->tesdoc['datemi']);
+      $this->sconto = $this->tesdoc['sconto'];
+      $this->tipdoc = 'Copia non fiscale dello Scontrino n.'.$this->tesdoc['numdoc'].' del '.$this->data;
+      $this->descriptive_last_row = $this->docVars->descriptive_last_row;
+      $this->efattura = '';
+      $this->ecr = $this->docVars->ecr;
     }
 
     function newPage() {
@@ -185,9 +186,9 @@ class Scontrino extends Template
            }
         }
         //FINE calcolo scadenze
-        if (!empty($this->descriptive_last_row) ) { // aggiungo alla fine un eventuale rigo descrittivo dalla configurazione avanzata azienda 
+        if (!empty($this->descriptive_last_row) ) { // aggiungo alla fine un eventuale rigo descrittivo dalla configurazione avanzata azienda
                 if (strlen($this->descriptive_last_row)>200){// Antonio Germani - se è troppo lungo lo divido in due righe
-					$descrtoolong=explode(" ",$this->descriptive_last_row);					
+					$descrtoolong=explode(" ",$this->descriptive_last_row);
 					for ($n=0; $n<=count($descrtoolong)/2; $n++){
 						$txt1=$txt1.$descrtoolong[$n]." ";
 						$txt2=$txt2.$descrtoolong[1+$n+count($descrtoolong)/2]." ";

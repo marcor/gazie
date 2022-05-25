@@ -31,20 +31,21 @@ class Parcella extends Template
 
     function setTesDoc()
     {
-        $this->tesdoc = $this->docVars->tesdoc;
-        $this->giorno = substr($this->tesdoc['datfat'],8,2);
-        $this->mese = substr($this->tesdoc['datfat'],5,2);
-        $this->anno = substr($this->tesdoc['datfat'],0,4);
-        $this->nomemese = ucwords(strftime("%B", mktime (0,0,0,substr($this->tesdoc['datfat'],5,2),1,0)));
-        $this->virtual_taxstamp=$this->tesdoc['virtual_taxstamp'];
-        $this->taxstamp=$this->tesdoc['taxstamp'];
-        $this->sconto = $this->tesdoc['sconto'];
-        $this->trasporto = $this->tesdoc['traspo'];
-		$descri = 'Parcella n.';
-		if ($this->tesdoc['tipdoc'] == 'FAQ') {
-            $descri = 'Parcella d\'acconto n.';
-        }
-        $this->tipdoc = $descri.$this->tesdoc['numfat'].'/'.$this->tesdoc['seziva'].' del '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
+      $this->tesdoc = $this->docVars->tesdoc;
+      $this->giorno = substr($this->tesdoc['datfat'],8,2);
+      $this->mese = substr($this->tesdoc['datfat'],5,2);
+      $this->anno = substr($this->tesdoc['datfat'],0,4);
+      $this->docVars->gazTimeFormatter->setPattern('MMMM');
+      $this->nomemese = ucwords($this->docVars->gazTimeFormatter->format(new DateTime($this->tesdoc['datfat'])));
+      $this->virtual_taxstamp=$this->tesdoc['virtual_taxstamp'];
+      $this->taxstamp=$this->tesdoc['taxstamp'];
+      $this->sconto = $this->tesdoc['sconto'];
+      $this->trasporto = $this->tesdoc['traspo'];
+      $descri = 'Parcella n.';
+      if ($this->tesdoc['tipdoc'] == 'FAQ') {
+        $descri = 'Parcella d\'acconto n.';
+      }
+      $this->tipdoc = $descri.$this->tesdoc['numfat'].'/'.$this->tesdoc['seziva'].' del '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
     }
 
     function newPage() {

@@ -30,15 +30,16 @@ class FatturaImmediata extends Template_con_scheda
 {
     function setTesDoc()
     {
-        $this->tesdoc = $this->docVars->tesdoc;
-        $this->giorno = substr($this->tesdoc['datfat'],8,2);
-        $this->mese = substr($this->tesdoc['datfat'],5,2);
-        $this->anno = substr($this->tesdoc['datfat'],0,4);
-		if ($this->tesdoc['datfat']){
-			$nomemese = ucwords(strftime("%B", mktime (0,0,0,substr($this->tesdoc['datfat'],5,2),1,0)));
-		} else {
-			$nomemese = '';
-		}
+      $this->tesdoc = $this->docVars->tesdoc;
+      $this->giorno = substr($this->tesdoc['datfat'],8,2);
+      $this->mese = substr($this->tesdoc['datfat'],5,2);
+      $this->anno = substr($this->tesdoc['datfat'],0,4);
+      if ($this->tesdoc['datfat']){
+        $this->docVars->gazTimeFormatter->setPattern('MMMM');
+        $nomemese = ucwords($this->docVars->gazTimeFormatter->format(new DateTime($this->tesdoc['datfat'])));
+      } else {
+        $nomemese = '';
+      }
         $this->virtual_taxstamp=$this->tesdoc['virtual_taxstamp'];
         $this->taxstamp=$this->tesdoc['taxstamp'];
         $this->sconto = $this->tesdoc['sconto'];

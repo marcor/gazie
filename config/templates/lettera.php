@@ -29,20 +29,21 @@ class Lettera extends Template
 
     function setTesDoc()
     {
-        $this->tesdoc = $this->docVars->tesdoc;
-        $this->giorno = substr($this->tesdoc['datemi'],8,2);
-        $this->mese = substr($this->tesdoc['datemi'],5,2);
-        $this->anno = substr($this->tesdoc['datemi'],0,4);
-        $this->nomemese = ucwords(strftime("%B", mktime (0,0,0,substr($this->tesdoc['datemi'],5,2),1,0)));
-        if ($this->tesdoc['tipdoc']=='SOL') {
-            $this->tipdoc = 'Sollecito del '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
-        } elseif ($this->tesdoc['tipdoc']=='DIC')  {
-            $this->tipdoc = 'Dichiarazione del '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
-        } elseif ($this->tesdoc['tipdoc']=='PRE')  {
-            $this->tipdoc = 'Preventivo del '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
-        } else  {
-            $this->tipdoc = 'Lettera n.'.$this->tesdoc['numdoc'].' del '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
-        }
+      $this->tesdoc = $this->docVars->tesdoc;
+      $this->giorno = substr($this->tesdoc['datemi'],8,2);
+      $this->mese = substr($this->tesdoc['datemi'],5,2);
+      $this->anno = substr($this->tesdoc['datemi'],0,4);
+      $this->docVars->gazTimeFormatter->setPattern('MMMM');
+      $this->nomemese = ucwords($this->docVars->gazTimeFormatter->format(new DateTime($this->tesdoc['datemi'])));
+      if ($this->tesdoc['tipdoc']=='SOL') {
+          $this->tipdoc = 'Sollecito del '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
+      } elseif ($this->tesdoc['tipdoc']=='DIC')  {
+          $this->tipdoc = 'Dichiarazione del '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
+      } elseif ($this->tesdoc['tipdoc']=='PRE')  {
+          $this->tipdoc = 'Preventivo del '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
+      } else  {
+          $this->tipdoc = 'Lettera n.'.$this->tesdoc['numdoc'].' del '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
+      }
     }
 
     function newPage() {

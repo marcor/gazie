@@ -519,7 +519,7 @@ class DocContabVars {
 
 }
 
-function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $dest = false, $lang_template=false,) {
+function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $dest = false, $lang_template=false) {
     $templates = array('Received' => 'received',
         'CartaIntestata' => 'carta_intestata',
         'Lettera' => 'lettera',

@@ -28,23 +28,24 @@ class Ticket extends Template
 {
     function setTesDoc()
     {
-        $this->company = $this->docVars->azienda;
-        $this->foro = gaz_dbi_get_row($this->docVars->gTables['provinces'],'abbreviation',$this->company['prospe']);
-        $this->tesdoc = $this->docVars->tesdoc;
-        $this->orderman = gaz_dbi_get_row($this->docVars->gTables['orderman'],'id',$this->tesdoc['id_orderman']);
-		$this->tecnico=gaz_dbi_get_row($this->docVars->gTables['staff'], 'id_staff',$this->orderman['id_staff_def']);
-        $anagrafica = new Anagrafica();
-		$this->staff = $anagrafica->getPartner($this->tecnico['id_clfoco']);
-		$this->campi=gaz_dbi_get_row($this->docVars->gTables['campi'], 'codice',$this->orderman['campo_impianto']);
-        $this->lines = $this->docVars->getRigo();
-        $this->giorno = substr($this->tesdoc['datemi'],8,2);
-        $this->mese = substr($this->tesdoc['datemi'],5,2);
-        $this->anno = substr($this->tesdoc['datemi'],0,4);
-        $this->nomemese = ucwords(strftime("%B", mktime (0,0,0,substr($this->tesdoc['datemi'],5,2),1,0)));
-        $this->sconto = $this->tesdoc['sconto'];
-        $this->trasporto = $this->tesdoc['traspo'];
-        $this->tipdoc = 'Ticket di assistenza n.'.$this->tesdoc['numdoc'].'/'.$this->tesdoc['seziva'].' del '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
-		$this->show_artico_composit = $this->docVars->show_artico_composit;
+      $this->company = $this->docVars->azienda;
+      $this->foro = gaz_dbi_get_row($this->docVars->gTables['provinces'],'abbreviation',$this->company['prospe']);
+      $this->tesdoc = $this->docVars->tesdoc;
+      $this->orderman = gaz_dbi_get_row($this->docVars->gTables['orderman'],'id',$this->tesdoc['id_orderman']);
+      $this->tecnico=gaz_dbi_get_row($this->docVars->gTables['staff'], 'id_staff',$this->orderman['id_staff_def']);
+      $anagrafica = new Anagrafica();
+      $this->staff = $anagrafica->getPartner($this->tecnico['id_clfoco']);
+      $this->campi=gaz_dbi_get_row($this->docVars->gTables['campi'], 'codice',$this->orderman['campo_impianto']);
+      $this->lines = $this->docVars->getRigo();
+      $this->giorno = substr($this->tesdoc['datemi'],8,2);
+      $this->mese = substr($this->tesdoc['datemi'],5,2);
+      $this->anno = substr($this->tesdoc['datemi'],0,4);
+      $this->docVars->gazTimeFormatter->setPattern('MMMM');
+      $this->nomemese = $this->docVars->gazTimeFormatter->format(new DateTime($this->tesdoc['datemi']);
+      $this->sconto = $this->tesdoc['sconto'];
+      $this->trasporto = $this->tesdoc['traspo'];
+      $this->tipdoc = 'Ticket di assistenza n.'.$this->tesdoc['numdoc'].'/'.$this->tesdoc['seziva'].' del '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
+      $this->show_artico_composit = $this->docVars->show_artico_composit;
     }
     function newPage() {
         $this->AddPage();
@@ -71,7 +72,7 @@ class Ticket extends Template
         $this->Cell(120,5,$this->campi['descri'],'R',1,'L',0,'',1);
         $this->Cell(66,5,'Suggerimenti e informazioni:','LT',0,'L',1,'',1);
         $this->Cell(120,5,'','TR',1,'L',0,'',1);
-        $this->MultiCell(186,4,$this->orderman['add_info'],'BLR','L');  
+        $this->MultiCell(186,4,$this->orderman['add_info'],'BLR','L');
         $this->Ln(2);
     }
 
@@ -84,7 +85,7 @@ class Ticket extends Template
     function body()
     {
 		foreach ($this->lines AS $key => $rigo) {
-			if ($key==5){ 
+			if ($key==5){
               $this->SetFont('helvetica','',9);
               $this->Cell(25,6,'Codice',1,0,'L',1);
               $this->Cell(80,6,'Descrizione',1,0,'L',1);
@@ -141,7 +142,7 @@ class Ticket extends Template
                 case "6":
                     $this->writeHtmlCell(186,6,10,$this->GetY(),$rigo['descri'],1,1);
                     break;
-                case "210": // se è un'articolo composto visualizzo la quantità 
+                case "210": // se è un'articolo composto visualizzo la quantità
                     if ( $this->show_artico_composit=="1" ) {
 						$oldy = $this->GetY();
 						$this->SetFont('helvetica', '', 8);
@@ -170,18 +171,18 @@ class Ticket extends Template
         $this->Cell(186,4,'Assistenza hardware:','LR',1,'L');
         $this->SetFont('helvetica','',6);
         $this->MultiCell(186,4,"1) L'intervento se in garanzia, copre esclusivamente i difetti di conformità del prodotto acquistato presso ".$this->intesta1.", ai sensi della legge. Non sono coperti da garanzia i prodotti che presentino chiari segni di manomissione o guasti causati da un'uso improprio del prodotto o da agenti esterni non riconducibili a vizi e/o difetti di fabbricazione. Pertanto in tal caso ".$this->intesta1." non sarà tenuta ad effettuare gratuitamente le riparazioni necessarie, ma potrà effettuarle, su richiesta del cliente a pagamento e secondo il preventivo che verrà fornito.
-		2) Il cliente dichiara di essere a conoscenza che l'intervento per la riparazione può comportare l'eventuale perdita totale o parziale di programmi e dati in qualunque modo contenuti o registrati nel prodotto consegnato per la riparazione. ".$this->intesta1." non si assume responsabilità alcuna riguardo a tale perdita, pertanto è esclusiva cura del cliente assicurarsi di aver effettuato le copie di sicurezza dei dati. A tale proposito si consiglia di richiedere a ".$this->intesta1.", che provvederà a titolo oneroso, per l'effettuazione dei backup di tutti i dati. In ogni caso il cliente è unico ed esclusivo responsabile di dati, informazioni e programmi contenuti o registrati in qualunque modo nel prodotto consegnato a ".$this->intesta1." con particolare riferimento alla liceità e legittima titolarità degli stessi.\n",'LR','L');  
+		2) Il cliente dichiara di essere a conoscenza che l'intervento per la riparazione può comportare l'eventuale perdita totale o parziale di programmi e dati in qualunque modo contenuti o registrati nel prodotto consegnato per la riparazione. ".$this->intesta1." non si assume responsabilità alcuna riguardo a tale perdita, pertanto è esclusiva cura del cliente assicurarsi di aver effettuato le copie di sicurezza dei dati. A tale proposito si consiglia di richiedere a ".$this->intesta1.", che provvederà a titolo oneroso, per l'effettuazione dei backup di tutti i dati. In ogni caso il cliente è unico ed esclusivo responsabile di dati, informazioni e programmi contenuti o registrati in qualunque modo nel prodotto consegnato a ".$this->intesta1." con particolare riferimento alla liceità e legittima titolarità degli stessi.\n",'LR','L');
         $this->Ln(0);
         $this->SetFont('helvetica','B',8);
         $this->Cell(186,4,'Assistenza software:','LR',1,'L');
         $this->SetFont('helvetica','',6);
         $this->MultiCell(186,4,"1) Il servizio verrà prestato dal personale ".$this->intesta1." o scelto da quest'ultima durante l'orario in vigore per il proprio personale e compatibilmente con la sua disponibilità di personale e risorse. ".$this->intesta1." si riserva la facoltà di affidare i servizi di assistenza informatica a terzi che, a suo insindacabile giudizio, possiedano la competenza e le risorse necessarie.
-		2) Sono espressamente esclusi dai servizi e dalle prestazioni: la cessione di software, materiali di consumo, materiale hardware di qualunque natura e/o quant'altro non specificatamente richiesto dal cliente. Nel  caso  in  cui  fossero  necessari  software  e/o  materiali  vari  durante  gli  interventi  sopracitati,  questi  dovranno essere forniti dal Cliente. I beni eventualmente necessari forniti da ".$this->intesta1." e saranno fatturati separatamente.\n",'LR','L');  
+		2) Sono espressamente esclusi dai servizi e dalle prestazioni: la cessione di software, materiali di consumo, materiale hardware di qualunque natura e/o quant'altro non specificatamente richiesto dal cliente. Nel  caso  in  cui  fossero  necessari  software  e/o  materiali  vari  durante  gli  interventi  sopracitati,  questi  dovranno essere forniti dal Cliente. I beni eventualmente necessari forniti da ".$this->intesta1." e saranno fatturati separatamente.\n",'LR','L');
         $this->Ln(0);
         $this->SetFont('helvetica','B',8);
         $this->Cell(186,4,'Foro competente:','LR',1,'L');
         $this->SetFont('helvetica','',6);
-        $this->MultiCell(186,4,"Per qualsiasi controversia è esclusivamente competente il foro di ".strtoupper($this->foro['name']).".\n ",'LBR','L');  
+        $this->MultiCell(186,4,"Per qualsiasi controversia è esclusivamente competente il foro di ".strtoupper($this->foro['name']).".\n ",'LBR','L');
         $this->Ln(1);
         $this->Cell(93,5,'per '.$this->intesta1,0,0,'L');
         $this->Cell(93,5,'Firma del cliente per approvazione:',0,1,'L');

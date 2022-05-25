@@ -28,15 +28,16 @@ class OrdineCliente extends Template
 {
     function setTesDoc()
     {
-        $this->tesdoc = $this->docVars->tesdoc;
-        $this->giorno = substr($this->tesdoc['datemi'],8,2);
-        $this->mese = substr($this->tesdoc['datemi'],5,2);
-        $this->anno = substr($this->tesdoc['datemi'],0,4);
-        $this->nomemese = ucwords(strftime("%B", mktime (0,0,0,substr($this->tesdoc['datemi'],5,2),1,0)));
-        $this->sconto = $this->tesdoc['sconto'];
-        $this->trasporto = $this->tesdoc['traspo'];
-        $this->tipdoc = 'Conferma d\'Ordine da Cliente n.'.$this->tesdoc['numdoc'].'/'.$this->tesdoc['seziva'].' del '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
-		$this->show_artico_composit = $this->docVars->show_artico_composit;
+      $this->tesdoc = $this->docVars->tesdoc;
+      $this->giorno = substr($this->tesdoc['datemi'],8,2);
+      $this->mese = substr($this->tesdoc['datemi'],5,2);
+      $this->anno = substr($this->tesdoc['datemi'],0,4);
+      $this->docVars->gazTimeFormatter->setPattern('MMMM');
+      $this->nomemese = ucwords($this->docVars->gazTimeFormatter->format(new DateTime($this->tesdoc['datemi'])));
+      $this->sconto = $this->tesdoc['sconto'];
+      $this->trasporto = $this->tesdoc['traspo'];
+      $this->tipdoc = 'Conferma d\'Ordine da Cliente n.'.$this->tesdoc['numdoc'].'/'.$this->tesdoc['seziva'].' del '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
+      $this->show_artico_composit = $this->docVars->show_artico_composit;
     }
     function newPage() {
         $this->AddPage();
@@ -107,7 +108,7 @@ class OrdineCliente extends Template
                 case "6":
                     $this->writeHtmlCell(186,6,10,$this->GetY(),$rigo['descri'],1,1);
                     break;
-                case "210": // se è un'articolo composto visualizzo la quantità 
+                case "210": // se è un'articolo composto visualizzo la quantità
                     if ( $this->show_artico_composit=="1" ) {
 						$oldy = $this->GetY();
 						$this->SetFont('helvetica', '', 8);

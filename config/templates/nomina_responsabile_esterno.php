@@ -29,42 +29,43 @@ class NominaResponsabileEsterno extends Template
 {
     function setTesDoc()
     {
-        $this->tesdoc = $this->docVars->tesdoc;
-        if ($this->docVars->client['sexper'] == 'F'){
-           $this->descriResponsabile = 'la Signora';
-        } elseif ($this->docVars->client['sexper'] == 'M'){
-           $this->descriResponsabile = 'il Signor';
-        } else {
-           $this->descriResponsabile = 'la Spettabile';
-        }
-		$this->service_descri=$this->docVars->client['external_service_descri'];
-		if ($this->docVars->tesdoc['clfoco']<=100000000) {
-			// non è un partner commerciale ma un responsabile interno (con diritti di amministrazione di gazie)
-			$this->user = gaz_dbi_get_row($this->docVars->gTables['admin'], "user_id", $this->docVars->tesdoc['clfoco']);
-			$this->cliente1 = $this->user['user_firstname'].' '.$this->user['user_lastname'];
-			$this->pers_title='per il/la Sig.r/a';
-			$this->descriResponsabile = 'il/la Signor/a';
-		}
-		$this->intesta1 = $this->docVars->intesta1;
-        $this->intesta1bis = $this->docVars->intesta1bis;
-        $this->intesta2 = $this->docVars->intesta2;
-        $this->intesta3 = $this->docVars->intesta3;
-        $this->intesta4 = $this->docVars->intesta4;
-        $this->colore = $this->docVars->colore;
-        $this->tipdoc = 'NOMINA DEL RESPONSABILE ESTERNO DEL TRATTAMENTO DEI DATI';
-		$this->luogo = $this->docVars->azienda['citspe'].' ('.$this->docVars->azienda['prospe'].'), lì '.strftime('%d %B %Y');
-		$this->pec = $this->docVars->azienda['pec'];
-        if ($this->docVars->intesta5 == 'F'){
-           $this->descriAzienda = 'la ditta';
-        } elseif ($this->docVars->intesta5 == 'M'){
-           $this->descriAzienda = 'la ditta';
-        } else {
-           $this->descriAzienda = 'la società';
-        }
-        $this->giorno = substr($this->tesdoc['datemi'],8,2);
-        $this->mese = substr($this->tesdoc['datemi'],5,2);
-        $this->anno = substr($this->tesdoc['datemi'],0,4);
-		$this->clientSedeLegale =''; // la sede legale verrà stampata al posto della destinazione
+      $this->tesdoc = $this->docVars->tesdoc;
+      if ($this->docVars->client['sexper'] == 'F'){
+         $this->descriResponsabile = 'la Signora';
+      } elseif ($this->docVars->client['sexper'] == 'M'){
+         $this->descriResponsabile = 'il Signor';
+      } else {
+         $this->descriResponsabile = 'la Spettabile';
+      }
+      $this->service_descri=$this->docVars->client['external_service_descri'];
+      if ($this->docVars->tesdoc['clfoco']<=100000000) {
+        // non è un partner commerciale ma un responsabile interno (con diritti di amministrazione di gazie)
+        $this->user = gaz_dbi_get_row($this->docVars->gTables['admin'], "user_id", $this->docVars->tesdoc['clfoco']);
+        $this->cliente1 = $this->user['user_firstname'].' '.$this->user['user_lastname'];
+        $this->pers_title='per il/la Sig.r/a';
+        $this->descriResponsabile = 'il/la Signor/a';
+      }
+      $this->intesta1 = $this->docVars->intesta1;
+      $this->intesta1bis = $this->docVars->intesta1bis;
+      $this->intesta2 = $this->docVars->intesta2;
+      $this->intesta3 = $this->docVars->intesta3;
+      $this->intesta4 = $this->docVars->intesta4;
+      $this->colore = $this->docVars->colore;
+      $this->tipdoc = 'NOMINA DEL RESPONSABILE ESTERNO DEL TRATTAMENTO DEI DATI';
+      $this->docVars->gazTimeFormatter->setPattern('dd MMMM YYYY');
+      $this->luogo = $this->docVars->azienda['citspe'].' ('.$this->docVars->azienda['prospe'].'), lì '.$this->docVars->gazTimeFormatter->format(new DateTime());
+      $this->pec = $this->docVars->azienda['pec'];
+      if ($this->docVars->intesta5 == 'F'){
+         $this->descriAzienda = 'la ditta';
+      } elseif ($this->docVars->intesta5 == 'M'){
+         $this->descriAzienda = 'la ditta';
+      } else {
+         $this->descriAzienda = 'la società';
+      }
+      $this->giorno = substr($this->tesdoc['datemi'],8,2);
+      $this->mese = substr($this->tesdoc['datemi'],5,2);
+      $this->anno = substr($this->tesdoc['datemi'],0,4);
+      $this->clientSedeLegale =''; // la sede legale verrà stampata al posto della destinazione
     }
 
     function newPage() {

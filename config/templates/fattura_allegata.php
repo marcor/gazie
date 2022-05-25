@@ -31,14 +31,15 @@ class FatturaAllegata extends Template
 
     function setTesDoc()
     {
-        $this->tesdoc = $this->docVars->tesdoc;
-        $this->giorno = substr($this->tesdoc['datfat'],8,2);
-        $this->mese = substr($this->tesdoc['datfat'],5,2);
-        $this->anno = substr($this->tesdoc['datfat'],0,4);
-        $this->data = strftime("%d-%m-%Y", mktime (0,0,0,substr($this->tesdoc['datemi'],5,2),substr($this->tesdoc['datemi'],8,2),substr($this->tesdoc['datemi'],0,4)));
-        $this->sconto = $this->tesdoc['sconto'];
-        $this->tipdoc =$this->tesdoc['numfat']>0?'Fattura n.'.$this->tesdoc['numfat'].'/'.$this->tesdoc['seziva'].' Allegata allo scontrino n.'.$this->tesdoc['numdoc'].' del '.$this->data:'Scontrino n.'.$this->tesdoc['numdoc'].' del '.$this->data;
-        $this->descriptive_last_row = $this->docVars->descriptive_last_row;
+      $this->tesdoc = $this->docVars->tesdoc;
+      $this->giorno = substr($this->tesdoc['datfat'],8,2);
+      $this->mese = substr($this->tesdoc['datfat'],5,2);
+      $this->anno = substr($this->tesdoc['datfat'],0,4);
+      $this->docVars->gazTimeFormatter->setPattern('dd MMMM YYYY');
+      $this->data = $this->docVars->gazTimeFormatter->format(new DateTime($this->tesdoc['datemi']);
+      $this->sconto = $this->tesdoc['sconto'];
+      $this->tipdoc =$this->tesdoc['numfat']>0?'Fattura n.'.$this->tesdoc['numfat'].'/'.$this->tesdoc['seziva'].' Allegata allo scontrino n.'.$this->tesdoc['numdoc'].' del '.$this->data:'Scontrino n.'.$this->tesdoc['numdoc'].' del '.$this->data;
+      $this->descriptive_last_row = $this->docVars->descriptive_last_row;
     }
 
     function newPage() {
@@ -187,7 +188,7 @@ class FatturaAllegata extends Template
            }
         }
         //FINE calcolo scadenze
-        if (!empty($this->descriptive_last_row) ) { // aggiungo alla fine un eventuale rigo descrittivo dalla configurazione avanzata azienda 
+        if (!empty($this->descriptive_last_row) ) { // aggiungo alla fine un eventuale rigo descrittivo dalla configurazione avanzata azienda
                 $this->Cell(186,6,$this->descriptive_last_row,1,1,'L',0,'',1);
 		}
         //stampo i totali

@@ -28,19 +28,20 @@ class OrdineFornitore extends Template
 {
     function setTesDoc()
     {
-        $this->tesdoc = $this->docVars->tesdoc;
-        $this->giorno = substr($this->tesdoc['datemi'],8,2);
-        $this->mese = substr($this->tesdoc['datemi'],5,2);
-        $this->anno = substr($this->tesdoc['datemi'],0,4);
-        $this->nomemese = ucwords(strftime("%B", mktime (0,0,0,substr($this->tesdoc['datemi'],5,2),1,0)));
-        $this->sconto = $this->tesdoc['sconto'];
-        $this->trasporto = $this->tesdoc['traspo'];
-        $this->tipdoc = 'Ordine a fornitore n.'.$this->tesdoc['numdoc'].'/'.$this->tesdoc['seziva'].' del '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
+      $this->tesdoc = $this->docVars->tesdoc;
+      $this->giorno = substr($this->tesdoc['datemi'],8,2);
+      $this->mese = substr($this->tesdoc['datemi'],5,2);
+      $this->anno = substr($this->tesdoc['datemi'],0,4);
+      $this->docVars->gazTimeFormatter->setPattern('MMMM');
+      $this->nomemese = ucwords($this->docVars->gazTimeFormatter->format(new DateTime("2000-".substr($this->tesdoc['datemi'],5,2)."-01")));
+      $this->sconto = $this->tesdoc['sconto'];
+      $this->trasporto = $this->tesdoc['traspo'];
+      $this->tipdoc = 'Ordine a fornitore n.'.$this->tesdoc['numdoc'].'/'.$this->tesdoc['seziva'].' del '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
 		if ($this->tesdoc['initra']>0) {
 			$this->giorno = substr($this->tesdoc['initra'],8,2);
 			$this->mese = substr($this->tesdoc['initra'],5,2);
 			$this->anno = substr($this->tesdoc['initra'],0,4);
-			$this->nomemese = ucwords(strftime("%B", mktime (0,0,0,substr($this->tesdoc['initra'],5,2),1,0)));
+			$this->nomemese = ucwords($this->docVars->gazTimeFormatter->format(new DateTime("2000-".substr($this->tesdoc['initra'],5,2)."-01")));
 			$this->consegna = 'Consegna richiesta per il giorno '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
 		} else {
 			$this->consegna = '';
@@ -90,38 +91,38 @@ class OrdineFornitore extends Template
                 switch($rigo['tiprig']) {
                 case "0":
 					$ctrldim=0;
-					$rp=0.000;	
+					$rp=0.000;
 					$dim='';
 					$pcs='';
 					$res_ps='';
-					$rigo['quality']=(!empty(trim($rigo['quality'])))? ' Qualità: '.$rigo['quality']:''; 
-					$rigo['codart']=(!empty(trim($rigo['codart'])))? ' Cod:'.$rigo['codart']:''; 
-					$rigo['codice_fornitore']=(!empty(trim($rigo['codice_fornitore'])))? ' Vs.Cod:'.$rigo['codice_fornitore']:''; 
+					$rigo['quality']=(!empty(trim($rigo['quality'])))? ' Qualità: '.$rigo['quality']:'';
+					$rigo['codart']=(!empty(trim($rigo['codart'])))? ' Cod:'.$rigo['codart']:'';
+					$rigo['codice_fornitore']=(!empty(trim($rigo['codice_fornitore'])))? ' Vs.Cod:'.$rigo['codice_fornitore']:'';
                     if ($rigo['pezzi'] > 0 ) {
 						$res_ps='kg/pz';
 						$rp=$rigo['pezzi'];
-						if ($rigo['lunghezza'] >= 0.001) { 
+						if ($rigo['lunghezza'] >= 0.001) {
 							$rp=$rigo['lunghezza']*$rigo['pezzi']/10**3;
-							$res_ps='kg/m';	
-							$dim .= floatval($rigo['lunghezza']); 
+							$res_ps='kg/m';
+							$dim .= floatval($rigo['lunghezza']);
 							$ctrldim+=$rigo['lunghezza'];
-							if ($rigo['larghezza'] >= 0.001) { 
+							if ($rigo['larghezza'] >= 0.001) {
 								$rp=$rigo['larghezza']*$rp/10**3;
-								$res_ps='kg/m²';	
-								$dim .= 'x'.floatval($rigo['larghezza']); 
+								$res_ps='kg/m²';
+								$dim .= 'x'.floatval($rigo['larghezza']);
 								$ctrldim+=$rigo['larghezza'];
-								if ($rigo['spessore'] >= 0.001) { 
+								if ($rigo['spessore'] >= 0.001) {
 									$rp=$rigo['spessore']*$rp;
-									$res_ps='kg/l';	
-									$dim .= 'x'.floatval($rigo['spessore']); 
+									$res_ps='kg/l';
+									$dim .= 'x'.floatval($rigo['spessore']);
 									$ctrldim+=$rigo['spessore'];
 								}
 							}
 						}
 						$dim.='mm';
 						$pcs='n.'.$rigo['pezzi'].' pezzi';
-						if ($rigo['peso_specifico'] >= 0.001) { 
-							$res_ps = ' - '.floatval($rigo['peso_specifico']).' '.$res_ps.' peso teor. '.floatval($rp*$rigo['peso_specifico']).' kg'; 
+						if ($rigo['peso_specifico'] >= 0.001) {
+							$res_ps = ' - '.floatval($rigo['peso_specifico']).' '.$res_ps.' peso teor. '.floatval($rp*$rigo['peso_specifico']).' kg';
 							$this->tot_rp +=$rp*$rigo['peso_specifico'];
 						}
                     } else {
@@ -144,7 +145,7 @@ class OrdineFornitore extends Template
                        $this->Cell(17, 6, number_format($rigo['prelis'],$this->decimal_price,',',''),1,0,'R'); // Modificato a mano
                     } else {
                        $this->Cell(17, 6, '',1); // Modificato a mano
-                    } 
+                    }
                     if ($rigo['sconto']> 0) {
                        $this->Cell(8, 6,  number_format($rigo['sconto'],1,',',''),1,0,'C');
                     } else {
