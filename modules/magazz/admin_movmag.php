@@ -416,7 +416,7 @@ if (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo acces
         if (strlen($form['expiry']) == 0) { // se non c'è la scadenza la inserisco a zero d'ufficio
           $form['expiry'] = "0000-00-00 00:00:00";
         }
-        $form['identifier'] = (empty($form['identifier'])) ? '' : filter_var($form['identifier'], FILTER_SANITIZE_STRING); // ne ripulisco il numero da caratteri dannosi
+        $form['identifier'] = (empty($form['identifier'])) ? '' : filter_var($form['identifier'], FILTER_SANITIZE_FULL_SPECIAL_CHARS); // ne ripulisco il numero da caratteri dannosi
         // Vedo dove andrà salvato il movimento di magazzino in movmag $id_movmag
         if ($toDo=="update") {
           $id_movmag=intval($_GET['id_mov']);

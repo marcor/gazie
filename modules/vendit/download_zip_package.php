@@ -25,7 +25,7 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
-$d=filter_input_array(INPUT_GET, FILTER_SANITIZE_STRING);
+$d=filter_input_array(INPUT_GET, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 $file_url = DATA_DIR."files/".$admin_aziend['codice']."/".substr($d['fn'],0,37);
 $mime=mime_content_type($file_url);
 header('Content-Type: '.$mime);

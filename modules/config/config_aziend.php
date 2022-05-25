@@ -39,19 +39,19 @@ if (isset($_POST['mode']) || isset($_GET['mode'])) {
 
 if (count($_POST) > 10) {
 	$error='&ok_insert';
-    $_POST  = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+    $_POST  = filter_input_array(INPUT_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     foreach ($_POST as $k => $v) {
-        $key=filter_var($k, FILTER_SANITIZE_STRING);
+        $key=filter_var($k, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 		if(substr($key,0,4)=='json'){
 			$v=html_entity_decode($v, ENT_QUOTES, 'UTF-8');
 			if (isJson($v)){
 				$value=$v;
 			} else {
-				$value='ERRORE!!! JSON NON VALIDO!: '.filter_var($v, FILTER_SANITIZE_STRING);
+				$value='ERRORE!!! JSON NON VALIDO!: '.filter_var($v, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 				$error='&json_error';
 			}
 		} else {
-            $value=filter_var($v, FILTER_SANITIZE_STRING);
+            $value=filter_var($v, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 		}
         gaz_dbi_put_row($gTables['company_config'], 'var', $key, 'val', $value);
     }

@@ -71,8 +71,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	$form['ritorno'] = $_POST['ritorno'];
 	$form['ref_ecommerce_id_main_product'] = substr($_POST['ref_ecommerce_id_main_product'], 0, 9);
 	$form['large_descri'] = filter_input(INPUT_POST, 'large_descri');
-	$form['cosear'] = filter_var($_POST['cosear'],FILTER_SANITIZE_STRING);
-	$form['codart'] = filter_var($_POST['codart'],FILTER_SANITIZE_STRING);
+	$form['cosear'] = filter_var($_POST['cosear'],FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+	$form['codart'] = filter_var($_POST['codart'],FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 	if ((isset($_GET['tab']) && $_GET['tab']=="variant") || ($_POST['cosear'] <> $_POST['codart']) ){
 		$cl_home="";
 		$cl_home_tab="";

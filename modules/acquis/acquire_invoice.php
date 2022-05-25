@@ -218,7 +218,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		$res_faesync=gaz_dbi_dyn_query("*", $gTables['files'], "item_ref='faesync' AND status = 0", "id_doc DESC", 0);
 	}
 } else { // accessi successivi
-	$form['fattura_elettronica_original_name'] = filter_var($_POST['fattura_elettronica_original_name'], FILTER_SANITIZE_STRING);
+	$form['fattura_elettronica_original_name'] = filter_var($_POST['fattura_elettronica_original_name'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 	$form['curr_doc'] = intval($_POST['curr_doc']);
 	$form['date_ini_D'] = '01';
 	$form['date_ini_M'] = date('m');
@@ -292,7 +292,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			}
 		}
 	} else if (isset($_POST['Download'])) { // faccio il download dell'allegato
-		$name = filter_var($_POST['Download'], FILTER_SANITIZE_STRING);
+		$name = filter_var($_POST['Download'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 		header('Content-Description: File Transfer');
 		header('Content-Type: application/octet-stream');
 		header('Content-Disposition: attachment;  filename="'.$name.'"');

@@ -42,7 +42,7 @@ if (!isset($_POST['item_ref'])) { // primo accesso nessun upload
 	$form['date_fin_Y'] = date('Y');
 	$form['curr_doc'] = 0;
 } else { // accessi successivi  
-	$form['item_ref'] = filter_var($_POST['item_ref'], FILTER_SANITIZE_STRING);
+	$form['item_ref'] = filter_var($_POST['item_ref'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 	$form['date_ini_D'] = '01';
 	$form['date_ini_M'] = date('m');
 	$form['date_ini_Y'] = date('Y');
@@ -92,7 +92,7 @@ if (!isset($_POST['item_ref'])) { // primo accesso nessun upload
 			}	
 		}
 	} else if (isset($_POST['Download'])) { // faccio il download dell'allegato
-		$name = filter_var($_POST['Download'], FILTER_SANITIZE_STRING);
+		$name = filter_var($_POST['Download'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 		header('Content-Description: File Transfer');
 		header('Content-Type: application/octet-stream');
 		header('Content-Disposition: attachment;  filename="'.$name.'"');

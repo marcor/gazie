@@ -331,17 +331,17 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
 				$getlot = $lm->getLot($form['rows'][$i]['id_lotmag']);
 				$form['rows'][$i]['identifier'] = $getlot['identifier'];
 			} else {
-				$form['rows'][$i]['identifier'] = (empty($_POST['rows'][$i]['identifier'])) ? '' : filter_var($_POST['rows'][$i]['identifier'], FILTER_SANITIZE_STRING);
+				$form['rows'][$i]['identifier'] = (empty($_POST['rows'][$i]['identifier'])) ? '' : filter_var($_POST['rows'][$i]['identifier'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 				$form['rows'][$i]['id_lotmag'] = $_POST['rows'][$i]['id_lotmag'];
 
 				if (isset($_POST['rows'][$i]['expiry']) AND $_POST['rows'][$i]['expiry']>0){
-					$form['rows'][$i]['expiry'] = (empty($_POST['rows'][$i]['expiry'])) ? '' : filter_var($_POST['rows'][$i]['expiry'], FILTER_SANITIZE_STRING);
+					$form['rows'][$i]['expiry'] = (empty($_POST['rows'][$i]['expiry'])) ? '' : filter_var($_POST['rows'][$i]['expiry'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 				} else {
 					$form['rows'][$i]['expiry']="0000-00-00 00:00:00";
 				}
 			}
 
-            $form['rows'][$i]['filename'] = filter_var($_POST['rows'][$i]['filename'], FILTER_SANITIZE_STRING);
+            $form['rows'][$i]['filename'] = filter_var($_POST['rows'][$i]['filename'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
             if (!empty($_FILES['docfile_' . $i]['name'])) {
                 $move = false;
                 $mt = substr($_FILES['docfile_' . $i]['name'], -3);

@@ -643,7 +643,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
           if ($form['lot_or_serial'] > 0) { // se l'articolo prodotto prevede un lotto
 
             // ripulisco il numero lotto inserito da caratteri dannosi
-            $form['identifier'] = (empty($form['identifier'])) ? '' : filter_var($form['identifier'], FILTER_SANITIZE_STRING);
+            $form['identifier'] = (empty($form['identifier'])) ? '' : filter_var($form['identifier'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
             if (strlen($form['identifier']) == 0) { // se non c'è il lotto lo inserisco con data e ora in automatico
               $form['identifier'] = date("Ymd Hms");
             }

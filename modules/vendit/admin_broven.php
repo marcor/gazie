@@ -239,7 +239,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['scorta'] = floatval($v['scorta']);
             $form['rows'][$next_row]['quamag'] = floatval($v['quamag']);
             $form['rows'][$next_row]['pesosp'] = floatval($v['pesosp']);
-            $form['rows'][$next_row]['extdoc'] = filter_var($_POST['rows'][$next_row]['extdoc'], FILTER_SANITIZE_STRING);//die(print_r($_POST['rows'],TRUE));
+            $form['rows'][$next_row]['extdoc'] = filter_var($_POST['rows'][$next_row]['extdoc'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);//die(print_r($_POST['rows'],TRUE));
             if (!empty($_FILES['docfile_' . $next_row]['name'])) {//die(print_r($_FILES,TRUE));
                 $move = false;
                 $mt = substr($_FILES['docfile_' . $next_row]['name'], -3);

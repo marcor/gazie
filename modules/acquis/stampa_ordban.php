@@ -53,7 +53,9 @@ $fornitor = $anagrafica->getPartner($tesbro['clfoco']);
 //ricavo il conto della banca di addebito(sulla testata e' riportata impropriamente su numfat)
 $bancadd = $anagrafica->getPartner($tesbro['numfat']);
 $banacc = gaz_dbi_get_row($gTables['banapp'],"codice",$tesbro['banapp']);
-$nomemese=ucwords(strftime("%B", mktime (0,0,0,substr($tesbro['datemi'],5,2),1,0)));
+
+$gazTimeFormatter->setPattern('MMMM');
+$nomemese=ucwords($gazTimeFormatter->format(new DateTime("2000-".substr($tesbro['datemi'],5,2)."-01")));
 $min = substr($tesbro['initra'],14,2);
 $ora = substr($tesbro['initra'],11,2);
 $day = substr($tesbro['initra'],8,2);

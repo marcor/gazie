@@ -40,8 +40,8 @@ function convNum($n=0){
   }
   return $r;
 }
-$luogo_data=$admin_aziend['citspe'].", lì ";
-$luogo_data .=ucwords(strftime("%d %B %Y", mktime (0,0,0,date("m"),date("d"),date("Y"))));
+$gazTimeFormatter->setPattern('dd MMMM YYYY');
+$luogo_data = $admin_aziend['citspe'] . ", lì " . ucwords($gazTimeFormatter->format($gazTime));
 $where = " 1 ";
 $what = $gTables['clfoco'].".*, CONCAT(".$gTables['anagra'].".ragso1, ' ',".$gTables['anagra'].".ragso2) AS ragsoc ";
 $table = $gTables['clfoco']." LEFT JOIN ".$gTables['anagra']." ON (".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id)";

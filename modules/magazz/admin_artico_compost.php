@@ -39,7 +39,7 @@ if(!isset($form['ritorno'])){
 	$form['ritorno']=$_POST['ritorno'];
 }
 if (isset($_GET['codice'])){
-    $codcomp = filter_var($_GET['codice'],FILTER_SANITIZE_STRING);
+    $codcomp = filter_var($_GET['codice'],FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 }else{
    // header("Location: ../magazz/admin_artico_compost.php?codice=".$codcomp )
    // Antonio Germani Se viene aperto senza codice articolo esco e rimando all'elenco articoli
@@ -55,8 +55,8 @@ if(isset($_POST['Update'])||isset($_GET['Update'])){
 
 if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo accesso
     $form['hidden_req'] = $_POST['hidden_req'];
-    $form['cosear'] = filter_var($_POST['cosear'],FILTER_SANITIZE_STRING);
-    $form['codart'] = filter_var($_POST['codart'],FILTER_SANITIZE_STRING);
+    $form['cosear'] = filter_var($_POST['cosear'],FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $form['codart'] = filter_var($_POST['codart'],FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $form['quanti'] = floatval($_POST['quanti']);
 } elseif (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo accesso per UPDATE
         $form['hidden_req'] = '';

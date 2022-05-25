@@ -106,35 +106,35 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
        }
 
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
-   $anagrafica = new Anagrafica();
-   $conto = $anagrafica->getPartner($_GET['codice']);
-   $_POST['num_rigo'] = 0;
-   $_POST['gioemi'] = $day;
-   $_POST['mesemi'] = $month;
-   $_POST['annemi'] = $year;
-   $utsnew= mktime(0,0,0,$month,$day+5,$year);
-   $_POST['gioval'] = strftime ("%d",$utsnew);
-   $_POST['mesval'] = strftime ("%m",$utsnew);
-   $_POST['annval'] = strftime ("%Y",$utsnew);
-   $_POST['spediz'] = $conto['iban'];
-   $_POST['righi'] = array();
-   $_POST['numfat'] = ""; //impropriamente usato per il numero di conto d'addebito
-   $_POST['id_con'] = "";
-   //recupero tutti i movimenti contabili del conto insieme alle relative testate per creare l'array dei debiti
-   $utsemi= mktime(0,0,0,$_POST['mesemi'],$_POST['gioemi'],$_POST['annemi']);
-   $utsval= mktime(0,0,0,$_POST['mesval'],$_POST['gioval'],$_POST['annval']);
-   $pagame = gaz_dbi_get_row($gTables['pagame'],"codice",$conto['codpag']);
-   if ($pagame['tippag'] == 'D' || $pagame['tippag'] == 'O') {
-      $_POST['tipdoc'] = 'AOB';
-   } else {
-      $_POST['tipdoc'] = 'AOA';
-   }
-   $result = mergeTable($gTables['rigmoc'],"*",$gTables['tesmov'],"*","id_tes","codcon = ".intval($conto['codice'])." AND caucon <> 'CHI' ORDER BY datreg asc");
-   $_POST['righi'] = createArrayDebiti($result,$pagame,$utsemi);
-   $_POST['num_rigo'] = $_POST['righi']['numrighi'] ;
-   $_POST['righi'] = array_splice($_POST['righi'],0,$_POST['num_rigo']);
-   //azzero gli array eliminati
-   $_POST['delrig'] = array();
+  $anagrafica = new Anagrafica();
+  $conto = $anagrafica->getPartner($_GET['codice']);
+  $_POST['num_rigo'] = 0;
+  $_POST['gioemi'] = $day;
+  $_POST['mesemi'] = $month;
+  $_POST['annemi'] = $year;
+  $uts = new DateTime('@'.mktime(12,0,0,$month,$day+5,$year));
+  $_POST['gioval'] = $uts->format('d');
+  $_POST['mesval'] = $uts->format('m');
+  $_POST['annval'] = $uts->format('Y');
+  $_POST['spediz'] = $conto['iban'];
+  $_POST['righi'] = array();
+  $_POST['numfat'] = ""; //impropriamente usato per il numero di conto d'addebito
+  $_POST['id_con'] = "";
+  //recupero tutti i movimenti contabili del conto insieme alle relative testate per creare l'array dei debiti
+  $utsemi= mktime(12,0,0,$_POST['mesemi'],$_POST['gioemi'],$_POST['annemi']);
+  $utsval= mktime(12,0,0,$_POST['mesval'],$_POST['gioval'],$_POST['annval']);
+  $pagame = gaz_dbi_get_row($gTables['pagame'],"codice",$conto['codpag']);
+  if ($pagame['tippag'] == 'D' || $pagame['tippag'] == 'O') {
+     $_POST['tipdoc'] = 'AOB';
+  } else {
+     $_POST['tipdoc'] = 'AOA';
+  }
+  $result = mergeTable($gTables['rigmoc'],"*",$gTables['tesmov'],"*","id_tes","codcon = ".intval($conto['codice'])." AND caucon <> 'CHI' ORDER BY datreg asc");
+  $_POST['righi'] = createArrayDebiti($result,$pagame,$utsemi);
+  $_POST['num_rigo'] = $_POST['righi']['numrighi'] ;
+  $_POST['righi'] = array_splice($_POST['righi'],0,$_POST['num_rigo']);
+  //azzero gli array eliminati
+  $_POST['delrig'] = array();
 }
 
 if ($toDo == 'update') {
@@ -143,12 +143,11 @@ if ($toDo == 'update') {
     $titolo = "Salda Debito verso ".$conto['ragso1']." ".$conto['ragso2']."(inserimento)";
 }
 
-if (!isset($_POST['delrig']))
-    $_POST['delrig'] = array();
-if (!isset($testata['id_con']))
-    $testata['id_con'] = 0;
+if (!isset($_POST['delrig']))  $_POST['delrig'] = [];
+if (!isset($testata['id_con'])) $testata['id_con'] = 0;
 
-$nomemese=ucwords(strftime("%B", mktime (0,0,0,$month,1,0)));
+$gazTimeFormatter->setPattern('MMMM');
+$nomemese=ucwords($gazTimeFormatter->format(new DateTime("2000-".$month."-01")));
 
 if (isset($_POST['ins'])) {
         //controllo le date
@@ -358,9 +357,8 @@ echo "\t </select>\n";
 echo "\t <select name=\"mesemi\" class=\"FacetSelect\" >\n";
 for( $counter = 1; $counter <= 12; $counter++ ) {
     $selected = "";
-    if($counter == $_POST['mesemi'])
-            $selected = "selected";
-    $nome_mese = ucwords(strftime("%B", mktime (0,0,0,$counter,1,0)));
+    if($counter == $_POST['mesemi']) $selected = "selected";
+    $nome_mese = $gazTimeFormatter->format(new DateTime("2000-".$counter."-01"));
     echo "\t\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
 }
 echo "\t </select>\n";
@@ -387,9 +385,8 @@ echo "\t </select>\n";
 echo "\t <select name=\"mesval\" class=\"FacetSelect\" >\n";
 for( $counter = 1; $counter <= 12; $counter++ ) {
     $selected = "";
-    if($counter == $_POST['mesval'])
-            $selected = "selected";
-    $nome_mese = ucwords(strftime("%B", mktime (0,0,0,$counter,1,0)));
+    if($counter == $_POST['mesval']) $selected = "selected";
+    $nome_mese = $gazTimeFormatter->format(new DateTime("2000-".$counter."-01"));
     echo "\t\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
 }
 echo "\t </select>\n";
@@ -425,7 +422,7 @@ echo "<div class=\"table-responsive\"><table class=\"Tlarge table table-striped 
 /** ENRICO FEDELE */
 /* glyph-icon */
 echo '  <tr>
-		  <td colspan="3" align="right">Aggiungi un rigo --&raquo; 
+		  <td colspan="3" align="right">Aggiungi un rigo --&raquo;
 			<button type="submit" class="btn btn-default btn-sm" name="add" title="Aggiunta rigo!"><i class="glyphicon glyphicon-ok"></i></button>
 		</td>
 	   </tr>';
@@ -441,7 +438,7 @@ foreach ($_POST['righi'] as $key => $value) {
     echo "<tr><td><input type=\"text\" name=\"righi[{$key}][descri]\" value=\"{$value['descri']}\" maxlength=\"50\" ></td>\n";
     echo "<td align=\"right\"><input align=\"right\" type=\"text\" name=\"righi[{$key}][prelis]\" value=\"".preg_replace("/\,/",'.', $importo_rigo)."\" maxlength=\"11\" ></td>\n";
     //echo "<td align=\"right\"><input type=\"image\" name=\"del[{$key}]\" src=\"../../library/images/xbut.gif\" title=\"Elimina rigo!\"></td></tr>\n";
-	
+
 		/** ENRICO FEDELE */
 	/* glyph icon */
 	echo '  <td align="right">
@@ -449,7 +446,7 @@ foreach ($_POST['righi'] as $key => $value) {
 			</td>
 		  </tr>';
 	/** ENRICO FEDELE */
-	
+
     echo "<input type=\"hidden\" name=\"righi[{$key}][id_rig]\" value=\"{$value['id_rig']}\">\n";
 }
 if($_POST['num_rigo'] > 0) {

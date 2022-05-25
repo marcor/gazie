@@ -153,7 +153,7 @@ function recoverCorruptedXML($s)
 }
 
 if (isset($_POST['Download'])) { // è stato richiesto il download dell'allegato
-		$name = filter_var($_POST['Download'], FILTER_SANITIZE_STRING);
+		$name = filter_var($_POST['Download'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 		header('Content-Description: File Transfer');
 		header('Content-Type: application/octet-stream');
 		header('Content-Disposition: attachment;  filename="'.$name.'"');

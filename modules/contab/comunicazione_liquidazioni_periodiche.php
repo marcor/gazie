@@ -27,7 +27,7 @@ $admin_aziend = checkAdmin();
 $msg = array('err' => array(), 'war' => array());
 
 function getMovimentiPeriodo($trimestre_liquidabile) {
-    global $gTables, $admin_aziend;
+    global $gTables, $admin_aziend, $gazTimeFormatter;
     // ricavo le date dei periodi da liquidare in base all'ultimo trimestre e alle impostazioni aziendali
     $y = substr($trimestre_liquidabile, 0, 4);
     $trimestre = substr($trimestre_liquidabile, 4, 1);
@@ -43,7 +43,7 @@ function getMovimentiPeriodo($trimestre_liquidabile) {
         $date_carry = new DateTime($y . '-' . $m . '-1');
         $date_carry->modify('-1 month');
         $carry = gaz_dbi_get_row($gTables['liquidazioni_iva'], "mese_trimestre", $date_carry->format('m'), "AND anno = '{$date_carry->format('Y')}'");
-        $saldo = round($carry['vp4'] - $carry['vp5'] + $carry['vp7'] - $carry['vp8'] - $carry['vp9'] - $carry['vp10'] - $carry['vp11'] + $carry['vp12'] - $carry['vp13'], 2);
+        $saldo = $carry?round($carry['vp4'] - $carry['vp5'] + $carry['vp7'] - $carry['vp8'] - $carry['vp9'] - $carry['vp10'] - $carry['vp11'] + $carry['vp12'] - $carry['vp13'], 2):0;
         if ($saldo <= -0.01) { // se c'è un credito
             $cre = $saldo;
         } else {
@@ -63,8 +63,9 @@ function getMovimentiPeriodo($trimestre_liquidabile) {
     }
     $first = true;
     $carry_cre = 0.00;
+    $gazTimeFormatter->setPattern('MMMM');
     foreach ($mod_periodi as $date) {
-        $np = str_pad(" " . strftime('%B', mktime(0, 0, 0, $date['mese_trimestre'], 1, $y)) . " " . $y . " ", 20, "*", STR_PAD_BOTH);
+        $np = str_pad(" " . $gazTimeFormatter->format(new DateTime("2000-".$date['mese_trimestre']."-01")) . " " . $y . " ", 20, "*", STR_PAD_BOTH);
         if ($admin_aziend['ivam_t'] == "T") {
             $np = null;
         }
@@ -153,9 +154,10 @@ if (!isset($_POST['ritorno'])) {
     if ((isset($_GET['Update']) && isset($_GET['id']))) { // è una modifica
         $liq = gaz_dbi_get_row($gTables['liquidazioni_iva'], "id", intval($_GET['id']));
         $rs_liq = gaz_dbi_dyn_query("*", $gTables['liquidazioni_iva'], "nome_file_xml = '" . $liq['nome_file_xml'] . "'", "mese_trimestre");
+        $gazTimeFormatter->setPattern('MMMM');
         while ($r = gaz_dbi_fetch_array($rs_liq)) {
             $form['mods'][$r['mese_trimestre']] = $r;
-            $form['mods'][$r['mese_trimestre']]['nome_periodo'] = str_pad(" " . strftime('%B', mktime(0, 0, 0, $r['mese_trimestre'], 1, $r['anno'])) . " " . $r['anno'] . " ", 20, "*", STR_PAD_BOTH);
+            $form['mods'][$r['mese_trimestre']]['nome_periodo'] = str_pad(" " .  $gazTimeFormatter->format(new DateTime("2000-".$r['mese_trimestre']."-01")) . " " . $r['anno'] . " ", 20, "*", STR_PAD_BOTH);
             if ($r['periodicita'] == "T") {
                 $form['mods'][$r['mese_trimestre']]['nome_periodo'] = null;
             }
@@ -281,7 +283,7 @@ $gForm = new contabForm();
 ?>
 <STYLE>
     .verticaltext {
-        position: relative; 
+        position: relative;
         padding-left:50px;
         margin:1em 0;
         min-height:120px;
@@ -468,18 +470,18 @@ $gForm = new contabForm();
                                 <div class="form-group">
                                     <label for="vp13m" class="col-sm-1 col-md-1 col-lg-1 control-label">VP13</label>
                                     <div class="col-sm-6 col-md-6 col-lg-6">
-                                        <?php 
+                                        <?php
 										$tl = substr($form['trimestre_liquidabile'],-1);
-										if ($k == 12 || ($tl == 4 && $form['mods'][$k]['periodicita'] == 'T')  ) { 
-											// nel quarto trimestre o ultimo mese scelgo il metodo di acconto 
+										if ($k == 12 || ($tl == 4 && $form['mods'][$k]['periodicita'] == 'T')  ) {
+											// nel quarto trimestre o ultimo mese scelgo il metodo di acconto
 											$vp13disab='';
-											echo $script_transl['vp13m']; 
+											echo $script_transl['vp13m'];
 											$gForm->variousSelect('mods['.$k.'][vp13m]', $script_transl['vp13m_val'], $form['mods'][$k]['vp13m'], "col-lg-12", true, '', false, 'col-lg-12');
-										} else { 
+										} else {
 											$vp13disab='disabled';
 											?>
 											<input type="hidden" name="mods[<?php echo $k; ?>][vp13m]" value="<?php echo $v['vp13m']; ?>">
-											<?php											
+											<?php
 										}
 										?>
                                    </div>
@@ -518,7 +520,7 @@ $gForm = new contabForm();
         <?php } else if (count($msg['err']) == 0) {
             ?>
             <div class="col-sm-12 text-center"><input name="Submit" type="submit" class="btn btn-warning" value="Genera il file XML per la comunicazione trimestrale dell'IVA" /></div>
-            <?php } ?>   
+            <?php } ?>
     </form>
     <?php
     require("../../library/include/footer.php");

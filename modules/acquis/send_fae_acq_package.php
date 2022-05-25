@@ -30,7 +30,7 @@ if (isset($_GET['fn'])) {
 	$gMail = new GAzieMail();
     $user = gaz_dbi_get_row($gTables['admin'], "user_name", $_SESSION["user_name"]);
    
-	$d=filter_input_array(INPUT_GET, FILTER_SANITIZE_STRING);
+	$d=filter_input_array(INPUT_GET, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 	$file_url = DATA_DIR."files/tmp/".substr($d['fn'],0,43);	
     
     $content = new StdClass;

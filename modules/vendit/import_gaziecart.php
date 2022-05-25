@@ -97,7 +97,7 @@ if (!isset($_POST['ritorno'])) { // al primo accesso allo script
             $form['status'] = 'GENERATO';
             $form['initra'] = substr($n, 0, 4) . "-" . substr($n, 4, 2) . "-" . substr($n, 6, 2) . " " . substr($n, 8, 2) . ":" . substr($n, 10, 2) . ":" . substr($n, 12, 2);
             $form['datemi'] = substr($n, 0, 4) . "-" . substr($n, 4, 2) . "-" . substr($n, 6, 2);
-            $text = filter_var($_POST['order'][$n]['text'], FILTER_SANITIZE_STRING);
+            $text = filter_var($_POST['order'][$n]['text'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
             tesbroInsert($form);
             //recupero l'id assegnato dall'inserimento
             $ultimo_id = gaz_dbi_last_id();

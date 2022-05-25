@@ -24,6 +24,7 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
+$gazTimeFormatter->setPattern('MMMM');
 
 require("../../library/include/header.php");
 $script_transl = HeadMain();
@@ -47,7 +48,7 @@ if (isset($_POST['hidden_req'])) { // accessi successivi allo script
                 <table class="Tlarge table table-striped table-bordered table-condensed">
                     <tr>
                         <th class="FacetFieldCaptionTD">ID</th>
-                        <th class="FacetFieldCaptionTD"><?php echo $script_transl['periodo']; ?></th>            
+                        <th class="FacetFieldCaptionTD"><?php echo $script_transl['periodo']; ?></th>
                         <th class="FacetFieldCaptionTD">File XML</th>
                         <th class="FacetFieldCaptionTD"><?php echo $script_transl['vp4']; ?></th>
                         <th class="FacetFieldCaptionTD"><?php echo $script_transl['vp5']; ?></th>
@@ -59,7 +60,7 @@ if (isset($_POST['hidden_req'])) { // accessi successivi allo script
                                 if ($row["periodicita"] == 'T') {
                                     $descri_per = $script_transl['periodo_val'][$row['mese_trimestre']] . ' ' . $script_transl['periodicita_val'][$row["periodicita"]] . ' ' . $row["anno"];
                                 } else {
-                                    $descri_per = $script_transl['periodicita_val'][$row["periodicita"]] . ' ' . strftime('%B', mktime(0, 0, 0, $row['mese_trimestre'], 1, $row["anno"])) . ' ' . $row["anno"];
+                                    $descri_per = $script_transl['periodicita_val'][$row["periodicita"]] . ' ' . $gazTimeFormatter->format(new DateTime("2000-".$row['mese_trimestre']."-01"))  . ' ' . $row["anno"];
                                 }
                                 $altro=round($row['vp7'] - $row['vp8'] - $row['vp9'] - $row['vp10'] - $row['vp11'] + $row['vp12'] - $row['vp13'], 2);
                                 echo "<tr class=\"FacetDataTD\">";

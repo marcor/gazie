@@ -34,15 +34,15 @@ if(isset($_POST["fn"])&& isset($_POST["filename"])){ // ho i dati di base
     $admin_aziend = checkAdmin();
     // scrittura db
     if ($_POST["fn"]=='save'){ // upsert
-        $ier=gaz_dbi_get_row($gTables['company_data'], 'var', filter_var($_POST['filename'], FILTER_SANITIZE_STRING));
+        $ier=gaz_dbi_get_row($gTables['company_data'], 'var', filter_var($_POST['filename'], FILTER_SANITIZE_FULL_SPECIAL_CHARS));
         if ($ier){
-            gaz_dbi_put_row($gTables['company_data'], 'var', filter_var($_POST['filename'], FILTER_SANITIZE_STRING),'data',filter_var($_POST['value'], FILTER_SANITIZE_STRING));
+            gaz_dbi_put_row($gTables['company_data'], 'var', filter_var($_POST['filename'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),'data',filter_var($_POST['value'], FILTER_SANITIZE_FULL_SPECIAL_CHARS));
         }else{
-            gaz_dbi_table_insert('company_data', array('description'=>'Valori settaggio IERincludeExcludeRows', 'var'=>filter_var($_POST['filename'], FILTER_SANITIZE_STRING),'data'=>filter_var($_POST['value'], FILTER_SANITIZE_STRING)));		
+            gaz_dbi_table_insert('company_data', array('description'=>'Valori settaggio IERincludeExcludeRows', 'var'=>filter_var($_POST['filename'], FILTER_SANITIZE_FULL_SPECIAL_CHARS),'data'=>filter_var($_POST['value'], FILTER_SANITIZE_FULL_SPECIAL_CHARS)));		
         }
 	// lettura db
     } else {
-        echo gaz_dbi_get_row($gTables['company_data'], 'var', filter_var($_POST['filename'], FILTER_SANITIZE_STRING))['data'];
+        echo gaz_dbi_get_row($gTables['company_data'], 'var', filter_var($_POST['filename'], FILTER_SANITIZE_FULL_SPECIAL_CHARS))['data'];
     }
 }
 ?>

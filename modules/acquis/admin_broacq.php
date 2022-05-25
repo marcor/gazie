@@ -179,7 +179,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['spessore'] = floatval($v['spessore']);
             $form['rows'][$next_row]['peso_specifico'] = floatval($v['peso_specifico']);
             $form['rows'][$next_row]['pezzi'] = floatval($v['pezzi']);
-            $form['rows'][$next_row]['extdoc'] = filter_var($_POST['rows'][$next_row]['extdoc'], FILTER_SANITIZE_STRING);
+            $form['rows'][$next_row]['extdoc'] = filter_var($_POST['rows'][$next_row]['extdoc'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
             if (!empty($_FILES['docfile_' . $next_row]['name'])) {
                 $move = false;
                 $mt = substr($_FILES['docfile_' . $next_row]['name'], -3);

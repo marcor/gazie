@@ -50,7 +50,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['ceedar'] = substr($_POST['ceedar'],0,8);
     $form['ceeave'] = substr($_POST['ceeave'],0,8);
     $form['paymov'] = substr($_POST['paymov'],0,1);
-    $form['annota'] = filter_var($_POST['annota'],FILTER_SANITIZE_STRING);
+    $form['annota'] = filter_var($_POST['annota'],FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     if (isset($_POST['Submit'])) { // conferma tutto
        //eseguo i controlli formali
        $code_exist = gaz_dbi_dyn_query('codice',$gTables['clfoco'],"codice = ".$form['codice'],'codice DESC',0,1);

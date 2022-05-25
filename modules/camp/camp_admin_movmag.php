@@ -886,7 +886,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 							$idlotcontroll = gaz_dbi_get_row($gTables['lotmag'], "id", $form['id_lotmag'][$form['mov']]); // in $idlotcontroll['id_movmag'] ho l'id del movimento madre del lotto mi
 							if ($form['lot_or_serial'][$form['mov']] > 0 && intval($form['id_lotmag'][$form['mov']]) == 0) { // se l'articolo prevede un lotto e non ho id_lotmag, vuol dire che non ho scelto il lotto fra gli esistenti e quindi devo creare un  nuovo lotto
 								// ripulisco il numero lotto da caratteri dannosi
-								$form['identifier'][$form['mov']] = (empty($form['identifier'][$form['mov']])) ? '' : filter_var($form['identifier'][$form['mov']], FILTER_SANITIZE_STRING);
+								$form['identifier'][$form['mov']] = (empty($form['identifier'][$form['mov']])) ? '' : filter_var($form['identifier'][$form['mov']], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 								if (strlen($form['identifier'][$form['mov']]) == 0) { // se non c'è il lotto lo inserisco con data e ora in automatico
 									$form['identifier'][$form['mov']] = date("Ymd Hms");
 								}

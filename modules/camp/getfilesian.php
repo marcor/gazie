@@ -33,8 +33,8 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 if (isset($_GET['filename'])&&isset($_GET['ext'])&&isset($_GET['company_id'])){
-	$bfn = filter_var($_GET['filename'], FILTER_SANITIZE_STRING);
-	$ext = filter_var($_GET['ext'], FILTER_SANITIZE_STRING);
+	$bfn = filter_var($_GET['filename'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+	$ext = filter_var($_GET['ext'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 	$fn=$bfn.'.'.$ext;
 	$ci = intval($_GET['company_id']);
 	if (file_exists(DATA_DIR."files/".$ci."/sian/".$fn)){

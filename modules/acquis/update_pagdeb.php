@@ -196,14 +196,13 @@ print "<td class=\"FacetFieldCaptionTD\">\n";
             print "\t </select>\n";
             // select del mese
             print "\t <select name=\"mesemi\" class=\"FacetSelect\" >\n";
-            for( $counter = 1; $counter <= 12; $counter++ )
-                {
-                $selected = "";
-                if($counter == $_POST['mesemi'])
-                        $selected = "selected";
-                $nome_mese = ucwords(strftime("%B", mktime (0,0,0,$counter,1,0)));
-                print "\t\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
-                }
+            $gazTimeFormatter->setPattern('MMMM');
+            for( $counter = 1; $counter <= 12; $counter++ ) {
+              $selected = "";
+              if($counter == $_POST['mesemi']) $selected = "selected";
+              $nome_mese = $gazTimeFormatter->format(new DateTime("2000-".$counter."-01"));
+              print "\t\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
+            }
             print "\t </select>\n";
             // select del anno
             print "\t <select name=\"annemi\" class=\"FacetSelect\" >\n";
@@ -240,9 +239,8 @@ print "<td class=\"FacetFieldCaptionTD\">\n";
             for( $counter = 1; $counter <= 12; $counter++ )
                 {
                 $selected = "";
-                if($counter == $_POST['mesval'])
-                        $selected = "selected";
-                $nome_mese = ucwords(strftime("%B", mktime (0,0,0,$counter,1,0)));
+                if($counter == $_POST['mesval']) $selected = "selected";
+                $nome_mese = $gazTimeFormatter->format(new DateTime("2000-".$counter."-01"));
                 print "\t\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
                 }
             print "\t </select>\n";
@@ -282,7 +280,7 @@ print "<tr><td colspan=\"3\" align=\"right\">Aggiungi un rigo --&raquo; <input t
 /** ENRICO FEDELE */
 /* glyph-icon */
 echo '  <tr>
-		  <td colspan="3" align="right">Aggiungi un rigo --&raquo; 
+		  <td colspan="3" align="right">Aggiungi un rigo --&raquo;
 			<button type="submit" class="btn btn-default btn-sm" name="add" title="Aggiunta rigo!"><i class="glyphicon glyphicon-ok"></i></button>
 		</td>
 	   </tr>';
@@ -297,9 +295,9 @@ if ($_POST['rigbon'] > 0)
         $importo=number_format($value['prelis'],2, '.', '');
         print "<tr><td><input type=\"text\" name=\"righi[{$key}][descri]\" value=\"{$value['descri']}\" maxlength=\"50\" ></td>\n";
         print "<td align=\"right\"><input align=\"right\" type=\"text\" name=\"righi[{$key}][prelis]\" value=\"{$value['prelis']}\" maxlength=\"11\" ></td>\n";
-        
+
 		//print "<td align=\"right\"><input type=\"image\" name=\"del[{$key}]\" src=\"../../library/images/xbut.gif\" title=\"Elimina rigo!\"></td></tr>\n";
-        
+
 		/** ENRICO FEDELE */
 		/* glyph icon */
 		echo '  <td align="right">
@@ -307,7 +305,7 @@ if ($_POST['rigbon'] > 0)
 				</td>
 			  </tr>';
 		/** ENRICO FEDELE */
-		
+
 		print "<input type=\"hidden\" name=\"righi[{$key}][id_rig]\" value=\"{$value['id_rig']}\">\n";
        }
 if($_POST['rigbon'] > 0)

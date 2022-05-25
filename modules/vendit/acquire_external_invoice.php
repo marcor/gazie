@@ -69,7 +69,7 @@ function getLastProtocol($type, $year, $sezione) {
 if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso nessun upload
 	$form['fattura_elettronica_original_name'] = '';
 } else { // accessi successivi  
-	$form['fattura_elettronica_original_name'] = filter_var($_POST['fattura_elettronica_original_name'], FILTER_SANITIZE_STRING);
+	$form['fattura_elettronica_original_name'] = filter_var($_POST['fattura_elettronica_original_name'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 	if (!isset($_POST['datreg'])){
 		$form['datreg'] = date("d/m/Y");
 		$form['seziva'] = 1;
@@ -109,7 +109,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		}
 		
 	} else if (isset($_POST['Download'])) { // faccio il download dell'allegato
-		$name = filter_var($_POST['Download'], FILTER_SANITIZE_STRING);
+		$name = filter_var($_POST['Download'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 		header('Content-Description: File Transfer');
 		header('Content-Type: application/octet-stream');
 		header('Content-Disposition: attachment;  filename="'.$name.'"');

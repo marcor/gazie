@@ -45,8 +45,8 @@ $script_transl = HeadMain(0, array('custom/bootstrap-switch'));
 
 // eseguo l'aggiornamento del db se richiesto
 if(isset($_POST['addrow'])&&!empty($_POST['addrow'])){ // aggiungo il widget
-	$titolo=filter_var($_POST['title-'.$_POST['addrow']], FILTER_SANITIZE_STRING);
-	$file=filter_var($_POST['addrow'],FILTER_SANITIZE_STRING).".php";
+	$titolo=filter_var($_POST['title-'.$_POST['addrow']], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+	$file=filter_var($_POST['addrow'],FILTER_SANITIZE_FULL_SPECIAL_CHARS).".php";
 	// controllo se il widget è sul db
 	$widget_exist=gaz_dbi_get_row($gTables['breadcrumb'], "adminid ='".$admin_aziend['user_name']."' AND file", $file); 
 	if($widget_exist){ // il widget esiste faccio l'upload

@@ -108,8 +108,8 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 	// se ho scelto un conto bancario con IBAN,CUC ed il fornitore ha per pagamento rimessa o bonifico è possibile visualizzare il pulsante per la generazione del file XML-CBI
     if ($form['target_account'] >= 100000001) {
 		$banapp=gaz_dbi_get_row($gTables['banapp'], 'codice', $bank_data['banapp']);
-		if ($banapp && $banapp['codabi'] >= 1000 && strlen($bank_data['cuc_code']) == 8 && strlen($bank_data['iban']) == 27 ){ // se la banca selezionata ha un codice ABI ed un codice cuc 
-			// infine controllo se il pagamento del cliente è di tipo bonifico "O" 
+		if ($banapp && $banapp['codabi'] >= 1000 && strlen($bank_data['cuc_code']) == 8 && strlen($bank_data['iban']) == 27 ){ // se la banca selezionata ha un codice ABI ed un codice cuc
+			// infine controllo se il pagamento del cliente è di tipo bonifico "O"
 			$partner_pagame = gaz_dbi_get_row($gTables['clfoco'].' LEFT JOIN '.$gTables['pagame'].' ON '.$gTables['clfoco'].'.codpag = '.$gTables['pagame'].'.codice', $gTables['clfoco'].'.codice', $form['partner']);
 			if ( $partner_pagame && ($partner_pagame['tippag'] == 'O' || $partner_pagame['tippag'] == 'D') && strlen($partner_pagame['iban']) == 27 ) {
 				$xmlcbi_button = [];
@@ -124,7 +124,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 	}
 
     if (!isset($_POST['ins'])) {
-        if ($bank_data['maxrat'] >= 0.01 && $_POST['transfer_fees'] < 0.01) { // se il conto corrente bancario prevede un addebito per bonifici allora lo propongo
+        if ($bank_data && $bank_data['maxrat'] >= 0.01 && $_POST['transfer_fees'] < 0.01) { // se il conto corrente bancario prevede un addebito per bonifici allora lo propongo
             $form['transfer_fees_acc'] = $bank_data['cosric'];
             $form['transfer_fees'] = $bank_data['maxrat'];
         } elseif (substr($form['target_account'], 0, 3) == substr($admin_aziend['cassa_'], 0, 3)) {
@@ -149,7 +149,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     if (isset($_POST['ins']) && $form['target_account'] < 100000001) {
         $msg = '5+';
     }
-	
+
 
     // fine controlli
     if ((isset($_POST['ins']) || isset($_POST['insXml'])) && $msg == '') {
@@ -321,7 +321,7 @@ if ($form['partner'] > 100000000) { // partner selezionato
     $linkHeaders->output();
     echo "</tr>\n";
     $saldoscadenzario = 0.00;
-    $form_tot=0.00;    
+    $form_tot=0.00;
     foreach ($paymov->PartnerStatus as $k => $v) {
         /** inizio modifica FP 28/11/2015
          * selezione solo il documento richiesto
@@ -413,7 +413,7 @@ if ($form['partner'] > 100000000) { // partner selezionato
         echo "<td class=\"FacetDataTDred\" colspan='4'>" . $script_transl['mesg'][3] . " <a class=\"btn btn-xs btn-default btn-edit\" href=\"../contab/admin_movcon.php?Insert\"><i class=\"glyphicon glyphicon-edit\"> </i></td>";
     }
     echo '<td align="center"><input title="Registra in contabilità" name="ins" id="preventDuplicate" onClick="chkSubmit();" onClick="chkSubmit();" type="submit" value="' . ucfirst($script_transl['insert']) . '"></td>';
-	if ( count( $xmlcbi_button ) >= 1 ) { 
+	if ( count( $xmlcbi_button ) >= 1 ) {
 		$disxml=' disabled';
 		$clsxml='btn-danger';
 		$titxml=implode($xmlcbi_button);

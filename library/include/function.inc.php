@@ -527,18 +527,18 @@ class Config {
          * In caso di inserimento � necessario passare un array in $value mentre in caso di
          * aggiornamento � sufficiente un valore */
         global $gTables;
-        $variable = filter_var(substr($variable, 0, 100), FILTER_SANITIZE_STRING);
+        $variable = filter_var(substr($variable, 0, 100), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $result = gaz_dbi_dyn_query("*", $gTables['config'], "variable='" . $variable . "'");
         if (gaz_dbi_num_rows($result) >= 1) { // � un aggiornamento
             if (is_array($value)) {
                 $row = gaz_dbi_fetch_array($result);
-                $value['cvalue'] = filter_var(substr($value['cvalue'], 0, 100), FILTER_SANITIZE_STRING);
+                $value['cvalue'] = filter_var(substr($value['cvalue'], 0, 100), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
                 $this->{$variable} = $value['cvalue'];
                 $value['variable'] = $variable;
                 ;
                 gaz_dbi_table_update('config', array('id', $row['id']), $value);
             } else {
-                $this->{$variable} = filter_var(substr($value, 0, 100), FILTER_SANITIZE_STRING);
+                $this->{$variable} = filter_var(substr($value, 0, 100), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
                 gaz_dbi_put_row($gTables['config'], 'variable', $variable, 'cvalue', $value['cvalue']);
             }
         } else { // � un inserimento
@@ -569,17 +569,17 @@ class UserConfig {
          * In caso di inserimento � necessario passare un array in $value mentre in caso di
          * aggiornamento � sufficiente un valore */
         global $gTables, $form;
-        $variable = filter_var(substr($variable, 0, 100), FILTER_SANITIZE_STRING);
+        $variable = filter_var(substr($variable, 0, 100), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $result = gaz_dbi_dyn_query("*", $gTables['admin_config'], "var_name='" . $variable . "'");
         if (gaz_dbi_num_rows($result) >= 1) { // � un aggiornamento
             if (is_array($value)) {
                 $row = gaz_dbi_fetch_array($result);
-                $value['var_value'] = filter_var(substr($value['var_value'], 0, 100), FILTER_SANITIZE_STRING);
+                $value['var_value'] = filter_var(substr($value['var_value'], 0, 100), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
                 $this->{$variable} = $value['var_value'];
                 $value['var_name'] = $variable;
                 gaz_dbi_table_update('admin_config', array('id', $row['id']), $value);
             } else {
-                $this->{$variable} = filter_var(substr($value, 0, 100), FILTER_SANITIZE_STRING);
+                $this->{$variable} = filter_var(substr($value, 0, 100), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
                 gaz_dbi_put_row($gTables['admin_config'], 'var_name', $variable, 'var_value', $value['var_value']);
             }
         } else { // � un inserimento

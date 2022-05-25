@@ -42,7 +42,7 @@ $enable_sync = explode(",",$getenable_sync);
 
     if (count($_POST) > 0) { // ho modificato i valori
 
-        $_POST  = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+        $_POST  = filter_input_array(INPUT_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
 		if (!empty($_FILES['myfile']['name'])) {
 			// cancello eventuale vecchio file e salvo il nuovo nella cartella files
@@ -65,8 +65,8 @@ $enable_sync = explode(",",$getenable_sync);
 				}
 				$v=$_FILES['myfile']['name'];
 			}
-            $value=filter_var($v, FILTER_SANITIZE_STRING);
-            $key=filter_var($k, FILTER_SANITIZE_STRING);
+            $value=filter_var($v, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+            $key=filter_var($k, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
             $res=gaz_dbi_put_row($gTables['company_config'], 'var', $key, 'val', $value);
         }
