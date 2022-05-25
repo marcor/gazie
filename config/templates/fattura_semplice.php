@@ -30,13 +30,15 @@ require('template.php');
 class FatturaSemplice extends Template {
 
     function setTesDoc() {
-        $this->tesdoc = $this->docVars->tesdoc;
-        $this->destinazione = '';
-        $this->giorno = substr($this->tesdoc['datfat'], 8, 2);
-        $this->mese = substr($this->tesdoc['datfat'], 5, 2);
-        $this->anno = substr($this->tesdoc['datfat'], 0, 4);
+      $this->tesdoc = $this->docVars->tesdoc;
+      $this->destinazione = '';
+      $this->giorno = substr($this->tesdoc['datfat'], 8, 2);
+      $this->mese = substr($this->tesdoc['datfat'], 5, 2);
+      $this->anno = substr($this->tesdoc['datfat'], 0, 4);
 		if ($this->tesdoc['datfat']){
-			$nomemese = ucwords(strftime("%B", mktime (0,0,0,substr($this->tesdoc['datfat'],5,2),1,0)));
+      $datemi =  new DateTime($this->tesdoc['datemi']);
+      $this->docVars->gazTimeFormatter->setPattern('MMMM');
+      $nomemese = ucwords($this->docVars->gazTimeFormatter->format($datemi));
 		} else {
 			$nomemese = '';
 		}

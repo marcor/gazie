@@ -4130,6 +4130,7 @@ class TCPDF {
 	 * @since 5.9.000 (2010-09-28)
 	 */
 	public function getRawCharWidth($char) {
+    $char=intval($char);
 		if ($char == 173) {
 			// SHY character will not be printed
 			return (0);
@@ -7178,7 +7179,7 @@ class TCPDF {
 		} else {
 			$ximg = $x;
 		}
-		
+
 		if ($ismask OR $hidden) {
 			// image is not displayed
 			return $info['i'];

@@ -202,7 +202,7 @@ function confirFae(link){
             $("#dialog_fae_content_MC").show();
             console.log(flux_status);
         break;
-        case "NS":	
+        case "NS":
         case "NEEC02":
             $("#dialog_fae_content_NS span").html("<p class=\'text-center bg-danger\'>" + flux_descri.replace(/<[^>]*>?/gm, "") + "</p><p class=\'text-center\'> re: <a href=\'"+link.href+"&id_tes="+tes_id+"&reinvia=reinvia"+sdiflux+"\' class=\'btn btn-danger\'><b> " + $("#doc1_"+tes_id).attr("dialog_fae_reinvio")+ "</b> <br/>" + numrei.toString() + "° reinvio </a></p>");
             $("#dialog_fae_content_NS").show();
@@ -459,7 +459,7 @@ function printPdf(urlPrintDoc){
             $pagame = gaz_dbi_get_row($gTables['pagame'], 'codice', $r['pagame']);
             $modulo_fae = "electronic_invoice.php?id_tes=" . $r['id_tes'];
             $modulo_fae_report = "report_fae_sdi.php?id_tes=" . $r['id_tes'];
-            $zipped = (preg_match("/^[A-Z0-9]{13,18}_([a-zA-Z0-9]{5}).zip$/",$r['fattura_elettronica_zip_package'],$match))?$match[1]:false;
+            $zipped = (preg_match("/^[A-Z0-9]{13,18}_([a-zA-Z0-9]{5}).zip$/",$r['fattura_elettronica_zip_package']?$r['fattura_elettronica_zip_package']:'',$match))?$match[1]:false;
             $classe_btn = "btn-default";
             if ($r["tipdoc"] == 'FAI'||$r["tipdoc"] == 'FAA') {
                 $tipodoc = "Fattura Immediata";
@@ -661,7 +661,7 @@ function printPdf(urlPrintDoc){
                       $sdititle = 'genera il file '.$r['fae_attuale'].' o fai il '.intval($r['fattura_elettronica_reinvii']+1).'° reinvio ';
                       break;
                     }
-                    echo (empty($sdilabel)?'':'<a class="btn btn-xs btn-'.$sdihilight.' btn-xml" onclick="confirFae(this);return false;" id="doc1_'.$r['id_tes'].'" dialog_fae_reinvio="'.$r['fae_reinvio'].'" dialog_flux_descri="'.htmlentities($r['flux_descri']).'" dialog_fae_sdiflux="'.$sdi_flux.'" dialog_fae_filename="'.$r['fae_attuale'].'" dialog_fae_numrei="'.$r['fattura_elettronica_reinvii'].'" dialog_fae_numfat="'. $r['tipdoc'].' '. $r['numfat'].'/'. $r['seziva'].'" dialog_flux_status="'. $last_flux_status.'" target="_blank" href="'.$modulo_fae.'" zip_ref="'.$zip_ref.'" title="'.$sdititle.'"> '.strtoupper($sdilabel).' </a>').'<a class="btn btn-xs btn-default" title="Visualizza in stile" href="electronic_invoice.php?id_tes='.$r['id_tes'].'&viewxml" target="_blank"><i class="glyphicon glyphicon-eye-open"></i> </a>';
+                    echo (empty($sdilabel)?'':'<a class="btn btn-xs btn-'.$sdihilight.' btn-xml" onclick="confirFae(this);return false;" id="doc1_'.$r['id_tes'].'" dialog_fae_reinvio="'.$r['fae_reinvio'].'" dialog_flux_descri="'.htmlentities($r['flux_descri']?$r['flux_descri']:'').'" dialog_fae_sdiflux="'.$sdi_flux.'" dialog_fae_filename="'.$r['fae_attuale'].'" dialog_fae_numrei="'.$r['fattura_elettronica_reinvii'].'" dialog_fae_numfat="'. $r['tipdoc'].' '. $r['numfat'].'/'. $r['seziva'].'" dialog_flux_status="'. $last_flux_status.'" target="_blank" href="'.$modulo_fae.'" zip_ref="'.$zip_ref.'" title="'.$sdititle.'"> '.strtoupper($sdilabel).' </a>').'<a class="btn btn-xs btn-default" title="Visualizza in stile" href="electronic_invoice.php?id_tes='.$r['id_tes'].'&viewxml" target="_blank"><i class="glyphicon glyphicon-eye-open"></i> </a>';
                     if ($r['fattura_elettronica_reinvii'] > 0) {
                       echo '<br/><small>' . $r['fattura_elettronica_reinvii'] . ($r['fattura_elettronica_reinvii']==1 ? ' reinvio' : ' reinvii') . '</small><br/>';
                     }

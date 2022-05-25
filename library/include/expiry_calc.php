@@ -78,44 +78,44 @@ class Expiry {
            if ($c==1) { // alla prima scadenza si devono aggiungere i giorni di decorrenza
               switch($this->effect) {
                      case "D": //caso in cui la scadenza fa riferimento alla data della fattura
-                        $uts = mktime(0,0,0,$this->month,$this->day+$this->start_day,$this->year);
-                        $this->ctrl_day = strftime("%d",$uts);
-                        $this->ctrl_month = strftime("%m",$uts);
-                        $this->ctrl_year = strftime("%Y",$uts);
+                        $uts = new DateTime('@'.mktime(0,0,0,$this->month,$this->day+$this->start_day,$this->year));
+                        $this->ctrl_day = $uts->format('dd');
+                        $this->ctrl_month = $uts->format('mm');
+                        $this->ctrl_year = $uts->format('yyyy');
                      break;
                      case "G": //caso in cui la scadenza fa riferimento ad un giorno fisso impostato sul relativo campo
-                        $uts = mktime(0,0,0,$this->month,$this->day+$this->start_day,$this->year);
-                        $this->ctrl_day = strftime("%d",$uts);
-                        $this->ctrl_month = strftime("%m",$uts);
-                        $this->ctrl_year = strftime("%Y",$uts);
+                        $uts = new DateTime('@'.mktime(0,0,0,$this->month,$this->day+$this->start_day,$this->year));
+                        $this->ctrl_day = $uts->format('dd');
+                        $this->ctrl_month = $uts->format('mm');
+                        $this->ctrl_year = $uts->format('yyyy');
                         if ($this->fix_day<$this->ctrl_day) { // salto un mese se va a cadere in un giorno precedente
                             $this->ctrl_month++;
                         }
-                        $uts = mktime(0,0,0,$this->ctrl_month,$this->fix_day,$this->ctrl_year);
-                        $this->ctrl_day = strftime("%d",$uts);
-                        $this->ctrl_month = strftime("%m",$uts);
-                        $this->ctrl_year = strftime("%Y",$uts);
+                        $uts = new DateTime('@'.mktime(0,0,0,$this->ctrl_month,$this->fix_day,$this->ctrl_year));
+                        $this->ctrl_day = $uts->format('dd');
+                        $this->ctrl_month = $uts->format('mm');
+                        $this->ctrl_year = $uts->format('yyyy');
                      break;
                      case "F": //caso in cui la scadenza deve far riferimento al fine mese rispetto alla data della fattura
                         // prima porto il riferimento al primo finemese
-                        $uts = mktime(0,0,0,$this->ctrl_month+1,0,$this->ctrl_year);
-                        $this->ctrl_day = strftime("%d",$uts);
-                        $this->ctrl_month = strftime("%m",$uts);
-                        $this->ctrl_year = strftime("%Y",$uts);
+                        $uts = new DateTime('@'.mktime(0,0,0,$this->ctrl_month+1,0,$this->ctrl_year));
+                        $this->ctrl_day = $uts->format('dd');
+                        $this->ctrl_month = $uts->format('mm');
+                        $this->ctrl_year = $uts->format('yyyy');
                         // poi aumento dei giorni di decorrenza (-2 per compensare febbraio)
-                        $uts = mktime(0,0,0,$this->ctrl_month,$this->ctrl_day+$this->start_day-2,$this->ctrl_year);
-                        $this->ctrl_month = strftime("%m",$uts);
-                        $this->ctrl_year = strftime("%Y",$uts);
+                        $uts = new DateTime('@'.mktime(0,0,0,$this->ctrl_month,$this->ctrl_day+$this->start_day-2,$this->ctrl_year));
+                        $this->ctrl_month = $uts->format('mm');
+                        $this->ctrl_year = $uts->format('yyyy');
                         // quindi riporto a fine mese
-                        $uts = mktime(0,0,0,$this->ctrl_month+1,0,$this->ctrl_year);
-                        $this->ctrl_day = strftime("%d",$uts);
-                        $this->ctrl_month = strftime("%m",$uts);
-                        $this->ctrl_year = strftime("%Y",$uts);
+                        $uts = new DateTime('@'.mktime(0,0,0,$this->ctrl_month+1,0,$this->ctrl_year));
+                        $this->ctrl_day = $uts->format('dd');
+                        $this->ctrl_month = $uts->format('mm');
+                        $this->ctrl_year = $uts->format('yyyy');
                         if ($this->fix_day>0){   // eventualmente vado al giorno successivo
-                           $uts = mktime(0,0,0,$this->ctrl_month+1,$this->fix_day,$this->ctrl_year);
-                           $this->ctrl_day = strftime("%d",$uts);
-                           $this->ctrl_month = strftime("%m",$uts);
-                           $this->ctrl_year = strftime("%Y",$uts);
+                           $uts = new DateTime('@'.mktime(0,0,0,$this->ctrl_month+1,$this->fix_day,$this->ctrl_year));
+                           $this->ctrl_day = $uts->format('dd');
+                           $this->ctrl_month = $uts->format('mm');
+                           $this->ctrl_year = $uts->format('yyyy');
                         }
                      break;
               }
@@ -145,19 +145,19 @@ class Expiry {
                     $this->ctrl_day=0;
                     $this->ctrl_month++;
               }
-              $uts = mktime(0,0,0,$this->ctrl_month,$this->ctrl_day,$this->ctrl_year);
-              $this->ctrl_day = strftime("%d",$uts);
-              $this->ctrl_month = strftime("%m",$uts);
-              $this->ctrl_year = strftime("%Y",$uts);
+              $uts = new DateTime('@'.mktime(0,0,0,$this->ctrl_month,$this->ctrl_day,$this->ctrl_year));
+              $this->ctrl_day = $uts->format('dd');
+              $this->ctrl_month = $uts->format('mm');
+              $this->ctrl_year = $uts->format('yyyy');
               if ($this->foll_month>0 && $this->foll_month==$this->ctrl_month) {
                  $this->ctrl_month++;
               }
            }
-           $uts = mktime(0,0,0,$this->ctrl_month,$this->ctrl_day,$this->ctrl_year);
-           $this->ctrl_day = strftime("%d",$uts);
-           $this->ctrl_month = strftime("%m",$uts);
-           $this->ctrl_year = strftime("%Y",$uts);
-           return strftime("%Y-%m-%d",mktime(0,0,0,$this->ctrl_month,$this->ctrl_day,$this->ctrl_year));
+           $uts = new DateTime('@'.mktime(0,0,0,$this->ctrl_month,$this->ctrl_day,$this->ctrl_year));
+           $this->ctrl_day = $uts->format('dd');
+           $this->ctrl_month = $uts->format('mm');
+           $this->ctrl_year = $uts->format('yyyy');
+           return $this->ctrl_day.'-'.$this->ctrl_month.'-'.$this->ctrl_year;
   }
   // fine calcolo date
 }
