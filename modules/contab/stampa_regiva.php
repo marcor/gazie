@@ -283,7 +283,7 @@ if ($url_get['jp'] != 'jump') {
 }
 $period_chopped = calcPeriod($url_get['ri'], $url_get['rf'], $period);
 $p_max = count($period_chopped);
-$gazTimeFormatter->setPattern('MMMM YYYY');
+$gazTimeFormatter->setPattern('MMMM yyyy');
 for ($i = 1; $i <= $p_max; $i++) {
     $pdf->setData($period_chopped[$i] + $url_get, $gTables, $admin_aziend);
     if ($pdf->vatsect==$pdf->rc_sect){

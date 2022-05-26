@@ -615,12 +615,12 @@ for ($counter = 1; $counter <= 31; $counter++) {
 }
 echo "\t </select>\n";
 echo "\t <select name=\"mesreg\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
+$gazTimeFormatter->setPattern('MMMM');
 for ($counter = 1; $counter <= 12; $counter++) {
-    $selected = "";
-    if ($counter == $form['mesreg'])
-        $selected = "selected";
-    $nome_mese = ucwords(strftime("%B", mktime(0, 0, 0, $counter, 1, 0)));
-    echo "\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
+  $selected = "";
+  if ($counter == $form['mesreg']) $selected = "selected";
+  $nome_mese = $gazTimeFormatter->format(new DateTime("2000-".$counter."-01"));
+  echo "\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
 }
 echo "\t </select>\n";
 echo "\t <select name=\"annreg\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
@@ -718,11 +718,10 @@ echo "\t </select>\n";
 
 echo "\t <select name=\"mesdoc\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
 for ($counter = 1; $counter <= 12; $counter++) {
-    $selected = "";
-    if ($counter == $form['mesdoc'])
-        $selected = "selected";
-    $nome_mese = ucwords(strftime("%B", mktime(0, 0, 0, $counter, 1, 0)));
-    echo "\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
+  $selected = "";
+  if ($counter == $form['mesdoc']) $selected = "selected";
+  $nome_mese = $gazTimeFormatter->format(new DateTime("2000-".$counter."-01"));
+  echo "\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
 }
 echo "\t </select>\n";
 echo "\t <select name=\"anndoc\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
@@ -884,7 +883,7 @@ if ($form['artico'] != "" && intval( $item_artico['lot_or_serial'] && $form['cau
 			<div id="lm_dialog" class="collapse" >
 			<?php
 			if ((count($lm->available) >= 1)) {
-				foreach ($lm->available as $v_lm) {					
+				foreach ($lm->available as $v_lm) {
 					if ($v_lm['id'] <> $form['id_lotmag']) {
 						echo '<div>Cambia con:<button class="btn btn-xs btn-warning" type="text" onclick="this.form.submit();" name="id_lotmag" value="'.$v_lm['id'].'">'
 						. $v_lm['id']. ' lotto n.:' . $v_lm['identifier'];

@@ -30,9 +30,7 @@
 require("../../library/include/expiry_calc.php");
 
 function CalcolaScadenze($totpag, $giorno, $mese, $anno, $tipdec, $giodec, $numrat, $tiprat, $mesesc, $giosuc) {
-   /** inizio modifica FP 09/06/16 */
    $numrat=max($numrat,1); // non posso avere meno di 1 rata
-   /** fine modifica FP */
    $ex = new Expiry;
    $rs_array = $ex->CalcExpiry($totpag, $anno . '-' . $mese . '-' . $giorno, $tipdec, $giodec, $numrat, $tiprat, $mesesc, $giosuc);
    $acc = array();

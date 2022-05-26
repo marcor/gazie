@@ -66,21 +66,20 @@ function getMovements($date_ini,$date_fin)
 				$r['id_lotmag']="";
 			}
             $m[] = $r;
-        } 
+        }
         return $m;
     }
 
-
+$gazTimeFormatter->setPattern('dd MMMM yyyy');
 $luogo_data=$admin_aziend['citspe'].", lì ";
-
 if (isset($_GET['ds'])) {
-   $giosta = substr($_GET['ds'],0,2);
-   $messta = substr($_GET['ds'],2,2);
-   $annsta = substr($_GET['ds'],4,4);
-   $utssta= mktime(0,0,0,$messta,$giosta,$annsta);
-   $luogo_data .= ucwords(strftime("%d %B %Y",$utssta));
+  $giosta = substr($_GET['ds'],0,2);
+  $messta = substr($_GET['ds'],2,2);
+  $annsta = substr($_GET['ds'],4,4);
+  $utssta= mktime(0,0,0,$messta,$giosta,$annsta);
+  $luogo_data .= ucwords($gazTimeFormatter->format(new DateTime($annsta.'-'.$messta.'-'.$giosta)));
 } else {
-   $luogo_data .=ucwords(strftime("%d %B %Y", mktime (0,0,0,date("m"),date("d"),date("Y"))));
+  $luogo_data .= ucwords($gazTimeFormatter->format(new DateTime()));
 }
 
 if ($_GET['md']=="1"){
@@ -94,19 +93,20 @@ if ($_GET['md']=="1"){
 $giori = substr($_GET['ri'],0,2);
 $mesri = substr($_GET['ri'],2,2);
 $annri = substr($_GET['ri'],4,4);
-$utsri= mktime(0,0,0,$mesri,$giori,$annri);
+$utsri= mktime(12,0,0,$mesri,$giori,$annri);
 $giorf = substr($_GET['rf'],0,2);
 $mesrf = substr($_GET['rf'],2,2);
 $annrf = substr($_GET['rf'],4,4);
-$utsrf= mktime(0,0,0,$mesrf,$giorf,$annrf);
-
-$result=getMovements(strftime("%Y%m%d",$utsri),strftime("%Y%m%d",$utsrf));
+$utsrf= mktime(12,0,0,$mesrf,$giorf,$annrf);
+$gazTimeFormatter->setPattern('yyyyMMdd');
+$result=getMovements($gazTimeFormatter->format(new DateTime('@'.$utsri)),$gazTimeFormatter->format(new DateTime('@'.$utsrf)));
 
 require("../../config/templates/report_template.php");
 $pdf = new Report_template('L','mm','A4',true,'UTF-8',false,true);
+$gazTimeFormatter->setPattern('dd MMMM yyyy');
 if ($_GET['pr']==1){
-	$title = array('luogo_data'=>$luogo_data,
-               'title'=>"GIORNALE DI MAGAZZINO".$title." dal ".strftime("%d %B %Y",$utsri)." al ".strftime("%d %B %Y",$utsrf)." - ".$_GET['sb'],
+  $title = array('luogo_data'=>$luogo_data,
+               'title'=>"GIORNALE DI MAGAZZINO".$title." dal ".$gazTimeFormatter->format(new DateTime('@'.$utsri))." al ".$gazTimeFormatter->format(new DateTime('@'.$utsrf))." - ".$_GET['sb'],
                'hile'=>array(array('lun' => 20,'nam'=>'Data Reg.'),
                              array('lun' => 36,'nam'=>'Causale'),
                              array('lun' => 83,'nam'=>'Articolo'),
@@ -120,7 +120,7 @@ if ($_GET['pr']==1){
             );
 } else {
 	$title = array('luogo_data'=>$luogo_data,
-               'title'=>"GIORNALE DI MAGAZZINO".$title." dal ".strftime("%d %B %Y",$utsri)." al ".strftime("%d %B %Y",$utsrf)." - ".$_GET['sb'],
+               'title'=>"GIORNALE DI MAGAZZINO".$title." dal ".$gazTimeFormatter->format(new DateTime('@'.$utsri))." al ".$gazTimeFormatter->format(new DateTime('@'.$utsrf))." - ".$_GET['sb'],
                'hile'=>array(array('lun' => 20,'nam'=>'Data Reg.'),
                              array('lun' => 36,'nam'=>'Causale'),
                              array('lun' => 83,'nam'=>'Articolo'),
@@ -131,7 +131,7 @@ if ($_GET['pr']==1){
                              array('lun' => 15,'nam'=>'Quantità')
                             )
             );
-$pdf->SetLeftMargin(16);			
+$pdf->SetLeftMargin(16);
 }
 
 $pdf->setVars($admin_aziend,$title);

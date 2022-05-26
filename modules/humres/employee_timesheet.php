@@ -29,19 +29,19 @@ $admin_aziend = checkAdmin();
 function getWorkedHours($mese,$anno) { // Carico staff worked hours per il dato mese e anno
 	global $gTables;
 	$month_res=array();
-	$query="SELECT DAY(work_day) AS daynum,work_day,hours_normal,hours_extra,hours_absence,hours_other,".$gTables['staff'] .".id_staff,id_work_type_extra,id_absence_type,id_other_type,note FROM ".$gTables['staff_worked_hours']." 
-	LEFT JOIN ". $gTables['staff'] . " ON ". $gTables['staff_worked_hours'] .".id_staff = ". $gTables['staff'] .".id_staff 
+	$query="SELECT DAY(work_day) AS daynum,work_day,hours_normal,hours_extra,hours_absence,hours_other,".$gTables['staff'] .".id_staff,id_work_type_extra,id_absence_type,id_other_type,note FROM ".$gTables['staff_worked_hours']."
+	LEFT JOIN ". $gTables['staff'] . " ON ". $gTables['staff_worked_hours'] .".id_staff = ". $gTables['staff'] .".id_staff
 	WHERE MONTH(work_day) = '". $mese ."' AND YEAR(work_day) = '". $anno ."' ORDER BY id_staff ASC";
 	$resc = gaz_dbi_query($query);
 	while($r = mysqli_fetch_array($resc)){
 		$month_res[$r['daynum']][$r['id_staff']] = $r;
-		
+
 		$des=gaz_dbi_get_row($gTables['staff_work_type'], "id_work", $r['id_work_type_extra']);
 		$month_res[$r['daynum']][$r['id_staff']]['extra_des']=($des)?$des['descri_ext']:'';
-		
+
 		$des=gaz_dbi_get_row($gTables['staff_work_type'], "id_work", $r['id_absence_type']);
 		$month_res[$r['daynum']][$r['id_staff']]['absence_des']=($des)?$des['descri_ext']:'';
-		
+
 		$des=gaz_dbi_get_row($gTables['staff_work_type'], "id_work", $r['id_other_type']);
 		$month_res[$r['daynum']][$r['id_staff']]['other_des']=($des)?$des['descri_ext']:'';
 		// riprendo pure tutte le note da staff_work_movements (cartellino)
@@ -52,15 +52,15 @@ function getWorkedHours($mese,$anno) { // Carico staff worked hours per il dato 
 			$accnote.=(empty($cr['note']))?'':$cr['note'].', ';
 		}
 		$month_res[$r['daynum']][$r['id_staff']]['mov_note'] = substr($accnote,0,-2);
-	}	
+	}
 	return $month_res;
 }
-	
+
 function getWorkers($mese,$anno) { // carico i collaboratori ancora in forza per il dato mese e anno
 	global $gTables;
 	$cols=array();
 	$query="SELECT ragso1,ragso2,id_staff,id_clfoco,last_hourly_cost FROM ".$gTables['staff']."
-	LEFT JOIN ". $gTables['clfoco'] . " ON ". $gTables['staff'] .".id_clfoco = ". $gTables['clfoco'] .".codice 
+	LEFT JOIN ". $gTables['clfoco'] . " ON ". $gTables['staff'] .".id_clfoco = ". $gTables['clfoco'] .".codice
 	LEFT JOIN ". $gTables['anagra'] . " ON ". $gTables['anagra'] .".id = ". $gTables['clfoco'] .".id_anagra
 	WHERE DATE_FORMAT(start_date, '%Y%m') <=  ".$anno.str_pad($mese,2,"0",STR_PAD_LEFT)." AND (DATE_FORMAT(end_date, '%Y%m') >= ".$anno.str_pad($mese,2,"0",STR_PAD_LEFT)." OR end_date IS NULL OR end_date <= '2004-01-27')";
 	$coll = gaz_dbi_query($query);
@@ -70,30 +70,30 @@ function getWorkers($mese,$anno) { // carico i collaboratori ancora in forza per
 	return $cols;
 }
 
-	
+
 // carico i dati per la select work type del jquery
 $query = 'SELECT id_work, descri FROM `' . $gTables['staff_work_type'] . '` ORDER BY `id_work_type` ASC';
 $result = gaz_dbi_query($query);
-$work_types="0:'Lavoro normale'";	
+$work_types="0:'Lavoro normale'";
 $invalid_characters = array("'", ",", ":");
-while ($r = gaz_dbi_fetch_array($result)) {// carico i dati di staff_work_type	
-	$work_types .= ", ".$r['id_work'].":'". substr(str_replace($invalid_characters, " ", $r['descri']), 0, 75)."'";				
+while ($r = gaz_dbi_fetch_array($result)) {// carico i dati di staff_work_type
+	$work_types .= ", ".$r['id_work'].":'". substr(str_replace($invalid_characters, " ", $r['descri']), 0, 75)."'";
 }
 
 // carico i dati per la select orderman del jquery
 $query = 'SELECT id,description FROM `' . $gTables['orderman'] . '` WHERE stato_lavorazione = 0 ORDER BY `id`';
 $result = gaz_dbi_query($query);
-$orderman="0:'Nessuna lavorazione associata'";	
+$orderman="0:'Nessuna lavorazione associata'";
 $invalid_characters = array("'", ",", ":");
-while ($r = gaz_dbi_fetch_array($result)) {		
-	$orderman .= ", ".$r['id'].":'".substr(str_replace($invalid_characters, " ", $r['description']), 0, 40)."'";		
+while ($r = gaz_dbi_fetch_array($result)) {
+	$orderman .= ", ".$r['id'].":'".substr(str_replace($invalid_characters, " ", $r['description']), 0, 40)."'";
 }
 
 if ($_POST) { // accessi successivi
 	$form['mese']=intval($_POST['mese']);
 	$form['anno']=intval($_POST['anno']);
 	$month_res = getWorkedHours($form['mese'],$form['anno']);
-	$cols=getWorkers($form['mese'],$form['anno']);	
+	$cols=getWorkers($form['mese'],$form['anno']);
 } else { // al primo accesso
 	if (isset($_GET['yearmonth'])){ // se mi è stato passato il mese come referenza lo uso
 		$refyearmonth=explode("-",$_GET['yearmonth']);
@@ -104,17 +104,17 @@ if ($_POST) { // accessi successivi
 		$form['anno'] = $dto->format("Y");
 		$form['mese'] = $dto->format("m");
 	}
-	$month_res = getWorkedHours($form['mese'],$form['anno']);	
-	$cols = getWorkers($form['mese'],$form['anno']);	
+	$month_res = getWorkedHours($form['mese'],$form['anno']);
+	$cols = getWorkers($form['mese'],$form['anno']);
 }
 
 require("../../library/include/header.php");
 ?>
 <script type="text/javascript">
-    $(function () {		
+    $(function () {
 		var wpx = $(window).width()*0.97;
 		$("#dialog_worker_card").dialog({ autoOpen: false });
-		$('.dialog_worker_card').click(function() {			
+		$('.dialog_worker_card').click(function() {
 			var id = $(this).attr('id_staff');
 			var hourly_cost = $(this).attr('hourly_cost');
 			var id2 = $(this).attr('date');
@@ -127,16 +127,16 @@ require("../../library/include/header.php");
 			$("p#iddescri").html(id+' '+$(this).attr("staff_name")+' giorno <b>'+da+' '+mo+' '+ye+'</b>');
 			$.ajax({ // chiedo tutte le registrazioni fatte nel cartellino presenze per quel giorno
 				'async': false,
-				url:"./get_pres.php",   
-				type: "POST",    
+				url:"./get_pres.php",
+				type: "POST",
 				dataType: 'text',
 				data: {id_staff: id, date: id2},
-				success:function(jsonstr) {	
+				success:function(jsonstr) {
 					//alert(jsonstr);
-					jsondatastr = jsonstr;			
+					jsondatastr = jsonstr;
 				}
-			});				
-						
+			});
+
 			var myAppendGrid = new AppendGrid({ // creo la tabella vuota
 			  element: "tblAppendGrid",
 			  uiFramework: "bootstrap4",
@@ -162,10 +162,10 @@ require("../../library/include/header.php");
 				  name: "id_work_type",
 				  display: "Tipo lavoro",
 				  type: "select",
-					ctrlOptions: {					
+					ctrlOptions: {
 					<?php echo $work_types;?>
 					},
-					
+
 				},
 				{
 				  name: "min_delay",
@@ -180,7 +180,7 @@ require("../../library/include/header.php");
 				  name: "id_orderman",
 				  display: "Lavorazione",
 					type: "select",
-					ctrlOptions: {					
+					ctrlOptions: {
 					<?php echo $orderman;?>
 					}
 				},
@@ -201,19 +201,19 @@ require("../../library/include/header.php");
 			  ],
 			  beforeRowRemove: function(caller, rowIndex) {
 				 var rowValues = myAppendGrid.getRowValue(rowIndex);
-				 deleted_rows.push(rowValues.id); 
+				 deleted_rows.push(rowValues.id);
 				//alert("row index:" + rowIndex + " values:" + JSON.stringify(deleted_rows));
 				return confirm("Sei sicuro di voler rimuovere la riga?");
 				}
 			});
-			
+
 			if (jsondatastr){
 			// popolo la tabella
 			var jsondata = $.parseJSON(jsondatastr);
 			myAppendGrid.load( jsondata );
 			}
-			
-			
+
+
 			$( "#dialog_worker_card" ).dialog({
 				minHeight: 1,
 				width: wpx,
@@ -221,15 +221,15 @@ require("../../library/include/header.php");
 				show: "blind",
 				hide: "explode",
 				buttons: {
-					delete:{ 
-						text:'Annulla', 
+					delete:{
+						text:'Annulla',
 						'class':'btn btn-danger delete-button',
 						click:function (event, ui) {
 							$(this).dialog("close");
 						}
 					},
-					confirm :{ 
-					  text:'CONFERMA', 
+					confirm :{
+					  text:'CONFERMA',
 					  'class':'btn btn-success pull-right btn-conferma',
 					  click:function() {
 						var msg = null;
@@ -252,31 +252,34 @@ require("../../library/include/header.php");
 					}
 				}
 			});
-			$("#dialog_worker_card" ).dialog( "open" );  
-		});		
+			$("#dialog_worker_card" ).dialog( "open" );
+		});
 	});
-	
-$(document).ready(function(){		
+
+$(document).ready(function(){
 	$('[data-toggle="popover"]').popover({
 		html: true
-	});   
+	});
 });
 function printPdf(urlPrintDoc){
-	$(function(){			
+	$(function(){
 		$('#framePdf').attr('src',urlPrintDoc);
 		$('#framePdf').css({'height': '100%'});
 		$('.framePdf').css({'display': 'block','width': '90%', 'height': '80%', 'z-index':'2000'});
+    $("html, body").delay(100).animate({scrollTop: $('#framePdf').offset().top},'slow', function() {
+        $("#framePdf").focus();
+    });
 		$('#closePdf').on( "click", function() {
 			$('.framePdf').css({'display': 'none'});
-		});	
-	});	
+		});
+	});
 };
 </script>
 <?php
 $script_transl = HeadMain(0,array('custom/autocomplete','appendgrid/AppendGrid'));
 $gForm = new humresForm();
 
-?> 
+?>
 <style>
 #tblAppendGrid .form-control { height: 28px; }
 .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset { float: unset !important; }
@@ -294,13 +297,14 @@ $gForm = new humresForm();
 <div class="text-center FacetFormHeaderFont"><b><?php echo $script_transl['title']; ?></b></div>
 <div class="panel panel-info">
 	<div class="row">
-		<div class="col-lg-12 text-center">	
-			<?php			
+		<div class="col-lg-12 text-center">
+			<?php
+      $gazTimeFormatter->setPattern('MMMM');
 			echo "\t <select name=\"mese\" onchange=\"this.form.submit()\">\n";
 			for ($counter = 1;$counter <= 12;$counter++) {
 				$selected = "";
 				if ($counter == $form['mese']) $selected = "selected";
-				$nome_mese = ucwords(strftime("%B", mktime(0, 0, 0, $counter, 1, 0)));
+        $nome_mese = $gazTimeFormatter->format(new DateTime("2000-".$counter."-01"));
 				echo "\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
 			}
 			echo "\t </select>\n";
@@ -312,18 +316,19 @@ $gForm = new humresForm();
 			}
 			echo "\t </select>\n";
 			$col = cal_days_in_month(CAL_GREGORIAN, $form['mese'], $form['anno']); //giorni nel mese e anno selezionato
-			
+
 			?>
 		</div>
 	</div>
 	<div class="table-responsive">
-	
+
 		<table class="table table-hover" border="1" cellpadding="1">
 			 <thead>
 			 </thead>
 			 <tbody>
-			 
-				<?php 
+
+				<?php
+        $gazTimeFormatter->setPattern('E');
 				foreach ($cols as $oper){
 					?>
 					<tr>
@@ -336,8 +341,7 @@ $gForm = new humresForm();
 					</td>
 					<?php
 					for($c=0;$c<$col ; $c++){
-						//print_r($oper);
-						$week_day=strftime("%a", strtotime(($c+1) ."-". $form['mese'] ."-". $form['anno']));
+            $week_day=$gazTimeFormatter->format(new DateTime($form['anno']."-".$form['mese']."-".($c+1)));
 						if ($week_day=="sab"){
 							$td[$c]='bg-warning text-center';
 							$bt[$c]='btn-warning';
@@ -359,7 +363,7 @@ $gForm = new humresForm();
 					?>
 					</tr>
 					<tr class="bg-info">
-					 
+
 					<td>
 						<?php echo "Ore normali"; ?>
 					</td>
@@ -371,7 +375,7 @@ $gForm = new humresForm();
 						</td>
 						<?php
 					}
-					?> </tr><tr> 
+					?> </tr><tr>
 					<td class="text-warning" >
 						<?php echo "Straordinario"; ?>
 					</td>
@@ -382,14 +386,14 @@ $gForm = new humresForm();
 						<?php if (isset($month_res[$c][$oper['id_staff']]['hours_extra']) && $month_res[$c][$oper['id_staff']]['hours_extra']>0 ){
 							?>
 							<a style="cursor: help;" data-toggle="popover" tabindex="<?php echo $c-1; ?>" data-placement="auto" data-trigger="focus" title="Ore di straordinario" data-content="<?php echo (isset($month_res[$c][$oper['id_staff']]['extra_des']))?$month_res[$c][$oper['id_staff']]['extra_des']:''; ?>">
-							<?php 
+							<?php
 						}
-						echo (isset($month_res[$c][$oper['id_staff']]['hours_extra'])&&$month_res[$c][$oper['id_staff']]['hours_extra']>=0.01)?floatval($month_res[$c][$oper['id_staff']]['hours_extra']):''; ?>						
+						echo (isset($month_res[$c][$oper['id_staff']]['hours_extra'])&&$month_res[$c][$oper['id_staff']]['hours_extra']>=0.01)?floatval($month_res[$c][$oper['id_staff']]['hours_extra']):''; ?>
 						</a>
-						</td>						
+						</td>
 						<?php
 					}
-					?> </tr><tr> 
+					?> </tr><tr>
 					<td >
 						<?php echo "Festivo e notturno"; ?>
 					</td>
@@ -400,14 +404,14 @@ $gForm = new humresForm();
 						<?php if (isset($month_res[$c][$oper['id_staff']]['hours_other']) && $month_res[$c][$oper['id_staff']]['hours_other']>0 ){
 							?>
 							<a style="cursor: help;" data-toggle="popover" tabindex="<?php echo $c-1; ?>" data-placement="auto" data-trigger="focus" title="Ore festive e notturne" data-content="<?php echo (isset($month_res[$c][$oper['id_staff']]['other_des']))?$month_res[$c][$oper['id_staff']]['other_des']:''; ?>">
-							<?php 
+							<?php
 						}
 						echo (isset($month_res[$c][$oper['id_staff']]['hours_other']) && $month_res[$c][$oper['id_staff']]['hours_other']>=0.01)?floatval($month_res[$c][$oper['id_staff']]['hours_other']):''; ?>
 						</a>
-						</td>					
+						</td>
 						<?php
 					}
-					?> </tr><tr> 
+					?> </tr><tr>
 					<td ">
 						<?php echo "Assenza"; ?>
 					</td>
@@ -418,41 +422,42 @@ $gForm = new humresForm();
 						<?php if (isset($month_res[$c][$oper['id_staff']]['hours_absence']) && $month_res[$c][$oper['id_staff']]['hours_absence']>0 ){
 							?>
 							<a style="cursor: help;" data-toggle="popover" tabindex="<?php echo $c-1; ?>" data-placement="auto" data-trigger="focus" title="Ore di assenza" data-content="<?php echo (isset($month_res[$c][$oper['id_staff']]['absence_des']))?$month_res[$c][$oper['id_staff']]['absence_des']:''; ?>">
-							<?php 
+							<?php
 						}
 							echo (isset($month_res[$c][$oper['id_staff']]['hours_absence'])&&$month_res[$c][$oper['id_staff']]['hours_absence']>=0.01)?floatval($month_res[$c][$oper['id_staff']]['hours_absence']):''; ?>
 						</a>
-						</td>						
+						</td>
 						<?php
 					}
-					?>				
+					?>
 					</tr>
-					
+
 					<?php
 				}
 				?>
 			</tbody>
 		</table>
 	</div>
-	<div class="row text-center" style="padding-top:12px;">     		
+	<div class="row text-center" style="padding-top:12px;">
 		<?php
-		echo "<td align=\"center\"><a class=\"btn btn-xs btn-warning\" style=\"cursor:pointer;\" onclick=\"printPdf('print_timesheet.php?year=". $form['anno'] ."&month=". $form['mese'] ."')\"><i class=\"glyphicon glyphicon-print\" title=\"Stampa documento PDF\">".$script_transl['print'].$script_transl['title'].' '.ucfirst(strftime("%B %Y", mktime (0,0,0,$form['mese'],1,$form['anno'])))."</i></a>";
-		?>       
-	</div>		
+    $gazTimeFormatter->setPattern('MMMM yyyy');
+		echo "<td align=\"center\"><a class=\"btn btn-xs btn-warning\" style=\"cursor:pointer;\" onclick=\"printPdf('print_timesheet.php?year=". $form['anno'] ."&month=". $form['mese'] ."')\"><i class=\"glyphicon glyphicon-print\" title=\"Stampa documento PDF\">".$script_transl['print'].$script_transl['title'].' '.ucfirst($gazTimeFormatter->format(new DateTime($form['anno'].'-'.$form['mese'].'-01')))."</i></a>";
+		?>
+	</div>
 </div>
 	<div style="display:none" id="dialog_worker_card" title="Cartellino presenze">
-        <p><b>Dipendente:</b></p>		
+        <p><b>Dipendente:</b></p>
 		<p class="ui-state-highlight" id="iddescri"></p>
-		<table id="tblAppendGrid"></table>        
+		<table id="tblAppendGrid"></table>
 	</div>
-	
-  
-	
-    
-   
-   
+
+
+
+
+
+
 </form>
-</div>  
+</div>
 <?php
 require("../../library/include/footer.php");
 ?>

@@ -38,16 +38,16 @@ if (!isset($_GET['li']) or ! isset($_GET['ci']) or ! isset($_GET['cf']) or ! iss
 if (empty($_GET['af'])) {
    $_GET['af'] = 'zzzzzzzzzzzzzzz';
 }
-
+$gazTimeFormatter->setPattern('dd mmmm yyyy');
 $luogo_data = $admin_aziend['citspe'] . ", lì ";
 if (isset($_GET['ds'])) {
-   $giosta = substr($_GET['ds'], 0, 2);
-   $messta = substr($_GET['ds'], 2, 2);
-   $annsta = substr($_GET['ds'], 4, 4);
-   $utssta = mktime(0, 0, 0, $messta, $giosta, $annsta);
-   $luogo_data .= ucwords(strftime("%d %B %Y", $utssta));
+  $giosta = substr($_GET['ds'], 0, 2);
+  $messta = substr($_GET['ds'], 2, 2);
+  $annsta = substr($_GET['ds'], 4, 4);
+  $utssta = mktime(0, 0, 0, $messta, $giosta, $annsta);
+  $luogo_data .= ucwords($gazTimeFormatter->format(new DateTime($annsta.'-'.$messta.'-'.$giosta)));
 } else {
-   $luogo_data .=ucwords(strftime("%d %B %Y", mktime(0, 0, 0, date("m"), date("d"), date("Y"))));
+  $luogo_data .= ucwords($gazTimeFormatter->format(new DateTime()));
 }
 
 require("../../config/templates/report_template.php");

@@ -74,7 +74,7 @@ if ($gazie_locale != "") {
   setlocale(LC_TIME, $local['cvalue']);
 }
 $gazTime =  new DateTime();
-$gazTimeFormatter = new IntlDateFormatter($gazie_locale,IntlDateFormatter::FULL,IntlDateFormatter::FULL);
+$gazTimeFormatter = new IntlDateFormatter($gazie_locale,IntlDateFormatter::FULL,IntlDateFormatter::FULL,'Europe/Rome',);
 
 $id = 1;
 if (isset($_SESSION['company_id'])) {

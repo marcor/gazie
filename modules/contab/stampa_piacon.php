@@ -40,7 +40,7 @@ function convNum($n=0){
   }
   return $r;
 }
-$gazTimeFormatter->setPattern('dd MMMM YYYY');
+$gazTimeFormatter->setPattern('dd MMMM yyyy');
 $luogo_data = $admin_aziend['citspe'] . ", lì " . ucwords($gazTimeFormatter->format($gazTime));
 $where = " 1 ";
 $what = $gTables['clfoco'].".*, CONCAT(".$gTables['anagra'].".ragso1, ' ',".$gTables['anagra'].".ragso2) AS ragsoc ";

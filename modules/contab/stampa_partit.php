@@ -53,14 +53,14 @@ $datafin = date("Ymd",$utsfin);
 $descrDataini = date("d-m-Y",$utsini);
 $descrDatafin = date("d-m-Y",$utsfin);
 $luogo_data=$admin_aziend['citspe'].", lì ";
-$gazTimeFormatter->setPattern('dd MMMM YYYY');
+$gazTimeFormatter->setPattern('dd MMMM yyyy');
 if (isset($_GET['ds'])) {
   $giosta = substr($_GET['ds'],0,2);
   $messta = substr($_GET['ds'],2,2);
   $annsta = substr($_GET['ds'],4,4);
   $utssta= mktime(0,0,0,$messta,$giosta,$annsta);
   $utsstaobj = new DateTime('@'.$utssta);
-  $gazTimeFormatter->setPattern('dd MMMM YYYY');
+  $gazTimeFormatter->setPattern('dd MMMM yyyy');
   $luogo_data .= ucwords($gazTimeFormatter->format($utsstaobj));
 } else {
   $luogo_data .=ucwords($gazTimeFormatter->format(new DateTime()));

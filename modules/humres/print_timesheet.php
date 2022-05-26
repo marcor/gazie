@@ -50,10 +50,10 @@ $ed_date = strtotime($last_day);
 for ($i = $st_date; $i <= $ed_date; $i = mktime(0, 0, 0, date("m",$i)  , date("d",$i)+1, date("Y",$i)) ) {
 	$currDate = array('strdate'=>date('Y-m-d', $i),'daydate'=>date('w',$i),'tsdate'=>$i);
 	// in $aDates accumulo i giorni del mese
-    $aDates[] = $currDate;
+  $aDates[] = $currDate;
 }
-
-$luogo_data=$admin_aziend['citspe'].", lì " . ucwords(strftime("%d %B %Y", mktime (0,0,0,date("m"),date("d"),date("Y"))));
+$gazTimeFormatter->setPattern('dd MMMM yyyy');
+$luogo_data=$admin_aziend['citspe'].", lì ".ucfirst($gazTimeFormatter->format(new DateTime()));
 
 require("../../config/templates/report_template.php");
 require("lang.".$admin_aziend['lang'].".php");
@@ -63,13 +63,15 @@ $what="*";
 $tables=$gTables['staff'] . ' AS st LEFT JOIN ' . $gTables['clfoco'] . ' AS wo ON st.id_clfoco=wo.codice ';
 $result = gaz_dbi_dyn_query($what, $tables, $where, 'id_staff');
 
+$gazTimeFormatter->setPattern('MMMM yyyy');
 $title = array('luogo_data'=>$luogo_data,
-               'title'=>$script_transl['title'].' del mese di '.strftime("%B %Y", strtotime($first_day)),
+               'title'=>$script_transl['title'].' del mese di '.$gazTimeFormatter->format(new DateTime($first_day)),
                'hile'=>array(array('lun' => 40,'nam'=>$script_transl['header'][1]),
                              array('lun' => 20,'nam'=>$script_transl['header'][2],'col'=>array(255,255,255))
                             )
               );
 // accodo a $title l'array dei giorni segnando le domeniche in rosso
+$gazTimeFormatter->setPattern('E');
 for ($i=0; $i<=30; $i++){
 	if (isset($aDates[$i])){
 		$col=array(255,255,255);
@@ -79,12 +81,12 @@ for ($i=0; $i<=30; $i++){
 		if ($aDates[$i]['daydate']==6){
 			$col=array(255,230,200);
 		}
-		$title['hile'][]=array('lun'=>7,'nam'=>substr($aDates[$i]['strdate'],-2)."\n". substr(strftime("%A", strtotime($aDates[$i]['strdate'])),0,2), 'col'=>$col);
+		$title['hile'][]=array('lun'=>7,'nam'=>substr($aDates[$i]['strdate'],-2)."\n". substr($gazTimeFormatter->format(new DateTime($aDates[$i]['strdate'])),0,2), 'col'=>$col);
 	} else {
 		$title['hile'][]=array('lun'=>7,'nam'=>" \n ");
 	}
 }
- 
+
 $pdf = new Report_template();
 $pdf->setVars($admin_aziend,$title);
 $pdf->SetTopMargin(45);
@@ -104,7 +106,7 @@ while ($mv = gaz_dbi_fetch_array($result)) {
 		$anagrafica = new Anagrafica();
 		$worker = $anagrafica->getPartner($mv['codice']);
 		if (!empty($ctrlWorker)) { // non sono al primo lavoratore
-		
+
 		}
         $pdf->SetFillColor(hexdec(substr($pdf->colore, 0, 2)), hexdec(substr($pdf->colore, 2, 2)), hexdec(substr($pdf->colore, 4, 2)));
 		$pdf->Cell(40,5,$mv['id_staff'].') '.$mv['descri'],'RTL',2,'L',1, '', 1);
@@ -147,36 +149,36 @@ while ($mv = gaz_dbi_fetch_array($result)) {
 				if (isset($work_h) AND $work_h['hours_normal']>=0.01){
 					$hn=floatval($work_h['hours_normal']);
 				} else {
-					$hn='-';	
+					$hn='-';
 				}
 				if (isset($work_h) AND $work_h['hours_extra']>=0.01){
 					$he=floatval($work_h['hours_extra']);
 				} else {
-					$he='';	
+					$he='';
 				}
 				if (isset($work_h) AND $work_h['id_absence_type']>=1){
 					$r_at = gaz_dbi_get_row($gTables['staff_work_type'], "id_work", $work_h['id_absence_type']);
 					$at=$r_at['causal'];
 					$leg_absence[$at]=$r_at['descri_ext'];
 				} else {
-					$at='';	
+					$at='';
 				}
 				if (isset($work_h) AND $work_h['hours_absence']>=0.01){
 					$ha=number_format($work_h['hours_absence'],1,',','');
 				} else {
-					$ha='';	
+					$ha='';
 				}
 				if (isset($work_h) AND $work_h['id_other_type']>=1){
 					$r_ot = gaz_dbi_get_row($gTables['staff_work_type'], "id_work", $work_h['id_other_type']);
 					$ot=$script_transl['work_type'][$r_ot['id_work_type']][0];
 					$leg_other[$ot]= $script_transl['work_type'][$r_ot['id_work_type']][1].'=>'.$r_ot['descri'];
 				} else {
-					$ot='';	
+					$ot='';
 				}
 				if (isset($work_h) AND $work_h['hours_other']>=0.01){
 					$ho=floatval($work_h['hours_other']);
 				} else {
-					$ho='';	
+					$ho='';
 				}
 				if (!empty($accnote)){
 					$dn=gaz_format_date($aDates[$i]['strdate'],false,true);

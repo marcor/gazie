@@ -36,7 +36,7 @@ if (!isset($_GET['orderby'])) {
 }
 require("../../config/templates/report_template.php");
 
-$gazTimeFormatter->setPattern('dd MMMM YYYY');
+$gazTimeFormatter->setPattern('dd MMMM yyyy');
 $luogo_data = $admin_aziend['citspe'] . ", lì " . ucwords($gazTimeFormatter->format($gazTime));
 
 $item_head = array('top' => array(array('lun' => 80, 'nam' => 'Descrizione'),

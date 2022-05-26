@@ -55,16 +55,16 @@ if (isset($_GET['li'])) {
         $listino = 'web_price';
     }
 }
-
+$gazTimeFormatter->setPattern('dd MMMM yyyy');
 $luogo_data = $admin_aziend['citspe'] . ", lì ";
 if (isset($_GET['ds'])) {
-    $giosta = substr($_GET['ds'], 0, 2);
-    $messta = substr($_GET['ds'], 2, 2);
-    $annsta = substr($_GET['ds'], 4, 4);
-    $utssta = mktime(0, 0, 0, $messta, $giosta, $annsta);
-    $luogo_data .= ucwords(strftime("%d %B %Y", $utssta));
+  $giosta = substr($_GET['ds'], 0, 2);
+  $messta = substr($_GET['ds'], 2, 2);
+  $annsta = substr($_GET['ds'], 4, 4);
+  $utssta = mktime(0, 0, 0, $messta, $giosta, $annsta);
+  $luogo_data .= ucwords($gazTimeFormatter->format(new DateTime($annsta.'-'.$messta.'-'.$giosta)));
 } else {
-    $luogo_data .= ucwords(strftime("%d %B %Y", mktime(0, 0, 0, date("m"), date("d"), date("Y"))));
+  $luogo_data .= ucwords($gazTimeFormatter->format(new DateTime()));
 }
 
 class Depliant extends Report_template {
@@ -102,7 +102,7 @@ class Depliant extends Report_template {
                 $xx=73;
                 $yy=0;
                 if ($ratio>0.8){ // ho una immagine troppo larga per essere contenuta in 20
-                    $w=20; // impongo venti come larghezza 
+                    $w=20; // impongo venti come larghezza
                     $h=20/$ratio;// ... e diminuisco l'altezza con il ratio
                     $yy=12.5-$h/2; // faccio il padding verticale
                 } else { // immagine che non entra per altezza
@@ -115,7 +115,7 @@ class Depliant extends Report_template {
 //                echo $exc->getTraceAsString();
                 $this->Cell($x, $y, "Immagine non disponibile");
             } finally {
-                error_reporting($livelloPrecedente);                
+                error_reporting($livelloPrecedente);
             }
 
             $this->Cell(93, 5, $code, 'LTR', 2, 'L', 0, '', 1);
@@ -126,7 +126,7 @@ class Depliant extends Report_template {
 				$this->Cell(70, 5, $description, 'L', 2, 'L', 0, '', 1);
 				$this->cell(70, 5,'','L',2,'L',0,'',1);
 			}
-			
+
             if ($un > 0) {
                 $un .= ' N./Pack';
             } else {
@@ -172,7 +172,7 @@ class Depliant extends Report_template {
 				$this->Cell(93, 5, $description, 'LR', 2, 'L', 0, '', 1);
 				$this->cell(93, 5,'','LR',2,'L',0,'',1);
 			}
-			
+
             if ($un > 0) {
                 $un .= ' N./Pack';
             } else {

@@ -27,7 +27,7 @@ require("../../library/include/datlib.inc.php");
 
 $admin_aziend = checkAdmin();
 
-$gazTimeFormatter->setPattern('dd MMMM YYYY');
+$gazTimeFormatter->setPattern('dd MMMM yyyy');
 $luogo_data = $admin_aziend['citspe'] . ", lì " . ucwords($gazTimeFormatter->format($gazTime));
 
 $form['id_agente'] = (isset($_GET['id_agente']) ? intval($_GET['id_agente']) : '');

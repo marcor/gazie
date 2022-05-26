@@ -122,12 +122,12 @@ for( $counter = 1; $counter <= 31; $counter++ ){
 }
 echo "\t </select>\n";
 echo "\t <select name=\"mesini\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
+$gazTimeFormatter->setPattern('MMMM');
 for( $counter = 1; $counter <= 12; $counter++ ){
-    $selected = "";
-    if($counter == $_GET['mesini'])
-            $selected = "selected";
-    $nome_mese = ucwords(strftime("%B", mktime (0,0,0,$counter,1,0)));
-    echo "\t\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
+  $selected = "";
+  if($counter == $_GET['mesini']) $selected = "selected";
+  $nome_mese = $gazTimeFormatter->format(new DateTime("2000-".$counter."-01"));
+  echo "\t\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
 }
 echo "\t </select>\n";
 echo "\t <select name=\"annini\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
@@ -149,11 +149,10 @@ for( $counter = 1; $counter <= 31; $counter++ ){
 echo "\t </select>\n";
 echo "\t <select name=\"mesfin\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
 for( $counter = 1; $counter <= 12; $counter++ ){
-    $selected = "";
-    if($counter == $_GET['mesfin'])
-            $selected = "selected";
-    $nome_mese = ucwords(strftime("%B", mktime (0,0,0,$counter,1,0)));
-    echo "\t\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
+  $selected = "";
+  if($counter == $_GET['mesfin']) $selected = "selected";
+  $nome_mese = $gazTimeFormatter->format(new DateTime("2000-".$counter."-01"));
+  echo "\t\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
 }
 echo "\t </select>\n";
 echo "\t <select name=\"annfin\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";

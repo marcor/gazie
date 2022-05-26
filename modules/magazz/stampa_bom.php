@@ -39,9 +39,8 @@ if (!isset($_GET['ri'])) {
 	$artdata= gaz_dbi_get_row($gTables['artico'], 'codice',$codart);
 	$result=$gForm->getBOM($codart);
 }
-
-$luogo_data=$admin_aziend['citspe'].", lì ";
-$luogo_data .=ucwords(strftime("%d %B %Y", mktime (0,0,0,date("m"),date("d"),date("Y"))));
+$gazTimeFormatter->setPattern('MMMM');
+$luogo_data=$admin_aziend['citspe'].", lì ".ucwords($gazTimeFormatter->format(new DateTime()));
 require("../../config/templates/report_template.php");
 $pdf = new Report_template('L','mm','A4',true,'UTF-8',false,true);
 $title = array('luogo_data'=>$luogo_data,
@@ -53,7 +52,7 @@ $title = array('luogo_data'=>$luogo_data,
                              array('lun' => 37,'nam'=>'Quantità totale')
                             )
             );
-$pdf->SetLeftMargin(16);			
+$pdf->SetLeftMargin(16);
 
 
 $pdf->setVars($admin_aziend,$title);
@@ -143,7 +142,7 @@ if (sizeof($result) > 0) {
 				}
 			}
 		}
-		
+
 	}
 	ksort($acc);
 $title = array('luogo_data'=>$luogo_data,

@@ -178,7 +178,7 @@ function getAssets($date) {
     }
     return $acc;
 }
-$gazTimeFormatter->setPattern('dd MMMM YYYY');
+$gazTimeFormatter->setPattern('dd MMMM yyyy');
 $luogo_data = $admin_aziend['citspe'] . ", lì " . ucwords($gazTimeFormatter->format(new DateTime(substr($dt, 8, 2).'-'.substr($dt, 5, 2).'-'.substr($dt, 0, 4))));
 
 require("../../config/templates/report_template.php");

@@ -238,12 +238,12 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $dtiniobj = new DateTime('@'.$utsdatini);
     $dtfinobj = new DateTime('@'.$utsdatfin);
     if ($admin_aziend['ivam_t'] == 'M') {
-      $gazTimeFormatter->setPattern('MMMM YYYY');
+      $gazTimeFormatter->setPattern('MMMM yyyy');
       $form['descri'].=ucwords($gazTimeFormatter->format($dtiniobj));
     } else {
       $gazTimeFormatter->setPattern('MMMM');
       $form['descri'].=ucwords($gazTimeFormatter->format($dtiniobj))." - ";
-      $gazTimeFormatter->setPattern('MMMM YYYY');
+      $gazTimeFormatter->setPattern('MMMM yyyy');
       $form['descri'].=ucwords($gazTimeFormatter->format($dtfinobj));
     }
     $form['date_ini_D']=1;
@@ -291,12 +291,12 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
       $dtiniobj = new DateTime('@'.mktime(12,0,0,$form['date_ini_M'],$form['date_ini_D'],$form['date_ini_Y']));
       $dtfinobj = new DateTime('@'.mktime(12,0,0,$form['date_fin_M'],$form['date_fin_D'],$form['date_fin_Y']));
       if ($admin_aziend['ivam_t'] == 'M') {
-        $gazTimeFormatter->setPattern('MMMM YYYY');
+        $gazTimeFormatter->setPattern('MMMM yyyy');
         $form['descri'].=ucwords($gazTimeFormatter->format($dtiniobj));
       } else {
         $gazTimeFormatter->setPattern('MMMM');
         $form['descri'].=ucwords($gazTimeFormatter->format($dtiniobj)).' - ';
-        $gazTimeFormatter->setPattern('MMMM YYYY');
+        $gazTimeFormatter->setPattern('MMMM yyyy');
         $form['descri'].=ucwords($gazTimeFormatter->format($dtfinobj));
       }
       $form['hidden_req']='';

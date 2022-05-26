@@ -347,7 +347,7 @@ class FatturaSemplice extends Template {
         }
         //effettuo il calcolo degli importi delle scadenze
         $totpag = $totimpfat + $taxstamp + $impbol + $totriport + $totivafat - $ritenuta - $totivasplitpay;
-        $ratpag = CalcolaScadenze($totpag, $this->giorno, $this->mese, $this->anno, $this->pagame['tipdec'], $this->pagame['giodec'], $this->pagame['numrat'], $this->pagame['tiprat'], $this->pagame['mesesc'], $this->pagame['giosuc']);
+        $ratpag = ($this->giorno>0)?CalcolaScadenze($totpag, $this->giorno, $this->mese, $this->anno, $this->pagame['tipdec'], $this->pagame['giodec'], $this->pagame['numrat'], $this->pagame['tiprat'], $this->pagame['mesesc'], $this->pagame['giosuc']):[];
         if ($ratpag) {
             //allungo l'array fino alla 4^ scadenza
             $ratpag['import'] = array_pad($ratpag['import'], 4, '');
@@ -453,27 +453,27 @@ class FatturaSemplice extends Template {
         $this->Cell(32, 6, $ratpag['giorno']['2'] . '-' . $ratpag['mese']['2'] . '-' . $ratpag['anno']['2'], 'LR', 0, 'C');
         $this->Cell(33, 6, $ratpag['giorno']['3'] . '-' . $ratpag['mese']['3'] . '-' . $ratpag['anno']['3'], 'LR', 0, 'C');
         $this->Cell(56, 6, '', 'R', 1, 'C');
-        if ($ratpag['import']['0'] != 0) {
+        if ($ratpag['import']['0'] >= 0.01) {
             $this->Cell(32, 6, gaz_format_number($ratpag['import']['0']), 'LBR', 0, 'C');
         } else {
             $this->Cell(32, 6, '', 'LBR');
         }
-        if ($ratpag['import']['1'] != 0) {
+        if ($ratpag['import']['1'] >= 0.01) {
             $this->Cell(33, 6, gaz_format_number($ratpag['import']['1']), 'LBR', 0, 'C');
         } else {
             $this->Cell(33, 6, '', 'LBR');
         }
-        if ($ratpag['import']['2'] != 0) {
+        if ($ratpag['import']['2'] >= 0.01) {
             $this->Cell(32, 6, gaz_format_number($ratpag['import']['2']), 'LBR', 0, 'C');
         } else {
             $this->Cell(32, 6, '', 'LBR');
         }
-        if ($ratpag['import']['3'] != 0) {
+        if ($ratpag['import']['3'] >= 0.01) {
             $this->Cell(33, 6, gaz_format_number($ratpag['import']['3']), 'LBR', 0, 'C');
         } else {
             $this->Cell(33, 6, '', 'LBR');
         }
-        if ($totriport != 0) {
+        if ($totriport  >= 0.01) {
             $this->Cell(56, 6, gaz_format_number($totriport), 'BR', 1, 'C');
         } else {
             $this->Cell(56, 6, '', 'BR', 1);
@@ -492,5 +492,4 @@ class FatturaSemplice extends Template {
     }
 
 }
-
 ?>

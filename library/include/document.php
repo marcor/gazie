@@ -37,6 +37,9 @@ class DocContabVars {
       $this->show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit')['val'];
       $this->user = gaz_dbi_get_row($gTables['admin'], "user_name", $_SESSION["user_name"]);
       $this->pagame = gaz_dbi_get_row($gTables['pagame'], "codice", $tesdoc['pagame']);
+      if (!$this->pagame) {
+        $this->pagame = ['descri'=>'','id_bank'=>0,'tipdec'=>'','giodec'=>0,'numrat'=>1,'tiprat'=>'','mesesc'=>0,'giosuc'=>0,'incaut'=>0,'tippag'=>'D'];
+      }
       if (isset($tesdoc['caumag']) && (!is_null($tesdoc['caumag']))) {
           $this->caumag = gaz_dbi_get_row($gTables['caumag'], "codice", $tesdoc['caumag']);
       }
@@ -76,7 +79,7 @@ class DocContabVars {
       $this->iva_bollo = gaz_dbi_get_row($gTables['aliiva'], "codice", $admin_aziend['taxstamp_vat']);
       $this->client = $anagrafica->getPartner($tesdoc['clfoco']);
       if(!$this->client){
-        $this->client=['ragso1'=>'Anonimo','ragso2'=>'','pec_email'=>'','fe_cod_univoco'=>'','fe_cod_univoco'=>'','indspe'=>'','citspe'=>'','country'=>'IT','capspe'=>'','prospe'=>'','pariva'=>'','pariva'=>'','codfis'=>'','sedleg'=>'','fiscal_rapresentative_id'=>''];
+        $this->client=['ragso1'=>': ','ragso2'=>'','pec_email'=>'','fe_cod_univoco'=>'','fe_cod_univoco'=>'','indspe'=>'','citspe'=>'','country'=>'IT','capspe'=>'','prospe'=>'','pariva'=>'','pariva'=>'','codfis'=>'','sedleg'=>'','fiscal_rapresentative_id'=>'','stapre'=>''];
       }
       if ( $this->client['country']!=="IT" ) {
           $this->descri_partner = 'Customer';
