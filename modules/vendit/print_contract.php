@@ -42,7 +42,8 @@ $body = gaz_dbi_get_row($gTables['body_text'],'id_body' ,$contract['id_body_text
 $rs_rows = gaz_dbi_dyn_query("*", $gTables['contract_row'], "id_contract = $id","id_row ASC");
 $customer= $anagrafica->getPartner($contract['id_customer']);
 $payment= gaz_dbi_get_row($gTables['pagame'],'codice' ,$contract['payment_method']);
-$bank= gaz_dbi_get_row($gTables['banapp'],'codice' ,$contract['bank']);
+$bank=gaz_dbi_get_row($gTables['banapp'],'codice' ,$contract['bank']);
+$bank['descri']=$bank?$bank['descri']:'';
 $revenue= gaz_dbi_get_row($gTables['clfoco'],'codice' ,$contract['cod_revenue']);
 $vat= gaz_dbi_get_row($gTables['aliiva'],'codice' ,$contract['vat_code']);
 

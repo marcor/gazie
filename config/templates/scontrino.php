@@ -35,7 +35,7 @@ class Scontrino extends Template
       $this->giorno = substr($this->tesdoc['datfat'],8,2);
       $this->mese = substr($this->tesdoc['datfat'],5,2);
       $this->anno = substr($this->tesdoc['datfat'],0,4);
-      $this->docVars->gazTimeFormatter->setPattern('dd MMMM YYYY');
+      $this->docVars->gazTimeFormatter->setPattern('dd MMMM yyyy');
       $this->data = $this->docVars->gazTimeFormatter->format(new DateTime($this->tesdoc['datemi']);
       $this->sconto = $this->tesdoc['sconto'];
       $this->tipdoc = 'Copia non fiscale dello Scontrino n.'.$this->tesdoc['numdoc'].' del '.$this->data;

@@ -128,53 +128,54 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['num_ini']=$iniData['ni'];
     $form['num_fin']=$iniData['nf'];
 } else { // accessi successivi
-    $form['hidden_req']=htmlentities($_POST['hidden_req']);
-    $form['ritorno']=$_POST['ritorno'];
-    $form['date_emi_D']=intval($_POST['date_emi_D']);
-    $form['date_emi_M']=intval($_POST['date_emi_M']);
-    $form['date_emi_Y']=intval($_POST['date_emi_Y']);
-    $form['bank']=intval($_POST['bank']);
-    $form['reprint']=substr($_POST['reprint'],0,1);
-    $form['date_ini_D']=intval($_POST['date_ini_D']);
-    $form['date_ini_M']=intval($_POST['date_ini_M']);
-    $form['date_ini_Y']=intval($_POST['date_ini_Y']);
-    $form['date_fin_D']=intval($_POST['date_fin_D']);
-    $form['date_fin_M']=intval($_POST['date_fin_M']);
-    $form['date_fin_Y']=intval($_POST['date_fin_Y']);
-    $form['num_ini']=intval($_POST['num_ini']);
-    $form['num_fin']=intval($_POST['num_fin']);
-    if ($form['hidden_req']=='reprint'){
-       if ($form['reprint']=='S') {
-          $iniData=getLimit(1);
-      } else {
-          $iniData=getLimit();
-      }
-      $form['date_ini_D']=substr($iniData['si'],8,2);
-      $form['date_ini_M']=substr($iniData['si'],5,2);
-      $form['date_ini_Y']=substr($iniData['si'],0,4);
-      $form['date_fin_D']=substr($iniData['sf'],8,2);
-      $form['date_fin_M']=substr($iniData['sf'],5,2);
-      $form['date_fin_Y']=substr($iniData['sf'],0,4);
-      $form['num_ini']=$iniData['ni'];
-      $form['num_fin']=$iniData['nf'];
+  $form['hidden_req']=htmlentities($_POST['hidden_req']);
+  $form['ritorno']=$_POST['ritorno'];
+  $form['date_emi_D']=intval($_POST['date_emi_D']);
+  $form['date_emi_M']=intval($_POST['date_emi_M']);
+  $form['date_emi_Y']=intval($_POST['date_emi_Y']);
+  $form['bank']=intval($_POST['bank']);
+  $form['reprint']=substr($_POST['reprint'],0,1);
+  $form['date_ini_D']=intval($_POST['date_ini_D']);
+  $form['date_ini_M']=intval($_POST['date_ini_M']);
+  $form['date_ini_Y']=intval($_POST['date_ini_Y']);
+  $form['date_fin_D']=intval($_POST['date_fin_D']);
+  $form['date_fin_M']=intval($_POST['date_fin_M']);
+  $form['date_fin_Y']=intval($_POST['date_fin_Y']);
+  $form['num_ini']=intval($_POST['num_ini']);
+  $form['num_fin']=intval($_POST['num_fin']);
+  if ($form['hidden_req']=='reprint'){
+     if ($form['reprint']=='S') {
+        $iniData=getLimit(1);
+    } else {
+        $iniData=getLimit();
     }
-    if (isset($_POST['period'])) {
-      $new_date_ini=mktime(0,0,0,date("m")+1,16,date("Y"));
-      $new_date_fin=mktime(0,0,0,date("m")+2,15,date("Y"));
-      $form['date_ini_D']=16;
-      $form['date_ini_M']=strftime ("%m",$new_date_ini);
-      $form['date_ini_Y']=strftime ("%Y",$new_date_ini);
-      $form['date_fin_D']=15;
-      $form['date_fin_M']=strftime ("%m",$new_date_fin);
-      $form['date_fin_Y']=strftime ("%Y",$new_date_fin);
-      $form['num_ini']=1;
-      $form['num_fin']=999999999;
-      $form['reprint']='S';
-    }
-    if (isset($_POST['return'])) {
-        header("Location: ".$form['ritorno']);
-        exit;
-    }
+    $form['date_ini_D']=substr($iniData['si'],8,2);
+    $form['date_ini_M']=substr($iniData['si'],5,2);
+    $form['date_ini_Y']=substr($iniData['si'],0,4);
+    $form['date_fin_D']=substr($iniData['sf'],8,2);
+    $form['date_fin_M']=substr($iniData['sf'],5,2);
+    $form['date_fin_Y']=substr($iniData['sf'],0,4);
+    $form['num_ini']=$iniData['ni'];
+    $form['num_fin']=$iniData['nf'];
+  }
+  if (isset($_POST['period'])) {
+    $gazTimeFormatter->setPattern('MMyyyy');
+    $new_date_ini=$gazTimeFormatter->format(new DateTime('@'.mktime(12,0,0,date("m")+1,16,date("Y"))));
+    $new_date_fin=$gazTimeFormatter->format(new DateTime('@'.mktime(12,0,0,date("m")+2,15,date("Y"))));
+    $form['date_ini_D']=16;
+    $form['date_ini_M']=substr($new_date_ini,0,2);
+    $form['date_ini_Y']=substr($new_date_ini,2,4);
+    $form['date_fin_D']=15;
+    $form['date_fin_M']=substr($new_date_fin,0,2);
+    $form['date_fin_Y']=substr($new_date_fin,2,4);
+    $form['num_ini']=1;
+    $form['num_fin']=999999999;
+    $form['reprint']='S';
+  }
+  if (isset($_POST['return'])) {
+      header("Location: ".$form['ritorno']);
+      exit;
+  }
 }
 
 //controllo i campi
@@ -183,6 +184,7 @@ if (!checkdate( $form['date_emi_M'], $form['date_emi_D'], $form['date_emi_Y']) |
     !checkdate( $form['date_fin_M'], $form['date_fin_D'], $form['date_fin_Y'])) {
     $msg .='1+';
 }
+
 $utsemi= mktime(0,0,0,$form['date_emi_M'],$form['date_emi_D'],$form['date_emi_Y']);
 $utsini= mktime(0,0,0,$form['date_ini_M'],$form['date_ini_D'],$form['date_ini_Y']);
 $utsfin= mktime(0,0,0,$form['date_fin_M'],$form['date_fin_D'],$form['date_fin_Y']);

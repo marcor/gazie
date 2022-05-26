@@ -39,13 +39,11 @@ require("../../config/templates/report_template.php");
 
 function getData($id_rig)
 {
-    /*
-     * restituisce tutti i dati relativi al rigo contabile del pagamento 
-    */
+    // restituisce tutti i dati relativi al rigo contabile del pagamento
     global $gTables;
     $anagrafica = new Anagrafica();
     $paymov = new Schedule;
-    $sqlquery= "SELECT ".$gTables['tesmov'].".*, ".$gTables['paymov'].".*, ".$gTables['rigmoc'].".import 
+    $sqlquery= "SELECT ".$gTables['tesmov'].".*, ".$gTables['paymov'].".*, ".$gTables['rigmoc'].".import
     FROM ".$gTables['rigmoc']." LEFT JOIN ".$gTables['paymov']." ON ".$gTables['paymov'].".id_rigmoc_pay = ".$gTables['rigmoc'].".id_rig
     LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes
     WHERE ".$gTables['rigmoc'].".id_rig = $id_rig ORDER BY expiry ASC";
@@ -61,10 +59,8 @@ function getData($id_rig)
 }
 
 $d=getData(intval($_GET['id_rig']));
-//print_r($d);
-$luogo_data=$admin_aziend['citspe'].", lì ".ucwords(strftime("%d %B %Y", mktime (0,0,0,substr($d['d'][1]['datreg'],5,2)
-																					  ,substr($d['d'][1]['datreg'],8,2)
-																					  ,substr($d['d'][1]['datreg'],0,4))));
+$gazTimeFormatter->setPattern('dd MMMM yyyy');
+$luogo_data=$admin_aziend['citspe'].", lì ".ucwords($gazTimeFormatter->format(new DateTime('@'.mktime(12,0,0,substr($d['d'][1]['datreg'],5,2),substr($d['d'][1]['datreg'],8,2),substr($d['d'][1]['datreg'],0,4)))));
 $item_head = array('top'=>array(array('lun' => 80,'nam'=>'Descrizione'),
                                 array('lun' => 25,'nam'=>'Numero Conto')
                                )

@@ -29,7 +29,9 @@ $anno = date("Y");
 $msg = "";
 
 function getDayNameFromDayNumber($day_number) {
-    return ucfirst(utf8_encode(strftime('%A', mktime(0, 0, 0, 3, 19+$day_number, 2017))));
+  global $gazTimeFormatter;
+  $gazTimeFormatter->setPattern('eeee');
+  return ucfirst(utf8_encode($gazTimeFormatter->format(new DateTime('@'.mktime(12,0,0,3,19+$day_number, 2017)))));
 }
 
 $upd_mm = new magazzForm;
@@ -77,8 +79,8 @@ function azzera() {
     $form['gross_weight'] = 0;
     $form['units'] = 0;
     $form['volume'] = 0;
-    $form['weekday_repeat']=0;    
-    $form['tipdoc']='';    
+    $form['weekday_repeat']=0;
+    $form['tipdoc']='';
     return $form;
 }
 
@@ -89,7 +91,7 @@ if ( isset($_POST['weekday_repeat']) ) {
    $rows = gaz_dbi_fetch_all ( $res_orgio );
 
    foreach ( $rows as $riga ) {
-   
+
       $_POST['num_rigo'] = 0;
       $form['hidden_req'] = '';
       $form['righi'] = array();
@@ -131,12 +133,12 @@ if ( isset($_POST['weekday_repeat']) ) {
     foreach ($_POST['search'] as $k => $v) {
         $form['search'][$k] = $v;
     }
-    
-      $_GET['id_tes'] = $riga['id_tes']; 
+
+      $_GET['id_tes'] = $riga['id_tes'];
       if (isset($_GET['id_tes'])) { //se � stato richiesto un ordine specifico lo carico
         $form['id_tes'] = intval($_GET['id_tes']);
         $testate = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $form['id_tes']);
-        
+
         $form['clfoco'] = $testate['clfoco'];
         $anagrafica = new Anagrafica();
         $cliente = $anagrafica->getPartner($form['clfoco']);
@@ -193,7 +195,7 @@ if ( isset($_POST['weekday_repeat']) ) {
         }
     }
 
-    
+
 //conferma dell'evasione di un ddt
     //controllo i campi
     $dataemiss = $form['datemi_Y'] . "-" . $form['datemi_M'] . "-" . $form['datemi_D'];
@@ -223,7 +225,7 @@ if ( isset($_POST['weekday_repeat']) ) {
     if ($utsIniziotrasporto < $utsDataemiss) {
         $msg .= "6+";
     }
-    
+
     if ($msg == "") {//procedo all'inserimento
         $iniziotrasporto .= " " . $form['initra_H'] . ":" . $form['initra_I'] . ":00";
         require("lang.".$admin_aziend['lang'].".php");
@@ -246,13 +248,13 @@ if ( isset($_POST['weekday_repeat']) ) {
         $form['status'] = ''; //GENERATO
         $form['initra'] = $iniziotrasporto;
         $form['datemi'] = $dataemiss;
-          
+
         tesdocInsert($form);
-                                        
+
         //recupero l'id assegnato dall'inserimento
         $last_id = gaz_dbi_last_id();
         $ctrl_tes = 0;
-        
+
         foreach ($form['righi'] as $k => $v) {
             /*if ($v['id_tes'] != $ctrl_tes) {  //se fa parte di un'ordine diverso dal precedente
                 //inserisco un rigo descrittivo per il riferimento all'ordine sul DdT
@@ -302,7 +304,7 @@ if ( isset($_POST['weekday_repeat']) ) {
             //gaz_dbi_put_row($gTables['tesbro'], "id_tes", $ctrl_tes, "status", "EVASO");
         }
         //$_SESSION['print_request'] = $last_id;
-        
+
     } else echo $msg;
 }
 header("Location: report_doctra.php");
@@ -362,14 +364,14 @@ $gForm->CalendarPopup('datemi', $form['datemi_D'], $form['datemi_M'], $form['dat
 echo "\t </td>";
 ?>
 <td class="FacetFieldCaptionTD">
-   Ordini del giorno 
+   Ordini del giorno
 </td>
 <td class="FacetDataTD">
 </td>
 <td colspan="2" class="FacetFieldCaptionTD">
    <input type="submit" accesskey="o" name="gddt" value="GENERA DDT!" />
 </td>
-</tr> 
+</tr>
 <tr>
 <?php
 echo '<td class="FacetFieldCaptionTD">' . $script_transl['banapp'] . "</td>\n";

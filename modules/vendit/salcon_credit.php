@@ -136,8 +136,6 @@ if (!isset($_POST['delrig']))
 if (!isset($testata['id_con']))
     $testata['id_con'] = 0;
 
-$nomemese=ucwords(strftime("%B", mktime (0,0,0,$month,1,0)));
-
 if (isset($_POST['ins'])) {
         //controllo le date
         if (!checkdate( $_POST['mesemi'], $_POST['gioemi'], $_POST['annemi']))
@@ -344,19 +342,18 @@ for( $counter = 1; $counter <= 31; $counter++ ) {
 }
 print "\t </select>\n";
 print "\t <select name=\"mesemi\" class=\"FacetSelect\" >\n";
+$gazTimeFormatter->setPattern('MMMM');
 for( $counter = 1; $counter <= 12; $counter++ ) {
     $selected = "";
-    if($counter == $_POST['mesemi'])
-            $selected = "selected";
-    $nome_mese = ucwords(strftime("%B", mktime (0,0,0,$counter,1,0)));
+    if($counter == $_POST['mesemi'])  $selected = "selected";
+    $nome_mese = $gazTimeFormatter->format(new DateTime("2000-".$counter."-01"));
     print "\t\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
 }
 print "\t </select>\n";
 print "\t <select name=\"annemi\" class=\"FacetSelect\" >\n";
 for( $counter = 2002; $counter <= 2030; $counter++ ) {
     $selected = "";
-    if($counter == $_POST['annemi'])
-            $selected = "selected";
+    if($counter == $_POST['annemi']) $selected = "selected";
     print "\t\t <option value=\"$counter\"  $selected >$counter</option>\n";
 }
 print "\t </select></td></tr>\n";
@@ -389,12 +386,12 @@ print "<table class=\"Tlarge table table-striped table-bordered table-condensed 
 /** ENRICO FEDELE */
 /* glyph-icon */
 echo '  <tr>
-		  <td colspan="3" align="right">Aggiungi un rigo --&raquo; 
+		  <td colspan="3" align="right">Aggiungi un rigo --&raquo;
 			<button type="submit" class="btn btn-default btn-sm" name="add" title="Aggiunta rigo!"><i class="glyphicon glyphicon-ok"></i></button>
 		</td>
 	   </tr>';
 	   /** ENRICO FEDELE */
-	   
+
 if ($_POST['num_rigo'] > 0) {
   print "<tr><th class=\"FacetFieldCaptionTD\">Descrizione</th><th class=\"FacetFieldCaptionTD\">Importo</th><th class=\"FacetFieldCaptionTD\">Selez.</th></tr>\n";
 }
@@ -407,7 +404,7 @@ foreach ($_POST['righi'] as $k => $v) {
     $importo_rigo=number_format($v['prelis'],2, '.', '');
     print "<tr><td><input type=\"text\" name=\"righi[{$k}][descri]\" value=\"{$v['descri']}\" maxlength=\"50\" ></td>\n";
     print "<td align=\"right\"><input align=\"right\" type=\"text\" name=\"righi[{$k}][prelis]\" value=\"".preg_replace("/\,/",'.', $importo_rigo)."\" maxlength=\"11\" ></td>\n";
-    
+
 
    /** ENRICO FEDELE */
    /* glyph icon */
@@ -415,7 +412,7 @@ foreach ($_POST['righi'] as $k => $v) {
 		     <button type="submit" class="btn btn-default btn-sm" name="del['.$k.']" title="Elimina rigo!"><i class="glyphicon glyphicon-remove"></i></button>
 		   </td>
 	     </tr>';
-   /** ENRICO FEDELE */   
+   /** ENRICO FEDELE */
 
 	print "<input type=\"hidden\" name=\"righi[{$k}][id_rig]\" value=\"{$v['id_rig']}\">\n";
 }

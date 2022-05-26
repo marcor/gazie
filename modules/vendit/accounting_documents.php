@@ -290,48 +290,49 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
   $lastdayofmonth=date("Ymt", strtotime($form['this_date_Y'].'-'.$form['this_date_M'].'-'.$form['this_date_D']));
 	$rs = getDocumentsAccounts($form['type'], $form['vat_section'], $lastdayofmonth, $form['profin']);
 } else {    // accessi successivi
-    $form['type'] = substr($_POST['type'], 0, 1);
-    $form['vat_section'] = intval($_POST['vat_section']);
-    $form['this_date_Y'] = intval($_POST['this_date_Y']);
-    $form['this_date_M'] = intval($_POST['this_date_M']);
-    $form['this_date_D'] = intval($_POST['this_date_D']);
-    $form['proini'] = intval($_POST['proini']);
-    $form['profin'] = intval($_POST['profin']);
-    $form['year_ini'] = intval($_POST['year_ini']);
-    $form['year_fin'] = intval($_POST['this_date_Y']);
-    if (isset($_POST['accpaymov'])) {
-		$paymoverr=false;
-        foreach($_POST['accpaymov']as$prot=>$v){
-			// in $v ho il id_tesdoc_ref selezionato;
-			$form["accpaymov_$prot"] = $v;
+  $form['type'] = substr($_POST['type'], 0, 1);
+  $form['vat_section'] = intval($_POST['vat_section']);
+  $form['this_date_Y'] = intval($_POST['this_date_Y']);
+  $form['this_date_M'] = intval($_POST['this_date_M']);
+  $form['this_date_D'] = intval($_POST['this_date_D']);
+  $form['proini'] = intval($_POST['proini']);
+  $form['profin'] = intval($_POST['profin']);
+  $form['year_ini'] = intval($_POST['year_ini']);
+  $form['year_fin'] = intval($_POST['this_date_Y']);
+  if (isset($_POST['accpaymov'])) {
+    $paymoverr=false;
+    foreach($_POST['accpaymov']as$prot=>$v){
+      // in $v ho il id_tesdoc_ref selezionato;
+      $form["accpaymov_$prot"] = $v;
             $form['accpaymov'][$prot]= $v;
-			// controllo se le partite di scadenzario delle note credito sono state tutte selezionate
-			if($v<2&&$v!='no'){$paymoverr=true;}
-        }
-		if($paymoverr){$msg['err'][]="nopaymov";}
-	}
-    $form['hidden_req'] = htmlentities($_POST['hidden_req']);
-    if (!checkdate($form['this_date_M'], $form['this_date_D'], $form['this_date_Y']))
-       $msg['err'][]="date";
-    if ($form['hidden_req'] == 'type' || $form['hidden_req'] == 'vat_section') {   //se cambio il registro
-        $extreme = getExtremeDocs($form['type'], $form['vat_section']);
-        if ($extreme['ini']['proini'] > 0) {
-            $form['this_date_Y'] = substr($extreme['fin']['date'], 0, 4);
-            $form['this_date_M'] = substr($extreme['fin']['date'], 5, 2);
-            $form['this_date_D'] = substr($extreme['fin']['date'], 8, 2);
-        } else {
-            $form['this_date_Y'] = date("Y");
-            $form['this_date_M'] = date("m");
-            $form['this_date_D'] = date("d");
-        }
-        $form['proini'] = $extreme['ini']['proini'];
-        $form['profin'] = $extreme['fin']['profin'];
-        $form['year_ini'] = substr($extreme['ini']['date'], 0, 4);
-        $form['year_fin'] = substr($extreme['fin']['date'], 0, 4);
+      // controllo se le partite di scadenzario delle note credito sono state tutte selezionate
+      if($v<2&&$v!='no'){$paymoverr=true;}
     }
-    $form['hidden_req'] = '';
-    $uts_this_date = mktime(0, 0, 0, $form['this_date_M'], $form['this_date_D'], $form['this_date_Y']);
-	$rs = getDocumentsAccounts($form['type'], $form['vat_section'], strftime("%Y%m%d", $uts_this_date), $form['profin']);
+    if($paymoverr){$msg['err'][]="nopaymov";}
+	}
+  $form['hidden_req'] = htmlentities($_POST['hidden_req']);
+  if (!checkdate($form['this_date_M'], $form['this_date_D'], $form['this_date_Y']))
+     $msg['err'][]="date";
+  if ($form['hidden_req'] == 'type' || $form['hidden_req'] == 'vat_section') {   //se cambio il registro
+      $extreme = getExtremeDocs($form['type'], $form['vat_section']);
+      if ($extreme['ini']['proini'] > 0) {
+          $form['this_date_Y'] = substr($extreme['fin']['date'], 0, 4);
+          $form['this_date_M'] = substr($extreme['fin']['date'], 5, 2);
+          $form['this_date_D'] = substr($extreme['fin']['date'], 8, 2);
+      } else {
+          $form['this_date_Y'] = date("Y");
+          $form['this_date_M'] = date("m");
+          $form['this_date_D'] = date("d");
+      }
+      $form['proini'] = $extreme['ini']['proini'];
+      $form['profin'] = $extreme['fin']['profin'];
+      $form['year_ini'] = substr($extreme['ini']['date'], 0, 4);
+      $form['year_fin'] = substr($extreme['fin']['date'], 0, 4);
+  }
+  $form['hidden_req'] = '';
+  $uts_this_date = mktime(12, 0, 0, $form['this_date_M'], $form['this_date_D'], $form['this_date_Y']);
+  $gazTimeFormatter->setPattern('yyyyMMdd');
+  $rs = getDocumentsAccounts($form['type'], $form['vat_section'], $gazTimeFormatter->format(new DateTime('@'.$uts_this_date)), $form['profin']);
 
     if (isset($_POST['gosubmit']) && count($msg['err'])==0) {   //confermo la contabilizzazione
         if (!empty($rs) && count($rs)>0) {

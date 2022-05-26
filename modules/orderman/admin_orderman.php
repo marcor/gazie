@@ -443,7 +443,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 			} else { // se invece è un ordine cliente devo lasciarlo e solo sganciarlo da orderman
 			gaz_dbi_query ("UPDATE " . $gTables['tesbro'] . " SET id_orderman = '' WHERE id_tes ='".$form['id_tesbro']."'") ; // sgancio tesbro da orderman
 			}
-		
+
             // in ogni caso riporto l'auto_increment all'ultimo valore disponibile
             $query="SELECT max(id)+1 AS li FROM ".$gTables['orderman'];
             $last_autincr=gaz_dbi_query($query);
@@ -457,7 +457,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
                 $id_tesbro = $form['id_tesbro'];
                 $id_rigbro = $form['id_rigbro'];
             }
-          
+
 
           if ($form['order_type'] == "AGR" or $form['order_type'] == "RIC" or $form['order_type'] == "PRF") {
               // escludo AGR RIC e PRF dal creare movimento di magazzino e lotti
@@ -491,7 +491,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
             }
           // inserisco orderman: l'attuale produzione
             $form['start_work']=$start_work; $form['end_work']=$end_work; $form['id_tesbro']=(isset($id_tesbro))?$id_tesbro:0; $form['stato_lavorazione']=$status; $form['adminid']=$admin_aziend['adminid']; $form['duration']=$form['day_of_validity'];
-            
+
 			if (isset($_GET['codice']) && intval($_GET['codice'])>0){// se è un update aggiorno rigo orderman
 				$id_orderman=intval($_GET['codice']);
 				$update = array();
@@ -1662,11 +1662,12 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
   }
   echo "\t </select>\n";
   echo "\t <select name=\"mesinp\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
+  $gazTimeFormatter->setPattern('MMMM');
   for ($counter = 1;$counter <= 12;$counter++) {
-      $selected = "";
-      if ($counter == $form['mesinp']) $selected = "selected";
-      $nome_mese = ucwords(strftime("%B", mktime(0, 0, 0, $counter, 1, 0)));
-      echo "\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
+    $selected = "";
+    if ($counter == $form['mesinp']) $selected = "selected";
+    $nome_mese = $gazTimeFormatter->format(new DateTime("2000-".$counter."-01"));
+    echo "\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
   }
   echo "\t </select>\n";
   echo "\t <select name=\"anninp\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";

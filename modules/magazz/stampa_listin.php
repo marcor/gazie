@@ -38,7 +38,7 @@ if (!isset($_GET['li']) or ! isset($_GET['ci']) or ! isset($_GET['cf']) or ! iss
 if (empty($_GET['af'])) {
    $_GET['af'] = 'zzzzzzzzzzzzzzz';
 }
-$gazTimeFormatter->setPattern('dd mmmm yyyy');
+$gazTimeFormatter->setPattern('dd MMMM yyyy');
 $luogo_data = $admin_aziend['citspe'] . ", lì ";
 if (isset($_GET['ds'])) {
   $giosta = substr($_GET['ds'], 0, 2);

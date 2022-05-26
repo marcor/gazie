@@ -44,7 +44,7 @@ class Report_template extends TCPDF {
         if (isset($altri_dati['luogo_data'])) { // se viene passata il valore di luogo_data
           $this->luogo = $altri_dati['luogo_data'];
         } else {  // altrimenti uso quello di default
-          $gazTimeFormatter->setPattern('dd MMMM YYYY');
+          $gazTimeFormatter->setPattern('dd MMMM yyyy');
           $this->luogo = $admin_aziend['citspe'] . ", lì " . $gazTimeFormatter->format($gazTime);
         }
         $this->SetCreator('GAzie - ' . $this->intesta1);

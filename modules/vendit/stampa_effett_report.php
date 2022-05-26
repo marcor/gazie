@@ -41,11 +41,11 @@ if (!isset($_GET['de']) ||
 $gioemi = substr($_GET['de'],0,2);
 $mesemi = substr($_GET['de'],2,2);
 $annemi = substr($_GET['de'],4,4);
-$utsemi= mktime(0,0,0,$mesemi,$gioemi,$annemi);
+$utsemi= mktime(12,0,0,$mesemi,$gioemi,$annemi);
 $gioini = substr($_GET['ri'],0,2);
 $mesini = substr($_GET['ri'],2,2);
 $annini = substr($_GET['ri'],4,4);
-$utsini= mktime(0,0,0,$mesini,$gioini,$annini);
+$utsini= mktime(12,0,0,$mesini,$gioini,$annini);
 $datainizio = date("Ymd",$utsini);
 $giofin = substr($_GET['rf'],0,2);
 $mesfin = substr($_GET['rf'],2,2);
@@ -59,22 +59,23 @@ if ($_GET['rp'] <> 'S') {
     $ristampa = "(banacc = '".intval($_GET['ba'])."' OR banacc = 0) AND ";
 }
 
-$luogo_data=$admin_aziend['citspe'].", lì ";
 
 
 $where = $ristampa." scaden BETWEEN '".$datainizio."' AND '".$datafine."' AND progre BETWEEN '".intval($_GET['ni'])."' AND '".intval($_GET['nf'])."'";
 $result = gaz_dbi_dyn_query("*", $gTables['effett'],$where,"tipeff, scaden, id_tes");
 $anagrafica = new Anagrafica();
-$banacc = $anagrafica->getPartner(intval($_GET['ba']));
-$descbanacc = $banacc['ragso1'];
+$banacc = gaz_dbi_get_row($gTables['clfoco'],"codice",intval($_GET['ba']));
+$descbanacc = $banacc['descri'];
+$luogo_data=$admin_aziend['citspe'].", lì ";
+$gazTimeFormatter->setPattern('dd MMMM yyyy');
 if (isset($_GET['de'])) {
-   $luogo_data .= ucwords(strftime("%d %B %Y",$utsemi));
+  $luogo_data .= ucwords($gazTimeFormatter->format(new DateTime('@'.$utsemi)));
 } else {
-   $luogo_data .=ucwords(strftime("%d %B %Y", mktime (0,0,0,date("m"),date("d"),date("Y"))));
+  $luogo_data .= ucwords($gazTimeFormatter->format(new DateTime()));
 }
-
+$gazTimeFormatter->setPattern('dd/MM/yyyy');
 $title = array('luogo_data'=>$luogo_data,
-               'title'=>$descbanacc." dal \n".strftime("%d/%m/%Y",$utsini).' al '.strftime("%d/%m/%Y",$utsfin),
+               'title'=>'Effetti su '.$descbanacc." dal ".$gazTimeFormatter->format(new DateTime('@'.$utsini)).' al '.$gazTimeFormatter->format(new DateTime('@'.$utsfin)),
                'hile'=>array(array('lun' => 18,'nam'=>'Scadenza'),
                              array('lun' => 18,'nam'=>'Effetto'),
                              array('lun' => 100,'nam'=>'Cliente / Indirizzo,P.IVA / Fattura'),

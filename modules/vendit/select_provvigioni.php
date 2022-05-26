@@ -192,12 +192,12 @@ for( $counter = 1; $counter <= 31; $counter++ )
 echo "\t </select>\n";
 // select del mese
 echo "\t <select name=\"mi\" class=\"FacetSelect\">\n";
+$gazTimeFormatter->setPattern('MMMM');
 for( $counter = 1; $counter <= 12; $counter++ )
     {
     $selected = "";
-    if($counter == $form['mi'])
-            $selected = "selected";
-    $nome_mese = ucwords(strftime("%B", mktime (0,0,0,$counter,1,0)));
+    if($counter == $form['mi']) $selected = "selected";
+    $nome_mese = $gazTimeFormatter->format(new DateTime("2000-".$counter."-01"));
     echo "\t\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
     }
 echo "\t </select>\n";
@@ -228,13 +228,12 @@ echo "\t </select>\n";
 // select del mese
 echo "\t <select name=\"mf\" class=\"FacetSelect\">\n";
 for( $counter = 1; $counter <= 12; $counter++ )
-    {
+  {
     $selected = "";
-    if($counter == $form['mf'])
-            $selected = "selected";
-    $nome_mese = ucwords(strftime("%B", mktime (0,0,0,$counter,1,0)));
+    if($counter == $form['mf']) $selected = "selected";
+    $nome_mese = $gazTimeFormatter->format(new DateTime("2000-".$counter."-01"));
     echo "\t\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
-    }
+  }
 echo "\t </select>\n";
 // select del anno
 echo "\t <select name=\"af\" class=\"FacetSelect\">\n";

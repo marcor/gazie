@@ -37,25 +37,13 @@ if (!isset($_GET['orderby'])) {
 require("../../config/templates/report_template.php");
 $anagrafica = new Anagrafica();
 $conto = $anagrafica->getPartner(intval($_GET['clfoco']));
-/* ENRICO FEDELE */
-/* strftime effettivamente formatta sulla base della lingua del server, ma se l'italiano non è installato, comunque la data sarà in inglese
-  stessa cosa dicasi per il fuso orario (sul mio NAS non so perchè se stampo l'ora, mi rendo conto che il fuso orario è quello cinese!!!
-  mi chiedo perchè è stato usato mktime invete di lasciare che sia il sistema a prendere data/ora correnti con time(), forse per tentare di
-  bypassare il problema del fuso orario?
-  Per avere sicuramente data e ora nella lingua impostata dall'utente, occorrerebbe predisporre degli apposity array di localizzazione
-  $date = array("month" => array(1=> "Gennaio", 2 => "Febbraio", ...., 12 => "Dicembre"),
-  "day"	 => array(1=> "Lunedì",  2 => "Martedì", ...., 7 => "Domenica"));
-  da richiamare poi con $date["month"][date("n")]
-  $date["day"][date("N")]
- */
-$luogo_data = $admin_aziend['citspe'] . ", lì " . ucwords(strftime("%d %B %Y", mktime(0, 0, 0, date("m"), date("d"), date("Y"))));
-/* ENRICO FEDELE */
+$gazTimeFormatter->setPattern('dd MMMM yyyy');
+$luogo_data=$admin_aziend['citspe'].", lì ".ucwords($gazTimeFormatter->format(new DateTime()));
+
 $item_head = array('top' => array(array('lun' => 80, 'nam' => 'Descrizione'),
         array('lun' => 25, 'nam' => 'Numero Conto')
     )
 );
-/* ENRICO FEDELE */
-/* Modifico larghezza e intestazione delle colonne */
 $title = array('luogo_data' => $luogo_data,
     'title' => "LISTA DELLE PARTITE APERTE ",
     'hile' => array(array('lun' => 45, 'nam' => 'Cliente'),
@@ -130,15 +118,15 @@ if (sizeof($scdl->Entries) > 0) {
             $border_paymov = 1;
             $scdl->getStatus($paymov);
             $r = $scdl->Status;
-            if ($r['sta'] == 1) { // CHIUSA   
+            if ($r['sta'] == 1) { // CHIUSA
                 $pdf->SetFillColor(230, 255, 230);
-            } elseif ($r['sta'] == 2) { // ESPOSTA  
+            } elseif ($r['sta'] == 2) { // ESPOSTA
                 $pdf->SetFillColor(255, 245, 185);
-            } elseif ($r['sta'] == 3) { // SCADUTA  
+            } elseif ($r['sta'] == 3) { // SCADUTA
                 $pdf->SetFillColor(255, 160, 160);
-            } elseif ($r['sta'] == 9) { // PAGAMENTO ANTICIPATO 
+            } elseif ($r['sta'] == 9) { // PAGAMENTO ANTICIPATO
                 $pdf->SetFillColor(190, 190, 255);
-            } else { // APERTA  
+            } else { // APERTA
                 $pdf->SetFillColor(230, 255, 230);
             }
         }
@@ -190,12 +178,12 @@ if (sizeof($scdl->Entries) > 0) {
 	$pdf->Cell(45, 4, '', 0, 0, 'C',false);
     $pdf->Cell(128, 4, '', 'T', 0, 'C',false);
 	$pdf->Cell(13, 4, 'SALDO', 1, 1, 'C',true);
-	
+
     // Aggiunta la percentuale dell'avere rispetto al totale dare+avere
     // Antonio Germani, non so a cosa possa servire ma ce la lascio spostandola ad inizio riga. Al suo posto mi sembra più corretto mettere il saldo che non c'era proprio.
 	$pdf->Cell(10, 4, gaz_format_number(100 * $tot_avere / ($tot_dare + $tot_avere)) . " %", 'LBT', 0, 'L', false);
-	
-    $pdf->Cell(133, 4, 'TOTALI', 1, 0, 'R', false);	
+
+    $pdf->Cell(133, 4, 'TOTALI', 1, 0, 'R', false);
     $pdf->Cell(15, 4, gaz_format_number($tot_dare), 1, 0, 'R', false);
     $pdf->Cell(15, 4, gaz_format_number($tot_avere), 1, 0, 'R', false);
     // Antonio Germani - Stampo il saldo

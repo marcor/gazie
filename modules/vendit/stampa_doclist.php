@@ -248,7 +248,8 @@ if (isset($_GET['ag'])&&is_numeric($_GET['ag'])){
     $agente = gaz_dbi_get_row($gTables['agenti'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['agenti'] . ".id_fornitore = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id', $gTables['agenti'] . '.id_agente', intval($_GET['ag']));
     $titolo .= ($agente)? ' - '.$agente['ragso1']:'';
 }
-$luogo_data = $admin_aziend['citspe'] . ", lì " . ucwords(strftime("%d %B %Y", mktime(0, 0, 0, date("m"), date("d"), date("Y"))));
+$gazTimeFormatter->setPattern('dd MMMM yyyy');
+$luogo_data=$admin_aziend['citspe'].", lì ".ucwords($gazTimeFormatter->format(new DateTime()));
 $title = array('luogo_data' => $luogo_data,
 'title' => 'Vendite: '.$titolo.' dal '.gaz_format_date(substr($_GET['di'],0,4).'-'.substr($_GET['di'],4,2).'-'.substr($_GET['di'],6,2)).' al '.gaz_format_date(substr($_GET['df'],0,4).'-'.substr($_GET['df'],4,2).'-'.substr($_GET['df'],6,2)),
 'hile' => array(

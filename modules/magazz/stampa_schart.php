@@ -128,7 +128,7 @@ $mval['q_g']=0;
 $mval['q_g']=0;
 $mval['v_g']=0;
 $mval['v_g']=0;
-$gazTimeFormatter->setPattern('dd-mm-YYYY');
+$gazTimeFormatter->setPattern('dd-MM-yyyy');
 while ($mv = gaz_dbi_fetch_array($result)) {
       $pdf->setRiporti($aRiportare);
       if ($ctrlArtico != $mv['artico']) {

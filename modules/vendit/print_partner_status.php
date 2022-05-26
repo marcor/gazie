@@ -38,7 +38,8 @@ if (!isset($_GET['date'])) {
     exit;
 }
 require("../../config/templates/report_template.php");
-$luogo_data = $admin_aziend['citspe'] . ", lì " . ucwords(strftime("%d %B %Y", mktime(0, 0, 0, date("m"), date("d"), date("Y"))));
+$gazTimeFormatter->setPattern('dd MMMM yyyy');
+$luogo_data=$admin_aziend['citspe'].", lì ".ucwords($gazTimeFormatter->format(new DateTime()));
 $item_head = array('top' => array(array('lun' => 80, 'nam' => 'Descrizione'),
         array('lun' => 25, 'nam' => 'Numero Conto')
     )
@@ -113,7 +114,7 @@ if (sizeof($paymov->Partners) > 0) {
                 if ($vi['expo_day'] >= 1) {
                     $expo = $vi['expo_day'];
                     if ($vi['cl_val'] == $vi['op_val']) {
-                        $vi['status'] = 2; // la partita è chiusa ma è esposta a rischio insolvenza 
+                        $vi['status'] = 2; // la partita è chiusa ma è esposta a rischio insolvenza
                         $pdf->SetFillColor(255, 245, 185);
                         $class_paymov = 'FacetDataTDevidenziaOK';
                     }

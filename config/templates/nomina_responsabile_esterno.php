@@ -52,7 +52,7 @@ class NominaResponsabileEsterno extends Template
       $this->intesta4 = $this->docVars->intesta4;
       $this->colore = $this->docVars->colore;
       $this->tipdoc = 'NOMINA DEL RESPONSABILE ESTERNO DEL TRATTAMENTO DEI DATI';
-      $this->docVars->gazTimeFormatter->setPattern('dd MMMM YYYY');
+      $this->docVars->gazTimeFormatter->setPattern('dd MMMM yyyy');
       $this->luogo = $this->docVars->azienda['citspe'].' ('.$this->docVars->azienda['prospe'].'), lì '.$this->docVars->gazTimeFormatter->format(new DateTime());
       $this->pec = $this->docVars->azienda['pec'];
       if ($this->docVars->intesta5 == 'F'){

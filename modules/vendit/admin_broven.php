@@ -33,7 +33,9 @@ $msg = "";
 $show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
 $tipo_composti = gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti');
 function getDayNameFromDayNumber($day_number) {
-    return ucfirst(utf8_encode(strftime('%A', mktime(0, 0, 0, 3, 19 + $day_number, 2017))));
+  global $gazTimeFormatter;
+  $gazTimeFormatter->setPattern('eeee');
+  return ucfirst(utf8_encode($gazTimeFormatter->format(new DateTime('@'.mktime(12,0,0,3,19+$day_number, 2017)))));
 }
 
 $upd_mm = new magazzForm;

@@ -88,68 +88,69 @@ function getData($date_ini, $date_fin, $num_ini, $num_fin,$bank) {
 }
 
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
-    $form['hidden_req'] = '';
-    $form['ritorno'] = $_SERVER['HTTP_REFERER'];
-    require("lang." . $admin_aziend['lang'] . ".php");
-    $iniData = getLimit();
-    $form['date_emi_D'] = date("d");
-    $form['date_emi_M'] = date("m");
-    $form['date_emi_Y'] = date("Y");
-    // propongo l'ultima banca utilizzata
+  $form['hidden_req'] = '';
+  $form['ritorno'] = $_SERVER['HTTP_REFERER'];
+  require("lang." . $admin_aziend['lang'] . ".php");
+  $iniData = getLimit();
+  $form['date_emi_D'] = date("d");
+  $form['date_emi_M'] = date("m");
+  $form['date_emi_Y'] = date("Y");
+  // propongo l'ultima banca utilizzata
 	$rs_last_bank = gaz_dbi_query("SELECT banacc FROM ".$gTables['effett']." WHERE tipeff='B' AND banacc > 0 ORDER BY id_tes DESC LIMIT 1");
-    $last_bank=gaz_dbi_fetch_array($rs_last_bank);
-    $form['bank']=($last_bank)?$last_bank['banacc']:0; 
-    $form['date_ini_D'] = substr($iniData['si'], 8, 2);
-    $form['date_ini_M'] = substr($iniData['si'], 5, 2);
-    $form['date_ini_Y'] = substr($iniData['si'], 0, 4);
-    $form['date_fin_D'] = substr($iniData['sf'], 8, 2);
-    $form['date_fin_M'] = substr($iniData['sf'], 5, 2);
-    $form['date_fin_Y'] = substr($iniData['sf'], 0, 4);
-    $form['num_ini'] = $iniData['ni'];
-    $form['num_fin'] = $iniData['nf'];
-    $form['eof'] = false;
+  $last_bank=gaz_dbi_fetch_array($rs_last_bank);
+  $form['bank']=($last_bank)?$last_bank['banacc']:0;
+  $form['date_ini_D'] = substr($iniData['si'], 8, 2);
+  $form['date_ini_M'] = substr($iniData['si'], 5, 2);
+  $form['date_ini_Y'] = substr($iniData['si'], 0, 4);
+  $form['date_fin_D'] = substr($iniData['sf'], 8, 2);
+  $form['date_fin_M'] = substr($iniData['sf'], 5, 2);
+  $form['date_fin_Y'] = substr($iniData['sf'], 0, 4);
+  $form['num_ini'] = $iniData['ni'];
+  $form['num_fin'] = $iniData['nf'];
+  $form['eof'] = false;
 } else { // accessi successivi
 	if (!isset($_POST['bank'])){
 		$_POST['bank']=0;
 		$msg .='4+';
 	}
 	$form['hidden_req'] = htmlentities($_POST['hidden_req']);
-    $form['ritorno'] = $_POST['ritorno'];
-    $form['date_emi_D'] = intval($_POST['date_emi_D']);
-    $form['date_emi_M'] = intval($_POST['date_emi_M']);
-    $form['date_emi_Y'] = intval($_POST['date_emi_Y']);
-    $form['bank'] = intval($_POST['bank']);
-    $form['date_ini_D'] = intval($_POST['date_ini_D']);
-    $form['date_ini_M'] = intval($_POST['date_ini_M']);
-    $form['date_ini_Y'] = intval($_POST['date_ini_Y']);
-    $form['date_fin_D'] = intval($_POST['date_fin_D']);
-    $form['date_fin_M'] = intval($_POST['date_fin_M']);
-    $form['date_fin_Y'] = intval($_POST['date_fin_Y']);
-    $form['num_ini'] = intval($_POST['num_ini']);
-    $form['num_fin'] = intval($_POST['num_fin']);
-    if (isset($_POST['period'])) {
-        $new_date_ini = mktime(0, 0, 0, date("m") + 1, 16, date("Y"));
-        $new_date_fin = mktime(0, 0, 0, date("m") + 2, 15, date("Y"));
-        $form['date_ini_D'] = 16;
-        $form['date_ini_M'] = strftime("%m", $new_date_ini);
-        $form['date_ini_Y'] = strftime("%Y", $new_date_ini);
-        $form['date_fin_D'] = 15;
-        $form['date_fin_M'] = strftime("%m", $new_date_fin);
-        $form['date_fin_Y'] = strftime("%Y", $new_date_fin);
-        $form['num_ini'] = 1;
-        $form['num_fin'] = 999999999;
-    }
-    if (isset($_POST['eof'])) {
-        $form['eof'] = substr($_POST['eof'], 0, 8);
-    } else {
-        $form['eof'] = '';
-    }
-    if (isset($_POST['return'])) {
-        header("Location: " . $form['ritorno']);
-        exit;
-    }
+  $form['ritorno'] = $_POST['ritorno'];
+  $form['date_emi_D'] = intval($_POST['date_emi_D']);
+  $form['date_emi_M'] = intval($_POST['date_emi_M']);
+  $form['date_emi_Y'] = intval($_POST['date_emi_Y']);
+  $form['bank'] = intval($_POST['bank']);
+  $form['date_ini_D'] = intval($_POST['date_ini_D']);
+  $form['date_ini_M'] = intval($_POST['date_ini_M']);
+  $form['date_ini_Y'] = intval($_POST['date_ini_Y']);
+  $form['date_fin_D'] = intval($_POST['date_fin_D']);
+  $form['date_fin_M'] = intval($_POST['date_fin_M']);
+  $form['date_fin_Y'] = intval($_POST['date_fin_Y']);
+  $form['num_ini'] = intval($_POST['num_ini']);
+  $form['num_fin'] = intval($_POST['num_fin']);
+  if (isset($_POST['period'])) {
+    $gazTimeFormatter->setPattern('MMyyyy');
+    $new_date_ini=$gazTimeFormatter->format(new DateTime('@'.mktime(12,0,0,date("m")+1,16,date("Y"))));
+    $new_date_fin=$gazTimeFormatter->format(new DateTime('@'.mktime(12,0,0,date("m")+2,15,date("Y"))));
+    $form['date_ini_D']=16;
+    $form['date_ini_M']=substr($new_date_ini,0,2);
+    $form['date_ini_Y']=substr($new_date_ini,2,4);
+    $form['date_fin_D']=15;
+    $form['date_fin_M']=substr($new_date_fin,0,2);
+    $form['date_fin_Y']=substr($new_date_fin,2,4);
+    $form['num_ini']=1;
+    $form['num_fin']=999999999;
+  }
+  if (isset($_POST['eof'])) {
+      $form['eof'] = substr($_POST['eof'], 0, 8);
+  } else {
+      $form['eof'] = '';
+  }
+  if (isset($_POST['return'])) {
+      header("Location: " . $form['ritorno']);
+      exit;
+  }
 	if (isset($_POST['submit']) && empty($msg) ) {
-		// prima di passare allo script per la generazione del file distinta segno le riba scelte sul db portando il loro status a "CHK" 
+		// prima di passare allo script per la generazione del file distinta segno le riba scelte sul db portando il loro status a "CHK"
 		foreach($_POST['chk'] as $k=>$v){
 			gaz_dbi_put_row($gTables['effett'],'id_tes',intval($k),'status','CHK');
 		}
@@ -162,9 +163,14 @@ if (!checkdate($form['date_emi_M'], $form['date_emi_D'], $form['date_emi_Y']) ||
         !checkdate($form['date_fin_M'], $form['date_fin_D'], $form['date_fin_Y'])) {
     $msg .='1+';
 }
-$utsemi = mktime(0, 0, 0, $form['date_emi_M'], $form['date_emi_D'], $form['date_emi_Y']);
-$utsini = mktime(0, 0, 0, $form['date_ini_M'], $form['date_ini_D'], $form['date_ini_Y']);
-$utsfin = mktime(0, 0, 0, $form['date_fin_M'], $form['date_fin_D'], $form['date_fin_Y']);
+$utsemi = mktime(12,0,0,$form['date_emi_M'],$form['date_emi_D'],$form['date_emi_Y']);
+$utsini = mktime(12,0,0,$form['date_ini_M'],$form['date_ini_D'],$form['date_ini_Y']);
+$utsfin = mktime(12,0,0,$form['date_fin_M'],$form['date_fin_D'],$form['date_fin_Y']);
+$gazTimeFormatter->setPattern('yyyy-MM-dd');
+$datemi = $gazTimeFormatter->format(new DateTime('@'.$utsemi));
+$datini = $gazTimeFormatter->format(new DateTime('@'.$utsini));
+$datfin = $gazTimeFormatter->format(new DateTime('@'.$utsfin));
+
 if ($utsini > $utsfin) {
     $msg .='2+';
 }
@@ -172,14 +178,8 @@ if ($utsemi > $utsini) {
     $msg .='3+';
 }
 // fine controlli
-$datemi = strftime("%Y-%m-%d", $utsemi);
-$datini = strftime("%Y-%m-%d", $utsini);
-$datfin = strftime("%Y-%m-%d", $utsfin);
 
 $anagrafica = new Anagrafica();
-
-
-
 
 require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup'));
@@ -207,19 +207,19 @@ $(function() {
 		  var total = 0;
 		  $('input.checkeffett:checked').each(function(){ // iterate through each checked element.
 			total += isNaN(parseFloat($(this).val())) ? 0 : parseFloat($(this).val());
-		  }); 
+		  });
 		  $("span#totval").text(total.toLocaleString("it-IT",{ maximumFractionDigits: 2, minimumFractionDigits: 2 }));
 		  if (total<=0.01){
-			$('input#submitform').prop('disabled', true);			  
+			$('input#submitform').prop('disabled', true);
 		  } else {
-			$('input#submitform').prop('disabled', false);			  
+			$('input#submitform').prop('disabled', false);
 		  }
 	});
 	$('input#selall').click (function () {
 	  $('input.checkeffett').prop('checked', this.checked);
 	  $('input.checkeffett').trigger('change');
-	});	
-});   
+	});
+});
 </script>
 <?php
 echo '<form method="POST">';
@@ -313,7 +313,7 @@ if (isset($_POST['preview']) && $msg == '') {
         echo "</tr><tr><td></td></tr>";
         echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
 		echo '<td  class="text-right" colspan="5"><input type="submit" class="btn btn-warning" name="submit"  id="submitform" value="' . $script_transl['submit'] . '" accesskey="c" />';
-		
+
         echo "\t </td>\n";
         echo "\t </tr>\n";
     } else {
@@ -324,7 +324,7 @@ if (isset($_POST['preview']) && $msg == '') {
     echo '</table></div>';
 } elseif (isset($_POST['submit']) && empty($msg) ) {
     echo '<div class="text-center"><a class="btn btn-xs btn-warning godistintaBtn" ref="genera_rb_cbi.php?datemi=' . $datemi . "&banacc=" . $form['bank'] . "&proini=" . $form['num_ini'] . "&profin=" . $form['num_fin'] . "&scaini=" . $datini . "&scafin=" . $datfin.((empty($form['eof']))?'':'&eof=1').'" id="godistintaBtn">'.$script_transl['submit'].'</a></div>';
-		
+
 }
 ?>
 </form>
@@ -334,7 +334,7 @@ if (isset($_POST['submit']) && empty($msg) ) {
 echo '
 <script>
 $(function() {
-    var ref = $("a#godistintaBtn").attr("ref");		
+    var ref = $("a#godistintaBtn").attr("ref");
     $("a.godistintaBtn").attr("disabled", true);
     window.location.replace(ref);
 });

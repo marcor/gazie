@@ -98,9 +98,9 @@ function getBillableContracts($date_ref = false, $vat_section = 1, $customer = 0
                 " . $gTables['contract'] . ".current_fee," . $gTables['contract'] . ".periodicity,
                 MAX(" . $gTables['tesdoc'] . ".datfat), MAX(" . $gTables['tesdoc'] . ".datfat) AS df";
 
-    $from = $gTables['contract'] . " 
-                INNER JOIN " . $gTables['clfoco'] . " ON " . $gTables['contract'] . ".id_customer = " . $gTables['clfoco'] . ".codice 
-                INNER JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id 
+    $from = $gTables['contract'] . "
+                INNER JOIN " . $gTables['clfoco'] . " ON " . $gTables['contract'] . ".id_customer = " . $gTables['clfoco'] . ".codice
+                INNER JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id
                 LEFT JOIN " . $gTables['tesdoc'] . " ON " . $gTables['contract'] . ".id_contract = " . $gTables['tesdoc'] . ".id_contract";
 
     $where = $gTables['contract'] . ".vat_section=" . $vat_section . " " . $selected_customer . " AND (" . $gTables['tesdoc'] . ".id_contract IS NULL OR " . $gTables['tesdoc'] . ".datfat>=" . $gTables['contract'] . ".start_date)
@@ -142,8 +142,9 @@ if (!isset($_POST['vat_section'])) { // al primo accesso
     $form['this_date_Y'] = intval($_POST['this_date_Y']);
     $form['this_date_M'] = intval($_POST['this_date_M']);
     $form['this_date_D'] = intval($_POST['this_date_D']);
-    $uts_this_month = mktime(0, 0, 0, $form['this_date_M'], $form['this_date_D'], $form['this_date_Y']);
-    $form['this_date'] = strftime("%Y-%m-%d", $uts_this_month);
+    $uts_this_month = mktime(12,0,0,$form['this_date_M'], $form['this_date_D'],$form['this_date_Y']);
+    $gazTimeFormatter->setPattern('yyyy-MM-dd');
+    $form['this_date'] = $gazTimeFormatter->format(new DateTime('@'.$uts_this_month));
     $billable = getBillableContracts($form['this_date'], $form['vat_section']);
     if (isset($_POST['create']) && empty($msg)) {
         $first_protoc = 0;
@@ -199,29 +200,31 @@ if (!isset($_POST['vat_section'])) { // al primo accesso
                 tesdocInsert($head_data);
                 $tesdoc_id = gaz_dbi_last_id();
                 //inserisco i primi 2 righi (sempre)
-                $uts_conclusion = mktime(0, 0, 0, substr($cntr['conclusion_date'], 5, 2), substr($cntr['conclusion_date'], 8, 2), substr($cntr['conclusion_date'], 0, 4));
-                $conclusion_date = strftime("%d %B %Y", $uts_conclusion);
+                $uts_conclusion = mktime(12,0,0,substr($cntr['conclusion_date'],5,2),substr($cntr['conclusion_date'],8,2),substr($cntr['conclusion_date'],0,4));
+                $gazTimeFormatter->setPattern('dd MMMM yyyy');
+                $conclusion_date = $gazTimeFormatter->format(new DateTime('@'.$uts_conclusion));
                 $rows_data = array('id_tes' => $tesdoc_id, 'tiprig' => 2,
                     'descri' => $strScript['invoice_from_contract.php']['ref'] .
                     $conclusion_date
                 );
                 rigdocInsert($rows_data);
-				$cliente = gaz_dbi_get_row($gTables['clfoco'], "codice", $cntr['id_customer']);
+                $cliente = gaz_dbi_get_row($gTables['clfoco'], "codice", $cntr['id_customer']);
                 //formatto il periodo
                 if (empty($val['last_month'])) { //first time
-                    $y = floor($val['start_month'] / 12);
-                    $m = $val['start_month'] - $y * 12;
-                    $fee = $cntr['current_fee'] * floor(1 + ($val['this_month'] - $val['start_month']) / $val['periodicity']);
+                  $y = floor($val['start_month'] / 12);
+                  $m = $val['start_month'] - $y * 12;
+                  $fee = $cntr['current_fee'] * floor(1 + ($val['this_month'] - $val['start_month']) / $val['periodicity']);
                 } else {
-                    $y = floor($val['last_month'] / 12);
-                    $m = $val['last_month'] - $y * 12 + 1;
-                    $fee = $cntr['current_fee'] * floor(($val['this_month'] - $val['last_month']) / $val['periodicity']);
+                  $y = floor($val['last_month'] / 12);
+                  $m = $val['last_month'] - $y * 12 + 1;
+                  $fee = $cntr['current_fee'] * floor(($val['this_month'] - $val['last_month']) / $val['periodicity']);
                 }
-                $uts_first = mktime(0, 0, 0, $m, $form['this_date_D'], $y);
-                $uts_last = mktime(0, 0, 0, $form['this_date_M'] + $cntr['periodicity'] - 1, $form['this_date_D'], $form['this_date_Y']);
-                $period = strftime("%B %Y", $uts_first);
+                $uts_first = mktime(12,0,0,$m,$form['this_date_D'],$y);
+                $uts_last  = mktime(12,0,0,($form['this_date_M']+$cntr['periodicity']-1),$form['this_date_D'],$form['this_date_Y']);
+                $gazTimeFormatter->setPattern('MMMM yyyy');
+                $period = $gazTimeFormatter->format(new DateTime('@'.$uts_first));
                 if ($uts_last > $uts_first) {
-                    $period .= ' - ' . strftime("%B %Y", $uts_last);
+                  $period .= ' - ' . $gazTimeFormatter->format(new DateTime('@'.$uts_last));
                 }
                 $vat_per = gaz_dbi_get_row($gTables['aliiva'], 'codice', $cntr['vat_code']);
                 $rows_data = array('id_tes' => $tesdoc_id, 'tiprig' => 1,
@@ -234,9 +237,9 @@ if (!isset($_POST['vat_section'])) { // al primo accesso
                     'codric' => $cntr['cod_revenue'],
                     'provvigione' => $cntr['provvigione']
                 );
-				if ($cliente['ritenuta'] > 0) {
-					$rows_data['ritenuta'] = $cliente['ritenuta'];
-				}
+                if ($cliente['ritenuta'] > 0) {
+                  $rows_data['ritenuta'] = $cliente['ritenuta'];
+                }
                 rigdocInsert($rows_data);
                 // e se ci sono altri addebiti
                 $rs_rows = gaz_dbi_dyn_query("*", $gTables['contract_row'], "id_contract = " . $val['id_contract'], "id_row ASC");
@@ -252,11 +255,11 @@ if (!isset($_POST['vat_section'])) { // al primo accesso
                         'pervat' => $vat_per['aliquo'],
                         'codric' => $row['cod_revenue']
                     );
-					if ($rows_data['prelis'] != 0) {
-						if ($cliente['ritenuta'] > 0) {
-							$rows_data['ritenuta'] = $cliente['ritenuta'];
-						}
-					}
+                    if ($rows_data['prelis'] != 0) {
+                      if ($cliente['ritenuta'] > 0) {
+                        $rows_data['ritenuta'] = $cliente['ritenuta'];
+                      }
+                    }
                     rigdocInsert($rows_data);
                 }
             }
@@ -267,16 +270,17 @@ if (!isset($_POST['vat_section'])) { // al primo accesso
         } else {
             $doc_type = 4;
         }
+        $gazTimeFormatter->setPattern('yyyyMMdd');
         $locazione = "Location: select_docforprint.php?tipdoc=" . $doc_type . "&seziva=" . $form['vat_section'] .
                 "&proini=" . $first_protoc . "&profin=" . $last_protoc .
                 "&numini=" . $first_numdoc . "&numfin=" . $last_numdoc .
-                "&datini=" . strftime("%Y%m%d", $uts_this_month) . "&datfin=" . strftime("%Y%m%d", $uts_this_month);
+                "&datini=" . $gazTimeFormatter->format(new DateTime('@'.$uts_this_month)) . "&datfin=" . $gazTimeFormatter->format(new DateTime('@'.$uts_this_month));
         header($locazione);
         exit;
     }
 }
-$form['rows'] = array();
-$uts_this_month = mktime(0, 0, 0, $form['this_date_M'], $form['this_date_D'], $form['this_date_Y']);
+$form['rows'] = [];
+$uts_this_month = mktime(12,0,0,$form['this_date_M'],$form['this_date_D'],$form['this_date_Y']);
 $FAI = lastDocNumber($form['this_date_Y'], 'FAI', $form['vat_section']);
 $uts_last['FAI'] = $FAI['uts'];
 $VRI = lastDocNumber($form['this_date_Y'], 'VRI', $form['vat_section']);

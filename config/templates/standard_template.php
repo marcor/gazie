@@ -42,7 +42,7 @@ class Standard_template extends TCPDF {
         $this->intesta3 = 'Tel.' . $admin_aziend['telefo'] . ' C.F. ' . $admin_aziend['codfis'] . ' P.I. ' . $admin_aziend['pariva'];
         $this->intesta4 = $admin_aziend['e_mail'];
         if ($luogo_data === 1) { // se viene passato a 1 stampo luogo_data di systema
-          $gazTimeFormatter->setPattern('dd MMMM YYYY');
+          $gazTimeFormatter->setPattern('dd MMMM yyyy');
           $this->luogo = $admin_aziend['citspe'] . ", lì " . $gazTimeFormatter->format($gazTime);
         } elseif (!empty($luogo_data)) {  // opp. uso quello passato
           $this->luogo = $luogo_data;

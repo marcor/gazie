@@ -39,7 +39,7 @@ class NominaIncaricatoInterno extends Template
       $this->colore = $this->docVars->colore;
       $this->tipdoc = 'NOMINA A INCARICATO DEL TRATTAMENTO DEI DATI PERSONALI';
       $this->cliente1 = $this->user['user_firstname'].' '.$this->user['user_lastname'];
-      $this->docVars->gazTimeFormatter->setPattern('dd MMMM YYYY');
+      $this->docVars->gazTimeFormatter->setPattern('dd MMMM yyyy');
       $this->luogo = $this->docVars->azienda['citspe'].' ('.$this->docVars->azienda['prospe'].'), lì '.$this->docVars->gazTimeFormatter->format(new DateTime());
       $this->pec = $this->docVars->azienda['pec'];
       if ($this->docVars->intesta5 == 'F'){

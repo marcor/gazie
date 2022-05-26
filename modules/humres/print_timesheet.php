@@ -53,7 +53,7 @@ for ($i = $st_date; $i <= $ed_date; $i = mktime(0, 0, 0, date("m",$i)  , date("d
   $aDates[] = $currDate;
 }
 $gazTimeFormatter->setPattern('dd MMMM yyyy');
-$luogo_data=$admin_aziend['citspe'].", lì ".ucfirst($gazTimeFormatter->format(new DateTime()));
+$luogo_data=$admin_aziend['citspe'].", lì ".ucwords($gazTimeFormatter->format(new DateTime()));
 
 require("../../config/templates/report_template.php");
 require("lang.".$admin_aziend['lang'].".php");

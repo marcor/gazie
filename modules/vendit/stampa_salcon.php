@@ -43,7 +43,6 @@ $anagrafica = new Anagrafica();
 $client = $anagrafica->getPartner($tesbro['clfoco']);
 $pagame = gaz_dbi_get_row($gTables['pagame'],"codice",$tesbro['pagame']);
 $vettor = gaz_dbi_get_row($gTables['vettor'],"codice",$tesbro['vettor']);
-$nomemese=ucwords(strftime("%B", mktime (0,0,0,substr($tesbro['datemi'],5,2),1,0)));
 $day = substr($tesbro['datemi'],8,2);
 $month = substr($tesbro['datemi'],5,2);
 $year = substr($tesbro['datemi'],0,4);
@@ -56,7 +55,8 @@ $intesta1=$admin_aziend['ragso1'].' '.$admin_aziend['ragso2'];
 $intesta2=$admin_aziend['indspe'].' '.$admin_aziend['capspe'].' '.$admin_aziend['citspe'].' ('.$admin_aziend['prospe'].')';
 $intesta3='Tel.'.$admin_aziend['telefo'].' C.F. '.$admin_aziend['codfis'].' P.I. '.$admin_aziend['pariva'];
 $intesta4=$admin_aziend['e_mail'];
-$nomemese=ucwords(strftime("%B", mktime (0,0,0,$month,1,0)));
+$gazTimeFormatter->setPattern('MMMM');
+$nomemese = $gazTimeFormatter->format(new DateTime("2000-".$month."-01"));
 $dataluogo = $admin_aziend['citspe'].', lì '.$day.' '.$nomemese.' '.$year;
 
 class PDF extends TCPDF

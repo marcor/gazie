@@ -236,13 +236,13 @@ $script_transl = HeadMain();
                 echo "\t </select>\n";
                 // select del mese
                 echo "\t <select name=\"mesexe\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
-
+                $gazTimeFormatter->setPattern('MMMM');
                 for ($counter = 1; $counter <= 12; $counter++) {
-                    $selected = "";
-                    if ($counter == $_POST['mesexe'])
-                        $selected = "selected";
-                    $nome_mese = ucwords(strftime("%B", mktime(0, 0, 0, $counter, 1, 0)));
-                    echo "\t\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
+                  $selected = "";
+                  if ($counter == $_POST['mesexe'])
+                       $selected = "selected";
+                  $nome_mese = $gazTimeFormatter->format(new DateTime("2000-".$counter."-01"));
+                  echo "\t\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
                 }
                 echo "\t </select>\n";
                 // select del anno
