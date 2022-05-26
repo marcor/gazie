@@ -85,11 +85,18 @@ function savedb(){
 				alert('Clicked on: ' + info.startStr);
 				alert('Clicked to: ' + info.endStr);
 				*/
-				var title = prompt("Inserire la descrizione del periodo occupato");
+				var title = prompt("Enter Event Title select");
 				var start = info.startStr;
 				var end = info.endStr;
 				var xhttp = new XMLHttpRequest();
-				xhttp.open("GET", "save_to_db_events.php?title="+ title +"&start="+ start +"&end="+ end +"&house_code=<?php echo $id; ?>", true);
+	 		
+				xhttp.open("GET", "save_to_db_events.php?title="+ title +"&start="+ start +"&end="+ end +"&house_code=<?php echo $id; ?>", false);
+				
+xhttp.onreadystatechange = function() {
+    
+      console.log(this);
+   
+ };					
 				xhttp.send();
 				calendar.refetchEvents();
 				window.location.reload(true);

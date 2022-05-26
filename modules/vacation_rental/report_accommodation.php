@@ -34,6 +34,7 @@ require("../../library/include/datlib.inc.php");
 require("../../modules/magazz/lib.function.php");
 $admin_aziend=checkAdmin();
 require("../../library/include/header.php");
+$firstpart_ical_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']!='off') ? 'https://'.$_SERVER['SERVER_NAME'] : 'http://'.$_SERVER['SERVER_NAME'];
 // campi ammissibili per la ricerca
 $search_fields = [
     'sea_codice' => "{$gTables['artico']}.codice LIKE '%%%s%%'",
@@ -445,7 +446,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 			echo "</td>\n";
 			?>
 			<td class="text-center">
-				<input type="text" value="<?php echo dirname(__FILE__),"/ical.php?house_code=",$r['codice']; ?>" id="copy" readonly width="100">
+				<input type="text" value="<?php echo $firstpart_ical_url,"/modules/vacation_rental/ical.php?house_code=",$r['codice']; ?>" id="copy" readonly width="100">
 				<a class="btn btn-xs btn-default" style="cursor:pointer;" onclick="Copy()">
 					<i class="glyphicon glyphicon-copy" title="Copia url Ical">
 					</i>
