@@ -86,7 +86,7 @@ if (isset($_POST['preview'])) {
       $datfin = sprintf("%04d%02d%02d", $form['af'], $form['mf'], $form['gf']);
 //       $_SESSION['print_request'] = array('livello'=>$form['livello'],'di'=>$datini,'df'=>$datfin);
 //       header("Location: invsta_analisi_agenti.php");
-      $what = "clienti.codice as codice_cliente, concat(dati_clienti.ragso1,' ',dati_clienti.ragso2) as nome_cliente, 
+      $what = "clienti.codice as codice_cliente, concat(dati_clienti.ragso1,' ',dati_clienti.ragso2) as nome_cliente,
 sum(CASE WHEN (tesdoc.datfat between '$datini' and '$datfin' and tesdoc.tipdoc like 'FA%') THEN rigdoc.quanti*rigdoc.prelis*(1-rigdoc.sconto/100) ELSE 0 END) as imp_ven,
 sum(CASE WHEN (tesdoc.datfat between '$datini' and '$datfin' and tesdoc.tipdoc like 'FA%') THEN rigdoc.quanti*artico.preacq ELSE 0 END) as imp_acq";
       $tab_rigdoc = $gTables['rigdoc'];
@@ -94,28 +94,28 @@ sum(CASE WHEN (tesdoc.datfat between '$datini' and '$datfin' and tesdoc.tipdoc l
       $tab_artico = $gTables['artico'];
       $tab_anagra = $gTables['anagra'];
       $tab_clfoco = $gTables['clfoco'];
-      $table = "$tab_rigdoc rigdoc 
-left join $tab_tesdoc tesdoc on rigdoc.id_tes=tesdoc.id_tes 
-left join $tab_artico artico on artico.codice=rigdoc.codart 
-left join $tab_clfoco fornitori on artico.clfoco=fornitori.codice 
-left join $tab_anagra dati_fornitori on fornitori.id_anagra=dati_fornitori.id 
-left join $tab_clfoco clienti on tesdoc.clfoco=clienti.codice 
+      $table = "$tab_rigdoc rigdoc
+left join $tab_tesdoc tesdoc on rigdoc.id_tes=tesdoc.id_tes
+left join $tab_artico artico on artico.codice=rigdoc.codart
+left join $tab_clfoco fornitori on artico.clfoco=fornitori.codice
+left join $tab_anagra dati_fornitori on fornitori.id_anagra=dati_fornitori.id
+left join $tab_clfoco clienti on tesdoc.clfoco=clienti.codice
 left join $tab_anagra dati_clienti on clienti.id_anagra=dati_clienti.id ";
       $id_agente = $form['id_agente'];
       $where = "tesdoc.tipdoc like 'F%' and rigdoc.quanti>0 " .
               ($id_agente > 0 ? "and tesdoc.id_agente=$id_agente" : "");
       $order = "nome_cliente";
       $group = "clienti.codice";
-//       $query="select clienti.codice as codice_cliente, concat(dati_clienti.ragso1,' ',dati_clienti.ragso2) as nome_cliente, 
+//       $query="select clienti.codice as codice_cliente, concat(dati_clienti.ragso1,' ',dati_clienti.ragso2) as nome_cliente,
 //sum(CASE WHEN (tesdoc.datfat between '2016-01-01' and '2016-01-31' and tesdoc.tipdoc like 'FA%') THEN rigdoc.quanti*rigdoc.prelis*(1-rigdoc.sconto/100) ELSE 0 END) as imp_ven,
 //sum(CASE WHEN (tesdoc.datfat between '2016-01-01' and '2016-01-31' and tesdoc.tipdoc like 'FA%') THEN rigdoc.quanti*artico.preacq ELSE 0 END) as imp_acq
-//FROM gaz_002rigdoc rigdoc 
-//join gaz_002tesdoc tesdoc on rigdoc.id_tes=tesdoc.id_tes 
-//join gaz_002artico artico on artico.codice=rigdoc.codart 
-//join gaz_002clfoco fornitori on artico.clfoco=fornitori.codice 
-//join ".$gTables['anagra']." dati_fornitori on fornitori.id_anagra=dati_fornitori.id 
-//join gaz_002clfoco clienti on tesdoc.clfoco=clienti.codice 
-//join ".$gTables['anagra']." dati_clienti on clienti.id_anagra=dati_clienti.id 
+//FROM gaz_002rigdoc rigdoc
+//join gaz_002tesdoc tesdoc on rigdoc.id_tes=tesdoc.id_tes
+//join gaz_002artico artico on artico.codice=rigdoc.codart
+//join gaz_002clfoco fornitori on artico.clfoco=fornitori.codice
+//join ".$gTables['anagra']." dati_fornitori on fornitori.id_anagra=dati_fornitori.id
+//join gaz_002clfoco clienti on tesdoc.clfoco=clienti.codice
+//join ".$gTables['anagra']." dati_clienti on clienti.id_anagra=dati_clienti.id
 //WHERE tesdoc.tipdoc like 'F%' and rigdoc.quanti>0 and artico.ragstat is not null and artico.ragstat!=''
 //GROUP BY clienti.codice
 //order by nome_cliente";
@@ -159,21 +159,20 @@ for ($counter = 1; $counter <= 31; $counter++) {
 }
 echo "\t </select>\n";
 // select del mese
+$gazTimeFormatter->setPattern('MMMM');
 echo "\t <select name=\"mi\" class=\"FacetSelect\">\n";
 for ($counter = 1; $counter <= 12; $counter++) {
-   $selected = "";
-   if ($counter == $form['mi'])
-      $selected = "selected";
-   $nome_mese = ucwords(strftime("%B", mktime(0, 0, 0, $counter, 1, 0)));
-   echo "\t\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
+  $selected = "";
+  if ($counter == $form['mi']) $selected = "selected";
+  $nome_mese = $gazTimeFormatter->format(new DateTime("2000-".$counter."-01"));
+  echo "\t\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
 }
 echo "\t </select>\n";
 // select del anno
 echo "\t <select name=\"ai\" class=\"FacetSelect\">\n";
 for ($counter = date("Y") - 10; $counter <= date("Y") + 10; $counter++) {
    $selected = "";
-   if ($counter == $form['ai'])
-      $selected = "selected";
+   if ($counter == $form['ai']) $selected = "selected";
    echo "\t\t <option value=\"$counter\"  $selected >$counter</option>\n";
 }
 
@@ -193,11 +192,10 @@ echo "\t </select>\n";
 // select del mese
 echo "\t <select name=\"mf\" class=\"FacetSelect\">\n";
 for ($counter = 1; $counter <= 12; $counter++) {
-   $selected = "";
-   if ($counter == $form['mf'])
-      $selected = "selected";
-   $nome_mese = ucwords(strftime("%B", mktime(0, 0, 0, $counter, 1, 0)));
-   echo "\t\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
+  $selected = "";
+  if ($counter == $form['mf']) $selected = "selected";
+  $nome_mese = $gazTimeFormatter->format(new DateTime("2000-".$counter."-01"));
+  echo "\t\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
 }
 echo "\t </select>\n";
 // select del anno
@@ -210,12 +208,6 @@ for ($counter = date("Y") - 10; $counter <= date("Y") + 10; $counter++) {
 }
 echo "\t </select>\n";
 echo "</td></tr>";
-
-//echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[2]</td>";
-//echo "<td class=\"FacetDataTD\">";
-//echo "<input title=\"anno da analizzare\" type=\"text\" name=\"livello\" value=\"" .
-// $form["livello"] . "\" maxlength=\"5\"  class=\"FacetInput\">";
-//echo "</td></tr>";
 
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['id_agente'] . "</td>";
@@ -235,12 +227,12 @@ if (isset($resultFatturato)) {
    $linkHeaders->output();
    $totFatturato = 0;
    $totCosti = 0;
-   
+
    //*+ DC - 21/05/2018
    // array da usare per grafici
    $CJSarray = array();
    //*- DC - 21/05/2018
-	  
+
    while ($mv = gaz_dbi_fetch_array($resultFatturato)) {
       $nFatturato = $mv['imp_ven'];
       if ($nFatturato > 0) {
@@ -420,7 +412,7 @@ var chartHeight = chartAreaHeight + 80;
 
 var rightHeight=chartHeight + "px";
 //document.getElementById("chart_horizontal_bar_div").style.height = rightHeight; // ? con poche barre, verificare ?
-	  
+
 // Get the 2d context for pie chart container (canvas)
 let myChartHorizontalBar = document.getElementById('myChartHorizontalBar').getContext('2d');
 

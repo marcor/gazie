@@ -90,7 +90,8 @@ $aRiportare = array('top' => array(array('lun' => 168, 'nam' => 'da riporto : ')
         array('lun' => 19, 'nam' => '')
     )
 );
-$luogo_data = $admin_aziend['citspe'] . ", lì " . ucwords(strftime("%d %B %Y", mktime(0, 0, 0, date("m"), date("d"), date("Y"))));
+$gazTimeFormatter->setPattern('dd MMMM yyyy');
+$luogo_data = $admin_aziend['citspe'] . ", lì " . ucwords($gazTimeFormatter->format(new DateTime()));
 $title = array('luogo_data' => $luogo_data,
     'title' => "Analisi agenti dal $datini al $datfin",
     'hile' => array(

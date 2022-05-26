@@ -80,9 +80,9 @@ for ($cat = 1; $cat <= 12; $cat+=$incMMInizio) { // costruiamo la query per ogni
    $meseFine = $cat + $incMMFine;
    $dTmp = new DateTime("$anno-$meseFine-01");
    $dataFine = $dTmp->format('Y-m-t');
-   $what = $what . ", sum(CASE WHEN (tesdoc.datfat between '$dataInizio' and '$dataFine' and tesdoc.tipdoc like 'FA%') THEN rigdoc.quanti ELSE 0 END) as qt_ft$contaRagstat, 
+   $what = $what . ", sum(CASE WHEN (tesdoc.datfat between '$dataInizio' and '$dataFine' and tesdoc.tipdoc like 'FA%') THEN rigdoc.quanti ELSE 0 END) as qt_ft$contaRagstat,
 sum(CASE WHEN (tesdoc.datfat between '$dataInizio' and '$dataFine' and tesdoc.tipdoc like 'FA%') THEN rigdoc.quanti*rigdoc.prelis*(1-rigdoc.sconto/100) ELSE 0 END) as imp_ft$contaRagstat,
-sum(CASE WHEN (tesdoc.datfat between '$dataInizio' and '$dataFine' and tesdoc.tipdoc like 'FN%') THEN rigdoc.quanti ELSE 0 END) as qt_nc$contaRagstat, 
+sum(CASE WHEN (tesdoc.datfat between '$dataInizio' and '$dataFine' and tesdoc.tipdoc like 'FN%') THEN rigdoc.quanti ELSE 0 END) as qt_nc$contaRagstat,
 sum(CASE WHEN (tesdoc.datfat between '$dataInizio' and '$dataFine' and tesdoc.tipdoc like 'FN%') THEN rigdoc.quanti*rigdoc.prelis*(1-rigdoc.sconto/100) ELSE 0 END) as imp_nc$contaRagstat ";
 }
 $result = gaz_dbi_dyn_query($what, $table, $where, $order, 0, 20000, $group);
@@ -94,7 +94,8 @@ $aRiportare = array('top' => array(array('lun' => 168, 'nam' => 'da riporto : ')
         array('lun' => 19, 'nam' => '')
     )
 );
-$luogo_data = $admin_aziend['citspe'] . ", lì " . ucwords(strftime("%d %B %Y", mktime(0, 0, 0, date("m"), date("d"), date("Y"))));
+$gazTimeFormatter->setPattern('dd MMMM yyyy');
+$luogo_data = $admin_aziend['citspe'] . ", lì " . ucwords($gazTimeFormatter->format(new DateTime()));
 $title = array('luogo_data' => $luogo_data,
     'title' => "Analisi acquisti clienti",
     'hile' => array(
@@ -102,13 +103,14 @@ $title = array('luogo_data' => $luogo_data,
         array('lun' => 62, 'nam' => 'Articolo'),
    )
 );
+$gazTimeFormatter->setPattern('MMM');
 for ($k = 1; $k <= $maxPeriodi; $k++) {
 	if ($periodo == 1) {  // trimestre
 		$descrPeriodo = $k."°Trim";
 	} else {
-		$descrPeriodo = ucwords(substr(strftime("%B", mktime (0,0,0,$k,1,0)),0,3));
+		$descrPeriodo = ucwords($gazTimeFormatter->format(new DateTime("2000-".$k."-01")));
 	}
-   $title['hile'][] = array('lun' => $dimCol*2, 'nam' => "Qt/Imp ".$descrPeriodo);
+  $title['hile'][] = array('lun' => $dimCol*2, 'nam' => "Qt/Imp ".$descrPeriodo);
 }
 $item_head['top'] = array(
 );

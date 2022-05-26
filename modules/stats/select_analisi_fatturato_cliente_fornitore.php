@@ -90,7 +90,7 @@ if (isset($_POST['preview'])) {
       $datfin = sprintf("%04d%02d%02d", $form['af'], $form['mf'], $form['gf']);
 //       $_SESSION['print_request'] = array('livello'=>$form['livello'],'di'=>$datini,'df'=>$datfin);
 //       header("Location: invsta_analisi_agenti.php");
-      $what = "fornitori.codice as codice_fornitore, concat(dati_fornitori.ragso1,' ',dati_fornitori.ragso2) as nome_fornitore, 
+      $what = "fornitori.codice as codice_fornitore, concat(dati_fornitori.ragso1,' ',dati_fornitori.ragso2) as nome_fornitore,
 sum(CASE WHEN (tesdoc.datfat between '$datini' and '$datfin' and tesdoc.tipdoc like 'FA%') THEN rigdoc.quanti*rigdoc.prelis*(1-rigdoc.sconto/100) ELSE 0 END) as imp_ven,
 sum(CASE WHEN (tesdoc.datfat between '$datini' and '$datfin' and tesdoc.tipdoc like 'FA%') THEN rigdoc.quanti*artico.preacq ELSE 0 END) as imp_acq";
       $tab_rigdoc = $gTables['rigdoc'];
@@ -98,12 +98,12 @@ sum(CASE WHEN (tesdoc.datfat between '$datini' and '$datfin' and tesdoc.tipdoc l
       $tab_artico = $gTables['artico'];
       $tab_anagra = $gTables['anagra'];
       $tab_clfoco = $gTables['clfoco'];
-      $table = "$tab_rigdoc rigdoc 
-left join $tab_tesdoc tesdoc on rigdoc.id_tes=tesdoc.id_tes 
-left join $tab_artico artico on artico.codice=rigdoc.codart 
-left join $tab_clfoco fornitori on artico.clfoco=fornitori.codice 
-left join $tab_anagra dati_fornitori on fornitori.id_anagra=dati_fornitori.id 
-left join $tab_clfoco clienti on tesdoc.clfoco=clienti.codice 
+      $table = "$tab_rigdoc rigdoc
+left join $tab_tesdoc tesdoc on rigdoc.id_tes=tesdoc.id_tes
+left join $tab_artico artico on artico.codice=rigdoc.codart
+left join $tab_clfoco fornitori on artico.clfoco=fornitori.codice
+left join $tab_anagra dati_fornitori on fornitori.id_anagra=dati_fornitori.id
+left join $tab_clfoco clienti on tesdoc.clfoco=clienti.codice
 left join $tab_anagra dati_clienti on clienti.id_anagra=dati_clienti.id ";
       $codcli = $form['partner'];
       $where = "tesdoc.tipdoc like 'F%' and rigdoc.quanti>0 " .
@@ -159,12 +159,12 @@ for ($counter = 1; $counter <= 31; $counter++) {
 echo "\t </select>\n";
 // select del mese
 echo "\t <select name=\"mi\" class=\"FacetSelect\">\n";
+$gazTimeFormatter->setPattern('MMMM');
 for ($counter = 1; $counter <= 12; $counter++) {
-   $selected = "";
-   if ($counter == $form['mi'])
-      $selected = "selected";
-   $nome_mese = ucwords(strftime("%B", mktime(0, 0, 0, $counter, 1, 0)));
-   echo "\t\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
+  $selected = "";
+  if ($counter == $form['mi']) $selected = "selected";
+  $nome_mese = $gazTimeFormatter->format(new DateTime("2000-".$counter."-01"));
+  echo "\t\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
 }
 echo "\t </select>\n";
 // select del anno
@@ -192,11 +192,10 @@ echo "\t </select>\n";
 // select del mese
 echo "\t <select name=\"mf\" class=\"FacetSelect\">\n";
 for ($counter = 1; $counter <= 12; $counter++) {
-   $selected = "";
-   if ($counter == $form['mf'])
-      $selected = "selected";
-   $nome_mese = ucwords(strftime("%B", mktime(0, 0, 0, $counter, 1, 0)));
-   echo "\t\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
+  $selected = "";
+  if ($counter == $form['mf']) $selected = "selected";
+  $nome_mese = $gazTimeFormatter->format(new DateTime("2000-".$counter."-01"));
+  echo "\t\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
 }
 echo "\t </select>\n";
 // select del anno
@@ -233,12 +232,12 @@ if (isset($resultFatturato)) {
    $linkHeaders->output();
    $totFatturato = 0;
    $totCosti = 0;
-   
+
    //*+ DC - 23/05/2018
    // array da usare per grafici
    $CJSarray = array();
    //*- DC - 23/05/2018
-	  
+
    while ($mv = gaz_dbi_fetch_array($resultFatturato)) {
       $nFatturato = $mv['imp_ven'];
       if ($nFatturato > 0) {
@@ -418,7 +417,7 @@ var chartHeight = chartAreaHeight + 80;
 
 var rightHeight=chartHeight + "px";
 document.getElementById("chart_horizontal_bar_div").style.height = rightHeight;
-	  
+
 // Get the 2d context for pie chart container (canvas)
 let myChartHorizontalBar = document.getElementById('myChartHorizontalBar').getContext('2d');
 

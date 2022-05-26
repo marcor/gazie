@@ -38,7 +38,7 @@ if ( isset($_GET['flt_passo']) ) {
 
 // preparo la query
 if ( isset($_GET['oggetto'])) {
-	$where .= " and ".$gTables['assist'].".oggetto like '%".$_GET['oggetto']."%'"; 
+	$where .= " and ".$gTables['assist'].".oggetto like '%".$_GET['oggetto']."%'";
 }
 
 if ( isset($_GET['clfoco']) && $_GET['clfoco']!="All" ) {
@@ -61,7 +61,8 @@ if (!ini_get('safe_mode')){ //se me lo posso permettere...
 }
 
 require("../../config/templates/report_template.php");
-$luogo_data=$admin_aziend['citspe'].", l� ".ucwords(strftime("%d %B %Y", mktime (0,0,0,date("m"),date("d"),date("Y"))));
+$gazTimeFormatter->setPattern('dd MMMM yyyy');
+$luogo_data=$admin_aziend['citspe'].", lì ".ucwords($gazTimeFormatter->format(new DateTime()));
 $item_head = array('top'=>array(array('lun' => 80,'nam'=>'Descrizione'),
                                 array('lun' => 25,'nam'=>'Numero Conto')
                                )
@@ -83,23 +84,23 @@ $result = gaz_dbi_dyn_query($gTables['assist'].".*,
 		".$gTables['anagra'].".telefo, ".$gTables['anagra'].".fax,
 		".$gTables['anagra'].".cell, ".$gTables['anagra'].".e_mail
 		", $gTables['assist'].
-		" LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['assist'].".clfoco = ".$gTables['clfoco'].".codice". 
+		" LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['assist'].".clfoco = ".$gTables['clfoco'].".codice".
 		" LEFT JOIN ".$gTables['anagra'].' ON '.$gTables['clfoco'].'.id_anagra = '.$gTables['anagra'].'.id',
 		$where, "clfoco,DATA ASC", $limit, $passo);
 
 $totale_ore = -1;
 
 while ($row = gaz_dbi_fetch_array($result)) {
-	if ( $row["ragso1"] != $vrag ) {	
+	if ( $row["ragso1"] != $vrag ) {
 		$pdf->SetFont('helvetica','B',10);
 		$pdf->SetFillColor(255,255,255);
-		if ( $totale_ore != -1 ) {	
+		if ( $totale_ore != -1 ) {
 			$pdf->Cell(158,5,'Totale Ore :','LTB',0,'R',1,'',1);
 			$pdf->Cell(12,5,gaz_format_number($totale_ore),1,1,'R',1);
 		}
 		$totale_ore ++;
-		
-	    $pdf->Ln(2);		
+
+	    $pdf->Ln(2);
 		if ( $row['fax'] != "" ) $fax = "fax: ".$row['fax'];
 		else $fax = "";
 		if ( $row['cell'] != "" ) $mob = "mob:".$row['cell'];
@@ -118,16 +119,16 @@ while ($row = gaz_dbi_fetch_array($result)) {
    	$pdf->Cell(62,5,$row['oggetto'],1,0,'L',1);
 	$pdf->Cell(64,5,substr(strip_tags($row['descrizione']),0,50),1,0,'L',1);
 	$pdf->Cell(12,5,gaz_format_number($row['ore']),1,0,'R',1);
-	$totale_ore += $row['ore'];	
+	$totale_ore += $row['ore'];
   	$pdf->Cell(18,5,$row['stato'],1,1,'R',1);
 }
 $pdf->SetFont('helvetica','B',10);
 $pdf->SetFillColor(255,255,255);
-if ( $totale_ore != -1 ) {	
+if ( $totale_ore != -1 ) {
 	$pdf->Cell(158,5,'Totale Ore :','LTB',0,'R',1,'',1);
 	$pdf->Cell(12,5,gaz_format_number($totale_ore),1,1,'R',1);
 }
-		
+
 $pdf->setRiporti('');
 $pdf->Output();
 ?>

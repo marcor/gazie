@@ -1,6 +1,6 @@
 <?php
 $gazTimeFormatter->setPattern('H');
-$t = $gazTimeFormatter->format($gazTime);
+$t = $gazTimeFormatter->format(new DateTime());
 if ($t > 4 && $t <= 13) {
     $msg = $script_transl['morning'];
 } elseif ($t > 13 && $t <= 17) {
