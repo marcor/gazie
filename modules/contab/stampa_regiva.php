@@ -61,7 +61,7 @@ class vatBook extends Standard_template {
         $this->enddate = date("Ymd", mktime(0, 0, 0, substr($data['f'], 2, 2), substr($data['f'], 0, 2), substr($data['f'], 4, 4)));
     }
 
-    function getRows($gTables) { // recupera i righi dell'intervallo settato 
+    function getRows($gTables) { // recupera i righi dell'intervallo settato
         //recupero i movimenti IVA del conto insieme alle relative testate
         $what = $gTables['tesmov'] . ".*, " .
                 $gTables['rigmoi'] . ".*,
@@ -113,16 +113,16 @@ class vatBook extends Standard_template {
                $taxable = 0;
                $tax = $mov['impost'];
             }
-			
-// INIZIO TIPIZZAZIONE MOVIMENTI PER DISTINGUERE QUELLI CHE VANNO SUL REGISTRO DEL PERIODO 
+
+// INIZIO TIPIZZAZIONE MOVIMENTI PER DISTINGUERE QUELLI CHE VANNO SUL REGISTRO DEL PERIODO
 // DA QUELLI CHE PARTECIPANO ALLA LIQUIDAZIONE IVE DEL PERIODO SELEZIONATO
 		// INIZIO MOVIMENTI DI REGISTRO
 		$mov['liq_class']='';
-		if($mov['dr']<$this->inidate){ // fattura pregressa, precedente al periodo selezionato ma che concorre alla liquidazione 
+		if($mov['dr']<$this->inidate){ // fattura pregressa, precedente al periodo selezionato ma che concorre alla liquidazione
 			$mov['liq_class']='danger';
 		}elseif($mov['dr']>$this->enddate){// fattura successiva al periodo selezionato ma che concorre alla liquidazione es. acquisto egistrato nei 15gg successivi
 			$mov['liq_class']='danger';
-		}else{ // fatture che fanno parte del registro 
+		}else{ // fatture che fanno parte del registro
   			$reg_yes=true; // il movimento fa parte del registro, a prescidere che sia liquidabile o meno
 			$this->taxable += $taxable;
 			if ($mov['tipiva'] != 'D' && $mov['tipiva'] != 'T') { // se NON indetraibili o split payment
@@ -150,10 +150,10 @@ class vatBook extends Standard_template {
 		}
 		$mov['liq_val']='';
 		if ($mov['dl']< $this->inidate){
-			$mov['liq_val']='GIÀ LIQUIDATA'; 					
+			$mov['liq_val']='GIÀ LIQUIDATA';
 			$mov['liq_class']='danger';
 		} elseif ($mov['dl']>$this->enddate){
-			$mov['liq_val']='NON LIQUIDATA'; 					
+			$mov['liq_val']='NON LIQUIDATA';
 			$mov['liq_class']='warning';
 		} else {
 			$mov['liq_val']=gaz_format_number($tax);
@@ -162,8 +162,8 @@ class vatBook extends Standard_template {
             $this->vat_castle_liq[$codiva]['taxable'] += $taxable;
             $this->vat_castle_liq[$codiva]['tax'] += $tax;
 		}
-		// FINE MOVIMENTI DI LIQUIDAZIONE		
-			
+		// FINE MOVIMENTI DI LIQUIDAZIONE
+
 // FINE TIPIZZAZIONE REGISTRO - LIQUIDAZIONE            // aggiungo ai totali generali
             //se e' una semplificata recupero anche i righi contabili
             $this->acc_rows = array();
@@ -205,67 +205,67 @@ class vatBook extends Standard_template {
 }
 
 function calcPeriod($dateIni, $dateFin, $period) {
-    if ($period == 'M') { // mensile
-        $period_num = 1 + substr($dateFin, 2, 2) - substr($dateIni, 2, 2) + (substr($dateFin, 4, 4) - substr($dateIni, 4, 4)) * 12;
-        for ($i = 1; $i <= $period_num; $i++) {
-            $rs[$i]['m'] = 'M';
-            if ($period_num == 1) { // il solo
-                $rs[$i]['i'] = date("dmY", mktime(0, 0, 0, substr($dateIni, 2, 2), substr($dateIni, 0, 2), substr($dateIni, 4, 4)));
-                $rs[$i]['f'] = date("dmY", mktime(0, 0, 0, substr($dateFin, 2, 2), substr($dateFin, 0, 2), substr($dateFin, 4, 4)));
-            } elseif ($i == 1) { // il primo
-                $rs[$i]['i'] = date("dmY", mktime(0, 0, 0, substr($dateIni, 2, 2), substr($dateIni, 0, 2), substr($dateIni, 4, 4)));
-                $rs[$i]['f'] = date("dmY", mktime(0, 0, 0, substr($dateIni, 2, 2) + 1, 0, substr($dateIni, 4, 4)));
-            } elseif ($i == $period_num) { // l'ultimo
-                $rs[$i]['i'] = date("dmY", mktime(0, 0, 0, substr($dateIni, 2, 2) + $i - 1, 1, substr($dateIni, 4, 4)));
-                $rs[$i]['f'] = date("dmY", mktime(0, 0, 0, substr($dateFin, 2, 2), substr($dateFin, 0, 2), substr($dateFin, 4, 4)));
-            } else { // gli intermedi
-                $rs[$i]['i'] = date("dmY", mktime(0, 0, 0, substr($dateIni, 2, 2) + $i - 1, 1, substr($dateIni, 4, 4)));
-                $rs[$i]['f'] = date("dmY", mktime(0, 0, 0, substr($dateIni, 2, 2) + $i, 0, substr($dateIni, 4, 4)));
-            }
-        }
-    } elseif ($period == 'no') { // tutto
-        $period_num = 1;
-        $rs[1]['m'] = 'N';
-        $rs[1]['i'] = $dateIni;
-        $rs[1]['f'] = $dateFin;
-    } else { // trimestrale
-        if (substr($dateIni, 2, 2) >= 1 and substr($dateIni, 2, 2) < 4) {
-            $tri_ini = 1;
-        } elseif (substr($dateIni, 2, 2) >= 4 and substr($dateIni, 2, 2) < 7) {
-            $tri_ini = 2;
-        } elseif (substr($dateIni, 2, 2) >= 7 and substr($dateIni, 2, 2) < 10) {
-            $tri_ini = 3;
-        } else {
-            $tri_ini = 4;
-        }
-        if (substr($dateFin, 2, 2) >= 1 and substr($dateFin, 2, 2) < 4) {
-            $tri_fin = 1;
-        } elseif (substr($dateFin, 2, 2) >= 4 and substr($dateFin, 2, 2) < 7) {
-            $tri_fin = 2;
-        } elseif (substr($dateFin, 2, 2) >= 7 and substr($dateFin, 2, 2) < 10) {
-            $tri_fin = 3;
-        } else {
-            $tri_fin = 4;
-        }
-        $period_num = 1 + $tri_fin - $tri_ini + (substr($dateFin, 4, 4) - substr($dateIni, 4, 4)) * 4;
-        for ($i = 1; $i <= $period_num; $i++) {
-            $rs[$i]['m'] = 'T';
-            if ($period_num == 1) { // il solo
-                $rs[$i]['i'] = date("dmY", mktime(0, 0, 0, substr($dateIni, 2, 2), substr($dateIni, 0, 2), substr($dateIni, 4, 4)));
-                $rs[$i]['f'] = date("dmY", mktime(0, 0, 0, substr($dateFin, 2, 2), substr($dateFin, 0, 2), substr($dateFin, 4, 4)));
-            } elseif ($i == 1) { // il primo
-                $rs[$i]['i'] = date("dmY", mktime(0, 0, 0, substr($dateIni, 2, 2), substr($dateIni, 0, 2), substr($dateIni, 4, 4)));
-                $rs[$i]['f'] = date("dmY", mktime(0, 0, 0, $tri_ini * 3 + 1, 0, substr($dateIni, 4, 4)));
-            } elseif ($i == $period_num) { // l'ultimo
-                $rs[$i]['i'] = date("dmY", mktime(0, 0, 0, $tri_ini * 3 + ($i - 2) * 3 + 1, 1, substr($dateIni, 4, 4)));
-                $rs[$i]['f'] = date("dmY", mktime(0, 0, 0, substr($dateFin, 2, 2), substr($dateFin, 0, 2), substr($dateFin, 4, 4)));
-            } else { // gli intermedi
-                $rs[$i]['i'] = date("dmY", mktime(0, 0, 0, $tri_ini * 3 + ($i - 2) * 3 + 1, 1, substr($dateIni, 4, 4)));
-                $rs[$i]['f'] = date("dmY", mktime(0, 0, 0, $tri_ini * 3 + ($i - 2) * 3 + 4, 0, substr($dateIni, 4, 4)));
-            }
+  if ($period == 'M') { // mensile
+    $period_num = 1 + substr($dateFin, 2, 2) - substr($dateIni, 2, 2) + (substr($dateFin, 4, 4) - substr($dateIni, 4, 4)) * 12;
+    for ($i = 1; $i <= $period_num; $i++) {
+      $rs[$i]['m'] = 'M';
+      if ($period_num == 1) { // il solo
+        $rs[$i]['i'] = date("dmY", mktime(0, 0, 0, substr($dateIni, 2, 2), substr($dateIni, 0, 2), substr($dateIni, 4, 4)));
+        $rs[$i]['f'] = date("dmY", mktime(0, 0, 0, substr($dateFin, 2, 2), substr($dateFin, 0, 2), substr($dateFin, 4, 4)));
+      } elseif ($i == 1) { // il primo
+        $rs[$i]['i'] = date("dmY", mktime(0, 0, 0, substr($dateIni, 2, 2), substr($dateIni, 0, 2), substr($dateIni, 4, 4)));
+        $rs[$i]['f'] = date("dmY", mktime(0, 0, 0, substr($dateIni, 2, 2) + 1, 0, substr($dateIni, 4, 4)));
+      } elseif ($i == $period_num) { // l'ultimo
+        $rs[$i]['i'] = date("dmY", mktime(0, 0, 0, substr($dateIni, 2, 2) + $i - 1, 1, substr($dateIni, 4, 4)));
+        $rs[$i]['f'] = date("dmY", mktime(0, 0, 0, substr($dateFin, 2, 2), substr($dateFin, 0, 2), substr($dateFin, 4, 4)));
+      } else { // gli intermedi
+        $rs[$i]['i'] = date("dmY", mktime(0, 0, 0, substr($dateIni, 2, 2) + $i - 1, 1, substr($dateIni, 4, 4)));
+        $rs[$i]['f'] = date("dmY", mktime(0, 0, 0, substr($dateIni, 2, 2) + $i, 0, substr($dateIni, 4, 4)));
+      }
+    }
+  } elseif ($period == 'no') { // tutto
+    $period_num = 1;
+    $rs[1]['m'] = 'N';
+    $rs[1]['i'] = $dateIni;
+    $rs[1]['f'] = $dateFin;
+  } else { // trimestrale
+    if (substr($dateIni, 2, 2) >= 1 and substr($dateIni, 2, 2) < 4) {
+      $tri_ini = 1;
+    } elseif (substr($dateIni, 2, 2) >= 4 and substr($dateIni, 2, 2) < 7) {
+      $tri_ini = 2;
+    } elseif (substr($dateIni, 2, 2) >= 7 and substr($dateIni, 2, 2) < 10) {
+      $tri_ini = 3;
+    } else {
+      $tri_ini = 4;
+    }
+    if (substr($dateFin, 2, 2) >= 1 and substr($dateFin, 2, 2) < 4) {
+      $tri_fin = 1;
+    } elseif (substr($dateFin, 2, 2) >= 4 and substr($dateFin, 2, 2) < 7) {
+      $tri_fin = 2;
+    } elseif (substr($dateFin, 2, 2) >= 7 and substr($dateFin, 2, 2) < 10) {
+      $tri_fin = 3;
+    } else {
+      $tri_fin = 4;
+    }
+    $period_num = 1 + $tri_fin - $tri_ini + (substr($dateFin, 4, 4) - substr($dateIni, 4, 4)) * 4;
+    for ($i = 1; $i <= $period_num; $i++) {
+        $rs[$i]['m'] = 'T';
+        if ($period_num == 1) { // il solo
+            $rs[$i]['i'] = date("dmY", mktime(0, 0, 0, substr($dateIni, 2, 2), substr($dateIni, 0, 2), substr($dateIni, 4, 4)));
+            $rs[$i]['f'] = date("dmY", mktime(0, 0, 0, substr($dateFin, 2, 2), substr($dateFin, 0, 2), substr($dateFin, 4, 4)));
+        } elseif ($i == 1) { // il primo
+            $rs[$i]['i'] = date("dmY", mktime(0, 0, 0, substr($dateIni, 2, 2), substr($dateIni, 0, 2), substr($dateIni, 4, 4)));
+            $rs[$i]['f'] = date("dmY", mktime(0, 0, 0, $tri_ini * 3 + 1, 0, substr($dateIni, 4, 4)));
+        } elseif ($i == $period_num) { // l'ultimo
+            $rs[$i]['i'] = date("dmY", mktime(0, 0, 0, $tri_ini * 3 + ($i - 2) * 3 + 1, 1, substr($dateIni, 4, 4)));
+            $rs[$i]['f'] = date("dmY", mktime(0, 0, 0, substr($dateFin, 2, 2), substr($dateFin, 0, 2), substr($dateFin, 4, 4)));
+        } else { // gli intermedi
+            $rs[$i]['i'] = date("dmY", mktime(0, 0, 0, $tri_ini * 3 + ($i - 2) * 3 + 1, 1, substr($dateIni, 4, 4)));
+            $rs[$i]['f'] = date("dmY", mktime(0, 0, 0, $tri_ini * 3 + ($i - 2) * 3 + 4, 0, substr($dateIni, 4, 4)));
         }
     }
-    return $rs;
+  }
+  return $rs;
 }
 
 // -------------  INIZIO STAMPA  -------------------------------
@@ -283,23 +283,23 @@ if ($url_get['jp'] != 'jump') {
 }
 $period_chopped = calcPeriod($url_get['ri'], $url_get['rf'], $period);
 $p_max = count($period_chopped);
-//print_r($period_chopped);
+$gazTimeFormatter->setPattern('MMMM YYYY');
 for ($i = 1; $i <= $p_max; $i++) {
     $pdf->setData($period_chopped[$i] + $url_get, $gTables, $admin_aziend);
-    if ($pdf->vatsect==$pdf->rc_sect){ 
-        $desreg = $pdf->desregrc.' sez.'; 
+    if ($pdf->vatsect==$pdf->rc_sect){
+        $desreg = $pdf->desregrc.' sez.';
         $pdf->script_transl['title'][$pdf->typbook] = ucfirst($desreg). ' ';
     } else {
-        $desreg = $pdf->script_transl['vat_section']; 
+        $desreg = $pdf->script_transl['vat_section'];
     }
     if ($i == 1) {
         $n_page = array('ini_page' => $ini_page, 'year' => ucwords($desreg) . $pdf->vatsect . ' ' . $pdf->script_transl['page'] . ' ' . substr($url_get['ri'], 4, 4));
     } else {
         $n_page = false;
     }
-    $descri_period = $pdf->script_transl['title'][$pdf->typbook] . ucwords(strftime("%B %Y", mktime(0, 0, 0, substr($period_chopped[$i]['i'], 2, 2), 1, substr($period_chopped[$i]['i'], 4, 4))));
+    $descri_period = $pdf->script_transl['title'][$pdf->typbook] . ucwords($gazTimeFormatter->format(new DateTime('01-'.substr($period_chopped[$i]['i'], 2, 2).'-'.substr($period_chopped[$i]['i'], 4, 4))));
     if (substr($period_chopped[$i]['f'], 2, 6) != substr($period_chopped[$i]['i'], 2, 6)) {
-        $descri_period .= ' - ' . ucwords(strftime("%B %Y", mktime(0, 0, 0, substr($period_chopped[$i]['f'], 2, 2), 1, substr($period_chopped[$i]['f'], 4, 4))));
+        $descri_period .= ' - ' . ucwords($gazTimeFormatter->format(new DateTime('01-'.substr($period_chopped[$i]['f'], 2, 2).'-'.substr($period_chopped[$i]['f'], 4, 4))));
     }
     $pdf->setVars($admin_aziend, $descri_period, 0, $n_page);
     $pdf->getRows($gTables);
@@ -359,7 +359,7 @@ for ($i = 1; $i <= $p_max; $i++) {
                 $impost = 0;
                 break;
         }
-		if($v['dr']<$pdf->inidate){ // fattura pregressa, precedente al periodo selezionato ma che concorre alla liquidazione 
+		if($v['dr']<$pdf->inidate){ // fattura pregressa, precedente al periodo selezionato ma che concorre alla liquidazione
 		}elseif($v['dr']>$pdf->enddate){// fattura successiva al periodo selezionato ma che concorre alla liquidazione es. acquisto egistrato nei 15gg successivi
 		}else{
 			$totimponi += $imponi;
@@ -372,7 +372,7 @@ for ($i = 1; $i <= $p_max; $i++) {
 		} else {
 			$totimponi_liq += $imponi;
 			$totimpost_liq += $impost;
-		}	
+		}
         if ($ctrl != $v['id_tes']) { // primo rigo iva del movimento contabile
             if ($maxY > 250) {
 				$pdf->Ln();

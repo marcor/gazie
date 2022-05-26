@@ -38,7 +38,7 @@ if (isset($_GET['date'])) { //se non mi viene passata la data
 }
 
 function getAssets($date) {
-    /*  funzione per riprendere dal database tutti i beni ammortizzabili 
+    /*  funzione per riprendere dal database tutti i beni ammortizzabili
       e proporre una anteprima di ammortamenti */
     global $gTables, $admin_aziend;
     $ctrl_fix = 0;
@@ -53,7 +53,7 @@ function getAssets($date) {
     $acc = array();
     while ($row = gaz_dbi_fetch_array($result)) {
         // ad ogni cambio di bene creo un array e sulla radice metto tutti i dati che mi servono sulla intestazione del bene stesso
-        $movcon = "AND id_tes = '{$row['id_movcon']}'"; 
+        $movcon = "AND id_tes = '{$row['id_movcon']}'";
         if ($ctrl_fix <> $row['acc_fixed_assets']) {
             // azzero i totali delle colonne
             // in ordine di data necessariamente il primo rigo dev'essere l'acquisto
@@ -89,7 +89,7 @@ function getAssets($date) {
             }
             $ddays = $dateamm->diff($datelast);
             $acc[$row['acc_fixed_assets']][1]['gglast'] = $ddays->days;
-            // ricavo il gruppo e la specie dalla tabella ammortamenti ministeriali 
+            // ricavo il gruppo e la specie dalla tabella ammortamenti ministeriali
             $xml = simplexml_load_file('../../library/include/ammortamenti_ministeriali.xml') or die("Error: Cannot create object");
             preg_match("/^([0-9 ]+)([a-zA-Z ]+)$/", $admin_aziend['amm_min'], $m);
             foreach ($xml->gruppo as $vg) {
@@ -151,7 +151,7 @@ function getAssets($date) {
                     break;
                 case '80' : // alienazione parziale
                     break;
-                case '90' : // alienazione del bene 
+                case '90' : // alienazione del bene
                     // prendo il valore del decremento del costo storico dal rigo contabile
                     $fx = gaz_dbi_get_row($gTables['rigmoc'], 'codcon', $row['acc_fixed_assets'], $movcon);
                     $acc[$row['acc_fixed_assets']][1]['fixed_tot'] -= $fx['import'];
@@ -178,9 +178,8 @@ function getAssets($date) {
     }
     return $acc;
 }
-
-$luogo_data = $admin_aziend['citspe'] . ", lì " . ucwords(strftime("%d %B %Y", mktime(0, 0, 0, substr($dt, 5, 2), substr($dt, 8, 2), substr($dt, 0, 4))));
-
+$gazTimeFormatter->setPattern('dd MMMM YYYY');
+$luogo_data = $admin_aziend['citspe'] . ", lì " . ucwords($gazTimeFormatter->format(new DateTime(substr($dt, 8, 2).'-'.substr($dt, 5, 2).'-'.substr($dt, 0, 4))));
 
 require("../../config/templates/report_template.php");
 
@@ -281,7 +280,7 @@ foreach ($form['assets'] as $ka => $va) {
         }
     }
 	$residuo = $v['fixed_subtot'] - $v['found_subtot'];
-	if($va[1]['super_ammort']>=0.1 && $residuo >= 0.01) { // ho un super_ammortamento da utilizzare in sede di dichiarazione dei redditi 
+	if($va[1]['super_ammort']>=0.1 && $residuo >= 0.01) { // ho un super_ammortamento da utilizzare in sede di dichiarazione dei redditi
 		$pdf->Cell(270, 4, 'SUPERAMMORTAMENTO AL '.gaz_format_number(100+$va[1]['super_ammort']).'% - In sede di dichiarazione potranno essere portate in diminuzione della base imponibile € '.gaz_format_number($v['cost_val']*$va[1]['super_ammort']/100), 'LBR', 1, 'C');
 	}
     $pdf->Ln(4);

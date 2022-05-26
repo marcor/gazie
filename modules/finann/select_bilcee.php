@@ -261,12 +261,12 @@ for( $counter = 1; $counter <= 31; $counter++ ) {
 print "\t </select>\n";
 // select del mese
 echo "\t <select name=\"mesini\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
+$gazTimeFormatter->setPattern('MMMM');
 for( $counter = 1; $counter <= 12; $counter++ ) {
-     $selected = "";
-     if($counter == $_GET['mesini'])
-        $selected = "selected";
-        $nome_mese = ucwords(strftime("%B", mktime (0,0,0,$counter,1,0)));
-        echo "\t\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
+  $selected = "";
+  if($counter == $_GET['mesini']) $selected = "selected";
+  $nome_mese = $gazTimeFormatter->format(new DateTime("2000-".$counter."-01"));
+  echo "\t\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
 }
 echo "\t </select>\n";
 // select del anno
@@ -301,9 +301,8 @@ echo "\t </select>\n";
             for( $counter = 1; $counter <= 12; $counter++ )
                 {
                 $selected = "";
-                if($counter == $_GET['mesfin'])
-                        $selected = "selected";
-                $nome_mese = ucwords(strftime("%B", mktime (0,0,0,$counter,1,0)));
+                if($counter == $_GET['mesfin']) $selected = "selected";
+                $nome_mese = $gazTimeFormatter->format(new DateTime("2000-".$counter."-01"));
                 echo "\t\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
                 }
             echo "\t </select>\n";
@@ -893,7 +892,7 @@ if (isset($_GET['visualizza']) and $message == "")
         // Tutto questo casino puo' essere spiegato:
         // con un percorso logico-matematico ===>se io faccio "ValoreDellaProduzione" MENO "CostoDellaProduzione" e separo le rimanenze dei prodotti (che metto nel primo aggregato) dalle rimanenze di materie prime (che metto nel secondo aggregato) è naturale che io debba invertire il segno per le rimanenze di materie da quelle di prodotti
         // con un ragionamento economico ====>se durante l'anno:
-        // mi si incrementano le scorte di prodotti è naturale che tale incremento debba concorrere positivamente a formare il valore della produzione (RF&minus;RI) 
+        // mi si incrementano le scorte di prodotti è naturale che tale incremento debba concorrere positivamente a formare il valore della produzione (RF&minus;RI)
         // mi si incrementano le scorte di materie prime è naturale che io debba rettificare il costo della produzione (RI&minus;RF)
         //
         echo "<tr><td align=\"center\">c.e. A2+A3</td><td align=\"center\">+</td>";
