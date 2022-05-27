@@ -78,7 +78,9 @@ $msg = "";
 $show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
 $tipo_composti = gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti');
 function getDayNameFromDayNumber($day_number) {
-    return ucfirst(utf8_encode(strftime('%A', mktime(0, 0, 0, 3, 19 + $day_number, 2017))));
+  global $gazTimeFormatter;
+  $gazTimeFormatter->setPattern('eeee');
+  return ucfirst(utf8_encode($gazTimeFormatter->format(new DateTime('@'.mktime(12,0,0,3,19+$day_number, 2017)))));
 }
 function validateDate($date, $format = 'Y-m-d H:i:s') {
     $d = DateTime::createFromFormat($format, $date);
@@ -2042,12 +2044,13 @@ if ($form['tipdoc'] == 'VOG') {
     echo '				</select>';
     // select del mese
     echo '				<select name="mesemi" class="FacetSelect">';
+    $gazTimeFormatter->setPattern('MMMM');
     for ($counter = 1; $counter <= 12; $counter++) {
         $selected = "";
         if ($counter == $form['mesemi']) {
             $selected = ' selected=""';
         }
-        $nome_mese = ucwords(strftime("%B", mktime(0, 0, 0, $counter, 1, 0)));
+        $nome_mese = $gazTimeFormatter->format(new DateTime("2000-".$counter."-01"));
         echo '					<option value="' . $counter . '"' . $selected . '>' . $nome_mese . '</option>';
     }
     echo '				</select>';
