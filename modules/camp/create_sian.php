@@ -122,7 +122,8 @@ if (!isset($_POST['ritorno'])){// Antonio Germani - se non è stata ricaricata l
 	$namefile=$_POST['namefile'];
 }
 $ritorno="file creato";
-$result=getMovements(strftime("%Y%m%d",$utsri),strftime("%Y%m%d",$utsrf));
+$gazTimeFormatter->setPattern('yyyyMMdd');
+$result=getMovements($gazTimeFormatter->format(new DateTime('@'.$utsri)),$gazTimeFormatter->format(new DateTime('@'.$utsrf)));
 
 if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti e la pagina non è stata ricaricata creo il file
 	$myfile = fopen(DATA_DIR."files/".$admin_aziend['codice']."/sian/".$namefile, "w") or die("Unable to open file!");

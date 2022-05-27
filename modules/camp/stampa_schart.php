@@ -6,28 +6,28 @@
 	  (http://www.devincentiis.it)
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
-	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP 
+	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP
 	  Copyright (C) 2018-2021 - Antonio Germani, Massignano (AP)
-	  https://www.lacasettabio.it 
+	  https://www.lacasettabio.it
 	  https://www.programmisitiweb.lacasettabio.it
 	  --------------------------------------------------------------------------
 	  Questo programma e` free software;   e` lecito redistribuirlo  e/o
 	  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
 	  come e` pubblicata dalla Free Software Foundation; o la versione 2
 	  della licenza o (a propria scelta) una versione successiva.
-	
+
 	  Questo programma  e` distribuito nella speranza  che sia utile, ma
 	  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
 	  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
 	  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
-	
+
 	  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
 	  Generica GNU insieme a   questo programma; in caso  contrario,  si
 	  scriva   alla   Free  Software Foundation,  Inc.,   59
 	  Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
-	  --------------------------------------------------------------------------	 
+	  --------------------------------------------------------------------------
 	  # free to use, Author name and references must be left untouched  #
-	  --------------------------------------------------------------------------	  
+	  --------------------------------------------------------------------------
 */
 
 require("../../library/include/datlib.inc.php");
@@ -50,16 +50,16 @@ if (!isset($_GET['ri']) or
 if (empty($_GET['af'])){
 $_GET['af'] = 'zzzzzzzzzzzzzzzzz';
 }
-
+$gazTimeFormatter->setPattern('dd MMMM yyyy');
 $luogo_data=$admin_aziend['citspe'].", lì ";
 if (isset($_GET['ds'])) {
    $giosta = substr($_GET['ds'],0,2);
    $messta = substr($_GET['ds'],2,2);
    $annsta = substr($_GET['ds'],4,4);
    $utssta= mktime(0,0,0,$messta,$giosta,$annsta);
-   $luogo_data .= ucwords(strftime("%d %B %Y",$utssta));
+   $luogo_data .= ucwords($gazTimeFormatter->format(new DateTime($annsta.'-'.$messta.'-'.$giosta)));
 } else {
-   $luogo_data .=ucwords(strftime("%d %B %Y", mktime (0,0,0,date("m"),date("d"),date("Y"))));
+   $luogo_data .= ucwords($gazTimeFormatter->format(new DateTime()));
 }
 
 require("../../config/templates/report_template.php");
@@ -73,11 +73,11 @@ $giorf = substr($_GET['rf'],0,2);
 $mesrf = substr($_GET['rf'],2,2);
 $annrf = substr($_GET['rf'],4,4);
 $utsrf= mktime(0,0,0,$mesrf,$giorf,$annrf);
-
+$gazTimeFormatter->setPattern('yyyyMMdd');
 
 $where = " catmer BETWEEN ".$_GET['ci']." AND ".$_GET['cf']." AND".
          " artico BETWEEN '".$_GET['ai']."' AND '".$_GET['af']."' AND".
-         " datreg BETWEEN ".strftime("%Y%m%d",$utsri)." AND ".strftime("%Y%m%d",$utsrf);
+         " datreg BETWEEN ".$gazTimeFormatter->format(new DateTime($annri.'-'.$mesri.'-'.$giori))." AND ".$gazTimeFormatter->format(new DateTime($annrf.'-'.$mesrf.'-'.$giorf));
 $what = $gTables['movmag'].".*, ".
         $gTables['caumag'].".codice, ".$gTables['caumag'].".descri, ".
         $gTables['clfoco'].".codice, ".
@@ -96,9 +96,9 @@ $item_head = array('top'=>array(array('lun' => 21,'nam'=>$script_transl['item_he
                                 array('lun' => 18,'nam'=>$script_transl['item_head'][4])
                                )
                    );
-
+$gazTimeFormatter->setPattern('dd MMMM yyyy');
 $title = array('luogo_data'=>$luogo_data,
-               'title'=>$script_transl[0].strftime("%d %B %Y",$utsri).$script_transl[1].strftime("%d %B %Y",$utsrf),
+               'title'=>$script_transl[0].$gazTimeFormatter->format(new DateTime('@'.$utsri)).$script_transl[1].$gazTimeFormatter->format(new DateTime('@'.$utsrf)),
                'hile'=>array(array('lun' => 16,'nam'=>$script_transl['header'][0]),
                              array('lun' => 30,'nam'=>$script_transl['header'][1]),
                              array('lun' => 100,'nam'=>$script_transl['header'][2]),
@@ -130,8 +130,7 @@ $ctrlArtico = "";
 $ctrl_id=0;
 $mval['q_g']=0;
 $mval['q_g']=0;
-//$mval['v_g']=0;
-//$mval['v_g']=0;
+$gazTimeFormatter->setPattern('dd-MM-yyyy');
 while ($mv = gaz_dbi_fetch_array($result)) {
       $pdf->setRiporti($aRiportare);
       if ($ctrlArtico != $mv['artico']) {
@@ -139,7 +138,7 @@ while ($mv = gaz_dbi_fetch_array($result)) {
          if (!empty($ctrlArtico)) {
                    $pdf->StartPageGroup();
                    $pdf->SetFont('helvetica','B',8);
-                   $pdf->Cell($aRiportare['top'][0]['lun'],4,$script_transl['tot'].strftime("%d-%m-%Y",$utsrf).' : ',1,0,'R');
+                   $pdf->Cell($aRiportare['top'][0]['lun'],4,$script_transl['tot'].$gazTimeFormatter->format(new DateTime('@'.$utsrf)).' : ',1,0,'R');
                    $pdf->Cell($aRiportare['top'][1]['lun'],4,$aRiportare['top'][1]['nam'],1,0,'R');
                    //$pdf->Cell($aRiportare['top'][2]['lun'],4,$aRiportare['top'][2]['nam'],1,0,'R');
                    $pdf->SetFont('helvetica','',7);
@@ -199,7 +198,7 @@ while ($mv = gaz_dbi_fetch_array($result)) {
       $ctrlArtico = $mv['artico'];
 }
 $pdf->SetFont('helvetica','B',8);
-$pdf->Cell($aRiportare['top'][0]['lun'],4,$script_transl['tot'].strftime("%d-%m-%Y",$utsrf).' : ',1,0,'R');
+$pdf->Cell($aRiportare['top'][0]['lun'],4,$script_transl['tot'].$gazTimeFormatter->format(new DateTime('@'.$utsrf)).' : ',1,0,'R');
 $pdf->Cell($aRiportare['top'][1]['lun'],4,$aRiportare['top'][1]['nam'],1,0,'R');
 //$pdf->Cell($aRiportare['top'][2]['lun'],4,$aRiportare['top'][2]['nam'],1,0,'R');
 $pdf->SetFont('helvetica','',7);
