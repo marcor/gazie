@@ -370,10 +370,8 @@ while ($r = gaz_dbi_fetch_array($result)) {
 			echo "<i ".$ecomGlobe." ></i>";// globo per e-commerce
 			echo '</td>';
 			echo '<td><span class="gazie-tooltip" data-type="product-thumb" data-id="'. $r['id_artico_group'] .'" data-title="" >'.$r['descri'].'</span>';
-			echo "</td>\n";
-			//echo '<td class="text-center"><a class="btn btn-xs btn-default" style="cursor:pointer;" onclick="openframe(\'accommodation_price.php?house_code='.$r["id_artico_group"].'\')" data-toggle="modal" data-target="#iframe"> <i class="glyphicon glyphicon-calendar" title="Calendario della disponibilità"></i></a>';
-			//echo "</td>\n";
-			echo '<td class="text-center"><a class="btn btn-xs btn-default" style="cursor:pointer;" onclick="openframe(\'accommodation_availability.php?house_code='.$r["id_artico_group"].'\')" data-toggle="modal" data-target="#iframe"> <i class="glyphicon glyphicon-calendar" title="Calendario della disponibilità"></i></a>';
+			echo "</td>\n";			
+			echo '<td class="text-center"><a class="btn btn-xs btn-default" style="cursor:pointer;" onclick="openframe(\'facility_availability.php?code='.$r["id_artico_group"].'\')" data-toggle="modal" data-target="#iframe"> <i class="glyphicon glyphicon-calendar" title="Calendario della disponibilità"></i></a>';
 			echo "</td>\n";
 			echo '<td class="text-center"><a class="btn btn-xs btn-default" href="clone_group.php?id_artico_group='.$r["id_artico_group"].'"> <i class="glyphicon glyphicon-export"></i></a>';
 			echo "</td>\n";
