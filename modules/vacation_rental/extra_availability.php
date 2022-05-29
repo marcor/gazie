@@ -7,6 +7,7 @@
   E' possibile usare questo modulo solo dietro autorizzazione dell'autore
   --------------------------------------------------------------------------
   */
+require("../../library/include/datlib.inc.php");
 ?>
 <!DOCTYPE html>
 <html lang='en'>
@@ -14,25 +15,10 @@
     <meta charset='utf-8' />
     <link href='fullcalendar-5.10.2/lib/main.css' rel='stylesheet' />
     <script src='fullcalendar-5.10.2/lib/main.js'></script>
-
 <?php
-require("../../library/include/datlib.inc.php");
 $id=substr($_GET['extra_code'],0,32);
 ?>
-
 <script>
-
-function savedb(){
-	 var xhttp = new XMLHttpRequest();
-  xhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-     document.getElementById("calendar").innerHTML = this.responseText;
-    }
-  };
-  xhttp.open("GET", "save_to_db.php?title=testo titolo&start=2022-03-20&end=2022-03-20", true);
-  xhttp.send();
-}
-
       document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -52,32 +38,7 @@ function savedb(){
 			events : 'load_from_db_events.php?id=<?php echo $id; ?>',
 
 /* ***** L'EVENTO, AD ESEMPIO DI UN GIORNO, COMINCIA ALLE ORE 00:00 DEL GIORNO DI INIZIO E FINISCE ALLE ORE 00:00 DEL GIORNO DOPO (SONO DUE DATE DIFFERENTI MA SONO 24 ORE E QUINDI VIENE MOSTRATO PIENO SOLO UN GIORNO) ***** */
-
-			// se c'è select, dateClick non serve!!!
-		/*
-			dateClick: function(info) {
-
-				alert('Clicked on: ' + info.dateStr);
-				alert('Coordinates: ' + info.jsEvent.pageX + ',' + info.jsEvent.pageY);
-				alert('Current view: ' + info.view.type);
-				alert('Test get dayEl: ' + info.dayEl);
-
-				// change the day's background color just for fun
-				info.dayEl.style.backgroundColor = 'red';
-
-				var title = prompt("Enter Event Title dateclick");
-				var start = info.dateStr;
-				var end = info.dateStr;
-				var xhttp = new XMLHttpRequest();
-
-				xhttp.open("GET", "save_to_db_events.php?title="+ title +"&start="+ start +"&end="+ end +"&house_code="+<?php echo $id; ?>, true);
-				xhttp.send();
-				calendar.refetchEvents();
-				window.location.reload(true);
-				//calendar.refetchEvents();
-			},
-	*/
-
+	
 			select: function(info) {// seleziona più giorni passando sopra con il mouse cliccato
 				/*
 				alert('Clicked on: ' + info.startStr);
@@ -139,10 +100,7 @@ function savedb(){
 
 			},
 
-
-
-
-			 eventClick: function(info) {
+			eventClick: function(info) {
 				//alert('Event: ' + info.event.title);
 				//alert('Coordinates: ' + info.jsEvent.pageX + ',' + info.jsEvent.pageY);
 				//alert('View: ' + info.view.type);
@@ -161,19 +119,13 @@ function savedb(){
 					alert(newWindow.closed); // true
 					}
 				*/
-
-
-
 			  }
-
-
-
         });
         calendar.render();
       });
 
-    </script>
-  </head>
+</script>
+</head>
   <body>
     <div id='calendar'>
 	<form method="GET">
@@ -191,6 +143,3 @@ function savedb(){
 	</div>
   </body>
 </html>
-<?php
-
-?>
