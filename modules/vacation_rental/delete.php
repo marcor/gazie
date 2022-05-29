@@ -99,7 +99,7 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 		break;
 		case "ical":
 			// elimino l'Ical dalla tabella ical
-			gaz_dbi_del_row($gTables['ical'], 'id', intval($_POST['ref']));
+			gaz_dbi_del_row($gTables['rental_ical'], 'id', intval($_POST['ref']));
 			// elimino tutti i suoi eventi dalla tabella rental_events
 			gaz_dbi_del_row($gTables['rental_events'], 'Ical_sync_id', intval($_POST['ref']));
 		break;

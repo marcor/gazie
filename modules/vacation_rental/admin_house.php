@@ -92,9 +92,11 @@ if (isset($_POST['icalsub'])) {
 	// sincronizzo tutti gli eventi in esso contenuti
 	$events = iCalDecoder($ical['url']);
 	$columns = array('ical_sync_id','id','title', 'start','end','house_code');
+	if (isset($events)){
 	foreach ($events as $event){
 		$newValue = array('ical_sync_id' => $ical_sync_id, 'title'=>substr($ical['ical_descri'].$event['uid'],0,128), 'start'=>substr($event['start'],0,10), 'end'=>substr($event['end'],0,10),'house_code'=>substr($ical['codice_alloggio'],0,32));
 		tableInsert('rental_events', $columns, $newValue);
+	}
 	}
 }
 
