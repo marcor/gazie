@@ -29,44 +29,12 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
- //echo "<pre>",print_r($_POST);
- ?>
- <style>
-* {
-  box-sizing: border-box;
-}
-
-/* Create three equal columns that floats next to each other */
-.column {
-  float: left;
-  width: 33.33%;
-  padding: 10px;
-}
-
-/* Clear floats after the columns */
-.row:after {
-  content: "";
-  display: table;
-  clear: both;
-}
-
-#search_cosear {
-	width:auto !important;
-	background-color: inherit;
-}
-
-/* Responsive layout - makes the three columns stack on top of each other instead of next to each other */
-@media screen and (max-width: 980px) {
-  .column {
-    width: 100%;
-  }
-}
-</style>
-<?php
+//echo "<pre>",print_r($_POST);
 require("../../library/include/datlib.inc.php");
 require("../../modules/magazz/lib.function.php");
 require("../../modules/vendit/lib.function.php");
-require("../../modules/acquis/lib.data.php");
+//require("../../modules/acquis/lib.data.php");
+
 $admin_aziend = checkAdmin();
 $min_stay = gaz_dbi_get_row($gTables['company_config'], 'var', 'vacation_minnights')['val'];
 $vacation_blockdays = gaz_dbi_get_row($gTables['company_config'], 'var', 'vacation_blockdays')['val'];
@@ -1860,6 +1828,39 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 }
 
 require("../../library/include/header.php");
+?>
+<style>
+* {
+  box-sizing: border-box;
+}
+
+/* Create three equal columns that floats next to each other */
+.column {
+  float: left;
+  width: 33.33%;
+  padding: 10px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+#search_cosear {
+	width:auto !important;
+	background-color: inherit;
+}
+
+/* Responsive layout - makes the three columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 980px) {
+  .column {
+    width: 100%;
+  }
+}
+</style>
+<?php
 require("./lang." . $admin_aziend['lang'] . ".php");
 $script_transl = $strScript["admin_booking.php"] + HeadMain(0, array(/* 'tiny_mce/tiny_mce', */
             /* 'boxover/boxover', */
