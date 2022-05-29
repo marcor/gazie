@@ -251,7 +251,6 @@ $('#closePdf').on( "click", function() {
 		$('.framePdf').css({'display': 'none'});
 	});
 function openframe(url,codice){
-
 	$(function(){
 		$("#titolo").append(codice);
 		$('#framePdf').attr('src',url);
@@ -457,7 +456,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 			echo "</td>\n";
 			echo '<td class="text-center"><a class="btn btn-xs btn-default" style="cursor:pointer;" onclick="openframe(\'accommodation_availability.php?house_code='.$r["codice"].'\',\'Calendario <b>'.$r["codice"].'</b>\')" data-toggle="modal" data-target="#iframe"> <i class="glyphicon glyphicon-calendar" title="Calendario della disponibilità"></i></a>';
 			echo "</td>\n";
-			echo '<td class="text-center"><a class="btn btn-xs btn-default" href="clone_artico.php?codice='.$r["codice"].'"> <i class="glyphicon glyphicon-export"></i></a>';
+			echo '<td class="text-center"><a class="btn btn-xs btn-default" href="clone_house.php?codice='.$r["codice"].'"> <i class="glyphicon glyphicon-export"></i></a>';
 			echo "</td>\n";
 			echo '<td class="text-center"><a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="'. $r['codice'].'" artico="'. $r['descri'].'"> <i class="glyphicon glyphicon-remove"></i></a>';
 			echo "</td>\n";

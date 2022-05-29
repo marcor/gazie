@@ -43,8 +43,7 @@ $search_fields = [
 $sortable_headers = array  (
             "Id" => 'id_artico_group',
             "Descrizione"=>'descri',
-			"Disponibilità" => '',
-            'Duplica' => '',
+			"Disponibilità" => '',            
             'Elimina' => ''
 );
 
@@ -106,143 +105,13 @@ $(function() {
 	});
 
 });
-function getorders(artico) {
-	$("#idartico").append("articolo: "+artico);
-  $("#dialog_orders").attr("title","Ordini da clienti aperti");
-	$.get("ajax_request.php?opt=orders",
-		{term: artico},
-		function (data) {
-			var j=0;
-				$.each(data, function(i, value) {
-				j++;
-				$(".list_orders").append("<tr><td><a>"+value.descri+"</a>&nbsp; </td><td align='right'>&nbsp;  <button> Ordine n."+ value.numdoc +" del "+ value.datemi + " </button></td></tr>");
-				$(".list_orders").click(function () {
-					window.open('../vendit/admin_broven.php?Update&id_tes='+ value.id_tes);
-				});
-				});
-				if (j==0){
-					$(".list_orders").append('<tr><td class="bg-danger">********* Non ci sono ordini *********</td></tr>');
-				}
-		}, "json"
-	);
-	$( function() {
-    var dialog
-	,
-	dialog = $("#dialog_orders").dialog({
-		modal: true,
-		show: "blind",
-		hide: "explode",
-		width: "auto",
-		buttons: {
-			Chiudi: function() {
-				$(this).dialog('close');
-			}
-		},
-		close: function(){
-				$("p#idartico").empty();
-				$("div.list_orders tr").remove();
-				$(this).dialog('destroy');
-		}
-	});
-	});
-};
-function getgroup(artico) {
-	$("#idgroup").append("Struttura");
-    $("#dialog_group").attr("title","Struttura ID "+artico);
-	$.get("ajax_request.php?opt=group",
-		{term: artico},
-		function (data) {
-            var j=0;
-			$.each(data, function(i, value) {
-                j++;
-                if (j==1) {
-                    $(".list_group").append("<tr><td>"+value.descri+"&nbsp;&nbsp;</td></tr><tr><td>&nbsp;</td></tr>");
-                    $("#idvar").append("composta dai seguenti alloggi:");
-                    $(".list_variants").append("<tr><td>Codice&nbsp;</td><td>Descrizione</td></tr>");
-                } else {
-                    $(".list_variants").append("<tr><td> "+(j-1)+") "+value.codice+"&nbsp;</td><td>"+value.descri+"</td></tr>");
-                }
-			});
-			if (j==0){
-				$(".list_orders").append('<tr><td class="bg-danger">********* Non ci sono varianti in questo gruppo articoli*********</td></tr>');
-			}
-		}, "json"
-	);
-	$( function() {
-        var dialog,
-        dialog = $("#dialog_group").dialog({
-            modal: true,
-            show: "blind",
-            hide: "explode",
-            width: "auto",
-            buttons: {
-                Modifica:{
-                    text:'Modifica la struttura',
-					'class':'btn btn-warning',
-					click:function (event, ui) {
-                        window.open('../vacation_rental/admin_facility.php?Update&id_artico_group='+ artico);
-                    }
-                },
-                Chiudi: function() {
-                    $(this).dialog('close');
-                }
-            },
-            close: function(){
-				$("p#idgroup").empty();
-				$("p#idvar").empty();
-				$("div.list_group tr").remove();
-				$("div.list_variants tr").remove();
-				$(this).dialog('destroy');
-            }
-        });
-	});
-};
-function getlastbuys(artico) {
-	$("#idartico").append("articolo: "+artico);
-  $("#dialog_orders").attr("title","Ultimi acquisti da fornitori");
-	$.get("ajax_request.php?opt=lastbuys",
-		{term: artico},
-		function (data) {
-			var j=0;
-				$.each(data, function(i, value) {
-				j++;
-				$(".list_orders").append("<tr><td> "+value.supplier+"&nbsp; </td><td> &nbsp;<button>"+ value.desdoc + " </button> &nbsp;</td><td> &nbsp;"+value.desvalue+" </td></tr>");
-				$(".list_orders").click(function () {
-					window.open('../acquis/admin_docacq.php?Update&id_tes='+ value.docref);
-				});
-				});
-				if (j==0){
-					$(".list_orders").append('<tr><td class="bg-danger">********* Non ci sono acquisti *********</td></tr>');
-				}
-		}, "json"
-	);
-	$( function() {
-    var dialog
-	,
-	dialog = $("#dialog_orders").dialog({
-		modal: true,
-		show: "blind",
-		hide: "explode",
-		width: "auto",
-		buttons: {
-			Chiudi: function() {
-				$(this).dialog('close');
-			}
-		},
-		close: function(){
-				$("p#idartico").empty();
-				$("div.list_orders tr").remove();
-				$(this).dialog('destroy');
-		}
-	});
-	});
-};
 
 $('#closePdf').on( "click", function() {
 		$('.framePdf').css({'display': 'none'});
 	});
-function openframe(url){
+function openframe(url,codice){
 	$(function(){
+		$("#titolo").append(codice);
 		$('#framePdf').attr('src',url);
 		$('#framePdf').css({'height': '100%'});
 		$('.framePdf').css({'display': 'block','width': '90%', 'height': '80%', 'z-index':'2000'});
@@ -251,25 +120,10 @@ function openframe(url){
     });
 	});
 	$('#closePdf').on( "click", function() {
+		$("#titolo").empty();
 		$('.framePdf').css({'display': 'none'});
 	});
 };
-
-
-function Copy() {
-	 /* Get the text field */
-  var copyText = document.getElementById("copy");
-
-  /* Select the text field */
-  copyText.select();
-  copyText.setSelectionRange(0, 99999); /* For mobile devices */
-
-   /* Copy the text inside the text field */
-  navigator.clipboard.writeText(copyText.value);
-
-  /* Alert the copied text */
-  //alert("Copied the text: " + copyText.value);
-}
 
 </script>
 <?php
@@ -290,7 +144,7 @@ $ts->output_navbar();
 	</div>
 	<div class="framePdf panel panel-success" style="display: none; position: fixed; left: 5%; top: 10px">
 			<div class="col-lg-12">
-				<div class="col-xs-11"><h4><?php echo $script_transl['print'];; ?></h4></div>
+				<h4><div class="col-xs-11" id="titolo" ></div></h4>				
 				<div class="col-xs-1"><h4><button type="button" id="closePdf"><i class="glyphicon glyphicon-remove"></i></button></h4></div>
 			</div>
 			<iframe id="framePdf"  style="height: 100%; width: 100%" src=""></iframe>
@@ -365,16 +219,12 @@ while ($r = gaz_dbi_fetch_array($result)) {
 			echo '<td>
 			<a class="btn btn-xs btn" href="../vacation_rental/admin_facility.php?Update&id_artico_group='.$r['id_artico_group'].'" ><i class="glyphicon glyphicon-edit"></i> '.$r['id_artico_group'].'</a>';
 
-
-
 			echo "<i ".$ecomGlobe." ></i>";// globo per e-commerce
 			echo '</td>';
 			echo '<td><span class="gazie-tooltip" data-type="product-thumb" data-id="'. $r['id_artico_group'] .'" data-title="" >'.$r['descri'].'</span>';
 			echo "</td>\n";			
-			echo '<td class="text-center"><a class="btn btn-xs btn-default" style="cursor:pointer;" onclick="openframe(\'facility_availability.php?code='.$r["id_artico_group"].'\')" data-toggle="modal" data-target="#iframe"> <i class="glyphicon glyphicon-calendar" title="Calendario della disponibilità"></i></a>';
-			echo "</td>\n";
-			echo '<td class="text-center"><a class="btn btn-xs btn-default" href="clone_group.php?id_artico_group='.$r["id_artico_group"].'"> <i class="glyphicon glyphicon-export"></i></a>';
-			echo "</td>\n";
+			echo '<td class="text-center"><a class="btn btn-xs btn-default" style="cursor:pointer;" onclick="openframe(\'facility_availability.php?code='.$r["id_artico_group"].'\',\'Calendario disponibilità della struttura: '.$r["descri"].'\')" data-toggle="modal" data-target="#iframe"> <i class="glyphicon glyphicon-calendar" title="Calendario della disponibilità"></i></a>';
+			echo "</td>\n";			
 			echo '<td class="text-center"><a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="'. $r['id_artico_group'].'" artico="'. $r['descri'].'"> <i class="glyphicon glyphicon-remove"></i></a>';
 			echo "</td>\n";
 			echo "</tr>\n";
