@@ -15,6 +15,18 @@
     <meta charset='utf-8' />
     <link href='fullcalendar-5.10.2/lib/main.css' rel='stylesheet' />
     <script src='fullcalendar-5.10.2/lib/main.js'></script>
+	<style>
+		.overlay{
+			
+			position: fixed;
+			width: 100%;
+			height: 100%;
+			top: 0;
+			left: 0;
+			z-index: 999;
+			background: rgba(255,255,255,0.8) url("spinner.gif") center no-repeat;
+		}
+	</style>
 	<!-- questo style insieme a 'display' => 'background' inviato da load db from event e inviando il title '' crea il calendario per il frontend
 	<style>
 	.fc-bg-event {
@@ -46,6 +58,13 @@ $id=substr($_GET['code'],0,9);
       locale: 'it',
       eventDisplay  : 'block',// tutti gli eventi vengono mostrati con un rettangolo pieno in visualizzazione giornaliera
       events : 'load_from_db_facilityevents.php?id=<?php echo $id; ?>',
+	  loading: function( isLoading, view ) {
+			if(isLoading) {// isLoading gives boolean value
+				calendarEl.classList.add("overlay");
+			} else {
+				calendarEl.classList.remove("overlay");
+			}
+		},
 
 /* ***** L'EVENTO, AD ESEMPIO DI UN GIORNO, COMINCIA ALLE ORE 00:00 DEL GIORNO DI INIZIO E FINISCE ALLE ORE 00:00 DEL GIORNO DOPO (SONO DUE DATE DIFFERENTI MA SONO 24 ORE E QUINDI VIENE MOSTRATO PIENO SOLO UN GIORNO) ***** */
 

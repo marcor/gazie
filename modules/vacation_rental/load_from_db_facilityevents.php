@@ -58,38 +58,40 @@ foreach($data as $dt){// per ogni evento
 	$end=$dt['end'];
 	while (strtotime($start) < strtotime($end)) {// per ogni giorno dell'evento
 		$house=[];//echo "<br>->-> analizzo il giorno:",$start;
-		foreach($data as $dt2){// 2ciclo di nuovo tutti gli eventi
-			if (!in_array($dt2['title'],$house)){// se c'è gia questo alloggio salto e velocizzoil giro
-			//echo"<br>ciclo di nuovo questo evento:",print_r($dt2);
-				$start2=$dt2['start'];
-				$end2=$dt2['end'];
-				while (strtotime($start2) < strtotime($end2)) {// 2per ogni giorno dell'evento
-					if (!in_array($dt2['title'],$house) && $start2==$start){// cerco se c'è il giorno e se ancora non aggiunto aggiungo l'alloggio
-	//echo "<br>non cè:",$dt2['title']," in -",print_r($house);
-						array_push($house,$dt2['title']);//echo "<br>in questo giorno",$start2," ho aggiungo:",$dt2['title']," ecco l'array:",print_r($house);
-						break;
+		if (!in_array($start, array_column($dataTot, 'start'))){// escludo i giorni già occupati così velocizzo
+			foreach($data as $dt2){// 2ciclo di nuovo tutti gli eventi
+				if (!in_array($dt2['title'],$house)){// se c'è gia questo alloggio salto e velocizzoil giro
+				//echo"<br>ciclo di nuovo questo evento:",print_r($dt2);
+					$start2=$dt2['start'];
+					$end2=$dt2['end'];
+					while (strtotime($start2) < strtotime($end2)) {// 2per ogni giorno dell'evento
+						if (!in_array($dt2['title'],$house) && $start2==$start){// cerco se c'è il giorno e se ancora non aggiunto aggiungo l'alloggio
+							//echo "<br>non cè:",$dt2['title']," in -",print_r($house);
+							array_push($house,$dt2['title']);//echo "<br>in questo giorno",$start2," ho aggiungo:",$dt2['title']," ecco l'array:",print_r($house);
+							break;
+						}
+						$start2 = date ("Y-m-d", strtotime("+1 days", strtotime($start2)));// 2aumento di un giorno il ciclo
 					}
-					$start2 = date ("Y-m-d", strtotime("+1 days", strtotime($start2)));// 2aumento di un giorno il ciclo
 				}
 			}
-		}
-		if (intval(count($house)) == intval($resulth->num_rows)){// se il contatore alloggi è uguale al numero totale alloggi
-			$dataTot[] = array(// il giorno è totalmente occupato
-			'id'   => $dt["id"],
-			'title'   => 'TUTTO ESAURITO',
-			'start'   => $start,
-			'end'   => $start,
-			'display' => 'background'
-			);
-			//echo "<br>il giorno occupato",$start;
-		}elseif (null !==(count($house))&& intval(count($house))>0){
-			$dataTot[] = array(// il giorno è parzialmente occupato
-			'id'   => $dt["id"],
-			'title'   => 'Disponibili '.(intval($resulth->num_rows) - intval(count($house))).' alloggi su '.intval($resulth->num_rows),
-			'start'   => $start,
-			'end'   => $start
-			);
-			//echo "<br>il giorno parzialmente occupato",$start;
+			if (intval(count($house)) == intval($resulth->num_rows)){// se il contatore alloggi è uguale al numero totale alloggi
+				$dataTot[] = array(// il giorno è totalmente occupato
+				'id'   => $dt["id"],
+				'title'   => 'TUTTO ESAURITO',
+				'start'   => $start,
+				'end'   => $start,
+				'display' => 'background'
+				);
+				//echo "<br>il giorno occupato",$start;
+			}elseif (null !==(count($house))&& intval(count($house))>0){
+				$dataTot[] = array(// il giorno è parzialmente occupato
+				'id'   => $dt["id"],
+				'title'   => 'Disponibili '.(intval($resulth->num_rows) - intval(count($house))).' alloggi su '.intval($resulth->num_rows),
+				'start'   => $start,
+				'end'   => $start
+				);
+				//echo "<br>il giorno parzialmente occupato",$start;
+			}
 		}
 		$start = date ("Y-m-d", strtotime("+1 days", strtotime($start)));// aumento di un giorno il ciclo
 	}
