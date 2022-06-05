@@ -625,9 +625,71 @@ $strScript = array(
 		'look'=>'Look at',
 		'price'=>'Price',
 		'search'=>"Search",
+		'open_calendar'=>"Open total calendar",
 		'imposta'=>"For availability and prices set check-in and check-out dates",
 		'risultato'=>"Availability for the dates requested",
+		'book'=>"Book",
 		'nessun_risultato'=>"There is no availability for your requested dates. Try to modify them or look at the calendar."       
+    ),
+	"booking_form.php" =>
+    array('title' => 'Booking form',
+        'err' => array(
+			'date_uguali'=> 'Check-in and check-out dates are the same',
+			'start>end'=> 'Check-in date is after check-out date',
+			'no_payment'=> 'You have to selecte a payment method',
+			'no_ccinfo'=> 'Credit card datas are wrong or missing',
+			'email-error' => 'The e-mail addresses you wrote are not the same',
+			'email-validate' => 'The e-mail address is wrong'
+        ),
+        'war' => array(
+            'ok' => 'ok riempitura array'
+		),
+		'guest'=>'Guests',
+		'rules_label'=>'Read the lease agreement',
+		'privacy_label'=>'Read the privacy rules',
+		'rules_button'=>'Lease agreement',
+		'privacy_button'=>'Privacy rules',
+		'title'=>'Booking form',
+		'submit'=>'Go to summary',
+		'return'=>'Back',
+		'tur_tax' => 'Turist tax',
+		'submitpay'=>'Sign the reservation and pay',
+		'price_for' => 'Price for ',
+		'discount_to' => 'Discount to be applied ',
+		'select_guest' => 'Select the guests ',
+		'max_capability' => 'Max capability ',
+		'persons' => ' persons',
+		'adults' => 'adults',
+		'children' => 'children until 12 years old ',
+		'price' => 'price',
+		'each' => 'each',
+		'per_person' => 'per person',
+		'per_booking' => 'per booking',
+		'per_night' => 'per night',
+		'per_person_night' => 'per night and per each person',
+		'out_stock' => 'Not available for this period',
+		'quantity' => 'quantity',
+		'per_stay' => 'per stay',
+		'per_night_adult' => 'per night and only per adult',
+		'per_person_adult' => 'per adult person',
+		'required' => 'required',
+		'read_rules' => 'I have read and I accept the lease',
+		'read_privacy' => 'I accept the processing of sensitive data',
+		'price_sum' => 'Prices summary',
+		'booking_tot' => 'Total rental price',
+		'which_deposit' => 'of which, for a confirmatory deposit',
+		'select_pay_deposit' => 'Select the type of payment for the confirmation deposit',
+		'bank_transfer' => 'Bank transfer',
+		'credit_card_offline' => 'Credit card offline',
+		'payment' => 'Payment',
+		'transfer_instruction' => 'Make the bank transfer to the following coordinates within 24 hours',
+		'bank_beneficiary' => 'Beneficiary',
+		'amount' => 'Amount',
+		'bank_reason' => 'Reason: Lease confirmation deposit ',
+		'unsecure_protocol' => '> ATTENTION your connection is not secure, you are in http <',
+		'secure_protocl' => 'You are in a secure connection https',
+		'amount_pay' => 'Amount to pay',
+		'nights' => 'nights'
     ),
 	
   "admin_extra.php" =>
@@ -674,22 +736,6 @@ $strScript = array(
             'Inserire almeno 1 carattere!',
             'Cambia fornitore'
       )
-    ),
-	"admin_warehouse.php" =>
-    array('title' => 'Lista dei magazzini ( oltre la sede )',
-        'ins_this' => 'Inserimento nuovo magazzino',
-        'upd_this' => 'Modifica il magazzino',
-        'err' => array(
-            'name' => 'Il nome del magazzino deve essere lungo almeno 4 caratteri',
-            'filmim' => 'Il file dev\'essere nel formato PNG, JPG, GIF'
-        ),
-        'war' => array(
-            'ok_ins' => 'Magazzino inserito con successo'
-		),
-        'name' => 'Nome',
-        'web_url' => 'Indirizzo web',
-        'image' => 'Immagine',
-        'note_other' => 'Descrizione/Indirizzo',
     )
 );
 ?>
