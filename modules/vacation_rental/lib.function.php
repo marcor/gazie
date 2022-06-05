@@ -138,4 +138,16 @@ function selectFromDBJoin($table, $name, $key, $val, $order = false, $empty = fa
 			echo $acc;
 		}
 }
+function get_string_lang($string, $lang){
+	$string = " ".$string;
+	$ini = strpos($string,"<".$lang.">");
+	if ($ini == 0) return "";
+	$ini += strlen("<".$lang.">");
+	$len = strpos($string,"</".$lang.">",$ini) - $ini;
+  if (intval($len)>0){// se è stato trovato il tag lingua restituisco filtrato
+    return substr($string,$ini,$len);
+  }else{// altrimenti restituisco come era
+    return $string;
+  }
+}
 ?>
