@@ -43,6 +43,11 @@ $search_fields = [
     'asset' => "id_assets = %d",
     'codcat' => "{$gTables['catmer']}.codice = %d",
 ];
+if ($admin_aziend['lang']=="italian"){
+	$lang="it";
+}else{
+	$lang="en";
+}
 
 // creo l'array (header => campi) per l'ordinamento dei record
 $sortable_headers = array  (
@@ -420,7 +425,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 
 			echo "<i ".$ecomGlobe." ></i>";// globo per e-commerce
 			echo '</td>';
-			echo '<td><span class="gazie-tooltip" data-type="product-thumb" data-id="'. $r['codice'] .'" data-title="'. $r['annota'].'" >'.$r['descri'].'</span>';
+			echo '<td><span class="gazie-tooltip" data-type="product-thumb" data-id="'. $r['codice'] .'" data-title="'. $r['annota'].'" >'.get_string_lang($r['descri'], $lang).'</span>';
 			echo "</td>\n";
 			echo '<td class="text-center">';
 			switch($r['accommodation_type']){// 3 => 'Appartamento', 4 => 'Casa indipendente', 5=> 'Bed & breakfast'

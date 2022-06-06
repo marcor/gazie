@@ -689,7 +689,21 @@ $strScript = array(
 		'unsecure_protocol' => '> ATTENTION your connection is not secure, you are in http <',
 		'secure_protocl' => 'You are in a secure connection https',
 		'amount_pay' => 'Amount to pay',
-		'nights' => 'nights'
+		'nights' => 'nights',
+		'name' => 'First name',
+		'surname' => 'Surname',
+		'address' => 'Address',
+		'postalcode' => 'Postal code',
+		'city' => 'City',
+		'provincia' => 'District',
+		'nation' => 'Nation',
+		'vatcode' => 'Vat code',
+		'phone' => 'Telephone',
+		'email' => 'E-mail',
+		'email2' => 'Just to avoid issue, repeat e-mail',
+		'apartment' => 'Apartment',
+		'house' => 'House',
+		'bandb' => 'Bed & breakfast'
     ),
 	
   "admin_extra.php" =>

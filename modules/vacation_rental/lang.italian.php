@@ -454,7 +454,21 @@ $strScript = array(
 		'unsecure_protocol' => '> ATTENZIONE la tua connessione non è sicura, sei in http <',
 		'secure_protocl' => 'Sei in connessione sicura https',
 		'amount_pay' => 'Importo da pagare',
-		'nights' => 'notti'
+		'nights' => 'notti',
+		'name' => 'Nome',
+		'surname' => 'Cognome',
+		'address' => 'Indirizzo con numero civico',
+		'city' => 'Città',
+		'postalcode' => 'CAP',
+		'provincia' => 'Provincia',
+		'nation' => 'Nazione',
+		'vatcode' => 'Codice fiscale',
+		'phone' => 'Telefono',
+		'email' => 'E-mail',
+		'email2' => 'Per evitare errori, riscrivere l\'e-mail',
+		'apartment' => 'Appartamento',
+		'house' => 'Casa indipendente',
+		'bandb' => 'Bed & breakfast'
     ),
 
   "admin_extra.php" =>

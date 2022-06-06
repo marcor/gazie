@@ -42,7 +42,11 @@ $search_fields = [
     'asset' => "id_assets = %d",
     'codcat' => "{$gTables['catmer']}.codice = %d",
 ];
-
+if ($admin_aziend['lang']=="italian"){
+	$lang="it";
+}else{
+	$lang="en";
+}
 // creo l'array (header => campi) per l'ordinamento dei record
 $sortable_headers = array  (
             "Codice" => 'codice',
@@ -339,7 +343,7 @@ while ($r1 = gaz_dbi_fetch_array($result)) {
 			<a class="btn btn-xs btn-'.$class.'" href="../vacation_rental/admin_extra.php?Update&codice='.$r['codice'].'" ><i class="glyphicon glyphicon-edit"></i> '.$r['codice'].'</a>';
 			echo "<i ".$ecomGlobe." ></i>";// globo per e-commerce
 			echo '</td>';
-			echo '<td><span class="gazie-tooltip" data-type="product-thumb" data-id="'. $r['codice'] .'" data-title="'. $r['annota'].'" >'.$r['descri'].'</span>';
+			echo '<td><span class="gazie-tooltip" data-type="product-thumb" data-id="'. $r['codice'] .'" data-title="'. $r['annota'].'" >'.get_string_lang($r['descri'], $lang).'</span>';
 			echo "</td>\n";
 			echo '<td class="text-center">';
 			switch($r['mod_prezzo']){// 0 => 'a prenotazione', 1 => 'a persona', 2 => 'a notte', 3 => 'a persona e a notte'
