@@ -36,6 +36,8 @@ class DocContabVars {
     function setData($gTables, $tesdoc, $testat, $tableName, $ecr = false, $genTables="", $azTables="") {
 
         $link=$GLOBALS['link'];
+		global $gazie_locale;
+		$this->gazTimeFormatter = new IntlDateFormatter($gazie_locale,IntlDateFormatter::FULL,IntlDateFormatter::FULL);
 
         $IDaz=preg_replace("/[^1-9]/", "", $azTables );
 
