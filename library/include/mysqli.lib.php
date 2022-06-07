@@ -45,16 +45,22 @@ function gaz_dbi_query($query, $ar = false) {
 }
 
 function connectToDB() {
-   global $link, $Host, $Database, $User, $Password;
-   $link = @mysqli_connect($Host, $User, $Password, $Database, $Port) or die("Was not found, << $Database >>  database! <br />
+  global $link, $Host, $Database, $User, $Password;
+  mysqli_report(MYSQLI_REPORT_OFF);
+  $link = @mysqli_connect($Host, $User, $Password, $Database);
+  if(!$link) {
+    print "Was not found, << $Database >>  database! <br />
              Could not be installed, try to do so by <a href=\"../../setup/install/install.php\"> clicking HERE! </a><br />
              <br />Non &egrave; stata trovata la base dati di nome << $Database >>! <br />
              Potrebbe non essere stato installata, prova a farlo <a href=\"../../setup/install/install.php\"> cliccando QUI! </a> <br />
              <br />No se ha encontrado, la base de datos << $Database >>  ! <br />
-			No pudo ser instalado, trate de hacerlo haciendo <a href=\"../../setup/install/install.php\">  clic AQU&Iacute;! </a>");
-   gaz_dbi_query("/*!50701 SET SESSION sql_mode='' */");
-   gaz_dbi_query("/*M!100204 SET SESSION sql_mode='' */");
-   mysqli_set_charset($link, 'utf8');
+			No pudo ser instalado, trate de hacerlo haciendo <a href=\"../../setup/install/install.php\">  clic AQU&Iacute;! </a>";
+  } else {
+    gaz_dbi_query("/*!50701 SET SESSION sql_mode='' */");
+    gaz_dbi_query("/*M!100204 SET SESSION sql_mode='' */");
+    mysqli_set_charset($link, 'utf8');
+    mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+  }
 }
 
 function createDatabase($Database) {
@@ -62,19 +68,15 @@ function createDatabase($Database) {
 }
 
 function databaseIsOk() {
-   global $link, $Database;
-   $result = True;
-   mysqli_select_db($link, $Database) or ( $result = False); // In $result l'esito della selezione
-   // Verifico che il database non sia vuoto (condizione che può invece verificarsi nel caso in cui un amministratore di sistema fornisca db e user senza grant CREATE)
-   if ($tablesResult = gaz_dbi_query("SELECT COUNT(*) AS numTables FROM information_schema.tables WHERE table_schema = '$Database';")) {
-      $numTables = mysqli_fetch_row($tablesResult);
-      if ($numTables[0] == 0) {
-         $result = False;
-      }
-   } else {
-      $result = False;
-   }
-   return $result;
+  global $link, $Host, $Database, $User, $Password;
+  mysqli_report(MYSQLI_REPORT_OFF);
+  $result = false;
+  $link = @mysqli_connect($Host, $User, $Password, $Database);
+  if($link) {
+    $result = true;
+    mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+  }
+  return $result;
 }
 
 function gaz_dbi_fetch_array($resource, $mode='') {

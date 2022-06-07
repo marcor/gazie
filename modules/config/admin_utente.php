@@ -95,6 +95,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
 	// dal custom field di admin_module relativo al magazzino trovo il magazzino di default
 	$magmodule = gaz_dbi_get_row($gTables['module'], "name",'magazz');
 	$magadmin_module = gaz_dbi_get_row($gTables['admin_module'], "moduleid",$magmodule['id']," AND adminid='{$form['user_name']}' AND company_id=" . $admin_aziend['company_id']);
+  $magadmin_module['custom_field'] = ($magadmin_module['custom_field'] === NULL) ? '' : $magadmin_module['custom_field'];
 	$magcustom_field=json_decode($magadmin_module['custom_field']);
 	$form["id_warehouse"] = (isset($magcustom_field->user_id_warehouse))?$magcustom_field->user_id_warehouse:0;
 	$form['user_password_old'] = '';
@@ -639,11 +640,11 @@ if ($user_data["Abilit"] == 9) {
     <div class="col-xs-12 text-center"><input name="Submit" class="btn btn-warning" type="submit" value="<?php echo ucfirst($script_transl[$toDo]); ?>"></div>
 </div>
 </form>
-<?php 
+<?php
 if ($admin_aziend['Abilit']==9){
 	?>
 	<div  class="panel panel-default  table-responsive gaz-table-form">
-	<iframe src="../../modules/root/set_config_data.php?iframe=TRUE" title="Configurazione globale" width="100%" height="1330"  frameBorder="0"> 
+	<iframe src="../../modules/root/set_config_data.php?iframe=TRUE" title="Configurazione globale" width="100%" height="1330"  frameBorder="0">
 	</iframe>
 	</div>
 	<?php

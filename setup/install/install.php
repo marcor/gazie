@@ -70,7 +70,7 @@ if (!is_writable(DATA_DIR.'files/')) { //questa per archiviare i documenti
 }
 if (!is_writable(K_PATH_CACHE)) { //questa per permettere a TCPDF di inserire le immagini
     echo K_PATH_CACHE.' --> '.$usrwww['name'].' permission = '.substr(sprintf('%o', fileperms(K_PATH_CACHE)),-3).'<br/>';
-    $err[] = 'no_tcpdf_cache_writable'; 
+    $err[] = 'no_tcpdf_cache_writable';
 }
 //
 // fine controllo directory scrivibili
@@ -101,7 +101,7 @@ if (!isset($_POST['hidden_req'])){           // al primo accesso allo script
 				// il db è allineato ma ho trovato da eseguire uno script php  correlato
 				include($form['hidden_req']);
 			}
-		} else { 
+		} else {
 			connectToDB();
 			$exe_script = executeQueryFileUpgrade($table_prefix);
 			if ($exe_script) {
@@ -317,7 +317,7 @@ function executeQueryFileUpgrade($table_prefix) // funzione dedicata alla gestio
         }
     }
 	// trovo un eventuale file per  script php correlato alle query di aggiornamento
-	$exe_script=executeScriptFileUpgrade($sqlFile); 
+	$exe_script=executeScriptFileUpgrade($sqlFile);
 	return $exe_script;
 }
 
@@ -412,7 +412,7 @@ return $structArray;
 
 function executeScriptFileUpgrade($name_sql) // se ho un file php da eseguire dopo la query sql
 {
-	$filename = pathinfo($name_sql, PATHINFO_FILENAME).'.php';		
+	$filename = pathinfo($name_sql, PATHINFO_FILENAME).'.php';
 	if (file_exists($filename)) {
 		// ho un file da eseguire alla fine delle query
 		return $filename;
