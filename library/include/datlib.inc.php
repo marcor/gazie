@@ -61,17 +61,15 @@ foreach ($tn as $v) {
     $gTables[$v] = $table_prefix . "_" . $v;
 }
 
-if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-    $local = gaz_dbi_get_row($gTables['config'], 'variable', 'win_locale');
-} else {
-    $local = gaz_dbi_get_row($gTables['config'], 'variable', 'lin_locale');
-}
 
 if ($gazie_locale != "") {
   setlocale(LC_TIME, $gazie_locale);
 } else {
-  $gazie_locale = $local['cvalue'];
-  setlocale(LC_TIME, $local['cvalue']);
+  if ($link) {
+    $local = (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') ? gaz_dbi_get_row($gTables['config'], 'variable', 'win_locale'):gaz_dbi_get_row($gTables['config'], 'variable', 'lin_locale');
+    $gazie_locale = $local['cvalue'];
+    setlocale(LC_TIME, $local['cvalue']);
+  }
 }
 $gazTimeFormatter = new IntlDateFormatter($gazie_locale,IntlDateFormatter::FULL,IntlDateFormatter::FULL,'Europe/Rome',);
 

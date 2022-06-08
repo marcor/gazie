@@ -2460,8 +2460,9 @@ function redirect($filename) {
 
 
 function checkAdmin($Livaut = 0) {
-    global $gTables, $module, $table_prefix;
+    global $gTables, $module, $table_prefix, $link;
     $_SESSION["Abilit"] = false;
+    if (!$link) exit;
     // Se utente non � loggato lo mandiamo alla pagina di login
     if (!isset($_SESSION["user_name"])) {
         redirect('../root/login_user.php?tp=' . $table_prefix);
