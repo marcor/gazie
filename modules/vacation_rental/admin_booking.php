@@ -33,7 +33,7 @@
 require("../../library/include/datlib.inc.php");
 require("../../modules/magazz/lib.function.php");
 require("../../modules/vendit/lib.function.php");
-//require("../../modules/acquis/lib.data.php");
+require("../../modules/acquis/lib.data.php");
 
 $admin_aziend = checkAdmin();
 $min_stay = gaz_dbi_get_row($gTables['company_config'], 'var', 'vacation_minnights')['val'];
@@ -94,6 +94,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['id_tes'] = $_POST['id_tes'];
     $anagrafica = new Anagrafica();
     $cliente = $anagrafica->getPartner($_POST['clfoco']);
+    if (!isset($cliente['speban'])){
+      $cliente['speban']="N";
+    }
     $form['hidden_req'] = $_POST['hidden_req'];
     // ...e della testata
     foreach ($_POST['search'] as $k => $v) {
