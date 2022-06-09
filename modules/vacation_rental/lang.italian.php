@@ -306,7 +306,7 @@ $strScript = array(
         'pack_units' => 'Pezzi in imballo',
         'codcon' => 'Conto di ricavo su vendite',
         'id_cost' => 'Conto di costo su acquisti',
-        'annota' => 'Annotazioni (pubblicate anche sul web)',
+        'annota' => 'Indirizzo e/o dati catastali (da riportare nel contratto di locazione)',
         'fornitori-codici' => 'Codici Fornitori',
         'document' => 'Documenti e/o certificazioni',
         'imageweb' => 'immagini e foto',
@@ -508,7 +508,7 @@ $strScript = array(
         'payroll_tax_value' => array(0 => 'No', 1 => 'Si'),
 		'codcon' => 'Conto di ricavo su vendite',
         'id_cost' => 'Conto di costo su acquisti',
-		'annota' => 'Annotazione',
+		'annota' => 'Annotazione (da riportare nel contratto di locazione)',
 		'err' => array(
         'valcod' => 'Non hai inserito il codice dell\'extra',
 		'descri' => 'Non hai scritto la descrizione'
@@ -550,6 +550,28 @@ $strScript = array(
         'stop_further_processing'=> "Questo sconto blocca tutti gli altri con minore priorità",
         'id_anagra'=> "ID utente a cui è riservato lo sconto",
         'reusable' => "Lo sconto è utilizzabile più volte"
+    ),
+    "lease.php" =>
+    array('locatore' => 'Il locatore',
+    'conduttore' => 'il conduttore',
+    'parti' => 'Le parti',
+    'e' => 'e ',
+    'contratto_n' => 'Contratto di locazione n.',
+    'body1' => 'stipulano quanto segue: ',
+    'oggetto' => 'Oggetto',
+    'body2' => 'Il locatore concede in locazione al conduttore, che accetta, per il solo ed esclusivo uso turistico: ',
+    'body3' => 'Così come descritto nel sito internet alla pagina ',
+    'body4' => 'Ogni altra cosa o servizio non contemplati nella suddetta pagina internet sono da considerarsi non compresi nel canone di locazione.',
+    'divieti' => 'Divieti ed obblighi',
+    'durata' => 'Durata',
+    'canone' => 'Canone e spese',
+    'rinvio' => 'Rinvio',
+    'bodyrinvio' =>'Per quanto non espressamente previsto dal presente contratto, le parti dichiarano applicabili le disposizioni del codice civile e le norme del codice del turismo, nonché gli usi locali.',
+    'apartment' => 'Appartamento',
+		'house' => 'Casa indipendente',
+		'bandb' => 'Bed & breakfast'
+
+
     )
 );
 ?>
