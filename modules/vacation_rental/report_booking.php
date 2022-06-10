@@ -619,14 +619,23 @@ $ts->output_navbar();
               echo "</td>";
 
               // stampa
-              echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-stampa\"";
+              echo "<td align=\"center\">";
+              echo "<a class=\"btn btn-xs btn-default btn-stampa\"";
               // vedo se è presente un file di template adatto alla stampa su carta già intestata
               if($enable_lh_print_dialog>0 && withoutLetterHeadTemplate($r['tipdoc'])){
-                echo ' onclick="choice_template(\''.$modulo.'\');" title="Scegli modulo per stampa"';
+                echo ' onclick="choice_template(\''.$modulo.'\');" title="Stampa prenotazione"';
               }else{
                 echo " style=\"cursor:pointer;\" onclick=\"printPdf('".$modulo."')\"";
               }
               echo "><i class=\"glyphicon glyphicon-print\" title=\"Stampa documento PDF\"></i></a>";
+              echo "&nbsp;<a class=\"btn btn-xs btn-default btn-stampa\"";
+              // vedo se è presente un file di template adatto alla stampa su carta già intestata
+              if($enable_lh_print_dialog>0 && withoutLetterHeadTemplate($r['tipdoc'])){
+                echo ' onclick="choice_template(\''.$modulo.'\');" title="Stampa contratto"';
+              }else{
+                echo " style=\"cursor:pointer;\" onclick=\"printPdf('stampa_contratto.php?id_tes=". $r['id_tes']. "')\"";
+              }
+              echo "><i class=\"glyphicon glyphicon-book\" title=\"Stampa contratto PDF\"></i></a>";
               echo "</td>";
 
               // Colonna "Mail"

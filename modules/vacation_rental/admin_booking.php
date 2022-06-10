@@ -997,14 +997,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 			$form['in_prelis']=$total_price;
 		}
 
-        gaz_dbi_query ("UPDATE ".$gTables['artico']." SET `last_used`='".date("Y-m-d")."' WHERE codice='".$form['in_codart']."';");
-        // addizione ai totali peso,pezzi,volume
-        $form['net_weight'] += $form['in_quanti'] * $artico['peso_specifico'];
-        $form['gross_weight'] += $form['in_quanti'] * $artico['peso_specifico'];
-        if ($artico['pack_units'] > 0) {
-            $form['units'] += intval(round($form['in_quanti'] / $artico['pack_units']));
-        }
-        $form['volume'] += $form['in_quanti'] * $artico['volume_specifico'];
+    gaz_dbi_query ("UPDATE ".$gTables['artico']." SET `last_used`='".date("Y-m-d")."' WHERE codice='".$form['in_codart']."';");
+    // addizione ai totali peso,pezzi,volume
+    $form['net_weight'] += $form['in_quanti'] * $artico['peso_specifico'];
+    $form['gross_weight'] += $form['in_quanti'] * $artico['peso_specifico'];
+    if ($artico['pack_units'] > 0) {
+        $form['units'] += intval(round($form['in_quanti'] / $artico['pack_units']));
+    }
+    $form['volume'] += $form['in_quanti'] * $artico['volume_specifico'];
 		$form['in_good_or_service']=$artico['good_or_service'];
 
 		// carico i dati del json articolo
@@ -1016,62 +1016,54 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 					$form['in_child'] = $data['vacation_rental']['child'];
 					$form['in_total_guests'] = $data['vacation_rental']['total_guests'];
 
-				} elseif (isset($data['vacation_rental']['extra'])){// se è un extra
+			} elseif (isset($data['vacation_rental']['extra'])){// se è un extra
+        $extra = gaz_dbi_get_row($gTables['rental_extra'], "id", $data['vacation_rental']['extra']);
 
+        if ($extra['max_quantity']>0){ //e controllo se si supera il quantitativo massimo disponibile ammesso che ci sia
+          $result=gaz_dbi_query("SELECT SUM(quanti) AS booked FROM ". $gTables['rental_events'] ." LEFT JOIN " . $gTables['rigbro'] . " ON " . $gTables['rental_events'] . ".id_rigbro = " . $gTables['rigbro'] . ".id_rig WHERE (start >= '". $form['start'] ."' AND end <= '". $form['end']."') AND house_code = '".$form['extra']."' ORDER BY id ASC LIMIT 0, 2000000");
+          $res = $result->fetch_assoc();
+          if (floatval($extra['max_quantity'])-floatval($res['booked'])-floatval($form['qtaextra'])<0){
+             $msg .= "64+";// Overbooking
+          }
+        }
+        $form['in_quanti']=$form['qtaextra'];
+        $form['in_unimis']=$artico['unimis'];
+        $form['qtaextra']=0;
 
-					$extra = gaz_dbi_get_row($gTables['rental_extra'], "id", $data['vacation_rental']['extra']);
+        // calcolo il numero di notti
+        $diff=date_diff(date_create($form['start']),date_create($form['end']));
+        $night= $diff->format("%a");
 
-					// calcolo il numero di notti
-					$start=$form['start'];
-					$night=0;
-					if ($extra['max_quantity']>0){ //e controllo se si supera il quantitativo massimo disponibile ammesso che ci sia
-						$result=gaz_dbi_query("SELECT SUM(quanti) AS booked FROM ". $gTables['rental_events'] ." LEFT JOIN " . $gTables['rigbro'] . " ON " . $gTables['rental_events'] . ".id_rigbro = " . $gTables['rigbro'] . ".id_rig WHERE (start >= '". $form['start'] ."' AND end <= '". $form['end']."') AND house_code = '".$form['extra']."' ORDER BY id ASC LIMIT 0, 2000000");
-						$res = $result->fetch_assoc();
-						if (floatval($extra['max_quantity'])-floatval($res['booked'])-floatval($form['qtaextra'])<0){
-							 $msg .= "64+";// Overbooking
-						}
-					}
-					$form['in_quanti']=$form['qtaextra'];
-					$form['in_unimis']=$artico['unimis'];
-					$form['qtaextra']=0;
+        $form['in_accommodation_type'] = 1;// è un extra
+        $form['in_adult'] = 0;
+        $form['in_child'] = 0;
+        $form['in_total_guests'] = 0;
+        // calcolo il prezzo dell'extra
 
-					while (strtotime($start) <= strtotime($form['end'])) {// ciclo il periodo della locazione giorno per giorno
-
-						$start = date ("Y-m-d", strtotime("+1 days", strtotime($start)));// aumento di un giorno il ciclo
-						$night++;// conto le notti
-					}
-					$night--;$start="";
-
-					$form['in_accommodation_type'] = 1;// è un extra
-					$form['in_adult'] = 0;
-					$form['in_child'] = 0;
-					$form['in_total_guests'] = 0;
-					// calcolo il prezzo dell'extra
-
-					switch ($extra['mod_prezzo']) {//0 => 'a prenotazione', 1 => 'a persona', 2 => 'a notte', 3 => 'a persona e a notte', 4 => 'cadauno'
-						case "0":
-							$form['in_prelis']=$artico['web_price'];
-							break;
-						case "1":
-							$form['in_prelis']=floatval($artico['web_price'])*(intval($form['adult'])+intval($form['child']));
-							break;
-						case "2":
-							$form['in_prelis']=floatval($artico['web_price'])*(intval($night));
-							break;
-						case "3":
-							$form['in_prelis']=(floatval($artico['web_price'])*(intval($form['adult'])+intval($form['child'])))*(intval($night));
-							break;
-						case "4":
-							$form['in_prelis']=$artico['web_price'];
-							break;
-					}
-					$form['extra']="";
-				} else {
-					$form['in_accommodation_type'] = 0;
-					$form['in_adult'] = 0;
-					$form['in_child'] = 0;
-					$form['in_total_guests'] = 0;
-				}
+        switch ($extra['mod_prezzo']) {//0 => 'a prenotazione', 1 => 'a persona', 2 => 'a notte', 3 => 'a persona e a notte', 4 => 'cadauno'
+          case "0":
+            $form['in_prelis']=$artico['web_price'];
+            break;
+          case "1":
+            $form['in_prelis']=floatval($artico['web_price'])*(intval($form['adult'])+intval($form['child']));
+            break;
+          case "2":
+            $form['in_prelis']=floatval($artico['web_price'])*(intval($night));
+            break;
+          case "3":
+            $form['in_prelis']=(floatval($artico['web_price'])*(intval($form['adult'])+intval($form['child'])))*(intval($night));
+            break;
+          case "4":
+            $form['in_prelis']=$artico['web_price'];
+            break;
+        }
+        $form['extra']="";
+      } else {
+        $form['in_accommodation_type'] = 0;
+        $form['in_adult'] = 0;
+        $form['in_child'] = 0;
+        $form['in_total_guests'] = 0;
+      }
 		} else {
 			$form['in_accommodation_type'] = 0;
 			$form['in_adult'] = 0;

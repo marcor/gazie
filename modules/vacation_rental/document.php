@@ -349,14 +349,16 @@ class DocContabVars {
     function getRigo() {
        // $from = $this->gTables[$this->tableName] . ' AS rs LEFT JOIN ' . $this->gTables['aliiva'] . ' AS vat ON rs.codvat=vat.codice';
        // $rs_rig = gaz_dbi_dyn_query('rs.*,vat.tipiva AS tipiva', $from, "rs.id_tes = " . $this->testat, "id_tes DESC, id_rig");
-global $azTables;
+      global $azTables;
+      $azTables=$GLOBALS['azTables'];
+      global $link;
+      $link=$GLOBALS['link'];
 
-$azTables=$GLOBALS['azTables'];
-global $link;
-
-$link=$GLOBALS['link'];
-
-        $sql = "SELECT ".$azTables."rigbro".".*, ".$azTables.'aliiva'.".tipiva FROM ".$azTables."rigbro"." LEFT JOIN " . $azTables.'aliiva' . " ON codvat=codice WHERE id_tes = " . $this->testat." ORDER BY id_tes DESC, id_rig";
+        $sql = "SELECT ".$azTables."rigbro".".*, ".$azTables.'aliiva'.".tipiva, ".$azTables.'artico'.".custom_field, ".$azTables.'artico'.".descri AS desart, ".$azTables.'artico'.".annota, ".$azTables.'artico'.".web_url, ".$azTables."rental_events".".* FROM ".$azTables."rigbro"."
+        LEFT JOIN " . $azTables.'aliiva' . " ON codvat=codice
+        LEFT JOIN " . $azTables.'artico' . " ON " . $azTables.'artico'.".codice=" . $azTables.'rigbro' . ".codart
+        LEFT JOIN " . $azTables.'rental_events' . " ON " . $azTables.'rental_events'.".id_rigbro=" . $azTables.'rigbro' . ".id_rig
+        WHERE id_tes = " . $this->testat." ORDER BY id_tes DESC, id_rig";
         if ($rs_rig = mysqli_query($link, $sql)){
         }else{
           echo "Error: " . $sql . "<br>" . mysqli_error($link);
@@ -371,67 +373,63 @@ $link=$GLOBALS['link'];
         $this->ritenuta = 0.00;
         $results = array();
         while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
-
           $rigo['barcode']="";
+          if ($rigo['tiprig'] <= 1 || $rigo['tiprig'] == 4 || $rigo['tiprig'] == 50 || $rigo['tiprig'] == 90) {
+              $tipodoc = substr($this->tesdoc["tipdoc"], 0, 1);
+              $rigo['importo'] = CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], $rigo['sconto']);
+              $v_for_castle = CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], array($rigo['sconto'], $this->tesdoc['sconto']));
+              if ($rigo['tiprig'] == 1) {
+                  $rigo['importo'] = CalcolaImportoRigo(1, $rigo['prelis'], 0);
+                  $v_for_castle = CalcolaImportoRigo(1, $rigo['prelis'], $this->tesdoc['sconto']);
+              }
+              if ($rigo['tiprig'] == 4) {
+                  $rigo['importo'] = round($rigo['provvigione']*$rigo['prelis']/100,2);
+                  $v_for_castle = $rigo['importo'] ;
+              }
 
+              if (!isset($this->castel[$rigo['codvat']])) {
+                  $this->castel[$rigo['codvat']] = 0;
+              }
+              if (!isset($this->body_castle[$rigo['codvat']])) {
+                  $this->body_castle[$rigo['codvat']]['impcast'] = 0;
+              }
+              $this->body_castle[$rigo['codvat']]['impcast'] += $v_for_castle;
+              $this->castel[$rigo['codvat']] += $v_for_castle;
+              $this->totimp_body += $rigo['importo'];
+              $this->ritenuta += round($rigo['importo'] * $rigo['ritenuta'] / 100, 2);
+          } elseif ($rigo['tiprig'] == 6 || $rigo['tiprig'] == 7 || $rigo['tiprig'] == 8) {
+              $body_text = gaz_dbi_get_row($this->gTables['body_text'], "id_body", $rigo['id_body_text']);
+              $rigo['descri'] = $body_text['body_text'];
+          } elseif ($rigo['tiprig'] == 3) {
+              $this->riporto += $rigo['prelis'];
+          } elseif ($rigo['tiprig'] == 91) {
+              $this->roundcastle[$rigo['codvat']] = $rigo['prelis'];
+          }
+          if ($this->tesdoc['tipdoc']=='AFA' && $rigo['tiprig'] <= 2 && strlen($rigo['descri'])>70  ){
+            // 	se la descrizione no la si riesce a contenere in un rigo (es.fattura elettronica d'acquisto)	aggiungo righi descrittivi
 
-
-            if ($rigo['tiprig'] <= 1 || $rigo['tiprig'] == 4 || $rigo['tiprig'] == 50 || $rigo['tiprig'] == 90) {
-                $tipodoc = substr($this->tesdoc["tipdoc"], 0, 1);
-                $rigo['importo'] = CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], $rigo['sconto']);
-                $v_for_castle = CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], array($rigo['sconto'], $this->tesdoc['sconto']));
-                if ($rigo['tiprig'] == 1) {
-                    $rigo['importo'] = CalcolaImportoRigo(1, $rigo['prelis'], 0);
-                    $v_for_castle = CalcolaImportoRigo(1, $rigo['prelis'], $this->tesdoc['sconto']);
-                }
-                if ($rigo['tiprig'] == 4) {
-                    $rigo['importo'] = round($rigo['provvigione']*$rigo['prelis']/100,2);
-                    $v_for_castle = $rigo['importo'] ;
-                }
-
-                if (!isset($this->castel[$rigo['codvat']])) {
-                    $this->castel[$rigo['codvat']] = 0;
-                }
-                if (!isset($this->body_castle[$rigo['codvat']])) {
-                    $this->body_castle[$rigo['codvat']]['impcast'] = 0;
-                }
-                $this->body_castle[$rigo['codvat']]['impcast'] += $v_for_castle;
-                $this->castel[$rigo['codvat']] += $v_for_castle;
-                $this->totimp_body += $rigo['importo'];
-                $this->ritenuta += round($rigo['importo'] * $rigo['ritenuta'] / 100, 2);
-            } elseif ($rigo['tiprig'] == 6 || $rigo['tiprig'] == 7 || $rigo['tiprig'] == 8) {
-                $body_text = gaz_dbi_get_row($this->gTables['body_text'], "id_body", $rigo['id_body_text']);
-                $rigo['descri'] = $body_text['body_text'];
-            } elseif ($rigo['tiprig'] == 3) {
-                $this->riporto += $rigo['prelis'];
-            } elseif ($rigo['tiprig'] == 91) {
-                $this->roundcastle[$rigo['codvat']] = $rigo['prelis'];
+            $descrizione_nuova='';
+            $nuovi_righi=array();
+            $n_r=explode(' ',$rigo['descri']);
+            foreach($n_r as $v){
+              if (strlen($descrizione_nuova)<=60){ // se  la descrizione è ancora abbastanza corta la aggiungo
+                $descrizione_nuova .= ' '.$v;
+              } else {
+                // i righi iniziali sono aggiunti e definiti descrittivi
+                $nuovi_righi[]=array('tiprig'=>2,'codart'=>'','descri'=>$descrizione_nuova,'quanti'=>0, 'unimis'=>'','prelis'=>0,'sconto'=>0,'prelis'=>0,'pervat'=>0,'codric'=>0,'provvigione'=>0,'ritenuta'=>0,'id_order'=>0,'id_mag'=>0,'id_orderman'=>0);
+                // riparto con un nuovo valore di descrizione
+                $descrizione_nuova = $v;
+              }
             }
-			if ($this->tesdoc['tipdoc']=='AFA' && $rigo['tiprig'] <= 2 && strlen($rigo['descri'])>70  ){
-				// 	se la descrizione no la si riesce a contenere in un rigo (es.fattura elettronica d'acquisto)	aggiungo righi descrittivi
-
-				$descrizione_nuova='';
-				$nuovi_righi=array();
-				$n_r=explode(' ',$rigo['descri']);
-				foreach($n_r as $v){
-					if (strlen($descrizione_nuova)<=60){ // se  la descrizione è ancora abbastanza corta la aggiungo
-						$descrizione_nuova .= ' '.$v;
-					} else {
-						// i righi iniziali sono aggiunti e definiti descrittivi
-						$nuovi_righi[]=array('tiprig'=>2,'codart'=>'','descri'=>$descrizione_nuova,'quanti'=>0, 'unimis'=>'','prelis'=>0,'sconto'=>0,'prelis'=>0,'pervat'=>0,'codric'=>0,'provvigione'=>0,'ritenuta'=>0,'id_order'=>0,'id_mag'=>0,'id_orderman'=>0);
-						// riparto con un nuovo valore di descrizione
-						$descrizione_nuova = $v;
-					}
-				}
-				// quando esco dal ciclo sull'ultimo rigo rimane dello stesso tipo originale
-				$rigo['descri']=$descrizione_nuova;
-				$nuovi_righi[]=$rigo;
-				foreach($nuovi_righi as $v_nr) { // riattraverso l'array dei nuovi righi e sull'ultimo
-					$results[] = $v_nr;
-				}
-			} else {
-				$results[] = $rigo;
-			}
+            // quando esco dal ciclo sull'ultimo rigo rimane dello stesso tipo originale
+            $rigo['descri']=$descrizione_nuova;
+            $nuovi_righi[]=$rigo;
+            foreach($nuovi_righi as $v_nr) { // riattraverso l'array dei nuovi righi e sull'ultimo
+              $results[] = $v_nr;
+            }
+          } else {
+            $results[] = $rigo;
+          }
             //creo il castelletto IVA ma solo se del tipo normale o forfait
         }
         return $results;
@@ -538,7 +536,8 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
         'CMR' => 'cmr',
         'Ticket'=>'ticket',
         'Maintenance'=>'maintenance',
-        'BookingSummary' => 'booking_summary'
+        'BookingSummary' => 'booking_summary',
+        'Lease' => 'lease'
     );
 
     $config = new Config;
