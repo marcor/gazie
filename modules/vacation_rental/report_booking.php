@@ -191,7 +191,30 @@ function confirMail(link){
                   }
          });
    $("#dialog" ).dialog( "open" );
-}';
+}
+function confirMailC(link){
+   tes_id = link.id.replace("docC", "");
+   $.fx.speeds._default = 500;
+   targetUrl = $("#docC"+tes_id).attr("urlC");
+   alert (targetUrl);
+   $("p#mail_adrs").html($("#docC"+tes_id).attr("mail"));
+   $("p#mail_attc").html($("#docC"+tes_id).attr("namedoc"));
+   $( "#dialog" ).dialog({
+         modal: "true",
+      show: "blind",
+      hide: "explode",
+         buttons: {
+                      " ' . $script_transl['submit'] . ' ": function() {
+                         window.location.href = targetUrl;
+                      },
+                      " ' . $script_transl['cancel'] . ' ": function() {
+                        $(this).dialog("close");
+                      }
+                  }
+         });
+   $("#dialog" ).dialog( "open" );
+}
+';
 ?>
 
 function choice_template(modulo) {
@@ -627,7 +650,7 @@ $ts->output_navbar();
               }else{
                 echo " style=\"cursor:pointer;\" onclick=\"printPdf('".$modulo."')\"";
               }
-              echo "><i class=\"glyphicon glyphicon-print\" title=\"Stampa documento PDF\"></i></a>";
+              echo "><i class=\"glyphicon glyphicon-print\" title=\"Stampa prenotazione PDF\"></i></a>";
               echo "&nbsp;<a class=\"btn btn-xs btn-default btn-stampa\"";
               // vedo se è presente un file di template adatto alla stampa su carta già intestata
               if($enable_lh_print_dialog>0 && withoutLetterHeadTemplate($r['tipdoc'])){
@@ -641,11 +664,15 @@ $ts->output_navbar();
               // Colonna "Mail"
               echo "<td align=\"center\">";
               if (!empty($r['e_mail'])){ // ho una mail sulla destinazione
-                  echo '<a class="btn btn-xs btn-default btn-email" onclick="confirMail(this);return false;" id="doc' . $r['id_tes'] . '" url="' . $modulo . '&dest=E" href="#" title="mailto: ' . $r['e_mail'] . '"
+                  echo '<a class="btn btn-xs btn-default btn-email" onclick="confirMail(this);return false;" id="doc' . $r['id_tes'] . '" url="' . $modulo . '&dest=E" href="#" title="Invia prenotazione: ' . $r['e_mail'] . '"
                   mail="' . $r['e_mail'] . '" namedoc="' . $script_transl['type_value'][$r['tipdoc']] . ' n.' . $r['numdoc'] . ' del ' . gaz_format_date($r['datemi']) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
+                  echo ' <a class="btn btn-xs btn-default btn-emailC" onclick="confirMailC(this);return false;" id="docC' . $r['id_tes'] . '" urlC="stampa_contratto.php?id_tes='. $r['id_tes']. '&dest=E" href="#" title="invia contratto a: ' . $r['e_mail'] . '"
+                  mail="' . $r['e_mail'] . '" namedoc="' . $script_transl['type_value'][$r['tipdoc']] . ' n.' . $r['numdoc'] . ' del ' . gaz_format_date($r['datemi']) . '"><i class="glyphicon glyphicon-send"></i></a>';
               } elseif (!empty($r['base_mail'])) { // ho una mail sul cliente
-                  echo '<a class="btn btn-xs btn-default btn-email" onclick="confirMail(this);return false;" id="doc' . $r['id_tes'] . '" url="' . $modulo . '&dest=E" href="#" title="mailto: ' . $r['base_mail'] . '"
+                  echo ' <a class="btn btn-xs btn-default btn-email" onclick="confirMail(this);return false;" id="doc' . $r['id_tes'] . '" url="' . $modulo . '&dest=E" href="#" title="Invia prenotazione: ' . $r['base_mail'] . '"
                   mail="' . $r['base_mail'] . '" namedoc="' . $script_transl['type_value'][$r['tipdoc']] . ' n.' . $r['numdoc'] . ' del ' . gaz_format_date($r['datemi']) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
+                  echo ' <a class="btn btn-xs btn-default btn-emailC" onclick="confirMailC(this);return false;" id="docC' . $r['id_tes'] . '" urlC="stampa_contratto.php?id_tes='. $r['id_tes']. '&dest=E" href="#" title="invia contratto a: ' . $r['base_mail'] . '"
+                  mail="' . $r['base_mail'] . '" namedoc="Contratto n.' . $r['numdoc'] . ' del ' . gaz_format_date($r['datemi']) . '"><i class="glyphicon glyphicon-send"></i></a>';
               } else { // non ho mail
                   echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" href="admin_client.php?codice=' . substr($r['clfoco'], 3) . '&Update"><i class="glyphicon glyphicon-edit"></i></a>';
               }
