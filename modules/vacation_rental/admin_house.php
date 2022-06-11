@@ -144,6 +144,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
   $form['child'] = $_POST['child'];
   $form['total_guests'] = $_POST['total_guests'];
   $form['deposit'] = $_POST['deposit'];
+  $form['security_deposit'] = $_POST['security_deposit'];
   $form['deposit_type'] = $_POST['deposit_type'];
   $form['agent'] = $_POST['agent'];
   $form['tur_tax_mode'] = $_POST['tur_tax_mode'];
@@ -318,7 +319,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     }
 	$form['preve1']=$form['web_price'];// al momento imposto il prezzo 1 uguale al webprice
     if ($toDo == 'insert') {
-		$array= array('vacation_rental'=>array('accommodation_type' => $_POST['accommodation_type'],'total_guests' => $_POST['total_guests'],'adult' => $_POST['adult'],'child' => $_POST['child'],'deposit' => $_POST['deposit'],'deposit_type' => $_POST['deposit_type'],'tur_tax_mode' => $_POST['tur_tax_mode'],'tur_tax' => $_POST['tur_tax'],'agent' => $_POST['agent']));// creo l'array per il custom field
+		$array= array('vacation_rental'=>array('accommodation_type' => $_POST['accommodation_type'],'total_guests' => $_POST['total_guests'],'adult' => $_POST['adult'],'child' => $_POST['child'],'deposit' => $_POST['deposit'],'security_deposit' => $_POST['security_deposit'],'deposit_type' => $_POST['deposit_type'],'tur_tax_mode' => $_POST['tur_tax_mode'],'tur_tax' => $_POST['tur_tax'],'agent' => $_POST['agent']));// creo l'array per il custom field
 		$form['custom_field'] = json_encode($array);// codifico in json  e lo inserisco nel form
 		gaz_dbi_table_insert('artico', $form);
 		if (!empty($tbt)) {
@@ -333,13 +334,14 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 				$data['vacation_rental']['adult']=$_POST['adult'];
 				$data['vacation_rental']['child']=$_POST['child'];
 				$data['vacation_rental']['deposit']=$_POST['deposit'];
+        $data['vacation_rental']['security_deposit']=$_POST['security_deposit'];
 				$data['vacation_rental']['deposit_type']=$_POST['deposit_type'];
 				$data['vacation_rental']['tur_tax_mode'] = $_POST['tur_tax_mode'];
 				$data['vacation_rental']['tur_tax']= $_POST['tur_tax'];
         $data['vacation_rental']['agent']= $_POST['agent'];
 				$form['custom_field'] = json_encode($data);
 			} else { //se non c'è il modulo "vacation_rental" lo aggiungo
-				$data['vacation_rental']= array('accommodation_type' => $_POST['accommodation_type'],'total_guests' => $_POST['total_guests'],'adult' => $_POST['adult'],'child' => $_POST['child'],'deposit' => $_POST['deposit'],'deposit_type' => $_POST['deposit_type'],'tur_tax_mode' => $_POST['tur_tax_mode'],'tur_tax' => $_POST['tur_tax'],'agent' => $_POST['agent']);
+				$data['vacation_rental']= array('accommodation_type' => $_POST['accommodation_type'],'total_guests' => $_POST['total_guests'],'adult' => $_POST['adult'],'child' => $_POST['child'],'deposit' => $_POST['deposit'],'security_deposit' => $_POST['security_deposit'],'deposit_type' => $_POST['deposit_type'],'tur_tax_mode' => $_POST['tur_tax_mode'],'tur_tax' => $_POST['tur_tax'],'agent' => $_POST['agent']);
 				$form['custom_field'] = json_encode($data);
 			}
 		}
@@ -426,6 +428,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 				$form['child'] = $data['vacation_rental']['child'];
 				$form['total_guests'] = $data['vacation_rental']['total_guests'];
 				$form['deposit'] = $data['vacation_rental']['deposit'];
+        $form['security_deposit'] = (isset($data['vacation_rental']['security_deposit']))?$data['vacation_rental']['security_deposit']:0;
 				$form['deposit_type'] = $data['vacation_rental']['deposit_type'];
 				$form['tur_tax_mode'] = $data['vacation_rental']['tur_tax_mode'];
 				$form['tur_tax']= $data['vacation_rental']['tur_tax'];
@@ -437,6 +440,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 				$form['child'] = 0;
 				$form['total_guests'] = 0;
 				$form['deposit'] = 0;
+        $form['security_deposit'] = 0;
 				$form['deposit_type'] = 0;
 				$form['tur_tax_mode'] =0;
 				$form['tur_tax']=0;
@@ -448,6 +452,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 		$form['child'] = 0;
 		$form['total_guests'] = 0;
 		$form['deposit'] = 0;
+    $form['security_deposit'] = 0;
 		$form['deposit_type'] = 0;
 		$form['tur_tax_mode'] =0;
 		$form['tur_tax']=0;
@@ -516,6 +521,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['web_mu'] = "n.";
     $form['web_multiplier'] = 1;
     $form['deposit'] = 0;
+    $form['security_deposit'] = 0;
     $form['deposit_type'] = 0;
     $form['agent'] = 0;
     $form['tur_tax_mode'] =0;
@@ -1099,6 +1105,14 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div>
+                 <div id="SECdeposit" class="row IERincludeExcludeRow">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="SECdeposit" class="col-sm-4 control-label">Deposito cauzionale</label>
+                            <input class="col-sm-4" type="text" value="<?php echo $form['security_deposit']; ?>" name="security_deposit" maxlength="15" />
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
 				<!--
 
                 <div id="retentionTax" class="row IERincludeExcludeRow">
