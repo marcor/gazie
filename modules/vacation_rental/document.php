@@ -672,7 +672,7 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
     $pdf->pageHeader();
     $pdf->compose();
     $pdf->pageFooter();
-    $doc_name = preg_replace("/[^a-zA-Z0-9]+/", "_", $docVars->intesta1 . '_' . $pdf->tipdoc) . '.pdf';
+    $doc_name = preg_replace("/[^a-zA-Z0-9]+/", "_", $docVars->intesta1 . '_' . $pdf->tipdoc) . '.pdf';	
 	// aggiungo all'array con indice 'azienda' altri dati
 	$docVars->azienda['cliente1']=$docVars->cliente1;
 	$docVars->azienda['doc_name']=$pdf->tipdoc.'.pdf';

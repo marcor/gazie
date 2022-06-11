@@ -36,7 +36,7 @@ class Lease extends Template
         $this->nomemese = ucwords($this->docVars->gazTimeFormatter->format(new DateTime($this->tesdoc['datemi'])));
         $this->sconto = $this->tesdoc['sconto'];
         $this->trasporto = $this->tesdoc['traspo'];
-        $this->tipdoc = 'Prenotazione n.'.$this->tesdoc['numdoc'].'/'.$this->tesdoc['seziva'].' del '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
+        $this->tipdoc = 'Contratto n.'.$this->tesdoc['numdoc'].'/'.$this->tesdoc['seziva'].' del '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
         $this->show_artico_composit = $this->docVars->show_artico_composit;
     }
     function newPage() {
