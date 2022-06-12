@@ -22,7 +22,7 @@
     Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
  --------------------------------------------------------------------------
 */
-require('booking_template.php');
+require('booking_template_lease.php');
 
 class Lease extends Template
 {
@@ -38,12 +38,19 @@ class Lease extends Template
         $this->trasporto = $this->tesdoc['traspo'];
         $this->tipdoc = 'Contratto n.'.$this->tesdoc['numdoc'].'/'.$this->tesdoc['seziva'].' del '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
         $this->show_artico_composit = $this->docVars->show_artico_composit;
+        if (($customtes = json_decode($this->tesdoc['custom_field'],true)) && (json_last_error() == JSON_ERROR_NONE)){
+          if (array_key_exists('ip', $customtes['vacation_rental'])) {// se nel customfield c'è l'IP lo prendo
+            $this->ip = $customtes['vacation_rental']['ip'];
+          } else {
+            $this->ip = "";
+          }
+        }
     }
     function newPage() {
+
         $this->AddPage();
         $this->SetFillColor(hexdec(substr($this->colore,0,2)),hexdec(substr($this->colore,2,2)),hexdec(substr($this->colore,4,2)));
         $this->SetFont('helvetica','',9);
-
     }
 
     function pageHeader()
@@ -61,8 +68,8 @@ class Lease extends Template
       $lines = $this->docVars->getRigo();
 
       // create some HTML content
-      $html = "<h1>".$script_transl['contratto_n'].$this->tesdoc['numdoc']."</h1><p>".$script_transl['parti']."<br>".$script_transl['locatore'].": ".$this->intesta1.$this->intesta2.$this->intesta3."<br>"
-      .$script_transl['e'].$script_transl['conduttore'].": ".$this->cliente1." ".$this->cliente2." ".$this->cliente3." ".$this->cliente4." "."<br>".$script_transl['body1']."</p>
+      $html = "<p><b>".$script_transl['parti']."</b><br>-<b>".$script_transl['locatore']."</b> ".$this->intesta1.$this->intesta2.$this->intesta3."<br>-"
+      .$script_transl['e']."<b>".$script_transl['conduttore']."</b>"." ".$this->cliente1." ".$this->cliente2." ".$this->cliente3." ".$this->cliente4." "."<br>".$script_transl['body1']."</p>
       <p>1- <b>".$script_transl['oggetto']."</b><br>".$script_transl['body2']."</p>";
       $html .= "<ul>";
       foreach ($lines as $rigo){
@@ -89,6 +96,7 @@ class Lease extends Template
               $child=$rigo['child'];
               $start=$rigo['start'];
               $end=$rigo['end'];
+              $secdep = $custom['vacation_rental']['security_deposit'];
           }
           if (array_key_exists('extra', $custom['vacation_rental'])) { // è un extra
               $html .= "<li>".intval($rigo['quanti'])."Extra ".$rigo['desart']." ".$rigo['annota'];
@@ -110,6 +118,10 @@ class Lease extends Template
       $totivafat = $this->docVars->totivafat;
       $impbol = $this->docVars->impbol;
       $taxstamp=$this->docVars->taxstamp;
+      $totamount = $totimpfat + $totivafat + $impbol + $taxstamp;
+      $locale = 'it_IT';// creo l'importo in lettere
+      $fmt = numfmt_create($locale, NumberFormatter::SPELLOUT);
+      $in_words = numfmt_format($fmt, $totamount);
 
       $html .= "</ul>";
 
@@ -123,11 +135,13 @@ class Lease extends Template
       $html .= "<dt>3- <b>".$script_transl['canone']."</b></dt>" ;
       $html .= "<dd>- ".$script_transl['body5'].(intval($adult)+intval($child)).$script_transl['body6'].$adult.$script_transl['body7'].$child.$script_transl['body8']."</dd>";
 
-      $html .= "<dd>- ".$script_transl['canone1']." € ".number_format(($totimpfat + $totivafat + $impbol+$taxstamp),2,",",".").$script_transl['canone2']."</dd>".
-               "<dd>- ".$script_transl['canone3']." dep cauz . ".$script_transl['canone4']."</dd>";
+      $html .= "<dd>- ".$script_transl['canone1']." € ".number_format(($totamount),2,",",".")." (".$in_words.") ".$script_transl['canone2']."</dd>";
+      if ($secdep>1){// se è previsto un deposito cauzionale lo scrivo
+        $html .= "<dd>- ".$script_transl['canone3']." € ".number_format(($secdep),2,",",".")." ".$script_transl['canone4']."</dd>";
+      }
 
       $html .= "<dt>4- <b>".$script_transl['divieti']."</b></dt>";
-      $html .= "<dd>- ".$script_transl['divieto1']."</dd>"."<dd>- ".$script_transl['divieto2']."</dd>"."<dd>- ".$script_transl['divieto3']."</dd>"."<dd>- ".$script_transl['divieto5']."</dd>"."<dd>- ".$script_transl['divieto7']."</dd>"."<dd>- ".$script_transl['divieto4']."</dd>"."<dd>- ".$script_transl['divieto6']."</dd>";
+      $html .= "<dd>- ".$script_transl['divieto1']."</dd>"."<dd>- ".$script_transl['divieto2']."</dd>"."<dd>- ".$script_transl['divieto3']."</dd>"."<dd>- ".$script_transl['divieto5']."</dd>"."<dd>- ".$script_transl['divieto7']."</dd>"."<dd>- ".$script_transl['divieto4']."</dd>";
 
       $html .= "<dt>5- <b>".$script_transl['recesso']."</b></dt>" ;
       $html .= "<dd>- ".$script_transl['recesso1']."</dd>"."<dd>- ".$script_transl['recesso2']."</dd>"."<dd>- ".$script_transl['recesso3']."</dd>"."<dd>- ".$script_transl['recesso4']."</dd>"."<dd>- ".$script_transl['recesso5']."</dd>"."<dd>- ".$script_transl['recesso6']."</dd>"."<dd>- ".$script_transl['recesso7']."</dd>"."<dd>- ".$script_transl['recesso8']."</dd>";
@@ -136,10 +150,17 @@ class Lease extends Template
       $html .= "<dd>- ".$script_transl['rinvio1']."</dd>";
 
       $html .= "<dt>7- <b>".$script_transl['accettazione']."</b></dt>" ;
-      $html .= "<dd>- ".$script_transl['accettazione1']."</dd>"."<dd>- ".$script_transl['accettazione2']."</dd>";
+      if (strlen($this->ip)>6){// se firmato on line lo preciso
+        $html .= "<dd>- ".$script_transl['accettazione1']."</dd>";
+      }
+      $html .= "<dd>- ".$script_transl['accettazione2']."</dd>";
 
       $html .= "<dl>";
-
+      if (strlen($this->ip)>6){// firme digitali
+        $html .= "<br><p><b>Firmato digitalmente on-line</b></p><span>Il locatore ".$this->intesta1."</span><span style=\" letter-spacing: 30px;\">&nbsp; &nbsp;</span><span> Il conduttore ".$this->cliente1." firmato on-line da IP:".$this->ip."</span>";
+      }else{// firme fisiche
+        $html .= "<br><p><b>Firmato </b></p><span>Il locatore ".$this->intesta1."</span><span style=\" letter-spacing: 30px;\">&nbsp; &nbsp;</span><span> Il conduttore ".$this->cliente1."</span>";
+      }
       // output the HTML content
       $this->writeHTML($html, true, false, true, false, '');
 
@@ -153,22 +174,14 @@ class Lease extends Template
 
     function pageFooter()
     {
-        $y = $this->GetY();
 
-      $this->SetY(224);
 
     }
 
     function Footer()
     {
         //Page footer
-        $this->SetY(-20);
-        $this->SetFont('helvetica', '', 8);
-        if ( $this->sedelegale!="" ) {
-            $this->MultiCell(184, 4, $this->intesta1 . ' ' . $this->intesta2 . ' ' . $this->intesta3 . ' ' . $this->intesta4 . ' ' . "SEDE LEGALE: ".$this->sedelegale, 0, 'C', 0);
-        } else {
-            $this->MultiCell(184, 4, $this->intesta1 . ' ' . $this->intesta2 . ' ' . $this->intesta3 . ' ' . $this->intesta4, 0, 'C', 0);
-        }
+
     }
 }
 

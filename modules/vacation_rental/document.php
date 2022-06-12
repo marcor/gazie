@@ -106,14 +106,14 @@ class DocContabVars {
         }else{
           echo "Error: " . $sql . "<br>" . mysqli_error($link);
         }
-		
+
         $banapp = $resban;
         $this->banapp =($banapp)?$banapp:array('descri'=>'');
        // $anagrafica = new Anagrafica();
-		
+
 		//commentato perché nel frontend mi da errore in quanto la classe Anagrafica sta in function.inc e getPartner usa l'sql di gazie
-		
-        //$this->banacc =($this->pagame)?$anagrafica->getPartner($this->pagame['id_bank']):'';		
+
+        //$this->banacc =($this->pagame)?$anagrafica->getPartner($this->pagame['id_bank']):'';
 		if ($this->pagame){
 			$sql = "SELECT * FROM ". $azTables."clfoco" . " LEFT JOIN " . $genTables."anagra" . " ON " . $azTables."clfoco" . ".id_anagra = " . $genTables."anagra" . ".id WHERE codice = '".$this->pagame['id_bank']."' LIMIT 1";
 			if ($result = mysqli_query($link, $sql)) {
@@ -143,7 +143,7 @@ class DocContabVars {
         if (strlen($admin_aziend['REA_ufficio'])>1 && strlen($admin_aziend['REA_numero'])>3 ) {
             $this->codici .= 'R.E.A. ' . $admin_aziend['REA_ufficio'].' '.$admin_aziend['REA_numero'];
         }
-		
+
         $this->intesta4 = $admin_aziend['e_mail'];
         $this->intesta5 = $admin_aziend['sexper'];
         $this->colore = $admin_aziend['colore'];
@@ -174,7 +174,7 @@ class DocContabVars {
         }else{
           echo "Error: " . $sql . "<br>" . mysqli_error($link);
         }
-		
+
 		if(!$this->client){
 			$this->client=['ragso1'=>'Anonimo','ragso2'=>'','pec_email'=>'','fe_cod_univoco'=>'','fe_cod_univoco'=>'','indspe'=>'','citspe'=>'','country'=>'IT','capspe'=>'','prospe'=>'','pariva'=>'','pariva'=>'','codfis'=>'','sedleg'=>'','fiscal_rapresentative_id'=>''];
 		}
@@ -246,7 +246,7 @@ class DocContabVars {
           echo "Error: " . $sql . "<br>" . mysqli_error($link);
         }
         $this->id_agente = $resag;
-		
+
         //$this->rs_agente = ($this->id_agente)?$anagrafica->getPartner($this->id_agente['id_fornitore']):'';
 		if ($this->id_agente){
 			$sql = "SELECT * FROM ". $azTables."clfoco" . " LEFT JOIN " . $genTables."anagra" . " ON " . $azTables."clfoco" . ".id_anagra = " . $genTables."anagra" . ".id WHERE codice = '".$this->id_agente['id_fornitore']."' LIMIT 1";
@@ -258,7 +258,7 @@ class DocContabVars {
 		}else{
 			$this->rs_agente='';
 		}
-		
+
         $this->name_agente = ($this->id_agente)?substr($this->rs_agente['ragso1'] . " " . $this->rs_agente['ragso2'], 0, 47):'';
 
         if (isset($tesdoc['destin']) and is_array($tesdoc['destin'])) {
@@ -294,7 +294,7 @@ class DocContabVars {
         }else{
           echo "Error: " . $sql . "<br>" . mysqli_error($link);
         }
-		
+
         $this->tesdoc = $tesdoc;
         $this->min = substr($tesdoc['initra'], 14, 2);
         $this->ora = substr($tesdoc['initra'], 11, 2);
@@ -381,9 +381,9 @@ class DocContabVars {
         $this->artico_doc = array(); // accumulatore referenze ai documenti degli articoli eventualemente da allegare
 		// ATTRIBUISCO UN EVENTUALE REGIME FISCALE DIVERSO DALLA CONFIGURAZIONE AZIENDA SE LA SEZIONE IVA E' LEGATO AD ESSO TRAMITE IL RIGO var='sezione_regime_fiscale' IN gaz_XXXcompany_config
 		$this->regime_fiscale=$this->azienda['fiscal_reg'];
-		
+
 		//if ($fr=getRegimeFiscale($this->tesdoc["seziva"])) $this->regime_fiscale=$fr;
-		$res=false;		
+		$res=false;
 		$sql = "SELECT * FROM ".$azTables."company_config"." WHERE var = 'sezione_regime_fiscale' LIMIT 1";
         if ($result = mysqli_query($link, $sql)) {
           $conf_rf = mysqli_fetch_assoc($result);
@@ -404,7 +404,7 @@ class DocContabVars {
 		if ($fr){
 			$this->regime_fiscale=$fr;
 		}
-		
+
     }
 
     function initializeTotals() {
@@ -459,7 +459,7 @@ class DocContabVars {
                   $rigo['importo'] = round($rigo['provvigione']*$rigo['prelis']/100,2);
                   $v_for_castle = $rigo['importo'] ;
               }
-				
+
               if (!isset($this->castel[$rigo['codvat']])) {
                   $this->castel[$rigo['codvat']] = 0;
               }
@@ -479,7 +479,7 @@ class DocContabVars {
 			}else{
 			  echo "Error: " . $sql . "<br>" . mysqli_error($link);
 			}
-			  
+
               $rigo['descri'] = $body_text['body_text'];
           } elseif ($rigo['tiprig'] == 3) {
               $this->riporto += $rigo['prelis'];
@@ -521,7 +521,7 @@ class DocContabVars {
 		$azTables=$GLOBALS['azTables'];
 		global $link;
 		$link=$GLOBALS['link'];
-        
+
         $this->totivafat = 0.00;
         $this->totimpfat = 0.00;
         $this->totimpmer = 0.00;
@@ -541,7 +541,7 @@ class DocContabVars {
         $this->totimpmer = $this->totimp_body;
         $this->totimp_body = 0;
         $somma_spese = $this->tottraspo + $this->speseincasso + $this->tesdoc['spevar'];
-		
+
 		if (isset($_SESSION["user_name"])){
 			$calc = new Compute();
 			$calc->add_value_to_VAT_castle($this->body_castle, $somma_spese, $this->tesdoc['expense_vat']);
@@ -575,7 +575,7 @@ class DocContabVars {
 			$this->totivafat=$this->totiva+(($somma_spese*$resali['aliquo'])/100);
 			$this->totimpfat=$this->totimpmer;
 		}
-		
+
         $this->ritenute = 0;
         $this->roundcastle = [];
         $this->castel = [];
@@ -654,25 +654,22 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
 
     $docVars->setData($gTables, $testata, $testata['id_tes'], $rows, false, $genTables, $azTables);
     $docVars->initializeTotals();
-	/*
-    if (!isset($_SESSION["user_name"])){
-      $docVars->user['user_lastname']="Germani";
-      $docVars->user['user_firstname']="Antonio";
-      $docVars->user['user_name']="amministratore";
-    }
-	*/
     $pdf->setVars($docVars, $templateName);
     $pdf->setTesDoc();
     $pdf->setCreator('GAzie - ' . $docVars->intesta1);
     $pdf->setAuthor($docVars->user['user_lastname'] . ' ' . $docVars->user['user_firstname']);
     $pdf->setTitle($templateName);
-    $pdf->setTopMargin(79);
+    if ($templates[$templateName]=="lease"){// il contratto non ha intestazione, quindi il margine superiore deve essere minore
+      $pdf->setTopMargin(25);
+    }else{
+      $pdf->setTopMargin(79);
+    }
     $pdf->setHeaderMargin(5);
     $pdf->Open();
     $pdf->pageHeader();
     $pdf->compose();
     $pdf->pageFooter();
-    $doc_name = preg_replace("/[^a-zA-Z0-9]+/", "_", $docVars->intesta1 . '_' . $pdf->tipdoc) . '.pdf';	
+    $doc_name = preg_replace("/[^a-zA-Z0-9]+/", "_", $docVars->intesta1 . '_' . $pdf->tipdoc) . '.pdf';
 	// aggiungo all'array con indice 'azienda' altri dati
 	$docVars->azienda['cliente1']=$docVars->cliente1;
 	$docVars->azienda['doc_name']=$pdf->tipdoc.'.pdf';

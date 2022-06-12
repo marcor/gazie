@@ -196,7 +196,7 @@ function confirMailC(link){
    tes_id = link.id.replace("docC", "");
    $.fx.speeds._default = 500;
    targetUrl = $("#docC"+tes_id).attr("urlC");
-   alert (targetUrl);
+   //alert (targetUrl);
    $("p#mail_adrs").html($("#docC"+tes_id).attr("mail"));
    $("p#mail_attc").html($("#docC"+tes_id).attr("namedoc"));
    $( "#dialog" ).dialog({
