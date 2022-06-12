@@ -49,10 +49,9 @@ if ($stato AND $stato['id_language'] == 1 or $stato['id_language'] == 0){// se Ã
 }elseif ($stato AND $stato['id_language'] == 3 ) {// se Ã¨ spagnolo
   $lang = 'spanish';
 }
-
 if ($tesbro['tipdoc']=='VOR' || $tesbro['tipdoc']=='VOG') {
 	$type=false;
-	$template='BookingSummary';
+	$template='Lease';
     if (isset($_GET['dest'])&& $_GET['dest']=='E' ){ // se l'utente vuole inviare una mail
 		$type='E';
     }

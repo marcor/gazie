@@ -642,9 +642,11 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
     //$config = new Config;
     $configTemplate = new configTemplate;
     if ($lang_template) {
-		$ts=$configTemplate->template;
-		$configTemplate->setTemplateLang($lang_template);
-		if (empty($ts)){$configTemplate->template=substr($configTemplate->template, 1);}
+      $ts=$configTemplate->template;
+      $configTemplate->setTemplateLang($lang_template);
+      if (empty($ts)){
+        $configTemplate->template=substr($configTemplate->template, 1);
+      }
     }
 	$lh=(($dest && $dest == 'H')?'_lh':''); // eventuale scelta di stampare su carta intestata, aggiungo il suffisso "lh";
 

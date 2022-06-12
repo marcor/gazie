@@ -601,7 +601,9 @@ $strScript = array(
     'recesso8' => 'Il mancato rispetto, da parte del conduttore, anche di un solo punto del presente contratto così come la mancata presentazione del conduttore, in mancanza di disdetta, alla data di arrivo e nella fascia oraria stabilita comporterà la risoluzione espressa ipso iure del presente contratto ai sensi dell\'art. 1456 del C.C. e l\'obbligo del pagamento del saldo della locazione.',
     'accettazione' => 'Accettazione',
     'accettazione1' => 'Il presente contratto è stato letto accettato e sottoscritto on-line con la spunta sull\'apposita casella. Sarà pertanto valido a tutti gli effetti di legge anche in mancanza della firma fisica.',
-    'accettazione2' => 'Per ogni controversia in ordine all\'esecuzione del presente contratto viene tra le parti convenuta ed accettata la competenza esclusiva del foro di Fermo.'
+    'accettazione2' => 'Per ogni controversia in ordine all\'esecuzione del presente contratto viene tra le parti convenuta ed accettata la competenza esclusiva del foro di Fermo.',
+    'sign-online' => 'Firmato digitalmente on-line',
+    'sign' => 'Firmato',
     )
 );
 ?>

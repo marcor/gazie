@@ -613,7 +613,7 @@ $strScript = array(
         )
     ),
 	"banner_search.php" =>
-    array('title' => 'Iframe total search',       
+    array('title' => 'Iframe total search',
         'err' => array(
 			'date_uguali'=> 'check-in and check-out dates are identical',
 			'start>end'=> 'Check-in date is after check-out date'
@@ -629,7 +629,7 @@ $strScript = array(
 		'imposta'=>"For availability and prices set check-in and check-out dates",
 		'risultato'=>"Availability for the dates requested",
 		'book'=>"Book",
-		'nessun_risultato'=>"There is no availability for your requested dates. Try to modify them or look at the calendar."       
+		'nessun_risultato'=>"There is no availability for your requested dates. Try to modify them or look at the calendar."
     ),
 	"booking_form.php" =>
     array('title' => 'Booking form',
@@ -716,7 +716,7 @@ $strScript = array(
 		'regards' => 'Best regards',
 		'of' => 'of'
     ),
-	
+
   "admin_extra.php" =>
     array('title' => 'Gestione degli extra',
 		'ins_this' => 'Inserimento nuovo extra',
@@ -743,9 +743,9 @@ $strScript = array(
         'payroll_tax_value' => array(0 => 'No', 1 => 'Si'),
 		'codcon' => 'Conto di ricavo su vendite',
         'id_cost' => 'Conto di costo su acquisti',
-		'annota' => 'Annotazione',        
-		'err' => array(		
-        'valcod' => 'Non hai inserito il codice dell\'extra',  
+		'annota' => 'Annotazione',
+		'err' => array(
+        'valcod' => 'Non hai inserito il codice dell\'extra',
 		'descri' => 'Non hai scritto la descrizione'
 		),
 		" Extra ",
@@ -761,6 +761,60 @@ $strScript = array(
             'Inserire almeno 1 carattere!',
             'Cambia fornitore'
       )
+    ),
+    "lease.php" =>
+    array('locatore' => 'The landlord',
+    'conduttore' => 'the tenant',
+    'parti' => 'The parts',
+    'e' => 'and ',
+    'contratto_n' => 'Tourist lease agreement n.',
+    'body1' => 'stipulate the following: ',
+    'oggetto' => 'Object',
+    'body2' => 'For residential tourist use only, the landlord leases to the tenant who accepts: ',
+    'body3' => 'As described on the website at the page ',
+    'body4' => 'Any other thing or service not contemplated in the aforementioned internet page or in this contract are to be considered not included in the rent and therefore not provided.',
+    'divieti' => 'Prohibitions and obligations',
+    'durata' => 'Duration and times',
+    'canone' => 'Fee and expenses',
+    'rinvio' => 'Referral',
+    'rinvio1' =>'Although not expressly provided for in this contract, the parties declare applicable the provisions of the civil code and the rules of the tourism code, as well as local customs.',
+    'apartment' => 'Apartament',
+		'house' => 'Indipendent house',
+		'bandb' => 'Bed & breakfast',
+    'body5' => 'The lease is granted for a maximum number of ',
+    'body6' => ' people, of which ',
+    'body7' => ' adults and ',
+    'body8' => ' children under 12 years old.',
+    'divieto1' => 'It is forbidden the overnight stay, even occasional, of a number of people higher than that agreed.',
+    'divieto2' => 'The tenant undertakes to agree with the landlord the expected arrival and departure times at least 12 hours in advance. The tenant undertakes to notify the landlord, during the trip, of any update of the expected arrival time.',
+    'divieto3' => 'With the collection of the keys, the tenant accepts and undertakes to become the keeper of the accommodation for the entire duration of the lease. Therefore, we undertake the obligation to keep it with due diligence and not to cause damage to the accommodation, furniture and appliances, not to make any changes to the arrangement of the furniture and objects and not to carry out any repairs except in advance. authorized by the landlord.',
+    'divieto7' => 'Any faults or breakages must be immediately reported to the landlord. If faults or breakages are derived from a correct and conscientious use of the property, they will be charged to the landlord, otherwise they will be charged to the tenant. The technical times for repair and / or restoration will be determined from time to time by a competent technician who will be appointed by the landlord. Pending repair, for the non-use of the faulty asset the tenant declares from now on to renounce any type of compensation.',
+    'divieto4' => 'It is strictly forbidden to house animals of any species and size.',
+    'divieto5' => 'The landlord will deliver the accommodation in a good state of cleanliness and maintenance. The same must be returned in the same state. To this end, the tenant accepts that cleaning during the stay, as well as the final cleaning upon departure, will be his responsibility.',
+
+    'durata1' => 'This contract is stipulated for a fixed period, for a maximum duration of nights ',
+    'durata2' => 'Arrival (check-in / delivery) is established and accepted by the tenant between 3 pm and 7 pm of the day ',
+    'durata3' => 'The departure (check-out / return) is established and accepted by the conductor between 8 and 10 of the day ',
+    'durata4' => ' and this lease will cease without any need for notice, which is understood to be given now by then, with the tenant\'s obligation to return the accommodation to the landlord.',
+    'durata5' => 'Arrivals or departures outside the established time slot are not allowed.',
+    'canone1' => 'The rent of this lease, agreed and accepted by both parties, is',
+    'canone2' => ' inclusive of expenses for the consumption of electricity, water and gas. The tenant accepts and undertakes to pay the balance of the lease together with the collection of the keys on the day of arrival.',
+    'canone3' => 'As a guarantee, at check-in the tenant agrees to have to pay in cash a non-interest-bearing security deposit of',
+    'canone4' => 'Once there is no damage and the final cleaning has taken place, this deposit will be returned upon check-out. Otherwise, the amount will be retained by the landlord by way of reimbursement without prejudice to the right to request greater damage even for any non-use of the accommodation.',
+    'recesso' => 'Withdrawal',
+    'recesso1' => 'The tenant can withdraw from this contract at least 60 days before the date of arrival; in this case the landlord will refund the confirmatory deposit withholding € 50.00.',
+    'recesso2' => 'The tenant can withdraw from this contract between 59 and 31 days before the arrival date; in this case the landlord will reimburse only half of the confirmatory deposit, keeping the remaining half.',
+    'recesso3' => 'The tenant can withdraw from this contract in the 30 days preceding the arrival date; in this case the landlord will keep all the confirmatory deposit.',
+    'recesso4' => 'The landlord can withdraw from this contract at least 30 days before the arrival date; in this case he will return the confirmation deposit to the landlord.',
+    'recesso5' => 'The landlord may withdraw from this contract within 29 days prior to the arrival date. In this case he will return the confirmatory deposit received as well as a further amount of the same amount as compensation and compensation.',
+    'recesso6' => 'Upon check-in, the tenant may terminate the lease early but will not be entitled to any refund for unused nights.',
+    'recesso7' => 'If due to extraordinary events (by way of example only: fire, earthquake, flooding, etc.) the tenant is forced to terminate the lease early, the landlord will refund the amount of the unused nights. No other damage can be claimed from the landlord.',
+    'recesso8' => 'Failure by the tenant to comply with even a single point of this contract as well as the non-presentation of the tenant, in the absence of cancellation, on the date of arrival and within the established time slot will result in the express resolution ipso iure of this contract pursuant to of art. 1456 of the Italian Civil Code and the obligation to pay the balance of the lease.',
+    'accettazione' => 'Acceptance',
+    'accettazione1' => 'This contract has been read, accepted and signed online by ticking the appropriate box. It will therefore be valid for all legal purposes even in the absence of a physical signature.',
+    'accettazione2' => 'For any dispute regarding the execution of this contract, the exclusive jurisdiction of the court of Fermo (Italy) is agreed and accepted between the parties.',
+    'sign-online' => 'Digitally signed online',
+    'sign' => 'Signed',
     )
 );
 ?>
