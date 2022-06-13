@@ -418,7 +418,7 @@ $strScript = array(
 		'submit'=>'Vai avanti al riepilogo',
 		'return'=>'Indietro',
 		'tur_tax' => 'Tassa turistica',
-		'submitpay'=>'Sottoscrivi la prenotazione e paga',
+		'submitpay'=>'Sottoscrivi la locazione e paga',
 		'price_for' => 'Prezzo per ',
 		'discount_to' => 'Sconto da applicare ',
 		'select_guest' => 'Seleziona gli ospiti ',
@@ -479,7 +479,11 @@ $strScript = array(
 		'email_confirm_subject' => 'Richiesta di prenotazione n.',
 		'email_confirm_addbody' => '<p>Entro 24 ore, effettuare il pagamento della caparra confirmatoria così come segue:</p>',
 		'regards' => 'Cordiali saluti',
-		'of' => 'del'
+		'of' => 'del',
+    'discount_code' => 'Se hai un codice sconto, inseriscilo qui',
+    'coupon_apply' => 'Buono sconto da applicare',
+    'discount_apply' => 'Sconto da applicare',
+    'coupon_error' => 'Codice sconto non applicato perché non valido'
     ),
 
   "admin_extra.php" =>

@@ -653,7 +653,7 @@ $strScript = array(
 		'submit'=>'Go to summary',
 		'return'=>'Back',
 		'tur_tax' => 'Turist tax',
-		'submitpay'=>'Sign the reservation and pay',
+		'submitpay'=>'Sign the lease and pay',
 		'price_for' => 'Price for ',
 		'discount_to' => 'Discount to be applied ',
 		'select_guest' => 'Select the guests ',
@@ -714,7 +714,11 @@ $strScript = array(
 		'email_confirm_subject' => 'Booking request n.',
 		'email_confirm_addbody' => '<p>Within 24 hours, make the payment of the deposit as follows:</p>',
 		'regards' => 'Best regards',
-		'of' => 'of'
+		'of' => 'of',
+    'discount_code' => 'If you have a disount code, write it here',
+    'coupon_apply' => 'Discount coupon to apply',
+    'discount_apply' =>'Discount to apply',
+    'coupon_error' => 'Discount code not applied because it is not valid'
     ),
 
   "admin_extra.php" =>
