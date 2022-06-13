@@ -1646,37 +1646,39 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['pesosp'] = 0;
             $form['rows'][$next_row]['tipiva'] = "";
         }else{
-			if (isset ($articolo) && $data = json_decode($articolo['custom_field'], TRUE)) { // se esiste un json nel custom field
-				if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['accommodation_type'])){
-					$form['rows'][$next_row]['accommodation_type'] = $data['vacation_rental']['accommodation_type'];
-					$form['rows'][$next_row]['adult'] = $data['vacation_rental']['adult'];
-					$form['rows'][$next_row]['child'] = $data['vacation_rental']['child'];
-					$form['rows'][$next_row]['total_guests'] = $data['vacation_rental']['total_guests'];
+          if (isset ($articolo) && $data = json_decode($articolo['custom_field'], TRUE)) { // se esiste un json nel custom field
+            if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['accommodation_type'])){
+              $form['rows'][$next_row]['accommodation_type'] = $data['vacation_rental']['accommodation_type'];
+              $form['rows'][$next_row]['adult'] = $data['vacation_rental']['adult'];
+              $form['rows'][$next_row]['child'] = $data['vacation_rental']['child'];
+              $form['rows'][$next_row]['total_guests'] = $data['vacation_rental']['total_guests'];
 
-				} elseif (is_array($data['vacation_rental']) && isset($data['vacation_rental']['extra'])){
-					$form['in_accommodation_type'] = 1;// è un extra
-					$form['in_adult'] = 0;
-					$form['in_child'] = 0;
-					$form['in_total_guests'] = 0;
-				} else {
-					$form['rows'][$next_row]['accommodation_type'] = 0;
-					$form['rows'][$next_row]['adult'] = 0;
-					$form['rows'][$next_row]['child'] = 0;
-					$form['rows'][$next_row]['total_guests'] = 0;
-				}
-			} else {
-				$form['rows'][$next_row]['accommodation_type'] = 0;
-				$form['rows'][$next_row]['adult'] = 0;
-				$form['rows'][$next_row]['child'] = 0;
-				$form['rows'][$next_row]['total_guests'] = 0;
-			}
-			$form['rows'][$next_row]['good_or_service'] = $articolo['good_or_service'];
-			$form['rows'][$next_row]['annota'] = $articolo['annota'];
-			$form['rows'][$next_row]['scorta'] = $articolo['scorta'];
-			$form['rows'][$next_row]['pesosp'] = $articolo['peso_specifico'];
-			$iva_row = gaz_dbi_get_row($gTables['aliiva'], 'codice', $rigo['codvat']);
-			$form['rows'][$next_row]['tipiva'] = $iva_row['tipiva'];
-		}
+            } elseif (is_array($data['vacation_rental']) && isset($data['vacation_rental']['extra'])){
+              $form['in_accommodation_type'] = 1;// è un extra
+              $form['in_adult'] = 0;
+              $form['in_child'] = 0;
+              $form['in_total_guests'] = 0;
+            } else {
+              $form['rows'][$next_row]['accommodation_type'] = 0;
+              $form['rows'][$next_row]['adult'] = 0;
+              $form['rows'][$next_row]['child'] = 0;
+              $form['rows'][$next_row]['total_guests'] = 0;
+            }
+          } else {
+            $form['rows'][$next_row]['accommodation_type'] = 0;
+            $form['rows'][$next_row]['adult'] = 0;
+            $form['rows'][$next_row]['child'] = 0;
+            $form['rows'][$next_row]['total_guests'] = 0;
+          }
+
+          $form['rows'][$next_row]['good_or_service'] = (isset($articolo['good_or_service']))?$articolo['good_or_service']:1;
+          $form['rows'][$next_row]['annota'] = (isset($articolo['annota']))?$articolo['annota']:0;
+          $form['rows'][$next_row]['scorta'] = (isset($articolo['scorta']))?$articolo['scorta']:'';
+          $form['rows'][$next_row]['pesosp'] = (isset($articolo['peso_specifico']))?$articolo['peso_specifico']:0;
+          $iva_row = gaz_dbi_get_row($gTables['aliiva'], 'codice', $rigo['codvat']);
+          $form['rows'][$next_row]['tipiva'] = (isset($iva_row['tipiva']))?$iva_row['tipiva']:'';
+        }
+
         $form['rows'][$next_row]['descri'] = $rigo['descri'];
         $form['rows'][$next_row]['tiprig'] = $rigo['tiprig'];
         $form['rows'][$next_row]['id_doc'] = $rigo['id_doc'];
