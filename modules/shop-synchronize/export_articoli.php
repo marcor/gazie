@@ -227,8 +227,7 @@ if (isset($_POST['conferma'])) { // se confermato
 					header("Location: " . "../../modules/shop-synchronize/export_articoli.php?success=5");
 					exit;
 				}
-			}
-			if (($_GET['img']=="updimg" || $_GET['todo']=="insert") AND strlen($_POST['imgblob'.$ord])>0){// se è da aggiornare e c'è un'immagine blob
+			}elseif (($_GET['img']=="updimg" || $_GET['todo']=="insert") AND strlen($_POST['imgblob'.$ord])>0){// se è da aggiornare e c'è un'immagine blob
 				file_put_contents("../../data/files/tmp/img.jpg", base64_decode($_POST['imgblob'.$ord])); // salvo immagine nella cartella temporanea
 				if (ftp_put($conn_id, $ftp_path_upload."images/".str_replace(' ', '_', $_POST['codice'.$ord]).".jpg", "../../data/files/tmp/img.jpg",  FTP_BINARY)){
 					// scrivo l'immagine web blob nella cartella images dell'e-commerce
