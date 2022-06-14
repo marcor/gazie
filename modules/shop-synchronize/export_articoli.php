@@ -165,7 +165,7 @@ if (isset($_POST['conferma'])) { // se confermato
 	$xml_output .= "\n<Products>\n";
 	for ($ord=0 ; $ord<=$_POST['num_products']; $ord++){// ciclo gli articoli e creo il file xml
 		if (isset($_POST['download'.$ord])){ // se selezionato
-			if ((isset ($_POST['barcode'.$ord]) AND intval($_POST['barcode'.$ord])==0) OR !isset ($_POST['barcode'.$ord])) {
+			if (intval($_POST['barcode'.$ord])==0 OR !isset ($_POST['barcode'.$ord])) {
 				$_POST['barcode'.$ord]="NULL";
 			}
 
@@ -287,20 +287,20 @@ if (isset($_POST['conferma'])) { // se confermato
 	$access=base64_encode($accpass);
 
 	// avvio il file di interfaccia presente nel sito web remoto
-	
+
 	$file = fopen ($urlinterf.'?access='.$access, "r");
 	if ( $file ){ // controllo se il file esiste o mi dà accesso
 		while (!feof($file)) { // scorro il file generato dall'interfaccia durante la sua eleborazione
-			$line = fgets($file);			
-			$ln=explode("-",$line);			
+			$line = fgets($file);
+			$ln=explode("-",$line);
 			if (isset($ln) && strlen($ln[3])>0){ // Se l'e-commerce ha restituito l'ID riferito ad un articolo
-				// vado a modificare il riferimenot id e-commerce nell'articolo di GAzie				
+				// vado a modificare il riferimenot id e-commerce nell'articolo di GAzie
 				gaz_dbi_put_row($gTables['artico'], "codice", rtrim($ln[3],"<br>\n"), "ref_ecommerce_id_product", $ln[1]); // tolgo <br>\n perché viene aggiunto dall'ecommerce
 				gaz_dbi_put_row($gTables['artico'], "codice", rtrim($ln[3],"<br>\n"), "web_public", "5");// lo imposto come disattivato
-			}			
+			}
 		}
-	
-	} else {// ho avuto problemi 
+
+	} else {// ho avuto problemi
 		$headers = get_headers ($urlinterf.'?access='.$access);// controllo l'header
 		if(intval(substr($headers[0], 9, 3))==400){
 			// chiudo la connessione FTP
@@ -311,10 +311,10 @@ if (isset($_POST['conferma'])) { // se confermato
 			// chiudo la connessione FTP
 			ftp_quit($conn_id);
 			header("Location: " . "../../modules/shop-synchronize/export_articoli.php?success=2");
-			exit;	
+			exit;
 		}
 
-	} 
+	}
 	// chiudo la connessione FTP
 	ftp_quit($conn_id);
 	header("Location: " . "../../modules/shop-synchronize/export_articoli.php?success=1");
@@ -407,15 +407,15 @@ if (!isset($_GET['success'])){
 					</div>
 				</div>
 				<?php
-			
-				if (isset($_GET['todo'])){					
+
+				if (isset($_GET['todo'])){
 				}else{
 					$_GET['todo']="";
-				}	
-		
+				}
+
 				if ($_GET['todo']!=="insert"){
 					$where="web_public >= '1' and good_or_service <> '1'";
-				}else{					
+				}else{
 					$where="good_or_service <> '1'";
 				}
 				// carico in $artico gli articoli che sono presenti in GAzie
@@ -464,6 +464,7 @@ if (!isset($_GET['success'])){
 									}
 								}
 								echo '<input type="hidden" name="web_public'. $n .'" value="'. $item['web_public'] . '">';
+                echo '<input type="hidden" name="barcode'. $n .'" value="'. $item['barcode'] . '">';
 								echo '<input type="hidden" name="quanti'. $n .'" value="'. $avqty .'">';
 								echo '<input type="hidden" name="aliiva'. $n .'" value="'. $item['aliiva'] .'">';
 								echo '<input type="hidden" name="catmer'. $n .'" value="'. $item['catmer'] .'">';
@@ -474,7 +475,7 @@ if (!isset($_GET['success'])){
 									echo '<input type="hidden" name="ToDo'. $n .'" value="insert">Insert';
 								} else {
 									echo '<input type="hidden" name="ToDo'. $n .'" value="update">Update';
-								}							
+								}
 								echo '<input type="hidden" name="ecomm_option_attribute'. $n .'" value="'. htmlspecialchars($item['ecomm_option_attribute']) .'">';
 								if ($_GET['img']=="updimg" || $_GET['todo']=="insert"){ // se devo aggiornare o inserire l'immagine ne trovo l'url di GAzie
 									unset ($imgres);
