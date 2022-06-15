@@ -43,7 +43,7 @@ $lang = false;
 $id_anagra = gaz_dbi_get_row($gTables['clfoco'], 'codice', $tesbro['clfoco']);
 $stato = gaz_dbi_get_row($gTables['anagra'], 'id', $id_anagra['id_anagra']);
 if ($stato AND $stato['id_language'] == 1 or $stato['id_language'] == 0){// se è italiano o non è impostato
-    $lang = 'false';
+    $lang = '';
 } elseif ($stato AND $stato['id_language'] == 2 ) {// se è inglese
   $lang = 'english';
 }elseif ($stato AND $stato['id_language'] == 3 ) {// se è spagnolo
