@@ -382,7 +382,7 @@ while ($r1 = gaz_dbi_fetch_array($result)) {
 			echo "</td>\n";
 			echo '<td class="text-center"><a class="btn btn-xs btn-default" style="cursor:pointer;" onclick="openframe(\'extra_availability.php?extra_code='.$r["codice"].'\',\'Calendario disponibilità extra: <b>'.$r["codice"].'</b>\')" data-toggle="modal" data-target="#iframe"> <i class="glyphicon glyphicon-calendar" title="Calendario della disponibilità degli extra"></i></a>';
 			echo "</td>\n";
-			echo '<td class="text-center"><a class="btn btn-xs btn-default" href="clone_artico.php?codice='.$r["codice"].'"> <i class="glyphicon glyphicon-export"></i></a>';
+			echo '<td class="text-center"><a class="btn btn-xs btn-default" disabled="disabled" title="ancora da sviluppare" href="clone_artico.php?codice='.$r["codice"].'"> <i class="glyphicon glyphicon-export"></i></a>';
 			echo "</td>\n";
 			echo '<td class="text-center"><a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="'. $r['codice'].'" artico="'. $r['descri'].'"> <i class="glyphicon glyphicon-remove"></i></a>';
 			echo "</td>\n";
