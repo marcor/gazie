@@ -67,8 +67,8 @@ class Lease extends Template
 
       $lines = $this->docVars->getRigo();
 
-      // create some HTML content
-      $html = "<p><b>".$script_transl['parti']."</b><br>-<b>".$script_transl['locatore']."</b> ".$this->intesta1.$this->intesta2.$this->intesta3."<br>-"
+      // create HTML content
+      $html = "<p><b>".$script_transl['parti']."</b><br>-<b>".$script_transl['locatore']."</b> ".$this->intesta1." ".$this->intesta2." ".$this->intesta3."<br>-"
       .$script_transl['e']."<b>".$script_transl['conduttore']."</b>"." ".$this->cliente1." ".$this->cliente2." ".$this->cliente3." ".$this->cliente4." "."<br>".$script_transl['body1']."</p>
       <p>1- <b>".$script_transl['oggetto']."</b><br>".$script_transl['body2']."</p>";
       $html .= "<ul>";

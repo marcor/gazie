@@ -38,7 +38,10 @@ $azTables = constant("table_prefix").$idDB;
 
 require("document.php");
 $tesbro = gaz_dbi_get_row($gTables['tesbro'],"id_tes", intval($_GET['id_tes']));
-
+$id_ag='';
+if (isset($_GET['id_ag']) && $_GET['id_ag']>0){// se è stato passato un proprietario/agente
+	$id_ag=intval($_GET['id_ag']);
+}
 $lang = false;
 $id_anagra = gaz_dbi_get_row($gTables['clfoco'], 'codice', $tesbro['clfoco']);
 $stato = gaz_dbi_get_row($gTables['anagra'], 'id', $id_anagra['id_anagra']);
@@ -61,7 +64,7 @@ if ($tesbro['tipdoc']=='VOR' || $tesbro['tipdoc']=='VOG') {
 	if ($tesbro['template']=='Ticket'){
 		$template='Ticket';
 	}
-    createDocument($tesbro,$template,$gTables,'rigbro',$type,$lang,$genTables,$azTables);
+    createDocument($tesbro,$template,$gTables,'rigbro',$type,$lang,$genTables,$azTables,'','',$id_ag);
 } elseif ($tesbro['tipdoc']=='VOW'){
 	$type=false;
     createDocument($tesbro, 'OrdineWeb',$gTables,'rigbro',$type,$lang);

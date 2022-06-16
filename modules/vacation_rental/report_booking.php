@@ -529,30 +529,39 @@ $ts->output_navbar();
         $ts->where." AND template = 'booking' ", $ts->orderby,
         $ts->getOffset(), $ts->getLimit(),$gTables['rental_events'].".id_tesbro");
         $ctrlprotoc = "";
+		$r['id_agent']=0;
         while ($r = gaz_dbi_fetch_array($result)) {
+			$artico_custom_field=gaz_dbi_get_row($gTables['artico'], 'codice', $r['house_code'])['custom_field'];
+			if ($datahouse = json_decode($artico_custom_field, TRUE)) { // se esiste un json nel custom field dell'alloggio
+				if (is_array($datahouse['vacation_rental']) && isset($datahouse['vacation_rental']['agent'])){
+					$agent = $datahouse['vacation_rental']['agent'];
+					if (intval($agent)>0){// se c'è un proprietario/agente
+						$clfoco_agent=gaz_dbi_get_row($gTables['agenti'], 'id_agente', $agent)['id_fornitore'];
+						$r['id_agent']=gaz_dbi_get_row($gTables['clfoco'], 'codice', $clfoco_agent)['id_anagra'];						
+					}
+				} 
+			} 			
+			$stato_btn = 'btn-default';
+			if ($data = json_decode($r['custom_field'], TRUE)) { // se esiste un json nel custom field della testata
+			if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['status'])){
+				$r['status'] = $data['vacation_rental']['status'];				
+			} else {
+			   $r['status'] = '';
+			}
+			} else {
+			$r['status'] = '';
+			}
+			if ($r['status']=='CONFIRMED'){
+			  $stato_btn = 'btn-success';
+			}elseif ($r['status']=='ISSUE'){
+			  $stato_btn = 'btn-warning';
+			}elseif ($r['status']=='PENDING' || $r['status']=='FROZEN'){
+			  $stato_btn = 'btn-info';
+			}elseif ($r['status']=='CANCELLED'){
+			  $stato_btn = 'btn-danger';
+			}
 
-          $stato_btn = 'btn-default';
-          if ($data = json_decode($r['custom_field'], TRUE)) { // se esiste un json nel custom field
-            if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['status'])){
-              $r['status'] = $data['vacation_rental']['status'];
-
-            } else {
-               $r['status'] = '';
-            }
-          } else {
-            $r['status'] = '';
-          }
-          if ($r['status']=='CONFIRMED'){
-              $stato_btn = 'btn-success';
-          }elseif ($r['status']=='ISSUE'){
-              $stato_btn = 'btn-warning';
-          }elseif ($r['status']=='PENDING' || $r['status']=='FROZEN'){
-              $stato_btn = 'btn-info';
-          }elseif ($r['status']=='CANCELLED'){
-              $stato_btn = 'btn-danger';
-          }
-
-          $remains_atleastone = false; // Almeno un rigo e' rimasto da evadere.
+			$remains_atleastone = false; // Almeno un rigo e' rimasto da evadere.
             $processed_atleastone = false; // Almeno un rigo e' gia' stato evaso.
             $rigbro_result = gaz_dbi_dyn_query('*', $gTables['rigbro'], "id_tes = " . $r['id_tes'] . " AND tiprig <=1 ", 'id_tes DESC');
             while ( $rigbro_r = gaz_dbi_fetch_array($rigbro_result) ) {
@@ -656,7 +665,7 @@ $ts->output_navbar();
               if($enable_lh_print_dialog>0 && withoutLetterHeadTemplate($r['tipdoc'])){
                 echo ' onclick="choice_template(\''.$modulo.'\');" title="Stampa contratto"';
               }else{
-                echo " style=\"cursor:pointer;\" onclick=\"printPdf('stampa_contratto.php?id_tes=". $r['id_tes']. "')\"";
+                echo " style=\"cursor:pointer;\" onclick=\"printPdf('stampa_contratto.php?id_tes=". $r['id_tes'] . "&id_ag=". $r['id_agent'] ."')\"";
               }
               echo "><i class=\"glyphicon glyphicon-book\" title=\"Stampa contratto PDF\"></i></a>";
               echo "</td>";
@@ -666,12 +675,12 @@ $ts->output_navbar();
               if (!empty($r['e_mail'])){ // ho una mail sulla destinazione
                   echo '<a class="btn btn-xs btn-default btn-email" onclick="confirMail(this);return false;" id="doc' . $r['id_tes'] . '" url="' . $modulo . '&dest=E" href="#" title="Invia prenotazione: ' . $r['e_mail'] . '"
                   mail="' . $r['e_mail'] . '" namedoc="' . $script_transl['type_value'][$r['tipdoc']] . ' n.' . $r['numdoc'] . ' del ' . gaz_format_date($r['datemi']) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
-                  echo ' <a class="btn btn-xs btn-default btn-emailC" onclick="confirMailC(this);return false;" id="docC' . $r['id_tes'] . '" urlC="stampa_contratto.php?id_tes='. $r['id_tes']. '&dest=E" href="#" title="invia contratto a: ' . $r['e_mail'] . '"
+                  echo ' <a class="btn btn-xs btn-default btn-emailC" onclick="confirMailC(this);return false;" id="docC' . $r['id_tes'] . '" urlC="stampa_contratto.php?id_tes='. $r['id_tes']. '&dest=E&id_ag='.$r['id_agent'].'" href="#" title="invia contratto a: ' . $r['e_mail'] . '"
                   mail="' . $r['e_mail'] . '" namedoc="' . $script_transl['type_value'][$r['tipdoc']] . ' n.' . $r['numdoc'] . ' del ' . gaz_format_date($r['datemi']) . '"><i class="glyphicon glyphicon-send"></i></a>';
               } elseif (!empty($r['base_mail'])) { // ho una mail sul cliente
                   echo ' <a class="btn btn-xs btn-default btn-email" onclick="confirMail(this);return false;" id="doc' . $r['id_tes'] . '" url="' . $modulo . '&dest=E" href="#" title="Invia prenotazione: ' . $r['base_mail'] . '"
                   mail="' . $r['base_mail'] . '" namedoc="' . $script_transl['type_value'][$r['tipdoc']] . ' n.' . $r['numdoc'] . ' del ' . gaz_format_date($r['datemi']) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
-                  echo ' <a class="btn btn-xs btn-default btn-emailC" onclick="confirMailC(this);return false;" id="docC' . $r['id_tes'] . '" urlC="stampa_contratto.php?id_tes='. $r['id_tes']. '&dest=E" href="#" title="invia contratto a: ' . $r['base_mail'] . '"
+                  echo ' <a class="btn btn-xs btn-default btn-emailC" onclick="confirMailC(this);return false;" id="docC' . $r['id_tes'] . '" urlC="stampa_contratto.php?id_tes='. $r['id_tes']. '&dest=E&id_ag='.$r['id_agent'].'" href="#" title="invia contratto a: ' . $r['base_mail'] . '"
                   mail="' . $r['base_mail'] . '" namedoc="Contratto n.' . $r['numdoc'] . ' del ' . gaz_format_date($r['datemi']) . '"><i class="glyphicon glyphicon-send"></i></a>';
               } else { // non ho mail
                   echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" href="admin_client.php?codice=' . substr($r['clfoco'], 3) . '&Update"><i class="glyphicon glyphicon-edit"></i></a>';

@@ -607,7 +607,7 @@ class DocContabVars {
 
 }
 
-function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $dest = false, $lang_template=false,$genTables='',$azTables='',$IDaz='',$link='') {
+function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $dest = false, $lang_template=false,$genTables='',$azTables='',$IDaz='',$link='',$id_ag=0) {
 
     $templates = array('Received' => 'received',
         'CartaIntestata' => 'carta_intestata',
@@ -651,11 +651,21 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
 	$lh=(($dest && $dest == 'H')?'_lh':''); // eventuale scelta di stampare su carta intestata, aggiungo il suffisso "lh";
 
 	require_once ("templates" . ($configTemplate->template ? '.' . $configTemplate->template : '') . '/' . $templates[$templateName] .$lh. '.php');
-    $pdf = new $templateName();
+	$pdf = new $templateName();
     $docVars = new DocContabVars();
 
-    $docVars->setData($gTables, $testata, $testata['id_tes'], $rows, false, $genTables, $azTables);
+    $docVars->setData($gTables, $testata, $testata['id_tes'], $rows, false, $genTables, $azTables);	
     $docVars->initializeTotals();
+	
+	 // se il template è lease e c'è un proprietario devo intestare il contratto al proprietario	
+	if ($templateName=='Lease' && intval($id_ag)>0){// modifico i dati intestazione con quelli del proprietario	
+		$ag_anagra=gaz_dbi_get_row($gTables['anagra'], 'id', intval($id_ag));
+		$docVars->intesta1=$ag_anagra['ragso1']." ".$ag_anagra['ragso2'];
+		$docVars->intesta2=$ag_anagra['indspe']." ".$ag_anagra['capspe']." ".$ag_anagra['citspe']." ".$ag_anagra['prospe'];
+		$docVars->intesta3= "tel.: ".$ag_anagra['telefo']." ";
+		$docVars->intesta4= "e-mail: ".$ag_anagra['e_mail'];
+	}
+	
     $pdf->setVars($docVars, $templateName);
     $pdf->setTesDoc();
     $pdf->setCreator('GAzie - ' . $docVars->intesta1);
