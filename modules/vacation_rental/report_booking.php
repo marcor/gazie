@@ -529,39 +529,40 @@ $ts->output_navbar();
         $ts->where." AND template = 'booking' ", $ts->orderby,
         $ts->getOffset(), $ts->getLimit(),$gTables['rental_events'].".id_tesbro");
         $ctrlprotoc = "";
-		$r['id_agent']=0;
-        while ($r = gaz_dbi_fetch_array($result)) {
-			$artico_custom_field=gaz_dbi_get_row($gTables['artico'], 'codice', $r['house_code'])['custom_field'];
-			if ($datahouse = json_decode($artico_custom_field, TRUE)) { // se esiste un json nel custom field dell'alloggio
-				if (is_array($datahouse['vacation_rental']) && isset($datahouse['vacation_rental']['agent'])){
-					$agent = $datahouse['vacation_rental']['agent'];
-					if (intval($agent)>0){// se c'è un proprietario/agente
-						$clfoco_agent=gaz_dbi_get_row($gTables['agenti'], 'id_agente', $agent)['id_fornitore'];
-						$r['id_agent']=gaz_dbi_get_row($gTables['clfoco'], 'codice', $clfoco_agent)['id_anagra'];						
-					}
-				} 
-			} 			
-			$stato_btn = 'btn-default';
-			if ($data = json_decode($r['custom_field'], TRUE)) { // se esiste un json nel custom field della testata
-			if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['status'])){
-				$r['status'] = $data['vacation_rental']['status'];				
-			} else {
-			   $r['status'] = '';
-			}
-			} else {
-			$r['status'] = '';
-			}
-			if ($r['status']=='CONFIRMED'){
-			  $stato_btn = 'btn-success';
-			}elseif ($r['status']=='ISSUE'){
-			  $stato_btn = 'btn-warning';
-			}elseif ($r['status']=='PENDING' || $r['status']=='FROZEN'){
-			  $stato_btn = 'btn-info';
-			}elseif ($r['status']=='CANCELLED'){
-			  $stato_btn = 'btn-danger';
-			}
 
-			$remains_atleastone = false; // Almeno un rigo e' rimasto da evadere.
+        while ($r = gaz_dbi_fetch_array($result)) {
+          $r['id_agent']=0;
+          $artico_custom_field=gaz_dbi_get_row($gTables['artico'], 'codice', $r['house_code'])['custom_field'];
+            if ($datahouse = json_decode($artico_custom_field, TRUE)) { // se esiste un json nel custom field dell'alloggio
+              if (is_array($datahouse['vacation_rental']) && isset($datahouse['vacation_rental']['agent'])){
+                $agent = $datahouse['vacation_rental']['agent'];
+                if (intval($agent)>0){// se c'è un proprietario/agente
+                  $clfoco_agent=gaz_dbi_get_row($gTables['agenti'], 'id_agente', $agent)['id_fornitore'];
+                  $r['id_agent']=gaz_dbi_get_row($gTables['clfoco'], 'codice', $clfoco_agent)['id_anagra'];
+                }
+              }
+            }
+            $stato_btn = 'btn-default';
+            if ($data = json_decode($r['custom_field'], TRUE)) { // se esiste un json nel custom field della testata
+            if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['status'])){
+              $r['status'] = $data['vacation_rental']['status'];
+            } else {
+               $r['status'] = '';
+            }
+            } else {
+            $r['status'] = '';
+            }
+            if ($r['status']=='CONFIRMED'){
+              $stato_btn = 'btn-success';
+            }elseif ($r['status']=='ISSUE'){
+              $stato_btn = 'btn-warning';
+            }elseif ($r['status']=='PENDING' || $r['status']=='FROZEN'){
+              $stato_btn = 'btn-info';
+            }elseif ($r['status']=='CANCELLED'){
+              $stato_btn = 'btn-danger';
+            }
+
+            $remains_atleastone = false; // Almeno un rigo e' rimasto da evadere.
             $processed_atleastone = false; // Almeno un rigo e' gia' stato evaso.
             $rigbro_result = gaz_dbi_dyn_query('*', $gTables['rigbro'], "id_tes = " . $r['id_tes'] . " AND tiprig <=1 ", 'id_tes DESC');
             while ( $rigbro_r = gaz_dbi_fetch_array($rigbro_result) ) {
@@ -687,7 +688,7 @@ $ts->output_navbar();
               }
               echo "</td>";
 
-              echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-duplica\" href=\"duplicate_booking.php?id_tes=" . $r['id_tes'] . "\"><i class=\"glyphicon glyphicon-duplicate\"></i></a>";
+              echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-duplica\" disabled = \"disabled\" title=\"al momento non attivo\" href=\"duplicate_booking.php?id_tes=" . $r['id_tes'] . "\"><i class=\"glyphicon glyphicon-duplicate\"></i></a>";
               echo "</td>";
 
               echo "<td align=\"center\">";
