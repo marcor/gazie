@@ -228,7 +228,7 @@ if ($toDo == 'update') {
       <td class="FacetFieldCaptionTD"><?php echo $script_transl['reusable']; ?>
       </td>
       <td class="FacetDataTD">
-        <?php $gForm->variousSelect('reusable', $script_transl['is_percent_value'], $form['reusable'], "col-sm-8", true, '', false, 'style="max-width: 100px;"');?>
+      <input type="text" name="reusable" value="<?php echo $form['reusable'];?>" maxlength="3"/>
       </td>
       </td>
     </tr>
