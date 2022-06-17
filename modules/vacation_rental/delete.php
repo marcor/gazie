@@ -94,7 +94,17 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 				}
 				gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigbro' AND id_ref ",$a_row['id_rig']);
 				// cancello anche l'evento
+        $rental_events = gaz_dbi_get_row($gTables['rental_events'], "id_tesbro", intval($_POST['id_tes']));
 				gaz_dbi_del_row($gTables['rental_events'], "id_tesbro", $_POST['id_tes']);
+        // aggiorno buono sconto se c'è
+        if (intval($rental_events['voucher_id'])>0){// se era stato usato un buono sconto
+          $rental_discounts  = gaz_dbi_get_row($gTables['rental_discounts'], "id", intval($rental_events['voucher_id']));
+          if ($rental_discounts['reusable']>0 AND $rental_discounts['STATUS']=="CLOSED"){// se lo sconto era stato chiuso
+            $sql = "UPDATE ".$gTables['rental_discounts']." SET STATUS = 'CREATED' WHERE id = ".intval($rental_events['voucher_id']);
+            $result = gaz_dbi_query($sql);// riapro lo sconto
+          }
+        }
+        // da fare
 			}
 		break;
 		case "ical":

@@ -81,7 +81,8 @@ function searchdiscount($house="",$facility="",$start="",$end="",$stay=0,$anagra
     $where .= $and." id_anagra = '".$anagra."' OR id_anagra = 0)";
     $and=" AND (";
   }
-   $sql = "SELECT * FROM ".$azTables."rental_discounts".$where." ORDER BY priority DESC, id ASC";
+  $where .= $and." status = 'CREATED')";
+  $sql = "SELECT * FROM ".$azTables."rental_discounts".$where." ORDER BY priority DESC, id ASC";
   //echo "<br>query: ",$sql,"<br>";
   if ($result = mysqli_query($link, $sql)) {
     return ($result);
@@ -138,12 +139,12 @@ function selectFromDBJoin($table, $name, $key, $val, $order = false, $empty = fa
 			echo $acc;
 		}
 }
-function get_string_lang($string, $lang){	
+function get_string_lang($string, $lang){
 	$string = " ".$string;
 	$ini = strpos($string,"<".$lang.">");
 	if ($ini == 0) return $string;
 	$ini += strlen("<".$lang.">");
-	$len = strpos($string,"</".$lang.">",$ini) - $ini;	
+	$len = strpos($string,"</".$lang.">",$ini) - $ini;
   if (intval($len)>0){// se è stato trovato il tag lingua restituisco filtrato
     return substr($string,$ini,$len);
   }else{// altrimenti restituisco come era
