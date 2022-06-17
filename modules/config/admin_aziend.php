@@ -240,7 +240,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['intermediary_code'] = $intermediary['cvalue'];
     if ($intermediary['cvalue'] > 0) {
         $intermediary_descr = gaz_dbi_get_row($gTables['aziend'], 'codice', $intermediary['cvalue']);
-        $form['intermediary_descr'] = $intermediary_descr['ragso1'] . ' ' . $intermediary_descr['ragso2'];
+        $form['intermediary_descr'] = $intermediary_descr ? $intermediary_descr['ragso1'] . ' ' . $intermediary_descr['ragso2']:'';
     } else {
         $form['intermediary_descr'] = '';
     }
@@ -646,8 +646,8 @@ if (count($msg['err']) > 0) { // ho un errore
                     <div class="form-group">
                         <label for="gazSynchro" class="col-sm-4 control-label"><?php echo $script_transl['gazSynchro']; ?></label>
                         <input class="col-sm-7" type="text" value="<?php echo $form['gazSynchro']; ?>" name="gazSynchro" maxlength="50" placeholder="es: shop-synchronize" />
-						
-						<span data-toggle="popover" title="Moduli di sincronizzazione" 
+
+						<span data-toggle="popover" title="Moduli di sincronizzazione"
 						data-content="Inserire il nome dei moduli di sincronizzazione installati.<br>
 						E' possibile inserire, e quindi sincronizzare, più di un nome/modulo ma ogni nome deve essere separato da una virgola, senza spazio ne prima e ne dopo (ad esempio: <i>shop-sync,pec,sdi</i>).<br>
 						Il primo nome/modulo deve necessariamente essere quello di un e-commerce in quanto necessita di sincronizzazioni più frequenti. A seguire vanno inseriti gli eventuali altri moduli.<br>
@@ -655,7 +655,7 @@ if (count($msg['err']) > 0) { // ho un errore
 						PS: La frequenza, ogni quanti minuti si avvia la sincronizzazione, va impostata in configurazione azienda/avanzata."
 						class="col-sm-1 glyphicon glyphicon-info-sign" data-placement="left" style="cursor: pointer;">
 						</span>
-						
+
 					</div>
                 </div>
             </div><!-- chiude row  -->
@@ -1363,10 +1363,10 @@ if (count($msg['err']) > 0) { // ho un errore
 </form>
 
 <script>
-	$(document).ready(function(){		
+	$(document).ready(function(){
 		$('[data-toggle="popover"]').popover({
 			html: true
-		});   
+		});
 	});
 </script>
 <style>

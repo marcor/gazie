@@ -382,7 +382,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $msg['err'][] = "cashlimit";
             }
         }
-        if (!empty($form['fiscal_code'])) {  // controllo codice fiscale          
+        if (!empty($form['fiscal_code'])) {  // controllo codice fiscale
             $rs_cf = $ctrl_cf->check_TAXcode($form['fiscal_code']);
             if (!empty($rs_cf)) {
                 $msg['err'][] = "codfis";
@@ -867,7 +867,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 		$form['fiscal_code'] = "";
 	} else {// è un codice fiscale
 		$form['fiscal_code'] = $tesdoc['spediz'];
-	}    
+	}
     $form['search']['clfoco'] =($cliente)?substr($cliente['ragso1'], 0, 6):'';
     $form['id_agente'] = $tesdoc['id_agente'];
     $provvigione = new Agenti;
@@ -1196,40 +1196,40 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
         <input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />
 		<input type=\"hidden\" value=\"" . $form['ok_barcode'] . "\" name=\"ok_barcode\" />";
     if ($next_row > 0) {
-        $tot = 0;
-        $tot_row = 0;
-        $form['net_weight'] = 0;
-        $form['units'] = 0;
-        $form['volume'] = 0;
-		$vp = gaz_dbi_get_row($gTables['company_config'], 'var', 'vat_price')['val'];
-        foreach ($form['rows'] as $k => $v) {
-            $imprig=0;
-			// se voglio inserire manualmente il prezzo IVA compresa (configurazione avanzata azienda) attivo il form modale
-			$ivacomp=($vp>0)?' onclick="vatPrice(\''.$k.'\',\''.$v['pervat'].'\');" ':'';
-            // addizione ai totali peso,pezzi,volume
-            $artico = gaz_dbi_get_row($gTables['artico'], 'codice', $v['codart']);
-            if ($artico) {
-                $form['net_weight'] += $v['quanti'] * $artico['peso_specifico'];
-                if ($artico['pack_units'] > 0) {
-                    $form['units'] += intval(round($v['quanti'] / $artico['pack_units']));
-                }
-                $form['volume'] += $v['quanti'] * $artico['volume_specifico'];
-            } else {
-                $artico=array('good_or_service'=>0);
-            }
-            // fine addizione peso,pezzi,volume
-            $btn_class = 'btn-success';
-            $btn_title = '';
-            $peso = 0;
-            if ($v['tiprig'] == 0) {
-                if ($artico['good_or_service']==1){
+      $tot = 0;
+      $tot_row = 0;
+      $form['net_weight'] = 0;
+      $form['units'] = 0;
+      $form['volume'] = 0;
+      $vp = gaz_dbi_get_row($gTables['company_config'], 'var', 'vat_price')['val'];
+      foreach ($form['rows'] as $k => $v) {
+        $imprig=0;
+        // se voglio inserire manualmente il prezzo IVA compresa (configurazione avanzata azienda) attivo il form modale
+        $ivacomp=($vp>0)?' onclick="vatPrice(\''.$k.'\',\''.$v['pervat'].'\');" ':'';
+        // addizione ai totali peso,pezzi,volume
+        $artico = gaz_dbi_get_row($gTables['artico'], 'codice', $v['codart']);
+        if ($artico) {
+          $form['net_weight'] += $v['quanti'] * $artico['peso_specifico'];
+          if ($artico['pack_units'] > 0) {
+              $form['units'] += intval(round($v['quanti'] / $artico['pack_units']));
+          }
+          $form['volume'] += $v['quanti'] * $artico['volume_specifico'];
+        } else {
+          $artico=array('good_or_service'=>0);
+        }
+        // fine addizione peso,pezzi,volume
+        $btn_class = 'btn-success';
+        $btn_title = '';
+        $peso = 0;
+        if ($v['tiprig'] == 0) {
+          if ($artico['good_or_service']==1){
 					$btn_class = 'btn-info';
 					$btn_title = ' Servizio';
 				} elseif ($v['quamag'] < 0.00001 && $admin_aziend['conmag']==2) { // se gestisco la contabilità di magazzino controllo presenza articolo
-                    $btn_class = 'btn-danger';
+          $btn_class = 'btn-danger';
 					$btn_title = ' ARTICOLO NON DISPONIBILE';
 				} elseif ($v['quamag'] <= $v['scorta'] && $admin_aziend['conmag']==2) { // se gestisco la contabilità di magazzino controllo il sottoscorta
-                    $btn_class = 'btn-warning';
+          $btn_class = 'btn-warning';
 					$btn_title = ' Articolo sottoscorta: disponibili '.gaz_format_quantity($v['quamag'], 1, $admin_aziend['decimal_quantity']).'/'.floatval($v['scorta']);
                 } else {
                     $btn_class = 'btn-success';
@@ -1652,18 +1652,18 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
         </div>
     </div>
 </div>
-<div class="modal" id="vat-price" title="IMPORTO IVA COMPRESA">
-	<input type="text" id="cat_prevat" style="text-align: right;" maxlength="11" onkeyup="vatPriceCalc();" />
+<div class="modal" id="vat-price" title="Calcolo prezzo IVA compresa">
+	Prezzo IVA compresa:<input type="text" id="cat_prevat" style="text-align: right;" maxlength="11" onkeyup="vatPriceCalc();" />
 	<br /><br />
 	<!--select id="codvat" name="cat_codvat" class="FacetSelect"></select-->
-	<input type="text" id="cat_pervat" style="text-align: center;" maxlength="5" disabled="disabled" />
+	IVA <input type="text" id="cat_pervat" style="text-align: center;" maxlength="5" disabled="disabled" /> %
 	<br /><br />
-	<input type="text" id="cat_prelis" style="text-align: right;" maxlength="11" disabled="disabled" />
+	Prezzo senza IVA:<input type="text" id="cat_prelis" style="text-align: right;" maxlength="11" onkeyup="priceCalc();"/>
 </div>
 <script type="text/javascript">
 	function vatPrice(row,pervat) {
 		var prelis = $("[name='rows["+row+"][prelis]']").val();
-		var prevat = Math.round(parseFloat(prelis)*(1+parseFloat(pervat)/100),4);
+		var prevat = parseFloat(prelis*(1+parseFloat(pervat)/100)).toFixed(2);
 		$("#cat_prevat").val(prevat);
 		$("#cat_pervat").val(pervat);
 		$("#cat_prelis").val(prelis);
@@ -1672,6 +1672,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
 			buttons: {
 				Ok: function() {
 					$("[name='rows["+row+"][prelis]']").val($("#cat_prelis").val());
+					$("[name='rows["+row+"][prevat]']").val($("#cat_prevat").val());
 					document.docven.last_focus.value="righi_" + row + "_sconto";
 					$("[name='rows["+row+"][prelis]']").parents("form:first").submit();
 					$(this).dialog("close");
@@ -1681,31 +1682,43 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
 	};
 	function vatPriceCalc() {
 		var prevat = $("#cat_prevat").val();
+		var prelis = $("#cat_prelis").val();
 		var pervat = $("#cat_pervat").val();
 		if (prevat!="" && pervat!="") {
-			var prelis = parseFloat(prevat)/(1+parseFloat(pervat)/100)
-			$("#cat_prelis").val(prelis.toFixed(2));
+			var prelis = parseFloat(prevat)/(1+parseFloat(pervat)/100);
+			$("#cat_prelis").val(prelis.toFixed(5));
 		} else {
 			$("#cat_prelis").val("0");
 		}
 	}
-    $(function () {
-        //twitter bootstrap script
-        $("#addmodal").click(function () {
-            $.ajax({
-                type: "POST",
-                url: "../../modules/magazz/admin_artico.php",
-                data: 'mode=modal',
-                success: function (msg) {
-                    $("#edit-modal .modal-sm").css('width', '100%');
-                    $("#edit-modal .modal-body").html(msg);
-                },
-                error: function () {
-                    alert("failure");
-                }
-            });
-        });
-    });
+	function priceCalc() {
+		var prelis = $("#cat_prelis").val();
+		var pervat = $("#cat_pervat").val();
+		var prevat = $("#cat_prevat").val();
+		if (prelis!="" && pervat!="") {
+			var prevat = parseFloat(prelis)*(1+parseFloat(pervat)/100);
+			$("#cat_prevat").val(prevat.toFixed(2));
+		} else {
+			$("#cat_prevat").val("0");
+		}
+	}
+  $(function () {
+      //twitter bootstrap script
+      $("#addmodal").click(function () {
+          $.ajax({
+              type: "POST",
+              url: "../../modules/magazz/admin_artico.php",
+              data: 'mode=modal',
+              success: function (msg) {
+                  $("#edit-modal .modal-sm").css('width', '100%');
+                  $("#edit-modal .modal-body").html(msg);
+              },
+              error: function () {
+                  alert("failure");
+              }
+          });
+      });
+  });
 	var last_focus_value;
 	var last_focus;
 	last_focus_value = document.docven.last_focus.value;
