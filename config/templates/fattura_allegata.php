@@ -36,7 +36,7 @@ class FatturaAllegata extends Template
       $this->mese = substr($this->tesdoc['datfat'],5,2);
       $this->anno = substr($this->tesdoc['datfat'],0,4);
       $this->docVars->gazTimeFormatter->setPattern('dd MMMM yyyy');
-      $this->data = $this->docVars->gazTimeFormatter->format(new DateTime($this->tesdoc['datemi']);
+      $this->data = $this->docVars->gazTimeFormatter->format(new DateTime($this->tesdoc['datemi']));
       $this->sconto = $this->tesdoc['sconto'];
       $this->tipdoc =$this->tesdoc['numfat']>0?'Fattura n.'.$this->tesdoc['numfat'].'/'.$this->tesdoc['seziva'].' Allegata allo scontrino n.'.$this->tesdoc['numdoc'].' del '.$this->data:'Scontrino n.'.$this->tesdoc['numdoc'].' del '.$this->data;
       $this->descriptive_last_row = $this->docVars->descriptive_last_row;
@@ -94,7 +94,7 @@ class FatturaAllegata extends Template
                 switch($rigo['tiprig']) {
                 case "0":
                     $this->Cell(23, 5, $rigo['codart'],1,0,'L');
-                    $this->Cell(75, 5, $rigo['descri'],1,0,'L');
+                    $this->Cell(75, 5, $rigo['descri'],1,0,'L', 0, '', 1);
                     $this->Cell(6, 5, $rigo['unimis'],1,0,'C');
                     $this->Cell(14, 5, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
                     $this->Cell(15, 5, number_format($rigo['prelis'],$this->decimal_price,',',''),1,0,'R');
