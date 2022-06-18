@@ -51,17 +51,21 @@ $admin_aziend=checkAdmin(9);
 			<p>Il suo utilizzo è possibile solo dietro autorizzazione dell'autore.</p>
 			<p>Copyright (C) - Antonio Germani Massignano (AP) https://www.programmisitiweb.lacasettabio.it - telefono +39 340 50 11 912</p>
 		</h5>
-    <h6><b>
-    -> Versione BETA <-
-    </b></h6>
+    <h5><b>
+    -------->    Versione 1.0    <---------
+    </b></h5>
     <div class="panel panel-info text-left" style="max-width:80%; margin-left:10%; padding:10px;">
 
         <p><b>Versione free: attivabile gratuitamente come modulo di GAzie</b></p>
+        <p>Utilizzabile solo in GAzie</p>
         <ul>
           <li>Gestione degli alloggi e delle strutture</li>
           <li>Gestione delle prenotazioni</li>
-          <li>Gestione degli extra, della tassa di soggiorno turistica e della caparra confirmatoria</li>
+          <li>Gestione degli extra (anche con quantità limitate) della tassa di soggiorno turistica, della caparra confirmatoria e del deposito cauzionale</li>
           <li>Calendario delle disponibilità</li>
+          <li>Creazione e invio via e-mail del PDF della prenotazione</li>
+          <li>Creazione e invio via e-mail del PDF del contratto di locazione</li>
+          <li>Gestione di alloggi con proprietario diverso dall'azienda di GAzie (contratto di locazione specifico)</li>
         </ul>
 
     </div>
@@ -69,19 +73,23 @@ $admin_aziend=checkAdmin(9);
     <div class="panel panel-info text-left" style="max-width:80%; margin-left:10%; padding:10px;">
       <p><b>Versione PRO, a pagamento</b></p>
       <ul>
+        <p>Utilizzabile in GAzie:</p>
         <li>Gestione degli alloggi e delle strutture</li>
         <li>Gestione delle prenotazioni</li>
-        <li>Gestione degli extra, della tassa di soggiorno turistica e della caparra confirmatoria</li>
+        <li>Gestione degli extra (anche con quantità limitate), della tassa di soggiorno turistica, della caparra confirmatoria e del deposito cauzionale</li>
         <li>Calendario delle disponibilità</li>
-        <li>Gestione e Calendario dei prezzi giornalieri di ogni singolo alloggio</li>
-        <li>Creazione di un contratto di locazione</li>
+        <li>Creazione e invio via e-mail del PDF della prenotazione</li>
+        <li>Creazione e invio via e-mail del PDF del contratto di locazione</li>
+        <li>Gestione del Calendario dei prezzi giornalieri per ogni singolo alloggio</li>
+        <li>Gestione di alloggi con proprietario diverso dall'azienda di GAzie (contratto di locazione specifico)<li>
+        <p><br>Utilizzabile in un qualsiasi sito web tramite apposito Iframe:</p>
         <li>Front-end per il cliente tramite iframe su qualsiasi sito internet</li>
-        <li>Uso nel Front-end degli sconti automatici per alloggio, struttura, numero di notti, periodo limitato e codice sconto</li>
-        <li>Modulo Front-end di ricerca disponibilità alloggio</li>
-        <li>Modulo Front-end per visualizzare il calendario delle disponibilità totali</li>
-        <li>Modulo Front-end di prenotazione e pagamento online (bonifici bancari e carte di credito off-line)</li>
-        <li>Possibilita di richiedere il pagamento della prenotazione a favore di soggetti diversi dall'amministratore di GAzie</li>
-        <li>Sincronizzazione dei calendari delle disponibilità con altri portali di prenotazioni (Airbnb, Booking, Tripadvisor, etc) tramite ICal in entrata (necessita di cron-job) e in uscita</li>
+        <li>L'Iframe, impostando giorno di check-in e check-out, fornirà disponibilità e prezzi e permetterà la prenotazione immediata online</li>
+        <li>Calcolo sconti automatico per alloggio, struttura, numero di notti, periodo limitato e codice sconto</li>
+        <li>Visualizzazione calendario delle disponibilità totali</li>
+        <li>Pagamento online (bonifico bancario e carta di credito off-line)</li>
+        <li>Possibilita di richiedere il pagamento della prenotazione a favore di soggetti diversi dall'azienda di GAzie (proprietario)</li>
+        <li>Sincronizzazione bidirezionale delle disponibilità con altri portali di prenotazioni (Airbnb, Booking, Tripadvisor, etc) tramite ICal in entrata (necessita di cron-job) e in uscita</li>
       </ul>
       <p>Per la versione PRO contattare lo sviluppatore: Antonio Germani Massignano (AP) https://www.programmisitiweb.lacasettabio.it - telefono +39 340 50 11 912</p>
     </div>
