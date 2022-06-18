@@ -234,11 +234,11 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 			/* Niente redirect se sono in finestra modale */
 			if ($modal === false) {
 
-				header("Location: ../../modules/vacation_rental/report_accommodation.php");
+				header("Location: ../../modules/vacation_rental/report_facility.php");
 				exit;
 
 			} else {
-				header("Location: ../../modules/vacation_renatl/admin_house.php?mode=modal&ok_insert=1");
+				header("Location: ../../modules/vacation_renatl/admin_facility.php?mode=modal&ok_insert=1");
 			  exit;
 			}
 		}
@@ -269,7 +269,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
   if ($modal === false) {
       $form['ritorno'] = $_SERVER['HTTP_REFERER'];
   } else {
-      $form['ritorno'] = 'admin_artico.php';
+      $form['ritorno'] = 'admin_facility.php';
   }
 
 } else { //se e' il primo accesso per INSERT
@@ -280,7 +280,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     if ($modal === false) {
         $form['ritorno'] = $_SERVER['HTTP_REFERER'];
     } else {
-        $form['ritorno'] = 'admin_artico.php';
+        $form['ritorno'] = 'admin_facility.php';
     }
     $form['web_public'] = 5;
     $form['depli_public'] = 1;

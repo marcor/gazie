@@ -43,7 +43,7 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 	$upd_mm = new magazzForm;
 	$admin_aziend = checkAdmin();
 	switch ($_POST['type']) {
-        case "artico":
+    case "artico":
 			$i=substr($_POST['ref'],0,32);
 			//Cancello le eventuali immagini web e i documenti
 			$rs=gaz_dbi_dyn_query ("*",$gTables['files'],"table_name_ref = 'artico' AND item_ref = '".$i."'");
@@ -57,6 +57,14 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 			$result = gaz_dbi_del_row($gTables['distinta_base'], "codice_composizione", $i );
 			//Cancello l'articolo
 			$result = gaz_dbi_del_row($gTables['artico'], "codice", $i);
+		break;
+    case "facility":
+			$i=intval($_POST['ref']);
+      $sql = "UPDATE ".$gTables['artico']." SET id_artico_group=0  WHERE id_artico_group=".$i;
+      // sgancio gli articoli dal gruppo
+      gaz_dbi_query($sql);
+			//Cancello gruppo
+			$result = gaz_dbi_del_row($gTables['artico_group'], "id_artico_group", $i);
 		break;
 		case "extra":
 			$i=substr($_POST['ref'],0,32);
