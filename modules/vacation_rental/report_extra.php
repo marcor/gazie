@@ -186,14 +186,15 @@ function openframe(url,codice){
     });
 	});
 	$('#closePdf').on( "click", function() {
+    $("#titolo").empty();
 		$('.framePdf').css({'display': 'none'});
 	});
 };
 
 
-function Copy() {
+function Copy(id) {
 	 /* Get the text field */
-  var copyText = document.getElementById("copy");
+  var copyText = document.getElementById("copy"+id);
 
   /* Select the text field */
   copyText.select();
@@ -346,7 +347,7 @@ while ($r1 = gaz_dbi_fetch_array($result)) {
 			echo '<td><span class="gazie-tooltip" data-type="product-thumb" data-id="'. $r['codice'] .'" data-title="'. $r['annota'].'" >'.get_string_lang($r['descri'], $lang).'</span>';
 			echo "</td>\n";
 			echo '<td class="text-center">';
-			switch($r['mod_prezzo']){// 0 => 'a prenotazione', 1 => 'a persona', 2 => 'a notte', 3 => 'a persona e a notte'
+			switch($r['mod_prezzo']){// 0 => 'a prenotazione', 1 => 'a persona', 2 => 'a notte', 3 => 'a persona e a notte, 4 => 'cadauno'
 				case "0":
 					echo "a prenotazione";
 				break;
@@ -358,6 +359,9 @@ while ($r1 = gaz_dbi_fetch_array($result)) {
 				break;
 				case "3":
 					echo "a persona e a notte";
+				break;
+        case "4":
+					echo "cadauno";
 				break;
 			}
 	if ($r['id_artico_group']>0){
@@ -371,8 +375,8 @@ while ($r1 = gaz_dbi_fetch_array($result)) {
 			echo "</td>\n";
 			?>
 			<td class="text-center">
-				<input type="text" value="<?php echo dirname(__FILE__),"/ical.php?extra_code=",$r['codice']; ?>" id="copy" readonly width="100">
-				<a class="btn btn-xs btn-default" style="cursor:pointer;" onclick="Copy()">
+				<input type="text" value="<?php echo dirname(__FILE__),"/ical.php?extra_code=",$r['codice']; ?>" id="copy<?php echo $r['codice'];?>" readonly width="100">
+				<a class="btn btn-xs btn-default" style="cursor:pointer;" onclick="Copy('<?php echo $r['codice'];?>')">
 					<i class="glyphicon glyphicon-copy" title="Copia url Ical">
 					</i>
 				</a>
