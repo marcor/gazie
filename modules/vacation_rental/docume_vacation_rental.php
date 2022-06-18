@@ -43,7 +43,7 @@ $admin_aziend=checkAdmin(9);
 		</h1>
 		<h2>Case Vacanze, Agriturismi, Bed & Breakfast, Alberghi</h2>
 		<div>
-			<img src="../vacation_rental/vacation_rental.PNG" alt="Vacation rental logo" style="max-width:20%;">
+			<img src="../vacation_rental/vacation_rental.png" alt="Vacation rental logo" style="max-width:20%;">
 		</div>
 		<h4> Gestione di prenotazione alloggi con sincronizzazione diretta e generazione di Ical</h4>
 		<h5>
