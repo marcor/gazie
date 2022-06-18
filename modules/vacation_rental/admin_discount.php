@@ -171,7 +171,7 @@ if ($toDo == 'update') {
       <td class="FacetFieldCaptionTD"><?php echo $script_transl['accommodation_code']; ?>
       </td>
       <td class="FacetDataTD">
-        <?php $gForm->selectFromDB('artico', 'accommodation_code', 'codice', $form['accommodation_code'], false, true, ' - ', 'descri', '', 'col-sm-8', null, 'style="max-width: 250px;"','custom_field REGEXP \'vacation_rental\'');?>
+        <?php $gForm->selectFromDB('artico', 'accommodation_code', 'codice', $form['accommodation_code'], false, true, ' - ', 'descri', '', 'col-sm-8', null, 'style="max-width: 250px;"','custom_field REGEXP \'accommodation_type\'');?>
       </td>
     </tr>
     <tr>
