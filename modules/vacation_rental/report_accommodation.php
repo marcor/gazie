@@ -272,9 +272,9 @@ function openframe(url,codice){
 };
 
 
-function Copy() {
+function Copy(id) {
 	 /* Get the text field */
-  var copyText = document.getElementById("copy");
+  var copyText = document.getElementById("copy"+id);
 
   /* Select the text field */
   copyText.select();
@@ -450,8 +450,8 @@ while ($r = gaz_dbi_fetch_array($result)) {
 			echo "</td>\n";
 			?>
 			<td class="text-center">
-				<input type="text" value="<?php echo $firstpart_ical_url,"/modules/vacation_rental/ical.php?house_code=",$r['codice']; ?>" id="copy" readonly width="100">
-				<a class="btn btn-xs btn-default" style="cursor:pointer;" onclick="Copy()">
+				<input type="text" value="<?php echo $firstpart_ical_url,"/modules/vacation_rental/ical.php?house_code=",$r['codice']; ?>" id="copy<?php echo $r['codice'];?>" readonly width="100">
+				<a class="btn btn-xs btn-default" style="cursor:pointer;" onclick="Copy('<?php echo $r['codice'];?>')">
 					<i class="glyphicon glyphicon-copy" title="Copia url Ical">
 					</i>
 				</a>
