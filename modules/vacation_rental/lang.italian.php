@@ -483,7 +483,12 @@ $strScript = array(
     'discount_code' => 'Se hai un codice sconto, inseriscilo qui',
     'coupon_apply' => 'Buono sconto da applicare',
     'discount_apply' => 'Sconto da applicare',
-    'coupon_error' => 'Codice sconto non applicato perché non valido'
+    'coupon_error' => 'Codice sconto non applicato perché non valido',
+	'paypal_payment' => 'Pagamento con PayPal',
+	'paypal_cancelled' => 'La transazione di PayPal e la richiesta di prenotazione sono state annullate',
+	'booking_cancell' => 'Cancellazione prenotazione',
+	'confirm_cancell' => 'Conferma di avvenuta cancellazione della prenotazione.',
+	'click_to_paypal' => 'Per procedere al pagamento su PayPal cliccare il pulsante'
     ),
 
   "admin_extra.php" =>

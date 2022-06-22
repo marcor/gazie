@@ -718,7 +718,12 @@ $strScript = array(
     'discount_code' => 'If you have a disount code, write it here',
     'coupon_apply' => 'Discount coupon to apply',
     'discount_apply' =>'Discount to apply',
-    'coupon_error' => 'Discount code not applied because it is not valid'
+    'coupon_error' => 'Discount code not applied because it is not valid',
+	'paypal_payment' => 'Payment with PayPal',
+	'paypal_cancelled' => 'The PayPal transaction and the booking request were canceled',
+	'booking_cancell' => 'Booking cancellation',
+	'confirm_cancell' => 'Confirmation of cancellation of the reservation.',
+	'click_to_paypal' => 'To proceed with the payment on PayPal click the button'
     ),
 
   "admin_extra.php" =>
