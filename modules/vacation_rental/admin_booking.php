@@ -476,8 +476,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                             gaz_dbi_del_row($gTables[$table], "id_rigbro", $val_old_row['id_rig']);
                             $form['title']= "Prenotazione ".$accomodation_type." ".$form['rows'][$i]['codart']." - ".$form['search']['clfoco'];
                             $form['house_code']=$form['rows'][$i]['codart'];
-                            $columns = array('id', 'title', 'start', 'end', 'house_code', 'id_tesbro', 'id_rigbro', 'adult', 'child');
+                            $form['type']="ALLOGGIO";
+                            $columns = array('id', 'title', 'start', 'end', 'house_code', 'id_tesbro', 'id_rigbro', 'adult', 'child', 'type');
                             tableInsert($table, $columns, $form);// scrivo l'evento
+                            $form['type']="";
                             $form['start']=$date1 = date("Y-m-d", strtotime($realstart.'- '.intval($vacation_blockdays).' days'));
                             $form['end']=$date1 = date("Y-m-d", strtotime($realstart.'- 1 days'));
                             tableInsert($table, $columns, $form);// scrivo il cuscinetto iniziale
@@ -560,7 +562,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                       }
                       $form['title']= "Prenotazione ".$accomodation_type." ".$form['rows'][$i]['codart']." - ".$form['search']['clfoco'];
                       $form['house_code']=$form['rows'][$i]['codart'];
-                      $columns = array('id', 'title', 'start', 'end', 'house_code', 'id_tesbro', 'id_rigbro', 'adult', 'child');
+                      $form['type']="ALLOGGIO";
+                      $columns = array('id', 'title', 'start', 'end', 'house_code', 'id_tesbro', 'id_rigbro', 'adult', 'child', 'type');
                       tableInsert($table, $columns, $form);
                     }
     // DA FARE gli extra illimitati non devono andare su rental events
@@ -568,10 +571,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     if ($form['rows'][$i]['accommodation_type']==1){
                       $table = 'rental_events';
                       $form['id_rigbro']=  $last_rigbro_id;
-
+                      $form['type']="EXTRA";
                       $form['title']= "Prenotazione EXTRA ".$form['rows'][$i]['codart'];
                       $form['house_code']=$form['rows'][$i]['codart'];
-                      $columns = array('id', 'title', 'start', 'end', 'house_code', 'id_tesbro', 'id_rigbro', 'adult', 'child');
+                      $columns = array('id', 'title', 'start', 'end', 'house_code', 'id_tesbro', 'id_rigbro', 'adult', 'child', 'type');
                       tableInsert($table, $columns, $form);
                     }
                     if (!empty($form['rows'][$i]['extdoc'])) {
@@ -663,9 +666,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                       $accomodation_type="Bed & breakfast";
                       break;
                   }
+                  $form['type']="ALLOGGIO";
                   $form['title']= "Prenotazione ".$accomodation_type." ".$form['rows'][$i]['codart']." - ".$form['search']['clfoco'];
                   $form['house_code']=$form['rows'][$i]['codart'];
-                  $columns = array('id', 'title', 'start', 'end', 'house_code', 'id_tesbro', 'id_rigbro', 'adult', 'child');
+                  $columns = array('id', 'title', 'start', 'end', 'house_code', 'id_tesbro', 'id_rigbro', 'adult', 'child', 'type');
                   tableInsert($table, $columns, $form);
                   if (intval($vacation_blockdays)>0){// se ci sono giorni cuscinetto li aggiungo a rental_events
 
@@ -686,10 +690,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 if ($form['rows'][$i]['accommodation_type']==1){
                   $table = 'rental_events';
                   $form['id_tesbro']=  $form['rows'][$i]['id_tes'];
-
+                  $form['type']="EXTRA";
                   $form['title']= "Prenotazione n.". $form['numdoc'] ." EXTRA ".$form['rows'][$i]['codart'];
                   $form['house_code']=$form['rows'][$i]['codart'];
-                  $columns = array('id', 'title', 'start', 'end', 'house_code', 'id_tesbro', 'id_rigbro', 'adult', 'child');
+                  $columns = array('id', 'title', 'start', 'end', 'house_code', 'id_tesbro', 'id_rigbro', 'adult', 'child', 'type');
                   tableInsert($table, $columns, $form);
                 }
 
@@ -770,7 +774,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             require("lang." . $admin_aziend['lang'] . ".php");
             $descripreventivo = "rif. " . $strScript['admin_booking.php'][0]['VPR'] . " n." . $form['numdoc'] . " del " . $form['gioemi'] . "." . $form['mesemi'] . "." . $form['annemi'];
 			// fine creazione descrizione preventivo di origine
-			$sql_documento = "YEAR(datemi) = " . date("Y") . " and tipdoc = 'VOR'";
+            $sql_documento = "YEAR(datemi) = " . date("Y") . " and tipdoc = 'VOR'";
             $rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesbro'], $sql_documento, "numdoc desc", 0, 1);
             $ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
             if ($ultimo_documento) {
