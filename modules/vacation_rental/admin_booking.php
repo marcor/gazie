@@ -29,7 +29,7 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
-//echo "<pre>",print_r($_POST);
+//echo "<pre>",print_r($_POST);die;
 require("../../library/include/datlib.inc.php");
 require("../../modules/magazz/lib.function.php");
 require("../../modules/vendit/lib.function.php");
@@ -91,6 +91,7 @@ if ((isset($_POST['Update'])) or ( isset($_GET['Update']))) {
 
 if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il primo accesso
     //qui si dovrebbe fare un parsing di quanto arriva dal browser...
+
     $form['id_tes'] = $_POST['id_tes'];
     $anagrafica = new Anagrafica();
     $cliente = $anagrafica->getPartner($_POST['clfoco']);
@@ -102,6 +103,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     foreach ($_POST['search'] as $k => $v) {
         $form['search'][$k] = $v;
     }
+    $form['tur_tax'] = $_POST['tur_tax'];
+    $form['tur_tax_mode'] = $_POST['tur_tax_mode'];
     $form['start'] = $_POST['start'];
     $form['end'] = $_POST['end'];
     $form['adult'] = $_POST['adult'];
@@ -962,44 +965,45 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$next_row]['tiprig'] = 6;
         $next_row++;
     } else if ((isset($_POST['in_submit']) && strlen($form['in_codart'])>0 && $form['start']!="" && $form['end']!="") || (isset($_POST['extra_submit']) && strlen($form['extra'])>0 && isset($_POST['rows']))) {// conferma inserimento alloggio o extra
-		if (strlen($form['extra'])>0){// se è un extra (ci deve per forza essere l'alloggio e quindi per forza anche le date)
-			// faccio tutto più sotto
-			$form['in_codart']=$form['extra'];
-		}
-		$artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['in_codart']);
-		if (isset($_POST['in_submit']) && strlen($form['in_codart'])>0 && $form['start']!="" && $form['end']!=""){// se è un alloggio e ci sono le date CALCOLO IL PREZZO
-			$total_price=0;// calcolo del prezzo totale della locazione
-			$start=$form['start'];
-			$night=0;
-			while (strtotime($start) < strtotime($form['end'])) {// ciclo il periodo della locazione giorno per giorno
-				// Controllo disponibilità
-				$what = "title";
-				$table = $gTables['rental_events'];
-				$where = "house_code = '".$form['in_codart']."' AND start < '". $start ."' AND end >= '". $start."'";
-				$result = gaz_dbi_dyn_query($what, $table, $where);
-				$available = gaz_dbi_fetch_array($result);
-				if (isset($available)){
-					 $msg .= "63+";// Overbooking
-					break;
-				}
-				//Calcolo del prezzo locazione
-				$what = "title";
-				$table = $gTables['rental_prices'];
-				$where = "start < '". $start ."' AND end >= '". $start."'";
-				$result = gaz_dbi_dyn_query($what, $table, $where);
-				$prezzo = gaz_dbi_fetch_array($result);
-				if (isset($prezzo)){
-					$total_price += floatval($prezzo['title']);// aggiungo il prezzo giornaliero torvato
-				} else{
-					$total_price += floatval($artico['web_price']);// in mancanza del prezzo giornaliero aggiungo il prezzo base
-				}
 
-				$start = date ("Y-m-d", strtotime("+1 days", strtotime($start)));// aumento di un giorno il ciclo
-				$night++;
-			}
-			$start="";
-			$form['in_prelis']=$total_price;
-		}
+      if (strlen($form['extra'])>0){// se è un extra (ci deve per forza essere l'alloggio e quindi per forza anche le date)
+        // faccio tutto più sotto
+        $form['in_codart']=$form['extra'];
+      }
+      $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['in_codart']);
+      if (isset($_POST['in_submit']) && strlen($form['in_codart'])>0 && $form['start']!="" && $form['end']!=""){// se è un alloggio e ci sono le date CALCOLO IL PREZZO
+        $total_price=0;// calcolo del prezzo totale della locazione
+        $start=$form['start'];
+        $night=0;
+        while (strtotime($start) < strtotime($form['end'])) {// ciclo il periodo della locazione giorno per giorno
+          // Controllo disponibilità
+          $what = "title";
+          $table = $gTables['rental_events'];
+          $where = "house_code = '".$form['in_codart']."' AND start < '". $start ."' AND end >= '". $start."'";
+          $result = gaz_dbi_dyn_query($what, $table, $where);
+          $available = gaz_dbi_fetch_array($result);
+          if (isset($available)){
+             $msg .= "63+";// Overbooking
+            break;
+          }
+          //Calcolo del prezzo locazione
+          $what = "title";
+          $table = $gTables['rental_prices'];
+          $where = "start < '". $start ."' AND end >= '". $start."'";
+          $result = gaz_dbi_dyn_query($what, $table, $where);
+          $prezzo = gaz_dbi_fetch_array($result);
+          if (isset($prezzo)){
+            $total_price += floatval($prezzo['title']);// aggiungo il prezzo giornaliero torvato
+          } else{
+            $total_price += floatval($artico['web_price']);// in mancanza del prezzo giornaliero aggiungo il prezzo base
+          }
+
+          $start = date ("Y-m-d", strtotime("+1 days", strtotime($start)));// aumento di un giorno il ciclo
+          $night++;
+        }
+        $start="";
+        $form['in_prelis']=$total_price;
+      }
 
     gaz_dbi_query ("UPDATE ".$gTables['artico']." SET `last_used`='".date("Y-m-d")."' WHERE codice='".$form['in_codart']."';");
     // addizione ai totali peso,pezzi,volume
@@ -1019,6 +1023,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 					$form['in_adult'] = $data['vacation_rental']['adult'];
 					$form['in_child'] = $data['vacation_rental']['child'];
 					$form['in_total_guests'] = $data['vacation_rental']['total_guests'];
+          $form['tur_tax'] = $data['vacation_rental']['tur_tax'];
+          $form['tur_tax_mode'] = $data['vacation_rental']['tur_tax_mode'];
 
 			} elseif (isset($data['vacation_rental']['extra'])){// se è un extra
         $extra = gaz_dbi_get_row($gTables['rental_extra'], "id", $data['vacation_rental']['extra']);
@@ -1068,7 +1074,32 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['in_child'] = 0;
         $form['in_total_guests'] = 0;
       }
-		} else {
+		} elseif ($form['in_codart']=="TASSA-TURISTICA") {//SE E' tassa turistica
+        // calcolo prezzo tassa turistica
+        switch ($form['tur_tax_mode']) {//0 => 'a persona', '1' => 'a persona escluso i minori', '2' => 'a notte', '3' => 'a notte escluso i minori'
+          case "0":
+            $tot_turtax=floatval($form['tur_tax'])*(intval($form['adult'])+intval($form['child']));
+            break;
+          case "1":
+            $tot_turtax=floatval($form['tur_tax'])*(intval($form['adult']));
+            break;
+          case "2":
+            $tot_turtax=(floatval($form['tur_tax'])*(intval($form['nights'])))*(intval($form['adult'])+intval($form['adult']));
+            break;
+          case "3":
+            $tot_turtax=(floatval($form['tur_tax'])*(intval($form['nights'])))*(intval($form['adult']));
+            break;
+          case "4":
+            $tot_turtax=$form['tur_tax'];
+            break;
+				}
+        $form['in_accommodation_type'] = 0;
+        $form['in_adult'] = 0;
+        $form['in_child'] = 0;
+        $form['in_total_guests'] = 0;
+        $form['in_prelis'] = $tot_turtax;
+
+    } else {
 			$form['in_accommodation_type'] = 0;
 			$form['in_adult'] = 0;
 			$form['in_child'] = 0;
@@ -1639,7 +1670,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $articolo = gaz_dbi_get_row($gTables['artico'], "codice", $rigo['codart']);
         if ($rigo['id_body_text'] > 0) { //se ho un rigo testo
             $text = gaz_dbi_get_row($gTables['body_text'], "id_body", $rigo['id_body_text']);
-            $form["row_$next_row"] = $text['body_text'];
+            $form["row_$next_row"] = (isset($text['body_text']))?$text['body_text']:'';
             $form['rows'][$next_row]['good_or_service'] = "";
             $form['rows'][$next_row]['accommodation_type'] = "";
             $form['rows'][$next_row]['adult'] = 0;
@@ -1656,6 +1687,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
               $form['rows'][$next_row]['adult'] = $data['vacation_rental']['adult'];
               $form['rows'][$next_row]['child'] = $data['vacation_rental']['child'];
               $form['rows'][$next_row]['total_guests'] = $data['vacation_rental']['total_guests'];
+              $form['tur_tax'] = $data['vacation_rental']['tur_tax'];
+              $form['tur_tax_mode'] = $data['vacation_rental']['tur_tax_mode'];
 
             } elseif (is_array($data['vacation_rental']) && isset($data['vacation_rental']['extra'])){
               $form['in_accommodation_type'] = 1;// è un extra
@@ -1730,6 +1763,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['child'] = 0;
     $form['extra'] = "";
     $form['qtaextra'] = 0;
+    $form['tur_tax'] =0;
+    $form['tur_tax_mode'] =0;
     $form['weekday_repeat'] = date("N") - 1;
     $form['gioemi'] = date("d");
     $form['mesemi'] = date("m");
@@ -1981,6 +2016,8 @@ echo '	<input type="hidden" name="' . ucfirst($toDo) . '" value="" />
 		<input type="hidden" value="' . $form['numdoc'] . '" name="numdoc" />
 		<input type="hidden" value="' . $form['numfat'] . '" name="numfat" />
 		<input type="hidden" value="' . $form['datfat'] . '" name="datfat" />
+    <input type="text" value="' . ((isset($form['tur_tax']))?$form['tur_tax']:"") . '" name="tur_tax" />
+    <input type="text" value="' . ((isset($form['tur_tax_mode']))?$form['tur_tax_mode']:"") . '" name="tur_tax_mode" />
 		<input type="hidden" value="' . (isset($_POST['last_focus']) ? $_POST['last_focus'] : "") . '" name="last_focus" />
 		<div align="center" class="FacetFormHeaderFont">' . $title . '  a :';
 $select_cliente = new selectPartner('clfoco');
@@ -2585,7 +2622,7 @@ echo '<div class="fissa" ><div class="FacetSeparatorTD" align="center">Inserimen
 						$select_artico = new selectartico("in_codart");
 						$select_artico->addSelected($form['in_codart']);
 
-						$select_artico->output($form['cosear'], " AND custom_field LIKE '%vacation_rental%'");
+						$select_artico->output($form['cosear'], " AND custom_field LIKE '%vacation_rental%' OR codice = 'TASSA-TURISTICA'");
 						?>
 					</td>
 				</tr>
