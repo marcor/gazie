@@ -630,7 +630,7 @@ class shopsynchronizegazSynchro {
 		global $gTables,$admin_aziend;
 		$rawres=[];
 		$id = gaz_dbi_get_row($gTables['artico'],"codice",$d);
-		if ($id['web_public'] > 0){
+		if (isset($id['web_public']) && $id['web_public'] > 0){
 			$ftp_host = gaz_dbi_get_row($gTables['company_config'], "var", "server")['val'];
 			$ftp_path_upload = gaz_dbi_get_row($gTables['company_config'], "var", "ftp_path")['val'];
 			$ftp_user = gaz_dbi_get_row($gTables['company_config'], "var", "user")['val'];
@@ -860,7 +860,7 @@ class shopsynchronizegazSynchro {
                 }
 							} else { // se non è italiano imposto il codice univoco con x e il codice fiscale con il codice cliente e-commerce
 								$lang="0";
-								$order->CustomerCodeFattEl = "XXXXXXX";
+								$order->CustomerCodeFattEl = "xxxxxxx";
 								if (strlen($order->CustomerFiscalCode)==0){
 									$order->CustomerFiscalCode =  $order->CustomerCode."privato";// riempio il campo codice fiscale con un numero di almeno 7 cifre
 								}
