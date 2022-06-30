@@ -36,7 +36,7 @@ if (trim($address_for_fae)==''){
 ?>
 <ul class="nav nav-pills">
   <li class="active"><a data-toggle="pill" href="#generale">Configurazione</a></li>
-  <li class=""><a data-toggle="pill" href="#email"><b>Custom <?php echo $address_for_fae; ?></b></a></li>
+  <li class=""><a data-toggle="pill" href="#email"><b>Custom</b></a></li>
   <li style="float: right;"><div class="btn btn-warning" id="upsave">Salva</div></li>
 </ul>
 <?php
@@ -51,12 +51,12 @@ if (trim($address_for_fae)==''){
             </div>
         <?php }
         if (gaz_dbi_num_rows($general) > 0) {
-          
+
           ?>
             <div class="row text-info bg-info">
 IMPOSTAZIONI GENERALI PER TUTTI GLI ALLOGGI E TUTTE LE STRUTTURE
             </div><!-- chiude row  -->
-            
+
           <?php
             while ($r = gaz_dbi_fetch_array($general)) {
                 ?>
@@ -79,7 +79,7 @@ IMPOSTAZIONI GENERALI PER TUTTI GLI ALLOGGI E TUTTE LE STRUTTURE
                 <?php
             }
         }
-        
+
         ?>
         <div class="row">
             <div class="form-group" >
@@ -95,7 +95,7 @@ IMPOSTAZIONI GENERALI PER TUTTI GLI ALLOGGI E TUTTE LE STRUTTURE
 			<div>Da utilizzare per impostazioni future.
         </div>
 		</br>
-    
+
     </div><!-- chiude email  -->
   </div><!-- chiude tab-content  -->
  </div><!-- chiude container-fluid  -->
