@@ -451,8 +451,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         $codice = array('id_rig', $val_old_row['id_rig']);
                         rigbroUpdate($codice, $form['rows'][$i]);
 
-                        // se è un alloggio modifico l'evento
+                        // se è un alloggio modifico l'evento rental_events
                         if ($form['rows'][$i]['accommodation_type']>2){
+                          $rental_row = gaz_dbi_get_row($gTables['rental_events'], 'id_rigbro', $val_old_row['id_rig']);// prima di cancellare o modificare, prendo i dati che c'erano
+                          $form['access_code'] = (isset($rental_row['access_code']))?$rental_row['access_code']:'NULL';
+						  $form['voucher_id'] = (isset($rental_row['voucher_id']))?$rental_row['voucher_id']:'NULL';
+						  $form['checked_in_date'] = (isset($rental_row['checked_in_date']))?$rental_row['checked_in_date']:'NULL';
+						  $form['checked_out_date'] = (isset($rental_row['checked_out_date']))?$rental_row['checked_out_date']:'NULL';
+						  $form['type'] = (isset($rental_row['type']))?$rental_row['type']:'';						  
                           $table = 'rental_events';
                           $form['id_tesbro']=  $form['id_tes'];
                           switch ($form['rows'][$i]['accommodation_type']) {//3 => 'Appartamento', 4 => 'Casa indipendente', 5=> 'Bed & breakfast'
@@ -465,30 +471,41 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                             case "5":
                               $accomodation_type="Bed & breakfast";
                               break;
-                          }
+                          }	
+				  
                           if (intval($vacation_blockdays)<1){// se non ci sono giorni cuscinetto aggiorno rigo e basta
                           $form['title']= "Prenotazione ".$accomodation_type." ".$form['rows'][$i]['codart']." - ".$form['search']['clfoco'];
                           $form['house_code']=$form['rows'][$i]['codart'];
+						  $form['id_rigbro'] = $val_old_row['id_rig'];
                           $columns = array('id', 'title', 'start', 'end', 'house_code', 'id_tesbro', 'id_rigbro', 'adult', 'child');
                           $codice[0] = "id_rigbro";
                           $codice[1] = $val_old_row['id_rig'];
                           tableUpdate($table, $columns, $codice, $form);
-                          }else{// se ci sono cancello e riscrivo
+                          }else{// se ci sono cuscinetti cancello e riscrivo
                             $realstart=$form['start'];
                             $realend=$form['end'];
-                            gaz_dbi_del_row($gTables[$table], "id_rigbro", $val_old_row['id_rig']);
+                            gaz_dbi_del_row($gTables[$table], "id_rigbro", $val_old_row['id_rig']);// cancello il rigo rental_events dell'alloggio
                             $form['title']= "Prenotazione ".$accomodation_type." ".$form['rows'][$i]['codart']." - ".$form['search']['clfoco'];
                             $form['house_code']=$form['rows'][$i]['codart'];
                             $form['type']="ALLOGGIO";
-                            $columns = array('id', 'title', 'start', 'end', 'house_code', 'id_tesbro', 'id_rigbro', 'adult', 'child', 'type');
-                            tableInsert($table, $columns, $form);// scrivo l'evento
+							$form['id_rigbro'] = $val_old_row['id_rig'];
+                            $columns = array('id', 'title', 'start', 'end', 'house_code', 'id_tesbro', 'id_rigbro', 'adult', 'child', 'type', 'access_code', 'voucher_id', 'checked_in_date', 'checked_out_date');
+                            tableInsert($table, $columns, $form);// riscrivo l'evento alloggio in rental_events
+							$query = "DELETE FROM ".$gTables[$table]." WHERE id_tesbro = ".intval($form['id_tesbro'])." AND id_rigbro = 0 AND (type IS NULL OR type = 'NULL')";// cancello i righi dei cuscinetti
+							gaz_dbi_query($query);
                             $form['type']="";
                             $form['start']=$date1 = date("Y-m-d", strtotime($realstart.'- '.intval($vacation_blockdays).' days'));
                             $form['end']=$date1 = date("Y-m-d", strtotime($realstart.'- 1 days'));
-                            tableInsert($table, $columns, $form);// scrivo il cuscinetto iniziale
-                            $form['start']=date("Y-m-d", strtotime($realend.'+ 1 days'));
+							$form['id_rigbro'] = 0;
+							$form['type'] = "NULL";
+							$form['access_code'] = "NULL";
+							$form['voucher_id'] = "NULL";
+							$form['checked_in_date'] = "NULL";
+							$form['checked_out_date'] = "NULL";								
+                            tableInsert($table, $columns, $form);// scrivo il cuscinetto iniziale start
+                            $form['start']=date("Y-m-d", strtotime($realend));
                             $form['end']=date("Y-m-d", strtotime($realend.'+ '.intval($vacation_blockdays).' days'));
-                            tableInsert($table, $columns, $form);// scrivo il cuscinetto finale
+                            tableInsert($table, $columns, $form);// scrivo il cuscinetto finale end
                             $form['start'] = $realstart;
                             $form['end'] = $realend;
                           }
@@ -1557,7 +1574,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $next_row--;
     }
 } elseif ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo accesso per UPDATE
-    $tesbro = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $_GET['id_tes']);
+    $tesbro = gaz_dbi_get_row($gTables['tesbro'], "id_tes", intval($_GET['id_tes']));
     $anagrafica = new Anagrafica();
     $cliente = $anagrafica->getPartner($tesbro['clfoco']);
     $form['indspe'] = $cliente['indspe'];
@@ -1582,8 +1599,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_ritenuta'] = 0;
     $form['in_unimis'] = "";
     $form['in_prelis'] = 0;
-	// carico nel form i dati dell'evento
-    $event = gaz_dbi_get_row($gTables['rental_events'], "id_tesbro", $form['id_tes']);
+	// carico nel form i dati dell'evento alloggio
+    $event = gaz_dbi_get_row($gTables['rental_events'], "id_tesbro", $form['id_tes'], " AND type = 'ALLOGGIO'");
     $form['adult'] = $event['adult'];
     $form['child'] = $event['child'];
     $form['start'] = $event['start'];
@@ -2016,8 +2033,8 @@ echo '	<input type="hidden" name="' . ucfirst($toDo) . '" value="" />
 		<input type="hidden" value="' . $form['numdoc'] . '" name="numdoc" />
 		<input type="hidden" value="' . $form['numfat'] . '" name="numfat" />
 		<input type="hidden" value="' . $form['datfat'] . '" name="datfat" />
-    <input type="text" value="' . ((isset($form['tur_tax']))?$form['tur_tax']:"") . '" name="tur_tax" />
-    <input type="text" value="' . ((isset($form['tur_tax_mode']))?$form['tur_tax_mode']:"") . '" name="tur_tax_mode" />
+    <input type="hidden" value="' . ((isset($form['tur_tax']))?$form['tur_tax']:"") . '" name="tur_tax" />
+    <input type="hidden" value="' . ((isset($form['tur_tax_mode']))?$form['tur_tax_mode']:"") . '" name="tur_tax_mode" />
 		<input type="hidden" value="' . (isset($_POST['last_focus']) ? $_POST['last_focus'] : "") . '" name="last_focus" />
 		<div align="center" class="FacetFormHeaderFont">' . $title . '  a :';
 $select_cliente = new selectPartner('clfoco');

@@ -404,7 +404,10 @@ $strScript = array(
 			'no_payment'=> 'Non è stato selezionato il tipo di pagamento',
 			'no_ccinfo'=> 'I dati della carta di credito sono errati o mancanti',
 			'email-error' => 'I due indirizzi e-mail non coincidono',
-			'email-validate' => 'L\'indirizzo email non è scritto correttamente'
+			'email-validate' => 'L\'indirizzo email non è scritto correttamente',
+      'inexistent_booking' => 'La prenotazione NON esiste',
+      'wrong_data' => 'I dati inseriti non sono corretti',
+      'too_many_error' => 'Accesso BLOCCATO per troppi errori. Riprovare più tardi'
         ),
         'war' => array(
             'ok' => 'ok riempitura array'
@@ -415,6 +418,7 @@ $strScript = array(
 		'rules_button'=>'Contratto di locazione',
 		'privacy_button'=>'Regolamento sulla privacy',
 		'title'=>'Modulo di richiesta di prenotazione',
+    'booking' => 'Prenotazione',
 		'submit'=>'Vai avanti al riepilogo',
 		'return'=>'Indietro',
 		'tur_tax' => 'Tassa turistica',
@@ -484,11 +488,12 @@ $strScript = array(
     'coupon_apply' => 'Buono sconto da applicare',
     'discount_apply' => 'Sconto da applicare',
     'coupon_error' => 'Codice sconto non applicato perché non valido',
-	'paypal_payment' => 'Pagamento con PayPal',
-	'paypal_cancelled' => 'La transazione di PayPal e la richiesta di prenotazione sono state annullate',
-	'booking_cancell' => 'Cancellazione prenotazione',
-	'confirm_cancell' => 'Conferma di avvenuta cancellazione della prenotazione.',
-	'click_to_paypal' => 'Per procedere al pagamento su PayPal cliccare il pulsante'
+    'paypal_payment' => 'Pagamento con PayPal',
+    'paypal_cancelled' => 'La transazione di PayPal e la richiesta di prenotazione sono state annullate',
+    'booking_cancell' => 'Cancellazione prenotazione',
+    'confirm_cancell' => 'Conferma di avvenuta cancellazione della prenotazione.',
+    'click_to_paypal' => 'Per procedere al pagamento su PayPal cliccare il pulsante',
+    'user_access' => 'Accesso utente'
     ),
 
   "admin_extra.php" =>
