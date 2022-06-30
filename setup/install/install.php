@@ -412,7 +412,7 @@ return $structArray;
 
 function executeScriptFileUpgrade($name_sql) // se ho un file php da eseguire dopo la query sql
 {
-  // Antonio Germani ->> TO DO: inserire qui una ricerca nelle directories dei moduli di un eventuale file upgrade_db.php che conterrà un array bidimensionale $upgrade_db[versione archivio][][istruzione da eseguire]
+  // Antonio Germani ->> TO DO: inserire qui una ricerca nelle directories dei moduli di un eventuale file upgrade_db.php che conterrà un array bidimensionale $upgrade_db[versione archivio][]="istruzione da eseguire";
   //                            se il file esiste verranno eseguite le istruzioni in esso contenute
 	$filename = pathinfo($name_sql, PATHINFO_FILENAME).'.php';
 	if (file_exists($filename)) {
