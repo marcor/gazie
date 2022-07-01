@@ -1227,6 +1227,17 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 			$results->appendChild($el0);
 		}
 	}
+
+  // DatiFattureCollegate per Reverse Charge
+	if ($XMLvars->reverse&&($XMLvars->TipoDocumento=='TD16'||$XMLvars->TipoDocumento=='TD17'||$XMLvars->TipoDocumento=='TD18'||$XMLvars->TipoDocumento=='TD19')) {
+		$el0 = $domDoc->createElement($dati_vari_nomi[5], "");
+		$el1 = $domDoc->createElement('IdDocumento', htmlspecialchars(str_replace(chr(0xE2).chr(0x82).chr(0xAC),"",trim($XMLvars->tesdoc['numfat'])), ENT_XML1 | ENT_QUOTES, 'UTF-8', true) );
+		$el0->appendChild($el1);
+		$el1 = $domDoc->createElement('Data', $XMLvars->tesdoc['datfat']);
+		$el0->appendChild($el1);
+		$results->appendChild($el0);
+  }
+
 	// DatiSAL
   if (count($XMLvars->DatiSAL)>0) {
 		$results = $xpath->query("//FatturaElettronicaBody/DatiGenerali")->item(0);
