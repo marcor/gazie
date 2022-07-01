@@ -1937,6 +1937,12 @@ echo "</script>\n";
 // FINE creazione form dialog-schedule
     ?>
 </form>
+<script>
+  $(function () {
+    $( "#onlyone_submit" ).trigger( "click" );
+  });
+</script>
+
 <?php
 require("../../library/include/footer.php");
 ?>
