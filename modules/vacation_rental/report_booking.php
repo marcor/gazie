@@ -405,6 +405,7 @@ $ts->output_navbar();
         numeri iniziali:<p class="ui-state-highlight" id="cc1"></p>
         cvv:<p class="ui-state-highlight" id="cc2"></p>
         intestatario:<p class="ui-state-highlight" id="cc3"></p>
+        importo:<p class="ui-state-highlight" id="cc4"></p>
         <p>L'altra parte dei dati è stata inviata via e-mail all'amministratore<P>
         <p><b>Cancellare questi dati e l'email immediatamente dopo aver acquisito il pagamento</b></p>
 
