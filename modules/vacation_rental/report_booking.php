@@ -399,15 +399,18 @@ $(function() {
 		$("p#id_status").html($(this).attr("refsta"));
 		$("p#de_status").html($(this).attr("prodes"));
 		var refsta = $(this).attr('refsta');
-        var new_stato_lavorazione = $(this).attr("prosta");
-        $("#sel_stato_lavorazione").val(new_stato_lavorazione);
-        $('#sel_stato_lavorazione').on('change', function () {
-            //ways to retrieve selected option and text outside handler
-            new_stato_lavorazione = this.value;
-            if (new_stato_lavorazione=="CONFIRMED"){
-              alert ("ATTENZIONE lo stato  Confermato cancellerà la parte dei dati della carta di credito memorizzata nel data base. Tali dati non potranno più essere recuperati!!!");
-            }
-        });
+    var new_stato_lavorazione = $(this).attr("prosta");
+    var adv='';
+    $("#sel_stato_lavorazione").val(new_stato_lavorazione);
+    $('#sel_stato_lavorazione').on('change', function () {
+        //ways to retrieve selected option and text outside handler
+
+        new_stato_lavorazione = this.value;
+        if (new_stato_lavorazione=="CONFIRMED" && adv==""){
+          alert ("ATTENZIONE lo stato  Confermato cancellerà, qualora presenti, la parte dei dati della carta di credito memorizzata nel data base. Tali dati non potranno più essere recuperati!!!");
+          adv="yes";
+        }
+    });
 		$( "#dialog_stato_lavorazione" ).dialog({
 			minHeight: 1,
 			width: "auto",
@@ -431,6 +434,7 @@ $(function() {
 					});
 				}},
 				"Non cambiare": function() {
+          $(this).dialog("destroy");
 					$(this).dialog("close");
 				}
 			}
