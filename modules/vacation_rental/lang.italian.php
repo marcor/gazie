@@ -496,7 +496,8 @@ $strScript = array(
     'user_access' => 'Accesso utente',
     'deposit' => 'Caparra confirmatoria locazione ',
     'balance' => 'Saldo rimanente',
-    'total_amount' => 'Importo totale'
+    'total_amount' => 'Importo totale',
+    'paypal_cancelled2' => 'Transazione con PayPal annullata'
     ),
 
   "admin_extra.php" =>

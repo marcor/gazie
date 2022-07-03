@@ -248,7 +248,7 @@ function choice_template(modulo) {
 }
 
 function pay(ref) {
-		$( "#dialog_payment" ).dialog({
+		$( "#credit_card" ).dialog({
 			minHeight: 1,
 			width: "auto",
 			modal: "true",
@@ -280,11 +280,83 @@ function pay(ref) {
           $("#cc1").html('');
           $("#cc2").html('');
           $("#cc3").html('');
+          $("#cc4").html('');
 					$(this).dialog("close");
 				}
 			}
 		});
+		$("#credit_card" ).dialog( "open" );
+}
+
+function payment(ref) {
+
+		$( "#dialog_payment" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{
+					text:'conferma',
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+            var type = $("#type").val();
+            var txn_id = $("#txn_id").val();
+            var payment_gross = $("#payment_gross").val();
+            $.ajax({
+              data: {'type':'payment',ref:ref,type:type,txn_id:txn_id,payment_gross:payment_gross},
+              type: 'POST',
+              url: '../vacation_rental/manual_payment.php',
+              dataType: 'text',
+              success: function(response){
+                var response = JSON.stringify(response);
+                alert(response);
+                arr = $.parseJSON(response); //convert to javascript array
+                // al rientro fai qualcosa
+                $("#type").html('');
+                $("#txn_id").html('');
+                $("#payment_gross").html('');
+                $("p#payment_des").html('');
+                $(this).dialog("close");
+              }
+            });
+				}},
+				"Chiudi": function() {
+          $("#type").html('');
+          $("#txn_id").html('');
+          $("#payment_gross").html('');
+          $("p#payment_des").html('');
+					$(this).dialog("close");
+				}
+			}
+		});
+
 		$("#dialog_payment" ).dialog( "open" );
+
+    setTimeout(function(){
+        // all'apertura del dialog prendo tutti i pagamenti già fatti e mostro il totale;
+        //
+        $.ajax({
+          data: {'type':'payment_list',ref:ref},
+          type: 'POST',
+          url: '../vacation_rental/manual_payment.php',
+          dataType: 'json',
+          success: function(response){
+            var response = JSON.stringify(response);
+            arr = $.parseJSON(response); //convert to javascript array
+            var tot = 0;
+            $.each(arr, function(n, val) {
+              $("p#payment_des").append(val.currency_code+" "+val.payment_gross+" - "+val.payment_status+" - "+val.created+" "+val.type+"<br>");
+              if (val.payment_status=="Completed"){
+                tot = tot+parseFloat(val.payment_gross);
+              }
+            });
+            $("p#payment_des").append("<br><b>TOTALE "+tot.toFixed(2)+"</b>");
+          }
+        });
+    },100);
+
 }
 
 $(function() {
@@ -384,6 +456,22 @@ function printPdf(urlPrintDoc){
 <?php
 $ts->output_navbar();
 ?>
+<form action="" id="payment" method="post">
+  <div style="display:none" id="dialog_payment" title="Pagamenti">
+  <p class="ui-state-highlight" id="payment_des"></p>
+    <p><b>Inserisci pagamento manuale:</b></p>
+    <p>
+    <label>tipo pagamento:</label>
+    <input style="float: right;" id="type" name="type" type="text">
+    </p><p>
+    <label>ID:</label>
+    <input style="float: right;" id="txn_id" name="txn_id" type="text">
+    </p><p>
+    <label>Importo: </label><?php echo $admin_aziend['curr_name']; ?>
+    <input style="float: right;" id="payment_gross" name="payment_gross" type="text">
+    </p>
+  </div>
+</form>
 <form method="GET" >
 	<div class="framePdf panel panel-success" style="display: none; position: fixed; left: 5%; top: 10px">
 		<div class="col-lg-12">
@@ -400,7 +488,7 @@ $ts->output_navbar();
         <p>Cliente:</p>
         <p class="ui-state-highlight" id="iddescri"></p>
 	</div>
-  <div style="display:none" id="dialog_payment" title="Pagamento con carta di credito off-line">
+  <div style="display:none" id="credit_card" title="Pagamento con carta di credito off-line">
         <p><b>Dati parziali della carta di credito:</b></p>
         numeri iniziali:<p class="ui-state-highlight" id="cc1"></p>
         cvv:<p class="ui-state-highlight" id="cc2"></p>
@@ -410,6 +498,7 @@ $ts->output_navbar();
         <p><b>Cancellare questi dati e l'email immediatamente dopo aver acquisito il pagamento</b></p>
 
 	</div>
+
   <div style="display:none" id="dialog_stato_lavorazione" title="Cambia lo stato">
         <p><b>prenotazione:</b></p>
         <p class="ui-state-highlight" id="id_status"></p>
@@ -628,8 +717,12 @@ $ts->output_navbar();
                       if ($r['pagame']==1 && $r['status']<>"CONFIRMED" ){
                         echo "&nbsp;&nbsp;<a class=\"btn btn-xs btn-default \"";
                         echo " style=\"cursor:pointer;\" onclick=\"pay('". $r['id'] ."')\"";
-                        echo "><i class=\"glyphicon glyphicon-piggy-bank\" title=\"Carta di credito\"></i></a>";
+                        echo "><i class=\"glyphicon glyphicon-credit-card\" title=\"Carta di credito\"></i></a>";
                       }
+                      echo "&nbsp;&nbsp;<a class=\"btn btn-xs btn-default \"";
+                      echo " style=\"cursor:pointer;\" onclick=\"payment('". $r['id_tes'] ."')\"";
+                      echo "><i class=\"glyphicon glyphicon-piggy-bank\" title=\"Pagamenti\"></i></a>";
+
                       ?>&nbsp;&nbsp;<a class="btn btn-xs <?php echo $stato_btn; ?> dialog_stato_lavorazione" refsta="<?php echo $r['id_tes']; ?>" prodes="<?php echo $r['ragso1']," ",$r['ragso2']; ?>" prosta="<?php echo $r['status']; ?>">
                           <i class="glyphicon glyphicon-compressed"></i><?php echo $r['status']; ?>
                         </a>

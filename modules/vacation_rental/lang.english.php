@@ -731,7 +731,8 @@ $strScript = array(
     'user_access' => 'User access',
     'deposit' => 'Lease confirmation deposit ',
     'balance' => 'Balance',
-    'total_amount' => 'Total amount'
+    'total_amount' => 'Total amount',
+    'paypal_cancelled2' => 'The PayPal transaction was canceled'
     ),
 
   "admin_extra.php" =>
