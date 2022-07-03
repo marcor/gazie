@@ -254,7 +254,7 @@ class invoiceXMLvars {
         // se ho avuto dei righi descrittivi che hanno preceduto  questo allora li inputo a questo rigo
         if (isset($righiDescrittivi[0])) {
             foreach ($righiDescrittivi[0] as $v) {
-              $righiDescrittivi[$nr][] = $v; // faccio il push su un array indicizzato con $nr (numero rigo)
+              $righiDescrittivi[$nr][] = $v.' '; // faccio il push su un array indicizzato con $nr (numero rigo)
             }
         }
         unset($righiDescrittivi[0]); // svuoto l'array per prepararlo ad eventuali nuovi righi descrittivi
@@ -292,7 +292,7 @@ class invoiceXMLvars {
         }
       } elseif ($rigo['tiprig'] == 2) { // descrittivo
         // faccio prima il parsing XML e poi il push su un array ancora da indicizzare (0)
-        $righiDescrittivi[0][] = htmlspecialchars($rigo['descri'], ENT_XML1 | ENT_QUOTES, 'UTF-8', true);
+        $righiDescrittivi[0][] = htmlspecialchars($rigo['descri'], ENT_XML1 | ENT_QUOTES, 'UTF-8', true).' ';
       } elseif ($rigo['tiprig'] == 4) { // cassa previdenziale
         if (!isset($this->castel[$rigo['codvat']])) {
           $this->castel[$rigo['codvat']] = 0;
@@ -327,7 +327,7 @@ class invoiceXMLvars {
         foreach ($res as $v) {
           $ctrl_v = trim($v);
           if (!empty($ctrl_v)) {
-            $righiDescrittivi[0][] = $v;
+            $righiDescrittivi[0][] = $v.' ';
           }
         }
       } elseif ($rigo['tiprig'] == 3) {  // var.totale fattura
@@ -379,7 +379,7 @@ class invoiceXMLvars {
     // se finiti i righi ho incontrato dei descrittivi che non sono stati imputati a dei righi normali perché successivi a questi allora li imputo all'ultimo normale incontrato
     if (isset($righiDescrittivi[0])) {
         foreach ($righiDescrittivi[0] as $v) {
-          $righiDescrittivi[$last_normal_row][] = $v; // faccio il push su un array indicizzato con $nr (numero rigo)
+          $righiDescrittivi[$last_normal_row][] = $v.' '; // faccio il push su un array indicizzato con $nr (numero rigo)
         }
     }
     unset($righiDescrittivi[0]);
