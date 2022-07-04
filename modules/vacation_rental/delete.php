@@ -125,6 +125,10 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
     // elimino lo sconto dalla tabella rental_discounts
     gaz_dbi_del_row($gTables['rental_discounts'], 'id', intval($_POST['ref']));
 		break;
+     case "delete_payment":
+      // elimino il pagamento
+      gaz_dbi_del_row($gTables['rental_payments'], 'payment_id', intval($_POST['ref']));
+		break;
 	}
 }
 ?>

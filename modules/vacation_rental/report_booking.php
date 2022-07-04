@@ -216,6 +216,18 @@ function confirMailC(link){
 }
 ';
 ?>
+function delete_payment(ref) {
+  if (confirm("Stai per eliminare un pagamento.")){
+    $.ajax({
+      data: {'type':'delete_payment',ref:ref},
+      type: 'POST',
+      url: '../vacation_rental/delete.php',
+      success: function(output){
+        window.location.replace("./report_booking.php?auxil=<?php echo $tipo;?>");
+      }
+    });
+  }
+}
 
 function choice_template(modulo) {
 	$( function() {
@@ -310,30 +322,25 @@ function payment(ref) {
               url: '../vacation_rental/manual_payment.php',
               dataType: 'text',
               success: function(response){
-                var response = JSON.stringify(response);
                 alert(response);
-                arr = $.parseJSON(response); //convert to javascript array
-                // al rientro fai qualcosa
-                $("#type").html('');
-                $("#txn_id").html('');
-                $("#payment_gross").html('');
-                $("p#payment_des").html('');
-                $(this).dialog("close");
+                $("#type").val('');
+                $("#txn_id").val('');
+                $("#payment_gross").val('');
+                $("#payment_des").html('');
+                $("#dialog_payment").dialog("close");
               }
             });
 				}},
 				"Chiudi": function() {
-          $("#type").html('');
-          $("#txn_id").html('');
-          $("#payment_gross").html('');
-          $("p#payment_des").html('');
-					$(this).dialog("close");
+          $("#type").val('');
+          $("#txn_id").val('');
+          $("#payment_gross").val('');
+          $("#payment_des").html('');
+					$("#dialog_payment").dialog("close");
 				}
 			}
 		});
-
 		$("#dialog_payment" ).dialog( "open" );
-
     setTimeout(function(){
         // all'apertura del dialog prendo tutti i pagamenti già fatti e mostro il totale;
         //
@@ -347,7 +354,7 @@ function payment(ref) {
             arr = $.parseJSON(response); //convert to javascript array
             var tot = 0;
             $.each(arr, function(n, val) {
-              $("p#payment_des").append(val.currency_code+" "+val.payment_gross+" - "+val.payment_status+" - "+val.created+" "+val.type+"<br>");
+              $("p#payment_des").append(val.currency_code+" "+val.payment_gross+" - "+val.payment_status+" - "+val.created+" "+val.type+" <input type='submit' class='btn btn-sm btn-default' name='delete form='report_form' onClick='delete_payment("+val.payment_id+");' value='ELIMINA'><br>");
               if (val.payment_status=="Completed"){
                 tot = tot+parseFloat(val.payment_gross);
               }
@@ -358,6 +365,7 @@ function payment(ref) {
     },100);
 
 }
+
 
 $(function() {
 	$("#dialog_delete").dialog({ autoOpen: false });
@@ -460,8 +468,9 @@ function printPdf(urlPrintDoc){
 <?php
 $ts->output_navbar();
 ?>
-<form action="" id="payment" method="post">
-  <div style="display:none" id="dialog_payment" title="Pagamenti">
+
+<form method="GET" id="report_form" >
+<div style="display:none" id="dialog_payment" title="Pagamenti">
   <p class="ui-state-highlight" id="payment_des"></p>
     <p><b>Inserisci pagamento manuale:</b></p>
     <p>
@@ -475,8 +484,6 @@ $ts->output_navbar();
     <input style="float: right;" id="payment_gross" name="payment_gross" type="text">
     </p>
   </div>
-</form>
-<form method="GET" >
 	<div class="framePdf panel panel-success" style="display: none; position: fixed; left: 5%; top: 10px">
 		<div class="col-lg-12">
 			<div class="col-xs-11"><h4><?php echo $script_transl['print'];; ?></h4></div>

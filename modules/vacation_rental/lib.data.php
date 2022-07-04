@@ -30,7 +30,7 @@
 	  --------------------------------------------------------------------------
 */
 //Aggiunta di tabelle aziendali specifiche del modulo Vacation Rental
-$tn = array('rental_events','rental_prices','rental_ical','rental_extra','rental_discounts');
+$tn = array('rental_events','rental_prices','rental_ical','rental_extra','rental_discounts','rental_payments');
 foreach ($tn as $v) {
     $gTables[$v] = $table_prefix . "_" . $id . $v;
 }
