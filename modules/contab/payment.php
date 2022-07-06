@@ -23,6 +23,7 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $msg = '';
+$anagrafica = new Anagrafica();
 
 function controllo($dataRegistrazione, $datdoc, $target_account) {
    $retval = true;
@@ -176,9 +177,10 @@ function setDate(name) {
 }
 </script>
 ";
+$partner = $anagrafica->getPartner($form['partner']);
 ?>
 
-<div class="FacetFormHeaderFont" align="center">Registrazione pagamento relativo a partita <?php echo $form['numpar']; ?></div>
+<div class="FacetFormHeaderFont" align="center">Registrazione pagamento relativo a partita <?php echo $form['numpar'].' di '.$partner['ragso1'].' '.$partner['ragso2']; ?></div>
 
 <form action="payment.php" method="POST">
     <input type="hidden" name="ritorno" value="<?php echo $form['ritorno']; ?>">
