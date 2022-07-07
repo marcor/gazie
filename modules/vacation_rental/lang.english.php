@@ -732,7 +732,13 @@ $strScript = array(
     'deposit' => 'Lease confirmation deposit ',
     'balance' => 'Balance',
     'total_amount' => 'Total amount',
-    'paypal_cancelled2' => 'The PayPal transaction was canceled'
+    'paypal_cancelled2' => 'The PayPal transaction was canceled',
+    'stripe_payment' => 'Credit Card payment',
+    'accommodation' => 'Accommodation',
+    'pay_now' => 'Pay now',
+    'payment_success' => 'Payment made correctly',
+    'payment_failed' => 'Payment NOT successful, check your credit card',
+    'payment_info' => 'Transaction data'
     ),
 
   "admin_extra.php" =>

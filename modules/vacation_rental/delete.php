@@ -112,7 +112,8 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
             $result = gaz_dbi_query($sql);// riapro lo sconto
           }
         }
-        // da fare
+        // cancello anche tutti i pagamenti relativi
+        gaz_dbi_del_row($gTables['rental_payments'], "id_tesbro", intval($_POST['id_tes']));
 			}
 		break;
 		case "ical":

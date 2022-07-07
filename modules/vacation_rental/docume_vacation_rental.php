@@ -82,12 +82,13 @@ $admin_aziend=checkAdmin(9);
         <li>Creazione e invio via e-mail del PDF del contratto di locazione</li>
         <li>Gestione del Calendario dei prezzi giornalieri per ogni singolo alloggio</li>
         <li>Gestione di alloggi con proprietario diverso dall'azienda di GAzie (contratto di locazione specifico)<li>
+
         <p><br>Utilizzabile in un qualsiasi sito web tramite apposito Iframe:</p>
         <li>Front-end per il cliente tramite iframe su qualsiasi sito internet</li>
         <li>L'Iframe, impostando giorno di check-in e check-out, fornirà disponibilità e prezzi e permetterà la prenotazione immediata online</li>
         <li>Calcolo sconti automatico per alloggio, struttura, numero di notti, periodo limitato e codice sconto</li>
         <li>Visualizzazione calendario delle disponibilità totali</li>
-        <li>Pagamento online (bonifico bancario e carta di credito off-line)</li>
+        <li>Pagamenti online con bonifico bancario, carta di credito off-line, PayPal e Stripe(richiede licenza d'uso)</li>
         <li>Possibilita di richiedere il pagamento della prenotazione a favore di soggetti diversi dall'azienda di GAzie (proprietario)</li>
         <li>Sincronizzazione bidirezionale delle disponibilità con altri portali di prenotazioni (Airbnb, Booking, Tripadvisor, etc) tramite ICal in entrata (necessita di cron-job) e in uscita</li>
         <li>Pagina front-end di accesso utente alla prenotazione con possibilità di effettuare pagamenti</li>

@@ -497,7 +497,13 @@ $strScript = array(
     'deposit' => 'Caparra confirmatoria locazione ',
     'balance' => 'Saldo rimanente',
     'total_amount' => 'Importo totale',
-    'paypal_cancelled2' => 'Transazione con PayPal annullata'
+    'paypal_cancelled2' => 'Transazione con PayPal annullata',
+    'stripe_payment' => 'Pagamento con carte di credito',
+    'accommodation' => 'Alloggio',
+    'pay_now' => 'Paga adesso',
+    'payment_success' => 'Pagamento effettuato correttamente',
+    'payment_failed' => 'Pagamento NON riuscito, controllare la carta di credito',
+    'payment_info' => 'Dati della transazione'
     ),
 
   "admin_extra.php" =>
