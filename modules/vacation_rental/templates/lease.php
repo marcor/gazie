@@ -74,7 +74,7 @@ class Lease extends Template
       $html .= "<ul>";
       foreach ($lines as $rigo){
         //echo "<br><pre>",print_r($rigo);
-        if (($custom = json_decode($rigo['custom_field'],true)) && (json_last_error() == JSON_ERROR_NONE)){
+        if (isset ($rigo['custom_field']) && ($custom = json_decode($rigo['custom_field'],true)) && (json_last_error() == JSON_ERROR_NONE)){
           if (array_key_exists('accommodation_type', $custom['vacation_rental'])) {// è un alloggio
               switch ($custom['vacation_rental']['accommodation_type']) {//3 => 'Appartamento', 4 => 'Casa indipendente', 5=> 'Bed & breakfast'
                 case "3":

@@ -10,7 +10,7 @@
  */
 
 function iCalDecoder($file) {
-    $ical = file_get_contents($file);
+    $ical = @file_get_contents($file);
     preg_match_all('/(BEGIN:VEVENT.*?END:VEVENT)/si', $ical, $result, PREG_PATTERN_ORDER);
     for ($i = 0; $i < count($result[0]); $i++) {
       $tmpbyline = explode("\r\n", $result[0][$i]);

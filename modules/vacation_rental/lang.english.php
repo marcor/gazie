@@ -475,7 +475,8 @@ $strScript = array(
         'weight' => 'peso',
         'zero_rows' => 'Il documento non contiene righi di alloggi, compila la ricerca alloggio nella sezione inserimento alloggio, inserisci il valore % per avere una lista completa o per effettuare una ricerca parziale',
         'discount_alert' => 'sconto da anagrafe articoli',
-        'last_row' => 'Ultimo rigo inserito'
+        'last_row' => 'Ultimo rigo inserito',
+        'Security deposit to be paid in cash at check-in: EURO'
     ),
     "admin_house.php" =>
       array('title' => 'Gestione degli alloggi',
@@ -738,7 +739,8 @@ $strScript = array(
     'pay_now' => 'Pay now',
     'payment_success' => 'Payment made correctly',
     'payment_failed' => 'Payment NOT successful, check your credit card',
-    'payment_info' => 'Transaction data'
+    'payment_info' => 'Transaction data',
+    'back_to_site' => 'Close and back to the website'
     ),
 
   "admin_extra.php" =>

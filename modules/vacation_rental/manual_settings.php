@@ -13,4 +13,7 @@ Copyright (C) - Antonio Germani Massignano (AP) https://www.lacasettabio.it - te
 */
 // ID azienda per stabilire a quale ID azienda del data base dovrà accedere il front-end del sito web
 $idDB="_001";
+
+// URL di ritorno da STRIPE
+$return_url="https://tony.netsons.org/"
 ?>

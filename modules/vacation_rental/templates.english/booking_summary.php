@@ -61,7 +61,7 @@ class BookingSummary extends Template
     }
     function body()
     {
-        $lines = $this->docVars->getRigo();
+        $lines = $this->docVars->getRigo('english');
 		foreach ($lines AS $key => $rigo) {
             if ($this->GetY() >= 185) {
                 $this->Cell(186,6,'','T',1);

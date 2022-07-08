@@ -210,13 +210,13 @@ $strScript = array(
         "Provvigioni",
         "Vuoi modificare un D.d.T. gi&agrave; fatturato!",
         "Questo documento &egrave; gi&agrave; stato contabilizzato!",
-		"E stata superata la capienza massima di persone ammesse per l'alloggio",
-		"Il numero di adulti è superiore a quello ammesso per l'alloggio",
-		"Il numero di minori è superiore a quello ammesso per l'alloggio",
-		"Prima di inserire un alloggio è necessario inserire le date di check-in e check-out",
-		"ATTENZIONE OVERBOOKING! Il periodo inserito risulta occupato",
-		"ATTENZIONE OVERBOOKING! Non c'è sufficiente disponibilità di questo extra",
-		"ATTENZIONE Il numero di notti sono inferiori al soggiorno minimo delle impostazioni generali",
+        "E stata superata la capienza massima di persone ammesse per l'alloggio",
+        "Il numero di adulti è superiore a quello ammesso per l'alloggio",
+        "Il numero di minori è superiore a quello ammesso per l'alloggio",
+        "Prima di inserire un alloggio è necessario inserire le date di check-in e check-out",
+        "ATTENZIONE OVERBOOKING! Il periodo inserito risulta occupato",
+        "ATTENZIONE OVERBOOKING! Non c'è sufficiente disponibilità di questo extra",
+        "ATTENZIONE Il numero di notti sono inferiori al soggiorno minimo delle impostazioni generali",
         'speban' => "Spese incasso",
         'speban_title' => 'Spese incasso non documentate/rate',
         'traspo_title' => 'Spese trasporto non documentate',
@@ -232,11 +232,12 @@ $strScript = array(
         'taxstamp' => 'Bollo',
         'virtual_taxstamp' => 'Modo',
         'virtual_taxstamp_value' => array(0 => 'No', 1 => 'Materiale', 2 => 'Virtuale'),
-		'typerow_booking' => array(0 => 'Alloggio', 2 => 'Rigo descrittivo'),
+        'typerow_booking' => array(0 => 'Alloggio', 2 => 'Rigo descrittivo'),
         'weight' => 'peso',
         'zero_rows' => 'Il documento non contiene righi di alloggi, compila la ricerca alloggio nella sezione inserimento alloggio, inserisci il valore % per avere una lista completa o per effettuare una ricerca parziale',
         'discount_alert' => 'sconto da anagrafe articoli',
-        'last_row' => 'Ultimo rigo inserito'
+        'last_row' => 'Ultimo rigo inserito',
+        'Deposito cauzionale da versare in contanti al check-in: EURO '
     ),
     "admin_house.php" =>
       array('title' => 'Gestione degli alloggi',
@@ -503,7 +504,10 @@ $strScript = array(
     'pay_now' => 'Paga adesso',
     'payment_success' => 'Pagamento effettuato correttamente',
     'payment_failed' => 'Pagamento NON riuscito, controllare la carta di credito',
-    'payment_info' => 'Dati della transazione'
+    'payment_info' => 'Dati della transazione',
+    'back_to_site' => 'Chiudi e torna al sito web',
+    'security_deposit_des2' => 'Oltre a quanto sopra, al check-in si dovrà versare un deposito cauzionale di',
+    'security_deposit_des' => 'Al check-in si dovrà versare un deposito cauzionale di'
     ),
 
   "admin_extra.php" =>

@@ -418,13 +418,18 @@ class DocContabVars {
 
 
 
-    function getRigo() {
-       // $from = $this->gTables[$this->tableName] . ' AS rs LEFT JOIN ' . $this->gTables['aliiva'] . ' AS vat ON rs.codvat=vat.codice';
-       // $rs_rig = gaz_dbi_dyn_query('rs.*,vat.tipiva AS tipiva', $from, "rs.id_tes = " . $this->testat, "id_tes DESC, id_rig");
-      global $azTables;
-      $azTables=$GLOBALS['azTables'];
-      global $link;
-      $link=$GLOBALS['link'];
+    function getRigo($lang='') {
+         // $from = $this->gTables[$this->tableName] . ' AS rs LEFT JOIN ' . $this->gTables['aliiva'] . ' AS vat ON rs.codvat=vat.codice';
+         // $rs_rig = gaz_dbi_dyn_query('rs.*,vat.tipiva AS tipiva', $from, "rs.id_tes = " . $this->testat, "id_tes DESC, id_rig");
+        global $azTables;
+        $azTables=$GLOBALS['azTables'];
+        global $link;
+        $link=$GLOBALS['link'];
+        if (!isset($lang) || $lang==''){
+          $lang="italian";
+        }
+        require("./lang." . $lang . ".php");
+        $script_transl = $strScript["admin_booking.php"];
 
         $sql = "SELECT ".$azTables."rigbro".".*, ".$azTables.'aliiva'.".tipiva, ".$azTables.'artico'.".custom_field, ".$azTables.'artico'.".descri AS desart, ".$azTables.'artico'.".annota, ".$azTables.'artico'.".web_url, ".$azTables."rental_events".".* FROM ".$azTables."rigbro"."
         LEFT JOIN " . $azTables.'aliiva' . " ON codvat=codice
@@ -442,10 +447,10 @@ class DocContabVars {
         $this->roundcastle = [];
         $this->riporto = 0.00;
         $this->ritenuta = 0.00;
-		$this->totiva = 0.00;
+        $this->totiva = 0.00;
         $results = array();
         while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
-			//echo "<br><pre>",print_r($rigo);
+          //echo "<br><pre>",print_r($rigo);
           $rigo['barcode']="";
           if ($rigo['tiprig'] <= 1 || $rigo['tiprig'] == 4 || $rigo['tiprig'] == 50 || $rigo['tiprig'] == 90) {
               $tipodoc = substr($this->tesdoc["tipdoc"], 0, 1);
@@ -470,25 +475,30 @@ class DocContabVars {
               $this->castel[$rigo['codvat']] += $v_for_castle;
               $this->totimp_body += $rigo['importo'];
               $this->ritenuta += round($rigo['importo'] * $rigo['ritenuta'] / 100, 2);
-			  $this->totiva += ($rigo['importo']*$rigo['pervat'])/100;
+              $this->totiva += ($rigo['importo']*$rigo['pervat'])/100;
+              if (isset ($rigo['custom_field']) && $data = json_decode($rigo['custom_field'], TRUE)) { // se esiste un json nel custom field
+                if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['accommodation_type'])){ // se è un alloggio
+                  $security_deposit = $data['vacation_rental']['security_deposit']; //prendo il deposito cauzionale
+                }
+              }
           } elseif ($rigo['tiprig'] == 6 || $rigo['tiprig'] == 7 || $rigo['tiprig'] == 8) {
             //  $body_text = gaz_dbi_get_row($this->gTables['body_text'], "id_body", $rigo['id_body_text']);
-			$sql = "SELECT * FROM ".$azTables."body_text"." WHERE id_body = ".$rigo['id_body_text']." LIMIT 1";
-			if ($result = mysqli_query($link, $sql)) {
-			  $body_text = mysqli_fetch_assoc($result);
-			}else{
-			  echo "Error: " . $sql . "<br>" . mysqli_error($link);
-			}
+            $sql = "SELECT * FROM ".$azTables."body_text"." WHERE id_body = ".$rigo['id_body_text']." LIMIT 1";
+            if ($result = mysqli_query($link, $sql)) {
+              $body_text = mysqli_fetch_assoc($result);
+            }else{
+              echo "Error: " . $sql . "<br>" . mysqli_error($link);
+            }
 
-              $rigo['descri'] = $body_text['body_text'];
+            $rigo['descri'] = $body_text['body_text'];
           } elseif ($rigo['tiprig'] == 3) {
               $this->riporto += $rigo['prelis'];
           } elseif ($rigo['tiprig'] == 91) {
               $this->roundcastle[$rigo['codvat']] = $rigo['prelis'];
           }
-          if ($this->tesdoc['tipdoc']=='AFA' && $rigo['tiprig'] <= 2 && strlen($rigo['descri'])>70  ){
-            // 	se la descrizione no la si riesce a contenere in un rigo (es.fattura elettronica d'acquisto)	aggiungo righi descrittivi
 
+          if ($this->tesdoc['tipdoc']=='AFA' && $rigo['tiprig'] <= 2 && strlen($rigo['descri'])>70  ){
+            // 	se la descrizione non la si riesce a contenere in un rigo (es.fattura elettronica d'acquisto)	aggiungo righi descrittivi
             $descrizione_nuova='';
             $nuovi_righi=array();
             $n_r=explode(' ',$rigo['descri']);
@@ -511,7 +521,14 @@ class DocContabVars {
           } else {
             $results[] = $rigo;
           }
-            //creo il castelletto IVA ma solo se del tipo normale o forfait
+        }
+        if (floatval($security_deposit)>0){// se è stato trovato un deposito cauzionale
+          $nuovi_righi=array();// aggiungo un rigo descrittivo per il deposito cauzionale
+          $nuovi_righi[]=array('tiprig'=>6,'codart'=>'','descri'=>$script_transl[66].$security_deposit,'quanti'=>0, 'unimis'=>'','prelis'=>0,'sconto'=>0,'prelis'=>0,'pervat'=>0,'codric'=>0,'provvigione'=>0,'ritenuta'=>0,'id_order'=>0,'id_mag'=>0,'id_orderman'=>0);
+          foreach($nuovi_righi as $v_nr) { // riattraverso l'array dei nuovi righi e sull'ultimo
+            $results[] = $v_nr;
+          }
+          $security_deposit=0;
         }
         return $results;
     }
@@ -609,6 +626,22 @@ class DocContabVars {
 
 function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $dest = false, $lang_template=false,$genTables='',$azTables='',$IDaz='',$link='',$id_ag=0) {
 
+    global $azTables;
+		$azTables=$GLOBALS['azTables'];
+		global $link;
+		$link=$GLOBALS['link'];
+    $sql = "SELECT val FROM ".$azTables."company_config"." WHERE var = 'vacation_url_user' LIMIT 1";
+    if ($result = mysqli_query($link, $sql)) {
+      $res = mysqli_fetch_assoc($result);
+      $vacation_url_user=$res['val'];
+      if (strlen($vacation_url_user)>3 && $templateName!=='Lease'){
+        $sql = "SELECT access_code FROM ".$azTables."rental_events"." WHERE id_tesbro = ".intval($testata['id_tes'])." AND type = 'ALLOGGIO' LIMIT 1";
+        $result = mysqli_query($link, $sql);
+        $res = mysqli_fetch_assoc($result);
+        $access=$res['access_code'];
+      }
+    }
+
     $templates = array('Received' => 'received',
         'CartaIntestata' => 'carta_intestata',
         'Lettera' => 'lettera',
@@ -654,18 +687,18 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
 	$pdf = new $templateName();
     $docVars = new DocContabVars();
 
-    $docVars->setData($gTables, $testata, $testata['id_tes'], $rows, false, $genTables, $azTables);	
+    $docVars->setData($gTables, $testata, $testata['id_tes'], $rows, false, $genTables, $azTables);
     $docVars->initializeTotals();
-	
-	 // se il template è lease e c'è un proprietario devo intestare il contratto al proprietario	
-	if ($templateName=='Lease' && intval($id_ag)>0){// modifico i dati intestazione con quelli del proprietario	
+
+	 // se il template è lease e c'è un proprietario devo intestare il contratto al proprietario
+	if ($templateName=='Lease' && intval($id_ag)>0){// modifico i dati intestazione con quelli del proprietario
 		$ag_anagra=gaz_dbi_get_row($gTables['anagra'], 'id', intval($id_ag));
 		$docVars->intesta1=$ag_anagra['ragso1']." ".$ag_anagra['ragso2'];
 		$docVars->intesta2=$ag_anagra['indspe']." ".$ag_anagra['capspe']." ".$ag_anagra['citspe']." ".$ag_anagra['prospe'];
 		$docVars->intesta3= "tel.: ".$ag_anagra['telefo']." ";
 		$docVars->intesta4= "e-mail: ".$ag_anagra['e_mail'];
 	}
-	
+
     $pdf->setVars($docVars, $templateName);
     $pdf->setTesDoc();
     $pdf->setCreator('GAzie - ' . $docVars->intesta1);
@@ -682,20 +715,24 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
     $pdf->compose();
     $pdf->pageFooter();
     $doc_name = preg_replace("/[^a-zA-Z0-9]+/", "_", $docVars->intesta1 . '_' . $pdf->tipdoc) . '.pdf';
-	// aggiungo all'array con indice 'azienda' altri dati
-	$docVars->azienda['cliente1']=$docVars->cliente1;
-	$docVars->azienda['doc_name']=$pdf->tipdoc.'.pdf';
+    // aggiungo all'array con indice 'azienda' altri dati
+    $docVars->azienda['cliente1']=$docVars->cliente1;
+    $docVars->azienda['doc_name']=$pdf->tipdoc.'.pdf';
     if ($dest && $dest == 'E') { // è stata richiesta una e-mail
         $dest = 'S';     // Genero l'output pdf come stringa binaria
         // Costruisco oggetto con tutti i dati del file pdf da allegare
         $content = new StdClass;
-		$content->urlfile=false;
+        $content->urlfile=false;
         $content->name = $doc_name;
         $content->string = $pdf->Output($doc_name, $dest);
         $content->encoding = "base64";
         $content->mimeType = "application/pdf";
+        $mail_message="";
+        if (strlen($vacation_url_user)>3 && $templateName!=='Lease'){ // se non ivio un contratto ed è impostata la user url, la comunico insieme ai codici di accesso
+          $mail_message = "<p>Le inviamo, in allegato, una copia della sua prenotazione</p><p>Per accedere alla prenotazione online e controllarne stato e pagamento usi questo link <a href = '".$vacation_url_user."'> ".$vacation_url_user."</a> e i seguenti codici di accesso:</p><p>Password: <b>".$access."</b></p>Numero ID: <b>".$testata['id_tes']."</b></p><p>Numero prenotazione: <b>".$testata['numdoc']."</b></p><p>- </p><p>Grazie, cordiali saluti</p>";
+        }
         $gMail = new GAzieMail();
-        $gMail->sendMail($docVars->azienda, $docVars->user, $content, $docVars->client);
+        $gMail->sendMail($docVars->azienda, $docVars->user, $content, $docVars->client,$mail_message);
     } elseif ($dest && $dest == 'X') { // è stata richiesta una stringa da allegare
         $dest = 'S';     // Genero l'output pdf come stringa binaria
         $content=$pdf->Output($doc_name, $dest);
