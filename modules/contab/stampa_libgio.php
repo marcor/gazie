@@ -138,7 +138,7 @@ if (isset($_GET['pdfa']) || isset($_GET['pdfamese'])) {
 			$this->SetFont('helvetica','',7);
             $this->MultiCell(190,4,$this->intesta1.' '.$this->intesta2.' '.$this->intesta3,0,'C');
 	    }
-	
+
 	}
 	$pdf = new GL_template('P', 'mm', 'A4', true, 'UTF-8', false, true);
 } else {
@@ -152,23 +152,20 @@ if (isset($_GET['pdfa']) || isset($_GET['pdfamese'])) {
 		}
 		function Header() {
 			$this->MemImage($this->ad_az['image'],10,10,0,12);
-			$this->SetFont('dejavusans','B',8);
-    		$this->SetX(40);
-            $this->Cell(85,4,$this->intesta1,0,0,'C');
-	        $this->Cell(75,4,$this->ad_az['title'],0,1,'R');
-			$this->SetFont('DejaVu','',7);
-    		$this->SetX(40);
-            $this->Cell(85,4,$this->intesta2,0,2,'C');
-	        $this->Cell(85,4,$this->intesta3,0,0,'C');
+			$this->SetFont('helvetica','B',8);
+    	$this->SetX(40);
+      $this->Cell(85,4,$this->intesta1,0,0,'C');
+	    $this->Cell(75,4,$this->ad_az['title'],0,1,'R');
+			$this->SetFont('helvetica','',7);
+    	$this->SetX(40);
+      $this->Cell(85,4,$this->intesta2,0,2,'C');
+	    $this->Cell(85,4,$this->intesta3,0,0,'C');
     	}
-        function Footer() {
-            $this->MultiCell(190,4,$this->intesta1.' '.$this->intesta2.' '.$this->intesta3,0,'C');
+      function Footer() {
+        $this->MultiCell(190,4,$this->intesta1.' '.$this->intesta2.' '.$this->intesta3,0,'C');
 	    }
-	
 	}
 	$pdf = new GL_template();
-	$pdf->AddFont('DejaVu','','DejaVuSansCondensed.ttf',true);
-	$pdf->AddFont('dejavusans','B','DejaVuSans-Bold.ttf', true);
 }
 $pdf->SetVars($admin_aziend);
 $pdf->SetFillColor(hexdec(substr($pdf->ad_az['colore'], 0, 2)), hexdec(substr($pdf->ad_az['colore'], 2, 2)), hexdec(substr($pdf->ad_az['colore'], 4, 2)));
@@ -211,9 +208,9 @@ foreach($a[1] as $k1=>$v1) {
 		}
 
         $pdf->Cell(10,4,$k2,1,0,'R');
-        $pdf->Cell(78,4,$dsx,$b);
+        $pdf->Cell(78,4,$dsx,$b,0,'L',0,'',1);
         $pdf->Cell(16,4,$v2['codcon'],'LT',0,'C');
-        $pdf->Cell(46,4,$v2['cfdes'],'LT',0,'L');
+        $pdf->Cell(46,4,$v2['cfdes'],'LT',0,'L',0,'',1);
         $pdf->Cell(20,4,$v2['dare'],'LT',0,'R');
         $pdf->Cell(20,4,$v2['avere'],'LRT',1,'R');
 	    $ci=$v2['id_tes'];
