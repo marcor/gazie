@@ -740,7 +740,17 @@ $strScript = array(
     'payment_success' => 'Payment made correctly',
     'payment_failed' => 'Payment NOT successful, check your credit card',
     'payment_info' => 'Transaction data',
-    'back_to_site' => 'Close and back to the website'
+    'back_to_site' => 'Close and back to the website',
+    'security_deposit_des2' => 'In addition to the above, at check-in you will have to pay a security deposit of',
+    'security_deposit_des' => 'At check-in you will have to pay a security deposit of',
+    'GENERATO' => 'GENERATED to approve',
+    'PENDING' => 'PENDING',
+    'CONFIRMED' => 'CONFIRMED and APPROVED',
+    'FROZEN' => 'FROZEN',
+    'ISSUE' => 'PROBLEMS to be solved',
+    'CANCELLED' => 'CANCELLED',
+    'no_extra' => 'No extras bought',
+    'change_status' => 'The status of the reservation has changed to'
     ),
 
   "admin_extra.php" =>

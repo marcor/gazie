@@ -36,18 +36,29 @@ if (!$isAjax) {
     $user_error = 'Access denied - not an AJAX request...';
     trigger_error($user_error, E_USER_ERROR);
 }
+use Ddeboer\Imap\Server;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+use PHPMailer\PHPMailer\SMTP;
+require("../../library/include/datlib.inc.php");
+require("../../modules/magazz/lib.function.php");
+$admin_aziend = checkAdmin();
 
 if (isset($_POST['type'])&&isset($_POST['ref'])) {
-	require("../../library/include/datlib.inc.php");
-	require("../../modules/magazz/lib.function.php");
-	$upd_mm = new magazzForm;
-	$admin_aziend = checkAdmin();
 	switch ($_POST['type']) {
 		case "set_new_stato_lavorazione":
 			$i=intval($_POST['ref']); // id_tesbro
       // ricarico il json custom field tesbro e controllo
-      $custom_field=gaz_dbi_get_row($gTables['tesbro'], "id_tes", $i)['custom_field']; // carico il vecchio json custom_field di tesbro
-      if ($data = json_decode($custom_field,true)){// se c'è un json
+      $tesbro=gaz_dbi_get_row($gTables['tesbro'], "id_tes", $i); // carico la tesbro
+      $clfoco=gaz_dbi_get_row($gTables['clfoco'], "codice", $tesbro['clfoco']);
+      $anagra=gaz_dbi_get_row($gTables['anagra'], "id", $clfoco['id_anagra']); // carico la anagra
+      $language=gaz_dbi_get_row($gTables['languages'], "lang_id", $anagra['id_language']); // carico la lingua
+      $langarr = explode(" ",$language['title_native']);
+      $lang = strtolower($langarr[0]);
+      include "lang.".$lang.".php";
+      $script_transl=$strScript['booking_form.php'];
+
+      if ($data = json_decode($tesbro['custom_field'],true)){// se c'è un json
         if (is_array($data['vacation_rental'])){ // se c'è il modulo "vacation rental" lo aggiorno
           $data['vacation_rental']['status']=substr($_POST['new_status'],0,10);
           $custom_json = json_encode($data);
@@ -60,6 +71,36 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
           $custom_json = json_encode($data);
       }
       gaz_dbi_put_row($gTables['tesbro'], 'id_tes', $i, 'custom_field', $custom_json);
+      if ($_POST['email']==true && strlen($_POST['cust_mail'])>4){// se richiesto invio mail
+        // imposto PHP Mailer per invio email di cambio stato
+        $host = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_server')['val'];
+        $usr = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_user')['val'];
+        $psw = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_password')['val'];
+        $port = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_port')['val'];
+        $mail = new PHPMailer(true);
+        $mail->CharSet = 'UTF-8';
+        //Server settings
+        $mail->SMTPDebug  = 0;                           //Enable verbose debug output default: SMTP::DEBUG_SERVER;
+        $mail->isSMTP();                                 //Send using SMTP
+        $mail->Host       = $host;                       //Set the SMTP server to send through
+        $mail->SMTPAuth   = true;                        //Enable SMTP authentication
+        $mail->Username   = $usr;                        //SMTP username
+        $mail->Password   = $psw;                        //SMTP password
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; //Enable implicit TLS encryption
+        $mail->Port       = $port;                       //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+        // creo e invio email di conferma
+        //Recipients
+        $mail->setFrom($admin_aziend['e_mail']); // sender (e-mail dell'account che sta inviando)
+        $mail->addAddress($_POST['cust_mail']);                  // email destinatario
+        $mail->addAddress($admin_aziend['e_mail']);             //invio copia a mittente
+        $mail->isHTML(true);
+        $mail->Subject = $script_transl['booking'].$tesbro['numdoc'].' '.$script_transl['of'].' '.gaz_format_date($tesbro['datemi']);
+        $mail->Body    = "<p>".$script_transl['change_status'].": ".$script_transl[$_POST['new_status']]."</p><p><b>".$admin_aziend['ragso1']." ".$admin_aziend['ragso2']."</b></p>";
+        if($mail->send()) {
+        }else {
+          echo "Errore imprevisto nello spedire la mail di modifica status: " . $mail->ErrorInfo;
+        }
+      }
 		break;
 	}
 }

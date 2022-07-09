@@ -507,7 +507,15 @@ $strScript = array(
     'payment_info' => 'Dati della transazione',
     'back_to_site' => 'Chiudi e torna al sito web',
     'security_deposit_des2' => 'Oltre a quanto sopra, al check-in si dovrà versare un deposito cauzionale di',
-    'security_deposit_des' => 'Al check-in si dovrà versare un deposito cauzionale di'
+    'security_deposit_des' => 'Al check-in si dovrà versare un deposito cauzionale di',
+    'GENERATO' => 'GENERATO da approvare',
+    'PENDING' => 'IN ATTESA',
+    'CONFIRMED' => 'CONFERMATO e APPROVATO',
+    'FROZEN' => 'CONGELATO',
+    'ISSUE' => 'PROBLEMI da risolvere',
+    'CANCELLED' => 'ANNULLATO',
+    'no_extra' => 'Nessun extra acquistato',
+    'change_status' => 'Lo stato della prenotazione è cambiato in'
     ),
 
   "admin_extra.php" =>

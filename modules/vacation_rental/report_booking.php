@@ -408,6 +408,7 @@ $(function() {
 		$("p#de_status").html($(this).attr("prodes"));
 		var refsta = $(this).attr('refsta');
     var new_stato_lavorazione = $(this).attr("prosta");
+    var cust_mail = $(this).attr("cust_mail");
     var adv='';
     $("#sel_stato_lavorazione").val(new_stato_lavorazione);
     $('#sel_stato_lavorazione').on('change', function () {
@@ -418,6 +419,11 @@ $(function() {
           alert ("ATTENZIONE lo stato  Confermato cancellerà, qualora presenti, la parte dei dati della carta di credito memorizzata nel data base. Tali dati non potranno più essere recuperati!!!");
           adv="yes";
         }
+    });
+    var email=$('#checkbox_email').prop('checked');
+    $('#checkbox_email').on('change', function () {
+      var email=$('#checkbox_email').prop('checked');
+      //alert(email);
     });
 		$( "#dialog_stato_lavorazione" ).dialog({
 			minHeight: 1,
@@ -431,7 +437,7 @@ $(function() {
 					'class':'btn btn-danger delete-button',
 					click:function (event, ui) {
 					$.ajax({
-						data: {'type':'set_new_stato_lavorazione','ref':refsta,'new_status':new_stato_lavorazione},
+						data: {'type':'set_new_stato_lavorazione','ref':refsta,'new_status':new_stato_lavorazione,email:email,cust_mail:cust_mail},
 						type: 'POST',
 						url: 'change_status.php',
 						success: function(output) {
@@ -522,6 +528,7 @@ $ts->output_navbar();
             <option value="ISSUE">Incontrate difficoltà</option>
             <option value="CANCELLED">Annullato</option>
         </select>
+        invia email al cliente<input id="checkbox_email"  type="checkbox" name="checkbox_email" value="1" checked="checked">
 	</div>
   <input type="hidden" name="auxil" value="<?php echo $tipo; ?>">
   <div style="display:none" id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">
@@ -734,7 +741,7 @@ $ts->output_navbar();
                       echo " style=\"cursor:pointer;\" onclick=\"payment('". $r['id_tes'] ."')\"";
                       echo "><i class=\"glyphicon glyphicon-piggy-bank\" title=\"Pagamenti\"></i></a>";
 
-                      ?>&nbsp;&nbsp;<a class="btn btn-xs <?php echo $stato_btn; ?> dialog_stato_lavorazione" refsta="<?php echo $r['id_tes']; ?>" prodes="<?php echo $r['ragso1']," ",$r['ragso2']; ?>" prosta="<?php echo $r['status']; ?>">
+                      ?>&nbsp;&nbsp;<a class="btn btn-xs <?php echo $stato_btn; ?> dialog_stato_lavorazione" refsta="<?php echo $r['id_tes']; ?>" prodes="<?php echo $r['ragso1']," ",$r['ragso2']; ?>" prosta="<?php echo $r['status']; ?>" cust_mail="<?php echo $r['base_mail']; ?>">
                           <i class="glyphicon glyphicon-compressed"></i><?php echo $r['status']; ?>
                         </a>
                       <?php
