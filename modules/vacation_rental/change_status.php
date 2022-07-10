@@ -71,7 +71,7 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
           $custom_json = json_encode($data);
       }
       gaz_dbi_put_row($gTables['tesbro'], 'id_tes', $i, 'custom_field', $custom_json);
-      if ($_POST['email']==true && strlen($_POST['cust_mail'])>4){// se richiesto invio mail
+      if ($_POST['email']=='true' && strlen($_POST['cust_mail'])>4){// se richiesto invio mail
         // imposto PHP Mailer per invio email di cambio stato
         $host = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_server')['val'];
         $usr = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_user')['val'];

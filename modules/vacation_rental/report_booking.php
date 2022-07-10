@@ -413,17 +413,11 @@ $(function() {
     $("#sel_stato_lavorazione").val(new_stato_lavorazione);
     $('#sel_stato_lavorazione').on('change', function () {
         //ways to retrieve selected option and text outside handler
-
         new_stato_lavorazione = this.value;
         if (new_stato_lavorazione=="CONFIRMED" && adv==""){
           alert ("ATTENZIONE lo stato  Confermato cancellerà, qualora presenti, la parte dei dati della carta di credito memorizzata nel data base. Tali dati non potranno più essere recuperati!!!");
           adv="yes";
         }
-    });
-    var email=$('#checkbox_email').prop('checked');
-    $('#checkbox_email').on('change', function () {
-      var email=$('#checkbox_email').prop('checked');
-      //alert(email);
     });
 		$( "#dialog_stato_lavorazione" ).dialog({
 			minHeight: 1,
@@ -436,18 +430,20 @@ $(function() {
 					text:'Modifica',
 					'class':'btn btn-danger delete-button',
 					click:function (event, ui) {
-					$.ajax({
-						data: {'type':'set_new_stato_lavorazione','ref':refsta,'new_status':new_stato_lavorazione,email:email,cust_mail:cust_mail},
-						type: 'POST',
-						url: 'change_status.php',
-						success: function(output) {
-		                    //alert('id:'+refsta+' new:'+new_stato_lavorazione);
-		                   // alert(output);
-							window.location.replace("./report_booking.php");
-						}
-					});
-				}},
-				"Non cambiare": function() {
+            $("#dialog_stato_lavorazione").css("background", "url("+'spinner.gif'+") center no-repeat");
+            var email=$('#checkbox_email').prop('checked');
+            $.ajax({
+              data: {'type':'set_new_stato_lavorazione','ref':refsta,'new_status':new_stato_lavorazione,email:email,cust_mail:cust_mail},
+              type: 'POST',
+              url: 'change_status.php',
+              success: function(output) {
+                 // alert('id:'+refsta+' new:'+new_stato_lavorazione+' email:'+email);
+                 // alert(output);
+                window.location.replace("./report_booking.php");
+              }
+            });
+          }},
+          "Non cambiare": function() {
           $(this).dialog("destroy");
 					$(this).dialog("close");
 				}
@@ -528,7 +524,7 @@ $ts->output_navbar();
             <option value="ISSUE">Incontrate difficoltà</option>
             <option value="CANCELLED">Annullato</option>
         </select>
-        invia email al cliente<input id="checkbox_email"  type="checkbox" name="checkbox_email" value="1" checked="checked">
+        invia email al cliente<input id="checkbox_email"  type="checkbox" name="checkbox_email" value="1" checked="">
 	</div>
   <input type="hidden" name="auxil" value="<?php echo $tipo; ?>">
   <div style="display:none" id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">
