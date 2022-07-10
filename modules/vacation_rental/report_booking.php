@@ -302,6 +302,7 @@ function pay(ref) {
 		$("#credit_card" ).dialog( "open" );
 
     $('#delete_data').on( "click", function() {
+      if (confirm("ATTENZIONE: Stai per distruggere i dati della carta di credito memorizzati.")){
         $.ajax({
           data: {'type':'delete_data',ref:ref},
           type: 'POST',
@@ -315,6 +316,10 @@ function pay(ref) {
             window.location.replace("./report_booking.php");
           }
         });
+      }else{
+
+        $("#credit_card").dialog("close");
+      }
 		});
 }
 
