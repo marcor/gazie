@@ -94,7 +94,7 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
         $mail->addAddress($_POST['cust_mail']);                  // email destinatario
         $mail->addAddress($admin_aziend['e_mail']);             //invio copia a mittente
         $mail->isHTML(true);
-        $mail->Subject = $script_transl['booking'].$tesbro['numdoc'].' '.$script_transl['of'].' '.gaz_format_date($tesbro['datemi']);
+        $mail->Subject = $script_transl['booking']." ".$tesbro['numdoc'].' '.$script_transl['of'].' '.gaz_format_date($tesbro['datemi']);
         $mail->Body    = "<p>".$script_transl['change_status'].": ".$script_transl[$_POST['new_status']]."</p><p><b>".$admin_aziend['ragso1']." ".$admin_aziend['ragso2']."</b></p>";
         if($mail->send()) {
         }else {

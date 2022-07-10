@@ -126,9 +126,29 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
     // elimino lo sconto dalla tabella rental_discounts
     gaz_dbi_del_row($gTables['rental_discounts'], 'id', intval($_POST['ref']));
 		break;
-     case "delete_payment":
+    case "delete_payment":
       // elimino il pagamento
       gaz_dbi_del_row($gTables['rental_payments'], 'payment_id', intval($_POST['ref']));
+		break;
+    case "delete_data":
+      // elimino dati carta di credito presenti nel data base
+
+      $anagra = gaz_dbi_get_row($gTables['anagra'], "id", intval($_POST['ref']));
+      if ($data = json_decode($anagra['custom_field'],true)){// se c'è un json in anagra
+        if (is_array($data['vacation_rental'])){ // se c'è il modulo "vacation rental" lo aggiorno
+          $data['vacation_rental']['first_ccn']='';
+          $data['vacation_rental']['cvv']='';
+          $data['vacation_rental']['ccname']='';
+          $data['vacation_rental']['amount']='';
+        } else { //se non c'è il modulo "vacation_rental" nel custom field lo aggiungo agli eventuali altri moduli già presenti
+          $data['vacation_rental']= array('vacation_rental'=>array('first_ccn' => '','cvv' => '','ccname' => '','amount' => ''));
+        }
+      }else{// se non c'è un json, lo inserisco
+        $data=[];
+        $data= array('vacation_rental'=>array('first_ccn' => encript(substr($_POST['ccnumber'],0,8)),'cvv' => encript($_POST['cccvv']),'ccname' => encript($_POST['ccname']),'amount' => encript($topay)));
+		  }
+      $custom_field = json_encode($data);
+      gaz_dbi_table_update('anagra', array('id',intval($_POST['ref'])), array('custom_field' => $custom_field));
 		break;
 	}
 }

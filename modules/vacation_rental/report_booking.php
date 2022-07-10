@@ -260,6 +260,7 @@ function choice_template(modulo) {
 }
 
 function pay(ref) {
+
 		$( "#credit_card" ).dialog({
 			minHeight: 1,
 			width: "auto",
@@ -271,23 +272,24 @@ function pay(ref) {
 					text:'visualizza',
 					'class':'btn btn-danger delete-button',
 					click:function (event, ui) {
-					$.ajax({
-						data: {'type':'booking',ref:ref},
-						type: 'POST',
-						url: '../vacation_rental/decrypt.php',
-            dataType: 'json',
-						success: function(response){
-              var response = JSON.stringify(response);
-              //alert(response);
-              arr = $.parseJSON(response); //convert to javascript array
-              var n=0;
-              $.each(arr,function(key,value){
-                n=n+1;
-                $("#cc"+n).html(value);
-              });
-						}
-					});
-				}},
+            $.ajax({
+              data: {'type':'booking',ref:ref},
+              type: 'POST',
+              url: '../vacation_rental/decrypt.php',
+              dataType: 'json',
+              success: function(response){
+                var response = JSON.stringify(response);
+                //alert(response);
+                arr = $.parseJSON(response); //convert to javascript array
+                var n=0;
+                $.each(arr,function(key,value){
+                  n=n+1;
+                  $("#cc"+n).html(value);
+                });
+              }
+            });
+          }
+				},
 				"Chiudi": function() {
           $("#cc1").html('');
           $("#cc2").html('');
@@ -298,6 +300,22 @@ function pay(ref) {
 			}
 		});
 		$("#credit_card" ).dialog( "open" );
+
+    $('#delete_data').on( "click", function() {
+        $.ajax({
+          data: {'type':'delete_data',ref:ref},
+          type: 'POST',
+          url: '../vacation_rental/delete.php',
+          dataType: 'text',
+          success: function(response){
+            $("#cc1").html('');
+            $("#cc2").html('');
+            $("#cc3").html('');
+            $("#cc4").html('');
+            window.location.replace("./report_booking.php");
+          }
+        });
+		});
 }
 
 function payment(ref) {
@@ -409,15 +427,10 @@ $(function() {
 		var refsta = $(this).attr('refsta');
     var new_stato_lavorazione = $(this).attr("prosta");
     var cust_mail = $(this).attr("cust_mail");
-    var adv='';
     $("#sel_stato_lavorazione").val(new_stato_lavorazione);
     $('#sel_stato_lavorazione').on('change', function () {
         //ways to retrieve selected option and text outside handler
         new_stato_lavorazione = this.value;
-        if (new_stato_lavorazione=="CONFIRMED" && adv==""){
-          alert ("ATTENZIONE lo stato  Confermato cancellerà, qualora presenti, la parte dei dati della carta di credito memorizzata nel data base. Tali dati non potranno più essere recuperati!!!");
-          adv="yes";
-        }
     });
 		$( "#dialog_stato_lavorazione" ).dialog({
 			minHeight: 1,
@@ -508,7 +521,8 @@ $ts->output_navbar();
         intestatario:<p class="ui-state-highlight" id="cc3"></p>
         importo:<p class="ui-state-highlight" id="cc4"></p>
         <p>L'altra parte dei dati è stata inviata via e-mail all'amministratore<P>
-        <p><b>La parte di questi dati, memorizzata nel data base, sarà definitivamente cancellata quando lo stato passerà in Confermato </b></p>
+        <p><b>I dati memorizzati nel data base devono essere cancellati subito dopo l'utilizzo</b></p>
+        <button type="button" class="btn-primary" id="delete_data"><i class="glyphicon glyphicon-fire" style="color: #ff9c9c;"></i> Distruggi dati</button>
 
 	</div>
 
@@ -648,7 +662,7 @@ $ts->output_navbar();
             }
             $ccoff=0;
             if ($data = json_decode($r['anagra_custom_field'], TRUE)) { // se esiste un json nel custom field anagra
-              if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['first_ccn'])){
+              if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['first_ccn']) && strlen($data['vacation_rental']['first_ccn'])>8){
                 $ccoff=1;// ci sono dati per pagamento carta di credito off line
               }
             }
