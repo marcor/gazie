@@ -151,4 +151,8 @@ function get_string_lang($string, $lang){
     return $string;
   }
 }
+// calcolo totale locazione
+function get_total_booking($tesbro){// da fare ...
+  global $link, $azTables;
+}
 ?>

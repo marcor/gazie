@@ -508,7 +508,7 @@ $ts->output_navbar();
         intestatario:<p class="ui-state-highlight" id="cc3"></p>
         importo:<p class="ui-state-highlight" id="cc4"></p>
         <p>L'altra parte dei dati è stata inviata via e-mail all'amministratore<P>
-        <p><b>Cancellare questi dati e l'email immediatamente dopo aver acquisito il pagamento</b></p>
+        <p><b>La parte di questi dati, memorizzata nel data base, sarà definitivamente cancellata quando lo stato passerà in Confermato </b></p>
 
 	</div>
 
@@ -626,7 +626,7 @@ $ts->output_navbar();
         //recupero le testate in base alle scelte impostate
         $result = gaz_dbi_dyn_query(cols_from($gTables['tesbro'], "*") . ", " .
         cols_from($gTables['anagra'],
-            "ragso1","ragso2","citspe",
+            "ragso1","ragso2","citspe","custom_field AS anagra_custom_field",
             "e_mail AS base_mail","id") . ", " .
         cols_from($gTables["destina"], "unita_locale1").", ".cols_from($gTables["rental_events"], "start","end","house_code"),
         $tesbro_e_destina." LEFT JOIN ".$gTables['rental_events']." ON  ".$gTables['rental_events'].".id_tesbro = ".$gTables['tesbro'].".id_tes AND ".$gTables['rental_events'].".type = 'ALLOGGIO' ",
@@ -635,8 +635,8 @@ $ts->output_navbar();
         $ctrlprotoc = "";
 
         while ($r = gaz_dbi_fetch_array($result)) {
-          $r['id_agent']=0;
-          $artico_custom_field=gaz_dbi_get_row($gTables['artico'], 'codice', $r['house_code'])['custom_field'];
+            $r['id_agent']=0;
+            $artico_custom_field=gaz_dbi_get_row($gTables['artico'], 'codice', $r['house_code'])['custom_field'];
             if ($datahouse = json_decode($artico_custom_field, TRUE)) { // se esiste un json nel custom field dell'alloggio
               if (is_array($datahouse['vacation_rental']) && isset($datahouse['vacation_rental']['agent'])){
                 $agent = $datahouse['vacation_rental']['agent'];
@@ -646,6 +646,13 @@ $ts->output_navbar();
                 }
               }
             }
+            $ccoff=0;
+            if ($data = json_decode($r['anagra_custom_field'], TRUE)) { // se esiste un json nel custom field anagra
+              if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['first_ccn'])){
+                $ccoff=1;// ci sono dati per pagamento carta di credito off line
+              }
+            }
+
             $stato_btn = 'btn-default';
             if ($data = json_decode($r['custom_field'], TRUE)) { // se esiste un json nel custom field della testata
             if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['status'])){
@@ -728,7 +735,7 @@ $ts->output_navbar();
                   } else {
                       echo "<a class=\"btn btn-xs btn-warning\" href=\"../../modules/vendit/select_evaord.php?id_tes=" . $r['id_tes'] . "\">Emetti documento fiscale</a>&nbsp;";
 
-                      if ($r['pagame']==1 && $r['status']<>"CONFIRMED" ){
+                      if ($ccoff==1 ){// se ci sono dati per il pagamento con carta di credito off line
                         echo "&nbsp;&nbsp;<a class=\"btn btn-xs btn-default \"";
                         echo " style=\"cursor:pointer;\" onclick=\"pay('". $r['id'] ."')\"";
                         echo "><i class=\"glyphicon glyphicon-credit-card\" title=\"Carta di credito\"></i></a>";

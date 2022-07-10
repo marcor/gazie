@@ -35,6 +35,7 @@ class DocContabVars {
 
     function setData($gTables, $tesdoc, $testat, $tableName, $ecr = false, $genTables="", $azTables="") {
 
+
         $link=$GLOBALS['link'];
         global $gazie_locale;
         $this->gazTimeFormatter = new IntlDateFormatter($gazie_locale,IntlDateFormatter::FULL,IntlDateFormatter::FULL);
@@ -59,6 +60,11 @@ class DocContabVars {
         }else{
           echo "Error: " . $sql . "<br>" . mysqli_error($link);
         }
+
+        if ($data_tesbro = json_decode($tesdoc['custom_field'], TRUE)){
+         $this->status = $data_tesbro['vacation_rental']['status'];
+        }
+
         $this->layout_pos_logo_on_doc = $company['val'];
 
         $sql = "SELECT * FROM ".$azTables."company_config"." WHERE var = 'descriptive_last_row' LIMIT 1";
@@ -80,13 +86,13 @@ class DocContabVars {
         if (isset($_SESSION["user_name"])){// se sono dentro GAzie cioè ho session valorizzato
           $this->user = gaz_dbi_get_row($gTables['admin'], "user_name", $_SESSION["user_name"]);
         }else{// se sono nel frontend prendo il primo amministratore
-			$sql = "SELECT * FROM ".$genTables."admin"." WHERE company_id = ".$IDaz." LIMIT 1";
-			if ($result = mysqli_query($link, $sql)) {
-				$this->user = mysqli_fetch_assoc($result);
-			}else{
-				echo "Error: " . $sql . "<br>" . mysqli_error($link);
-			}
-		}
+          $sql = "SELECT * FROM ".$genTables."admin"." WHERE company_id = ".$IDaz." LIMIT 1";
+          if ($result = mysqli_query($link, $sql)) {
+            $this->user = mysqli_fetch_assoc($result);
+          }else{
+            echo "Error: " . $sql . "<br>" . mysqli_error($link);
+          }
+        }
         $sql = "SELECT * FROM ".$azTables."pagame"." WHERE codice = '".$tesdoc['pagame']."' LIMIT 1";
         if ($result = mysqli_query($link, $sql)) {
           $rescau = mysqli_fetch_assoc($result);
@@ -111,19 +117,19 @@ class DocContabVars {
         $this->banapp =($banapp)?$banapp:array('descri'=>'');
        // $anagrafica = new Anagrafica();
 
-		//commentato perché nel frontend mi da errore in quanto la classe Anagrafica sta in function.inc e getPartner usa l'sql di gazie
+        //commentato perché nel frontend mi da errore in quanto la classe Anagrafica sta in function.inc e getPartner usa l'sql di gazie
 
         //$this->banacc =($this->pagame)?$anagrafica->getPartner($this->pagame['id_bank']):'';
-		if ($this->pagame){
-			$sql = "SELECT * FROM ". $azTables."clfoco" . " LEFT JOIN " . $genTables."anagra" . " ON " . $azTables."clfoco" . ".id_anagra = " . $genTables."anagra" . ".id WHERE codice = '".$this->pagame['id_bank']."' LIMIT 1";
-			if ($result = mysqli_query($link, $sql)) {
-			  $this->banacc = mysqli_fetch_array($result);
-			}else{
-			  echo "Error: " . $sql . "<br>" . mysqli_error($link);
-			}
-		}else{
-			$this->banacc="";
-		}
+        if ($this->pagame){
+          $sql = "SELECT * FROM ". $azTables."clfoco" . " LEFT JOIN " . $genTables."anagra" . " ON " . $azTables."clfoco" . ".id_anagra = " . $genTables."anagra" . ".id WHERE codice = '".$this->pagame['id_bank']."' LIMIT 1";
+          if ($result = mysqli_query($link, $sql)) {
+            $this->banacc = mysqli_fetch_array($result);
+          }else{
+            echo "Error: " . $sql . "<br>" . mysqli_error($link);
+          }
+        }else{
+          $this->banacc="";
+        }
 
         $this->vettor ="";
         $this->tableName = $tableName;

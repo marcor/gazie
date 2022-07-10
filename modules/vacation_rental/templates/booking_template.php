@@ -62,6 +62,7 @@ class Template extends TCPDI {
         $this->cliente4b = $docVars->cliente4b; // Nazione
         $this->cliente5 = $docVars->cliente5;  // P.IVA e C.F.
         $this->agente = $docVars->name_agente;
+        $this->status = $docVars->status;
         /*
         if ( $docVars->destinazione == "" && isset($docVars->client['destin'])) {
             $this->destinazione = $docVars->client['destin'];
@@ -143,12 +144,12 @@ class Template extends TCPDI {
             $this->Line(0, 93, 3, 93); //questa marca la linea d'aiuto per la piegatura del documento
             $this->Line(0, 143, 3, 143); //questa marca la linea d'aiuto per la foratura del documento
             $this->Ln($interlinea);
-			if (!empty($this->efattura)){
-				$this->SetFont('helvetica','B',9);
-				$this->SetTextColor(255,0,0);
-				$this->Cell(110,0,'Copia cartacea del documento elettronico inviato al Sistema di Interscambio ('.$this->efattura.')',0,1,'L',0,'',1);
-				$this->SetTextColor(0,0,0);
-			}
+            if (!empty($this->efattura)){
+              $this->SetFont('helvetica','B',9);
+              $this->SetTextColor(255,0,0);
+              $this->Cell(110,0,'Copia cartacea del documento elettronico inviato al Sistema di Interscambio ('.$this->efattura.')',0,1,'L',0,'',1);
+              $this->SetTextColor(0,0,0);
+            }
             $this->SetFont('helvetica', '', 11);
             $this->Cell(110, 5, $this->tipdoc, 1, 1, 'L', 1, '', 1);
             if ($this->tesdoc['tipdoc'] == 'NOP' || $this->withoutPageGroup) {
@@ -169,30 +170,30 @@ class Template extends TCPDI {
                     $this->MultiCell(80, 4, $this->destinazione, 'LBR', 'L');
                 }
             }
-			if ($this->codice_partner > 0){
-				$this->SetXY(35, $interlinea - 5);
-				$this->Cell(13, 4, $this->descri_partner, 'LT', 0, 'R', 1, '', 1);
-				$this->Cell(72, 4, ': ' . $this->cliente5, 'TR', 1, 0, '', 1);
-				$this->Cell(25);
-				$this->Cell(20, 4, ' cod.: ' . $this->codice_partner, 'LB', 0, 'L');
-				$to='';
-				if (trim($this->cod_univoco)!=''){
-					$to.=' Dest: '.$this->cod_univoco;
-				}
-				if (trim($this->pec_cliente)!=''){
-					$to.=' Pec: '.$this->pec_cliente;
-				}
-				$this->Cell(65, 4,$to.' ' , 'BR', 0, 'L', 0, '', 1);
+            if ($this->codice_partner > 0){
+              $this->SetXY(35, $interlinea - 5);
+              $this->Cell(13, 4, $this->descri_partner, 'LT', 0, 'R', 1, '', 1);
+              $this->Cell(72, 4, ': ' . $this->cliente5, 'TR', 1, 0, '', 1);
+              $this->Cell(25);
+              $this->Cell(20, 4, ' cod.: ' . $this->codice_partner, 'LB', 0, 'L');
+              $to='';
+              if (trim($this->cod_univoco)!=''){
+                $to.=' Dest: '.$this->cod_univoco;
+              }
+              if (trim($this->pec_cliente)!=''){
+                $to.=' Pec: '.$this->pec_cliente;
+              }
+              $this->Cell(65, 4,$to.' ' , 'BR', 0, 'L', 0, '', 1);
             }
-			$this->SetXY(110, $interlinea + 6);
-            $this->SetFont('helvetica', '', 10);
-			if (!empty($this->cliente1)){ // Antonio Germani - se non c'è cliente evito di scrivere (serve per template scontrino)
-            $this->Cell(15, 5, $this->pers_title.' ', 0, 0, 'R');
-            $this->Cell(75, 5, $this->cliente1, 0, 1, 'L', 0, '', 1);
-			} else {
-				$this->Cell(15, 5,'', 0, 0, 'R');
-				$this->Cell(75, 5,'', 0, 1, 'L', 0, '', 1);
-			}
+            $this->SetXY(110, $interlinea + 6);
+                  $this->SetFont('helvetica', '', 10);
+            if (!empty($this->cliente1)){ // Antonio Germani - se non c'è cliente evito di scrivere (serve per template scontrino)
+                  $this->Cell(15, 5, $this->pers_title.' ', 0, 0, 'R');
+                  $this->Cell(75, 5, $this->cliente1, 0, 1, 'L', 0, '', 1);
+            } else {
+              $this->Cell(15, 5,'', 0, 0, 'R');
+              $this->Cell(75, 5,'', 0, 1, 'L', 0, '', 1);
+            }
             if (!empty($this->cliente2)) {
                 $this->Cell(115);
                 $this->Cell(75, 5, $this->cliente2, 0, 1, 'L', 0, '', 1);
@@ -208,6 +209,29 @@ class Template extends TCPDI {
                 $this->SetFont('helvetica', '', 10);
                 $this->Cell(115, 8, 'alla C.A.', 0, 0, 'R');
                 $this->Cell(75, 8, $this->c_Attenzione, 0, 1, 'L', 0, '', 1);
+            }
+            if (!empty($this->status)) {
+              switch ($this->status) {
+                case "GENERATO":
+                  $this->status = 'GENERATO da approvare';
+                break;
+                case "PENDING":
+                  $this->status = 'IN ATTESA';
+                break;
+                case "CONFIRMED":
+                  $this->status = 'CONFERMATO e APPROVATO';
+                break;
+                case "FROZEN":
+                  $this->status = 'CONGELATO';
+                break;
+                case "ISSUE":
+                  $this->status = 'PROBLEMI da risolvere';
+                break;
+                case "CANCELLED":
+                  $this->status = 'CANCELLATO';
+                break;
+              }
+              $this->Cell(75, 8, "STATO DELLA PRENOTAZIONE: ".$this->status, 1, 1, 'C', 0, '', 1);
             }
             $this->SetFont('helvetica', '', 7);
             if ($this->fiscal_rapresentative) {

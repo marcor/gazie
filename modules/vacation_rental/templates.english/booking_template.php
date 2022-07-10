@@ -214,6 +214,29 @@ class Template extends TCPDI {
                 $this->Cell(115, 8, 'alla C.A.', 0, 0, 'R');
                 $this->Cell(75, 8, $this->c_Attenzione, 0, 1, 'L', 0, '', 1);
             }
+            if (!empty($this->status)) {
+              switch ($this->status) {
+                case "GENERATO":
+                  $this->status = 'GENERATED to approve';
+                break;
+                case "PENDING":
+                  $this->status = 'PENDING';
+                break;
+                case "CONFIRMED":
+                  $this->status = 'CONFIRMED and APPROVED';
+                break;
+                case "FROZEN":
+                  $this->status = 'FROZEN';
+                break;
+                case "ISSUE":
+                  $this->status = 'PROBLEMS to be solved';
+                break;
+                case "CANCELLED":
+                  $this->status = 'CANCELLED';
+                break;
+              }
+              $this->Cell(75, 8, "STATO DELLA PRENOTAZIONE: ".$this->status, 1, 1, 'C', 0, '', 1);
+            }
             $this->SetFont('helvetica', '', 7);
             if ($this->fiscal_rapresentative) {
                 $this->Cell(115, 8, 'Legale Rappresentante ', 0, 0, 'R');
