@@ -630,7 +630,7 @@ if ($user_data["Abilit"] == 9) {
 				echo "  <td><input type=radio name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"3\"></td>";
 				echo "  <td><input type=radio checked name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"0\"></td>";
 			} else {
-				echo '<td><input type=radio checked name="'. $co_id . 'acc_' . $mod['moduleid'] . ' value="3"> '.((count($mod['excluded_script'])>=1)?'<br><b>script esclusi:</b><br>'.implode('.php<br>',$mod['excluded_script']).'.php':'').'</td>';
+				echo '<td><input type=radio checked name="'. $co_id . 'acc_' . $mod['moduleid'] . '" value="3"> '.((count($mod['excluded_script'])>=1)?'<br><b>script esclusi:</b><br>'.implode('.php<br>',$mod['excluded_script']).'.php':'').'</td>';
 				echo "  <td><input type=radio name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"0\"></td>";
 			}
 			echo "</tr>\n";
