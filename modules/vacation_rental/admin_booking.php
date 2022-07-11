@@ -363,6 +363,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 		}
 	// Se viene inviata la richiesta di conferma totale ...
     if (isset($_POST['ins'])) {
+
         $sezione = $form['seziva'];
         $datemi = $form['annemi'] . "-" . $form['mesemi'] . "-" . $form['gioemi'];
         $utsemi = mktime(0, 0, 0, $form['mesemi'], $form['gioemi'], $form['annemi']);
@@ -455,10 +456,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         if ($form['rows'][$i]['accommodation_type']>2){
                           $rental_row = gaz_dbi_get_row($gTables['rental_events'], 'id_rigbro', $val_old_row['id_rig']);// prima di cancellare o modificare, prendo i dati che c'erano
                           $form['access_code'] = (isset($rental_row['access_code']))?$rental_row['access_code']:'NULL';
-						  $form['voucher_id'] = (isset($rental_row['voucher_id']))?$rental_row['voucher_id']:'NULL';
-						  $form['checked_in_date'] = (isset($rental_row['checked_in_date']))?$rental_row['checked_in_date']:'NULL';
-						  $form['checked_out_date'] = (isset($rental_row['checked_out_date']))?$rental_row['checked_out_date']:'NULL';
-						  $form['type'] = (isset($rental_row['type']))?$rental_row['type']:'';						  
+                          $form['voucher_id'] = (isset($rental_row['voucher_id']))?$rental_row['voucher_id']:'NULL';
+                          $form['checked_in_date'] = (isset($rental_row['checked_in_date']))?$rental_row['checked_in_date']:'NULL';
+                          $form['checked_out_date'] = (isset($rental_row['checked_out_date']))?$rental_row['checked_out_date']:'NULL';
+                          $form['type'] = (isset($rental_row['type']))?$rental_row['type']:'';
                           $table = 'rental_events';
                           $form['id_tesbro']=  $form['id_tes'];
                           switch ($form['rows'][$i]['accommodation_type']) {//3 => 'Appartamento', 4 => 'Casa indipendente', 5=> 'Bed & breakfast'
@@ -471,12 +472,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                             case "5":
                               $accomodation_type="Bed & breakfast";
                               break;
-                          }	
-				  
+                          }
+
                           if (intval($vacation_blockdays)<1){// se non ci sono giorni cuscinetto aggiorno rigo e basta
                           $form['title']= "Prenotazione ".$accomodation_type." ".$form['rows'][$i]['codart']." - ".$form['search']['clfoco'];
                           $form['house_code']=$form['rows'][$i]['codart'];
-						  $form['id_rigbro'] = $val_old_row['id_rig'];
+                          $form['id_rigbro'] = $val_old_row['id_rig'];
                           $columns = array('id', 'title', 'start', 'end', 'house_code', 'id_tesbro', 'id_rigbro', 'adult', 'child');
                           $codice[0] = "id_rigbro";
                           $codice[1] = $val_old_row['id_rig'];
@@ -488,20 +489,20 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                             $form['title']= "Prenotazione ".$accomodation_type." ".$form['rows'][$i]['codart']." - ".$form['search']['clfoco'];
                             $form['house_code']=$form['rows'][$i]['codart'];
                             $form['type']="ALLOGGIO";
-							$form['id_rigbro'] = $val_old_row['id_rig'];
+                            $form['id_rigbro'] = $val_old_row['id_rig'];
                             $columns = array('id', 'title', 'start', 'end', 'house_code', 'id_tesbro', 'id_rigbro', 'adult', 'child', 'type', 'access_code', 'voucher_id', 'checked_in_date', 'checked_out_date');
                             tableInsert($table, $columns, $form);// riscrivo l'evento alloggio in rental_events
-							$query = "DELETE FROM ".$gTables[$table]." WHERE id_tesbro = ".intval($form['id_tesbro'])." AND id_rigbro = 0 AND (type IS NULL OR type = 'NULL')";// cancello i righi dei cuscinetti
-							gaz_dbi_query($query);
+                            $query = "DELETE FROM ".$gTables[$table]." WHERE id_tesbro = ".intval($form['id_tesbro'])." AND id_rigbro = 0 AND (type IS NULL OR type = 'NULL')";// cancello i righi dei cuscinetti
+                            gaz_dbi_query($query);
                             $form['type']="";
                             $form['start']=$date1 = date("Y-m-d", strtotime($realstart.'- '.intval($vacation_blockdays).' days'));
                             $form['end']=$date1 = date("Y-m-d", strtotime($realstart.'- 1 days'));
-							$form['id_rigbro'] = 0;
-							$form['type'] = "NULL";
-							$form['access_code'] = "NULL";
-							$form['voucher_id'] = "NULL";
-							$form['checked_in_date'] = "NULL";
-							$form['checked_out_date'] = "NULL";								
+                            $form['id_rigbro'] = 0;
+                            $form['type'] = "NULL";
+                            $form['access_code'] = "NULL";
+                            $form['voucher_id'] = "NULL";
+                            $form['checked_in_date'] = "NULL";
+                            $form['checked_out_date'] = "NULL";
                             tableInsert($table, $columns, $form);// scrivo il cuscinetto iniziale start
                             $form['start']=date("Y-m-d", strtotime($realend));
                             $form['end']=date("Y-m-d", strtotime($realend.'+ '.intval($vacation_blockdays).' days'));
@@ -620,7 +621,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['geneff'] = $old_head['geneff'];
                 $form['id_contract'] = $old_head['id_contract'];
                 $form['id_con'] = $old_head['id_con'];
-                $form['status'] = $old_head['status'];
+                $form['status'] = "MODIFICATO";
                 $form['destin'] = $old_head['destin'];
                 $form['initra'] = $initra;
                 $form['datemi'] = $datemi;
@@ -657,10 +658,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
               $form['datfat'] = 0;
               //inserisco la testata
               $form['status'] = 'GENERATO';
-              $form['destin'] = 'GENERATO';
+              $form['destin'] = '';
               $form['template'] = 'booking';
               $form['initra'] = $initra;
               $form['datemi'] = $datemi;
+              $data=[];
+              $data= array('vacation_rental'=>array('status' => 'CONFIRMED','ip' => 'diretto'));
+              $form['custom_field'] = json_encode($data);
               tesbroInsert($form);
               //recupero l'id assegnato dall'inserimento
               $ultimo_id = gaz_dbi_last_id();
@@ -757,7 +761,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
               }
             }
         }
-    } elseif (isset($_POST['ord']) and $toDo == 'update') {  // si vuole generare un'ordine/prenotazione
+    } elseif (isset($_POST['ord']) and $toDo == 'update') {  // si vuole generare una prenotazione da un preventivo
+    echo "rigo 765, circa, da controllare prima di usare: ancora non si possono creare preventivi per le prenotazioni";die;
         $sezione = $form['seziva'];
         $datemi = $form['annemi'] . "-" . $form['mesemi'] . "-" . $form['gioemi'];
         $utsemi = mktime(0, 0, 0, $form['mesemi'], $form['gioemi'], $form['annemi']);
@@ -807,7 +812,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['datemi'] = date("Y-m-d");
             $form['tipdoc'] = 'VOR';
             $form['status'] = 'GENERATO';
-            $form['destin'] = 'GENERATO';
+            $form['destin'] = '';
+            $data=[];
+            $data= array('vacation_rental'=>array('status' => 'CONFIRMED','ip' => 'diretto'));
+            $form['custom_field'] = json_encode($data);
             tesbroInsert($form);
             //recupero l'id assegnato dall'inserimento
             $ultimo_id = gaz_dbi_last_id();
@@ -1776,7 +1784,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['id_tes'] = "";
     $form['start'] = "";
     $form['end'] = "";
-    $form['adult'] = 1;
+    $form['adult'] = 0;
     $form['child'] = 0;
     $form['extra'] = "";
     $form['qtaextra'] = 0;

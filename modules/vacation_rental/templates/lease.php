@@ -150,13 +150,13 @@ class Lease extends Template
       $html .= "<dd>- ".$script_transl['rinvio1']."</dd>";
 
       $html .= "<dt>7- <b>".$script_transl['accettazione']."</b></dt>" ;
-      if (strlen($this->ip)>6){// se firmato on line lo preciso
+      if (strlen($this->ip)>7){// se firmato on line lo preciso
         $html .= "<dd>- ".$script_transl['accettazione1']."</dd>";
       }
       $html .= "<dd>- ".$script_transl['accettazione2']."</dd>";
 
       $html .= "<dl>";
-      if (strlen($this->ip)>6){// firme digitali
+      if (strlen($this->ip)>7){// firme digitali
         $html .= "<br><p><b>Firmato digitalmente on-line</b></p><span>Il locatore ".$this->intesta1."</span><span style=\" letter-spacing: 30px;\">&nbsp; &nbsp;</span><span> Il conduttore ".$this->cliente1." firmato on-line da IP:".$this->ip."</span>";
       }else{// firme fisiche
         $html .= "<br><p><b>Firmato </b></p><span>Il locatore ".$this->intesta1."</span><span style=\" letter-spacing: 30px;\">&nbsp; &nbsp;</span><span> Il conduttore ".$this->cliente1."</span>";
