@@ -23,22 +23,20 @@
  --------------------------------------------------------------------------
 */
 require("../../library/include/datlib.inc.php");
-if (isset($_POST['logout'])) {
-    session_destroy();
-    header("Location: admin.php");
-    exit;
+if (isset($_POST['gohome'])) {
+  header("Location: admin.php");
+  exit;
 }
-$_SESSION["theme"]='';
-require("../../library/include/header.php");
 $r = gaz_dbi_get_row($gTables['admin'],"user_name",$_SESSION["user_name"]);
 require("./lang.".$r['lang'].".php");
 echo '<form method="post">';
 echo '<div class="error_box">';
-echo $errors['access'].' <span class="error">'.$_GET['module'].'</span> ---> ';
-echo '<input name="logout" type="submit" value=" Logout ">';
+if (isset($_GET['module'])) {
+  echo $errors['access_module'].' <span class="error">'.$_GET['module'].'</span> ---> ';
+} else {
+  echo $errors['access_script'].' <span class="error">'.$_GET['script'].'.php</span> ---> ';
+}
+echo '<button type="submit" name="gohome">Home page</button>';
 echo '</div>';
 ?>
 </form>
-<?php
-require("../../library/include/footer.php");
-?>

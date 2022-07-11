@@ -2461,11 +2461,19 @@ function checkAdmin($Livaut = 0) {
     if (!isset($_SESSION["user_name"])) {
         redirect('../root/login_user.php?tp=' . $table_prefix);
     }
-    if (checkAccessRights($_SESSION["user_name"], $module, $_SESSION['company_id']) == 0) {
-        // Se utente non ha il diritto di accedere al modulo, lo mostriamo
-        // il messaggio di errore, ma senza obligarlo di fare un altro (inutile) login
-        redirect("../root/access_error.php?module=" . $module);
+    $rschk = checkAccessRights($_SESSION["user_name"], $module, $_SESSION['company_id']);
+    if ($rschk === 0) {
+      // Se utente non ha il diritto di accedere al modulo specifico lo invito a tornare alla home
+      redirect("../root/access_error.php?module=" . $module);
+      exit;
+    } elseif (is_array($rschk)) { // questo utente ha almeno un script da escludere su questo modulo
+      $bn = basename($_SERVER['PHP_SELF'],'.php');
+      print_r($rschk);
+      print $bn;
+      if (in_array($bn,$rschk)){
+        redirect("../root/access_error.php?script=" . $bn);
         exit;
+      }
     }
     $test = gaz_dbi_query("SHOW COLUMNS FROM `" . $gTables['admin'] . "` LIKE 'enterprise_id'");
     $exists = (gaz_dbi_num_rows($test)) ? TRUE : FALSE;

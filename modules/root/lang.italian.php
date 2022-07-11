@@ -115,7 +115,8 @@ $strScript = array("admin.php" =>
         'student' => "Se sei uno studente puoi accedere da qui"
         ));
 $errors = array(
-    'access' => 'Non hai il diritto di accedere al modulo'
+    'access_module' => 'Non hai il diritto di accedere al modulo',
+    'access_script' => 'Non hai il diritto di accedere alla funzione richiesta'
 );
 
 if (!defined("MESSAGE_WELCOME")) {
@@ -223,7 +224,7 @@ if (!defined("MESSAGE_WELCOME")) {
         define("WORDING_USERNAME", "Nome utente");
         define("WORDING_YOU_ARE_LOGGED_IN_AS", "You are logged in as ");
         define("WORDING_LOGIN_AS_STUDENT", "Se sei uno studente puoi accedere da qui");
-		// ex config 
+		// ex config
 		// for: password reset email data
         define("EMAIL_PASSWORDRESET_FROM_NAME", "GAzie");
         define("EMAIL_PASSWORDRESET_SUBJECT", "Reimpostazione password di GAzie");

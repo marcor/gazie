@@ -1065,23 +1065,27 @@ function getAccessRights($userid = '', $company_id = 1) {
 }
 
 function checkAccessRights($adminid, $module, $company_id = 0) {
-   global $gTables;
-   $ck_co = gaz_dbi_fields('admin_module');
-   if ($company_id == 0 || (!array_key_exists('company_id', $ck_co))) {  // vengo da una vecchia versione (<4.0.12)
-      $query = 'SELECT am.access FROM ' . $gTables['admin_module'] . ' AS am' .
-              ' LEFT JOIN ' . $gTables['module'] . ' AS module ON module.id=am.moduleid' .
-              " WHERE am.adminid='" . $adminid . "' AND module.name='" . $module . "'";
-   } else {   //nuove versione >= 4.0.12
-      $query = 'SELECT am.access FROM ' . $gTables['admin_module'] . ' AS am' .
-              ' LEFT JOIN ' . $gTables['module'] . ' AS module ON module.id=am.moduleid' .
-              " WHERE am.adminid='" . $adminid . "' AND module.name='" . $module . "' AND am.company_id = $company_id ";
-   }
-   $result = gaz_dbi_query($query) or gaz_die ( $query, "1030", __FUNCTION__ );
-   if (gaz_dbi_num_rows($result) < 1) {
-      return 0;
-   }
-   $row = gaz_dbi_fetch_array($result);
-   return $row['access'];
+  global $gTables;
+  $ck_co = gaz_dbi_fields('admin_module');
+  if ($company_id == 0 || (!array_key_exists('company_id', $ck_co))) {  // vengo da una vecchia versione (<4.0.12)
+     $query = 'SELECT am.access FROM ' . $gTables['admin_module'] . ' AS am' .
+             ' LEFT JOIN ' . $gTables['module'] . ' AS module ON module.id=am.moduleid' .
+             " WHERE am.adminid='" . $adminid . "' AND module.name='" . $module . "'";
+  } else {   //nuove versione >= 4.0.12
+     $query = 'SELECT am.access, am.custom_field FROM ' . $gTables['admin_module'] . ' AS am' .
+             ' LEFT JOIN ' . $gTables['module'] . ' AS module ON module.id=am.moduleid' .
+             " WHERE am.adminid='" . $adminid . "' AND module.name='" . $module . "' AND am.company_id = $company_id ";
+  }
+  $result = gaz_dbi_query($query) or gaz_die ( $query, "1030", __FUNCTION__ );
+  if (gaz_dbi_num_rows($result) < 1) {
+     return 0;
+  }
+  $row = gaz_dbi_fetch_array($result);
+  $chkes = json_decode($row['custom_field']);
+  if ($chkes && isset($chkes->excluded_script)) {
+    return $chkes->excluded_script;
+  }
+  return $row['access'];
 }
 
 function gaz_dbi_fetch_all($resource) {
