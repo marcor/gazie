@@ -30,7 +30,7 @@ if ( isset($maintenance) && $maintenance!=FALSE && $maintenance!=$_SESSION['user
         <link rel="icon" href="data:image/x-icon;base64,<?php echo $ico?>"  type="image/x-icon" />
 		<link rel="icon" sizes="114x114" href="data:image/x-icon;base64,<?php echo $ico114?>"  type="image/x-icon" />
 		<link rel="apple-touch-icon" href="data:image/x-icon;base64,<?php echo $ico114?>"  type="image/x-icon">
-		<link rel="apple-touch-startup-image" href="data:image/x-icon;base64,<?php echo $ico114?>"  type="image/x-icon">		
+		<link rel="apple-touch-startup-image" href="data:image/x-icon;base64,<?php echo $ico114?>"  type="image/x-icon">
 		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="data:image/x-icon;base64,<?php echo $ico114?>"  type="image/x-icon" />
         <link href="../../library/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
         <link href="../../js/jquery.ui/jquery-ui.css" rel="stylesheet">
@@ -38,12 +38,12 @@ if ( isset($maintenance) && $maintenance!=FALSE && $maintenance!=$_SESSION['user
         <script src="../../js/jquery/jquery.js"></script>
 
         <?php
-        // carico il css strutturale grandezza font, posizione, ecc 
+        // carico il css strutturale grandezza font, posizione, ecc
         $style = 'base.css';
         if (!empty($admin_aziend['style']) && file_exists("../../library/theme/g7/scheletons/" . $admin_aziend['style'])) {
             $style = $admin_aziend['style'];
         }
-        // carico i fogli di stile personalizzati nella subdir skin si imposta l'aspetto (colori, font, ecc) 
+        // carico i fogli di stile personalizzati nella subdir skin si imposta l'aspetto (colori, font, ecc)
         $skin = 'base.css';
         if (!empty($admin_aziend['skin']) && file_exists("../../library/theme/g7/skins/" . $admin_aziend['skin'])) {
             $skin = $admin_aziend['skin'];
@@ -62,16 +62,16 @@ if ( isset($maintenance) && $maintenance!=FALSE && $maintenance!=$_SESSION['user
                 $hex = str_pad(dechex($dec), 2, '0', STR_PAD_LEFT);
             }
             return '#' . implode($rgb);
-        } 
+        }
         ?>
         <link href="../../library/theme/g7/scheletons/<?php echo $style; ?>" rel="stylesheet" type="text/css" />
         <link href="../../library/theme/g7/skins/<?php echo $skin; ?>" rel="stylesheet" type="text/css" />
         <style type="text/css">
-            .navbar-default .navbar-collapse { 
-                background-color: <?php echo hex_color_mod($admin_aziend['colore'],20); ?> ; 
+            .navbar-default .navbar-collapse {
+                background-color: <?php echo hex_color_mod($admin_aziend['colore'],20); ?> ;
             }
-            .company-color { 
-                background-color: #<?php echo $admin_aziend['colore']; ?> ; 
+            .company-color {
+                background-color: #<?php echo $admin_aziend['colore']; ?> ;
             }
             .dropdown-menu > li > a:hover {
                 background-color: #<?php echo $admin_aziend['colore']; ?> ;
@@ -88,11 +88,11 @@ if ( isset($maintenance) && $maintenance!=FALSE && $maintenance!=$_SESSION['user
 			}
 			@keyframes blink {
 				from { opacity:1; } to { opacity:0; }
-			}   
+			}
             .ui-dialog-buttonset>button.btn.btn-confirm:first-child {
                 background-color: #f9b54d;
-            }       
-        </style>  
+            }
+        </style>
         <?php
 
         function get_transl_referer($rlink) {
@@ -132,7 +132,7 @@ if ( isset($maintenance) && $maintenance!=FALSE && $maintenance!=$_SESSION['user
                             } else { // non ho trovato nulla nemmeno sui file tipo lang.english.php
                                 return $clink[1] . '-none-script';
                             }
-                        } else { // non c'è traduzione per questo script 
+                        } else { // non c'è traduzione per questo script
                             return $clink[1] . '-none-script_menu';
                         }
                     }
@@ -185,27 +185,31 @@ if ( isset($maintenance) && $maintenance!=FALSE && $maintenance!=$_SESSION['user
             }
             $result = getAccessRights($_SESSION["user_name"], $_SESSION['company_id']);
             if (gaz_dbi_num_rows($result) > 0) {
-                // creo l'array associativo per la generazione del menu con JSCookMenu
+                // creo l'array associativo per la generazione del menu
                 $ctrl_m1 = 0;
                 $ctrl_m2 = 0;
                 $ctrl_m3 = 0;
                 $menuArray = array();
                 $transl = array();
                 while ($row = gaz_dbi_fetch_array($result)) {
-                    if ($row['access'] == 3) {
+                  $chkes = json_decode($row['custom_field']);
+                  $path = parse_url($row['m3_link'], PHP_URL_PATH);
+                  $nfr = basename($path,'.php');
+                  if (isset($chkes->excluded_script) && in_array($nfr,$chkes->excluded_script)) {
+                    $row['m3_link'] = '';
+                  }
+                  if ($row['access'] == 3) {
                         if ($ctrl_m1 != $row['m1_id']) {
                             require("../../modules/" . $row['name'] . "/menu." . $admin_aziend['lang'] . ".php");
                         }
                         if ($row['name'] == $module) {
                             $row['weight'] = 0;
-
                             if ($row['m3_link'] == $scriptname) {
                                 $title_from_menu = $transl[$row['name']]['m3'][$row['m3_trkey']][0];
                             }
-
                             if ($ctrl_m2 != $row['m2_id'] and $ctrl_m1 != $row['m1_id']) {
                                 require("../../modules/" . $row['name'] . "/lang." . $admin_aziend['lang'] . ".php");
-				if (isset($strScript[$scriptname])) { // se è stato tradotto lo script lo ritorno al chiamante
+                                if (isset($strScript[$scriptname])) { // se è stato tradotto lo script lo ritorno al chiamante
                                     $translated_script = $strScript[$scriptname];
                                     if (isset($translated_script['title'])) {
                                         $title_from_menu = $translated_script['title'];
@@ -233,11 +237,14 @@ if ( isset($maintenance) && $maintenance!=FALSE && $maintenance!=$_SESSION['user
                                     'class' => $row['m2_class']);
                             }
                             // if (!isset($transl[$row['name']]['m3'][$row['m3_trkey']][1])) echo $row['name'] . '/' . $row['m3_link'].'<br>'; // decommentandolo evidenzio gli script con la key indefinita
-                            $menuArray[$row['weight']][$row['m2_weight']][$row['m3_weight']] = array('link' => '../' . $row['name'] . '/' . $row['m3_link'],
-                                'icon' => '../' . $row['name'] . '/' . $row['m3_icon'],
-                                'name' => $transl[$row['name']]['m3'][$row['m3_trkey']][1],
-                                'title' => $transl[$row['name']]['m3'][$row['m3_trkey']][0],
-                                'class' => $row['m3_class']);
+                            if (!empty($row['m3_link'])){
+                              $menuArray[$row['weight']][$row['m2_weight']][$row['m3_weight']] = array('link' => '../' . $row['name'] . '/' . $row['m3_link'],
+                              'icon' => '../' . $row['name'] . '/' . $row['m3_icon'],
+                              'name' => $transl[$row['name']]['m3'][$row['m3_trkey']][1],
+                              'title' => $transl[$row['name']]['m3'][$row['m3_trkey']][0],
+                              'class' => $row['m3_class']);
+
+                            }
                         } elseif ($ctrl_m1 != $row['m1_id']) { // è il primo di menu2
                             $menuArray[$row['weight']] = array('link' => '../' . $row['name'] . '/' . $row['link'],
                                 'icon' => '../' . $row['name'] . '/' . $row['icon'],
@@ -261,18 +268,9 @@ if ( isset($maintenance) && $maintenance!=FALSE && $maintenance!=$_SESSION['user
                     $ctrl_m2 = $row['m2_id'];
                     $ctrl_m3 = $row['m3_id'];
                 }
-		ksort($menuArray);
-                /*   Fine creazione array per JSCookMenu.
-                  In $menuArray c'e' la lista del menu
-                  con index '0' il modulo corrente,
-                  è una matrice a 3 dimensioni ,
-                  questo serve per poter creare un array in JS
-                  compatibile con le specifiche di JSCookMenu,
-                  la funzione createGazieJSCM serve per creare un
-                  array con il menu corrente orizzontale , si potrebbero creare
-                  altre forme di menu modificando questa funzione. */
+                ksort($menuArray);
                 echo "\n
-    
+
       <title>" . $admin_aziend['ragso1'] . '» ' . $menuArray[0]['title'];
                 if (!empty($idScript)) {
                     if (is_array($idScript)) { // $idScript dev'essere un array con index [0] per il numero di menu e index[1] per l'id dello script
@@ -310,7 +308,7 @@ if ( isset($maintenance) && $maintenance!=FALSE && $maintenance!=$_SESSION['user
 		 function chkSubmit() {
             if ( window.history.replaceState ) {
                 window.history.replaceState( null, null, window.location.href );
-            } 
+            }
 			if(countclick > 0) {
 				alert("' . $strCommon['wait_al'] . '");
 				document.getElementById("preventDuplicate").disabled=true;
@@ -334,5 +332,5 @@ if ( isset($maintenance) && $maintenance!=FALSE && $maintenance!=$_SESSION['user
 <div class="container-fluid gaz-body">';
 		printDash($gTables,$module,$admin_aziend,$transl);
             return ($strCommon + $translated_script);
-        } 
+        }
 ?>

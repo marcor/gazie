@@ -19,7 +19,7 @@ function bc_get_current_path( $posizione ) {
     }
     return $pos;
 }
-  
+
 function get_rref_type($value) {
     if ( stristr($value, "report_") ) return "fa-list";
     if ( stristr($value, "admin_") ) return "fa-pencil";
@@ -39,13 +39,13 @@ function pulisci_rref_name($value) {
     $value = str_replace("Selezione e", "", $value);
     $value = str_replace("Genera i", "", $value);
     //$value = ucfirst($value);
-    return substr( $value, 0, 28); 
+    return substr( $value, 0, 28);
 }
-  
+
 function printCheckbox( $Caption, $varName, $Descrizione ) {
     global $gTables, $form;
     $config = new UserConfig;
-    
+
     $admin_config = $config->getValue($varName);
     echo "<div class='form-group'>";
     echo "<label class='control-sidebar-subheading'>";
@@ -55,7 +55,7 @@ function printCheckbox( $Caption, $varName, $Descrizione ) {
     } else {
         $val="";
     }
-    echo "<input type='checkbox' hint='".$Descrizione."' class='pull-right' name='".$varName."' ".$val." onclick='processForm(this)' />"; 
+    echo "<input type='checkbox' hint='".$Descrizione."' class='pull-right' name='".$varName."' ".$val." onclick='processForm(this)' />";
     echo "</label><p>".$Descrizione."</p></div>";
 }
 
@@ -75,8 +75,8 @@ function submenu($array, $index, $sub="") {
     $submnu = '';
     if ($numsub === 0) {
             echo "<ul class=\"treeview-menu\">";
-        }       
-	if (count($mnu)>6) {            
+        }
+	if (count($mnu)>6) {
             if ( $admin_aziend["Abilit"]>=$mnu["m2_ackey"] ) {
             echo "<li>";
             if ( $mnu["name"]=="Azienda" ) {
@@ -90,12 +90,12 @@ function submenu($array, $index, $sub="") {
             }
             echo "  <a href=\"#\" hint=\"".$submnu.stripslashes($mnu["name"])."\">". $submnu.stripslashes($mnu["name"]);
             echo "      <i class=\"fa fa-angle-left pull-right\"></i>";
-            echo "  </a>";                    
+            echo "  </a>";
             submenu($mnu, 1, $sub);
             $sub="";
             echo "</li>";
             }
-        } else { 
+        } else {
             if ( isset($mnu["m2_ackey"])  ) {
                 if ( $admin_aziend["Abilit"]>=$mnu["m2_ackey"] ) {
                     if ( $sub!="" ) {
@@ -147,6 +147,12 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
         $menuArray = array();
         $transl = array();
         while ($row = gaz_dbi_fetch_array($result)) {
+            $chkes = json_decode($row['custom_field']);
+            $path = parse_url($row['m3_link'], PHP_URL_PATH);
+            $nfr = basename($path,'.php');
+            if (isset($chkes->excluded_script) && in_array($nfr,$chkes->excluded_script)) {
+              $row['m3_link'] = '';
+            }
             if ($row['access'] == 3) {
                 if ($ctrl_m1 != $row['m1_id']) {
                     if ( file_exists ( "../../modules/" . $row['name'] . "/menu.".$admin_aziend['lang'].".php" ) )
@@ -191,12 +197,14 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
                             'm2_ackey' => $row["m2_ackey"],
                             'class' => $row['m2_class']);
                     }
-                    $menuArray[$row['weight']][$row['m2_weight']][$row['m3_weight']] = array('link' => '../' . $row['name'] . '/' . $row['m3_link'],
+                    if (!empty($row['m3_link'])){
+                      $menuArray[$row['weight']][$row['m2_weight']][$row['m3_weight']] = array('link' => '../' . $row['name'] . '/' . $row['m3_link'],
                         'icon' => '../' . $row['name'] . '/' . $row['m3_icon'],
                         'name' => $transl[$row['name']]['m3'][$row['m3_trkey']][1],
                         'title' => $transl[$row['name']]['m3'][$row['m3_trkey']][0],
                         'm3_ackey' => $row["m3_ackey"],
                         'class' => $row['m3_class']);
+                    }
                 } elseif ($ctrl_m1 != $row['m1_id']) { // Ã¨ il primo di menu2
                     $menuArray[$row['weight']] = array('link' => '../' . $row['name'] . '/' . $row['link'],
                         'icon' => $row['icon'],
@@ -238,7 +246,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
         } elseif (isset($title_from_menu)) {
             //echo '			&raquo;' . $title_from_menu;
         }
-				
+
 				$accTitle=$admin_aziend['ragso1'] . '» ' . $menuArray[0]['title'];
         if (!empty($idScript)) {
 					if (is_array($idScript)) { // $idScript dev'essere un array con index [0] per il numero di menu e index[1] per l'id dello script
@@ -254,9 +262,9 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
           $accTitle.= '» ' . $title_from_menu;
         }
 
-    
+
     $i = 0;
-    $colors = array ( "#00CD66", "#DC143C", "#20B2AA", "#FAFAD2", "#CD8500", "#EEEE00", "#B7B7B7", "#20B2AA", "#00FF7F", "#FFDAB9", "#006400", "#d3f5c6", "#673723", "#6b0490", "#1527cc", "#0cacd8" );             //"#00CD66", "#DC143C", "#20B2AA", "#FAFAD2", "#CD8500" );   
+    $colors = array ( "#00CD66", "#DC143C", "#20B2AA", "#FAFAD2", "#CD8500", "#EEEE00", "#B7B7B7", "#20B2AA", "#00FF7F", "#FFDAB9", "#006400", "#d3f5c6", "#673723", "#6b0490", "#1527cc", "#0cacd8" );             //"#00CD66", "#DC143C", "#20B2AA", "#FAFAD2", "#CD8500" );
     $icons = array ("fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle");
     foreach ($menuArray as $link) {
 /*        if ( $i==0 ) {
@@ -278,7 +286,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
             echo "      <span>". $link['name'] ."</span>\n";
             echo "    <i class=\"fa fa-angle-left pull-right\"></i>\n";
             echo "  </a>\n";
-            
+
         //}
         submenu($link, $i);
         echo "          </li>\n";
@@ -291,17 +299,17 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
     </aside>
 </form>
     <div class="content-wrapper">
-      <section class="content-header">       
+      <section class="content-header">
         <?php
         global $gTables, $module;
         $pos="";
         $ci_sono_tasti_nel_menu=false;
-        $posizione = explode( '/',$_SERVER['REQUEST_URI'] );     
+        $posizione = explode( '/',$_SERVER['REQUEST_URI'] );
         $pos = bc_get_current_path($posizione);
         $posizione = array_pop( $posizione );
 
         $res_pos = gaz_dbi_dyn_query("*", $gTables['breadcrumb'], ' file="'.$pos.'" AND exec_mode=0', ' id_bread',0,999);
-        if ( gaz_dbi_num_rows($res_pos)>0 ) {             
+        if ( gaz_dbi_num_rows($res_pos)>0 ) {
             $row = gaz_dbi_fetch_array($res_pos);
             echo "<h1>";
             echo "<a href='".$row['link']."'>".$row['titolo']."</a>";
@@ -313,7 +321,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
             echo "<li><a href='../../modules/root/admin.php'><i class='fa fa-home'></i></a>&nbsp;<a href='../../modules/root/admin_breadcrumb.php?url=".$pos."'><i class='glyphicon glyphicon-cog'></i></a></li>";
             echo "</ol>";
         } else {
-		  if ($pos=='modules/root/admin.php') {             
+		  if ($pos=='modules/root/admin.php') {
 				echo "<a href='../../modules/root/admin_dash.php'><i class='glyphicon glyphicon-cog'></i></a>";
 				echo "</ol>";
 		  } else {
@@ -322,35 +330,35 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
             $result    = gaz_dbi_dyn_query("*", $gTables['menu_module'] , ' link="'.$posizione.'" ',' id',0,1);
             if ( !gaz_dbi_num_rows($result)>0 ) {
                 $posizionex = explode ("?",$posizione );
-                $result    = gaz_dbi_dyn_query("*", $gTables['menu_module'] , ' link="'.$posizionex[0].'" ',' id',0,1);	
+                $result    = gaz_dbi_dyn_query("*", $gTables['menu_module'] , ' link="'.$posizionex[0].'" ',' id',0,1);
             }
             $riga = gaz_dbi_fetch_array($result);
- 
+
             if ($riga && $riga["id"]!="" ) {
                 // siamo su una pagina di 2 livello nel menu principale
                 // mostra il titolo se siamo su una pagina di secondo livello
                 echo "<h1>";
                 echo "&nbsp;".stripslashes($transl[$module]["m2"][$riga["translate_key"]][0]);
-                echo "</h1>";          
+                echo "</h1>";
                 $result2 = gaz_dbi_dyn_query("*", $gTables['menu_script'] , ' id_menu='.$riga["id"].' ','id',0);
-                
+
                 echo "<ol class=\"breadcrumb\">";
-                
+
                 //da fare salvare i moduli più usati tramite la stella
-                //echo "<li><a><i class=\"fa fa-star-o\"></i></a>";                
+                //echo "<li><a><i class=\"fa fa-star-o\"></i></a>";
                 //echo "<li><a href=\"../../modules/".$module."/docume_".$module.".php\"><i class=\"fa fa-question\"></i></a></li>";
                 while ($r = gaz_dbi_fetch_array($result2)) {
                     if ( $admin_aziend["Abilit"]>=$r["accesskey"] )
                         echo '<li><a href="'.$r["link"].'">'.stripslashes ($transl[$module]["m3"][$r["translate_key"]]["1"]).'</a></li>';
                 }
                 $ci_sono_tasti_nel_menu=true;
-            } else { 
+            } else {
                 // siamo su una pagina di 3 livello nel menu principale
                 $result3    = gaz_dbi_dyn_query("*", $gTables['menu_script'] , ' link="'.$posizione.'"',' id',0,1);
                 if ( $r = gaz_dbi_fetch_array($result3) ) {
                     echo "<h1>";
                     echo "&nbsp;".$transl[$module]["m3"][$r["translate_key"]][0];
-                    echo "</h1>";                
+                    echo "</h1>";
                     // disegno i bottoni di accesso alle funzioni di questa pagina
                     $posizionex = explode ("?",$posizione );
                     $result4    = gaz_dbi_dyn_query("*", $gTables['menu_script']. " LEFT JOIN ".$gTables['menu_module']." ON ".$gTables['menu_script'].".id_menu = ".$gTables['menu_module'].".id LEFT JOIN ".$gTables['module']." ON ".$gTables['menu_module'].".id_module = ".$gTables['module'].".id", $gTables['menu_script'].".link LIKE '%".$posizionex[0]."%' AND ".$gTables['module'].".name = '".$module."'",'name',0,99);
@@ -361,7 +369,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
                     }
                     $ci_sono_tasti_nel_menu=true;
                 }
-                
+
             }
 
             if ( !$ci_sono_tasti_nel_menu ) {
@@ -373,7 +381,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
             echo "</ol>";
 		  }
         }
-         ?>     
+         ?>
         </section>
         <section class="content">
 <?php
@@ -454,7 +462,7 @@ function get_transl_referer($rlink) {
                             } else { // non ho trovato nulla nemmeno sui file tipo lang.english.php
                                 return $clink[1] . '-none-script';
                             }
-                        } else { // non c'è traduzione per questo script 
+                        } else { // non c'è traduzione per questo script
                             return $clink[1] . '-none-script_menu';
                         }
                     }
