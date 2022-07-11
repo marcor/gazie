@@ -136,22 +136,13 @@ class BookingSummary extends Template
         $this->SetY(212);
         $this->SetFillColor(hexdec(substr($this->colore,0,2)),hexdec(substr($this->colore,2,2)),hexdec(substr($this->colore,4,2)));
         $this->Cell(62,6, 'Payment',1,0,'C',1);
-        $this->Cell(68,6, 'Castelletto I.V.A.',1,0,'C',1);
+        $this->Cell(68,6, '',1,0,'C',1);
         $this->Cell(56,6, 'T O T A L',1,1,'C',1);
         $this->SetFont('helvetica', '', 8);
         $this->Cell(62,6, $this->pagame['descri'],1,0,'C');
-        $this->Cell(25,4, 'Taxable',1,0,'C',1);
-        $this->Cell(18,4, 'Rate',1,0,'C',1);
-        $this->Cell(25,4, 'Tax',1,1,'C',1);
+
         $this->docVars->setTotal($this->tesdoc['traspo']);
-		if ( $this->tesdoc['print_total']>0){
-			foreach ($this->docVars->cast as $key => $value) {
-				$this->Cell(62);
-				$this->Cell(18, 4, number_format($value['impcast'],2,",",".").' ', 0, 0, 'R');
-				$this->Cell(32, 4, $value['descriz'],0,0,'C');
-				$this->Cell(18, 4, number_format($value['ivacast'],2,",",".").' ',0,1,'R');
-			}
-		}
+
         $totimpmer = $this->docVars->totimpmer;
         $speseincasso = $this->docVars->speseincasso;
         $totimpfat = $this->docVars->totimpfat;
