@@ -611,15 +611,14 @@ if ($user_data["Abilit"] == 9) {
 								<img height="16" src="../' . $mod['name'] . '/' . $mod['name'] . '.png" /> ' . $mod['transl_name'] . ' (' . $mod['name'] . ")</td>\n";
 			if ($mod['moduleid'] == 0) { // il modulo non è stato mai attivato
 				if ($form["user_name"] <> $user_data["user_name"]) { // sono un amministratore che sta operando sul profilo di altro utente
-                    if ($mod_admin[$mod['name']]['access']==3){ // il modulo è attivo sull'amministratore
-                        // per evitare conflitti nemmeno l'amministratore può attivare un modulo se questo non lo è ancora sul suo
-                        echo "  <td><input type=radio name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"3\"></td>";
-                        echo "  <td><input type=radio checked name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"0\"></td>";
-                    } else { // modulo non attivo sull'amministratore
-                        echo '  <td>Non attivato</td>';
-                        echo '  <td><input type="hidden"  name="' . $co_id . "nusr_" . $mod['name'] . '" value="0"></td>';
-
-                    }
+          if ($mod_admin[$mod['name']]['access']==3){ // il modulo è attivo sull'amministratore
+              // per evitare conflitti nemmeno l'amministratore può attivare un modulo se questo non lo è ancora sul suo
+              echo "  <td><input type=radio name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"3\"></td>";
+              echo "  <td><input type=radio checked name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"0\"></td>";
+          } else { // modulo non attivo sull'amministratore
+              echo '  <td>Non attivato</td>';
+              echo '  <td><input type="hidden"  name="' . $co_id . "nusr_" . $mod['name'] . '" value="0"></td>';
+          }
 				} elseif ($co['set_co'] == 0) { // il modulo mai attivato
 					echo "  <td><input type=radio name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"3\"></td>";
 					echo "  <td><input type=radio checked name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"0\"></td>";
@@ -631,7 +630,7 @@ if ($user_data["Abilit"] == 9) {
 				echo "  <td><input type=radio name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"3\"></td>";
 				echo "  <td><input type=radio checked name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"0\"></td>";
 			} else {
-				echo '<td><input type=radio checked name="'. $co_id . 'acc_' . $mod['moduleid'] . ' value="3"> '.((count($mod['excluded_script'])>=1)?'<br><b>script esclusi:</b><br>'.implode('<br>',$mod['excluded_script']):'').'</td>';
+				echo '<td><input type=radio checked name="'. $co_id . 'acc_' . $mod['moduleid'] . ' value="3"> '.((count($mod['excluded_script'])>=1)?'<br><b>script esclusi:</b><br>'.implode('.php<br>',$mod['excluded_script']).'.php':'').'</td>';
 				echo "  <td><input type=radio name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"0\"></td>";
 			}
 			echo "</tr>\n";
