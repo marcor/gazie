@@ -2457,7 +2457,7 @@ function checkAdmin($Livaut = 0) {
     global $gTables, $module, $table_prefix, $link;
     $_SESSION["Abilit"] = false;
     if (!$link) exit;
-    // Se utente non � loggato lo mandiamo alla pagina di login
+    // Se utente non è loggato lo mandiamo alla pagina di login
     if (!isset($_SESSION["user_name"])) {
         redirect('../root/login_user.php?tp=' . $table_prefix);
     }
@@ -2468,8 +2468,6 @@ function checkAdmin($Livaut = 0) {
       exit;
     } elseif (is_array($rschk)) { // questo utente ha almeno un script da escludere su questo modulo
       $bn = basename($_SERVER['PHP_SELF'],'.php');
-      print_r($rschk);
-      print $bn;
       if (in_array($bn,$rschk)){
         redirect("../root/access_error.php?script=" . $bn);
         exit;
