@@ -148,10 +148,15 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
         $transl = array();
         while ($row = gaz_dbi_fetch_array($result)) {
             $chkes = json_decode($row['custom_field']);
-            $path = parse_url($row['m3_link'], PHP_URL_PATH);
-            $nfr = basename($path,'.php');
-            if (isset($chkes->excluded_script) && in_array($nfr,$chkes->excluded_script)) {
+            $path3 = parse_url($row['m3_link'], PHP_URL_PATH);
+            $nfr3 = basename($path3,'.php');
+            if (isset($chkes->excluded_script) && in_array($nfr3,$chkes->excluded_script)) {
               $row['m3_link'] = '';
+            }
+            $path2 = parse_url($row['m2_link'], PHP_URL_PATH);
+            $nfr2 = basename($path2,'.php');
+            if (isset($chkes->excluded_script) && in_array($nfr2,$chkes->excluded_script)) {
+              $row['m2_link'] = '../../..'.$_SERVER['PHP_SELF'];
             }
             if ($row['access'] == 3) {
                 if ($ctrl_m1 != $row['m1_id']) {
@@ -231,8 +236,6 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
             $ctrl_m2 = $row['m2_id'];
             $ctrl_m3 = $row['m3_id'];
         }
-        //ksort($menuArray);
-
         if (!empty($idScript)) {
             if (is_array($idScript)) { // $idScript dev'essere un array con index [0] per il numero di menu e index[1] per l'id dello script
                 if ($idScript[0] == 2) {
@@ -261,37 +264,22 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
         } elseif (isset($title_from_menu)) {
           $accTitle.= '» ' . $title_from_menu;
         }
-
-
     $i = 0;
-    $colors = array ( "#00CD66", "#DC143C", "#20B2AA", "#FAFAD2", "#CD8500", "#EEEE00", "#B7B7B7", "#20B2AA", "#00FF7F", "#FFDAB9", "#006400", "#d3f5c6", "#673723", "#6b0490", "#1527cc", "#0cacd8" );             //"#00CD66", "#DC143C", "#20B2AA", "#FAFAD2", "#CD8500" );
-    $icons = array ("fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle");
+    $colors = array ( "#00CD66", "#DC143C", "#20B2AA", "#FAFAD2", "#CD8500", "#EEEE00", "#B7B7B7", "#20B2AA", "#00FF7F", "#FFDAB9", "#006400", "#d3f5c6", "#673723", "#6b0490", "#1527cc", "#0cacd8" );$icons = array ("fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle");
     foreach ($menuArray as $link) {
-/*        if ( $i==0 ) {
-            echo "<li class=\"treeview\">";
-            echo "  <a href=\"".$link['link']."\">";
-            //echo "    <img width=\"18\" src=\"../".substr($link['icon'],0,-4)."/".$link['icon']."\" />";
-            echo "    <i style=\"color:".$colors[$i]."\" class=\"".$icons[$i]."\"></i>";
-            echo "      <span>".$link['name']."</span>";
-            echo "        <i class=\"fa fa-angle-left pull-right\"></i>";
-            echo "  </a>";
-        } else {*/
-        if ( $admin_aziend["Abilit"]>=$link["m1_ackey"] ) {
-						$rsm = explode("/",$link['link']);
-						$act=($module==$rsm[1])?' active':'';
-            echo '<li class="treeview'.$act.'">';
-            echo "  <a href=\"". $link['link'] ."\">\n";
-            echo "    <img height=\"16\" src=\"../".substr($link['icon'],0,-4)."/".$link['icon']."\">\n";
-           // echo "    <i style=\"color:".$colors[$i]."\" class=\"".$icons[$i]."\"></i>\n";
-            echo "      <span>". $link['name'] ."</span>\n";
-            echo "    <i class=\"fa fa-angle-left pull-right\"></i>\n";
-            echo "  </a>\n";
-
-        //}
+      if ( $admin_aziend["Abilit"]>=$link["m1_ackey"] ) {
+				$rsm = explode("/",$link['link']);
+				$act=($module==$rsm[1])?' active':'';
+        echo '<li class="treeview'.$act.'">';
+        echo "  <a href=\"". $link['link'] ."\">\n";
+        echo "    <img height=\"16\" src=\"../".substr($link['icon'],0,-4)."/".$link['icon']."\">\n";
+        echo "      <span>". $link['name'] ."</span>\n";
+        echo "    <i class=\"fa fa-angle-left pull-right\"></i>\n";
+        echo "  </a>\n";
         submenu($link, $i);
         echo "          </li>\n";
-        }
-        $i++;
+      }
+      $i++;
     }
 ?>
     </ul>

@@ -193,10 +193,15 @@ if ( isset($maintenance) && $maintenance!=FALSE && $maintenance!=$_SESSION['user
                 $transl = array();
                 while ($row = gaz_dbi_fetch_array($result)) {
                   $chkes = json_decode($row['custom_field']);
-                  $path = parse_url($row['m3_link'], PHP_URL_PATH);
-                  $nfr = basename($path,'.php');
-                  if (isset($chkes->excluded_script) && in_array($nfr,$chkes->excluded_script)) {
+                  $path3 = parse_url($row['m3_link'], PHP_URL_PATH);
+                  $nfr3 = basename($path3,'.php');
+                  if (isset($chkes->excluded_script) && in_array($nfr3,$chkes->excluded_script)) {
                     $row['m3_link'] = '';
+                  }
+                  $path2 = parse_url($row['m2_link'], PHP_URL_PATH);
+                  $nfr2 = basename($path2,'.php');
+                  if (isset($chkes->excluded_script) && in_array($nfr2,$chkes->excluded_script)) {
+                    $row['m2_link'] = '../../..'.$_SERVER['PHP_SELF'];
                   }
                   if ($row['access'] == 3) {
                         if ($ctrl_m1 != $row['m1_id']) {
