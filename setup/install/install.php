@@ -95,19 +95,21 @@ if (!isset($_POST['hidden_req'])){           // al primo accesso allo script
     $form['lang'] = substr($_POST['lang'],0,16);
     $form['install_upgrade'] = substr($_POST['install_upgrade'],0,16);
     if (isset($_POST['upgrade'])) {          // AGGIORNO
-		if (databaseIsAlign()) {             // la base dati e' aggiornata!
-			$err[] = 'is_align';
-			if (strlen($form['hidden_req'])>10 && substr($form['hidden_req'], 0, 10)=='update_to_' && substr($form['hidden_req'], -4)=='.php') {
-				// il db è allineato ma ho trovato da eseguire uno script php  correlato
-				include($form['hidden_req']);
-			}
-		} else {
-			connectToDB();
-			$exe_script = executeQueryFileUpgrade($table_prefix);
-			if ($exe_script) {
-				include($exe_script);
-			}
-		}
+      if (databaseIsAlign()) {             // la base dati e' aggiornata!
+        $err[] = 'is_align';
+        if (strlen($form['hidden_req'])>10 && substr($form['hidden_req'], 0, 10)=='update_to_' && substr($form['hidden_req'], -4)=='.php') {
+          // il db è allineato ma ho trovato da eseguire uno script php  correlato
+          include($form['hidden_req']);
+        }
+      } else {
+        connectToDB();
+        executeModulesUpdate();// Antonio Germani - prima di eseguire la modifica del numero versione archivi controllo l'aggiornamento dei moduli extra GAzie
+        $exe_script = executeQueryFileUpgrade($table_prefix);
+        if ($exe_script) {
+          include($exe_script);
+        }
+
+      }
     }
     if (isset($_POST['install'])) {          //INSTALLO
         // recupero il file sql d'installazione nella directory setup/install/
@@ -410,10 +412,7 @@ if ($handle = opendir($relativePath)) {
 return $structArray;
 }
 
-function executeScriptFileUpgrade($name_sql) // se ho un file php da eseguire dopo la query sql
-{
-  // Antonio Germani ->> TO DO: inserire qui una ricerca nelle directories dei moduli di un eventuale file upgrade_db.php che conterrà un array bidimensionale $upgrade_db[versione archivio][]="istruzione da eseguire";
-  //                            se il file esiste verranno eseguite le istruzioni in esso contenute
+function executeScriptFileUpgrade($name_sql){ // se ho un file php da eseguire dopo la query sql
 	$filename = pathinfo($name_sql, PATHINFO_FILENAME).'.php';
 	if (file_exists($filename)) {
 		// ho un file da eseguire alla fine delle query
@@ -421,6 +420,40 @@ function executeScriptFileUpgrade($name_sql) // se ho un file php da eseguire do
 	} else {
 		return false;
 	}
+}
+
+function executeModulesUpdate(){// Antonio Germani 12/07/2022 - funzione per eseguire gli eventuali upgrade inviati dai moduli tramite il file upgrade_db.php
+  global $table_prefix;
+  $companies=getCompanyNumbers();
+  $query = "SELECT name FROM `".$table_prefix."_module`";// prendo tutti i nomi dei moduli attivi
+  $result = gaz_dbi_query ($query);
+
+  while($module=gaz_dbi_fetch_array($result)){ // in ogni modulo attivo
+
+    if (file_exists("../../modules/". $module['name'] ."/upgrade_db.php")){ // cerco se c'è il file di aggiornamento
+
+      include("../../modules/". $module['name'] ."/upgrade_db.php"); // carico l'array
+      if (isset($upgrade_db)){ //se c'è
+        // prendo l'ultima versione archivio
+        $version = gaz_dbi_get_row($table_prefix.'_config', 'variable', 'archive')['cvalue'];
+        foreach ($upgrade_db as $k => $v){ //ciclo le istruzioni in base alla chiave
+          if ($k > $version){ // se la chiave è maggiore della versione attuale archivio
+            foreach ($upgrade_db[$k] as $instruction){ //ciclo le istruzioni e le eseguo per ogni azienda
+              foreach ($companies as $i) {
+                    $sql = preg_replace("/XXX/", sprintf('%03d',$i), $instruction);
+                    if (!gaz_dbi_query($sql)) { //se non è stata eseguita l'istruzione lo segnalo
+                        echo "Query Fallita";
+                        echo "$sql <br/>";
+                        exit;
+                    }
+               }
+            }
+          }
+        }
+
+      }
+    }
+  }
 }
 ?>
 <!DOCTYPE html>
