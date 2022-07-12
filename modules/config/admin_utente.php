@@ -94,10 +94,10 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
 	$form = gaz_dbi_get_row($gTables['admin'], "user_name", preg_replace("/[^A-Za-z0-9]/", '',substr($_GET["user_name"], 0, 15)));
 	// dal custom field di admin_module relativo al magazzino trovo il magazzino di default
 	$magmodule = gaz_dbi_get_row($gTables['module'], "name",'magazz');
-	$magadmin_module = gaz_dbi_get_row($gTables['admin_module'], "moduleid",$magmodule['id']," AND adminid='{$form['user_name']}' AND company_id=" . $admin_aziend['company_id']);
-  $magadmin_module['custom_field'] = ($magadmin_module['custom_field'] === NULL) ? '' : $magadmin_module['custom_field'];
-	$magcustom_field=json_decode($magadmin_module['custom_field']);
-	$form["id_warehouse"] = (isset($magcustom_field->user_id_warehouse))?$magcustom_field->user_id_warehouse:0;
+	$mod_customfield = gaz_dbi_get_row($gTables['admin_module'], "moduleid",$magmodule['id']," AND adminid='{$form['user_name']}' AND company_id=" . $admin_aziend['company_id']);
+  $mod_customfield['custom_field'] = ($mod_customfield['custom_field'] === NULL) ? '' : $mod_customfield['custom_field'];
+	$customfield=json_decode($mod_customfield['custom_field']);
+	$form['id_warehouse'] = (isset($customfield->user_id_warehouse))?$customfield->user_id_warehouse:0;
 	$form['user_password_old'] = '';
 	$form['user_password_new'] = '';
 	$form['user_password_ver'] = '';
@@ -254,22 +254,8 @@ if (isset($_POST['Submit'])) {
 						menu.creatione_data.php  e mettere in essa tutte le query al database necessarie per il funzionamento del nuovo
 						modulo
 						*/
-            global $table_prefix;
-            $query = "SELECT codice FROM `".$table_prefix."_aziend`";
-            $result = gaz_dbi_query ($query);
-            $companies = array();
-            while($r=gaz_dbi_fetch_array($result)){
-              $companies[]=$r['codice'];
-            }
 						foreach ($update_db as $vq) {
-              foreach ($companies as $i) {
-                $sql = preg_replace("/XXX/", sprintf('%03d',$i), $vq);
-                if (!gaz_dbi_query($sql)) { //se non è stata eseguita l'istruzione lo segnalo
-                    echo "Query Fallita";
-                    echo "$sql <br/>";
-                    exit;
-                }
-              }
+							gaz_dbi_query($vq);
 						}
 					}
 				  }
@@ -575,25 +561,30 @@ if ($toDo == 'insert') {
 
 <?php
 if ($user_data["Abilit"] == 9) {
-
 	function getModule($login, $company_id) {
 		global $gTables, $admin_aziend;
 		//trovo i moduli installati
-		$mod_found = array();
+		$mod_found = [];
 		$relativePath = '../../modules';
 		if ($handle = opendir($relativePath)) {
 			while ($exist_mod = readdir($handle)) {
 				if ($exist_mod == "." || $exist_mod == ".." || $exist_mod == ".svn" || $exist_mod == "root" || !file_exists("../../modules/$exist_mod/menu." . $admin_aziend['lang'] . ".php"))
 				continue;
-				$rs_mod = gaz_dbi_dyn_query(" am.access ,am.moduleid, module.name", $gTables['admin_module'] . ' AS am LEFT JOIN ' . $gTables['module'] .
+				$rs_mod = gaz_dbi_dyn_query("am.access,am.moduleid, am.custom_field, module.name ", $gTables['admin_module'] . ' AS am LEFT JOIN ' . $gTables['module'] .
 				' AS module ON module.id=am.moduleid ', " am.adminid = '" . $login . "' AND module.name = '$exist_mod' AND am.company_id = '$company_id'", "am.adminid", 0, 1);
 				require("../../modules/$exist_mod/menu." . $admin_aziend['lang'] . ".php");
 				$row = gaz_dbi_fetch_array($rs_mod);
+				$row['excluded_script'] = [];
 				if (!isset($row['moduleid'])) {
 					$row['name'] = $exist_mod;
 					$row['moduleid'] = 0;
 					$row['access'] = 0;
+          $row['custom_field'] = '';
 				}
+        $chkes = json_decode($row['custom_field']);
+        if ($chkes && isset($chkes->excluded_script)) {
+ 					$row['excluded_script'] = $chkes->excluded_script;
+        }
 				$row['transl_name'] = $transl[$exist_mod]['name'];
 				$mod_found[$exist_mod] = $row;
 			}
@@ -620,15 +611,14 @@ if ($user_data["Abilit"] == 9) {
 								<img height="16" src="../' . $mod['name'] . '/' . $mod['name'] . '.png" /> ' . $mod['transl_name'] . ' (' . $mod['name'] . ")</td>\n";
 			if ($mod['moduleid'] == 0) { // il modulo non è stato mai attivato
 				if ($form["user_name"] <> $user_data["user_name"]) { // sono un amministratore che sta operando sul profilo di altro utente
-                    if ($mod_admin[$mod['name']]['access']==3){ // il modulo è attivo sull'amministratore
-                        // per evitare conflitti nemmeno l'amministratore può attivare un modulo se questo non lo è ancora sul suo
-                        echo "  <td><input type=radio name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"3\"></td>";
-                        echo "  <td><input type=radio checked name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"0\"></td>";
-                    } else { // modulo non attivo sull'amministratore
-                        echo '  <td>Non attivato</td>';
-                        echo '  <td><input type="hidden"  name="' . $co_id . "nusr_" . $mod['name'] . '" value="0"></td>';
-
-                    }
+          if ($mod_admin[$mod['name']]['access']==3){ // il modulo è attivo sull'amministratore
+              // per evitare conflitti nemmeno l'amministratore può attivare un modulo se questo non lo è ancora sul suo
+              echo "  <td><input type=radio name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"3\"></td>";
+              echo "  <td><input type=radio checked name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"0\"></td>";
+          } else { // modulo non attivo sull'amministratore
+              echo '  <td>Non attivato</td>';
+              echo '  <td><input type="hidden"  name="' . $co_id . "nusr_" . $mod['name'] . '" value="0"></td>';
+          }
 				} elseif ($co['set_co'] == 0) { // il modulo mai attivato
 					echo "  <td><input type=radio name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"3\"></td>";
 					echo "  <td><input type=radio checked name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"0\"></td>";
@@ -640,7 +630,7 @@ if ($user_data["Abilit"] == 9) {
 				echo "  <td><input type=radio name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"3\"></td>";
 				echo "  <td><input type=radio checked name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"0\"></td>";
 			} else {
-				echo "  <td><input type=radio checked name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"3\"></td>";
+				echo '<td><input type=radio checked name="'. $co_id . 'acc_' . $mod['moduleid'] . '" value="3"> '.((count($mod['excluded_script'])>=1)?'<br><b>script esclusi:</b><br>'.implode('.php<br>',$mod['excluded_script']).'.php':'').'</td>';
 				echo "  <td><input type=radio name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"0\"></td>";
 			}
 			echo "</tr>\n";
