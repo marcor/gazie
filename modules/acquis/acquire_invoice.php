@@ -284,10 +284,10 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		}
 		// faccio i controlli sui righi
 		foreach($_POST as $kr=>$vr){
-			if (substr($kr,0,7)=='codvat_' && $vr<=0 && $vr !='000000000') {
+			if (substr($kr,0,7)=='codvat_' && $vr<=0 && $vr !='isdescri') {
 				$msg['err'][] = 'no_codvat';
 			}
-			if (substr($kr,0,7)=='codric_' && $vr<=0 && $vr !='000000000') {
+			if (substr($kr,0,7)=='codric_' && $vr<=0 && $vr !='isdescri') {
 				$msg['err'][] = 'no_codric';
 			}
 		}
@@ -1182,12 +1182,13 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
                     file_put_contents($fn,$form['fattura_elettronica_original_content']);
 				}
 				$ctrl_ddt='';
-        usort($form['rows'], function($a, $b) {
-          return $a['NumeroDDT'] <=> $b['NumeroDDT'];
-        });
+        if (!empty($ctrl_NumeroDDT)){
+          usort($form['rows'], function($a, $b) {
+            return $a['NumeroDDT'] <=> $b['NumeroDDT'];
+          });
+        }
 				foreach ($form['rows'] as $i => $v) { // inserisco i righi
-				 $form['rows'][$i]['status']="INSERT";
-					$post_nl=$i-1;
+          $form['rows'][$i]['status']="INSERT";
 					if (abs($v['prelis'])<0.00001) { // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo
 						$form['rows'][$i]['tiprig']=2;
 					}
@@ -1230,12 +1231,10 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 						$ctrl_ddt=$v['NumeroDDT'];
 					}
 					$form['rows'][$i]['id_tes'] = $ultimo_id;
-
-					// i righi postati hanno un indice diverso
-					$form['rows'][$i]['codart'] = preg_replace("/[^A-Za-z0-9_]i/",'',$_POST['codart_'.($post_nl+1)]);
-					$form['rows'][$i]['codric'] = intval($_POST['codric_'.($post_nl+1)]);
-					$form['rows'][$i]['warehouse'] = intval($_POST['warehouse_'.($post_nl+1)]);
-					$form['rows'][$i]['codvat'] = intval($_POST['codvat_'.($post_nl+1)]);
+					$form['rows'][$i]['codart'] = preg_replace("/[^A-Za-z0-9_]i/",'',$_POST['codart_'.($i-1)]);
+					$form['rows'][$i]['codric'] = intval($_POST['codric_'.($i-1)]);
+					$form['rows'][$i]['warehouse'] = intval($_POST['warehouse_'.($i-1)]);
+					$form['rows'][$i]['codvat'] = intval($_POST['codvat_'.($i-1)]);
 					$aliiva=$form['rows'][$i]['codvat'];
 					$exist_new_codart=gaz_dbi_get_row($gTables['artico'], "codice", $new_codart);
 					if ($exist_new_codart && substr($v['codart'],0,6)!='Insert') { // il codice esiste lo uso, ma prima controllo se l'ho volutamente cambiato sul form
@@ -1540,9 +1539,9 @@ if ($toDo=='insert' || $toDo=='update' ) {
 					$v['amount'] = '';
 					$v['ritenuta'] = '';
 					$v['pervat'] = '';
-					$codric_dropdown = '<input type="hidden" name="codric_'.$k.'" value="000000000" />';
+					$codric_dropdown = '<input type="hidden" name="codric_'.$k.'" value="isdescri" />';
 					$whareh_dropdown = '<input type="hidden" name="warehouse_'.$k.'" value="0" />';
-					$codvat_dropdown = '<input type="hidden" name="codvat_'.$k.'" value="0" />';
+					$codvat_dropdown = '<input type="hidden" name="codvat_'.$k.'" value="isdescri" />';
 					$codart_select = '<input type="hidden" name="codart_'.$k.'" /><input type="hidden" name="search_codart_'.$k.'" />';
 				} else {
 					//$v['prelis']=gaz_format_number($v['prelis']);
