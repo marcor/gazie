@@ -70,6 +70,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	$form['id_artico_group'] = trim($form['id_artico_group']);
 	$form['ritorno'] = $_POST['ritorno'];
   $form['paypal_email'] = $_POST['paypal_email'];
+  $form['stripe_pub_key'] = $_POST['stripe_pub_key'];
+  $form['stripe_sec_key'] = $_POST['stripe_sec_key'];
 	$form['ref_ecommerce_id_main_product'] = substr($_POST['ref_ecommerce_id_main_product'], 0, 9);
 	$form['large_descri'] = filter_input(INPUT_POST, 'large_descri');
 	$form['cosear'] = filter_var($_POST['cosear'],FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -215,7 +217,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 			$form['large_descri'] = htmlspecialchars_decode (addslashes($form['large_descri']));
 			// aggiorno il db
 			if ($toDo == 'insert') {
-				$array= array('vacation_rental'=>array('facility_type' => '', 'paypal_email' => $form['paypal_email']));// creo l'array per il custom field
+				$array= array('vacation_rental'=>array('facility_type' => '', 'paypal_email' => $form['paypal_email'], 'stripe_pub_key' => $form['stripe_pub_key'], 'stripe_sec_key' => $form['stripe_sec_key']));// creo l'array per il custom field
 				$form['custom_field'] = json_encode($array);// codifico in json  e lo inserisco nel form
 				gaz_dbi_table_insert('artico_group', $form);
 			} elseif ($toDo == 'update') {
@@ -224,9 +226,11 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
           if (is_array($data['vacation_rental'])){ // se c'è il modulo "vacation rental" lo aggiorno
             $data['vacation_rental']['facility_type']='';
             $data['vacation_rental']['paypal_email']=$_POST['paypal_email'];
+            $data['vacation_rental']['stripe_pub_key']=$_POST['stripe_pub_key'];
+            $data['vacation_rental']['stripe_sec_key']=$_POST['stripe_sec_key'];
             $form['custom_field'] = json_encode($data);
           } else { //se non c'è il modulo "vacation_rental" lo aggiungo
-            $data['vacation_rental']= array('facility_type' => '', 'paypal_email' => $_POST['paypal_email']);
+            $data['vacation_rental']= array('facility_type' => '', 'paypal_email' => $_POST['paypal_email'], 'stripe_pub_key' => $_POST['stripe_pub_key'], 'stripe_sec_key' => $_POST['stripe_sec_key']);
             $form['custom_field'] = json_encode($data);
           }
         }
@@ -268,13 +272,19 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     if (is_array($data['vacation_rental'])){
 				$form['facility_type'] = $data['vacation_rental']['facility_type'];
 				$form['paypal_email'] = (isset($data['vacation_rental']['paypal_email']))?$data['vacation_rental']['paypal_email']:'';
+        $form['stripe_pub_key'] = (isset($data['vacation_rental']['stripe_pub_key']))?$data['vacation_rental']['stripe_pub_key']:'';
+        $form['stripe_sec_key'] = (isset($data['vacation_rental']['stripe_sec_key']))?$data['vacation_rental']['stripe_sec_key']:'';
     } else {
 				$form['facility_type'] = '';
 				$form['paypal_email'] ='';
+        $form['stripe_pub_key'] = '';
+        $form['stripe_sec_key'] = '';
     }
 	} else {
     $form['facility_type'] = '';
 		$form['paypal_email'] = '';
+    $form['stripe_pub_key'] = '';
+    $form['stripe_sec_key'] = '';
 	}
 
 	if (isset($_GET['tab']) && $_GET['tab']=="variant"){
@@ -310,6 +320,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     // eventuale descrizione ampliata
     $form['large_descri'] = '';
     $form['paypal_email'] = '';
+    $form['stripe_pub_key'] = '';
+    $form['stripe_sec_key'] = '';
     $form['ref_ecommerce_id_main_product']="";
     $form['id_artico_group'] = "";
 
@@ -513,6 +525,22 @@ function groupErase(group,descri){
 								<div class="form-group">
 									<label for="paypal_email" class="col-sm-4 control-label">Eventuale e-mail account PayPal</label>
 									<input class="col-sm-8" type="text" value="<?php echo $form['paypal_email']; ?>" name="paypal_email" maxlength="60" />
+								</div>
+							</div>
+							</div><!-- chiude row  -->
+              <div id="webUrl" class="row IERincludeExcludeRow">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label for="stripe_pub_key" class="col-sm-4 control-label">Eventuale publicable Stripe API key</label>
+									<input class="col-sm-8" type="text" value="<?php echo $form['stripe_pub_key']; ?>" name="stripe_pub_key" maxlength="60" />
+								</div>
+							</div>
+							</div><!-- chiude row  -->
+              <div id="webUrl" class="row IERincludeExcludeRow">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label for="stripe_sec_key" class="col-sm-4 control-label">Eventuale secrete Stripe key</label>
+									<input class="col-sm-8" type="password" value="<?php echo $form['stripe_sec_key']; ?>" name="stripe_sec_key" maxlength="60" />
 								</div>
 							</div>
 							</div><!-- chiude row  -->

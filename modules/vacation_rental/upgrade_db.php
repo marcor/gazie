@@ -36,10 +36,10 @@ global $table_prefix;
 // da qui in poi iserire le query che saranno eseguite su ogni azienda con il modulo attivo
 
 /*  >>> esempio di come vanno impostate le query il numero [147] rappresenta la versione dell'update di GAzie
-
 $upgrade_db[147][]="ALTER TABLE ".$table_prefix."_XXXrental_discounts ADD `test2` TINYINT(2) NOT NULL DEFAULT '0' COMMENT 'test update 2';";
-
 */
+
+$update_db[148][]="INSERT INTO ".$table_prefix."_XXXcompany_config (`id`, `description`, `var`, `val`) VALUES (NULL, 'URL di ritorno da Stripe dopo avvenuto pagamento ', 'vacation_url_stripe', NULL);";
 
 
 ?>
