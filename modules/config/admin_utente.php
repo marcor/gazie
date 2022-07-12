@@ -254,8 +254,22 @@ if (isset($_POST['Submit'])) {
 						menu.creatione_data.php  e mettere in essa tutte le query al database necessarie per il funzionamento del nuovo
 						modulo
 						*/
+						global $table_prefix;
+            $query = "SELECT codice FROM `".$table_prefix."_aziend`";
+            $result = gaz_dbi_query ($query);
+            $companies = array();
+            while($r=gaz_dbi_fetch_array($result)){
+              $companies[]=$r['codice'];
+            }
 						foreach ($update_db as $vq) {
-							gaz_dbi_query($vq);
+              foreach ($companies as $i) {
+                $sql = preg_replace("/XXX/", sprintf('%03d',$i), $vq);
+                if (!gaz_dbi_query($sql)) { //se non è stata eseguita l'istruzione lo segnalo
+                    echo "Query Fallita";
+                    echo "$sql <br/>";
+                    exit;
+                }
+              }
 						}
 					}
 				  }
