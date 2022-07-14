@@ -728,7 +728,11 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					$dataddt=$valDatiDDT->getElementsByTagName('DataDDT')->item(0)->nodeValue;
           // faccio il push sull'accumulatore dei DataDDT con stesso numero-data
           $acc_DataDDT[$numddt]=['Numero'=>$numddt,'Data'=>$dataddt];
-          $existDdT=existDdT($numddt,$dataddt,$form['clfoco']);
+          if (isset($form['clfoco'])) {
+            $existDdT=existDdT($numddt,$dataddt,$form['clfoco']);
+          } else {
+            $existDdT=false;
+          }
           $acc_DataDDT[$numddt]=['Numero'=>$numddt,'Data'=>$dataddt,'Exist'=>$existDdT];
 					foreach ($RiferimentoNumeroLinea as $valRiferimentoNumeroLinea) { // attraverso RiferimentoNumeroLinea
             if (isset($nl_NumeroLinea[$valRiferimentoNumeroLinea->nodeValue])){//se esiste la linea indicata dal 'RiferimentoNumeroLinea'
@@ -1182,11 +1186,22 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
                     file_put_contents($fn,$form['fattura_elettronica_original_content']);
 				}
 				$ctrl_ddt='';
+        $i=0;
+        foreach ($form['rows'] as $row){ // aggiungo i mancanti prendendoli dal $_POST
+          $j=$i+1;
+          $form['rows'][$j]['codart'] = preg_replace("/[^A-Za-z0-9_]i/",'',$_POST['codart_'.$i]);
+					$form['rows'][$j]['codric'] = intval($_POST['codric_'.$i]);
+					$form['rows'][$j]['warehouse'] = intval($_POST['warehouse_'.$i]);
+					$form['rows'][$j]['codvat'] = intval($_POST['codvat_'.$i]);
+          $i++;
+        }
+
         if (!empty($ctrl_NumeroDDT)){
           usort($form['rows'], function($a, $b) {
             return $a['NumeroDDT'] <=> $b['NumeroDDT'];
           });
         }
+
 				foreach ($form['rows'] as $i => $v) { // inserisco i righi
           $form['rows'][$i]['status']="INSERT";
 					if (abs($v['prelis'])<0.00001) { // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo
@@ -1231,10 +1246,6 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 						$ctrl_ddt=$v['NumeroDDT'];
 					}
 					$form['rows'][$i]['id_tes'] = $ultimo_id;
-					$form['rows'][$i]['codart'] = preg_replace("/[^A-Za-z0-9_]i/",'',$_POST['codart_'.($i-1)]);
-					$form['rows'][$i]['codric'] = intval($_POST['codric_'.($i-1)]);
-					$form['rows'][$i]['warehouse'] = intval($_POST['warehouse_'.($i-1)]);
-					$form['rows'][$i]['codvat'] = intval($_POST['codvat_'.($i-1)]);
 					$aliiva=$form['rows'][$i]['codvat'];
 					$exist_new_codart=gaz_dbi_get_row($gTables['artico'], "codice", $new_codart);
 					if ($exist_new_codart && substr($v['codart'],0,6)!='Insert') { // il codice esiste lo uso, ma prima controllo se l'ho volutamente cambiato sul form
@@ -1500,7 +1511,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
 			$ctrl_ddt='';
 			$exist_movmag=false;
 			$new_acconcile=$form['new_acconcile'];
-			foreach ($form['rows'] as $k => $v) {
+      foreach ($form['rows'] as $k => $v) {
 				$k--;
 				if (isset($v['NumeroDDT'])) { // ho i riferimenti ai DdT
           if ( $v['NumeroDDT'] && empty($anomalia) ) { // ho i riferimenti ai DdT
@@ -1515,7 +1526,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
               $ctrl_ddt=$v['NumeroDDT'];
               $rowshead[$k]='<td colspan=14><b>da DdT n.'.$v['NumeroDDT'].' del '.gaz_format_date($v['DataDDT']).' '.$exist_ddt.'</b></td>';
             }
-            echo '<input type="hidden" name="'.'numddt_'.$k.'" value="'.$form['numddt_'.$k].'" />';
+            echo '<input type="hidden" name="'.'numddt_'.$k.'" value="'.(isset($form['numddt_'.$k])?$form['numddt_'.$k]:$ctrl_ddt).'" />';
           } else { // qui segnalo le anomalie e faccio le richieste di intervento dell'utente
             $ctrl_ddt='';
             $rowshead[$k]='<td colspan=14 class="bg-danger text-danger">'.concileDdT('numddt_'.$k,$form['numddt_'.$k],$acc_DataDDT).' Sul rigo '.($k+1).' manca il riferimento al numero di DdT indicato sulla fattura, &egrave; richiesta la selezione</td>';
