@@ -1655,11 +1655,11 @@ if (intval($form['nome_colt']) == 0) {
 						<?php
 
 						for ($n = 1;$n <= $form['ncamp'];++$n){ // ciclo i campi inseriti
-							$gForm->selectFromDB('campi', 'campo_impianto'.$n ,'codice', $form['campo_impianto'.$n], 'codice', 1, ' - ','descri','TRUE','FacetSelect' , null, '', "used_from_modules IN ('".$module."') OR used_from_modules='' OR used_from_modules='NULL' ");
+							$gForm->selectFromDB('campi', 'campo_impianto'.$n ,'codice', $form['campo_impianto'.$n], 'codice', 1, ' - ','descri','TRUE','FacetSelect' , null, '', "used_from_modules IN ('".$module."') OR used_from_modules='' OR used_from_modules IS NULL ");
 						}
 						$form['campo_impianto'.$n]="";
 						if ($n>1 AND $form['campo_impianto'.($n-1)]>0 AND $form['id_orderman']==0){ // permetto di inserire un nuovo campo solo se non c'è una produzione
-							$gForm->selectFromDB('campi', 'campo_impianto'.$n,'codice', $form['campo_impianto'.$n], 'codice', 1, ' - ','descri','TRUE','FacetSelect' , null, '', "used_from_modules IN ('".$module."') OR used_from_modules='' OR used_from_modules='NULL' ");
+							$gForm->selectFromDB('campi', 'campo_impianto'.$n,'codice', $form['campo_impianto'.$n], 'codice', 1, ' - ','descri','TRUE','FacetSelect' , null, '', "used_from_modules IN ('".$module."') OR used_from_modules='' OR used_from_modules IS NULL ");
 						}
 						$form['ncamp']=$n;
 						?>
