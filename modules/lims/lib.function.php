@@ -22,7 +22,7 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
 */
+class limsForm extends GAzieForm {
 
-class Lims {
 }
 ?>

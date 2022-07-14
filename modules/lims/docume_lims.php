@@ -27,8 +27,9 @@ $admin_aziend=checkAdmin();
 ?>
 <div class="help">
 <div class="panel panel-info text-center"><h2>
-<p>Il modulo "LIMS" per GAZIE (Gestione AZIEnda) è in fase di sviluppo, per qualsiasi chiarimento puoi contattare l'autore:</p>
-<p>Antonio De Vincentiis Montesilvano (PE) https://www.devincentiis.it - telefono +39 338 31 21 161</p>
+<ul>
+<li>Il modulo "LIMS" per GAZIE (Gestione AZIEnda) è sviluppato in base alle specifiche necessità dei laboratori. </li><li>Possono essere realizzati moduli ad-hoc per collegare gli strumenti di analisi, i dispositivi di campionamento, la sensoristica e ricordare le scadenze delle tarature/calibrature e degli accreditamenti.</li> <li>La reportistica, i rapporti di prova, i verbali di campionamento, le metodiche, le verifiche strumentali messe in essere.</li></ul>
+<p class="text-info"> Se vuoi realizzare un sistema informativo su misura o per qualsiasi chiarimento puoi contattare l'autore:<br> Antonio De Vincentiis Montesilvano (PE) https://www.devincentiis.it - telefono +39 3383121161</p>
 </h2></div>
 </div>
 </div>
