@@ -428,6 +428,7 @@ class DocContabVars {
          // $from = $this->gTables[$this->tableName] . ' AS rs LEFT JOIN ' . $this->gTables['aliiva'] . ' AS vat ON rs.codvat=vat.codice';
          // $rs_rig = gaz_dbi_dyn_query('rs.*,vat.tipiva AS tipiva', $from, "rs.id_tes = " . $this->testat, "id_tes DESC, id_rig");
         global $azTables;
+        global $genTables;
         $azTables=$GLOBALS['azTables'];
         global $link;
         $link=$GLOBALS['link'];
@@ -485,6 +486,21 @@ class DocContabVars {
               if (isset ($rigo['custom_field']) && $data = json_decode($rigo['custom_field'], TRUE)) { // se esiste un json nel custom field
                 if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['accommodation_type'])){ // se è un alloggio
                   $security_deposit = $data['vacation_rental']['security_deposit']; //prendo il deposito cauzionale
+                  $agent = $data['vacation_rental']['agent']; //prendo l'ID del proprietatio
+                }
+              }
+              if (isset($agent) && intval($agent)>0){// se c'è un proprietario ne prendo i dati
+                $sql = "SELECT " . $azTables."clfoco.id_anagra FROM ".$azTables."agenti"." LEFT JOIN " . $azTables."clfoco" . " ON id_fornitore=codice WHERE ".$azTables."agenti.id_agente = ".intval($agent)." LIMIT 1";
+                if ($result = mysqli_query($link, $sql)) {
+                  $clf = mysqli_fetch_assoc($result);
+                }else{
+                  echo "Error: " . $sql . "<br>" . mysqli_error($link);
+                }
+                $sql = "SELECT * FROM ".$genTables."anagra"." WHERE id = ".$clf['id_anagra']." LIMIT 1";
+                if ($result = mysqli_query($link, $sql)) {
+                  $anagra_prop = mysqli_fetch_assoc($result);
+                }else{
+                  echo "Error: " . $sql . "<br>" . mysqli_error($link);
                 }
               }
           } elseif ($rigo['tiprig'] == 6 || $rigo['tiprig'] == 7 || $rigo['tiprig'] == 8) {
@@ -528,14 +544,30 @@ class DocContabVars {
             $results[] = $rigo;
           }
         }
+        if (isset($anagra_prop) || floatval($security_deposit)>0){// se c'è un proprietario
+          $nuovi_righi=array();
+          if (isset($anagra_prop)){// aggiungo un rigo descrittivo per il proprietario
+          $nuovi_righi[]=array('tiprig'=>6,'codart'=>'','descri'=>$script_transl[68].": ".$anagra_prop['ragso1']." ".$anagra_prop['ragso1']." - ".$anagra_prop['citspe']." - ".$anagra_prop['prospe'],'quanti'=>0, 'unimis'=>'','prelis'=>0,'sconto'=>0,'prelis'=>0,'pervat'=>0,'codric'=>0,'provvigione'=>0,'ritenuta'=>0,'id_order'=>0,'id_mag'=>0,'id_orderman'=>0);
+          }
+          if (floatval($security_deposit)>0){// aggiungo un rigo descrittivo per il deposito cauzional
+          $nuovi_righi[]=array('tiprig'=>6,'codart'=>'','descri'=>$script_transl[66].$security_deposit.". ".$script_transl[67],'quanti'=>0, 'unimis'=>'','prelis'=>0,'sconto'=>0,'prelis'=>0,'pervat'=>0,'codric'=>0,'provvigione'=>0,'ritenuta'=>0,'id_order'=>0,'id_mag'=>0,'id_orderman'=>0);
+          }
+          foreach($nuovi_righi as $v_nr) { // riattraverso l'array dei nuovi righi e sull'ultimo
+            $results[] = $v_nr;
+          }
+          $security_deposit=0;
+          unset($anagra_prop);
+        }
+        /*
         if (floatval($security_deposit)>0){// se è stato trovato un deposito cauzionale
           $nuovi_righi=array();// aggiungo un rigo descrittivo per il deposito cauzionale
-          $nuovi_righi[]=array('tiprig'=>6,'codart'=>'','descri'=>$script_transl[66].$security_deposit,'quanti'=>0, 'unimis'=>'','prelis'=>0,'sconto'=>0,'prelis'=>0,'pervat'=>0,'codric'=>0,'provvigione'=>0,'ritenuta'=>0,'id_order'=>0,'id_mag'=>0,'id_orderman'=>0);
+          $nuovi_righi[]=array('tiprig'=>6,'codart'=>'','descri'=>$script_transl[66].$security_deposit.". ".$script_transl[67],'quanti'=>0, 'unimis'=>'','prelis'=>0,'sconto'=>0,'prelis'=>0,'pervat'=>0,'codric'=>0,'provvigione'=>0,'ritenuta'=>0,'id_order'=>0,'id_mag'=>0,'id_orderman'=>0);
           foreach($nuovi_righi as $v_nr) { // riattraverso l'array dei nuovi righi e sull'ultimo
             $results[] = $v_nr;
           }
           $security_deposit=0;
         }
+        */
         return $results;
     }
 
