@@ -237,7 +237,9 @@ $strScript = array(
         'zero_rows' => 'Il documento non contiene righi di alloggi, compila la ricerca alloggio nella sezione inserimento alloggio, inserisci il valore % per avere una lista completa o per effettuare una ricerca parziale',
         'discount_alert' => 'sconto da anagrafe articoli',
         'last_row' => 'Ultimo rigo inserito',
-        'Deposito cauzionale da versare in contanti al check-in: EURO '
+        'Deposito cauzionale da versare in contanti al check-in: EURO ',
+        'In assenza di danni il deposito sarà restituito al check-out',
+        'Proprietario'
     ),
     "admin_house.php" =>
       array('title' => 'Gestione degli alloggi',
@@ -395,7 +397,11 @@ $strScript = array(
 		'imposta'=>"Per disponibilità e prezzi impostare le date e cercare",
 		'risultato'=>"Disponibilità per ",
 		'book'=>"Prenota",
-		'nessun_risultato'=>"Per il periodo selezionato non ci sono disponibilità. Provare a modificare le date o visionare il calendario generale."
+		'nessun_risultato'=>"Per il periodo selezionato non ci sono disponibilità. Provare a modificare le date o visionare il calendario generale.",
+    'for_night' => 'a notte',
+    'nights' => 'notti',
+    'over_guest' => 'Attenzione: questo alloggio è disponibile ma ha una capienza massima di',
+    'persons' => 'persone'
     ),
 	"booking_form.php" =>
     array('title' => 'Modulo di prenotazione',
@@ -506,8 +512,8 @@ $strScript = array(
     'payment_failed' => 'Pagamento NON riuscito, controllare la carta di credito',
     'payment_info' => 'Dati della transazione',
     'back_to_site' => 'Chiudi e torna al sito web',
-    'security_deposit_des2' => 'Oltre a quanto sopra, al check-in si dovrà versare un deposito cauzionale di',
-    'security_deposit_des' => 'Al check-in si dovrà versare un deposito cauzionale di',
+    'security_deposit_des2' => 'Oltre a quanto sopra, al check-in si dovrà versare in contanti un deposito cauzionale di',
+    'security_deposit_des' => 'Al check-in si dovrà versare in contanti un deposito cauzionale di',
     'GENERATO' => 'GENERATO da approvare',
     'PENDING' => 'IN ATTESA',
     'CONFIRMED' => 'CONFERMATO e APPROVATO',
@@ -515,7 +521,9 @@ $strScript = array(
     'ISSUE' => 'PROBLEMI da risolvere',
     'CANCELLED' => 'ANNULLATO',
     'no_extra' => 'Nessun extra acquistato',
-    'change_status' => 'Lo stato della prenotazione è cambiato in'
+    'change_status' => 'Lo stato della prenotazione è cambiato in',
+    'booking_number' => 'Numero prenotazione',
+    'deposit_return' => 'In assenza di danni, il deposito cauzionale sarà restituito al check-out'
     ),
 
   "admin_extra.php" =>

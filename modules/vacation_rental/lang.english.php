@@ -476,7 +476,9 @@ $strScript = array(
         'zero_rows' => 'Il documento non contiene righi di alloggi, compila la ricerca alloggio nella sezione inserimento alloggio, inserisci il valore % per avere una lista completa o per effettuare una ricerca parziale',
         'discount_alert' => 'sconto da anagrafe articoli',
         'last_row' => 'Ultimo rigo inserito',
-        'Security deposit to be paid in cash at check-in: EURO'
+        'Security deposit to be paid in cash at check-in: EURO',
+        'In the absence of damages, the deposit will be returned at check-out',
+        'Owner'
     ),
     "admin_house.php" =>
       array('title' => 'Gestione degli alloggi',
@@ -630,7 +632,11 @@ $strScript = array(
 		'imposta'=>"For availability and prices set check-in and check-out dates",
 		'risultato'=>"Availability for the dates requested",
 		'book'=>"Book",
-		'nessun_risultato'=>"There is no availability for your requested dates. Try to modify them or look at the calendar."
+		'nessun_risultato'=>"There is no availability for your requested dates. Try to modify them or look at the calendar.",
+    'for_night' => 'for night',
+    'nights' => 'nights',
+    'over_guest' => 'Attention: this accommodation is available but has a max capability of',
+    'persons' => 'persons'
     ),
 	"booking_form.php" =>
     array('title' => 'Booking form',
@@ -741,8 +747,8 @@ $strScript = array(
     'payment_failed' => 'Payment NOT successful, check your credit card',
     'payment_info' => 'Transaction data',
     'back_to_site' => 'Close and back to the website',
-    'security_deposit_des2' => 'In addition to the above, at check-in you will have to pay a security deposit of',
-    'security_deposit_des' => 'At check-in you will have to pay a security deposit of',
+    'security_deposit_des2' => 'In addition to the above, at check-in you will have to pay cash a security deposit of',
+    'security_deposit_des' => 'At check-in you will have to pay cash a security deposit of',
     'GENERATO' => 'GENERATED to approve',
     'PENDING' => 'PENDING',
     'CONFIRMED' => 'CONFIRMED and APPROVED',
@@ -750,7 +756,9 @@ $strScript = array(
     'ISSUE' => 'PROBLEMS to be solved',
     'CANCELLED' => 'CANCELLED',
     'no_extra' => 'No extras bought',
-    'change_status' => 'The status of the reservation has changed to'
+    'change_status' => 'The status of the reservation has changed to',
+    'booking_number' => 'Booking number',
+    'deposit_return' => 'If there is no damage, the security deposit will be returned at check-out'
     ),
 
   "admin_extra.php" =>
