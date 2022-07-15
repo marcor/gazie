@@ -604,8 +604,31 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 					$results->appendChild($attrVal);
         }
 			}
-			if ($XMLvars->reverse) {// sulle autofatture (da TD16 a TD20) utilizzo i dati azienda per popolare il CessionarioCommittente e aggiungo l'elemento <SoggettoEmittente> per indicarlo
+			if ($XMLvars->reverse) { // sulle autofatture (da TD16 a TD20) utilizzo i dati azienda per popolare il CessionarioCommittente e aggiungo l'elemento <SoggettoEmittente> per indicarlo
         // INIZIO REVERSE
+        if ($XMLvars->TipoDocumento<>'TD16' && $XMLvars->fiscal_rapresentative && $XMLvars->fiscal_rapresentative['pariva'] > 100000) { // se è uno straniero controllo che non abbia il legale rappresentante in Italia se si aggiungo l'elemento 1.3 <RappresentanteFiscale>
+					$feh = $xpath->query("//FatturaElettronicaHeader")->item(0);
+					$fehcp = $xpath->query("//FatturaElettronicaHeader/CessionarioCommittente")->item(0);
+					$el = $domDoc->createElement("RappresentanteFiscale","");
+					$el1 = $domDoc->createElement("IdFiscaleIVA", $XMLvars->fiscal_rapresentative['country'].$XMLvars->fiscal_rapresentative['pariva']);
+					$el->appendChild($el1);
+					$el2 = $domDoc->createElement("IdPaese", $XMLvars->fiscal_rapresentative['country']);
+					$el1->appendChild($el2);
+					$el2 = $domDoc->createElement("IdCodice", $XMLvars->fiscal_rapresentative['pariva']);
+					$el1->appendChild($el2);
+					if (($XMLvars->fiscal_rapresentative['sexper']!='G') && (trim($XMLvars->fiscal_rapresentative['legrap_pf_nome'])!='') && (trim($XMLvars->fiscal_rapresentative['legrap_pf_nome'])!='')) {
+						// se è una persona fisica e ha valorizzato nome e cognome inserisco questi dati
+						$el1 = $domDoc->createElement("Nome", substr(trim($XMLvars->fiscal_rapresentative['legrap_pf_nome']), 0, 80));
+						$el->appendChild($el1);
+						$el1 = $domDoc->createElement("Cognome", substr(trim($XMLvars->fiscal_rapresentative['legrap_pf_cognome']), 0, 80));
+						$el->appendChild($el1);
+					} else {
+						 // Se è una ditta inserisco la denominazione
+						$el1 = $domDoc->createElement("Denominazione", substr(htmlspecialchars(str_replace(chr(0xE2).chr(0x82).chr(0xAC),"",trim($XMLvars->fiscal_rapresentative['ragso1'])), ENT_XML1 | ENT_QUOTES, 'UTF-8', true) . " " . htmlspecialchars(str_replace(chr(0xE2).chr(0x82).chr(0xAC),"",trim($XMLvars->fiscal_rapresentative['ragso2'])), ENT_XML1 | ENT_QUOTES, 'UTF-8', true), 0, 80));
+						$el->appendChild($el1);
+					}
+					$feh->insertBefore($el,$fehcp);
+        }
 				$rsDatiAnagrafici = $xpath->query("//CessionarioCommittente/DatiAnagrafici")->item(0);
 				$rsAnagrafica = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica")->item(0);
 				$el = $domDoc->createElement("IdFiscaleIVA", '');

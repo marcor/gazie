@@ -628,26 +628,28 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                 }
             }
     if ( $tot_reverse_charge >= 0.01 ) {
-                // ho accumulato un reverse charge creo un movimento contabile e IVA per documento di vendita sul sezionale scelto in configurazione azienda, entro il 2023 inserirò da qui anche i dati in gaz_NNNtesdoc e rigdoc per poter generare il relativo XML da trasmette all'AdE
+      // ho accumulato un reverse charge creo un movimento contabile e IVA per documento di vendita sul sezionale scelto in configurazione azienda, entro il 2023 inserirò da qui anche i dati in gaz_NNNtesdoc e rigdoc per poter generare il relativo XML da trasmette all'AdE
 
-                // per prima cosa dovrò controllare se c'è il cliente con la stessa anagrafica
-                $anagrafica = new Anagrafica();
-                $partner = $anagrafica->getPartner($v['tes']['clfoco']);
-                $rc_cli = gaz_dbi_get_row($gTables['clfoco'], "codice LIKE '" . $admin_aziend['mascli'] . "%' AND id_anagra ", $partner['id']);
-                if ($rc_cli) { // ho già il cliente
-                } else { // non ho il cliente lo dovrò creare sul piano dei conti
-                    $new_cli = $anagrafica->getPartnerData($partner['id']);
-                    $rc_cli['codice'] = $anagrafica->anagra_to_clfoco($new_cli, $admin_aziend['mascli'],$v['tes']['pagame']);
-                }
-
-                // inserisco la testata del movimento di storno reverse charge
-                $rs_ultimo_protoc = gaz_dbi_dyn_query("*", $gTables['tesmov'], "YEAR(datreg) = ".substr($v['tes']['datreg'],0,4)." AND regiva = 2 AND seziva = ".$admin_aziend['reverse_charge_sez'],  "protoc DESC", 0, 1);
-                $ultimo_protoc = gaz_dbi_fetch_array($rs_ultimo_protoc);
-                $protoc = 1;
-                if ($ultimo_protoc) {
-                    $protoc = $ultimo_protoc['protoc']+1;
-                }
-
+      // per prima cosa dovrò controllare se c'è il cliente con la stessa anagrafica
+      $anagrafica = new Anagrafica();
+      $partner = $anagrafica->getPartner($v['tes']['clfoco']);
+      $rc_cli = gaz_dbi_get_row($gTables['clfoco'], "codice LIKE '" . $admin_aziend['mascli'] . "%' AND id_anagra ", $partner['id']);
+      $fiscal_rapresentative_country=false;
+      if ($rc_cli) { // ho già il cliente
+        if ($partner['fiscal_rapresentative_id']>0) { // ho il rappresentante fiscale in italia
+          $fiscal_rapresentative_country = gaz_dbi_get_row($gTables['anagra'], "id", $partner['fiscal_rapresentative_id'])['country'];
+        }
+      } else { // non ho il cliente lo dovrò creare sul piano dei conti
+          $new_cli = $anagrafica->getPartnerData($partner['id']);
+          $rc_cli['codice'] = $anagrafica->anagra_to_clfoco($new_cli, $admin_aziend['mascli'],$v['tes']['pagame']);
+      }
+      // inserisco la testata del movimento di storno reverse charge
+      $rs_ultimo_protoc = gaz_dbi_dyn_query("*", $gTables['tesmov'], "YEAR(datreg) = ".substr($v['tes']['datreg'],0,4)." AND regiva = 2 AND seziva = ".$admin_aziend['reverse_charge_sez'],  "protoc DESC", 0, 1);
+      $ultimo_protoc = gaz_dbi_fetch_array($rs_ultimo_protoc);
+      $protoc = 1;
+      if ($ultimo_protoc) {
+          $protoc = $ultimo_protoc['protoc']+1;
+      }
 			if ($v['tes']['tipdoc'] == 'AFC') {
 				$newValue = array('caucon' => 'FNC',
 					'descri' => 'NOTA CREDITO REVERSE CHARGE',
@@ -681,9 +683,10 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 			// inserisco un documento fittizio in tesdoc al fine di generare un XML dal registro con il sezionale (normalmente 9) del Reverse Charge
 			// stabilisco il tipo di documento per lo SdI (TD16,TD17,TD18,TD19,TD20) e lo insterisco sulla colonna status di tesdoc
 			$status='TD16'; // operazioni interne (italiani)
+      print 'fs:'.$fiscal_rapresentative_country.'<br>';
 			if ($v['tes']['country']<>'IT') {
 				$status='TD17'; // acquisto servizi dall'estero
-				if ( $v['tes']['istat_area'] == 11 && $vv['operation_type'] <> 'SERVIZ' ) { // è un intra  ma devo vedere se sono beni altrimenti lascio TD17
+				if ( ( $v['tes']['istat_area'] == 11 && $vv['operation_type'] <> 'SERVIZ' ) || $fiscal_rapresentative_country == 'IT' ) { // è un intra  ma devo vedere se sono beni altrimenti lascio TD17
 					$status='TD18';
 				}
 			}
