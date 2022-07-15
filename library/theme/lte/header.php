@@ -331,7 +331,7 @@ setInterval(menu_check_from_modules,<?php echo intval((int)$period*60000);?>);
                             if ($row_access_mod && $row_access_mod['access'] == 3 ) {
                                 //visualizzo la documentazione standard
 								require '../' . $module . '/menu.' . $admin_aziend['lang'] . '.php';
-                                echo '<li><a id="docmodal" href="#myModal" data-toggle="modal" data-target="#doc_modal" title="Documentazione modulo '. $transl[$module]['name'] .'" module="'. $module .'"><img src="../'.$module.'/'.$module.'.png" height="24"><span class="hidden-xs">'.$transl[$module]['name']."</span></a></li>";
+                                echo '<li><a id="docmodal" href="#myModal" data-toggle="modal" data-target="#doc_modal" title="Documentazione modulo '. $transl[$module]['name'] .'" module="'. $module .'"><img src="../'.$module.'/'.$module.'.png" height="32"><span class="hidden-xs">'.$transl[$module]['name']."</span></a></li>";
                             }
                             ?>
                             <!-- Messages: style can be found in dropdown.less-->

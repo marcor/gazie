@@ -40,7 +40,7 @@
   }
 }
 .skin-blue .main-header {
-  background-color: #99d197;
+  background-color: #d6c188;
   color: #123311;
   border-bottom: 0 solid transparent;
 }
@@ -168,7 +168,7 @@ select.input-sm {
     height: 28px;
     padding: 0px 0px;
         padding-left: 5px;
-		
+
     border-radius: 2px;
     box-shadow: none;
     border-color: #515151;
@@ -227,7 +227,7 @@ div.panel.panel-default div.container-fluid div.form-row div.form-group.col-md-6
 	border: 1px solid #374850;
 	padding-left:10px;
 	padding-top: 2px;
-	height: 28px;	
+	height: 28px;
 }
 div.panel.panel-default div.container-fluid div.form-row div.form-group.col-md-6.col-lg-3.nopadding div.text-center
 {
@@ -236,7 +236,7 @@ div.panel.panel-default div.container-fluid div.form-row div.form-group.col-md-6
 	border: 1px solid #374850;
 	padding-left:10px;
 	padding-top: 2px;
-	height: 28px;	
+	height: 28px;
 }
 
 .panel-default {

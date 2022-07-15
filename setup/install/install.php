@@ -439,14 +439,22 @@ function executeModulesUpdate(){// Antonio Germani 12/07/2022 - funzione per ese
         foreach ($upgrade_db as $k => $v){ //ciclo le istruzioni in base alla chiave
           if ($k > $version){ // se la chiave è maggiore della versione attuale archivio
             foreach ($upgrade_db[$k] as $instruction){ //ciclo le istruzioni e le eseguo per ogni azienda
-              foreach ($companies as $i) {
-                    $sql = preg_replace("/XXX/", sprintf('%03d',$i), $instruction);
-                    if (!gaz_dbi_query($sql)) { //se non è stata eseguita l'istruzione lo segnalo
-                        echo "Query Fallita";
-                        echo "$sql <br/>";
-                        exit;
-                    }
-               }
+              if (preg_match("/XXX/",$instruction)) { // query ricorsive sulle tabelle di tutte le aziende
+                foreach ($companies as $i) {
+                  $sql = preg_replace("/XXX/", sprintf('%03d',$i), $instruction);
+                  if (!gaz_dbi_query($sql)) { //se non è stata eseguita l'istruzione lo segnalo
+                    echo "Query Fallita";
+                    echo "$sql <br/>";
+                    exit;
+                  }
+                }
+              } else { // query singola sulla tabella comune alle aziende
+                if (!gaz_dbi_query($instruction)) { //se non è stata eseguita l'istruzione lo segnalo
+                  echo "Query Fallita";
+                  echo "$sql <br/>";
+                  exit;
+                }
+              }
             }
           }
         }

@@ -49,7 +49,7 @@ div.table-responsive, table.FacetFormTABLE, table.GazFormDeleteTable, table.tabl
     border: 1px solid #000000;
 }
 .table {
-    
+
 }
 #products-list
 {
@@ -146,4 +146,7 @@ td.ui-datepicker-other-month>a.ui-state-default.ui-priority-secondary{
     color: #f00;
     font-weight: bold;
     animation: blink 0.5s infinite;
+}
+.navbar-nav > .user-menu > .dropdown-menu > .user-footer {
+	background-color: #a1a29f;
 }

@@ -27,10 +27,10 @@ $admin_aziend = checkAdmin(8);
 require("../../library/include/header.php");
 $script_transl = HeadMain();
 ?>
-<div class="panel panel-info"><h2>
+<div class="panel panel-info"><h2><div class="text-center"><img src="lims.png"></div>
 <ul>
-<li>Il modulo "LIMS" per GAZIE (Gestione AZIEnda) è sviluppato in base alle specifiche necessità dei laboratori. </li><li>Possono essere realizzati moduli ad-hoc per collegare gli strumenti di analisi, i dispositivi di campionamento, la sensoristica e ricordare le scadenze delle tarature/calibrature e degli accreditamenti.</li> <li>La reportistica, i rapporti di prova, i verbali di campionamento, le metodiche, le verifiche strumentali messe in essere.</li></ul>
-<p class="text-info"> Se vuoi realizzare un sistema informativo su misura o per qualsiasi chiarimento puoi contattare l'autore:<br> Antonio De Vincentiis Montesilvano (PE) https://www.devincentiis.it - telefono +39 3383121161</p>
+<li>Il modulo "LIMS" è sviluppato in base alle specifiche necessità dei laboratori. </li><li>Possono essere realizzati collegamenti ad-hoc con gli strumenti di analisi, i dispositivi di campionamento, la sensoristica.</li> <li> Ricordare le scadenze delle tarature/calibrature e degli accreditamenti.</li> <li>Generare i reports, i rapporti di prova, i verbali di campionamento, le metodiche, le accettazioni e le verifiche strumentali messe in essere.</li></ul>
+<p class="text-info"> Se vuoi creare un sistema informativo su misura per il tuo laboratorio o per qualsiasi altro chiarimento contatta l'autore:<br> Antonio De Vincentiis Montesilvano (PE) https://www.devincentiis.it - telefono +39 3383121161</p>
 </h2></div>
 </div>
 <?php

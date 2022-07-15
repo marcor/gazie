@@ -435,3 +435,18 @@ table.xdebug-error{
 #loginbox div.panel.panel-info {
   box-shadow: 0 30px 60px 0 rgba(0,0,0,.3);
 }
+
+.sidebar-menu, .main-sidebar .user-panel, .sidebar-menu > li.header {
+	padding-top: 10px;
+}
+
+.sidebar-menu > li {
+	margin-top: -5px;
+	margin-bottom: -5px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+.navbar-nav > li > a {
+	padding-top: 3px;
+	padding-bottom: 3px;
+}
