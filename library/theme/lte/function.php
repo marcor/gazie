@@ -139,6 +139,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
         }
     }
     $result = getAccessRights($_SESSION["user_name"], $_SESSION['company_id']);
+    $acc_excluded = [];
     if (gaz_dbi_num_rows($result) > 0) {
         // creo l'array associativo per la generazione del menu con JSCookMenu
         $ctrl_m1 = 0;
@@ -152,11 +153,13 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
             $nfr3 = basename($path3,'.php');
             if (isset($chkes->excluded_script) && in_array($nfr3,$chkes->excluded_script)) {
               $row['m3_link'] = '';
+              $acc_excluded[] = $nfr3;
             }
             $path2 = parse_url($row['m2_link'], PHP_URL_PATH);
             $nfr2 = basename($path2,'.php');
             if (isset($chkes->excluded_script) && in_array($nfr2,$chkes->excluded_script)) {
               $row['m2_link'] = '../../..'.$_SERVER['PHP_SELF'];
+              $acc_excluded[] = $nfr2;
             }
             if ($row['access'] == 3) {
                 if ($ctrl_m1 != $row['m1_id']) {
@@ -165,7 +168,6 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
                 }
                 if ($row['name'] == $module) {
                     $row['weight'] = 0;
-
                     if ($row['m3_link'] == $scriptname) {
                         $title_from_menu = $transl[$row['name']]['m3'][$row['m3_trkey']][0];
                     }
@@ -288,90 +290,75 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
 </form>
     <div class="content-wrapper">
       <section class="content-header">
-        <?php
-        global $gTables, $module;
-        $pos="";
-        $ci_sono_tasti_nel_menu=false;
-        $posizione = explode( '/',$_SERVER['REQUEST_URI'] );
-        $pos = bc_get_current_path($posizione);
-        $posizione = array_pop( $posizione );
+    <?php
+    global $gTables, $module;
+    $pos="";
+    $ci_sono_tasti_nel_menu=false;
+    $posizione = explode( '/',$_SERVER['REQUEST_URI'] );
+    $pos = bc_get_current_path($posizione);
+    $posizione = array_pop( $posizione );
+    $res_pos = gaz_dbi_dyn_query("*", $gTables['breadcrumb'], ' file="'.$pos.'" AND exec_mode=0', ' id_bread',0,999);
 
-        $res_pos = gaz_dbi_dyn_query("*", $gTables['breadcrumb'], ' file="'.$pos.'" AND exec_mode=0', ' id_bread',0,999);
-        if ( gaz_dbi_num_rows($res_pos)>0 ) {
-            $row = gaz_dbi_fetch_array($res_pos);
-            echo "<h1>";
-            echo "<a href='".$row['link']."'>".$row['titolo']."</a>";
-            echo "</h1>";
-            echo "<ol class='breadcrumb'>";
-            while ( $row = gaz_dbi_fetch_array($res_pos) ) {
-                echo "<li><a href='".$row['link']."'>".$row['titolo']."</a></li>";
-            }
-            echo "<li><a href='../../modules/root/admin.php'><i class='fa fa-home'></i></a>&nbsp;<a href='../../modules/root/admin_breadcrumb.php?url=".$pos."'><i class='glyphicon glyphicon-cog'></i></a></li>";
-            echo "</ol>";
-        } else {
-		  if ($pos=='modules/root/admin.php') {
+    if ( gaz_dbi_num_rows($res_pos)>0 ) {
+        $row = gaz_dbi_fetch_array($res_pos);
+        echo "<ol class='breadcrumb'>";
+        $yeslink=false;
+        while ( $row = gaz_dbi_fetch_array($res_pos) ) {
+          echo "<li><a href='".$row['link']."'>".$row['titolo']."</a></li>";
+          $yeslink=true;
+        }
+        echo "<li><a href='../../modules/root/admin.php'><i class='fa fa-home'></i></a>&nbsp;<a href='../../modules/root/admin_breadcrumb.php?url=".$pos."'><i class='glyphicon glyphicon-cog'></i></a></li>";
+        echo "</ol>";
+        if ($yeslink) echo "<h1><a href='".$row['link']."'>".$row['titolo']."</a></h1>";
+    } else {
+		  if ($pos=='modules/root/admin.php') { // sulla home page
 				echo "<a href='../../modules/root/admin_dash.php'><i class='glyphicon glyphicon-cog'></i></a>";
 				echo "</ol>";
 		  } else {
-            if ( $posizione == "report_received.php" ) $posizione = "report_scontr.php";
-			if ( strpos($posizione, "VOG")!==false ) $posizione = "report_broven.php?auxil=VOR";
-            $result    = gaz_dbi_dyn_query("*", $gTables['menu_module'] , ' link="'.$posizione.'" ',' id',0,1);
-            if ( !gaz_dbi_num_rows($result)>0 ) {
-                $posizionex = explode ("?",$posizione );
-                $result    = gaz_dbi_dyn_query("*", $gTables['menu_module'] , ' link="'.$posizionex[0].'" ',' id',0,1);
-            }
-            $riga = gaz_dbi_fetch_array($result);
-
-            if ($riga && $riga["id"]!="" ) {
-                // siamo su una pagina di 2 livello nel menu principale
-                // mostra il titolo se siamo su una pagina di secondo livello
-                echo "<h1>";
-                echo "&nbsp;".stripslashes($transl[$module]["m2"][$riga["translate_key"]][0]);
-                echo "</h1>";
-                $result2 = gaz_dbi_dyn_query("*", $gTables['menu_script'] , ' id_menu='.$riga["id"].' ','id',0);
-
-                echo "<ol class=\"breadcrumb\">";
-
-                //da fare salvare i moduli più usati tramite la stella
-                //echo "<li><a><i class=\"fa fa-star-o\"></i></a>";
-                //echo "<li><a href=\"../../modules/".$module."/docume_".$module.".php\"><i class=\"fa fa-question\"></i></a></li>";
-                while ($r = gaz_dbi_fetch_array($result2)) {
-                    if ( $admin_aziend["Abilit"]>=$r["accesskey"] )
-                        echo '<li><a href="'.$r["link"].'">'.stripslashes ($transl[$module]["m3"][$r["translate_key"]]["1"]).'</a></li>';
-                }
-                $ci_sono_tasti_nel_menu=true;
-            } else {
-                // siamo su una pagina di 3 livello nel menu principale
-                $result3    = gaz_dbi_dyn_query("*", $gTables['menu_script'] , ' link="'.$posizione.'"',' id',0,1);
-                if ( $r = gaz_dbi_fetch_array($result3) ) {
-                    echo "<h1>";
-                    echo "&nbsp;".$transl[$module]["m3"][$r["translate_key"]][0];
-                    echo "</h1>";
-                    // disegno i bottoni di accesso alle funzioni di questa pagina
-                    $posizionex = explode ("?",$posizione );
-                    $result4    = gaz_dbi_dyn_query("*", $gTables['menu_script']. " LEFT JOIN ".$gTables['menu_module']." ON ".$gTables['menu_script'].".id_menu = ".$gTables['menu_module'].".id LEFT JOIN ".$gTables['module']." ON ".$gTables['menu_module'].".id_module = ".$gTables['module'].".id", $gTables['menu_script'].".link LIKE '%".$posizionex[0]."%' AND ".$gTables['module'].".name = '".$module."'",'name',0,99);
-                    echo "<ol class=\"breadcrumb\">";
-                    while ($r = gaz_dbi_fetch_array($result4)) {
-                        if ( $admin_aziend["Abilit"]>=$r["accesskey"] )
-                            echo '<li><a href="'.$r["link"].'">'.stripslashes ($transl[$module]["m3"][$r["translate_key"]]["1"]).'</a></li>';
-                    }
-                    $ci_sono_tasti_nel_menu=true;
-                }
-
-            }
-
-            if ( !$ci_sono_tasti_nel_menu ) {
-                //echo "<h1>Titolo mancante</h1>"; //Fastidioso su varie pagine, per esempio su admin_client
-                echo "<ol class=\"breadcrumb\">";
-            }
-
-            echo "<li><a href=\"../../modules/root/admin.php\"><i class=\"fa fa-home\"></i></a>&nbsp;<a href='../../modules/root/admin_breadcrumb.php?url=".$pos."'><i class='glyphicon glyphicon-cog'></i></a></li>";
-            echo "</ol>";
-		  }
+        if ( $posizione == "report_received.php" ) $posizione = "report_scontr.php";
+        if ( strpos($posizione, "VOG")!==false ) $posizione = "report_broven.php?auxil=VOR";
+        $result    = gaz_dbi_dyn_query("*", $gTables['menu_module'] , ' link="'.$posizione.'" ',' id',0,1);
+        if (gaz_dbi_num_rows($result) > 0) {
+          $posizionex = explode ("?",$posizione );
+          $result    = gaz_dbi_dyn_query("*", $gTables['menu_module'] , ' link="'.$posizionex[0].'" ',' id',0,1);
         }
-         ?>
-        </section>
-        <section class="content">
+        $riga = gaz_dbi_fetch_array($result);
+        if ($riga && $riga["id"]!="" ) {
+          // siamo su una pagina di 2 livello nel menu principale
+          $result2 = gaz_dbi_dyn_query("*", $gTables['menu_script'] , ' id_menu='.$riga["id"].' ','id',0);
+          echo "<div><ol class=\"breadcrumb\">";
+          while ($r = gaz_dbi_fetch_array($result2)) {
+            $linkbase =  pathinfo($r['link'], PATHINFO_FILENAME);
+            if ( $admin_aziend["Abilit"]>=$r["accesskey"] && !in_array($linkbase,$acc_excluded) ) echo '<li><a href="'.$r["link"].'">'.stripslashes ($transl[$module]["m3"][$r["translate_key"]]["1"]).'</a></li>';
+          }
+        } else {
+          // siamo su una pagina di 3 livello nel menu principale
+          $result3    = gaz_dbi_dyn_query("*", $gTables['menu_script'] , ' link="'.$posizione.'"',' id',0,1);
+          if ( $ms = gaz_dbi_fetch_array($result3) ) {
+              // disegno i bottoni di accesso alle funzioni di questa pagina
+              $posizionex = explode ("?",$posizione );
+              $result4    = gaz_dbi_dyn_query($gTables['menu_script'].".*", $gTables['menu_script']. " LEFT JOIN ".$gTables['menu_module']." ON ".$gTables['menu_script'].".id_menu = ".$gTables['menu_module'].".id LEFT JOIN ".$gTables['module']." ON ".$gTables['menu_module'].".id_module = ".$gTables['module'].".id", $gTables['menu_script'].".id_menu =".$ms['id_menu']." AND ".$gTables['module'].".name = '".$module."'",'name',0,99);
+              echo "<div><ol class=\"breadcrumb\">";
+              while ($r = gaz_dbi_fetch_array($result4)) {
+                $linkbase =  pathinfo($r['link'], PATHINFO_FILENAME);
+                if ( $admin_aziend["Abilit"]>=$r["accesskey"] && !in_array($linkbase,$acc_excluded)) echo '<li><a href="'.$r["link"].'">'.stripslashes ($transl[$module]["m3"][$r["translate_key"]]["1"]).'</a></li>';
+              }
+          }
+        }
+        echo "<li><a href=\"../../modules/root/admin.php\"><i class=\"fa fa-home\"></i></a>&nbsp;<a href='../../modules/root/admin_breadcrumb.php?url=".$pos."'><i class='glyphicon glyphicon-cog'></i></a></li>";
+        echo "</ol>";
+        // mostra il titolo se siamo su una pagina di secondo livello
+        echo "<h1>";
+        $m23=($riga && $riga["id"]!="")?'m2':'m3';
+        if (isset($riga)){
+          echo "&nbsp;".stripslashes($transl[$module][$m23][$riga["translate_key"]][0]);
+        }
+        echo "</h1>";
+		  }
+    }
+?>
+      </section>
+      <section class="content">
 <?php
     }
     if (!isset($translated_script)) {

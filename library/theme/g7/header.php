@@ -184,6 +184,7 @@ if ( isset($maintenance) && $maintenance!=FALSE && $maintenance!=$_SESSION['user
                 }
             }
             $result = getAccessRights($_SESSION["user_name"], $_SESSION['company_id']);
+            $acc_excluded = [];
             if (gaz_dbi_num_rows($result) > 0) {
                 // creo l'array associativo per la generazione del menu
                 $ctrl_m1 = 0;
@@ -197,6 +198,7 @@ if ( isset($maintenance) && $maintenance!=FALSE && $maintenance!=$_SESSION['user
                   $nfr3 = basename($path3,'.php');
                   if (isset($chkes->excluded_script) && in_array($nfr3,$chkes->excluded_script)) {
                     $row['m3_link'] = '';
+                    $acc_excluded[] = $nfr3;
                   }
                   $path2 = parse_url($row['m2_link'], PHP_URL_PATH);
                   $nfr2 = basename($path2,'.php');
@@ -335,7 +337,7 @@ if ( isset($maintenance) && $maintenance!=FALSE && $maintenance!=$_SESSION['user
 		 }
 </script>
 <div class="container-fluid gaz-body">';
-		printDash($gTables,$module,$admin_aziend,$transl);
+		printDash($gTables,$module,$admin_aziend,$transl,$acc_excluded);
             return ($strCommon + $translated_script);
         }
 ?>

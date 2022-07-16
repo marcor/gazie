@@ -27,6 +27,9 @@
 	padding-left: 1px;
 	padding-right: 1px;
 }
+section.content {
+	padding-top: 1px;
+}
 .admin_footer {
     margin-top: 30px;
 	opacity: 0.5;
@@ -368,7 +371,6 @@ table.Tmiddle tr>td, table.Tsmall tr>td {
 	padding-top: 30px;
 }
 .content-header > .breadcrumb {
-    float: left;
     margin-top: 0px;
     margin-bottom: 0;
     font-size: 11px;
