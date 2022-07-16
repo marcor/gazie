@@ -34,9 +34,9 @@ echo '<div class="error_box">';
 if (isset($_GET['module'])) {
   echo $errors['access_module'].' <span class="error">'.$_GET['module'].'</span> ---> ';
 } else {
-  echo $errors['access_script'].' <span class="error">'.$_GET['script'].'.php</span> ---> ';
+  echo $errors['access_script'].' <span class="error">'.$_GET['script'].'.php</span> ';
 }
-echo '<button type="submit" name="gohome">Home page</button>';
+echo ' <button onclick="history.back()">'.$errors['back'].'</button>  ---> <button type="submit" name="gohome">Home page</button>';
 echo '</div>';
 ?>
 </form>

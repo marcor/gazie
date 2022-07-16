@@ -114,9 +114,11 @@ $strScript = array("admin.php" =>
         'new_psw' => "Inserisci Nuova Password",
         'student' => "Se sei uno studente puoi accedere da qui"
         ));
+
 $errors = array(
     'access_module' => 'Non hai il diritto di accedere al modulo',
-    'access_script' => 'Non hai il diritto di accedere alla funzione richiesta'
+    'access_script' => 'Non hai il diritto di accedere alla funzione richiesta',
+    'back' => 'Torna indietro'
 );
 
 if (!defined("MESSAGE_WELCOME")) {

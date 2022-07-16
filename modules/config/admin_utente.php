@@ -369,35 +369,106 @@ if (isset($_POST['Submit'])) {
 	}
 }
 require("../../library/include/header.php");
-$script_transl = HeadMain(0, array('capslockstate/src/jquery.capslockstate'));
+$script_transl = HeadMain(0,['appendgrid/AppendGrid','capslockstate/src/jquery.capslockstate']);
 ?>
-<script type="text/javascript">
-$(document).ready(function () {
-	/* Bind to capslockstate events and update display based on state  */
-	/*
-	$(window).bind("capsOn", function (event) {
-		if ($("#login-password:focus").length > 0) {
-			$("tr td #capsWarning").show();
-		}
-	});
-	$(window).bind("capsOff capsUnknown", function (event) {
-		$("tr td #capsWarning").hide();
-	});
-	$("#login-password").bind("focusout", function (event) {
-		$("tr td #capsWarning").hide();
-	});
-	$("#login-password").bind("focusin", function (event) {
-		if ($(window).capslockstate("state") === true) {
-			$("tr td #capsWarning").show();
-		}
-	});
-	*/
-	/*
-	 * Initialize the capslockstate plugin.
-	 * Monitoring is happening at the window level.
-	 */
-	//$(window).capslockstate();
+<script>
+$(function(){
+	var wpx = $(window).width()*0.6;
+	$("#dialog_module_card").dialog({ autoOpen: false });
+	$('.dialog_module_card').click(function() {
+		var mod = $(this).attr('module');
+		var jsondatastr = null;
+		var deleted_rows = [];
+		$("p#iddescri").html($(this).attr("transl_name")+'</b>');
+		$.ajax({ // prendo tutti i files php del modulo filtrati di quelli che so non essere di interesse
+			'async': false,
+			url:"./search.php",
+			type: "POST",
+			dataType: 'text',
+			data: { term: mod, opt: 'module' },
+			success:function(jsonstr) {
+				//alert(jsonstr);
+				jsondatastr = jsonstr;
+			}
+		});
 
+		var myAppendGrid = new AppendGrid({ // creo la tabella vuota
+		  element: "tblAppendGrid",
+		  uiFramework: "bootstrap4",
+		  iconFramework: "default",
+		  initRows: 1,
+		  columns: [
+        {
+          name: "script_name",
+          display: "Script",
+          type: "text",
+          ctrlAttr: { 'readonly': 'readonly' }
+        },
+        {
+          name: "chk_script",
+          display: "Nega accesso",
+          type: "checkbox"
+        },
+		  ],
+      hideButtons: {
+        // Remove all buttons at the end of rows
+        insert: true,
+        remove: true,
+        moveUp: true,
+        moveDown: true,
+        append: true,
+        removeLast: true
+      },
+      hideRowNumColumn: true
+		});
+
+		if (jsondatastr){
+		// popolo la tabella
+		var jsondata = $.parseJSON(jsondatastr);
+		myAppendGrid.load( jsondata );
+		}
+
+
+		$( "#dialog_module_card" ).dialog({
+			minHeight: 1,
+			width: wpx,
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{
+					text:'Annulla',
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+						$(this).dialog("close");
+					}
+				},
+				confirm :{
+				  text:'CONFERMA',
+				  'class':'btn btn-success pull-right btn-conferma',
+				  click:function() {
+					var msg = null;
+					$.ajax({ // registro con i nuovi dati il cartellino presenze
+						'async': false,
+						data: {del_script: myAppendGrid.getAllValue(), type: 'module', ref: mod},
+						type: 'POST',
+						url: './delete.php',
+						success: function(output){
+							msg = output;
+							console.log(msg);
+						}
+					});
+					if (msg) {
+						alert(msg);
+					} else {
+						window.location.replace("./admin_utente.php?user_name=<?php echo $admin_aziend['user_name']; ?>&Update");
+					}
+				  }
+				}
+			}
+		});
+		$("#dialog_module_card" ).dialog( "open" );
+	});
 });
 </script>
 <form method="POST" enctype="multipart/form-data"  autocomplete="off">
@@ -652,7 +723,7 @@ if ($user_data["Abilit"] == 9) {
 				echo "  <td><input type=radio name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"3\"></td>";
 				echo "  <td><input type=radio checked name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"0\"></td>";
 			} else {
-				echo '<td><input type=radio checked name="'. $co_id . 'acc_' . $mod['moduleid'] . '" value="3"> '.((count($mod['excluded_script'])>=1)?'<br><b>script esclusi:</b><br>'.implode('.php<br>',$mod['excluded_script']).'.php':'').'</td>';
+				echo '<td><input type=radio checked name="'. $co_id . 'acc_' . $mod['moduleid'] . '" value="3"> '.((count($mod['excluded_script'])>=1)?'<br><b>script esclusi:</b><br>'.implode('.php<br>',$mod['excluded_script']).'.php':'').'<a class="btn btn-xs dialog_module_card" module="'.$mod['name'].'" transl_name="'.$mod['transl_name'].'"><i class="glyphicon glyphicon-edit"></i></a></td>';
 				echo "  <td><input type=radio name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"0\"></td>";
 			}
 			echo "</tr>\n";
@@ -669,6 +740,11 @@ if ($user_data["Abilit"] == 9) {
 <?php
 if ($admin_aziend['Abilit']==9){
 	?>
+	<div style="display:none" id="dialog_module_card" title="Disabilitazione script">
+    <p><b>Modulo:</b></p>
+		<p class="ui-state-highlight" id="iddescri"></p>
+		<table id="tblAppendGrid"></table>
+	</div>
 	<div class="gaz-table-form">
     <p><b>Sei un amministratore: <a data-toggle="collapse" class="btn btn-danger" href="#gconfig" aria-expanded="false" aria-controls="gconfig"> puoi modificare i dati globali dell'installazione  ↓ </a>  </b></p>
     <div class="collapse" id="gconfig">
