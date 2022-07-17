@@ -452,3 +452,8 @@ table.xdebug-error{
 	padding-top: 3px;
 	padding-bottom: 3px;
 }
+section.content-header div h1 {
+  font-size: 2em;
+	margin-top: 8px;
+	margin-bottom: 6px;
+}
