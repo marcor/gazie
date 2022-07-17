@@ -390,10 +390,15 @@ td.ui-datepicker-other-month>a.ui-state-default.ui-priority-secondary{
   background-color: #cccccc;
 }
 .btn-danger {
-    color: #fff !important;
+  color: #fff !important;
 	background-color: #d9534f !important;
 	border-color: #d43f3a !important;
 }
+
+div.ui-dialog-buttonpane.ui-widget-content div.ui-dialog-buttonset button.btn.btn-success{
+	background-color: #5cb85c !important;
+}
+
 .blink {
     color: #f00;
     font-weight: bold;

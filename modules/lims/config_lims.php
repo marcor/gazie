@@ -29,8 +29,9 @@ $script_transl = HeadMain();
 ?>
 <div class="panel panel-info"><h2><div class="text-center"><img src="lims.png"></div>
 <ul>
-<li>Il modulo "LIMS" è sviluppato in base alle specifiche necessità dei laboratori. </li><li>Possono essere realizzati collegamenti ad-hoc con gli strumenti di analisi, i dispositivi di campionamento, la sensoristica.</li> <li> Ricordare le scadenze delle tarature/calibrature e degli accreditamenti.</li> <li>Generare i reports, i rapporti di prova, i verbali di campionamento, le metodiche, le accettazioni e le verifiche strumentali messe in essere.</li></ul>
-<p class="text-info"> Se vuoi creare un sistema informativo su misura per il tuo laboratorio o per qualsiasi altro chiarimento contatta l'autore:<br> Antonio De Vincentiis Montesilvano (PE) https://www.devincentiis.it - telefono +39 3383121161</p>
+<li>Il modulo "LIMS" è sviluppato in base alle specifiche necessità dei laboratori. </li><li>Possono essere realizzati collegamenti ad-hoc con gli strumenti di analisi, i dispositivi di campionamento, la sensoristica.</li> <li> Ricordare le scadenze delle tarature/calibrature e degli accreditamenti.</li> <li>Generare i reports, i rapporti di prova, i verbali di campionamento, le metodiche, le accettazioni dei campioni e le verifiche strumentali messe in essere.</li></ul>
+<p class="text-info"> Se vuoi creare un sistema informativo su misura per il tuo laboratorio o per qualsiasi altro chiarimento contatta l'autore:</p>
+<p class="text-warning">Antonio De Vincentiis Montesilvano (PE)<a href="https://www.devincentiis.it"> https://www.devincentiis.it </a> - telefono +39 <a href="tel:+393383121161">3383121161</a></p>
 </h2></div>
 </div>
 <?php
