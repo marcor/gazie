@@ -373,19 +373,19 @@ $script_transl = HeadMain(0,['appendgrid/AppendGrid','capslockstate/src/jquery.c
 ?>
 <script>
 $(function(){
-	var wpx = $(window).width()*0.6;
 	$("#dialog_module_card").dialog({ autoOpen: false });
 	$('.dialog_module_card').click(function() {
 		var mod = $(this).attr('module');
+		var username = $(this).attr('adminid');
 		var jsondatastr = null;
 		var deleted_rows = [];
-		$("p#iddescri").html($(this).attr("transl_name")+'</b>');
+		$("p#iddescri").html('<img src="../'+mod+'/'+mod+'.png" height="32"> '+$(this).attr("transl_name")+'</b>');
 		$.ajax({ // prendo tutti i files php del modulo filtrati di quelli che so non essere di interesse
 			'async': false,
 			url:"./search.php",
 			type: "POST",
 			dataType: 'text',
-			data: { term: mod, opt: 'module' },
+			data: { term: mod, opt: 'module', adminid: username },
 			success:function(jsonstr) {
 				//alert(jsonstr);
 				jsondatastr = jsonstr;
@@ -402,12 +402,15 @@ $(function(){
           name: "script_name",
           display: "Script",
           type: "text",
-          ctrlAttr: { 'readonly': 'readonly' }
+          ctrlAttr: { 'readonly': 'readonly' },
+          ctrlCss: {'font-size': '12px'}
         },
         {
           name: "chk_script",
           display: "Nega accesso",
-          type: "checkbox"
+          type: "checkbox",
+          cellCss: {'text-align': 'center'},
+          cellCss: {'width': '20px'}
         },
 		  ],
       hideButtons: {
@@ -423,16 +426,16 @@ $(function(){
 		});
 
 		if (jsondatastr){
-		// popolo la tabella
-		var jsondata = $.parseJSON(jsondatastr);
-		myAppendGrid.load( jsondata );
+      // popolo la tabella
+      var jsondata = $.parseJSON(jsondatastr);
+      myAppendGrid.load( jsondata );
 		}
-
 
 		$( "#dialog_module_card" ).dialog({
 			minHeight: 1,
-			width: wpx,
-			modal: "true",
+			width: 370,
+      position: { my: "top+100", at: "top+100", of: "div.container-fluid.gaz-body,div.wrapper div.content-wrapper",collision:" none" },
+      modal: "true",
 			show: "blind",
 			hide: "explode",
 			buttons: {
@@ -450,7 +453,7 @@ $(function(){
 					var msg = null;
 					$.ajax({ // registro con i nuovi dati il cartellino presenze
 						'async': false,
-						data: {del_script: myAppendGrid.getAllValue(), type: 'module', ref: mod},
+						data: {del_script: myAppendGrid.getAllValue(), type: 'module', ref: mod, adminid: username },
 						type: 'POST',
 						url: './delete.php',
 						success: function(output){
@@ -488,7 +491,7 @@ if (count($msg['err']) > 0) { // ho un errore
 echo '<input type="hidden" name="' . ucfirst($toDo) . '" value="">';
 ?>
 
-<div class="panel panel-default  table-responsive gaz-table-form">
+<div class="panel panel-default table-responsive gaz-table-form">
 <div class="container-fluid">
 <table class="table table-striped">
 <tr>
@@ -692,10 +695,11 @@ if ($user_data["Abilit"] == 9) {
 	$co_rs = gaz_dbi_dyn_query($what, $table, 1, "ragsoc ASC");
 	while ($co = gaz_dbi_fetch_array($co_rs)) {
 		$co_id = sprintf('%03d', $co['id']);
-		echo "<tr><td align=\"center\" colspan=\"3\">" . $co['ragsoc'] . '  - ' . $co['set_co'] . "</tr>\n";
-		echo "<tr><td class=\"FacetDataTD\">" .'<input type=hidden name="' . $co_id . 'nusr_root" value="3">'. $script_transl['mod_perm'] . ":</td>\n";
-		echo "<td>" . $script_transl['all'] . "</td>\n";
-		echo "<td>" . $script_transl['none'] . "</td></tr>\n";
+		echo "<tr><td align=\"center\" colspan=\"4\">" . $co['ragsoc'] . '  - ' . $co['set_co'] . "</tr>\n";
+		echo "<tr><td class=\"FacetDataTD\">" .'<input type=hidden name="' . $co_id . 'nusr_root" value="3"><b>'. $script_transl['mod_perm'] . ":</b></td>\n";
+		echo "<td><b>" . $script_transl['all'] . "</b></td>\n";
+		echo "<td><b>script esclusi:</b></td>\n";
+		echo "<td><b>" . $script_transl['none'] . "</b></td></tr>\n";
 		$mod_found = getModule($form["user_name"], $co['id']);
 		$mod_admin = getModule($user_data["user_name"], $co['id']);
 		foreach ($mod_found as $mod) {
@@ -706,24 +710,24 @@ if ($user_data["Abilit"] == 9) {
 				if ($form["user_name"] <> $user_data["user_name"]) { // sono un amministratore che sta operando sul profilo di altro utente
           if ($mod_admin[$mod['name']]['access']==3){ // il modulo è attivo sull'amministratore
               // per evitare conflitti nemmeno l'amministratore può attivare un modulo se questo non lo è ancora sul suo
-              echo "  <td><input type=radio name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"3\"></td>";
+              echo "  <td colspan=2 ><inputtype=radio name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"3\"></td>";
               echo "  <td><input type=radio checked name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"0\"></td>";
           } else { // modulo non attivo sull'amministratore
-              echo '  <td>Non attivato</td>';
+              echo '  <td colspan=2 >Non attivato</td>';
               echo '  <td><input type="hidden"  name="' . $co_id . "nusr_" . $mod['name'] . '" value="0"></td>';
           }
 				} elseif ($co['set_co'] == 0) { // il modulo mai attivato
-					echo "  <td><input type=radio name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"3\"></td>";
+					echo "  <td colspan=2><input type=radio name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"3\"></td>";
 					echo "  <td><input type=radio checked name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"0\"></td>";
 				} else { // se l'amministratore che sta operando sul proprio profilo può attivare un nuovo modulo e creare il relativo menù
-					echo "  <td class=\"FacetDataTDred\"><input class=\"btn btn-warning\" type=radio name=\"" . $co_id . "new_" . $mod['name'] . "\" value=\"3\">Modulo attivabile</td>";
+					echo "  <td class=\"FacetDataTDred\" colspan=2><input class=\"btn btn-warning\" type=radio name=\"" . $co_id . "new_" . $mod['name'] . "\" value=\"3\">Modulo attivabile</td>";
 					echo "  <td class=\"FacetDataTDred\"><input type=radio checked name=\"" . $co_id . "new_" . $mod['name'] . "\" value=\"0\"></td>";
 				}
 			} elseif ($mod['access'] == 0) { // il modulo è attivato, quindi propongo i valori precedenti
-				echo "  <td><input type=radio name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"3\"></td>";
+				echo "  <td colspan=2><input type=radio name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"3\"></td>";
 				echo "  <td><input type=radio checked name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"0\"></td>";
 			} else {
-				echo '<td><input type=radio checked name="'. $co_id . 'acc_' . $mod['moduleid'] . '" value="3"> '.((count($mod['excluded_script'])>=1)?'<br><b>script esclusi:</b><br>'.implode('.php<br>',$mod['excluded_script']).'.php':'').'<a class="btn btn-xs dialog_module_card" module="'.$mod['name'].'" transl_name="'.$mod['transl_name'].'"><i class="glyphicon glyphicon-edit"></i></a></td>';
+				echo '<td><input type=radio checked name="'. $co_id . 'acc_' . $mod['moduleid'] . '" value="3"> </td><td><a class="btn btn-xs dialog_module_card" module="'.$mod['name'].'" adminid="'.$form['user_name'].'" transl_name="'.$mod['transl_name'].'"><i class="glyphicon glyphicon-edit"></i></a>'.((count($mod['excluded_script'])>=1)?'<br>'.implode('.php<br>',$mod['excluded_script']).'.php':'').'</td>';
 				echo "  <td><input type=radio name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"0\"></td>";
 			}
 			echo "</tr>\n";
@@ -740,12 +744,12 @@ if ($user_data["Abilit"] == 9) {
 <?php
 if ($admin_aziend['Abilit']==9){
 	?>
-	<div style="display:none" id="dialog_module_card" title="Disabilitazione script">
+	<div style="display:none; padding-bottom: 30px;" id="dialog_module_card" title="Disabilitazione script">
     <p><b>Modulo:</b></p>
 		<p class="ui-state-highlight" id="iddescri"></p>
 		<table id="tblAppendGrid"></table>
 	</div>
-	<div class="gaz-table-form">
+	<div class="gaz-table-form" style="padding-bottom: 3000px;">
     <p><b>Sei un amministratore: <a data-toggle="collapse" class="btn btn-danger" href="#gconfig" aria-expanded="false" aria-controls="gconfig"> puoi modificare i dati globali dell'installazione  ↓ </a>  </b></p>
     <div class="collapse" id="gconfig">
       <iframe src="../../modules/root/set_config_data.php?iframe=TRUE" title="Configurazione globale" width="100%" height="1330"  frameBorder="0"></iframe>
