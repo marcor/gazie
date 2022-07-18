@@ -358,10 +358,10 @@ echo    '] });
 ?>
 </div>
 <?php
-if (abs($diff_saldi)==0.00 && $first_row_pm==false) {
+if ($form['id_partner'] > 100000000 && abs($diff_saldi)==0.00 && $saldocontabile==0.00 && $first_row_pm==false && count($allrows['rows'])>=1) {
 ?>
 <div class="col-xs-1 col-lg-3"></div>
-  <div class="btn btn-danger col-xs-10 col-lg-6 dialog_paymov" val_amount="0.00" id_partner="<?php echo $form['id_partner']; ?>"><b> ATTENZIONE!!!<br/>Il saldo sono coincidenti e a ZERO ma ci sono delle partite aperte con chiusure che probabilmente non sono state riferite correttamente, se il saldo è realmente zero allora si consiglia di eliminare tutto lo scadenzario (a partite aperte)</b></div>
+  <div class="btn btn-danger col-xs-10 col-lg-6 dialog_paymov" val_amount="0.00" id_partner="<?php echo $form['id_partner']; ?>"><b> ATTENZIONE!!!<br/>I saldi sono coincidenti e a ZERO ma ci sono delle partite aperte con chiusure che probabilmente non sono state riferite correttamente, se il saldo è realmente zero allora si consiglia di eliminare tutto lo scadenzario (a partite aperte)</b></div>
 <div class="col-xs-1 col-lg-3"></div>
 
 <?php
