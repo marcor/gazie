@@ -1080,7 +1080,7 @@ function checkAccessRights($adminid, $module, $company_id = 0) {
      return 0;
   }
   $row = gaz_dbi_fetch_array($result);
-  $chkes = json_decode($row['custom_field']);
+  $chkes = is_string($row['custom_field'])? json_decode($row['custom_field']) : false;
   if ($chkes && isset($chkes->excluded_script)) {
     return $chkes->excluded_script;
   }

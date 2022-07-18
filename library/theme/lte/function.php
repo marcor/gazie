@@ -148,8 +148,8 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
         $menuArray = array();
         $transl = array();
         while ($row = gaz_dbi_fetch_array($result)) {
-            $chkes = json_decode($row['custom_field']);
-            $path3 = parse_url($row['m3_link'], PHP_URL_PATH);
+            $chkes =  is_string($row['custom_field'])? json_decode($row['custom_field']):false;
+            $path3 = is_string($row['m3_link'])?parse_url($row['m3_link'], PHP_URL_PATH):'';
             $nfr3 = basename($path3,'.php');
             if (isset($chkes->excluded_script) && in_array($nfr3,$chkes->excluded_script)) {
               $row['m3_link'] = '';
