@@ -758,7 +758,9 @@ $strScript = array(
     'no_extra' => 'No extras bought',
     'change_status' => 'The status of the reservation has changed to',
     'booking_number' => 'Booking number',
-    'deposit_return' => 'If there is no damage, the security deposit will be returned at check-out'
+    'deposit_return' => 'If there is no damage, the security deposit will be returned at check-out',
+    'ask_feedback' => 'Thank you for being our guest, we hope you enjoyed your stay. <br> Total satisfaction of our guests is our goal. Your review is greatly appreciated, just take a few minutes and leave a review by clicking on the link below, please.',
+    'ask_feedback2' => 'Your judgment is very important to us. <br> Hoping to see you again soon <br> Sincerely'
     ),
 
   "admin_extra.php" =>

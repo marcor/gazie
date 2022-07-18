@@ -112,6 +112,10 @@ $search_fields = [
 ];
 
 require("../../library/include/header.php");
+?>
+<link rel="stylesheet" type="text/css" href="jquery/jquery.datetimepicker.min.css"/ >
+<script src="jquery/jquery.datetimepicker.full.min.js" type="text/javascript"></script>
+<?php
 $script_transl = HeadMain(0, array('custom/modal_form'));
 
 // creo l'array (header => campi) per l'ordinamento dei record
@@ -470,6 +474,73 @@ $(function() {
 		$("#dialog_stato_lavorazione" ).dialog( "open" );
 	});
 
+  $.datetimepicker.setLocale('it');
+  $("#dialog_check_inout").dialog({ autoOpen: false });
+  $("#datepicker").datetimepicker({
+    defaultDate: new Date(),
+    format:'d-m-Y H:i'
+  });
+	$('.dialog_check_inout').click(function() {
+		$("p#id_status_check").html($(this).attr("refcheck"));
+		$("p#de_status_check").html($(this).attr("prodes"));
+		var refcheck = $(this).attr('refcheck');
+    var new_stato_check = $(this).attr("prostacheck");
+    var cust_mail = $(this).attr("cust_mail");
+    var ckdate = $(this).attr("ckdate");
+    var d = $("#datepicker").val();
+    $("#sel_stato_check").val(new_stato_check);
+    $("span#date_stato_check").html($(this).attr("ckdate"));
+
+    if (new_stato_check=='OUT'){
+      $("#feedback_email").show();
+    }else{
+      $("#feedback_email").hide();
+    }
+    $('#sel_stato_check').on('change', function () {
+        //ways to retrieve selected option and text outside handler
+        var d = $("#datepicker").val();
+        //alert (d);
+        new_stato_check = this.value;
+        if (new_stato_check=='OUT'){
+          $("#feedback_email").show();
+        }else{
+          $("#feedback_email").hide();
+        }
+    });
+		$( "#dialog_check_inout" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{
+					text:'Modifica',
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+            $("#dialog_check_inout").css("background", "url("+'spinner.gif'+") center no-repeat");
+            var d = $("#datepicker").val();
+            var email=$('#checkbox_email_inout').prop('checked');
+            $.ajax({
+              data: {'type':'set_new_status_check','ref':refcheck,'new_status':new_stato_check,email:email,cust_mail:cust_mail,datetime:d},
+              type: 'POST',
+              url: 'change_status.php',
+              success: function(output) {
+                  //alert('id:'+refcheck+' new:'+new_stato_check+' email:'+email + ' datetime:'+d);
+                  //alert(output);
+                window.location.replace("./report_booking.php");
+              }
+            });
+          }},
+          "Non cambiare": function() {
+          $(this).dialog("destroy");
+					$(this).dialog("close");
+				}
+			}
+		});
+		$("#dialog_check_inout" ).dialog( "open" );
+	});
+
 
 
 });
@@ -488,7 +559,6 @@ function printPdf(urlPrintDoc){
 <?php
 $ts->output_navbar();
 ?>
-
 <form method="GET" id="report_form" >
 <div style="display:none" id="dialog_payment" title="Pagamenti">
   <p class="ui-state-highlight" id="payment_des"></p>
@@ -545,6 +615,21 @@ $ts->output_navbar();
         </select>
         invia email al cliente<input id="checkbox_email"  type="checkbox" name="checkbox_email" value="1" checked="">
 	</div>
+  <div style="display:none" id="dialog_check_inout" title="Stato Accettazione">
+      <p><b>prenotazione:</b></p>
+      <p class="ui-state-highlight" id="id_status_check"></p>
+      <p class="ui-state-highlight" id="de_status_check"></p>
+      <select name="sel_stato_check" id="sel_stato_check">
+          <option value="PENDING">IN ATTESA</option>
+          <option value="IN">CHECKED-IN</option>
+          <option value="OUT">CHECKED-OUT</option>
+      </select>
+      <span id="date_stato_check"></span>
+      <p><br>Cambia stato il: <input type="text" id="datepicker" value= "<?php echo date('d-m-Y H:i'); ?>" ></p>
+      <div style="display:none" id="feedback_email">
+      invia email richiesta recensione <input id="checkbox_email_inout"  type="checkbox" name="checkbox_email_inout" value="0" >
+      </div>
+  </div>
   <input type="hidden" name="auxil" value="<?php echo $tipo; ?>">
   <div style="display:none" id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">
       <p id="mail_alert1"><?php echo $script_transl['mail_alert1']; ?></p>
@@ -647,7 +732,7 @@ $ts->output_navbar();
         cols_from($gTables['anagra'],
             "ragso1","ragso2","citspe","custom_field AS anagra_custom_field",
             "e_mail AS base_mail","id") . ", " .
-        cols_from($gTables["destina"], "unita_locale1").", ".cols_from($gTables["rental_events"], "start","end","house_code"),
+        cols_from($gTables["destina"], "unita_locale1").", ".cols_from($gTables["rental_events"], "start","end","house_code","checked_in_date","checked_out_date"),
         $tesbro_e_destina." LEFT JOIN ".$gTables['rental_events']." ON  ".$gTables['rental_events'].".id_tesbro = ".$gTables['tesbro'].".id_tes AND ".$gTables['rental_events'].".type = 'ALLOGGIO' ",
         $ts->where." AND template = 'booking' ", $ts->orderby,
         $ts->getOffset(), $ts->getLimit(),$gTables['rental_events'].".id_tesbro");
@@ -670,6 +755,24 @@ $ts->output_navbar();
               if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['first_ccn']) && strlen($data['vacation_rental']['first_ccn'])>8){
                 $ccoff=1;// ci sono dati per pagamento carta di credito off line
               }
+            }
+
+            if (strtotime($r['checked_out_date'])){
+              $check_inout="OUT";
+              $ckdate=date ('d-m-Y H:i', strtotime($r['checked_out_date']));
+            }elseif (strtotime($r['checked_in_date'])){
+              $check_inout="IN";
+              $ckdate=date ('d-m-Y H:i', strtotime($r['checked_in_date']));
+            }else {
+              $check_inout="PENDING";
+              $ckdate="";
+            }
+
+            $stato_check_btn = 'btn-default';
+            if($check_inout=="IN"){
+              $stato_check_btn = 'btn-success';
+            }elseif ($check_inout=="OUT"){
+              $stato_check_btn = 'btn-warning';
             }
 
             $stato_btn = 'btn-default';
@@ -763,8 +866,11 @@ $ts->output_navbar();
                       echo " style=\"cursor:pointer;\" onclick=\"payment('". $r['id_tes'] ."')\"";
                       echo "><i class=\"glyphicon glyphicon-piggy-bank\" title=\"Pagamenti\"></i></a>";
 
-                      ?>&nbsp;&nbsp;<a class="btn btn-xs <?php echo $stato_btn; ?> dialog_stato_lavorazione" refsta="<?php echo $r['id_tes']; ?>" prodes="<?php echo $r['ragso1']," ",$r['ragso2']; ?>" prosta="<?php echo $r['status']; ?>" cust_mail="<?php echo $r['base_mail']; ?>">
+                      ?>&nbsp;&nbsp;<a title="Stato della prenotazione" class="btn btn-xs <?php echo $stato_btn; ?> dialog_stato_lavorazione" refsta="<?php echo $r['id_tes']; ?>" prodes="<?php echo $r['ragso1']," ",$r['ragso2']; ?>" prosta="<?php echo $r['status']; ?>" cust_mail="<?php echo $r['base_mail']; ?>">
                           <i class="glyphicon glyphicon-compressed"></i><?php echo $r['status']; ?>
+                        </a>
+                        &nbsp;&nbsp;<a title="Accettazione" class="btn btn-xs <?php echo $stato_check_btn; ?> dialog_check_inout" refcheck="<?php echo $r['id_tes']; ?>" prodes="<?php echo $r['ragso1']," ",$r['ragso2']; ?>" prostacheck="<?php echo $check_inout; ?>" cust_mail="<?php echo $r['base_mail']; ?>" ckdate="<?php echo $ckdate; ?>">
+                          <i class="glyphicon glyphicon-compressed"></i><?php echo "CHECK ",$check_inout; ?>
                         </a>
                       <?php
                   }

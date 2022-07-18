@@ -523,7 +523,9 @@ $strScript = array(
     'no_extra' => 'Nessun extra acquistato',
     'change_status' => 'Lo stato della prenotazione è cambiato in',
     'booking_number' => 'Numero prenotazione',
-    'deposit_return' => 'In assenza di danni, il deposito cauzionale sarà restituito al check-out'
+    'deposit_return' => 'In assenza di danni, il deposito cauzionale sarà restituito al check-out',
+    'ask_feedback' => 'Grazie per essere stato nostro ospite, speriamo che il soggiorno sia stato di suo gradimento.<br>La soddisfazione totale degli ospiti è il nostro obbiettivo. Una sua recensione sarebbe molto apprezzata, ci dedichi solo pochi minuti e lasci una recensione cliccando sul link sottostante, per favore.',
+    'ask_feedback2' => 'Il suo giudizio è molto importante per noi. <br>Sperando di rivederla presto <br> Cordiali saluti'
     ),
 
   "admin_extra.php" =>

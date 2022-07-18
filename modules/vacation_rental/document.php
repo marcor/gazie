@@ -558,16 +558,6 @@ class DocContabVars {
           $security_deposit=0;
           unset($anagra_prop);
         }
-        /*
-        if (floatval($security_deposit)>0){// se è stato trovato un deposito cauzionale
-          $nuovi_righi=array();// aggiungo un rigo descrittivo per il deposito cauzionale
-          $nuovi_righi[]=array('tiprig'=>6,'codart'=>'','descri'=>$script_transl[66].$security_deposit.". ".$script_transl[67],'quanti'=>0, 'unimis'=>'','prelis'=>0,'sconto'=>0,'prelis'=>0,'pervat'=>0,'codric'=>0,'provvigione'=>0,'ritenuta'=>0,'id_order'=>0,'id_mag'=>0,'id_orderman'=>0);
-          foreach($nuovi_righi as $v_nr) { // riattraverso l'array dei nuovi righi e sull'ultimo
-            $results[] = $v_nr;
-          }
-          $security_deposit=0;
-        }
-        */
         return $results;
     }
 

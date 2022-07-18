@@ -102,6 +102,60 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
         }
       }
 		break;
+    case "set_new_status_check":
+			$i=intval($_POST['ref']); // id_tesbro
+      $datetime  = date ('Y-m-d H:i:s', strtotime($_POST['datetime']));
+      // ricarico il json custom field tesbro e controllo
+      $tesbro=gaz_dbi_get_row($gTables['tesbro'], "id_tes", $i); // carico la tesbro
+      $clfoco=gaz_dbi_get_row($gTables['clfoco'], "codice", $tesbro['clfoco']);
+      $anagra=gaz_dbi_get_row($gTables['anagra'], "id", $clfoco['id_anagra']); // carico la anagra
+      $language=gaz_dbi_get_row($gTables['languages'], "lang_id", $anagra['id_language']); // carico la lingua specifica del cliente
+      $langarr = explode(" ",$language['title_native']);
+      $lang = strtolower($langarr[0]);
+      include "lang.".$lang.".php";
+      $script_transl=$strScript['booking_form.php'];
+
+      if ($_POST['new_status']=="OUT"){
+        $updt= "checked_out_date = '". $datetime."'";
+      }elseif($_POST['new_status']=="IN"){
+        $updt= "checked_in_date = '". $datetime."', checked_out_date = NULL";
+      }else{
+        $updt= "checked_in_date = NULL, checked_out_date = NULL";
+      }
+
+      gaz_dbi_query ("UPDATE " . $gTables['rental_events'] . " SET ".$updt." WHERE id_tesbro =".$i." AND type= 'ALLOGGIO'") ;
+
+      if ($_POST['email']=='true' && strlen($_POST['cust_mail'])>4){// se richiesto invio mail
+        // imposto PHP Mailer per invio email di cambio stato
+        $host = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_server')['val'];
+        $usr = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_user')['val'];
+        $psw = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_password')['val'];
+        $port = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_port')['val'];
+        $mail = new PHPMailer(true);
+        $mail->CharSet = 'UTF-8';
+        //Server settings
+        $mail->SMTPDebug  = 0;                           //Enable verbose debug output default: SMTP::DEBUG_SERVER;
+        $mail->isSMTP();                                 //Send using SMTP
+        $mail->Host       = $host;                       //Set the SMTP server to send through
+        $mail->SMTPAuth   = true;                        //Enable SMTP authentication
+        $mail->Username   = $usr;                        //SMTP username
+        $mail->Password   = $psw;                        //SMTP password
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; //Enable implicit TLS encryption
+        $mail->Port       = $port;                       //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+        // creo e invio email di conferma
+        //Recipients
+        $mail->setFrom($admin_aziend['e_mail']); // sender (e-mail dell'account che sta inviando)
+        $mail->addAddress($_POST['cust_mail']);                  // email destinatario
+        $mail->addAddress($admin_aziend['e_mail']);             //invio copia a mittente
+        $mail->isHTML(true);
+        $mail->Subject = $script_transl['booking']." ".$tesbro['numdoc'].' '.$script_transl['of'].' '.gaz_format_date($tesbro['datemi']);
+        $mail->Body    = "<p>".$script_transl['ask_feedback']."</p><p>".$script_transl['ask_feedback2']."</p><p><b>".$admin_aziend['ragso1']." ".$admin_aziend['ragso2']."</b></p>";
+        if($mail->send()) {
+        }else {
+          echo "Errore imprevisto nello spedire la mail di modifica status: " . $mail->ErrorInfo;
+        }
+      }
+		break;
 	}
 }
 ?>

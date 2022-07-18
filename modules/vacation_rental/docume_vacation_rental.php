@@ -66,6 +66,7 @@ $admin_aziend=checkAdmin(9);
           <li>Creazione e invio via e-mail del PDF della prenotazione</li>
           <li>Creazione e invio via e-mail del PDF del contratto di locazione</li>
           <li>Gestione di alloggi con proprietario diverso dall'azienda di GAzie (contratto di locazione specifico)</li>
+          <li>Gestione dell'accettazione (check-in/check-out) con data e ora e, al check-out, possibilità di inviare e-mail di richiesta recensione</li>
         </ul>
 
     </div>
@@ -81,7 +82,8 @@ $admin_aziend=checkAdmin(9);
         <li>Creazione e invio via e-mail del PDF della prenotazione</li>
         <li>Creazione e invio via e-mail del PDF del contratto di locazione</li>
         <li>Gestione del Calendario dei prezzi giornalieri per ogni singolo alloggio</li>
-        <li>Gestione di alloggi con proprietario diverso dall'azienda di GAzie (contratto di locazione specifico)<li>
+        <li>Gestione di alloggi con proprietario diverso dall'azienda di GAzie (contratto di locazione specifico)</li>
+        <li>Gestione dell'accettazione (check-in/check-out) con data e ora e, al check-out, possibilità di inviare e-mail di richiesta recensione</li>
 
         <p><br>Utilizzabile in un qualsiasi sito web tramite apposito Iframe:</p>
         <li>Front-end per il cliente tramite iframe su qualsiasi sito internet</li>
