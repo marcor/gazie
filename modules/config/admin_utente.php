@@ -677,7 +677,7 @@ if ($user_data["Abilit"] == 9) {
 					$row['access'] = 0;
           $row['custom_field'] = '';
 				}
-        $chkes = json_decode($row['custom_field']);
+        $chkes = is_string($row['custom_field'])?json_decode($row['custom_field']):false;
         if ($chkes && isset($chkes->excluded_script)) {
  					$row['excluded_script'] = $chkes->excluded_script;
         }
