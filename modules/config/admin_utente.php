@@ -727,7 +727,7 @@ if ($user_data["Abilit"] == 9) {
 				echo "  <td colspan=2><input type=radio name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"3\"></td>";
 				echo "  <td><input type=radio checked name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"0\"></td>";
 			} else {
-				echo '<td><input type=radio checked name="'. $co_id . 'acc_' . $mod['moduleid'] . '" value="3"> </td><td><a class="btn btn-xs dialog_module_card" module="'.$mod['name'].'" adminid="'.$form['user_name'].'" transl_name="'.$mod['transl_name'].'"><i class="glyphicon glyphicon-edit"></i></a>'.((count($mod['excluded_script'])>=1)?'<br>'.implode('.php<br>',$mod['excluded_script']).'.php':'').'</td>';
+				echo '<td><input type=radio checked name="'. $co_id . 'acc_' . $mod['moduleid'] . '" value="3"> </td><td><a class="btn btn-xs dialog_module_card" module="'.$mod['name'].'" adminid="'.$form['user_name'].'" transl_name="'.$mod['transl_name'].'"><i class="glyphicon glyphicon-edit"></i></a>'.((count($mod['excluded_script'])>=1)?'<br>'.implode('.php<br>',$mod['excluded_script']).'.php':'nessuno').'</td>';
 				echo "  <td><input type=radio name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"0\"></td>";
 			}
 			echo "</tr>\n";
