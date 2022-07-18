@@ -58,7 +58,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script per update
 
     if (count($msg['err']) <= 0) { // non ci sono errori, posso procedere
     }
-    
+
 }
 
 function random_color_part() {
@@ -100,14 +100,14 @@ $( function() {
 		  function (data) {
 			var ctrl=0;
 			$.each(data, function (i, v) {
-				if (ctrl!=v['id_tesdoc_ref']){	
+				if (ctrl!=v['id_tesdoc_ref']){
 					fragment +='<div class="bg-info col-xs-12">'+v['descridoc']+'</div>';
 				}
 				var exp = new Date(v['expiry']);
 				fragment +='<div class="col-xs-8 text-right">Scadenza: '+exp.toLocaleDateString('IT-it')+'</div><div class="col-xs-4 text-right">€ '+v['amount'].toFixed(2)+'</div>';
 				ctrl=v['id_tesdoc_ref'];
 			});
-			$("#proposeTable").append(fragment); 
+			$("#proposeTable").append(fragment);
 		  }, "json"
         );
 		$( "#dialog_paymov" ).dialog({
@@ -117,8 +117,8 @@ $( function() {
 			show: "blind",
 			hide: "explode",
 			buttons: {
-				delete:{ 
-					text:'Allinea ad € '+val_amount, 
+				delete:{
+					text:'Allinea ad € '+val_amount,
 					'class':'btn btn-danger delete-button',
 					click:function (event, ui) {
 					$.ajax({
@@ -132,13 +132,13 @@ $( function() {
 				}},
 				"Annulla": function() {
 					$(this).dialog("destroy");
-					$("#proposeTable").html(''); 
+					$("#proposeTable").html('');
 				}
 			}
 		});
-		$("#dialog_paymov" ).dialog( "open" );  
+		$("#dialog_paymov" ).dialog( "open" );
 	});
-    
+
 });
 </script>
 <form method="POST" name="form">
@@ -167,7 +167,7 @@ if (count($msg['war']) > 0) { // ho un alert
                 <div class="form-group">
                     <label for="id_partner" class="col-sm-4 control-label text-right"><?php echo $script_transl['id_partner']; ?></label>
     <?php
-    $gForm->selectPartner($form['search_partner'], $form['id_partner'], $admin_aziend['mascli']);    
+    $gForm->selectPartner($form['search_partner'], $form['id_partner'], $admin_aziend['mascli']);
     ?>
                 </div>
             </div>
@@ -210,15 +210,14 @@ if ($form['id_partner'] > 100000000) { // partner selezionato
                 </tr>
               </thead>
               <tbody>
-<?php        
-    $first_row=true;
+<?php
+    $first_row_pm=true;
     $svg_conn=[];
     foreach ($paymov->PartnerStatus as $k => $v) {
-        if ($first_row) {
+        if ($first_row_pm) {
             $progressivo= $paymov->docData[$k]['saldo'];
-            $first_row=false;
+            $first_row_pm=false;
             echo '<tr><td colspan=4 class="text-right">Saldo: <b>'.gaz_format_number($progressivo).'</b></td></tr>';
-            
         }
         $amount = 0.00;
         $svg_conn['open'][]=array('stroke'=>random_color(),'id_tes'=>$paymov->docData[$k]['id_tes']);
@@ -310,7 +309,6 @@ if ($form['id_partner'] > 100000000) { // partner selezionato
             </thead>
             <tbody>
 <?php
-$first_row=true;
 foreach($allrows['rows'] as $k=>$r) {
         $progressivo= (substr($form['id_partner'],0,3)==$admin_aziend['mascli'])?$r['progressivo']:-$r['progressivo'];
 ?>
@@ -319,7 +317,7 @@ foreach($allrows['rows'] as $k=>$r) {
     <?php echo '<a class="btn btn-xs btn-default"  href="../contab/admin_movcon.php?id_tes=' . $r['id_tes'] . '&Update" title="Modifica il movimento contabile ' . $r['id_tes'] . '"><i class="glyphicon glyphicon-edit">'.$r['id_tes'] .'</i><br>' . gaz_format_date($r['datreg'])  . "</a>\n";?>
     </td>
     <td><small><?php echo $r['descri'];?></small></td>
-    <?php 
+    <?php
     if ($r['darave']=='D') {
         echo '<td></td><td class="text-right">'.gaz_format_number($r['import']).'</td>';
     } else {
@@ -327,7 +325,7 @@ foreach($allrows['rows'] as $k=>$r) {
     }
     ?>
     <td class="text-right"><?php echo gaz_format_number($progressivo);?></td>
-</tr> 
+</tr>
 <?php
 }
 ?>
@@ -356,9 +354,20 @@ echo    '] });
     });
 </script>';
 }
- 
+
 ?>
 </div>
+<?php
+if (abs($diff_saldi)==0.00 && $first_row_pm==false) {
+?>
+<div class="col-xs-1 col-lg-3"></div>
+  <div class="btn btn-danger col-xs-10 col-lg-6 dialog_paymov" val_amount="0.00" id_partner="<?php echo $form['id_partner']; ?>"><b> ATTENZIONE!!!<br/>Il saldo sono coincidenti e a ZERO ma ci sono delle partite aperte con chiusure che probabilmente non sono state riferite correttamente, se il saldo è realmente zero allora si consiglia di eliminare tutto lo scadenzario (a partite aperte)</b></div>
+<div class="col-xs-1 col-lg-3"></div>
+
+<?php
+}
+?>
+
 </div>
 </form>
 <?php
