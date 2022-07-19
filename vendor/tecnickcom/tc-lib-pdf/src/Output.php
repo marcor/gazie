@@ -6,7 +6,7 @@
  * @category    Library
  * @package     Pdf
  * @author      Nicola Asuni <info@tecnick.com>
- * @copyright   2002-2019 Nicola Asuni - Tecnick.com LTD
+ * @copyright   2002-2022 Nicola Asuni - Tecnick.com LTD
  * @license     http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link        https://github.com/tecnickcom/tc-lib-pdf
  *
@@ -26,7 +26,7 @@ use \Com\Tecnick\Pdf\Font\Output as OutFont;
  * @category    Library
  * @package     Pdf
  * @author      Nicola Asuni <info@tecnick.com>
- * @copyright   2002-2019 Nicola Asuni - Tecnick.com LTD
+ * @copyright   2002-2022 Nicola Asuni - Tecnick.com LTD
  * @license     http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link        https://github.com/tecnickcom/tc-lib-pdf
  *
@@ -35,12 +35,19 @@ use \Com\Tecnick\Pdf\Font\Output as OutFont;
 abstract class Output
 {
     /**
-     * Array containing the ID of some named PDF objects
+     * Array containing the ID of some named PDF objects.
      *
      * @var array
      */
     protected $objid = array();
-    
+
+    /**
+     * Store XObject.
+     *
+     * @var array
+     */
+    protected $xobject = array();
+
     /**
      * ByteRange placemark used during digital signature process.
      *
@@ -56,7 +63,7 @@ abstract class Output
     protected static $sigmaxlen = 11742;
 
     /**
-     * Returns the RAW PDF string
+     * Returns the RAW PDF string.
      *
      * @return string
      */
@@ -71,12 +78,12 @@ abstract class Output
             .'startxref'."\n"
             .$startxref."\n"
             .'%%EOF'."\n";
-        $out = $this->signDocument($out);
+        $out .= $this->signDocument($out);
         return $out;
     }
 
     /**
-     * Returns the PDF document header
+     * Returns the PDF document header.
      *
      * @return string
      */
@@ -87,7 +94,7 @@ abstract class Output
     }
 
     /**
-     * Returns the raw PDF Body section
+     * Returns the raw PDF Body section.
      *
      * @return string
      */
@@ -130,7 +137,7 @@ abstract class Output
     }
 
     /**
-     * Returns the ordered offset array for each object
+     * Returns the ordered offset array for each object.
      *
      * @param string $data Raw PDF data
      *
@@ -148,7 +155,7 @@ abstract class Output
     }
 
     /**
-     * Returns the PDF XREF section
+     * Returns the PDF XREF section.
      *
      * @param array $offset Ordered offset array for each PDF object
      *
@@ -174,7 +181,7 @@ abstract class Output
     }
 
     /**
-     * Returns the PDF Trailer section
+     * Returns the PDF Trailer section.
      *
      * @param array $offset Ordered offset array for each PDF object
      *
@@ -197,7 +204,7 @@ abstract class Output
     }
 
     /**
-     * Returns the PDF object to include a standard sRGB_IEC61966-2.1 blackscaled ICC colour profile
+     * Returns the PDF object to include a standard sRGB_IEC61966-2.1 blackscaled ICC colour profile.
      *
      * @return string
      */
@@ -225,7 +232,7 @@ abstract class Output
     }
 
     /**
-     * Get OutputIntents for sRGB IEC61966-2.1 if required
+     * Get OutputIntents for sRGB IEC61966-2.1 if required.
      *
      * @return string
      */
@@ -248,7 +255,7 @@ abstract class Output
     }
 
     /**
-     * Get OutputIntents for PDF-X if required
+     * Get OutputIntents for PDF-X if required.
      *
      * @return string
      */
@@ -266,7 +273,7 @@ abstract class Output
     }
 
     /**
-     * Set OutputIntents
+     * Set OutputIntents.
      *
      * @return string
      */
@@ -282,7 +289,7 @@ abstract class Output
     }
 
     /**
-     * Get the PDF layers
+     * Get the PDF layers.
      *
      * @return string
      */
@@ -327,13 +334,12 @@ abstract class Output
     }
 
     /**
-     * Returns the PDF Catalog entry
+     * Returns the PDF Catalog entry.
      *
      * @return string
      */
     protected function getOutCatalog()
     {
-        // @TODO
         $oid = ++$this->pon;
         $this->objid['catalog'] = $oid;
         $out = $oid.' 0 obj'."\n"
@@ -402,35 +408,34 @@ abstract class Output
         //$out .= ' /PieceInfo <<>>';
         $out .= $this->getPDFLayers();
 
-        /*
         // AcroForm
-        if (!empty($this->form_obj_id)
-            OR ($this->sign AND isset($this->signature['cert_type']))
-            OR !empty($this->empty_signature_appearance)) {
+        if (!empty($this->objid['form'])
+            || ($this->sign && isset($this->signature['cert_type']))
+            || !empty($this->signature['appearance']['empty'])) {
             $out .= ' /AcroForm <<';
             $objrefs = '';
-            if ($this->sign AND isset($this->signature['cert_type'])) {
+            if ($this->sign && isset($this->signature['cert_type'])) {
                 // set reference for signature object
-                $objrefs .= $this->sig_obj_id.' 0 R';
+                $objrefs .= $this->objid['signature'].' 0 R';
             }
-            if (!empty($this->empty_signature_appearance)) {
-                foreach ($this->empty_signature_appearance as $esa) {
+            if (!empty($this->signature['appearance']['empty'])) {
+                foreach ($this->signature['appearance']['empty'] as $esa) {
                     // set reference for empty signature objects
                     $objrefs .= ' '.$esa['objid'].' 0 R';
                 }
             }
-            if (!empty($this->form_obj_id)) {
-                foreach($this->form_obj_id as $objid) {
+            if (!empty($this->objid['form'])) {
+                foreach ($this->objid['form'] as $objid) {
                     $objrefs .= ' '.$objid.' 0 R';
                 }
             }
             $out .= ' /Fields ['.$objrefs.']';
             // It's better to turn off this value and set the appearance stream for
             // each annotation (/AP) to avoid conflicts with signature fields.
-            if (empty($this->signature['approval']) OR ($this->signature['approval'] != 'A')) {
+            if (empty($this->signature['approval']) || ($this->signature['approval'] != 'A')) {
                 $out .= ' /NeedAppearances false';
             }
-            if ($this->sign AND isset($this->signature['cert_type'])) {
+            if ($this->sign && isset($this->signature['cert_type'])) {
                 if ($this->signature['cert_type'] > 0) {
                     $out .= ' /SigFlags 3';
                 } else {
@@ -438,30 +443,34 @@ abstract class Output
                 }
             }
             //$out .= ' /CO ';
-            if (isset($this->annotation_fonts) AND !empty($this->annotation_fonts)) {
-                $out .= ' /DR <<';
-                $out .= ' /Font <<';
+
+            if (!empty($this->annotation_fonts)) {
+                $out .= ' /DR << /Font <<';
                 foreach ($this->annotation_fonts as $fontkey => $fontid) {
-                    $out .= ' /F'.$fontid.' '.$this->font_obj_ids[$fontkey].' 0 R';
+                    $out .= ' /F'.$fontid.' '.$this->font->getFont($fontkey)['n'].' 0 R';
                 }
                 $out .= ' >> >>';
             }
-            $font = $this->getFontBuffer('helvetica');
+
+            $font = $this->font->getFont('helvetica');
             $out .= ' /DA (/F'.$font['i'].' 0 Tf 0 g)';
             $out .= ' /Q '.(($this->rtl)?'2':'0');
             //$out .= ' /XFA ';
             $out .= ' >>';
+
+
             // signatures
-            if ($this->sign AND isset($this->signature['cert_type'])
-                AND (empty($this->signature['approval']) OR ($this->signature['approval'] != 'A'))) {
+            if ($this->sign and isset($this->signature['cert_type'])
+                && (empty($this->signature['approval']) || ($this->signature['approval'] != 'A'))) {
+                $out .= ' /Perms << ';
                 if ($this->signature['cert_type'] > 0) {
-                    $out .= ' /Perms << /DocMDP '.($this->sig_obj_id + 1).' 0 R >>';
+                    $out .= '/DocMDP ';
                 } else {
-                    $out .= ' /Perms << /UR3 '.($this->sig_obj_id + 1).' 0 R >>';
+                    $out .= '/UR3 ';
                 }
+                $out .= ($this->objid['signature'] + 1).' 0 R >>';
             }
         }
-        */
 
         //$out .= ' /Legal <<>>';
         //$out .= ' /Requirements []';
@@ -474,7 +483,7 @@ abstract class Output
     }
 
     /**
-     * Returns the PDF OCG entry
+     * Returns the PDF OCG entry.
      *
      * @return string
      */
@@ -504,18 +513,93 @@ abstract class Output
     }
 
     /**
-     * Returns the PDF XObjects entry
+     * Returns the PDF XObjects entry.
      *
      * @return string
      */
     protected function getOutXObjects()
     {
-        // @TODO
-        return '';
+        $out = '';
+        foreach ($this->xobject as $key => $data) {
+            if (empty($data['outdata'])) {
+                continue;
+            }
+            $out .= ' '.$data['n'].' 0 R'."\n"
+                .'<<'
+                .' /Type /XObject'
+                .' /Subtype /Form'
+                .' /FormType 1';
+            $stream = trim($data['outdata']);
+            if ($this->pdfa != 3) {
+                $stream = gzcompress($stream);
+                $out .= ' /Filter /FlateDecode';
+            }
+            $out .= sprintf(
+                ' /BBox [%F %F %F %F]',
+                ($data['x'] * $this->kunit),
+                (-$data['y'] * $this->kunit),
+                (($data['w'] + $data['x']) * $this->kunit),
+                (($data['h'] - $data['y']) * $this->kunit)
+            );
+            $out .= ' /Matrix [1 0 0 1 0 0]'
+                .' /Resources <<'
+                .' /ProcSet [/PDF /Text /ImageB /ImageC /ImageI]';
+            if (!empty($data['fonts'])) {
+                $fonts = $data['fonts']->getFonts();
+                $out = ' /Font <<';
+                foreach ($fonts as $font) {
+                    $out .= ' /F'.$font['i'].' '.$font['n'].' 0 R';
+                }
+                $out .= ' >>';
+            }
+            if (!empty($data['extgstates'])) {
+                $out .= $data['extgstates']->getOutExtGStateResources();
+            }
+            if (!empty($data['gradients'])) {
+                $out .= $data['gradients']->getOutGradientResources();
+            }
+            if (!empty($data['spot_colors'])) {
+                $out .= $data['spot_colors']->getPdfSpotResources();
+            }
+            // images or nested xobjects
+            if (!empty($data['images']) || !empty($data['xobjects'])) {
+                $out .= ' /XObject <<';
+                foreach ($data['images'] as $imgid) {
+                    $out .= ' /I'.$imgid.' '.$this->xobject['I'.$imgid]['n'].' 0 R';
+                }
+                foreach ($data['xobjects'] as $sub_id => $sub_objid) {
+                    $out .= ' /'.$sub_id.' '.$sub_objid['n'].' 0 R';
+                }
+                $out .= ' >>';
+            }
+            $out .= ' >>';
+            if (!empty($data['group'])) {
+                // set transparency group
+                $out .= ' /Group << /Type /Group /S /Transparency';
+                if (is_array($data['group'])) {
+                    if (!empty($data['group']['CS'])) {
+                        $out .= ' /CS /'.$data['group']['CS'];
+                    }
+                    if (isset($data['group']['I'])) {
+                        $out .= ' /I /'.($data['group']['I']===true?'true':'false');
+                    }
+                    if (isset($data['group']['K'])) {
+                        $out .= ' /K /'.($data['group']['K']===true?'true':'false');
+                    }
+                }
+                $out .= ' >>';
+            }
+            $stream = $this->encrypt->encryptString($stream, $data['n']);
+            $out .= ' /Length '.strlen($stream);
+            $out .= ' >>';
+            $out .= ' stream'."\n".$stream."\n".'endstream';
+            $out .= "\n".'endobj';
+        }
+        return $out;
     }
 
     /**
-     * Returns the PDF Resources Dictionary entry
+     * Returns the PDF Resources Dictionary entry.
      *
      * @return string
      */
@@ -537,7 +621,7 @@ abstract class Output
     }
 
     /**
-     * Returns the PDF Destinations entry
+     * Returns the PDF Destinations entry.
      *
      * @return string
      */
@@ -563,7 +647,7 @@ abstract class Output
     }
 
     /**
-     * Returns the PDF Embedded Files entry
+     * Returns the PDF Embedded Files entry.
      *
      * @return string
      */
@@ -622,7 +706,7 @@ abstract class Output
     }
 
     /**
-     * Returns the PDF Annotations entry
+     * Returns the PDF Annotations entry.
      *
      * @return string
      */
@@ -633,7 +717,7 @@ abstract class Output
     }
 
     /**
-     * Returns the PDF Javascript entry
+     * Returns the PDF Javascript entry.
      *
      * @return string
      */
@@ -647,7 +731,7 @@ abstract class Output
                 // $this->setUserRights();
             }
             // The following two lines are used to avoid form fields duplication after saving.
-            // The addField method only works when releasing user rights (UR3)
+            // The addField method only works when releasing user rights (UR3).
             $pattern = "ftcpdfdocsaved=this.addField('%s','%s',%d,[%F,%F,%F,%F]);";
             $jsa = sprintf($pattern, 'tcpdfdocsaved', 'text', 0, 0, 1, 0, 1);
             $jsb = "getField('tcpdfdocsaved').value='saved';";
@@ -686,7 +770,7 @@ abstract class Output
     }
 
     /**
-     * Sort bookmarks by page and original position
+     * Sort bookmarks by page and original position.
      */
     protected function sortBookmarks()
     {
@@ -748,13 +832,16 @@ abstract class Output
     }
 
     /**
-     * Returns the PDF Bookmarks entry
+     * Returns the PDF Bookmarks entry.
      *
      * @return string
      */
     protected function getOutBookmarks()
     {
-        $numbookmarks = count($this->outlines);
+        if (empty($this->outlines)) {
+            return '';
+        }
+        $numbookmarks = is_countable($this->outlines)?count($this->outlines):0;
         if ($numbookmarks <= 0) {
             return;
         }
@@ -861,12 +948,15 @@ abstract class Output
     }
 
     /**
-     * Returns the PDF Signature Fields entry
+     * Returns the PDF Signature Fields entry.
      *
      * @return string
      */
     protected function getOutSignatureFields()
     {
+        if (empty($this->signature)) {
+            return '';
+        }
         foreach ($this->signature['appearance']['empty'] as $key => $esa) {
             $page = $this->page->getPage($esa['page']);
             $signame = $esa['name'].sprintf(' [%03d]', ($key + 1));
@@ -887,7 +977,7 @@ abstract class Output
     }
 
     /**
-     * Sign the document
+     * Sign the document.
      *
      * @param string $pdfdoc string containing the PDF document
      *
@@ -907,7 +997,7 @@ abstract class Output
         $byte_range = array();
         $byte_range[0] = 0;
         $byte_range[1] = strpos($pdfdoc, $this->byterange) + $byterange_strlen + 10;
-        $byte_range[2] = $byte_range[1] + $this->signature_max_length + 2;
+        $byte_range[2] = $byte_range[1] + $this->sigmaxlen + 2;
         $byte_range[3] = strlen($pdfdoc) - $byte_range[2];
         $pdfdoc = substr($pdfdoc, 0, $byte_range[1]).substr($pdfdoc, $byte_range[2]);
         // replace the ByteRange
@@ -957,7 +1047,7 @@ abstract class Output
         $signature = $this->applySignatureTimestamp($signature);
         // convert signature to hex
         $signature = current(unpack('H*', $signature));
-        $signature = str_pad($signature, $this->signature_max_length, '0');
+        $signature = str_pad($signature, $this->sigmaxlen, '0');
         // Add signature to the document
         $out = substr($pdfdoc, 0, $byte_range[1]).'<'.$signature.'>'.substr($pdfdoc, $byte_range[1]);
         return $out;
@@ -977,7 +1067,7 @@ abstract class Output
     }
 
     /**
-     * Returns the PDF signarure entry
+     * Returns the PDF signarure entry.
      *
      * @return string
      */
@@ -1035,7 +1125,7 @@ abstract class Output
     }
 
     /**
-     * Returns the PDF signarure entry
+     * Returns the PDF signarure entry.
      *
      * @return string
      */
@@ -1052,7 +1142,7 @@ abstract class Output
     }
 
     /**
-     * Returns the PDF signarure entry
+     * Returns the PDF signarure entry.
      *
      * @return string
      */
@@ -1086,7 +1176,7 @@ abstract class Output
     }
 
     /**
-     * Returns the PDF signarure info section
+     * Returns the PDF signarure info section.
      *
      * @return string
      */
@@ -1109,7 +1199,7 @@ abstract class Output
     }
 
     /**
-     * Get the PDF output string for Font resources dictionary
+     * Get the PDF output string for Font resources dictionary.
      *
      * return string
      */
@@ -1128,25 +1218,23 @@ abstract class Output
     }
 
     /**
-     * Get the PDF output string for XObject resources dictionary
+     * Get the PDF output string for XObject resources dictionary.
      *
      * return string
      */
     protected function getXObjectDic()
     {
-        if (empty($this->xobject)) {
-            return '';
-        }
         $out = ' /XObject <<';
         foreach ($this->xobject as $id => $oid) {
             $out .= ' /'.$id.' '.$oid['n'].' 0 R';
         }
+        $out .= $this->image->getXobjectDict();
         $out .= ' >>';
         return $out;
     }
 
     /**
-     * Get the PDF output string for Layer resources dictionary
+     * Get the PDF output string for Layer resources dictionary.
      *
      * return string
      */
@@ -1164,7 +1252,7 @@ abstract class Output
     }
 
     /**
-     * Returns 'ON' if $val is true, 'OFF' otherwise
+     * Returns 'ON' if $val is true, 'OFF' otherwise.
      *
      * return string
      */
