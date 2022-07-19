@@ -35,7 +35,7 @@ if (!isset($_SESSION['menu_alerts_lastcheck'])||((round(time()/60)-$_SESSION['me
 } elseif(isset($_SESSION['menu_alerts']) && count($_SESSION['menu_alerts'])>=1) {
         foreach($_SESSION['menu_alerts'] as $k=>$v) {
             // se ho i dati per visualizzare il bottone relativo al modulo sincronizzato faccio il load per crearlo (mod,title,button,label,link,style)
-            if ( is_array($v) && count($v) > 4 ) { // se ho i dati sufficienti creo l'elemento bottone tramite js    
+            if ( is_array($v) && count($v) > 4 ) { // se ho i dati sufficienti creo l'elemento bottone tramite js
                 echo "<script>menu_alerts_check('".$k."','".addslashes($v['title'])."','".addslashes($v['button'])."','".addslashes($v['label'])."','".addslashes($v['link'])."','".$v['style']."');</script>";
             }
         }
@@ -43,12 +43,12 @@ if (!isset($_SESSION['menu_alerts_lastcheck'])||((round(time()/60)-$_SESSION['me
 // solo quando verrà aggiornato KINT potremo utilizzarlo, tolto sulla 7.43
 //if ( $debug_active==true ) echo "<div>".d($GLOBALS, $_SERVER)."</div>";
 
-
+$contact_link=(isset($contact_link))?$contact_link:'';
 ?>
 
 <!-- questo è contenuto in library/theme/g7/footer.php -->
 <div class="navbar navbar-fixed-bottom" style="border:none;" >
-    <div style="background:white;" >Version: <?php echo GAZIE_VERSION; ?> 
+    <div style="background:white;" >Version: <?php echo GAZIE_VERSION; ?>
         <a  class="pull-right hidden-xs" target="_new" href="https://<?php echo $contact_link; ?>">https://<?php echo $contact_link; ?></a>
     </div>
 </div>

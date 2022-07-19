@@ -2093,6 +2093,7 @@ class PHPMailer
 
         // Only allow a custom message ID if it conforms to RFC 5322 section 3.6.4
         // https://tools.ietf.org/html/rfc5322#section-3.6.4
+
         if ('' != $this->MessageID and preg_match('/^<.*@.*>$/', $this->MessageID)) {
             $this->lastMessageID = $this->MessageID;
         } else {
@@ -2710,7 +2711,7 @@ class PHPMailer
         try {
             if (!self::isPermittedPath($path) or !file_exists($path)) {
                 throw new phpmailerException($this->lang('file_open') . $path, self::STOP_CONTINUE);
-            }           
+            }
 			if(version_compare(PHP_VERSION, '7.4.0', '<') && get_magic_quotes_runtime()) {
 				@set_magic_quotes_runtime(0);
 			}
@@ -3299,7 +3300,7 @@ class PHPMailer
     {
         $result = 'localhost.localdomain';
         if (!empty($this->Hostname)) {
-            $result = $this->Hostname;
+            $result = $this->Hostname['val'];
         } elseif (isset($_SERVER) and array_key_exists('SERVER_NAME', $_SERVER) and !empty($_SERVER['SERVER_NAME'])) {
             $result = $_SERVER['SERVER_NAME'];
         } elseif (function_exists('gethostname') && gethostname() !== false) {
