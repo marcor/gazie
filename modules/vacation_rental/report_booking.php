@@ -112,6 +112,10 @@ $search_fields = [
 ];
 
 require("../../library/include/header.php");
+
+$res=gaz_dbi_get_row($gTables['company_config'], "var", 'vacation_url_user');
+$vacation_url_user=$res['val'];// carico l'url per la pagina front-end utente
+
 ?>
 <link rel="stylesheet" type="text/css" href="jquery/jquery.datetimepicker.min.css"/ >
 <script src="jquery/jquery.datetimepicker.full.min.js" type="text/javascript"></script>
@@ -321,14 +325,12 @@ function pay(ref) {
           }
         });
       }else{
-
         $("#credit_card").dialog("close");
       }
 		});
 }
 
 function payment(ref) {
-
 		$( "#dialog_payment" ).dialog({
 			minHeight: 1,
 			width: "auto",
@@ -390,9 +392,7 @@ function payment(ref) {
           }
         });
     },100);
-
 }
-
 
 $(function() {
 	$("#dialog_delete").dialog({ autoOpen: false });
@@ -541,8 +541,6 @@ $(function() {
 		$("#dialog_check_inout" ).dialog( "open" );
 	});
 
-
-
 });
 function printPdf(urlPrintDoc){
 	$(function(){
@@ -626,9 +624,11 @@ $ts->output_navbar();
       </select>
       <span id="date_stato_check"></span>
       <p><br>Cambia stato il: <input type="text" id="datepicker" value= "<?php echo date('d-m-Y H:i'); ?>" ></p>
+      <?php if (strlen($vacation_url_user)>4){ ?>
       <div style="display:none" id="feedback_email">
       invia email richiesta recensione <input id="checkbox_email_inout"  type="checkbox" name="checkbox_email_inout" value="0" >
       </div>
+      <?php } ?>
   </div>
   <input type="hidden" name="auxil" value="<?php echo $tipo; ?>">
   <div style="display:none" id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">
@@ -760,12 +760,15 @@ $ts->output_navbar();
             if (strtotime($r['checked_out_date'])){
               $check_inout="OUT";
               $ckdate=date ('d-m-Y H:i', strtotime($r['checked_out_date']));
+              $title = "Checked-in ".date ('d-m-Y H:i', strtotime($r['checked_in_date']))." - Checked-out ".date ('d-m-Y H:i', strtotime($r['checked_out_date']));
             }elseif (strtotime($r['checked_in_date'])){
               $check_inout="IN";
               $ckdate=date ('d-m-Y H:i', strtotime($r['checked_in_date']));
+              $title = "Checked-in ".date ('d-m-Y H:i', strtotime($r['checked_in_date']));
             }else {
               $check_inout="PENDING";
               $ckdate="";
+              $title = "in attesa di check-in";
             }
 
             $stato_check_btn = 'btn-default';
@@ -869,7 +872,7 @@ $ts->output_navbar();
                       ?>&nbsp;&nbsp;<a title="Stato della prenotazione" class="btn btn-xs <?php echo $stato_btn; ?> dialog_stato_lavorazione" refsta="<?php echo $r['id_tes']; ?>" prodes="<?php echo $r['ragso1']," ",$r['ragso2']; ?>" prosta="<?php echo $r['status']; ?>" cust_mail="<?php echo $r['base_mail']; ?>">
                           <i class="glyphicon glyphicon-compressed"></i><?php echo $r['status']; ?>
                         </a>
-                        &nbsp;&nbsp;<a title="Accettazione" class="btn btn-xs <?php echo $stato_check_btn; ?> dialog_check_inout" refcheck="<?php echo $r['id_tes']; ?>" prodes="<?php echo $r['ragso1']," ",$r['ragso2']; ?>" prostacheck="<?php echo $check_inout; ?>" cust_mail="<?php echo $r['base_mail']; ?>" ckdate="<?php echo $ckdate; ?>">
+                        &nbsp;&nbsp;<a title="Accettazione: <?php echo $title; ?>" class="btn btn-xs <?php echo $stato_check_btn; ?> dialog_check_inout" refcheck="<?php echo $r['id_tes']; ?>" prodes="<?php echo $r['ragso1']," ",$r['ragso2']; ?>" prostacheck="<?php echo $check_inout; ?>" cust_mail="<?php echo $r['base_mail']; ?>" ckdate="<?php echo $ckdate; ?>">
                           <i class="glyphicon glyphicon-compressed"></i><?php echo "CHECK ",$check_inout; ?>
                         </a>
                       <?php

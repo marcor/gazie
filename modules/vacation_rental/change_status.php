@@ -114,6 +114,8 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
       $lang = strtolower($langarr[0]);
       include "lang.".$lang.".php";
       $script_transl=$strScript['booking_form.php'];
+      $res=gaz_dbi_get_row($gTables['company_config'], "var", 'vacation_url_user');
+      $vacation_url_user=$res['val'];// carico l'url per la pagina front-end utente
 
       if ($_POST['new_status']=="OUT"){
         $updt= "checked_out_date = '". $datetime."'";
@@ -125,7 +127,7 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 
       gaz_dbi_query ("UPDATE " . $gTables['rental_events'] . " SET ".$updt." WHERE id_tesbro =".$i." AND type= 'ALLOGGIO'") ;
 
-      if ($_POST['email']=='true' && strlen($_POST['cust_mail'])>4){// se richiesto invio mail
+      if ($_POST['email']=='true' && strlen($_POST['cust_mail'])>4 && strlen($vacation_url_user)>4){// se richiesto invio mail
         // imposto PHP Mailer per invio email di cambio stato
         $host = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_server')['val'];
         $usr = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_user')['val'];
@@ -149,7 +151,7 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
         $mail->addAddress($admin_aziend['e_mail']);             //invio copia a mittente
         $mail->isHTML(true);
         $mail->Subject = $script_transl['booking']." ".$tesbro['numdoc'].' '.$script_transl['of'].' '.gaz_format_date($tesbro['datemi']);
-        $mail->Body    = "<p>".$script_transl['ask_feedback']."</p><p>".$script_transl['ask_feedback2']."</p><p><b>".$admin_aziend['ragso1']." ".$admin_aziend['ragso2']."</b></p>";
+        $mail->Body    = "<p>".$script_transl['ask_feedback']."</p><p><a href=".$vacation_url_user.">".$vacation_url_user."</a></p><p>".$script_transl['ask_feedback2']."</p><p><b>".$admin_aziend['ragso1']." ".$admin_aziend['ragso2']."</b></p>";
         if($mail->send()) {
         }else {
           echo "Errore imprevisto nello spedire la mail di modifica status: " . $mail->ErrorInfo;
