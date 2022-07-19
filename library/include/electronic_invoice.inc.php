@@ -1437,44 +1437,49 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
     $el->appendChild($el1);
     $results->appendChild($el);
   }
-  // elementi dei <DatiPagamento> (2.4)
-  $results = $xpath->query("//FatturaElettronicaBody")->item(0);
-  $el = $domDoc->createElement("DatiPagamento", "");
-  $el1 = $domDoc->createElement("CondizioniPagamento", $cond_pag); // 2.4.1
-  $el->appendChild($el1);
-  $results->appendChild($el);
-  foreach ($ratpag as $k => $v) {
-    $results = $xpath->query("//FatturaElettronicaBody/DatiPagamento")->item(0);
-    $el = $domDoc->createElement("DettaglioPagamento", ''); // 2.4.2
-    if ($v['amount'] <= -0.01) { // ho un importo negativo derivante dai righi di tipo 3 negativi, es. storno note di credito
-      $el1 = $domDoc->createElement("Beneficiario", 'Credito di '.substr(htmlspecialchars(str_replace(chr(0xE2).chr(0x82).chr(0xAC),"",trim($XMLvars->client['ragso1'])), ENT_XML1 | ENT_QUOTES, 'UTF-8', true) . " " . htmlspecialchars(str_replace(chr(0xE2).chr(0x82).chr(0xAC),"",trim($XMLvars->client['ragso2'])), ENT_XML1 | ENT_QUOTES, 'UTF-8', true), 0, 80)); // 2.4.2.1
-      $el->appendChild($el1);
-      $el1 = $domDoc->createElement("ModalitaPagamento", 'MP22'); // 2.4.2.2
-      $el->appendChild($el1);
-      $el1 = $domDoc->createElement("DataScadenzaPagamento", $v['date']); // 2.4.2.5
-      $el->appendChild($el1);
-      $el1 = $domDoc->createElement("ImportoPagamento", -$v['amount']); // 2.4.2.6
-      $el->appendChild($el1);
-    } else {
-      $el1 = $domDoc->createElement("Beneficiario", htmlspecialchars(trim($XMLvars->intesta1 . " " . $XMLvars->intesta1bis), ENT_XML1 | ENT_QUOTES, 'UTF-8', true)); // 2.4.2.1
-      $el->appendChild($el1);
-      $el1 = $domDoc->createElement("ModalitaPagamento", $XMLvars->pagame['fae_mode']); // 2.4.2.2
-      $el->appendChild($el1);
-      $el1 = $domDoc->createElement("DataScadenzaPagamento", $v['date']); // 2.4.2.5
-      $el->appendChild($el1);
-      $el1 = $domDoc->createElement("ImportoPagamento", $v['amount']); // 2.4.2.6
-      $el->appendChild($el1);
-      if ($XMLvars->pagame['tippag'] == 'B') { // se il pagamento è una RiBa indico CAB e ABI
-          $el1 = $domDoc->createElement("ABI", str_pad($XMLvars->banapp['codabi'], 5, '0', STR_PAD_LEFT)); // 2.4.2.14
-          $el->appendChild($el1);
-          $el1 = $domDoc->createElement("CAB", str_pad($XMLvars->banapp['codcab'], 5, '0', STR_PAD_LEFT)); // 2.4.2.15
-          $el->appendChild($el1);
-      } elseif (!empty($XMLvars->banacc['iban'])) { // se il pagamento ha un IBAN associato
-          $el1 = $domDoc->createElement("IBAN", $XMLvars->banacc['iban']); // 2.4.2.13
-          $el->appendChild($el1);
-      }
-    }
+  if ($XMLvars->TipoDocumento=='TD04' || $XMLvars->reverse ){
+    // in caso di nota credito o di reverse charge salto i DatiPagamento
+  } else {
+    // elementi dei <DatiPagamento> (2.4)
+    $results = $xpath->query("//FatturaElettronicaBody")->item(0);
+    $el = $domDoc->createElement("DatiPagamento", "");
+    $el1 = $domDoc->createElement("CondizioniPagamento", $cond_pag); // 2.4.1
+    $el->appendChild($el1);
     $results->appendChild($el);
+    foreach ($ratpag as $k => $v) {
+      $results = $xpath->query("//FatturaElettronicaBody/DatiPagamento")->item(0);
+      $el = $domDoc->createElement("DettaglioPagamento", ''); // 2.4.2
+      if ($v['amount'] <= -0.01) { // ho un importo negativo derivante dai righi di tipo 3 negativi, es. storno note di credito
+        $el1 = $domDoc->createElement("Beneficiario", 'Credito di '.substr(htmlspecialchars(str_replace(chr(0xE2).chr(0x82).chr(0xAC),"",trim($XMLvars->client['ragso1'])), ENT_XML1 | ENT_QUOTES, 'UTF-8', true) . " " . htmlspecialchars(str_replace(chr(0xE2).chr(0x82).chr(0xAC),"",trim($XMLvars->client['ragso2'])), ENT_XML1 | ENT_QUOTES, 'UTF-8', true), 0, 80)); // 2.4.2.1
+        $el->appendChild($el1);
+        $el1 = $domDoc->createElement("ModalitaPagamento", 'MP22'); // 2.4.2.2
+        $el->appendChild($el1);
+        $el1 = $domDoc->createElement("DataScadenzaPagamento", $v['date']); // 2.4.2.5
+        $el->appendChild($el1);
+        $el1 = $domDoc->createElement("ImportoPagamento", -$v['amount']); // 2.4.2.6
+        $el->appendChild($el1);
+      } else {
+        $el1 = $domDoc->createElement("Beneficiario",
+        htmlspecialchars(trim($XMLvars->intesta1 . " " . $XMLvars->intesta1bis), ENT_XML1 | ENT_QUOTES, 'UTF-8', true)); // 2.4.2.1
+        $el->appendChild($el1);
+        $el1 = $domDoc->createElement("ModalitaPagamento", $XMLvars->pagame['fae_mode']); // 2.4.2.2
+        $el->appendChild($el1);
+        $el1 = $domDoc->createElement("DataScadenzaPagamento", $v['date']); // 2.4.2.5
+        $el->appendChild($el1);
+        $el1 = $domDoc->createElement("ImportoPagamento", $v['amount']); // 2.4.2.6
+        $el->appendChild($el1);
+        if ($XMLvars->pagame['tippag'] == 'B') { // se il pagamento è una RiBa indico CAB e ABI
+            $el1 = $domDoc->createElement("ABI", str_pad($XMLvars->banapp['codabi'], 5, '0', STR_PAD_LEFT)); // 2.4.2.14
+            $el->appendChild($el1);
+            $el1 = $domDoc->createElement("CAB", str_pad($XMLvars->banapp['codcab'], 5, '0', STR_PAD_LEFT)); // 2.4.2.15
+            $el->appendChild($el1);
+        } elseif (!empty($XMLvars->banacc['iban'])) { // se il pagamento ha un IBAN associato
+            $el1 = $domDoc->createElement("IBAN", $XMLvars->banacc['iban']); // 2.4.2.13
+            $el->appendChild($el1);
+        }
+      }
+      $results->appendChild($el);
+    }
   }
   // faccio l'encode in base 36 per ricavare il progressivo unico di invio
 	if($XMLvars->reverse){ // è una autofattura reverse charge encodo così:
