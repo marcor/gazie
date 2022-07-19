@@ -695,7 +695,7 @@ if ($user_data["Abilit"] == 9) {
 	$co_rs = gaz_dbi_dyn_query($what, $table, 1, "ragsoc ASC");
 	while ($co = gaz_dbi_fetch_array($co_rs)) {
 		$co_id = sprintf('%03d', $co['id']);
-		echo "<tr><td align=\"center\" colspan=\"4\">" . $co['ragsoc'] . '  - ' . $co['set_co'] . "</tr>\n";
+		echo '<tr><td align="center" colspan="4"><img src="../../modules/root/view.php?table=aziend&value='.$co['id'].'" alt="Logo" height="30"> ' . $co['ragsoc'] . '  - ID:' . $co['id'] . "</tr>\n";
 		echo "<tr><td class=\"FacetDataTD\">" .'<input type=hidden name="' . $co_id . 'nusr_root" value="3"><b>'. $script_transl['mod_perm'] . ":</b></td>\n";
 		echo "<td><b>" . $script_transl['all'] . "</b></td>\n";
 		echo "<td><b>script esclusi:</b></td>\n";
