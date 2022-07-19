@@ -193,8 +193,9 @@ if ( isset($maintenance) && $maintenance!=FALSE && $maintenance!=$_SESSION['user
                 $menuArray = array();
                 $transl = array();
                 while ($row = gaz_dbi_fetch_array($result)) {
-                  $chkes = json_decode($row['custom_field']);
-                  $path3 = parse_url($row['m3_link'], PHP_URL_PATH);
+                  $chkes = is_string($row['custom_field'])?json_decode($row['custom_field']):false;
+                  $m3l = is_string($row['m3_link'])?$row['m3_link']:'';
+                  $path3 = parse_url($m3l, PHP_URL_PATH);
                   $nfr3 = basename($path3,'.php');
                   if (isset($chkes->excluded_script) && in_array($nfr3,$chkes->excluded_script)) {
                     $row['m3_link'] = '';

@@ -39,7 +39,7 @@ if (isset($_POST['term'])) { //	Evitiamo errori se lo script viene chiamato dire
       // preparo l'array con gli script già esclusi
       $module = gaz_dbi_get_row($gTables['module'], "name",substr($_POST['term'],0,30));
       $admin_module = gaz_dbi_get_row($gTables['admin_module'], "moduleid",$module['id']," AND adminid='".substr($_POST['adminid'],0,30)."' AND company_id=" . $admin_aziend['company_id']);
-      $custom_field=(array)json_decode($admin_module['custom_field']);
+      $custom_field=is_string($admin_module['custom_field'])?json_decode($admin_module['custom_field'],true):[];
       // fine prep array in $custom_field['excluded_script']
       $files = glob('../'.substr($_POST['term'],0,30).'/*.php');
       $patterns ='/\/docume|\/search|\/lang|\/lib|\/delete|\/ajax|\/rec_|\/get_|\/menu|\/sync/';

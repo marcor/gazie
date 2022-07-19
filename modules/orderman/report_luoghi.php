@@ -65,8 +65,8 @@ $(function() {
 			show: "blind",
 			hide: "explode",
 			buttons: {
-				delete:{ 
-					text:'Elimina', 
+				delete:{
+					text:'Elimina',
 					'class':'btn btn-danger delete-button',
 					click:function (event, ui) {
 					$.ajax({
@@ -84,7 +84,7 @@ $(function() {
 				}
 			}
 		});
-		$("#dialog_delete" ).dialog( "open" );  
+		$("#dialog_delete" ).dialog( "open" );
 	});
 });
 </script>
@@ -116,18 +116,18 @@ $recordnav -> output();
                 </td>
             </tr>
             <tr>
-<?php 
+<?php
 	$groupby= "codice";
 	$result = gaz_dbi_dyn_query ('*', $gTables['campi']. ' LEFT JOIN ' . $gTables['movmag'] . ' ON ' . $gTables['movmag'] . '.campo_impianto = ' . $gTables['campi'] . '.codice', $where, $orderby, $limit, $passo, $groupby);
 	// creo l'array (header => campi) per l'ordinamento dei record
 	$headers_campi = array("Codice"      => "codice",
 							"Descrizione" => "descri",
 							"Immagine" => "image",
-							
+
 							"Note" => "annota",
-							
+
 							"Mappa di Google" => "web_url",
-							
+
 							"Cancella"    => ""
 							);
 	$linkHeaders = new linkHeaders($headers_campi);
@@ -135,12 +135,12 @@ $recordnav -> output();
 ?>
         	</tr>
         </thead>
-		
+
         <tbody>
 <?php
 
 
-while ($a_row = gaz_dbi_fetch_array($result)) { 
+while ($a_row = gaz_dbi_fetch_array($result)) {
 ?>		<tr class="FacetDataTD">
 			<td>
 				<a class="btn btn-xs btn-success btn-block" href="admin_luoghi.php?Update&codice=<?php echo $a_row["codice"]; ?>">
@@ -150,20 +150,20 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			<td>
 				<span class="gazie-tooltip" data-type="campi-thumb" data-id="<?php echo $a_row['codice']; ?>" data-title="<?php echo $a_row['annota']; ?>"><?php echo $a_row["descri"]; ?></span>
 			</td>
-								
-			<td align="center"> <img width="100" style="cursor: -moz-zoom-in;" 
+
+			<td align="center"> <img width="100" style="cursor: -moz-zoom-in;"
 			<?php echo 'src="data:image/jpeg;base64,'.base64_encode( $a_row['image'] ).'"';?>
 			onclick="this.width=500;" ondblclick="this.width=100;" title="<?php echo $a_row["descri"]; ?>" alt="IMG non presente" /></td>
-			
+
 			<td align="center"><?php echo $a_row["annota"];?></td>
-			
+
 			<td align="center"><a  href="javascript:;" onclick="window.open('<?php echo($a_row["web_url"])?>', 'titolo', 'width=800, height=400, left=80%, top=80%, resizable, status, scrollbars=1, location');">
 			<i class="glyphicon glyphicon-picture"></i>
 			</a></td>
-			
+
 			<td align="center">
-			<?php 
-			$used_from=explode(',',$a_row['used_from_modules']);			
+			<?php
+			$used_from=explode(',',is_string($a_row['used_from_modules'])?$a_row['used_from_modules']:'');
 			if (intval ($a_row['campo_impianto'])>0) {
 				?>
 				<button title="Luogo non cancellabile perche' ha movimenti di magazzino" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-remove"></i></button>
@@ -189,9 +189,9 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 <form method="post" action="stampa_luoghi.php">
 	<table>
 		<tr class="FacetFieldCaptionTD">
-			<td colspan="7" align="right"><input type="submit" name="print" value="<?php echo $script_transl['print'];?>">  
+			<td colspan="7" align="right"><input type="submit" name="print" value="<?php echo $script_transl['print'];?>">
             </td>
-        </tr>    		
+        </tr>
     </table>
 </form>
 <?php

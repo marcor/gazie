@@ -71,7 +71,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
        if (empty($form['descri'])){  //descrizione vuota
              $msg .= "5+";
        }
-	   
+
        if ($msg == "") {// nessun errore
           // preparo la stringa dell'immagine
           if ($_FILES['userfile']['size'] > 0) { //se c'e' una nuova immagine nel buffer
@@ -90,11 +90,11 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
        }
   }
 } elseif ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo accesso per UPDATE
-    $campi = gaz_dbi_get_row($gTables['campi'],"codice",$_GET['codice']);
-	if (strlen($campi['used_from_modules'])==0){
-		$form['used_from_modules']=$module;	
+  $campi = gaz_dbi_get_row($gTables['campi'],"codice",$_GET['codice']);
+	if (is_string($campi['used_from_modules'])){
+		$form['used_from_modules']=$module;
 	}else{
-		$form['used_from_modules']=$campi['used_from_modules'];	
+		$form['used_from_modules']=$campi['used_from_modules'];
 	}
     $form['ritorno'] = $_POST['ritorno'];
     $form['codice'] = $campi['codice'];
@@ -172,7 +172,7 @@ echo "<tr><td>";
      <input type="hidden" value="" name="nome_colt" />
 	 <input type="hidden" value="" name="id_colture"/>
 	 </td>
-</tr> 
+</tr>
 <tr>
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl[3]; ?>
 	</td>
@@ -191,7 +191,7 @@ if ($toDo == 'update') {
 } else {
    print '<input type="submit" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="'.ucfirst($script_transl['insert']).'!"></td></tr>';
 }
-?>	
+?>
 </table>
 </form>
 <?php

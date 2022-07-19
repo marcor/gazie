@@ -38,7 +38,7 @@ if ((isset($_POST['type']) && isset($_POST['ref'])) || (isset($_POST['type'])&&i
       // preparo l'update di custom_field che potrebbe contenere altri dati
       $module = gaz_dbi_get_row($gTables['module'], "name",substr($_POST['ref'],0,30));
       $admin_module = gaz_dbi_get_row($gTables['admin_module'], "moduleid",$module['id']," AND adminid='".substr($_POST['adminid'],0,30)."' AND company_id=" . $admin_aziend['company_id']);
-      $custom_field=(array)json_decode($admin_module['custom_field']);
+      $custom_field=is_string($admin_module['custom_field'])?json_decode($admin_module['custom_field'],true):[];
       $custom_field['excluded_script']=[]; // azzero l'array prima di ripopolarlo
       foreach($_POST['del_script'] as $v) {
         if ($v['chk_script']==1) $custom_field['excluded_script'][] = substr($v['script_name'],0,-4);
