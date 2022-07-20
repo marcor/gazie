@@ -75,7 +75,7 @@ print '<div align="center" class="FacetFormHeaderFont">'.$script_transl['title']
 			</tr>
 		</thead>
 		<tbody>';
-$result = gaz_dbi_dyn_query ('*',$gTables['files']." LEFT JOIN ".$gTables['artico']." ON ".$gTables['files'].".item_ref = ".$gTables['artico'].".codice", $where, $orderby, $limit, $passo);
+$result = gaz_dbi_dyn_query ('*',$gTables['files']." LEFT JOIN ".$gTables['artico']." ON ".$gTables['files'].".item_ref = ".$gTables['artico'].".codice", $where." AND table_name_ref = 'artico'", $orderby, $limit, $passo);
 // creo l'array (header => campi) per l'ordinamento dei record
 $headers_mov = array("ID" => "id_doc",
 					 $script_transl['item'] => "item_ref",
@@ -100,7 +100,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 	// class="gazie-tooltip" data-type="product-thumb" data-id="'.$value['codart'].'" data-title="'.$descrizione.'" type="text" name="rows['.$key.'][descri]" value="'.$descrizione.'" maxlength="50"
     echo '<tr>
 			<td class="FacetDataTD" align="right">
-				<a href="admin_document.php?id_doc='.$a_row["id_doc"].'&Update" title="'.ucfirst($script_transl['update']).'">'.$a_row["id_doc"].'</a>
+				<a class="btn btn-edit btn-xs" href="admin_document.php?id_doc='.$a_row["id_doc"].'&Update" title="'.ucfirst($script_transl['update']).'">'.$a_row["id_doc"].'</a>
 			</td>
 			<td class="FacetDataTD" align="center">
 				<span class="gazie-tooltip" data-type="product-thumb" data-id="'.$a_row['item_ref'].'" data-title="'.$a_row['annota'].'">'.$a_row["item_ref"].'</span>
@@ -109,12 +109,12 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			<td class="FacetDataTD" align="center">'.$a_row["title"].'</td>
 			<td class="FacetDataTD" align="center">'.$a_row["extension"].'</td>
 			<td class="FacetDataTD" align="center">
-				<a class="btn btn-xs btn-default" href="../root/retrieve.php?id_doc='.$a_row["id_doc"].'" title="'.$script_transl['view'].'">
-					<i class="glyphicon glyphicon-eye-open"></i>					
+				<a class="btn btn-sm" href="../root/retrieve.php?id_doc='.$a_row["id_doc"].'" title="'.$script_transl['view'].'">
+					<i class="glyphicon glyphicon-eye-open"></i>
 				</a>
 			</td>
 			<td class="FacetDataTD" align="center">
-				<a href="delete_document.php?id_doc='.$a_row["id_doc"].'" title="'.$script_transl['delete'].'!">
+				<a class="btn btn-elimina" href="delete_document.php?id_doc='.$a_row["id_doc"].'" title="'.$script_transl['delete'].'!">
 					<i class="glyphicon glyphicon-remove"></i>
 				</a>
 			</td>
