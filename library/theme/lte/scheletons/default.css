@@ -40,7 +40,10 @@ section.content {
 	opacity: 1;
 	filter: alpha(opacity=100);
 }
-
+.nopadding {
+   padding: 0 !important;
+   margin: 0 !important;
+}
 .form-control {
 
 }
@@ -80,7 +83,6 @@ section.content {
     padding-bottom: 5px;
     border: 1px solid #f4f4f4;
 }
-
 .FacetFieldCaptionTD
 {
     padding: 5px 5px 5px 5px;
@@ -89,11 +91,9 @@ section.content {
 	padding-left: unset;
 	margin-left: 0px;
 }
-
 .form-group input {
 	padding-left: 10px;
 }
-
 .tab-content{
     background-color:#fff;
     /*color:#fff;*/
@@ -110,7 +110,6 @@ section.content {
     border-left: 1px solid #ddd;
     border-right: 1px solid #ddd;
 }
-
 .table {
     margin-bottom: 5px;
 }
@@ -122,7 +121,6 @@ table.Tmiddle,table.Tsmall {
 table.Tmiddle tr>td, table.Tsmall tr>td {
 	padding : 5px;
 }
-
 @media only screen and (min-width: 990px) {
 	table.Tmiddle {
 		max-width : 70%;
@@ -139,7 +137,6 @@ table.Tmiddle tr>td, table.Tsmall tr>td {
     border-collapse: separate;
     /*border: 1px solid;*/
 }
-
 .logo {
 
 }

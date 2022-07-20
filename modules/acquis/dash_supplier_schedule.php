@@ -32,12 +32,12 @@ if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
     <!-- Scadenziari -->
 	<div class="panel panel-info col-sm-12" >
           <div class="box-header bg-danger">
-            <div class="box-title"><b><?php echo $script_transl['sca_scafor']; ?></b> -> data di riferimento: 
+            <div class="box-title"><b><?php echo $script_transl['sca_scafor']; ?></b> -> data di riferimento:
 			<?php echo '<input type="text" value="'.$form['datref_for'].'" id="datref_for" name="datref_for" readonly>'; ?><small>(6 mesi prima e 6 dopo)</small>
 			</div>
 			<a class="pull-right dialog_grid" id_bread="<?php echo $grr['id_bread']; ?>" style="cursor:pointer;"><i class="glyphicon glyphicon-cog"></i></a>
           </div>
-          <div class="box-body">
+          <div class="box-body nopadding">
               <table id="fornitori" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="fornitori_info">
                   <thead>
                       <tr role="row">
@@ -55,9 +55,9 @@ if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
 	$rs_rate = gaz_dbi_dyn_query(
 	$gTables["paymov"].'.*,'.$gTables["anagra"].'.ragso1,'.$gTables["rigmoc"].'.id_tes,'.$gTables["rigmoc"].'.codcon,'.$gTables["tesmov"].'.caucon,'.$gTables["tesmov"].'.numdoc,'.$gTables["tesmov"].'.datreg,'.$gTables["tesmov"].'.seziva,'.$gTables["tesmov"].'.datdoc',$gTables["paymov"]."
 	LEFT JOIN ". $gTables["rigmoc"].' ON '.$gTables["paymov"].'.id_rigmoc_doc = '.$gTables["rigmoc"].".id_rig
-	LEFT JOIN ". $gTables["tesmov"].' ON '.$gTables["rigmoc"].'.id_tes = '.$gTables["tesmov"].".id_tes 
-	LEFT JOIN ". $gTables["clfoco"].' ON '.$gTables["rigmoc"].'.codcon = '.$gTables["clfoco"].".codice 
-	LEFT JOIN ". $gTables['anagra'].' ON '.$gTables["clfoco"].'.id_anagra='.$gTables['anagra'] . ".id", 
+	LEFT JOIN ". $gTables["tesmov"].' ON '.$gTables["rigmoc"].'.id_tes = '.$gTables["tesmov"].".id_tes
+	LEFT JOIN ". $gTables["clfoco"].' ON '.$gTables["rigmoc"].'.codcon = '.$gTables["clfoco"].".codice
+	LEFT JOIN ". $gTables['anagra'].' ON '.$gTables["clfoco"].'.id_anagra='.$gTables['anagra'] . ".id",
 	"id_rigmoc_doc >0 AND expiry BETWEEN DATE_SUB('".gaz_format_date($form['datref_for'],true)."',INTERVAL 6 MONTH) AND DATE_ADD('".gaz_format_date($form['datref_for'],true)."',INTERVAL 6 MONTH) AND ".$gTables['rigmoc'] . ".codcon BETWEEN " . $admin_aziend['masfor'] . "000001 AND ".$admin_aziend['masfor']  . "999999",$gTables["paymov"].'.expiry ASC,'.$gTables["tesmov"].'.datdoc ASC,'.$gTables["tesmov"].'.seziva ASC, '.$gTables["tesmov"].'.protoc ASC');
 	$paymov = new Schedule;
 	//$paymov->setScheduledPartner($admin_aziend['masfor'],$form['datref_for']);
@@ -133,7 +133,7 @@ if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
 			"responsive": true,
 			"ordering": false,
             "stateSave": true
-			
+
         });
 		$('#datref_for').each(function(){
 			$(this).datepicker({ dateFormat: 'dd-mm-yy' });
@@ -145,7 +145,7 @@ if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
 		$('.delete_supplier_schedule').click(function() {
 			$("p#id_supplier_schedule").html($(this).attr("ref"));
 			$("p#id_supplier_descri").html($(this).attr("nome"));
-			var id_tesdoc_ref = $(this).attr('ref');		
+			var id_tesdoc_ref = $(this).attr('ref');
 			$( "#delete_supplier_schedule" ).dialog({
 				minHeight: 1,
 				width: "auto",
@@ -153,8 +153,8 @@ if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
 				show: "blind",
 				hide: "explode",
 				buttons: {
-					delete:{ 
-						text:'Elimina', 
+					delete:{
+						text:'Elimina',
 						'class':'btn btn-danger delete-button',
 						click:function (event, ui) {
 						$.ajax({
@@ -172,7 +172,7 @@ if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
 					}
 				}
 			});
-			$("#delete_supplier_schedule" ).dialog( "open" );  
+			$("#delete_supplier_schedule" ).dialog( "open" );
 		});
     });
 

@@ -19,6 +19,9 @@ table.Tlarge {
 table.Tmiddle {
 	border-color : #000000;
 }
+th {
+	background-color: #c4c7ca;
+}
 table.Tsmall {
 	border-color : #000000;
 }
@@ -252,10 +255,6 @@ table.selectTable td {
 .btn-articolo {
 
 }
-.form-inline {
-	background-color: #dae1da;
-}
-
 
 /** ENRICO FEDELE */
 /* Inizio stili custom pper jquery-ui */
@@ -361,13 +360,14 @@ td.ui-datepicker-other-month>a.ui-state-default.ui-priority-secondary{
 	background-color: #d9534f !important;
 	border-color: #d43f3a !important;
 }
-
 div.ui-dialog-buttonpane.ui-widget-content div.ui-dialog-buttonset button.btn.btn-success{
 	background-color: #5cb85c !important;
 }
-
 .blink {
     color: #f00;
     font-weight: bold;
     animation: blink 0.5s infinite;
+}
+.table-striped > tbody > tr:nth-of-type(2n+1) {
+	background-color: #e9e9e9;
 }

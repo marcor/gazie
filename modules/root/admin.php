@@ -116,7 +116,7 @@ $script_transl = HeadMain();
 		padding-left: 0px;
 		padding-right: 0px;
 	}
-	div.panel { 
+	div.panel {
 		border-left:0px;
 		border-right:0px;
 		border-radius:0px;
@@ -127,22 +127,22 @@ $script_transl = HeadMain();
 	}
 	.dataTables_wrapper > div.row > div.col-sm-12{
 		padding-right: 0px;
-	} 
-	.row { 
+	}
+	.row {
 		margin-right: 0px;
 		padding: 0px;
 	}
 }
-.panel { 
+.panel {
 	padding: 0px 0px 5px 0px;
 	margin: 0px 0px 5px 0px;
 }
 
-.btn-full { 
+.btn-full {
 	width: 100%;
 	margin-top: 2px;
 }
-.btn-full>span { 
+.btn-full>span {
 	width: 100%;
 	margin-top: 2px;
 	white-space: normal;
@@ -151,6 +151,12 @@ $script_transl = HeadMain();
     display: flex;
     align-items: center;
 }
+
+.dataTables_wrapper div.row div.col-sm-12, .dataTables_wrapper div.row {
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
+
 </style>
 <script>
 $(function(){
@@ -179,13 +185,13 @@ $(function(){
     <div class="container" style="width: auto;">
 
         <?php
-		if ( $folderMissing ) 
+		if ( $folderMissing )
 		{
 			echo '<div class="alert alert-danger text-center" role="alert">';
 			echo 'Attenzione manca la cartella all\'interno di "data/files" per l\'azienda corrente';
 			echo '</div>';
 		}
-		
+
         if ( $lastBackup ) {
             ?>
             <div class="alert alert-danger text-center" role="alert">
@@ -223,7 +229,7 @@ while ( $grr = gaz_dbi_fetch_array($get_widgets) ) {
 	$col_lg=(!empty($grr['grid_class']))?$grr['grid_class']:''; // se si mette sulla colonna del db "col-lg-12" il widget occuperà l'intera larghezza con "col-lg-3" solo 1/4 del rigo della dashboard
 	echo '<div class="col-xs-12 col-md-6 '.$col_lg.' text-center" id="position-'.$grr['id_bread'].'">';
 	require('../'.$grr['file']);
-	echo '</div>'; 
+	echo '</div>';
 }
 echo '</div>';
 
@@ -270,7 +276,7 @@ $(function() {
 				url: './dashboard_update.php',
 				success: function(output){
 					window.location.replace("./admin.php");
-				}			  
+				}
 			  });
 			},
             "Non cambiare": function() {
@@ -278,7 +284,7 @@ $(function() {
             }
 			}
 		});
-		$("#dialog_grid" ).dialog( "open" );  
+		$("#dialog_grid" ).dialog( "open" );
 	});
 });
 
