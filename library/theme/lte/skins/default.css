@@ -10,17 +10,17 @@ body {
    background-color: #fff;
 }
 .control-label {
-   /*background-color: #aae2a8;*/
+   /*background-color: #c4c7ca;*/
 }
 .dropdown-menu {
     border-color: #000;
 }
 .FacetFieldCaptionTD {
-    background-color: #aae2a8;
+    background-color: #c4c7ca;
     color: #000;
 }
 th {
-    background-color : #aae2a8;
+    background-color : #c4c7ca;
 }
 th a {
     color: #000;
@@ -32,19 +32,13 @@ th a:hover {
     background-color: #daeada;
     color: #000;
 }
-div.table-responsive, table.FacetFormTABLE, table.GazFormDeleteTable, table.table-bordered, div.div-bordered {
-	border: 1px solid #5f7a56;
-	border-radius: 4px;
-}
-.FacetDataTD {
-    background-color: #b9e3a2;
-}
+
 .content-wrapper {
-    background-image: url("../../../../library/images/sfondo.png");
+  background-image: url("../../../../library/theme/lte/images/sfondo.png");
+	background-color: #f3f5f9;
 }
-.Tlarge {
-    border: 1px solid #000000;
-}
+
+
 .Tmiddle {
     border: 1px solid #000000;
 }
@@ -75,7 +69,7 @@ div.table-responsive, table.FacetFormTABLE, table.GazFormDeleteTable, table.tabl
     padding-left: 15px;
 }
 div.th {
-	background: #aae2a8;
+	background: #c4c7ca;
 	border: 1px solid #000;
 	border-bottom: 0px;
 }
@@ -92,7 +86,7 @@ div.th {
 {
   color: #f00;
   font-weight: bold;
-  background-color: #aae2a8;
+  background-color: #c4c7ca;
   margin-bottom: 10px;
 }
 

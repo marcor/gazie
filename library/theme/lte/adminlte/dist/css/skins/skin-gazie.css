@@ -240,8 +240,7 @@ div.panel.panel-default div.container-fluid div.form-row div.form-group.col-md-6
 }
 
 .panel-default {
-    border-color: #ddd;
-    background-color: honeydew;
+  background-color: #dfe4ea;;
 }
 
 .form-group select {

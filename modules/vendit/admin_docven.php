@@ -161,6 +161,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
   $form['change_pag'] = $_POST['change_pag'];
   if ($form['change_pag'] != $form['pagame']) {  //se è stato cambiato il pagamento
     $new_pag = gaz_dbi_get_row($gTables['pagame'], "codice", $form['pagame']);
+    $new_pag = $new_pag?$new_pag:['tippag'=>'D','numrat'=>1];
     if ($toDo == 'update') {  //se è una modifica mi baso sulle vecchie spese
         $old_header = gaz_dbi_get_row($gTables['tesdoc'], "id_tes", $form['id_tes']);
         if ($cliente['speban'] == "S" && ($new_pag['tippag'] == 'T' || $new_pag['tippag'] == 'B' || $new_pag['tippag'] == 'V')) {
@@ -173,7 +174,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
             $form['speban'] = 0.00;
         }
     } else { //altrimenti, se previste,  mi avvalgo delle nuove dell'azienda
-        if ($cliente['speban'] == "S" && ($new_pag['tippag'] == 'B' || $new_pag['tippag'] == 'T' || $new_pag['tippag'] == 'V')) {
+        if ($cliente && $cliente['speban'] == "S" && ($new_pag['tippag'] == 'B' || $new_pag['tippag'] == 'T' || $new_pag['tippag'] == 'V')) {
             $form['speban'] = $admin_aziend['sperib'];
         } else {
             $form['speban'] = 0;
@@ -2420,7 +2421,10 @@ if ($form['tipdoc'] == "DDT") {
 }
 // fine modifica FP
 
-echo '<div class="box-primary table-responsive"><table id="products-list" class="Tlarge table table-bordered table-condensed">
+echo '<div class="box-primary table-responsive">
+<div class="text-center"><b>'. $script_transl[1].'</b></div>
+
+<table id="products-list" class="Tlarge table table-bordered table-condensed">
 		  <thead>
 			<tr>
 				<th></th>
@@ -3183,7 +3187,6 @@ echo '	<input type="hidden" value="' . $form['in_descri'] . '" name="in_descri" 
 
 ?>
 <!-- DISEGNO LA FORM DI INSERIMENTO DATI -->
-<div class="text-center"><?php echo $script_transl[1]; ?></div>
 <div class="panel panel-info div-bordered">
   <div class="panel-body">
     <div class="container-fluid">
@@ -3313,7 +3316,7 @@ $magazz->selectIdWarehouse('in_id_warehouse',$form["in_id_warehouse"],false,'col
   </div>
 </div><!-- chiude panel -->
 
-<div class="FacetSeparatorTD text-center"><?php echo $script_transl[2]; ?></div>
+<div class="FacetSeparatorTD text-center"><b><?php echo $script_transl[2]; ?></b></div>
 	<input type="hidden" value="<?php echo $form['numrat']; ?>" name="numrat">
 	<input type="hidden" value="<?php echo $form['stamp']; ?>" name="stamp">
 	<input type="hidden" value="<?php echo $form['round_stamp']; ?>" name="round_stamp">

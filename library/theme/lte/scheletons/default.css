@@ -344,12 +344,6 @@ table.Tmiddle tr>td, table.Tsmall tr>td {
     padding: 0px;
 }
 
-/* la tabella responsive deve avere un po si margine destro e sinistro*/
-.table-responsive {
-    width: 98%;
-    margin: auto;
-}
-
 .ui-sortable-handle{
 	padding: 2px;
 }
