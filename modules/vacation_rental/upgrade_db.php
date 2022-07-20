@@ -39,7 +39,7 @@ global $table_prefix;
 $upgrade_db[147][]="ALTER TABLE ".$table_prefix."_XXXrental_discounts ADD `test2` TINYINT(2) NOT NULL DEFAULT '0' COMMENT 'test update 2';";
 */
 
-$update_db[148][]="INSERT INTO ".$table_prefix."_XXXcompany_config (`id`, `description`, `var`, `val`) VALUES (NULL, 'URL di ritorno da Stripe dopo avvenuto pagamento ', 'vacation_url_stripe', NULL);";
+$upgrade_db[148][]="INSERT INTO ".$table_prefix."_XXXcompany_config (`id`, `description`, `var`, `val`) VALUES (NULL, 'URL di ritorno da Stripe dopo avvenuto pagamento ', 'vacation_url_stripe', NULL);";
 
 
 ?>
