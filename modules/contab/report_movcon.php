@@ -270,7 +270,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 	}
     // INIZIO crezione tabella per la visualizzazione sul tootip di tutto il movimento e facccio la somma del totale movimento
     $res_rig = gaz_dbi_dyn_query("*", $gTables['rigmoc'], 'id_tes=' . $a_row["id_tes"], 'id_rig');
-    $tt = '<table><th colspan=3 >' . $a_row['descri'] . '</th>';
+    $tt = '<table><tr><td colspan=3 >' . $a_row['descri'] . '</td></tr>';
     $tot = 0.00;
     while ($rr = gaz_dbi_fetch_array($res_rig)) {
         $account = $anagrafica->getPartner($rr["codcon"], true);
