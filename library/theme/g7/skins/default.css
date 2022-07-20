@@ -224,10 +224,7 @@ table.selectTable td {
 .btn-custom:hover, .btn-custom:focus {
 	color: #fff;
 }
-.btn-edit {
-	background-color: #449d44 !important;
-	color: #FFFFFF !important;
-}
+
 .btn-cont {
 	background-color: #aae2a8;
 }
@@ -275,24 +272,21 @@ table.selectTable td {
 .ui-autocomplete span.hl_results {
 	background-color: #ffff66;
 }
-
-
 .gaz-attivo {
-    background-color: #88D6FF;
+  background-color: #E3F5FF;
 }
 .gaz-passivo {
-    background-color: #D6FF88;
+  background-color: #FFF6EF;
 }
 .gaz-costi {
-    background-color: #D688FF;
+  background-color: #FDD;
 }
 .gaz-ricavi {
-    background-color: #FFD688;
+  background-color: #EEFDED;
 }
 .gaz-transitori {
-    background-color: #FF88D6;
+  background-color: #F4D5FF;
 }
-
 /**************************************
 **** BOOTSTRAP & SMARTMENU ************
 ***************************************/
@@ -315,8 +309,8 @@ table.selectTable td {
 }
 .btn-edit {
   float: right;
-  background-color: #fa50f8;
-  color: #000;
+	background-color: #449d44 !important;
+	color: #FFFFFF !important;
 }
 .panel-default {
   background-color: #e7ece7;

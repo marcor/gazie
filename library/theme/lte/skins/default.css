@@ -106,19 +106,19 @@ html body.skin-blue.sidebar-mini.sidebar-collapse form div.wrapper header.main-h
     color : #000;
 }
 .gaz-attivo {
-    background-color: #88D6FF;
+  background-color: #E3F5FF;
 }
 .gaz-passivo {
-    background-color: #D6FF88;
+  background-color: #FFF6EF;
 }
 .gaz-costi {
-    background-color: #D688FF;
+  background-color: #FDD;
 }
 .gaz-ricavi {
-    background-color: #FFD688;
+  background-color: #EEFDED;
 }
 .gaz-transitori {
-    background-color: #FF88D6;
+  background-color: #F4D5FF;
 }
 td.ui-datepicker-other-month>a.ui-state-default.ui-priority-secondary{
 	color: #034802;
@@ -131,4 +131,15 @@ td.ui-datepicker-other-month>a.ui-state-default.ui-priority-secondary{
 }
 .navbar-nav > .user-menu > .dropdown-menu > .user-footer {
 	background-color: #a1a29f;
+}
+.btn-elimina {
+    color: #ff3939;
+}
+.btn-edit {
+  float: right;
+	background-color: #449d44 !important;
+	color: #FFFFFF !important;
+}
+.panel-default {
+  background-color: #e7ece7;
 }
