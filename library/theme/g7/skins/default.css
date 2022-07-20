@@ -1,6 +1,7 @@
 body {
-	background-image : url("../../../../library/images/sfondo.png");
-	color:#000;
+	background-image : url("sfondo.png");
+	color: #000;
+	background-color: #f3f5f9;
 }
 .img-circle.dit-picture,.text-center>a>.img-circle{
 	border-radius: 10px;
@@ -53,9 +54,8 @@ table.selectTable td {
 	font-weight : bold;
 }
 .FacetFieldCaptionTD {
-	background-color : #AAE2A8;
-	color : #000000;
-	font-size : 90%;
+	background-color: #C3C5CC;
+	color: #000000;
 }
 .FacetDataTRstart td {
 	border-top-color: white;
@@ -64,9 +64,8 @@ table.selectTable td {
 	border-bottom-color: #FFFFFF;
 }
 .FacetDataTD {
-	background-color : #c9edc8;
-	color : #000000;
-	font-size : 100%;
+	background-color : #caceca;
+	color : #000;
 }
 .dispari {
 	background-color : #b8dcb7;
@@ -87,24 +86,9 @@ table.selectTable td {
 	background-color : #FF8888;
 	color : #000000;
 }
-.FacetDataTDsmall {
-	background-color : #c9edc8;
-	color : #000000;
-	font-size : 90%;
-	border-bottom-color:  #fff;
-	border-right-color: #fff;
-}
-.FacetDataTDsmall a {
-	font-size : 90%;
-}
-.FacetDataTDsmallRed {
-	background-color : #c9edc8;
-	color : #FF0000;
-	font-size : 90%;
-}
 .FacetDataTDred {
-	background-color : #C9EDC8;
-	color : #FF0000;
+	background-color: #F955162E;
+	color: #FF0000;
 }
 .FacetColumnTD {
 	color : #000000;
@@ -144,20 +128,12 @@ table.selectTable td {
 	background-color : #FFFFFF;
 	font-size : 100%;
 }
-.FacetSelect {
-	font-size : 90%;
-	background-color : #C9EDC8;
-}
 .FacetSmall {
 	font-size : 90%;
 	color : #FF00FF;
 }
 .FacetText {
 	font-size : 90%;
-	color : #000000;
-}
-.FacetSelectBil {
-	background-color : #AAE2A8;
 	color : #000000;
 }
 .error {
@@ -192,7 +168,7 @@ table.selectTable td {
 }
 
 .navbar-lower {
-	background-color: #dafed9;
+	background-color: #dae1da;
 }
 .vcenter {
 	font-size: 100%;
@@ -216,11 +192,8 @@ table.selectTable td {
 .panel-title {
 	vertical-align: middle;
 }
-.panel-info {
-	border-color: #88c086;
-}
 .panel-info > .panel-heading {
-	background-color: #aae2a8 !important;
+	background-color: #a8bce2 !important;
 	border-color: #88c086;
 	color: #123311;
 }
@@ -233,7 +206,7 @@ table.selectTable td {
 }
 
 .panel-help {
-	background-color: #dafed9;
+	background-color: #dae1da;
 }
 /*    --------------------------------------------------
 	:: Inputs & Buttons
@@ -280,7 +253,7 @@ table.selectTable td {
 
 }
 .form-inline {
-	background-color: #dafed9;
+	background-color: #dae1da;
 }
 
 
@@ -331,29 +304,23 @@ table.selectTable td {
     color: #000;
     background-color: #fff;
 }
-
 .dropdown-menu >li >a {
     color: #000;
     background-color: #fff;
 }
-
 .form-control {
 	color: #000;
 }
-
 .btn-elimina {
     color: #ff3939;
 }
-
 .btn-edit {
-    float: right;
-    background-color: #fa50f8;
-    color: #000;
+  float: right;
+  background-color: #fa50f8;
+  color: #000;
 }
-
 .panel-default {
-    border-color: #ddd;
-    background-color: honeydew;
+  background-color: #e7ece7;
 }
 
 /**************************************

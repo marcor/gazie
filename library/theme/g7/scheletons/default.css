@@ -87,11 +87,6 @@ table.selectTable td {
     position: absolute;
     border: 1px solid;
 }
-
-.FacetDataTD input,select,textarea {
-	padding-left: unset;
-	margin-left: 0px;
-}
 .selectHeader {
     background-repeat: repeat-x;
     background-position: top center;
@@ -153,11 +148,12 @@ table.selectTable td {
     /*background-color : #FF8888;*/
 }
 .FacetDataTDsmall {
-    /*background-color : #c9edc8;*/
-    border-bottom: 1px solid;
-    border-right: 1px solid;
+	font-size : 90%;
+  border-bottom: 1px solid;
+  border-right: 1px solid;
 }
 .FacetDataTDsmall a {
+  	font-size : 90%;
 }
 .FacetDataTDsmallRed {
     /*background-color : #c9edc8;*/
@@ -203,16 +199,6 @@ table.selectTable td {
     border-left : 1px solid #000000;
     border-right : 1px solid #000000;
     border-top : 1px solid #000000;
-}
-.FacetSelect {
-    /*background-color : #C9EDC8;*/
-}
-.FacetSmall {
-}
-.FacetText {
-}
-.FacetSelectBil {
-    /*background-color : #AAE2A8;*/
 }
 .error {
     color : red;
@@ -319,10 +305,6 @@ input.input-xs {
 
 .panel-title {
     vertical-align: middle;
-}
-.panel-info {
-    border-color: #88c086;
-    margin: auto;
 }
 .panel-info > .panel-gazie {
     border-color: #88c086;
