@@ -40,10 +40,6 @@ section.content {
 	opacity: 1;
 	filter: alpha(opacity=100);
 }
-.nopadding {
-   padding: 0 !important;
-   margin: 0 !important;
-}
 .form-control {
 
 }

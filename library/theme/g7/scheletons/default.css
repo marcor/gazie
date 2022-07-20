@@ -892,9 +892,7 @@ form table.GazFormDeleteTable {
 .dropdown-menu > li > a {
 	padding: 3px 6px;
 }
-
-#clienti_wrapper.dataTables_wrapper div.row div.col-sm-12,
-#fornitori_wrapper.dataTables_wrapper div.row div.col-sm-12{
+.dataTables_wrapper div.row div.col-sm-12, .dataTables_wrapper div.row {
   padding-left: 0px !important;
   padding-right: 0px !important;
 }

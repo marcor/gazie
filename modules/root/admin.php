@@ -152,11 +152,6 @@ $script_transl = HeadMain();
     align-items: center;
 }
 
-.dataTables_wrapper div.row div.col-sm-12, .dataTables_wrapper div.row {
-  padding-left: 0px !important;
-  padding-right: 0px !important;
-}
-
 </style>
 <script>
 $(function(){
