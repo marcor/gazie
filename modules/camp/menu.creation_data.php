@@ -76,5 +76,5 @@ $menu_data = array( 'm1'=>array('link'=>"docume_camp.php"),
                                )
                   );
 $module_class='fas fa-seedling';
-$update_db[]="ALTER TABLE ".$table_prefix."_camp_fitofarmaci` ADD INDEX(`PRODOTTO`);";
+$update_db[]="ALTER TABLE ".$table_prefix."_camp_fitofarmaci ADD INDEX(`PRODOTTO`);";
 ?>
