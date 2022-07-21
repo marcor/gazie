@@ -221,10 +221,24 @@ $(function(){
 $get_widgets = gaz_dbi_dyn_query("*", $gTables['breadcrumb'],"exec_mode=2 AND adminid='".$admin_aziend['user_name']."'", 'position_order');
 echo '<div id="sortable" class="vertical-align">';
 while ( $grr = gaz_dbi_fetch_array($get_widgets) ) {
-	$col_lg=(!empty($grr['grid_class']))?$grr['grid_class']:''; // se si mette sulla colonna del db "col-lg-12" il widget occuperà l'intera larghezza con "col-lg-3" solo 1/4 del rigo della dashboard
-	echo '<div class="col-xs-12 col-md-6 '.$col_lg.' text-center" id="position-'.$grr['id_bread'].'">';
-	require('../'.$grr['file']);
-	echo '</div>';
+  $dfn = explode('/',$grr['file']);
+  $query = 'SELECT am.access, am.custom_field FROM ' . $gTables['admin_module'] . ' AS am' .
+           ' LEFT JOIN ' . $gTables['module'] . ' AS module ON module.id=am.moduleid' .
+           " WHERE am.adminid='" .$admin_aziend['user_name']. "' AND module.name='".$dfn[0]."' AND am.company_id = ".$admin_aziend['codice']." AND am.access >= 3";
+  $result = gaz_dbi_query($query) or gaz_die ( $query, "1030", __FUNCTION__ );
+  if (gaz_dbi_num_rows($result) >= 1) {
+    $row = gaz_dbi_fetch_array($result);
+    $chkes = is_string($row['custom_field'])? json_decode($row['custom_field']) : false;
+    $isexcl = ($chkes && isset($chkes->excluded_script))?$chkes->excluded_script:[];
+    $okaccess = (in_array(substr($dfn[1],0,-4),$isexcl))?false:true;
+    if ($okaccess) {
+      $col_lg=(!empty($grr['grid_class']))?$grr['grid_class']:'';
+      echo '<div class="col-xs-12 col-md-6 '.$col_lg.' text-center" id="position-'.$grr['id_bread'].'">';
+      require('../'.$grr['file']);
+      echo '</div>';
+    }
+  }
+
 }
 echo '</div>';
 
