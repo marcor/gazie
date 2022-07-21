@@ -479,9 +479,9 @@ $(function(){
 <input type="hidden" name="hidden_req" value="<?php if (isset($_POST['hidden_req'])){ print $_POST['hidden_req']; } ?>">
 <?php
 if ($toDo == 'insert') {
-	echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['ins_this'] . "</div>\n";
+	echo "<div class=\"text-center\"><h3>" . $script_transl['ins_this'] . "</h3></div>\n";
 } else {
-	echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['upd_this'] . " '" . $form["user_name"] . "'</div>\n";
+	echo "<div class=\"text-center\"><h3>" . $script_transl['upd_this'] . " '" . $form["user_name"] . "'</h3></div>\n";
 	echo "<input type=\"hidden\" value=\"" . $form["user_name"] . "\" name=\"user_name\" />\n";
 }
 $gForm = new configForm();
@@ -491,9 +491,9 @@ if (count($msg['err']) > 0) { // ho un errore
 echo '<input type="hidden" name="' . ucfirst($toDo) . '" value="">';
 ?>
 
-<div class="panel panel-default table-responsive gaz-table-form">
+<div class="panel panel-default">
 <div class="container-fluid">
-<table class="table table-striped">
+<table class="Tmiddle table-striped">
 <tr>
 <td class="FacetFieldCaptionTD"><?php echo $script_transl['user_lastname']; ?>* </td>
 <td colspan="2" class="FacetDataTD"><input title="Cognome" type="text" name="user_lastname" value="<?php print $form["user_lastname"] ?>" maxlength="30"  class="FacetInput">&nbsp;</td>

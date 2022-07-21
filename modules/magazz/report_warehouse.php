@@ -134,7 +134,7 @@ while ($r = gaz_dbi_fetch_array($rs)) {
   $moved=gaz_dbi_fetch_array($rs_numw)['moved'];
 ?>
 <tr>
- <td class="text-center"><a class="btn btn-xs btn-success btn-block" href="admin_warehouse.php?Update&id=<?php echo $r["id"]; ?>"><i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $r["id"];?></a></td>
+ <td class="text-center"><a class="btn btn-xs btn-edit" href="admin_warehouse.php?Update&id=<?php echo $r["id"]; ?>"><i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $r["id"];?></a></td>
  <td><?php echo $r["name"]; ?></td>
  <td align="center"> <img width="100" style="cursor: zoom-in;" <?php echo 'src="data:image/jpeg;base64,'.base64_encode( $r['image'] ).'"';?> onclick="this.width=500;" ondblclick="this.width=100;" title="click=zoom doubleclick=thumb" alt="no image" /></td>
  <td><?php echo $r["web_url"]; ?></td>

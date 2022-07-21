@@ -560,18 +560,17 @@ echo '<td align="left"><span ' . $tooltip . '>' . $v['i_d'] . '</span></td>
   }
   echo '		<tr>
   				<td colspan="2" class="FacetFieldCaptionTD">
-					<input type="submit" name="Return" value="' . $script_transl['return'] . '" />
 				</td>
 				<td align="center" colspan="6" class="FacetFieldCaptionTD">
-					<input type="submit" name="preview" id="btnpreview" value="' . $script_transl['view'].'" />
+					<input type="submit" class="btn btn-warning" name="preview" id="btnpreview" value="' . $script_transl['view'].'" />
 				</td>
 				<td align="right" class="bg-primary">Totale ' . gaz_format_number($tot_val_giac) . '</td>
 			</tr>';
   if (isset($_POST['preview']) && empty($msg)) { // e' possibile confermare, non i sono errori formali
       echo '	</table></div><div class="table-responsive">
-	 			<table class="Tlarge table table-striped table-bordered table-condensed">
+	 			<table class="Tmiddle table-striped">
 				<tr>
-	 					<td colspan="8" class="FacetFormHeaderFont">' . $script_transl['preview_title'] . '</td>
+	 					<td colspan="8" class="FacetFormHeaderFont"><span class="text-danger">' . $script_transl['preview_title'] . '</span></td>
 				</tr>
 				<tr>
 	 					<td class="FacetFieldCaptionTD">Causale</td>

@@ -163,7 +163,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 		while ($row = gaz_dbi_fetch_assoc($result)) {
       if (count($acc)==0){ $acc[0] = array_keys($row); }
       $acc[$row['codart']]=$row;
-    }    
+    }
     $spreadsheet = new Spreadsheet();
     $spreadsheet->setActiveSheetIndex(0);
     $sheet = $spreadsheet->getActiveSheet()->fromArray($acc);
@@ -303,8 +303,8 @@ echo "</tr>\n";
 
 /** fine modifica FP */
 echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
-echo "<td align=\"right\"><input type=\"submit\" name=\"export\" value=\"Esporta XLS\">\n";
-echo '<td align="center"> <input type="submit" accesskey="i" name="print" value="';
+echo '<td align="right"><input class="btn btn-info" type="submit" name="export" value="Esporta XLS">';
+echo '<td align="center"><input class="btn btn-warning" type="submit" accesskey="i" name="print" value="';
 echo $script_transl['print'];
 echo '" tabindex="100" >';
 echo "\t </td>\n";

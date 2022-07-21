@@ -45,7 +45,7 @@ $search_fields = [
     'codmax'
     => "codice <= $mascli + LEAST(%d, 999999)",
 
-    'sexper' 
+    'sexper'
     => "sexper = '%s'"
 ];
 
@@ -85,7 +85,7 @@ $(function() {
 	$('.dialog_delete').click(function() {
 		$("p#idcodice").html($(this).attr("ref"));
 		$("p#iddescri").html($(this).attr("ragso"));
-		var id = $(this).attr('ref');		
+		var id = $(this).attr('ref');
 		$( "#dialog_delete" ).dialog({
 			minHeight: 1,
 			width: "auto",
@@ -93,8 +93,8 @@ $(function() {
 			show: "blind",
 			hide: "explode",
 			buttons: {
-				delete:{ 
-					text:'Elimina', 
+				delete:{
+					text:'Elimina',
 					'class':'btn btn-danger delete-button',
 					click:function (event, ui) {
 					$.ajax({
@@ -112,7 +112,7 @@ $(function() {
 				}
 			}
 		});
-		$("#dialog_delete" ).dialog( "open" );  
+		$("#dialog_delete" ).dialog( "open" );
 	});
 });
 </script>
@@ -179,7 +179,7 @@ $(function() {
 			$check_bro = gaz_dbi_num_rows($rs_check_bro);
 			echo "<tr class=\"FacetDataTD\">";
             // Colonna codice cliente
-            echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"admin_client.php?codice=" . substr($a_row["codice"], 3) . "&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" .intval(substr($a_row["codice"],3)) . "</a> &nbsp</td>";
+            echo "<td align=\"center\"><a class=\"btn btn-xs btn-edit\" href=\"admin_client.php?codice=" . substr($a_row["codice"], 3) . "&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" .intval(substr($a_row["codice"],3)) . "</a> &nbsp</td>";
             // Colonna ragione sociale
             echo "<td title=\"" . $a_row["ragso2"] . "\">" . $a_row["ragso1"] . " &nbsp;</td>";
             // colonna sesso
@@ -239,7 +239,7 @@ $(function() {
 				?>
 				<button title="Impossibile cancellare perch� ci sono dei movimenti associati" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-remove"></i></button>
 				<?php
-				
+
 			} else {
 				?>
 				<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il cliente" ref="<?php echo $a_row['codice'];?>" ragso="<?php echo $a_row['ragso2']," ",$a_row['ragso1'];?>">
@@ -259,20 +259,20 @@ $(function() {
  $(document).ready(function(){
      var selects = $("select");
      // la funzione gaz_flt_dsp_select usa "All", qui usiamo invece valori vuoti
-     // (in questo modo i campi non usati possono essere esclusi)        
+     // (in questo modo i campi non usati possono essere esclusi)
      $("option", selects).filter(function(){ return this.value == "All"; }).val("");
-     
-     // la stessa funzione imposta onchange="this.form.submit()" sulle select: 
+
+     // la stessa funzione imposta onchange="this.form.submit()" sulle select:
      // l'azione non lancia un evento "submit" e non pu� essere intercettata.
      // per non andare a modificare la funzione rimpiazziamo l'attributo onchange:
      selects.attr('onchange', null).change(function() { $(this.form).submit(); });
-     
+
      // cos� ora possiamo intercettare tutti i submit e pulire la GET dal superfluo
      $("form").submit(function() {
          $(this).find(":input").filter(function(){ return !this.value; }).attr("disabled", "disabled");
          return true; // ensure form still submits
      });
-     
+
      // Un-disable form fields when page loads, in case they click back after submission
      $( "form" ).find( ":input" ).prop( "disabled", false );
  });

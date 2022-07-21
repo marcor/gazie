@@ -44,7 +44,7 @@ $linkHeaders -> output();
 $result = gaz_dbi_dyn_query ('*', $gTables['portos'], $where, $orderby, $limit, $passo);
 while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "<tr class=\"FacetDataTD\">";
-    echo "<td><a class=\"btn btn-xs btn-default\" href=\"admin_portos.php?Update&codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["codice"]."</a> &nbsp</td>";
+    echo "<td align=\"center\"><a class=\"btn btn-xs btn-edit\" href=\"admin_portos.php?Update&codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["codice"]."</a> &nbsp</td>";
     echo "<td>".$a_row["descri"]." &nbsp;</td>";
     echo "<td align=\"center\">".$a_row["incoterms"]." &nbsp;</td>";
     echo "<td align=\"center\">".$a_row["annota"]." &nbsp;</td>";

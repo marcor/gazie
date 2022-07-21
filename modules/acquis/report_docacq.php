@@ -381,6 +381,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
 	}
   $template="";
   $y = substr($row['datfat'], 0, 4);
+  $btncol='edit';
   if ($row["tipdoc"] == 'AFA') {
     $tipodoc = "Fattura";
     $modulo = "stampa_docacq.php?id_tes=" . $row['id_tes']."&template=".$template;
@@ -393,16 +394,17 @@ while ($row = gaz_dbi_fetch_array($result)) {
     $tipodoc = "Nota Credito";
     $modulo = "stampa_docacq.php?id_tes=" . $row['id_tes']."&template=".$template;
     $modifi = "admin_docacq.php?Update&id_tes=" . $row['id_tes'];
+    $btncol='danger';
   } elseif ($row["tipdoc"] == 'AFT') {
     $tipodoc = "Fattura";
     $modulo = "stampa_docacq.php?id_tes=" . $row['id_tes']."&template=".$template;
     $modifi = "";
 	}
-  echo "<tr class=\"FacetDataTD\">";
+  echo '<tr class="FacetDataTD"><td align="center" class="bg-'.$btncol.'">';
   if (!empty($modifi)) {
-    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"" . $modifi . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $row["protoc"] . "</td>";
+    echo '<a class="btn btn-xs btn-'.$btncol.'" href="' . $modifi . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $row["protoc"] . "</td>";
   } else {
-    echo "<td><button class=\"btn btn-xs btn-default btn-edit disabled\">" . $row["protoc"] . " &nbsp;</button></td>";
+    echo '<button class="btn btn-xs btn-'.$btncol.' disabled">' . $row["protoc"] . " &nbsp;</button></td>";
   }
   echo "<td>" . gaz_format_date($row["datreg"]) . " &nbsp;</td>";
   if (empty($row["fattura_elettronica_original_name"])) {

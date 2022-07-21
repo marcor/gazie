@@ -56,7 +56,8 @@ $recordnav -> output();
 /* pulizia del codice, eliminato boxover, aggiunte classi bootstrap alla tabella, convertite immagini in glyphicons */
 ?>
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+<div class="table-responsive">
+<table class="Tlarge table-striped">
     <thead>
         <tr>
         	<td></td>
@@ -89,23 +90,18 @@ $linkHeaders -> output();
 	<tbody>
 <?php
 while ($a_row = gaz_dbi_fetch_array($result)) {
-    /*if(!isset($_GET['all']) and !empty($a_row["image"])){
-            $boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[{$a_row['annota']}] body=[<center><img src='../root/view.php?table=ragstat&value=".$a_row['codice']."'>] fade=[on] fadespeed=[0.03] \"";
-    } else {
-            $boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[{$a_row['annota']}]  fade=[on] fadespeed=[0.03] \"";
-    }*/
     echo '		<tr>
-				<td class="FacetDataTD">
-					<a class="btn btn-xs btn-default btn-block" href="admin_ragstat.php?Update&codice='.$a_row["codice"].'">
+				<td class="text-center">
+					<a class="btn btn-xs btn-edit" href="admin_ragstat.php?Update&codice='.$a_row["codice"].'">
 						<i class="glyphicon glyphicon-edit"></i>&nbsp;'.$a_row["codice"].'
 					</a>
 				</td>
-				<td class="FacetDataTD">
+				<td>
 					<span class="gazie-tooltip" data-type="ragstat-thumb" data-id="'.$a_row['codice'].'" data-title="'.$a_row['annota'].'">'.$a_row["descri"].'</span>
 				</td>
-				<td class="FacetDataTD">'.$a_row["ricarico"].'</td>
-				<td class="FacetDataTD">'.$a_row["annota"].'</td>
-				<td class="FacetDataTD">
+				<td class="text-center">'.$a_row["ricarico"].'</td>
+				<td class="text-center">'.$a_row["annota"].'</td>
+				<td class="text-center">
 					<a class="btn btn-xs btn-default btn-elimina" href="delete_ragstat.php?codice='.$a_row["codice"].'">
 						<i class="glyphicon glyphicon-remove"></i>
 					</a>
@@ -115,6 +111,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 ?>
 			</tbody>
 		</table>
+  </div>
 	<?php
 require("../../library/include/footer.php");
 ?>

@@ -225,8 +225,8 @@ while ($r = gaz_dbi_fetch_array($result)) {
             $stato_btn = 'btn-danger';
         }
 ?>		<tr class="FacetDataTD">
-			<td>
-				<a class="btn btn-xs btn-default btn-block" href="admin_orderman.php?Update&codice=<?php echo $r['id']; ?>">
+			<td align="center">
+				<a class="btn btn-xs btn-edit" href="admin_orderman.php?Update&codice=<?php echo $r['id']; ?>">
 					<i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $r['id'];?>
 				</a>
 			</td>

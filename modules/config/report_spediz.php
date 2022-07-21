@@ -45,7 +45,7 @@ $linkHeaders -> output();
 $result = gaz_dbi_dyn_query ('*', $gTables['spediz'], $where, $orderby, $limit, $passo);
 while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "<tr class=\"FacetDataTD\">";
-    echo "<td><a class=\"btn btn-xs btn-default\" href=\"admin_spediz.php?Update&codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["codice"]."</a></td>";
+    echo "<td align=\"center\"><a class=\"btn btn-xs btn-edit\" href=\"admin_spediz.php?Update&codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["codice"]."</a></td>";
     echo "<td>".$a_row["descri"]." &nbsp;</td>";
     echo "<td align=\"center\">".$a_row["annota"]." &nbsp;</td>";
     echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_spediz.php?codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";

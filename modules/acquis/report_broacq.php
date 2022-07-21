@@ -53,11 +53,11 @@ $search_fields = [
 
 // creo l'array (header => campi) per l'ordinamento dei record
 $sortable_headers = array(
-    "ID" => "id_tes",
-    "Numero" => "numdoc",
+    "Numero" => "id_tes",
     "Produzione" => "id_orderman",
     "Data" => "datemi",
     "Fornitore" => "",
+    "Stato" => "",
     "Stampa" => "",
     "Operaz." => "",
     "Mail" => "",
@@ -368,7 +368,7 @@ function printPdf(urlPrintDoc){
                 echo '<tr class="FacetDataTD text-center">';
 
 				// colonna numero documento
-				echo "<td><a class=\"btn btn-xs btn-default\" id=\"tipdoc_".$r['id_tes']."\"  value=\"".$r["tipdoc"]."\" href=\"".$modifi."\"><i class=\"glyphicon glyphicon-edit\"></i> ".$tipodoc." n.".$r["numdoc"]." &nbsp;</a></td>\n";
+				echo "<td align=\"center\"><a class=\"btn btn-xs btn-edit\" id=\"tipdoc_".$r['id_tes']."\"  value=\"".$r["tipdoc"]."\" href=\"".$modifi."\"><i class=\"glyphicon glyphicon-edit\"></i> ".$tipodoc." n.".$r["numdoc"]." &nbsp;</a></td>\n";
 
 
 				// colonna produzione

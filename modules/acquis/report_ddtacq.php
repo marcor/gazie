@@ -234,14 +234,18 @@ function printPdf(urlPrintDoc){
             $title="Modifica documento";
           }
           $addtipdoc="DDT";
+          $btncol='edit';
           switch ($r['tipdoc']) {
             case "RDL":
+              $btncol='warning';
               $addtipdoc="RDL";
               break;
             case "DDL":
+              $btncol='info';
               $addtipdoc="DDL";
               break;
             case "DDR":
+              $btncol='danger';
               $addtipdoc="DDR";
               break;
           }
@@ -253,7 +257,7 @@ function printPdf(urlPrintDoc){
             $addtip="";
           }
           echo "<tr>";
-          echo '<td class="text-center"><a class="btn btn-xs btn-default" href="admin_docacq.php?id_tes=' . $r["id_tes"] . '&Update&'.$addtipdoc.'" title="'. $title .'" >  <i class="glyphicon glyphicon-edit"></i>&nbsp;' . $r["id_tes"] . '</a></td>';
+          echo '<td class="text-center bg-'.$btncol.'"><a class="btn btn-xs btn-'.$btncol.'" href="admin_docacq.php?id_tes=' . $r["id_tes"] . '&Update&'.$addtipdoc.'" title="'. $title .'" >  <i class="glyphicon glyphicon-edit"></i>&nbsp;' . $r["id_tes"] . '</a></td>';
           echo '<td class="text-center">' . $addtip.$r["tipdoc"] . " &nbsp;</td>";
           echo '<td class="text-center">'. $r["numdoc"] . ' '.$ddtanomalo.'</td>';
           echo '<td class="text-center">'. gaz_format_date($r["datemi"]). " &nbsp;</td>";

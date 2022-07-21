@@ -48,7 +48,7 @@ $linkHeaders -> output();
 $result = gaz_dbi_dyn_query ('*', $gTables['pagame'], $where, $orderby, $limit, $passo);
 while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "<tr class=\"FacetDataTD\">\n";
-    echo "<td><a class=\"btn btn-xs btn-default\" href=\"admin_pagame.php?codice=".$a_row["codice"]."&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["codice"]."</a></td>\n";
+    echo "<td align=\"center\"><a class=\"btn btn-xs btn-edit\" href=\"admin_pagame.php?codice=".$a_row["codice"]."&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["codice"]."</a></td>\n";
     echo "<td>".$a_row["descri"]." &nbsp;</td>\n";
     echo "<td align=\"center\">".$a_row["giodec"]." &nbsp;</td>\n";
     echo "<td align=\"center\">".$a_row["numrat"]." &nbsp;</td>\n";

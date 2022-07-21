@@ -32,7 +32,7 @@ if (isset($_GET['auxil'])) {
 } else {
 	$auxil = "";
 }
-	
+
 if (isset($_GET['auxil1'])) {
 	$auxil1 = $_GET['auxil1'];
 } else {
@@ -45,7 +45,7 @@ if (isset($_GET['all'])) {
 	if (isset($_GET['auxil']) and $auxil1=="") {
 		$where .= " AND ragso1 LIKE '%".addslashes($auxil)."%'";
 	} elseif (isset($_GET['auxil1'])) {
-		$codicetemp = intval($mascli)+intval($auxil1); 
+		$codicetemp = intval($mascli)+intval($auxil1);
 		$where .= " AND id LIKE '".$codicetemp."%'";
 	}
 }
@@ -95,7 +95,7 @@ $recordnav -> output();
 <?php
 while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "<tr class=\"FacetDataTD\">";
-    echo "<td><a class=\"btn btn-xs btn-default\" href=\"admin_anagra.php?id=".$a_row["id"]."&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["id"]."</a> &nbsp</td>";
+    echo "<td align=\"center\"><a class=\"btn btn-xs btn-edit\" href=\"admin_anagra.php?id=".$a_row["id"]."&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["id"]."</a> &nbsp</td>";
 	echo "<td title=\"".$a_row["ragso2"]."\">".$a_row["ragso1"]." ".$a_row["ragso2"]."</td>";
 	echo "<td align=\"center\">".$a_row["sexper"]."</td>";
 	$google_string = str_replace(" ","+",$a_row["indspe"]).",".str_replace(" ","+",$a_row["capspe"]).",".str_replace(" ","+",$a_row["citspe"]).",".str_replace(" ","+",$a_row["prospe"]);
@@ -126,7 +126,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 	echo "<td title=\"$title\" align=\"center\">".gaz_html_call_tel($a_row["telefo"])." &nbsp;</td>";
     echo "<td title=\"$title\" align=\"center\">".gaz_html_call_tel($a_row["cell"])." &nbsp;</td>";
     echo "<td title=\"$title\" align=\"center\">".gaz_html_call_tel($a_row["fax"])." &nbsp;</td>";
-    echo "<td title=\"$title\" align=\"center\"><a href='mailto:".$a_row["e_mail"]."'>".$a_row["e_mail"]."</a> &nbsp;</td>";   
+    echo "<td title=\"$title\" align=\"center\"><a href='mailto:".$a_row["e_mail"]."'>".$a_row["e_mail"]."</a> &nbsp;</td>";
 
     // colonna dati fiscali
     if ($a_row['pariva'] > 0 and empty($a_row['codfis'])) {

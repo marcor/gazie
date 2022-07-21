@@ -122,3 +122,15 @@ td.ui-datepicker-other-month>a.ui-state-default.ui-priority-secondary{
 .panel-default {
   background-color: #e7ece7;
 }
+.navbar-nav > .user-menu > .dropdown-menu > li.user-header {
+	background-color: #4f4e4e;
+}
+.control-sidebar-dark .control-sidebar-heading, .control-sidebar-dark .control-sidebar-subheading {
+	color: #3c3eae;
+}
+.control-sidebar-dark, .control-sidebar-dark .control-sidebar-menu > li > a .menu-info > p {
+	color: #9d5305;
+}
+.content-header > .breadcrumb {
+	background-color: #b7b9b9;
+}

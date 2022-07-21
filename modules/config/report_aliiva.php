@@ -50,7 +50,7 @@ $result = gaz_dbi_dyn_query ('*', $gTables['aliiva'], $where, $orderby, $limit, 
 while ($a_row = gaz_dbi_fetch_array($result))
     {
     echo "<tr class=\"FacetDataTD\">";
-    echo "<td><a class=\"btn btn-xs btn-default\" href=\"admin_aliiva.php?Update&codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["codice"]."</a> &nbsp</td>";
+    echo "<td align=\"center\"><a class=\"btn btn-xs btn-edit\" href=\"admin_aliiva.php?Update&codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["codice"]."</a> &nbsp</td>";
     echo "<td>".$a_row["descri"]." &nbsp;</td>";
     echo "<td align=\"center\">".$script_transl['tipiva'][$a_row["tipiva"]]."</td>";
     echo "<td align=\"center\">".$a_row["operation_type"]." &nbsp;</td>";

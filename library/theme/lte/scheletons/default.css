@@ -5,12 +5,12 @@
 .navbar-nav > .messages-menu > .dropdown-menu > li .menu > li > a > h4 {
   padding: 0;
   margin: 0 0 0 25px;
-  color: #444444;
+  color: #000;
   font-size: 15px;
   position: relative;
 }
 .navbar-nav > .messages-menu > .dropdown-menu > li .menu > li > a > p {
-    color: #999999;
+    color: #a80596;
     font-size: 12px;
     margin: 0 0 0 25px;
 }
@@ -360,14 +360,14 @@ table.Tmiddle tr>td, table.Tsmall tr>td {
 	padding-top: 30px;
 }
 .content-header > .breadcrumb {
-    margin-top: 0px;
-    margin-bottom: 0;
-    font-size: 11px;
-    padding: 4px 0px 4px 15px;
-    position: absolute;
-    width: 100%;
-    border-bottom: 1px solid #000 !important;
-    border-radius: 0px;
+  margin-top: 0px;
+  margin-bottom: 0;
+  font-size: 11px;
+  padding: 4px 0px 4px 15px;
+  position: absolute;
+  width: 100%;
+  border-bottom: 1px solid #000 !important;
+  border-radius: 0px;
 }
 .breadcrumb li {
     margin: 1px 0;

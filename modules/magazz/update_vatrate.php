@@ -161,8 +161,8 @@ echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['rate_new']."</td><td  
 $gForm->selectFromDB('aliiva','rate_new','codice',$form['rate_new'],false,false,'-','descri','rate_new');
 echo "</tr>\n";
 echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
-echo "<td align=\"left\"><input type=\"submit\" name=\"return\" value=\"".$script_transl['return']."\">\n";
-echo '<td align="right"> <input type="submit" accesskey="i" name="preview" value="';
+echo "<td align=\"left\">";
+echo '<td align="right"><input type="submit" class="btn btn-warning" accesskey="i" name="preview" value="';
 echo $script_transl['view'];
 echo '" tabindex="100" >';
 echo "\t </td>\n";
@@ -172,7 +172,7 @@ echo "</table>\n";
 if (isset($_POST['preview']) and $msg=='') {
   $m=getItems($form['rate_obj'],$form['cm_ini'],$form['cm_fin'],$form['art_ini'],$form['art_fin']);
   $new = gaz_dbi_get_row($gTables['aliiva'],'codice',$form['rate_new']);
-  echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
+  echo "<table class=\"Tmiddle table-striped table-responsive\">";
   if (sizeof($m) > 0) {
         if ($form['rate_new']=='0') {
            $name_bas='preacq';
@@ -194,24 +194,24 @@ if (isset($_POST['preview']) and $msg=='') {
         echo "</tr>";
         $ctr_mv=0;
 		foreach ($m AS $key => $mv) {
-            if ($mv['catmer']>$ctr_mv){
-                $cm=gaz_dbi_get_row($gTables['catmer'],'codice',$mv['catmer']);
-                echo "<tr><td class=\"FacetFieldCaptionTD\">".$mv['catmer'].' - '.$cm['descri']." &nbsp</td><td colspan=\"5\"></td></tr>\n";
-            }
-            echo "<tr><td></td>\n";
-            echo "<td class=\"FacetDataTD\">".$mv['codice']." &nbsp;</td>";
-            echo "<td class=\"FacetDataTD\">".$mv['descri']." &nbsp;</td>";
-            echo "<td align=\"center\" class=\"FacetDataTD\">".$mv['unimis']." &nbsp;</td>\n";
-            echo "<td align=\"center\" class=\"FacetDataTD\">".$mv['desiva']."</td>\n";
-            echo "<td align=\"center\" class=\"FacetDataTD\">".$new['descri']."</tr>\n";
-            $ctr_mv=$mv['catmer'];
-         }
-         echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
-         echo '<td colspan="6" align="right"><input type="submit" name="submit" value="';
-         echo $script_transl['submit'];
-         echo '">';
-         echo "\t </td>\n";
-         echo "\t </tr>\n";
+      if ($mv['catmer']>$ctr_mv){
+          $cm=gaz_dbi_get_row($gTables['catmer'],'codice',$mv['catmer']);
+          echo "<tr><td class=\"FacetFieldCaptionTD\">".$mv['catmer'].' - '.$cm['descri']." &nbsp</td><td colspan=\"5\"></td></tr>\n";
+      }
+      echo "<tr><td></td>\n";
+      echo "<td class=\"FacetDataTD\">".$mv['codice']." &nbsp;</td>";
+      echo "<td class=\"FacetDataTD\">".$mv['descri']." &nbsp;</td>";
+      echo "<td align=\"center\" class=\"FacetDataTD\">".$mv['unimis']." &nbsp;</td>\n";
+      echo "<td align=\"center\" class=\"FacetDataTD\">".$mv['desiva']."</td>\n";
+      echo "<td align=\"center\" class=\"FacetDataTD\">".$new['descri']."</tr>\n";
+      $ctr_mv=$mv['catmer'];
+    }
+    echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
+    echo '<td colspan="6" align="right"><input class="btn btn-warning" type="submit" name="submit" value="';
+    echo $script_transl['submit'];
+    echo '">';
+    echo "\t </td>\n";
+    echo "\t </tr>\n";
   }
   echo "</table>";
   $form['hidden_req']='';

@@ -61,12 +61,12 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 		$company['ragso1']=$script_transl['all'];
 	}
     echo "<tr class=\"FacetDataTD\">";
-    echo "<td title=\"".$script_transl['update']."\"><a class=\"btn btn-xs btn-default\" href=\"admin_utente.php?user_name=".$a_row["user_name"]."&Update\">".$a_row["user_name"]." </a> &nbsp</td>";
+    echo "<td title=\"".$script_transl['update']."\" align=\"center\"><a class=\"btn btn-xs btn-edit\" href=\"admin_utente.php?user_name=".$a_row["user_name"]."&Update\">".$a_row["user_name"]." </a> &nbsp</td>";
     echo "<td>".$a_row["user_lastname"]." &nbsp;</td>";
     echo "<td>".$a_row["user_firstname"]." &nbsp;</td>";
     echo "<td align=\"center\">".$a_row["Abilit"]." &nbsp;</td>";
     echo "<td>".$company['ragso1']." &nbsp;</td>";
-    // colonna stampa nomina trattamento dati personali 
+    // colonna stampa nomina trattamento dati personali
     echo "<td align=\"center\"><a title=\"".$ri_descr."\" class=\"btn btn-xs btn-default\" href=\"stampa_nomina.php?user_id=" . $a_row["user_id"] . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-eye-close\"></i></a>".
 	$regol_lnk."
 	</td>";

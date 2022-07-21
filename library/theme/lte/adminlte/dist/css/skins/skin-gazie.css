@@ -8,16 +8,6 @@
 .skin-blue .main-header .navbar .nav > li > a {
   color: #123311;
 }
-.skin-blue .main-header .navbar .nav > li > a:hover,
-.skin-blue .main-header .navbar .nav > li > a:active,
-.skin-blue .main-header .navbar .nav > li > a:focus,
-.skin-blue .main-header .navbar .nav .open > a,
-.skin-blue .main-header .navbar .nav .open > a:hover,
-.skin-blue .main-header .navbar .nav .open > a:focus,
-.skin-blue .main-header .navbar .nav > .active > a {
-  background: rgba(0, 0, 0, 0.1);
-  color: #f6f6f6;
-}
 .dropdown-toggle {
     color: #123311;
 }
@@ -178,25 +168,11 @@ select.input-sm {
 select {
 	min-height: 28px !important;
 }
-
-/*input {
-	height: 28px;
-}*/
-
 div.panel.panel-info div.container-fluid.bg-info ul.nav.nav-tabs li a {
     position: relative;
     display: block;
     padding: 4px 2px;
 }
-
-.navbar-nav > .user-menu > .dropdown-menu > li.user-header > p {
-	color: #666;
-}
-
-/*input.btn-default {
-	height: 28px;
-}*/
-
 div.panel.panel-default div.container-fluid div.form-row div.form-group.col-md-6.col-lg-3.nopadding div.bg-success.text-center {
 	border: 1px;
 	border-color: #666;

@@ -23,26 +23,20 @@
  --------------------------------------------------------------------------
 */
 require("../../library/include/datlib.inc.php");
-
 $admin_aziend=checkAdmin();
 $msg = "";
-
-
 if ((isset($_POST['Update'])) or (isset($_GET['Update']))) {
-    $toDo = 'update';
+  $toDo = 'update';
 } else {
-    $toDo = 'insert';
+  $toDo = 'insert';
 }
-
 if (!isset($_POST['ritorno'])) {
-    $_POST['ritorno'] = $_SERVER['HTTP_REFERER'];
+  $_POST['ritorno'] = $_SERVER['HTTP_REFERER'];
 }
-
 if ((isset($_GET['Update']) and  !isset($_GET['codice'])) or isset($_POST['Return'])) {
-    header("Location: ".$_POST['ritorno']);
-    exit;
+  header("Location: ".$_POST['ritorno']);
+  exit;
 }
-
 if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il primo accesso
     $form=gaz_dbi_parse_post('ragstat');
     // Se viene inviata la richiesta di conferma totale ...
@@ -98,7 +92,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
     $rs_ultimo_codice = gaz_dbi_dyn_query("*", $gTables['ragstat'], 1 ,'codice desc',0,1);
     $ultimo_codice = gaz_dbi_fetch_array($rs_ultimo_codice);
-    $form['codice'] = $ultimo_codice['codice']+1;
+    $form['codice'] = $ultimo_codice?$ultimo_codice['codice']+1:1;
     $form['descri'] = '';
     $form['ricarico'] = 0;
     $form['web_url']='';
@@ -115,7 +109,7 @@ print "<form method=\"POST\" enctype=\"multipart/form-data\">\n";
 print "<input type=\"hidden\" name=\"".ucfirst($toDo)."\" value=\"\">\n";
 print "<input type=\"hidden\" value=\"".$_POST['ritorno']."\" name=\"ritorno\">\n";
 print "<div align=\"center\" class=\"FacetFormHeaderFont\">$title</div>";
-print "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" class=\"FacetFormTABLE\" align=\"center\">\n";
+print '<table class="Tmiddle">';
 if (!empty($msg)) {
     $message = "";
     $rsmsg = array_slice( explode('+',chop($msg)),0,-1);
@@ -145,13 +139,12 @@ echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
       <input type=\"text\" name=\"web_url\" value=\"".$form['web_url']."\" maxlength=\"255\"  /></td>\n";
 echo "</tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[5]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"annota\" value=\"".$form['annota']."\" maxlength=\"50\"  />\n";
-print "</select></td></tr><tr><td class=\"FacetFieldCaptionTD\"><input type=\"reset\" name=\"Cancel\" value=\"".$script_transl['cancel']."\">\n";
+print "</select></td></tr><tr><td class=\"FacetFieldCaptionTD\">";
 print "</td><td class=\"FacetDataTD\" align=\"right\">\n";
-print "<input type=\"submit\" name=\"Return\" value=\"".$script_transl['return']."\">\n";
 if ($toDo == 'update') {
-   print '<input type="submit" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="'.ucfirst($script_transl['update']).'!"></td></tr><tr></tr>';
+   print '<input type="submit" class="btn btn-warning" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="'.ucfirst($script_transl['update']).'"></td></tr><tr></tr>';
 } else {
-   print '<input type="submit" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="'.ucfirst($script_transl['insert']).'!"></td></tr><tr></tr>';
+   print '<input type="submit" class="btn btn-warning" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="'.ucfirst($script_transl['insert']).'"></td></tr><tr></tr>';
 }
 print "</td></tr></table>\n";
 ?>

@@ -94,7 +94,7 @@ $linkHeaders = new linkHeaders($headers);
 $linkHeaders -> output();
 foreach($result as $r) {
     echo "<tr class=\"FacetDataTD\">";
-    echo "<td><a class=\"btn btn-xs btn-edit\" href=\"admin_bank_account.php?Update&codice=".substr($r["codice"],3)."\" title=\"Modifica\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".substr($r["codice"],3)."</a> &nbsp</td>";
+    echo "<td align=\"center\"><a class=\"btn btn-xs btn-edit\" href=\"admin_bank_account.php?Update&codice=".substr($r["codice"],3)."\" title=\"Modifica\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".substr($r["codice"],3)."</a> &nbsp</td>";
     echo "<td>".$r["ragso1"]." &nbsp;</td>";
     if (!empty($r['iban'])) {
        echo "<td>".$r["iban"]." &nbsp;</td>";
