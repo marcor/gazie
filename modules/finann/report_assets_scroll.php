@@ -32,7 +32,7 @@ if (!$isAjax) {
 if (isset($_POST['getresult'])) { //	Evitiamo errori se lo script viene chiamato direttamente
     require("../../library/include/datlib.inc.php");
     $admin_aziend = checkAdmin();
-    require("./lang.".$admin_aziend['lang'].".php");    
+    require("./lang.".$admin_aziend['lang'].".php");
     $script_transl = $strScript['report_assets.php'];
     $no = intval($_POST['getresult']);
     $result = gaz_dbi_dyn_query('*', $gTables['assets'], 'type_mov = 1', 'id', $no, PER_PAGE);
@@ -41,9 +41,9 @@ if (isset($_POST['getresult'])) { //	Evitiamo errori se lo script viene chiamato
         $anagrafica = new Anagrafica();
         $fornitore = $anagrafica->getPartner($tesmov['clfoco']);
         ?>
-        <tr>              
+        <tr>
             <td data-title="ID">
-                <a class="btn btn-xs btn-default" href="../acquis/admin_assets.php?Update&id=<?php echo $row['id']; ?>" ><i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $row['id']; ?></a>
+                <a class="btn btn-xs btn-edit" href="../acquis/admin_assets.php?Update&id=<?php echo $row['id']; ?>" ><i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $row['id']; ?></a>
             </td>
             <td data-title="<?php echo $script_transl["datreg"]; ?>">
                 <?php echo gaz_format_date($tesmov["datreg"]); ?>
@@ -60,7 +60,7 @@ if (isset($_POST['getresult'])) { //	Evitiamo errori se lo script viene chiamato
             <td data-title="<?php echo $script_transl["valamm"]; ?>"  class="text-right">
                 <?php echo round($row["valamm"],1); ?>%
             </td>
-        </tr>  
+        </tr>
         <?php
     }
     exit();

@@ -175,7 +175,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
   $form['datnas_M'] = substr($form['datnas'], 5, 2);
   $form['datnas_D'] = substr($form['datnas'], 8, 2);
   $form['start_date'] = gaz_format_date($staff['start_date'], false, false);
-	if (substr($staff['end_date'],0,4)>1999) {
+	if (is_string($staff['end_date']) && substr($staff['end_date'],0,4)>1999) {
 		$form['end_date'] = gaz_format_date($staff['end_date'], false, false);
 	} else {
 		$form['end_date'] = '';

@@ -61,11 +61,10 @@ require("../../library/include/header.php");
 $script_transl = HeadMain();
 ?>
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['title']; ?></div>
-<div class="panel panel-default">
-    <div id="gaz-responsive-table"  class="container-fluid">
-        <table class="table table-responsive table-striped table-condensed cf">
+  <div id="gaz-responsive-table" class="container-fluid table-responsive">
+        <table class="table table-striped table-condensed cf">
             <thead>
-                <tr class="bg-success">              
+                <tr>
                     <th>
                         ID
                     </th>
@@ -84,16 +83,15 @@ $script_transl = HeadMain();
                     <th class="text-right">
                         <?php echo $script_transl["valamm"]; ?>
                     </th>
-                </tr>      
-            </thead>    
+                </tr>
+            </thead>
             <tbody id="all_rows">
-            </tbody>     
+            </tbody>
         </table>
-    </div>  
 </div>
 <input type="hidden" id="row_no" value="0">
 <div id="loader-icon"><img src="../../library/images/ui-anim_basic_16x16.gif" />
-</div>  
+</div>
 <?php
 require("../../library/include/footer.php");
 ?>

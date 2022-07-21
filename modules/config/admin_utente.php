@@ -701,7 +701,7 @@ if ($user_data["Abilit"] == 9) {
 		$mod_admin = getModule($user_data["user_name"], $co['id']);
 		foreach ($mod_found as $mod) {
 			echo "<tr>\n";
-			echo '<td class="FacetFieldCaptionTD">
+			echo '<td>
 								<img height="16" src="../' . $mod['name'] . '/' . $mod['name'] . '.png" /> ' . $mod['transl_name'] . ' (' . $mod['name'] . ")</td>\n";
 			if ($mod['moduleid'] == 0) { // il modulo non è stato mai attivato
 				if ($form["user_name"] <> $user_data["user_name"]) { // sono un amministratore che sta operando sul profilo di altro utente

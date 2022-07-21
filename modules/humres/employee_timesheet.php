@@ -337,7 +337,7 @@ $gForm = new humresForm();
 					</tr>
 					<tr>
 					<td class="bg-success">
-					<a class="btn btn-success row btn-sm" href="./admin_staff.php?Update&codice=<?php echo substr($oper['id_clfoco'],-6); ?>"><i class="glyphicon glyphicon-edit"> </i><?php echo "<br/>".$oper['ragso1']," ",$oper['ragso2']; ?></a>
+					<a class="btn btn-edit row btn-sm" href="./admin_staff.php?Update&codice=<?php echo substr($oper['id_clfoco'],-6); ?>"><i class="glyphicon glyphicon-edit"> </i><?php echo "<br/>".$oper['ragso1']," ",$oper['ragso2']; ?></a>
 					</td>
 					<?php
 					for($c=0;$c<$col ; $c++){

@@ -27,10 +27,10 @@ $admin_aziend = checkAdmin();
 $msg = array('err' => array(), 'war' => array());
 
 function lastAccount($mas, $ss) {
-    /* funzione per trovare i numeri dei nuovi sottoconto da creare sui mastri 
-     * scelti per le immobilizzazioni, i fondi e i costi d'ammortamento dove i 
-     * due numeri successivi indicano la sottospecie della tabella ministeriale 
-     * degli ammortamenti e i restanti 4 (9999) sono attribuiti automaticamente 
+    /* funzione per trovare i numeri dei nuovi sottoconto da creare sui mastri
+     * scelti per le immobilizzazioni, i fondi e i costi d'ammortamento dove i
+     * due numeri successivi indicano la sottospecie della tabella ministeriale
+     * degli ammortamenti e i restanti 4 (9999) sono attribuiti automaticamente
      * al singolo bene da questa funzione                                     */
     global $gTables;
     $subacc = $mas * 1000000 + $ss * 10000;
@@ -192,11 +192,11 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                 $id_tesmov = gaz_dbi_last_id();
                 $form['id_tes'] = $id_tesmov;
                 $form['id_movcon'] = $id_tesmov;
-                // trovo il conto immobilizzazione 
+                // trovo il conto immobilizzazione
                 $form['acc_fixed_assets'] = lastAccount($form['mas_fixed_assets'], $form['ss_amm_min']);
-                // trovo il conto fondo ammortamento 
+                // trovo il conto fondo ammortamento
                 $form['acc_found_assets'] = lastAccount($form['mas_found_assets'], $form['ss_amm_min']);
-                // trovo il conto costo ammortamento 
+                // trovo il conto costo ammortamento
                 $form['acc_cost_assets'] = lastAccount($form['mas_cost_assets'], $form['ss_amm_min']);
                 // inserisco i dati sulla tabella assets
                 $form['descri'] = $descri;
@@ -259,7 +259,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                 // agli imponibili si dovrà sommare anche l'eventuale iva indetraibile (che diventa costo storico)
                 $form['import'] = $form['imponi'] + $form['no_imponi'] + $form['no_impost'];
                 gaz_dbi_table_insert('rigmoc', $form);
-                // rigo iva 
+                // rigo iva
                 $form['codiva'] = $form['codvat'];
                 $form['periva'] = $iva['aliquo'];
                 $form['tipiva'] = $iva['tipiva'];
@@ -314,7 +314,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
     $rigmoi = gaz_dbi_get_row($gTables['rigmoi'], "tipiva ='I' AND id_tes", $form['id_movcon']);
     $iva = gaz_dbi_get_row($gTables['aliiva'], "codice", $rigmoi['codiva']);
     $rigmoi_no = gaz_dbi_get_row($gTables['rigmoi'], "tipiva ='D' AND id_tes", $form['id_movcon']);
-    $iva_no = gaz_dbi_get_row($gTables['aliiva'], "codice", $rigmoi_no['codiva']);
+    $iva_no = gaz_dbi_get_row($gTables['aliiva'], "codice", ($rigmoi_no?$rigmoi_no['codiva']:$admin_aziend['preeminent_vat']));
     $anagrafica = new Anagrafica();
     $fornitore = $anagrafica->getPartner($tesmov['clfoco']);
     $form['hidden_req'] = '';
@@ -325,7 +325,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
     $form['mas_fixed_assets'] = substr($form['acc_fixed_assets'], 0, 3);
     $form['mas_found_assets'] = substr($form['acc_found_assets'], 0, 3);
     $form['mas_cost_assets'] = substr($form['acc_cost_assets'], 0, 3);
-    $form['id_no_deduct_vat'] = $rigmoi_no['codiva'];
+    $form['id_no_deduct_vat'] = $rigmoi_no?$rigmoi_no['codiva']:$admin_aziend['preeminent_vat'];
     $form['datreg'] = gaz_format_date($tesmov['datreg'],false,false);
     $form['protoc'] = $tesmov['protoc'];
     $form['numfat'] = $tesmov['numdoc'];
@@ -379,7 +379,7 @@ if (isset($_POST['ritorno'])) {
     $form['ritorno'] = $_SERVER['HTTP_REFERER'] . ' ';
 }
 
-// ricavo il gruppo e la specie dalla tabella ammortamenti ministeriali 
+// ricavo il gruppo e la specie dalla tabella ammortamenti ministeriali
 $xml = simplexml_load_file('../../library/include/ammortamenti_ministeriali.xml') or die("Error: Cannot create object for file ammortamenti ministeriali.xml");
 preg_match("/^([0-9 ]+)([a-zA-Z ]+)$/", $admin_aziend['amm_min'], $m);
 foreach ($xml->gruppo as $vg) {
@@ -469,7 +469,7 @@ if ($toDo == 'update') { // allerto che le modifiche devono essere fatte anche s
     <input type="hidden" value="<?php echo $form['mas_found_assets']; ?>" name="mas_found_assets">
     <input type="hidden" value="<?php echo $form['mas_cost_assets']; ?>" name="mas_cost_assets">
     <input type="hidden" value="<?php echo $form['search']['clfoco']; ?>" name="search[clfoco]">
-    
+
                 <?php
                 } else {
                     $select_fornitore = new selectPartner("clfoco");
@@ -485,7 +485,7 @@ if ($toDo == 'update') { // allerto che le modifiche devono essere fatte anche s
                 <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
                         <label for="indspe" class="col-sm-4 control-label"><?php echo $script_transl['indspe']; ?></label>
-                        <div class="col-sm-8 text-left"><?php echo $fornitore['indspe'] . ' ' . $fornitore['citspe']; ?></div>                
+                        <div class="col-sm-8 text-left"><?php echo $fornitore['indspe'] . ' ' . $fornitore['citspe']; ?></div>
                     </div>
                 </div>
                 <div class="col-sm-6 col-md-3 col-lg-3">
@@ -495,7 +495,7 @@ if ($toDo == 'update') { // allerto che le modifiche devono essere fatte anche s
                             <input type="text" class="form-control" id="datreg" name="datreg" tabindex=7 value="<?php echo $form['datreg']; ?>">
                         </div>
                     </div>
-                </div>                    
+                </div>
                 <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
                         <label for="numfat" class="col-sm-4 control-label"><?php echo $script_transl['numfat']; ?></label>
@@ -522,7 +522,7 @@ if ($toDo == 'update') { // allerto che le modifiche devono essere fatte anche s
                             $select_pagame = new selectpagame("pagame");
                             $select_pagame->addSelected($form["pagame"]);
                             $select_pagame->output(false, "col-sm-8 small");
-                            ?>                
+                            ?>
                         </div>
                     </div>
                 </div>
@@ -565,7 +565,7 @@ if ($toDo == 'update') { // allerto che le modifiche devono essere fatte anche s
                 </div>
                 <div class="col-md-12 col-lg-6">
                     <p class="col-sm-12 small bg-info">
-                        <?php echo $amm_sp; ?>                  
+                        <?php echo $amm_sp; ?>
                     </p>
                 </div>
             </div> <!-- chiude row  -->
@@ -697,8 +697,8 @@ if ($toDo == 'update') { // allerto che le modifiche devono essere fatte anche s
                         <label for="amount" class="col-sm-8 control-label"><?php echo $script_transl['amount']; ?></label>
                         <div class="col-sm-4 bg-success">
                             <span id="amount" class="text-right">
-                                <?php echo round($amount, 2); ?>                  
-                            </span>          
+                                <?php echo round($amount, 2); ?>
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -706,14 +706,14 @@ if ($toDo == 'update') { // allerto che le modifiche devono essere fatte anche s
                     <div class="form-group">
                         <p class="col-sm-12 small">
                             <?php echo $gg . $script_transl['info']['gg_to_year_end_1']; ?>
-                            <span id="yreg" class="text-right"><?php echo substr($form['datreg'], 6, 4) ?></span> 
+                            <span id="yreg" class="text-right"><?php echo substr($form['datreg'], 6, 4) ?></span>
                             <?php echo $script_transl['info']['gg_to_year_end_2'];
                             ?>
                             <span id="amount_rate">
                                 <?php
                                 echo gaz_format_number(round($amount * $form['valamm'] * $gg / 36500, 2));
                                 ?></span>
-                        </p>                
+                        </p>
                     </div>
                 </div>
                 <div class="col-sm-6 col-md-3 col-lg-3">

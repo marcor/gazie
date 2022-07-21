@@ -62,8 +62,8 @@ $(function() {
 			show: "blind",
 			hide: "explode",
 			buttons: {
-				delete:{ 
-					text:'Elimina', 
+				delete:{
+					text:'Elimina',
 					'class':'btn btn-danger delete-button',
 					click:function (event, ui) {
 					$.ajax({
@@ -81,7 +81,7 @@ $(function() {
 				}
 			}
 		});
-		$("#dialog_delete" ).dialog( "open" );  
+		$("#dialog_delete" ).dialog( "open" );
 	});
 });
 </script>
@@ -133,8 +133,8 @@ $recordnav -> output();
 <?php
 while ($a_row = gaz_dbi_fetch_array($result)) {
 ?>		<tr class="FacetDataTD">
-			<td>
-				<a class="btn btn-xs btn-success btn-block" href="admin_catmer.php?Update&codice=<?php echo $a_row["codice"]; ?>">
+			<td align="center">
+				<a class="btn btn-xs btn-edit" href="admin_catmer.php?Update&codice=<?php echo $a_row["codice"]; ?>">
 					<i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $a_row["codice"];?>
 				</a>
 			</td>

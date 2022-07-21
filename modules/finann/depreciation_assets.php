@@ -41,7 +41,7 @@ function suggestAmm($fixed, $found, $valamm, $no_deduct_cost_rate, $days) {
         $vy = $fixed - $found;
         $trunk = round($vy / $fixed * 100, 2);
     }
-    $vn = $vy; //$vn contiene la quota annua 
+    $vn = $vy; //$vn contiene la quota annua
     $vy = round($vy - ($vy * $no_deduct_cost_rate / 100), 2);
     $vn = round($vn - $vy, 2);
     if ($days < 364) { // dovrò proporzionare anche il valore percentuale dell'amortamento proposto
@@ -51,7 +51,7 @@ function suggestAmm($fixed, $found, $valamm, $no_deduct_cost_rate, $days) {
 }
 
 function getAssets($date) {
-    /*  funzione per riprendere dal database tutti i beni ammortizzabili 
+    /*  funzione per riprendere dal database tutti i beni ammortizzabili
       e proporre una anteprima di ammortamenti */
     global $gTables, $admin_aziend;
     $ctrl_fix = 0;
@@ -66,7 +66,7 @@ function getAssets($date) {
     $acc = array();
     while ($row = gaz_dbi_fetch_array($result)) {
         // ad ogni cambio di bene creo un array e sulla radice metto tutti i dati che mi servono sulla intestazione del bene stesso
-        $movcon = "AND id_tes = '{$row['id_movcon']}'"; 
+        $movcon = "AND id_tes = '{$row['id_movcon']}'";
         if ($ctrl_fix <> $row['acc_fixed_assets']) {
             // azzero i totali delle colonne
             // in ordine di data necessariamente il primo rigo dev'essere l'acquisto
@@ -102,7 +102,7 @@ function getAssets($date) {
             }
             $ddays = $dateamm->diff($datelast);
             $acc[$row['acc_fixed_assets']][1]['gglast'] = $ddays->days;
-            // ricavo il gruppo e la specie dalla tabella ammortamenti ministeriali 
+            // ricavo il gruppo e la specie dalla tabella ammortamenti ministeriali
             $xml = simplexml_load_file('../../library/include/ammortamenti_ministeriali.xml') or die("Error: Cannot create object");
             preg_match("/^([0-9 ]+)([a-zA-Z ]+)$/", $admin_aziend['amm_min'], $m);
             foreach ($xml->gruppo as $vg) {
@@ -164,7 +164,7 @@ function getAssets($date) {
                     break;
                 case '80' : // alienazione parziale
                     break;
-                case '90' : // alienazione del bene 
+                case '90' : // alienazione del bene
                     // prendo il valore del decremento del costo storico dal rigo contabile
                     $fx = gaz_dbi_get_row($gTables['rigmoc'], 'codcon', $row['acc_fixed_assets'], $movcon);
                     $acc[$row['acc_fixed_assets']][1]['fixed_tot'] -= $fx['import'];
@@ -229,13 +229,13 @@ if (isset($_POST['ritorno'])) { // accessi successivi
                 $form['darave'] = 'D';
                 $form['import'] = $form['assets'][$k]['cost_suggest'];
                 gaz_dbi_table_insert('rigmoc', $form);
-                if ($form['assets'][$k]['noded_suggest'] >= 0.01) { // se ho valorizzato un costo indeducibile 
+                if ($form['assets'][$k]['noded_suggest'] >= 0.01) { // se ho valorizzato un costo indeducibile
                     $form['codcon'] = $form['assets'][$k][1]['acc_no_deduct_cost'];
                     $form['darave'] = 'D';
                     $form['import'] = $form['assets'][$k]['noded_suggest'];
                     gaz_dbi_table_insert('rigmoc', $form);
                 }
-                // inserisco il movimento sul libro cespiti 
+                // inserisco il movimento sul libro cespiti
                 $form['id_movcon'] = $id_tesmov;
                 $form['type_mov'] = 50;
                 $form['descri'] = 'AMMORTAMENTO (QUOTA ANNO ' . substr($form['datreg'], 0, 4) . ')';
@@ -293,7 +293,7 @@ $script_transl = HeadMain();
         });
         $('.gaz-tooltip').tooltip({html: true, placement: 'auto bottom', delay: {show: 50}});
     });
-    // ricalcolo i valori in caso di cambiamenti sugli importi 
+    // ricalcolo i valori in caso di cambiamenti sugli importi
     $(document).ready(function () {
         $('table tbody tr td [orivalamm]').change(function () {
             var lc = 0;
@@ -305,7 +305,7 @@ $script_transl = HeadMain();
             var fixed = $('.container-fluid input[name="' + fix + '_ammfixed"]').val() * 1;
             var noded = $('.container-fluid input[name="' + fix + '_nodedrate"]').val() * 1;
             var residuo = fixed - found;
-            // calcolo i nuovi valori 
+            // calcolo i nuovi valori
             var nv = Math.round(ovala * fixed) / 100;
             if (residuo < nv) {
                 // se non ho abbastanza residuo forzo ai valori possibili
@@ -472,7 +472,7 @@ if (count($msg['war']) > 0) { // ho un warning
             $r[] = [array('head' => $script_transl["suggest_amm"] . ' %', 'class' => 'text-right bg-warning',
             'value' => $script_transl["suggest_amm"] . ' %'),
                 array('head' => '%', 'class' => 'text-right numeric bg-warning',
-                    'value' => '<input ' . $disabl . ' type="number" step="0.01" max="' . $va[1]['valamm'] . '" min="0" name="assets[' . $ka . '][valamm_suggest]" orivalamm="' . $v['valamm'] . '" value="' . $v['valamm'] . '" maxlength="5" />'),
+                    'value' => '<input ' . $disabl . ' type="number" step="0.01" max="' . $va[1]['valamm'] . '" min="0" name="assets[' . $ka . '][valamm_suggest]" orivalamm="' . $v['valamm'] . '" value="' . $v['valamm'] . '" maxlength="10" />'),
                 array('head' => $script_transl["fixed_val"], 'class' => 'text-right bg-warning',
                     'value' => ''),
                 array('head' => '', 'class' => 'text-center bg-warning', 'value' => ''),
