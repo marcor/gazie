@@ -58,7 +58,7 @@ while ($r = gaz_dbi_fetch_array($rs)) {
     if ($r['codice']==$_SESSION['company_id']) {
        $style=" style=\"background:#FF9999;\" ";
        echo "<tr $style>";
-       echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-default\" href=\"admin_aziend.php\" title=\"".$script_transl['update']."\" ><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$r["codice"]."</a></td>\n";
+       echo "<td align=\"center\"><a class=\"btn btn-xs btn-edit\" href=\"admin_aziend.php\" title=\"".$script_transl['update']."\" ><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$r["codice"]."</a></td>\n";
        echo "<td title=\"".$r["indspe"].' '.$r["citspe"].' ('.$r["prospe"].")\"><a href=\"admin_aziend.php\" title=\"".$script_transl['update']."\" >".
              $r["ragso1"].' '.$r["ragso2"]." </a></td>\n";
     } else {

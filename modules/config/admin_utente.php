@@ -695,7 +695,7 @@ if ($user_data["Abilit"] == 9) {
 		echo '</table><br/><div class="text-center"><h3><img src="../../modules/root/view.php?table=aziend&value='.$co['id'].'" alt="Logo" height="30"> ' . $co['ragsoc'] . '  - ID:' . $co['id'] . '</h3></div><table class="Tmiddle table-striped"><tbody>';
 		echo "<tr><td class=\"FacetDataTD\">" .'<input type=hidden name="' . $co_id . 'nusr_root" value="3"><b>'. $script_transl['mod_perm'] . ":</b></td>\n";
 		echo "<td><b>" . $script_transl['all'] . "</b></td>\n";
-		echo "<td><b>script esclusi:</b></td>\n";
+		echo '<td align="center"><b> Script esclusi</b></td>';
 		echo "<td><b>" . $script_transl['none'] . "</b></td></tr>\n";
 		$mod_found = getModule($form["user_name"], $co['id']);
 		$mod_admin = getModule($user_data["user_name"], $co['id']);
@@ -724,7 +724,7 @@ if ($user_data["Abilit"] == 9) {
 				echo "  <td colspan=2><input type=radio name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"3\"></td>";
 				echo "  <td><input type=radio checked name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"0\"></td>";
 			} else {
-				echo '<td><input type=radio checked name="'. $co_id . 'acc_' . $mod['moduleid'] . '" value="3"> </td><td><a class="btn btn-xs dialog_module_card" module="'.$mod['name'].'" adminid="'.$form['user_name'].'" transl_name="'.$mod['transl_name'].'"><i class="glyphicon glyphicon-edit"></i></a>'.((count($mod['excluded_script'])>=1)?'<br>'.implode('.php<br>',$mod['excluded_script']).'.php':'nessuno').'</td>';
+				echo '<td><input type=radio checked name="'. $co_id . 'acc_' . $mod['moduleid'] . '" value="3"> </td><td><a class="btn btn-xs dialog_module_card" module="'.$mod['name'].'" adminid="'.$form['user_name'].'" transl_name="'.$mod['transl_name'].'"><i class="glyphicon glyphicon-edit"></i>'.((count($mod['excluded_script'])>=1)?'<p class="text-left">'.implode('.php</p><p class="text-left">',$mod['excluded_script']).'.php</p>':'nessuno</p>').'</a></td>';
 				echo "  <td><input type=radio name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"0\"></td>";
 			}
 			echo "</tr>\n";
