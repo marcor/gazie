@@ -134,7 +134,7 @@ $linkHeaders -> output();
 <?php
 $result = gaz_dbi_dyn_query($gTables['agenti'].".*,".$gTables['anagra'].".telefo,".$gTables['anagra'].".ragso1,".$gTables['anagra'].".ragso2,".$gTables['anagra'].".fax", $gTables['agenti']." LEFT JOIN ".$gTables['clfoco']." on ".$gTables['agenti'].".id_fornitore = ".$gTables['clfoco'].".codice LEFT JOIN ".$gTables['anagra'].' ON '.$gTables['clfoco'].'.id_anagra = '.$gTables['anagra'].'.id', $where, $orderby,$limit, $passo);
 while ($a_row = gaz_dbi_fetch_array($result)) {
-        echo "<tr><td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_agenti.php?id_agente=".$a_row['id_agente']."&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row['id_agente']."</a></td>";
+        echo "<tr><td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-edit\" href=\"admin_agenti.php?id_agente=".$a_row['id_agente']."&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row['id_agente']."</a></td>";
         echo "<td class=\"FacetDataTD\">".$a_row["ragso1"]." ".$a_row["ragso2"]." &nbsp;</td>";
         echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["telefo"]."&nbsp;</td>";
         echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["fax"]." &nbsp;</td>";

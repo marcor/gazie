@@ -490,9 +490,6 @@ if (count($msg['err']) > 0) { // ho un errore
 }
 echo '<input type="hidden" name="' . ucfirst($toDo) . '" value="">';
 ?>
-
-<div class="panel panel-default">
-<div class="container-fluid">
 <table class="Tmiddle table-striped">
 <tr>
 <td class="FacetFieldCaptionTD"><?php echo $script_transl['user_lastname']; ?>* </td>
@@ -695,7 +692,7 @@ if ($user_data["Abilit"] == 9) {
 	$co_rs = gaz_dbi_dyn_query($what, $table, 1, "ragsoc ASC");
 	while ($co = gaz_dbi_fetch_array($co_rs)) {
 		$co_id = sprintf('%03d', $co['id']);
-		echo '<tr><td align="center" colspan="4"><img src="../../modules/root/view.php?table=aziend&value='.$co['id'].'" alt="Logo" height="30"> ' . $co['ragsoc'] . '  - ID:' . $co['id'] . "</tr>\n";
+		echo '</table><br/><div class="text-center"><h3><img src="../../modules/root/view.php?table=aziend&value='.$co['id'].'" alt="Logo" height="30"> ' . $co['ragsoc'] . '  - ID:' . $co['id'] . '</h3></div><table class="Tmiddle table-striped"><tbody>';
 		echo "<tr><td class=\"FacetDataTD\">" .'<input type=hidden name="' . $co_id . 'nusr_root" value="3"><b>'. $script_transl['mod_perm'] . ":</b></td>\n";
 		echo "<td><b>" . $script_transl['all'] . "</b></td>\n";
 		echo "<td><b>script esclusi:</b></td>\n";
@@ -736,10 +733,8 @@ if ($user_data["Abilit"] == 9) {
 }
 
 ?>
-    </table>
-    </div>
-    <div class="col-xs-12 text-right"><input name="Submit" class="btn btn-warning" type="submit" value="<?php echo ucfirst($script_transl[$toDo]); ?>"></div>
-</div>
+</table><br/>
+<div class="text-center"><input name="Submit" class="btn btn-warning" type="submit" value="<?php echo ucfirst($script_transl[$toDo]); ?>"></div>
 </form>
 <?php
 if ($admin_aziend['Abilit']==9){
@@ -757,5 +752,7 @@ if ($admin_aziend['Abilit']==9){
 	</div>
 	<?php
 }
+?>
+<?php
 require("../../library/include/footer.php");
 ?>

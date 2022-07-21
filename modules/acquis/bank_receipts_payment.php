@@ -307,7 +307,7 @@ echo '		  </table></div>';
                             <div class="form-group">
                                 <label for="entry_date" class="col-sm-11 control-label">
                                     <?php echo $fornitore['ragso1'] . ' ' . $fornitore['ragso2']; ?>
-                                    <a class="btn btn-xs btn-default btn-edit" title="<?php echo $script_transl['upd_entry']; ?>" href="../contab/admin_movcon.php?id_tes=<?php echo $doc_data['id_tes']; ?>&Update">
+                                    <a class="btn btn-xs btn-edit" title="<?php echo $script_transl['upd_entry']; ?>" href="../contab/admin_movcon.php?id_tes=<?php echo $doc_data['id_tes']; ?>&Update">
                                         <?php echo ' ' . $doc_data['descri'] . ' ' . $doc_data['numdoc'] . ' del ' . gaz_format_date($doc_data['datdoc']) . ' prot.' . $doc_data['protoc']; ?>
                                     </a>
                                 </label>

@@ -301,7 +301,7 @@ echo '</tr>';
 
             echo "<tr class=\"FacetDataTD\">";
             // Colonna ID scontrino
-            echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_scontr.php?Update&id_tes=" . $row['id_tes'] . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $row["id_tes"] . "</a></td>";
+            echo "<td align=\"center\"><a class=\"btn btn-xs btn-edit\" href=\"admin_scontr.php?Update&id_tes=" . $row['id_tes'] . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $row["id_tes"] . "</a></td>";
             // Colonna data emissione
             echo "<td align=\"center\">" . gaz_format_date($row['datemi']) . "</td>";
             // Colonna registratore

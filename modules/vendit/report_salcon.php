@@ -66,7 +66,7 @@ $anagrafica = new Anagrafica();
 while ($a_row = gaz_dbi_fetch_array($result)) {
     $cliente = $anagrafica->getPartner($a_row['clfoco']);
     print "<tr>";
-    print "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"salcon_credit.php?codice=".$a_row['id_tes']."&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row['id_tes']."</a></td>";
+    print "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-edit\" href=\"salcon_credit.php?codice=".$a_row['id_tes']."&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row['id_tes']."</a></td>";
     print "<td class=\"FacetDataTD\" align=\"center\">".$a_row["numdoc"]." &nbsp;</td>";
     print "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($a_row["datemi"])." &nbsp;</td>";
     print "<td class=\"FacetDataTD\" align=\"left\"><a title=\"Dettagli cliente\" href=\"report_client.php?nome=".$cliente["ragso1"]."\">".$cliente["ragso1"]."</a></td>";

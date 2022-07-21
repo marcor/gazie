@@ -335,7 +335,7 @@ if ($form['partner'] > 100000000) { // partner selezionato
         /** fine modifica FP */
         $amount = 0.00;
         echo "<tr>";
-        echo "<td class=\"FacetDataTD\" colspan='8'><a class=\"btn btn-xs btn-default btn-edit\" href=\"../contab/admin_movcon.php?Update&id_tes=" . $paymov->docData[$k]['id_tes'] . "\"><i class=\"glyphicon glyphicon-edit\"></i>" .
+        echo "<td class=\"FacetDataTD\" colspan='8'><a class=\"btn btn-xs btn-edit\" href=\"../contab/admin_movcon.php?Update&id_tes=" . $paymov->docData[$k]['id_tes'] . "\"><i class=\"glyphicon glyphicon-edit\"></i>" .
         $paymov->docData[$k]['descri'] . ' n.' .
         $paymov->docData[$k]['numdoc'] . ' del ' .
         gaz_format_date($paymov->docData[$k]['datdoc']) . "</a> REF: $k</td>";
@@ -379,7 +379,7 @@ if ($form['partner'] > 100000000) { // partner selezionato
             echo "<td align=\"center\">" . gaz_format_date($vi['expiry']) . "</td>";
             echo "<td align=\"right\">\n";
             foreach ($vi['cl_rig_data'] as $vj) {
-                echo "<a class=\"btn btn-xs btn-default btn-edit\"  href=\"../contab/admin_movcon.php?id_tes=" . $vj['id_tes'] . "&Update\" title=\"" . $script_transl['update'] . ': ' . $vj['descri'] . " € " . gaz_format_number($vj['import']) . "\"><i class=\"glyphicon glyphicon-edit\"></i>" . $vj['id_tes'] . "</a>\n ";
+                echo "<a class=\"btn btn-xs btn-edit\"  href=\"../contab/admin_movcon.php?id_tes=" . $vj['id_tes'] . "&Update\" title=\"" . $script_transl['update'] . ': ' . $vj['descri'] . " € " . gaz_format_number($vj['import']) . "\"><i class=\"glyphicon glyphicon-edit\"></i>" . $vj['id_tes'] . "</a>\n ";
             }
             echo $v_cl . "</td>";
             echo "<td align=\"center\">" . $cl_exp . "</td>";
@@ -410,7 +410,7 @@ if ($form['partner'] > 100000000) { // partner selezionato
     echo '</td>';
     if ($saldoscadenzario < $saldocontabile && !$isDocumentoSelezionato) {   // se sto guardando solo un documento specifico non controllo lo sbilancio
         /** fine modifica FP */
-        echo "<td class=\"FacetDataTDred\" colspan='4'>" . $script_transl['mesg'][3] . " <a class=\"btn btn-xs btn-default btn-edit\" href=\"../contab/admin_movcon.php?Insert\"><i class=\"glyphicon glyphicon-edit\"> </i></td>";
+        echo "<td class=\"FacetDataTDred\" colspan='4'>" . $script_transl['mesg'][3] . " <a class=\"btn btn-xs btn-edit\" href=\"../contab/admin_movcon.php?Insert\"><i class=\"glyphicon glyphicon-edit\"> </i></td>";
     }
     echo '<td align="center"><input title="Registra in contabilità" name="ins" id="preventDuplicate" onClick="chkSubmit();" onClick="chkSubmit();" type="submit" value="' . ucfirst($script_transl['insert']) . '"></td>';
 	if ( count( $xmlcbi_button ) >= 1 ) {

@@ -134,7 +134,7 @@ if (isset($_POST['preview'])) {
             foreach ($paymov->PartnerStatus as $k => $v) {
                 echo "<tr>";
                 echo "<td class=\"FacetDataTDred\" colspan='2'>REF: $k</td>";
-                echo "<td colspan='3'><a class=\"btn btn-xs btn-default btn-edit\" href=\"../contab/admin_movcon.php?Update&id_tes=" . $paymov->docData[$k]['id_tes'] . "\"><i class=\"glyphicon glyphicon-edit\"></i>" .
+                echo "<td colspan='3'><a class=\"btn btn-xs btn-edit\" href=\"../contab/admin_movcon.php?Update&id_tes=" . $paymov->docData[$k]['id_tes'] . "\"><i class=\"glyphicon glyphicon-edit\"></i>" .
                 $paymov->docData[$k]['id_tes'] . ' ' .
                 $paymov->docData[$k]['descri'];
                 if ($paymov->docData[$k]['numdoc'] >= 1) {

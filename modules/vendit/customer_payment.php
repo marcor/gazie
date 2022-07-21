@@ -345,7 +345,7 @@ END;
 
         <tr>
             <td class="FacetDataTD" colspan="8">
-                <a class="btn btn-xs btn-default btn-edit" href="../contab/admin_movcon.php?Update&amp;id_tes={$paymov->docData[$k]['id_tes']}">
+                <a class="btn btn-xs btn-edit" href="../contab/admin_movcon.php?Update&amp;id_tes={$paymov->docData[$k]['id_tes']}">
                     <i class="glyphicon glyphicon-edit"></i>
                     {$paymov->docData[$k]['descri']}
 END;
@@ -406,7 +406,7 @@ END;
             foreach ($vi['cl_rig_data'] as $vj) {
                 echo <<<END
 
-                <a class="btn btn-xs btn-default btn-edit"  
+                <a class="btn btn-xs btn-edit"  
                     href="../contab/admin_movcon.php?id_tes={$vj['id_tes']}&amp;Update" 
                     title="{$script_transl['update']}:{$vj['descri']} € {$gaz_format_number($vj['import'])}">
                     <i class="glyphicon glyphicon-edit"></i>

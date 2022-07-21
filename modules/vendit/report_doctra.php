@@ -220,8 +220,8 @@ if (isset($_SESSION['print_request']) && intval($_SESSION['print_request'])>0){
         $ts->output_navbar();
                 ?>
 
-    <div class="box-primary table-responsive">
-        <table class="Tlarge table table-striped table-bordered table-condensed">
+    <div class="table-responsive">
+        <table class="Tlarge table-striped">
             <tr>
                 <td class="FacetFieldCaptionTD">
                     <?php gaz_flt_disp_int("id_tes", "ID"); ?>
@@ -283,7 +283,7 @@ if (isset($_SESSION['print_request']) && intval($_SESSION['print_request'])>0){
                         case "DDS":
                             echo "<tr class=\"text-center\">";
                             // Colonna id
-                            echo "<td><a class=\"btn btn-xs btn-success\" href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $r['tipdoc'].' '. $r["id_tes"] . "</a></td>";
+                            echo "<td><a class=\"btn btn-xs btn-edit\" href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $r['tipdoc'].' '. $r["id_tes"] . "</a></td>";
                             // Colonna protocollo
                             echo "<td class=\"text-center\"><a href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\">" . $r["numdoc"] . "</a> &nbsp;</td>";
                             // Colonna type
@@ -435,7 +435,7 @@ if (isset($_SESSION['print_request']) && intval($_SESSION['print_request'])>0){
                             if ( $r['ddt_type'] != 'R') {
                             echo "<tr class=\"text-center\">";
                             // Colonna id
-                            echo "<td><a class=\"btn btn-xs btn-success\" href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-edit\"></i>".$r['tipdoc']."&nbsp;" . $r["id_tes"] . "</a></td>";
+                            echo "<td><a class=\"btn btn-xs btn-info\" href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-edit\"></i>".$r['tipdoc']."&nbsp;" . $r["id_tes"] . "</a></td>";
                             // Colonna protocollo
                             echo "<td><a href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\">" . $r["numdoc"] . "</a></td>";
                             // Colonna type

@@ -465,15 +465,15 @@ function printPdf(urlPrintDoc){
                 $tipodoc = "Fattura Immediata";
                 $modulo = "stampa_docven.php?id_tes=" . $r['id_tes'];
                 $modifi = "admin_docven.php?Update&id_tes=" . $r['id_tes'];
-                $classe_btn = "btn-success";
+                $classe_btn = "btn-edit";
             } elseif($r["tipdoc"] == 'FAF'){
                 $tipodoc = "Autofattura (TD26)";
                 $modulo = "stampa_docven.php?id_tes=" . $r['id_tes'];
                 $modifi = "admin_docven.php?Update&id_tes=" . $r['id_tes'];
-                $classe_btn = "btn-success";
+                $classe_btn = "btn-edit";
             } elseif ($r["tipdoc"] == 'FAD') {
                 $tipodoc = "Fattura Differita";
-                $classe_btn = "btn-success";
+                $classe_btn = "btn-edit";
                 $modulo = "stampa_docven.php?td=2&si=" . $r["seziva"] . "&pi=" . $r['protoc'] . "&pf=" . $r['protoc'] . "&di=" . $r['datfat'] . "&df=" . $r['datfat'];
                 $modulo_fae = "electronic_invoice.php?seziva=" . $r["seziva"] . "&protoc=" . $r['protoc'] . "&year=" . substr($r['datfat'], 0, 4);
                 if ( !$modifica_fatture_ddt ) {
@@ -494,7 +494,7 @@ function printPdf(urlPrintDoc){
                 $modifi = "admin_docven.php?Update&id_tes=" . $r['id_tes'];
             } elseif ($r["tipdoc"] == 'FND') {
                 $tipodoc = "Nota Debito";
-                $classe_btn = "btn-success";
+                $classe_btn = "btn-edit";
                 $modulo = "stampa_docven.php?id_tes=" . $r['id_tes'];
                 $modifi = "admin_docven.php?Update&id_tes=" . $r['id_tes'];
             } else {
@@ -546,7 +546,7 @@ function printPdf(urlPrintDoc){
                 echo "<tr class=\"FacetDataTD\">";
                 // Colonna protocollo
                 if (!empty($modifi)) {
-                  echo "<td class=\"text-center\"><a href=\"" . $modifi . "\" class=\"btn btn-100 btn-xs " . $classe_btn . "\" title=\"Modifica " . $tipodoc . " \">" . $r["protoc"] . "&nbsp;" . $r["tipdoc"] . "&nbsp;<i class=\"glyphicon glyphicon-edit\"></i></a></td>";
+                  echo "<td class=\"text-center\"><a href=\"" . $modifi . "\" class=\"btn btn-xs " . $classe_btn . "\" title=\"Modifica " . $tipodoc . " \">" . $r["protoc"] . "&nbsp;" . $r["tipdoc"] . "&nbsp;<i class=\"glyphicon glyphicon-edit\"></i></a></td>";
                 } else {
                   echo "<td class=\"text-center\"><button class=\"btn btn-100 btn-xs " . $classe_btn . " disabled\" title=\"Per poter modificare questa " . $tipodoc . " devi modificare i DdT in essa contenuti!\">" . $r["protoc"] . "&nbsp;" . $r["tipdoc"] . " &nbsp;<i class=\"glyphicon glyphicon-edit\"></i></button></td>";
                 }

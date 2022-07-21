@@ -155,7 +155,7 @@ $(function() {
                     $collapse = $r["codice"];
                     echo '<tr class="collapsible" data-toggle="collapse" data-target=".' . $collapse . '">	
 			<td class="'.$color_class.'">
-				<a class="btn btn-xs btn-default btn-edit" href="admin_piacon.php?Update&amp;codice=' . $r["codice"] . '" title="' . $script_transl['edit_master'] . '" >
+				<a class="btn btn-xs btn-edit" href="admin_piacon.php?Update&amp;codice=' . $r["codice"] . '" title="' . $script_transl['edit_master'] . '" >
 					<i class="glyphicon glyphicon-edit"></i>&nbsp;' . substr($r["codice"], 0, 3) . '
 				</a>
 			</td>

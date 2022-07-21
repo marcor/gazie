@@ -3316,14 +3316,14 @@ $magazz->selectIdWarehouse('in_id_warehouse',$form["in_id_warehouse"],false,'col
   </div>
 </div><!-- chiude panel -->
 
-<div class="FacetSeparatorTD text-center"><b><?php echo $script_transl[2]; ?></b></div>
+<div class="text-center"><b><?php echo $script_transl[2]; ?></b></div>
 	<input type="hidden" value="<?php echo $form['numrat']; ?>" name="numrat">
 	<input type="hidden" value="<?php echo $form['stamp']; ?>" name="stamp">
 	<input type="hidden" value="<?php echo $form['round_stamp']; ?>" name="round_stamp">
 	<input type="hidden" value="<?php echo $form['spevar']; ?>" name="spevar">
 	<input type="hidden" value="<?php echo $form['cauven']; ?>" name="cauven">
 	<input type="hidden" value="<?php echo $form['caucon']; ?>" name="caucon">
-	<div class="box-primary table-responsive"><table class="Tlarge table table-bordered table-condensed">
+	<div class="box-primary table-responsive"><table class="Tlarge">
 <?php
 $somma_spese = $form['traspo'] + $form['speban'] * $form['numrat'] + $form['spevar'];
 $calc->add_value_to_VAT_castle($castle, $somma_spese, $form['expense_vat']);

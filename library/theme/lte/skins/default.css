@@ -116,8 +116,9 @@ td.ui-datepicker-other-month>a.ui-state-default.ui-priority-secondary{
     color: #ff3939;
 }
 .btn-edit {
-	background-color: #449d44 !important;
-	color: #FFFFFF !important;
+	background-color: #449d44;
+	color: #FFFFFF;
+	box-shadow: 1px 1px 1px 1px gray;
 }
 .panel-default {
   background-color: #e7ece7;
