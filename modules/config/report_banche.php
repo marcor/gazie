@@ -39,7 +39,7 @@ $(function() {
 	$('.dialog_delete').click(function() {
 		$("p#idcodice").html($(this).attr("ref"));
 		$("p#iddescri").html($(this).attr("descri"));
-		var id = $(this).attr('ref');		
+		var id = $(this).attr('ref');
 		$( "#dialog_delete" ).dialog({
 			minHeight: 1,
 			width: "auto",
@@ -47,8 +47,8 @@ $(function() {
 			show: "blind",
 			hide: "explode",
 			buttons: {
-				delete:{ 
-					text:'Elimina', 
+				delete:{
+					text:'Elimina',
 					'class':'btn btn-danger delete-button',
 					click:function (event, ui) {
 					$.ajax({
@@ -66,7 +66,7 @@ $(function() {
 				}
 			}
 		});
-		$("#dialog_delete" ).dialog( "open" );  
+		$("#dialog_delete" ).dialog( "open" );
 	});
 });
 </script>
@@ -94,7 +94,7 @@ $linkHeaders = new linkHeaders($headers);
 $linkHeaders -> output();
 foreach($result as $r) {
     echo "<tr class=\"FacetDataTD\">";
-    echo "<td><a class=\"btn btn-xs btn-default btn-default\" href=\"admin_bank_account.php?Update&codice=".substr($r["codice"],3)."\" title=\"Modifica\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".substr($r["codice"],3)."</a> &nbsp</td>";
+    echo "<td><a class=\"btn btn-xs btn-edit\" href=\"admin_bank_account.php?Update&codice=".substr($r["codice"],3)."\" title=\"Modifica\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".substr($r["codice"],3)."</a> &nbsp</td>";
     echo "<td>".$r["ragso1"]." &nbsp;</td>";
     if (!empty($r['iban'])) {
        echo "<td>".$r["iban"]." &nbsp;</td>";

@@ -107,12 +107,14 @@ section.content {
     border-right: 1px solid #ddd;
 }
 .table {
-    margin-bottom: 5px;
+  margin-bottom: 5px;
 }
-table.Tmiddle,table.Tsmall {
-	border : solid 1px;
-	margin-left: auto;
-	margin-right: auto;
+.FacetFormTABLE,table.Tmiddle,table.Tsmall {
+	border: 1px solid #87b8d0;
+	border-radius: 4px;
+	border-collapse: unset;
+  margin-left: auto;
+  margin-right: auto;
 }
 table.Tmiddle tr>td, table.Tsmall tr>td {
 	padding : 5px;

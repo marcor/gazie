@@ -32,35 +32,15 @@ th a:hover {
     background-color: #daeada;
     color: #000;
 }
-
 .content-wrapper {
   background-image: url("../images/sfondo.png");
 	background-color: #f3f5f9;
 }
-
-
-.Tmiddle {
-    border: 1px solid #000000;
-}
-.table {
-
-}
-#products-list
-{
-}
-.main-header {
-    /*border: 1px solid #000000;*/
-}
-.logo {
-    /*border-right: 1px solid #000000;*/
-}
 .logo-lg {
     font-size: 14px;
 }
-.FacetFormTABLE {
-    border: 1px solid #000000;
-}
-.FacetFormHeaderFont {
+.FacetFormTABLE,table.Tmiddle,table.Tsmall {
+	background-color: #ebf2f49e;
 }
 #preventDuplicate {
     color: #000;
@@ -136,7 +116,6 @@ td.ui-datepicker-other-month>a.ui-state-default.ui-priority-secondary{
     color: #ff3939;
 }
 .btn-edit {
-  float: right;
 	background-color: #449d44 !important;
 	color: #FFFFFF !important;
 }

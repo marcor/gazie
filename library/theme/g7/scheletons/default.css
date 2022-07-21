@@ -44,10 +44,12 @@ table.Tlarge {
 .table {
     margin-bottom: 5px;
 }
-table.Tmiddle,table.Tsmall {
-	border : solid 1px;
-	margin-left: auto;
-	margin-right: auto;
+.FacetFormTABLE,table.Tmiddle,table.Tsmall {
+	border: 1px solid #87b8d0;
+	border-radius: 4px;
+	border-collapse: unset;
+  margin-left: auto;
+  margin-right: auto;
 }
 table.Tmiddle tr>td, table.Tsmall tr>td {
 	padding : 5px;
@@ -95,11 +97,6 @@ table.selectTable td {
     position : relative;
     top : -4px;
 }
-
-.FacetFormTABLE {
-    border : solid 1px;
-}
-
 .FacetFormHeaderFont {
     font-size: 18px;
     text-align: center;

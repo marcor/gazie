@@ -13,11 +13,8 @@ mark {
     background-color: #ff0;
     padding: 0em;
 }
-table.Tlarge {
-	border-color : #000000;
-}
-table.Tmiddle {
-	border-color : #000000;
+.FacetFormTABLE,table.Tmiddle,table.Tsmall {
+	background-color: #ebf2f49e;
 }
 th {
 	background-color: #c4c7ca;
@@ -44,10 +41,6 @@ table.selectTable td {
 	color: #eee;
 	background-color: #000;
 }
-
-.FacetFormTABLE {
-	border-color : #000000;
-}
 .FacetFormHeaderFont {
 	color : #000000;
 }
@@ -65,10 +58,6 @@ table.selectTable td {
 }
 .FacetDataTRend td {
 	border-bottom-color: #FFFFFF;
-}
-.FacetDataTD {
-	background-color : #caceca;
-	color : #000;
 }
 .dispari {
 	background-color : #b8dcb7;
@@ -308,7 +297,6 @@ table.selectTable td {
     color: #ff3939;
 }
 .btn-edit {
-  float: right;
 	background-color: #449d44 !important;
 	color: #FFFFFF !important;
 }

@@ -84,8 +84,8 @@ $(function() {
 			show: "blind",
 			hide: "explode",
 			buttons: {
-				delete:{ 
-					text:'Elimina', 
+				delete:{
+					text:'Elimina',
 					'class':'btn btn-danger delete-button',
 					click:function (event, ui) {
 					$.ajax({
@@ -103,7 +103,7 @@ $(function() {
 				}
 			}
 		});
-		$("#dialog_delete" ).dialog( "open" );  
+		$("#dialog_delete" ).dialog( "open" );
 	});
 });
 </script>
@@ -137,7 +137,7 @@ $(function() {
                     <input type="submit" class="btn btn-xs btn-default" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value = 1;">
                 </td>
             </tr>
-            <tr>        
+            <tr>
                 <?php
 				$groupby= "codice";
                 $result = gaz_dbi_dyn_query('*', $gTables['clfoco'] . ' LEFT JOIN ' . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id'
@@ -158,7 +158,7 @@ $(function() {
             while ($r = gaz_dbi_fetch_array($result)) {
                 echo "<tr>";
                 // Colonna codice staffe
-                echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"admin_staff.php?codice=" . substr($r["id_clfoco"], 3) . "&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . intval($r["id_contract"]) . "</a> &nbsp</td>";
+                echo "<td align=\"center\"><a class=\"btn btn-xs btn-edit\" href=\"admin_staff.php?codice=" . substr($r["id_clfoco"], 3) . "&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . intval($r["id_contract"]) . "</a> &nbsp</td>";
                 // Colonna cognome
                 echo "<td>" . $r["ragso1"] . " &nbsp;</td>";
                 // Colonna nome
@@ -204,7 +204,7 @@ $(function() {
                     </a></td>';
                 // colonna stampa privacy
                 echo "<td align=\"center\">";
-				if (intval($r['codcon']) > 0){					
+				if (intval($r['codcon']) > 0){
 					?>
 					<button title="Collaboratore non cancellabile perché ha movimenti contabili" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-remove"></i></button>
 					<?php
@@ -215,7 +215,7 @@ $(function() {
 				</a>
 				<?php
 				}
-				echo "</td></tr>\n";				
+				echo "</td></tr>\n";
             }
             ?>
     </form>

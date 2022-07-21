@@ -68,8 +68,8 @@ $(function() {
 			show: "blind",
 			hide: "explode",
 			buttons: {
-				delete:{ 
-					text:'Elimina', 
+				delete:{
+					text:'Elimina',
 					'class':'btn btn-danger delete-button',
 					click:function (event, ui) {
 					$.ajax({
@@ -87,7 +87,7 @@ $(function() {
 				}
 			}
 		});
-		$("#dialog_delete" ).dialog( "open" );  
+		$("#dialog_delete" ).dialog( "open" );
 	});
 });
 </script>
@@ -127,7 +127,7 @@ $recordnav = new recordnav($gTables['caumag'], $where, $limit, $passo);
 $recordnav -> output();
 while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "<tr class=\"FacetDataTD\">\n";
-    echo "<td><a class=\"btn btn-xs btn-default\" href=\"admin_caumag.php?codice=".$a_row["codice"]."&Update\" title=\"".ucfirst($script_transl['update'])."!\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["codice"]."</a> &nbsp</td>";
+    echo '<td class="text-center"><a class="btn btn-xs btn-edit" href="admin_caumag.php?codice='.$a_row["codice"].'&Update" title="'.ucfirst($script_transl['update']).'"><i class="glyphicon glyphicon-edit"></i>&nbsp;'.$a_row["codice"]."</a> &nbsp</td>";
     echo "<td align=\"center\">".$a_row["descri"]." &nbsp;</td>";
     echo "<td align=\"center\">".$script_transl[$a_row['clifor']+13]."</td>";
     echo "<td align=\"center\">".$script_transl[$a_row['operat']+9]."</td>";

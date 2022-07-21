@@ -25,12 +25,21 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 ?>
-<div class="help">
-<div class="panel panel-success"><h2><div class="text-center"><img src="lims.png"></div>
-<ul>
-<li>Il modulo <b>LIMS</b> è sviluppato in base alle specifiche necessità dei laboratori. </li><li>Possono essere realizzati collegamenti ad-hoc con gli strumenti di analisi, i dispositivi di campionamento, la sensoristica.</li> <li> Ricordare le scadenze delle tarature/calibrature e degli accreditamenti.</li> <li>Generare i reports, i rapporti di prova, i verbali di campionamento, le metodiche, le accettazioni dei campioni e le verifiche strumentali messe in essere.</li></ul>
-<p class="text-info"> Se vuoi creare un sistema informativo su misura per il tuo laboratorio o per qualsiasi altro chiarimento contatta l'autore:</p>
-<p class="text-warning">Antonio De Vincentiis Montesilvano (PE)<a href="https://www.devincentiis.it"> https://www.devincentiis.it </a> - telefono +39 <a href="tel:+393383121161">3383121161</a></p>
-</h2></div>
-</div>
+<div class="panel panel-info">
+  <div>
+    <h2>
+      <div class="text-center">
+        <img src="../lims/lims.png"/>
+      </div>
+      <ul>
+        <li>Il modulo <b>LIMS</b> è sviluppato in base alle specifiche necessità dei laboratori. </li>
+        <li>Possono essere realizzati collegamenti ad-hoc con gli strumenti di analisi ed i loro software di gestione, i dispositivi di campionamento, la sensoristica.</li>
+        <li>Potranno essere generati i verbali di campionamento, le accettazioni dei campioni, i rapporti di prova, le metodiche, i reports e le verifiche strumentali messe in essere.</li>
+        <li>Verranno ricordate le scadenze delle tarature/calibrature e degli accreditamenti.</li>
+      </ul>
+      <p class="text-info"> Se vuoi creare un sistema informativo su misura per il tuo laboratorio o per qualsiasi altro chiarimento contatta l'autore:</p>
+      <p class="text-warning">Antonio De Vincentiis Montesilvano (PE)<a href="https://www.devincentiis.it"> https://www.devincentiis.it </a> - telefono +39 <a href="tel:+393383121161">3383121161</a>
+      </p>
+    </h2>
+  </div>
 </div>
