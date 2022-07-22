@@ -1659,6 +1659,40 @@ echo "</script>\n";
     }
     ?>
   <div align="center"><b><?php echo $script_transl['insiva']; ?></b></div>
+        <?php
+        $resprow[0] = array();
+        echo '<input type="hidden" value="' . $_POST['rigiva'] . '" name="rigiva">';
+        for ($i = 0; $i < $_POST['rigiva']; $i++) {
+          $operation_type_dropdown = $gForm->selectFromXML('../../library/include/operation_type.xml', 'operation_type_ri[' . $i . ']', 'operation_type_ri['.$i.']', $form['operation_type_ri'][$i], true, '', '',null,'',false);
+          $rigoi = gaz_dbi_get_row($gTables['aliiva'], "codice", $form['codiva_ri'][$i]);
+          echo '<input type="hidden" name="id_rig_ri[' . $i . ']" value="' . $form['id_rig_ri'][$i] . '">';
+          echo '<input type="hidden" name="codiva_ri[' . $i . ']" value="' . $form['codiva_ri'][$i] . '">';
+          echo '<input type="hidden" name="reverse_charge_ri[' . $i . ']" value="' . $form['reverse_charge_ri'][$i] . '">';
+          if (!isset($form['imponi_ri'][$i])) {
+              $form['imponi_ri'][$i] = "";
+          }
+          if (!isset($form['impost_ri'][$i])) {
+              $form['impost_ri'][$i] = "";
+          }
+          if (!isset($form['codiva_ri'][$i])) {
+              $form['codiva_ri'][$i] = "";
+          }
+          // creo l'array da passare alla funzione per la creazione della tabella responsive
+          $resprow[$i] = array(
+              array('head' => $script_transl["taxable"], 'class' => 'text-right numeric',
+                  'value' => '<input type="number" step="0.01" name="imponi_ri[' . $i . ']" value="' . sprintf("%01.2f", preg_replace("/\,/", '.', $form['imponi_ri'][$i])) . '" maxlength="13" onchange="this.form.submit()" />'),
+              array('head' => $script_transl["vat"], 'class' => 'text-center',
+                  'value' => $rigoi["descri"]),
+              array('head' => $script_transl["operation_type"], 'class' => 'text-center',
+                  'value' => $operation_type_dropdown),
+              array('head' => $script_transl["tax"], 'class' => 'text-right numeric',
+                  'value' => '<input type="number" step="0.01" name="impost_ri[' . $i . ']" value="' . sprintf("%01.2f", preg_replace("/\,/", '.', $form['impost_ri'][$i])) . '" maxlength="13" />'),
+              array('head' => $script_transl["delete"], 'class' => 'text-center',
+                  'value' => '<button type="submit" class="btn btn-default btn-sm btn-elimina" name="dei[' . $i . ']" title="' . $script_transl['delrow'] . '"><i class="glyphicon glyphicon-remove"></i></button>')
+          );
+        }
+        $gForm->gazResponsiveTable($resprow, 'gaz-responsive-table');
+?>
         <div class="panel input-area">
             <div class="container-fluid">
                 <ul class="nav nav-tabs">
@@ -1694,42 +1728,11 @@ echo "</script>\n";
                              <button type="submit" class="btn btn-success btn-sm" name="adi" <?php echo $tabsmt; ?> ><?php echo $script_transl['addrow']; ?> <i class="glyphicon glyphicon-ok"></i></button>
                         </div>
                     </div>
-                </div><!-- chiude tab-pane  -->
-            </div><!-- chiude tab-content  -->
-        </div><!-- chiude container  -->
-        <?php
-        $resprow[0] = array();
-        echo '<input type="hidden" value="' . $_POST['rigiva'] . '" name="rigiva">';
-        for ($i = 0; $i < $_POST['rigiva']; $i++) {
-          $operation_type_dropdown = $gForm->selectFromXML('../../library/include/operation_type.xml', 'operation_type_ri[' . $i . ']', 'operation_type_ri['.$i.']', $form['operation_type_ri'][$i], true, '', '',null,'',false);
-          $rigoi = gaz_dbi_get_row($gTables['aliiva'], "codice", $form['codiva_ri'][$i]);
-          echo '<input type="hidden" name="id_rig_ri[' . $i . ']" value="' . $form['id_rig_ri'][$i] . '">';
-          echo '<input type="hidden" name="codiva_ri[' . $i . ']" value="' . $form['codiva_ri'][$i] . '">';
-          echo '<input type="hidden" name="reverse_charge_ri[' . $i . ']" value="' . $form['reverse_charge_ri'][$i] . '">';
-          if (!isset($form['imponi_ri'][$i])) {
-              $form['imponi_ri'][$i] = "";
-          }
-          if (!isset($form['impost_ri'][$i])) {
-              $form['impost_ri'][$i] = "";
-          }
-          if (!isset($form['codiva_ri'][$i])) {
-              $form['codiva_ri'][$i] = "";
-          }
-          // creo l'array da passare alla funzione per la creazione della tabella responsive
-          $resprow[$i] = array(
-              array('head' => $script_transl["taxable"], 'class' => 'text-right numeric',
-                  'value' => '<input type="number" step="0.01" name="imponi_ri[' . $i . ']" value="' . sprintf("%01.2f", preg_replace("/\,/", '.', $form['imponi_ri'][$i])) . '" maxlength="13" onchange="this.form.submit()" />'),
-              array('head' => $script_transl["vat"], 'class' => 'text-center',
-                  'value' => $rigoi["descri"]),
-              array('head' => $script_transl["operation_type"], 'class' => 'text-center',
-                  'value' => $operation_type_dropdown),
-              array('head' => $script_transl["tax"], 'class' => 'text-right numeric',
-                  'value' => '<input type="number" step="0.01" name="impost_ri[' . $i . ']" value="' . sprintf("%01.2f", preg_replace("/\,/", '.', $form['impost_ri'][$i])) . '" maxlength="13" />'),
-              array('head' => $script_transl["delete"], 'class' => 'text-center',
-                  'value' => '<button type="submit" class="btn btn-default btn-sm btn-elimina" name="dei[' . $i . ']" title="' . $script_transl['delrow'] . '"><i class="glyphicon glyphicon-remove"></i></button>')
-          );
-        }
-        $gForm->gazResponsiveTable($resprow, 'gaz-responsive-table');
+                </div>
+            </div>
+        </div>
+
+<?php
     } else {
 		?>
         <input type="hidden" name="datliq" value="<?php echo $form['datliq']; ?>" />
@@ -1745,25 +1748,8 @@ echo "</script>\n";
         $payacc = gaz_dbi_get_row($gTables['clfoco'], "codice", $form['pay_closure']);
         $gForm->toast("ATTENZIONE!!! Il pagamento <span style='background-color: yellow;'>" . $pay['descri'] . "</span> prevede che al termine della registrazione siano aggiunti due righi per la chiusura automatica della partita sul conto: <span style='background-color: yellow;'>" . $pay['pagaut'] . '-' . $payacc['descri'] . "</span>", 'alert-last-row', 'alert-success');  //lo mostriamo
     }
-    echo "<div class=\"table-responsive\"><table class=\"table input-area\">\n";
-    echo "<tr><td></td><td><b>" . $script_transl['mas'] . "</b></td><td><b>" . $script_transl['sub'] . "<b></td><td></b>" . $script_transl['amount'] . "</b></td><td><b>" . $script_transl['daav'] . "</b></td><td></td></tr>\n";
-    echo "<tr>\n";
-    echo "<td>#</td><td>";
-    $gForm->selMasterAcc('insert_mastro', $form['insert_mastro'], 'insert_mastro');
-    echo "</td>\n";
-    echo "<td>\n";
-    $gForm->lockSubtoMaster($form['insert_mastro'], 'insert_conto');
-    $gForm->sub_Account('insert_conto', $form['insert_conto'], $form['search']['insert_conto'], $form['hidden_req'], $script_transl['mesg']);
-    echo "</td>\n";
-    echo "<td><div onmousedown=\"toggleContent('insert')\" class=\"clickarea\" style=\"cursor:pointer;\">";
-    echo "<input style=\"text-align:right;\" type=\"text\" value=\"\" maxlength=\"13\" id=\"insert_import\" name=\"insert_import\"> &crarr;</div>\n";
-    $gForm->settleAccount('insert', $form['insert_conto'], sprintf("%04d%02d%02d", $form['date_reg_Y'], $form['date_reg_M'], $form['date_reg_D']));
-    echo "</td>";
-    echo "\t<td>\n";
-    $gForm->variousSelect('insert_darave', $script_transl['daav_value'], $form['insert_darave'], 'FacetSelect', false);
-    echo "\t </td>\n";
-    echo '  <td align="center"><button type="submit" class="btn btn-success btn-sm" name="add">'. $script_transl['addrow'] . '<i class="glyphicon glyphicon-ok"></i></button></td></tr>';
-    echo '</table><div class="text-center"><b>Righi inseriti:</b></div><table class="Tlarge table table-striped table-condensed">';
+    echo "<div class=\"panel panel-succes table-responsive\">";
+    echo '<table class="Tlarge table table-striped table-condensed">';
 //fine rigo inserimento
 // inizio righi già inseriti
 // faccio un primo ciclo del form per sommare e analizzare gli sbilanciamenti
@@ -1868,17 +1854,35 @@ echo "</script>\n";
 //faccio il post del numero di righi
     echo "<input type=\"hidden\" value=\"" . $_POST['rigcon'] . "\" name=\"rigcon\">";
     echo "<input type=\"hidden\" value=\"" . $form['id_testata'] . "\" name=\"id_testata\">";
-    echo "<tr><td class=\"FacetColumnTD text-center\" colspan=\"6\"><b>Totali:</b></td></tr>";
-    echo '<tr><td colspan="2" class="text-right">';
+    echo "<tr><td class=\"text-center\" colspan=\"6\"><b>Totali:</b></td></tr>";
+    echo '<tr><td colspan=6 class="text-center">';
     echo  $script_transl['tot_d'] . ": <input type=\"button\" $d_but value=\"" . number_format($form['tot_D'], 2, '.', '') . "\" id=\"tot_D\" name=\"tot_D\" onclick=\"tot_bal('D');\" />\n";
 
-    echo '</td><td class="text-right">'. $script_transl['tot_a'] . ' :';
+    echo ''. $script_transl['tot_a'] . ' :';
     echo "<input type=\"button\" $a_but value=\"" . number_format($form['tot_A'], 2, '.', '') . "\" id=\"tot_A\" name=\"tot_A\" onclick=\"tot_bal('A');\" />\n";
-    echo "\n</td>";
-	echo '<td>'.$diffV.'</td>';
-    echo '<td colspan=2 class="text-center">';
-    echo '<input name="ins" id="preventDuplicate" class="btn btn-warning" onClick="chkSubmit();" type="submit" ' . $i_but . ' tabindex="99" value="' . ucfirst($script_transl[$toDo]) . '">';
-    echo "</td></tr></table></div>";
+    echo $diffV.'</td>';
+    echo "</tr></table>";
+    echo "<table class=\"table input-area\">\n";
+    echo "<tr><td></td><td><b>" . $script_transl['mas'] . "</b></td><td><b>" . $script_transl['sub'] . "<b></td><td></b>" . $script_transl['amount'] . "</b></td><td><b>" . $script_transl['daav'] . "</b></td><td></td></tr>\n";
+    echo "<tr>\n";
+    echo "<td>#</td><td>";
+    $gForm->selMasterAcc('insert_mastro', $form['insert_mastro'], 'insert_mastro');
+    echo "</td>\n";
+    echo "<td>\n";
+    $gForm->lockSubtoMaster($form['insert_mastro'], 'insert_conto');
+    $gForm->sub_Account('insert_conto', $form['insert_conto'], $form['search']['insert_conto'], $form['hidden_req'], $script_transl['mesg']);
+    echo "</td>\n";
+    echo "<td><div onmousedown=\"toggleContent('insert')\" class=\"clickarea\" style=\"cursor:pointer;\">";
+    echo "<input style=\"text-align:right;\" type=\"text\" value=\"\" maxlength=\"13\" id=\"insert_import\" name=\"insert_import\"> &crarr;</div>\n";
+    $gForm->settleAccount('insert', $form['insert_conto'], sprintf("%04d%02d%02d", $form['date_reg_Y'], $form['date_reg_M'], $form['date_reg_D']));
+    echo "</td>";
+    echo "\t<td>\n";
+    $gForm->variousSelect('insert_darave', $script_transl['daav_value'], $form['insert_darave'], 'FacetSelect', false);
+    echo "\t </td>\n";
+    echo '  <td align="center"><button type="submit" class="btn btn-success btn-sm" name="add">'. $script_transl['addrow'] . '<i class="glyphicon glyphicon-ok"></i></button></td></tr>';
+    echo '</table>';
+    echo "</div>";
+    echo '<br/><div class="text-center"><input name="ins" id="preventDuplicate" class="btn btn-warning" onClick="chkSubmit();" type="submit" ' . $i_but . ' tabindex="99" value="' . ucfirst($script_transl[$toDo]) . ' il movimento contabile"></div>';
 
 // INIZIO creazione dialog-schedule dei partner
     for ($i = 0; $i < $_POST['rigcon']; $i++) {
