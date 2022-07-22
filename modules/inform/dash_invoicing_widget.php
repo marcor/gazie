@@ -7,9 +7,9 @@
     <table id="invoicing" class="table table-bordered table-striped dataTable"
 		<thead>
       <tr>
-         <th class="text-center bg-danger">Tipo di segnalazione</th>
-          <th class="text-center bg-danger">numero</th>
-          <th class="text-center bg-danger">Operazione consiglata</th>
+        <th>Tipo di segnalazione</th>
+        <th class="text-center">Numero</th>
+        <th class="text-center">Operazione consiglata</th>
       </tr>
     </thead>
     <tbody>
@@ -20,9 +20,9 @@
 	if ($fatacq['cnt']>0){
 ?>
     <tr>
-        <td><b class="text-info">Fatture d'acquisto da contabilizzare</b></td>
+        <td style="text-align: left;"><b class="text-info">Fatture d'acquisto da contabilizzare</b></td>
         <td><b><?php echo $fatacq['cnt']; ?></b></td>
-        <td><a class="btn btn-info" href="../acquis/accounting_documents.php?type=AF">Contabilizza fatture di acquisto<i class="glyphicon glyphicon-export"></i></a></td>
+        <td><a class="btn btn-info btn-xs" href="../acquis/accounting_documents.php?type=AF">Contabilizza fatture di acquisto<i class="glyphicon glyphicon-export"></i></a></td>
     </tr>
 <?php
   }
@@ -34,9 +34,9 @@
     if ($fae_flux['cnt']>0){
 ?>
       <tr>
-          <td><b class="text-danger">Fatture da inviare e/o scartate da (re)inviare</b></td>
+          <td style="text-align: left;"><b class="text-danger">Fatture da inviare e/o scartate da (re)inviare</b></td>
           <td><b><?php echo $fae_flux['cnt']; ?></b></td>
-          <td><a class="btn btn-danger" href="../vendit/report_docven.php">Vai al report delle fatture<i class="glyphicon glyphicon-export"></i></a></td>
+          <td><a class="btn btn-danger btn-xs" href="../vendit/report_docven.php">Vai al report delle fatture<i class="glyphicon glyphicon-export"></i></a></td>
       </tr>
 <?php
     }
@@ -46,9 +46,9 @@
 	if ($fatven['cnt']>0){
 ?>
     <tr>
-        <td><b class="text-success">Fatture di vendita da contabilizzare</b></td>
+        <td style="text-align: left;"><b class="text-success">Fatture di vendita da contabilizzare</b></td>
         <td><b><?php echo $fatven['cnt']; ?></b></td>
-        <td><a class="btn btn-success" href="../vendit/accounting_documents.php?type=F">Contabilizza fatture di vendita<i class="glyphicon glyphicon-export"></i></a></td>
+        <td><a  class="btn btn-success btn-xs" href="../vendit/accounting_documents.php?type=F">Contabilizza fatture di vendita<i class="glyphicon glyphicon-export"></i></a></td>
     </tr>
 <?php
     }
@@ -57,9 +57,9 @@
 	if ($ddtven['cnt']>0){
 ?>
     <tr>
-        <td><b class="text-warning">D.d.T. di vendita da fatturare</b></td>
+        <td style="text-align: left;"><b class="text-warning">D.d.T. di vendita da fatturare</b></td>
         <td><b><?php echo $ddtven['cnt']; ?></b></td>
-        <td><a class="btn btn-warning" href="../vendit/emissi_fatdif.php">Genera fatture differite <i class="glyphicon glyphicon-export"></i></a></td>
+        <td><a class="btn btn-warning btn-xs" href="../vendit/emissi_fatdif.php">Genera fatture differite <i class="glyphicon glyphicon-export"></i></a></td>
     </tr>
 <?php
   }
@@ -68,9 +68,9 @@
 	if ($geneff['cnt']>0){
 ?>
     <tr>
-        <td><b class="text-danger">Fatture che devono generare effetti</b></td>
+        <td style="text-align: left;"><b class="text-danger">Fatture che devono generare effetti</b></td>
         <td><b><?php echo $geneff['cnt']; ?></b></td>
-        <td><a class="btn btn-danger" href="../vendit/genera_effett.php">Genera effetti da fatture<i class="glyphicon glyphicon-export"></i></a></td>
+        <td><a class="btn btn-danger btn-xs" href="../vendit/genera_effett.php">Genera effetti da fatture<i class="glyphicon glyphicon-export"></i></a></td>
     </tr>
 <?php
   }

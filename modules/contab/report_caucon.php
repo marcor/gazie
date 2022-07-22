@@ -33,7 +33,7 @@ $(function() {
 	$('.dialog_delete').click(function() {
 		$("p#idcodice").html($(this).attr("ref"));
 		$("p#iddescri").html($(this).attr("descri"));
-		var id = $(this).attr('ref');		
+		var id = $(this).attr('ref');
 		$( "#dialog_delete" ).dialog({
 			minHeight: 1,
 			width: "auto",
@@ -41,8 +41,8 @@ $(function() {
 			show: "blind",
 			hide: "explode",
 			buttons: {
-				delete:{ 
-					text:'Elimina', 
+				delete:{
+					text:'Elimina',
 					'class':'btn btn-danger delete-button',
 					click:function (event, ui) {
 					$.ajax({
@@ -60,7 +60,7 @@ $(function() {
 				}
 			}
 		});
-		$("#dialog_delete" ).dialog( "open" );  
+		$("#dialog_delete" ).dialog( "open" );
 	});
 });
 </script>
@@ -90,8 +90,8 @@ $linkHeaders = new linkHeaders($headers_caucon);
 $linkHeaders -> output();
 $result = gaz_dbi_dyn_query ('*', $gTables['caucon'], $where, $orderby);
 while ($row = gaz_dbi_fetch_array($result)) {
-    echo "<tr class=\"FacetDataTD\">";
-    echo "<td><a class=\"btn btn-xs btn-default\" href=\"admin_caucon.php?codice=".$row["codice"]."&Update\"><i class=\"glyphicon glyphicon-folder-open\"></i>&nbsp;&nbsp;".$row["codice"]."</a> &nbsp</td>";
+    echo "<tr>";
+    echo "<td align=\"center\"><a class=\"btn btn-xs btn-edit\" href=\"admin_caucon.php?codice=".$row["codice"]."&Update\"><i class=\"glyphicon glyphicon-folder-open\"></i>&nbsp;&nbsp;".$row["codice"]."</a> &nbsp</td>";
     echo "<td>".$row["descri"]." &nbsp;</td>";
     echo "<td align=\"center\">".$script_transl['regiva_value'][$row["regiva"]]." &nbsp;</td>";
     echo "<td align=\"center\">".$script_transl['operat_value'][$row["operat"]]." &nbsp;</td>";
