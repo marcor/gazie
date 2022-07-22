@@ -61,7 +61,7 @@ if ((isset($_POST['Update'])) or ( isset($_GET['Update']))) {
 
 if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il primo accesso
     //qui si deve fare un parsing di quanto arriva dal browser...
-	$class="btn-success";$addvalue="";
+	$class="btn-warning";$addvalue="";
 	if (isset($_POST['button_ok_barcode']) || $_POST['ok_barcode']=="ok"){
 		$form['ok_barcode']="ok";
 	} else {
@@ -1173,6 +1173,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
             </div> <!-- chiude row  -->
         </div><!-- chiude container  -->
     </div><!-- chiude panel  -->
+    <div align="center"><b>Corpo</b></div>
     <?php
     echo "<input type=\"hidden\" value=\"" . $form['in_descri'] . "\" name=\"in_descri\" />
         <input type=\"hidden\" value=\"" . $form['in_pervat'] . "\" name=\"in_pervat\" />
@@ -1436,17 +1437,19 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
             }
         }
         $gForm->gazResponsiveTable($resprow, 'gaz-responsive-table');
+    } else {
+    echo '<div id="alert-zerorows" class="alert alert-danger col-xs-12">Il documento non contiene righi o prodotti, compila la ricerca articoli nella sezione corpo per aggiungerne, inserisci il valore % per avere una lista completa o per effettuare una ricerca parziale</div>';
     }
     ?>
-    <ul class="nav nav-tabs">
-        <li class="active"><a data-toggle="pill" href="#insrow1"> <?php echo $script_transl['conf_row']; ?> </a></li>
-        <li><a data-toggle="pill" href="#insrow2"><i class="glyphicon glyphicon-eye-open"></i> <?php echo $script_transl['other_row']; ?> </a></li>
-        <li><a href="#" id="addmodal" href="#myModal" data-toggle="modal" data-target="#edit-modal" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-export"></i><?php echo $script_transl['add_article']; ?></a></li>
-    </ul>
+      <ul class="nav nav-tabs">
+          <li class="active"><a data-toggle="pill" href="#insrow1"> <?php echo $script_transl['conf_row']; ?> </a></li>
+          <li><a data-toggle="pill" href="#insrow2"><i class="glyphicon glyphicon-eye-open"></i> <?php echo $script_transl['other_row']; ?> </a></li>
+          <li><a href="#" id="addmodal" href="#myModal" data-toggle="modal" data-target="#edit-modal" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-export"></i><?php echo $script_transl['add_article']; ?></a></li>
+      </ul>
 
-    <div class="panel-info panel-corpo div-bordered bg-info">
-        <div class="tab-content form-horizontal">
-            <div id="insrow1" class="tab-pane fade in active bg-info">
+    <div class="panel input-area">
+        <div class="form-horizontal">
+            <div id="insrow1" class="tab-pane fade in active">
                 <div class="row">
                     <div class="col-sm-2">
                         <div class="form-group">
@@ -1467,12 +1470,10 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
 
 						<?php
 						// Antonio Germani - input con pistola lettore codice a barre
-
-							//$class_btn_confirm='btn-success';
 							if ($form['ok_barcode']!="ok"){
 								?>
-										<button type="submit" name="button_ok_barcode" class="btn btn-edit btn-default btn-xs col-sm-2" title="inserisci con pistola Barcode">
-										<span class="glyphicon glyphicon-barcode"> Barcode</span>
+										<button type="submit" name="button_ok_barcode" class="btn btn-info btn-xs col-sm-2" title="inserisci con pistola Barcode">
+										 Barcode <i class="glyphicon glyphicon-barcode"></i>
 										</button>
 								<?php
 							} else {
@@ -1494,7 +1495,6 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
 									<?php
 								}
 							}
-
 						// Antonio Germani - fine input con pistola lettore codice a barre -->
 						?>
 						</div>
@@ -1510,15 +1510,15 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
 					<?php if ($form['ok_barcode']!="ok"){?>
                     <div class="col-sm-2">
                         <div class="form-group text-center">
-                            <button type="submit"  tabindex=7 class="btn btn-default btn-xs col-sm-12" name="in_submit" title="<?php echo $script_transl['submit'] . $script_transl['thisrow']; ?>">
-                                <?php echo $script_transl['conf_row']; ?>&nbsp;<i class="glyphicon glyphicon-ok"></i>
+                            <button type="submit"  tabindex=7 class="btn btn-success col-sm-12" name="in_submit">
+                                <?php echo $script_transl['insert'] . $script_transl['thisrow']; ?>&nbsp;<i class="glyphicon glyphicon-ok"></i>
                             </button>
                         </div>
                     </div>
 					<?php } ?>
                 </div>
             </div><!-- chiude tab-pane  -->
-            <div id="insrow2" class="tab-pane fade bg-info">
+            <div id="insrow2" class="tab-pane fade">
                 <div class="row">
                     <div class="col-sm-6 col-md-3 col-lg-3">
                         <div class="form-group">
@@ -1556,6 +1556,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
     <?php
     if ($next_row > 0) {
         ?>
+        <div align="center"><b>Piede</b></div>
         <div class="panel panel-success div-bordered">
             <div class="table-responsive">
                 <table class="table">

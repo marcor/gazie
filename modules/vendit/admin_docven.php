@@ -2419,7 +2419,6 @@ if ($form['tipdoc'] == "DDT") {
     echo "<input type=\"hidden\" value=\"" . $form['ragbol'] . "\" name=\"ragbol\">\n";
     echo '<input type="hidden" value="' . $form['id_doc_ritorno'] . '" name="id_doc_ritorno" />';
 }
-// fine modifica FP
 
 echo '<div class="box-primary table-responsive">
 <div class="text-center"><b>'. $script_transl[1].'</b></div>
@@ -3188,7 +3187,7 @@ echo '	<input type="hidden" value="' . $form['in_descri'] . '" name="in_descri" 
 
 ?>
 <!-- DISEGNO LA FORM DI INSERIMENTO DATI -->
-<div class="panel panel-info div-bordered">
+<div class="panel input-area">
   <div class="panel-body">
     <div class="container-fluid">
         <div class="row first_row">
@@ -3206,7 +3205,7 @@ $select_artico->addSelected($form['in_codart']);
 $select_artico->output(substr($form['cosear'], 0, 32));
 // Antonio Germani - input ricerca con pistola lettore codice a barre
 if ($toDo == "insert"){
-	$class_btn_confirm='btn-success';
+	$class_btn_confirm='btn-warning';
 	if ($form['ok_barcode']!="ok"){
 		?>
 
@@ -3310,7 +3309,7 @@ $magazz->selectIdWarehouse('in_id_warehouse',$form["in_id_warehouse"],false,'col
 ?>
 			</div>
             <div class="form-group col-sm-6 col-md-3 col-lg-2 text-right">
-                <button type="submit" class="btn btn-success btn-sm" name="in_submit" title="<?php echo $script_transl['submit'] . $script_transl['thisrow'] ?>" tabindex="6"><i class="glyphicon glyphicon-ok"> Conferma </i></button>
+                <button type="submit" class="btn btn-success" name="in_submit" tabindex="6"><?php echo $script_transl['insert'] . $script_transl['thisrow'] ?><i class="glyphicon glyphicon-ok"></i></button>
             </div>
 		</div>
 	</div><!-- chiude container-fuid -->
