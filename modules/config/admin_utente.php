@@ -707,7 +707,7 @@ if ($user_data["Abilit"] == 9) {
 				if ($form["user_name"] <> $user_data["user_name"]) { // sono un amministratore che sta operando sul profilo di altro utente
           if ($mod_admin[$mod['name']]['access']==3){ // il modulo è attivo sull'amministratore
               // per evitare conflitti nemmeno l'amministratore può attivare un modulo se questo non lo è ancora sul suo
-              echo "  <td colspan=2 ><inputtype=radio name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"3\"></td>";
+              echo "  <td colspan=2 ><input type=radio name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"3\"></td>";
               echo "  <td><input type=radio checked name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"0\"></td>";
           } else { // modulo non attivo sull'amministratore
               echo '  <td colspan=2 >Non attivato</td>';
