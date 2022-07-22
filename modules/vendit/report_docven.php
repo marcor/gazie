@@ -600,7 +600,11 @@ function printPdf(urlPrintDoc){
                     }
                     if ( $sdi_flux ) { // ho un modulo per la gestione dei flussi con il SdI: posso visualizzare lo stato
                       $zip_ref = 'fae_packaging.php?sdiflux='.$sdi_flux;
-                      $last_flux_status = explode(',',$r['refs_flux_status'])[0];
+                      if (!empty($r['refs_flux_status'])){
+                        $last_flux_status = explode(',',$r['refs_flux_status'])[0];
+                      } else{
+                        $last_flux_status='';
+                      }
                       $sdihilight = ( !empty($r['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][1] : 'default';
                       $sdilabel = ( !empty($r['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][0] : 'da inviare';
                       if ( $last_flux_status == '' ) {
@@ -610,7 +614,7 @@ function printPdf(urlPrintDoc){
                           $last_flux_status = 'DI';
                         }
                       }
-                      if ( strlen($r['fattura_elettronica_zip_package'])>10 && ($last_flux_status=='DI' || $last_flux_status=='##' || $last_flux_status=='PA')) { // il documento è impacchettato e da inviare
+                      if ( !empty($r['fattura_elettronica_zip_package']) && strlen($r['fattura_elettronica_zip_package'])>10 && ($last_flux_status=='DI' || $last_flux_status=='##' || $last_flux_status=='PA')) { // il documento è impacchettato e da inviare
                         $r['fae_attuale']=$r['fattura_elettronica_zip_package'];
                         $sdihilight = ( !empty($r['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][1] : 'default';
                         $sdilabel = ( !empty($r['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][0] : (($r['fattura_elettronica_zip_package']!='FAE_ZIP_NOGENERATED') ? 'ZIP da inviare' : '');

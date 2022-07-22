@@ -34,7 +34,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
 	if (count($lm->available) > 0) {
 		foreach ($lm->available as $v_lm) {
 			// 1 giorno è 86400 secondi ;  3 mesi sono 15552000
-			if (strtotime($v_lm['expiry'])>0 and (strtotime($v_lm['expiry'])-15552000)<=strtotime (date("Ymd")) and strtotime($v_lm['expiry']) > strtotime (date("Ymd"))) { // lotti prossimi alla scadenza
+			if (!empty($v_lm['expiry']) && strtotime($v_lm['expiry'])>0 and (strtotime($v_lm['expiry'])-15552000)<=strtotime (date("Ymd")) and strtotime($v_lm['expiry']) > strtotime (date("Ymd"))) { // lotti prossimi alla scadenza
 				$lotinscad[$inscad]['codice']=$row['codice'];
 				$lotinscad[$inscad]['descri']=$row['descri'];
 				$lotinscad[$inscad]['identifier']=$v_lm['identifier'];

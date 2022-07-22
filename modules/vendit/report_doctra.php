@@ -221,7 +221,7 @@ if (isset($_SESSION['print_request']) && intval($_SESSION['print_request'])>0){
                 ?>
 
     <div class="table-responsive">
-        <table class="Tlarge table-striped">
+        <table class="Tlarge table table-striped">
             <tr>
                 <td class="FacetFieldCaptionTD">
                     <?php gaz_flt_disp_int("id_tes", "ID"); ?>

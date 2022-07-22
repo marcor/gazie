@@ -292,7 +292,7 @@ $ts->output_navbar();
         <p class="ui-state-highlight" id="mail_attc"></p>
     </div>
     <div class="table-responsive">
-    <table class="Tlarge table-striped">
+    <table class="Tlarge table table-striped">
         <tr>
             <td class="FacetFieldCaptionTD">
                 <?php gaz_flt_disp_int("id_doc", "Numero Prot."); ?>

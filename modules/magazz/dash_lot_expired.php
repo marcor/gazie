@@ -33,7 +33,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
 	$lm -> getAvailableLots($row['codice'],0);
 	if (count($lm->available) > 0) {
 		foreach ($lm->available as $v_lm) {
-			if (strtotime($v_lm['expiry'])>0 and strtotime($v_lm['expiry']) <= strtotime (date("Ymd"))) { // lotti scaduti
+			if (!empty($v_lm['expiry']) && strtotime($v_lm['expiry'])>0 && strtotime($v_lm['expiry']) <= strtotime (date("Ymd"))) { // lotti scaduti
 				$lotscad[$scad]['codice']=$row['codice'];
 				$lotscad[$scad]['descri']=$row['descri'];
 				$lotscad[$scad]['identifier']=$v_lm['identifier'];
