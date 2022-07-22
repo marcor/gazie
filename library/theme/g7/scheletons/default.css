@@ -32,9 +32,6 @@ mark {
 .gaz-nav {
     min-width: 3000px;
 }
-.gaz-body {
-    padding-top: 5px;
-}
 table {
     border-spacing: 1px;
 }
@@ -293,16 +290,8 @@ input.input-xs {
 .panel-title {
     vertical-align: middle;
 }
-.panel-info > .panel-gazie {
-    border-color: #88c086;
-}
 .btn-100 {
     width: 100px;
-}
-.panel-info > .panel-heading {
-	background-color: #aae2a8 !important;
-	border-color: #88c086;
-	color: #123311;
 }
 #formlogin {
     padding-top: 50px

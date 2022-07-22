@@ -95,7 +95,7 @@ if (isset( $scriptname) && $scriptname != $prev_script && $scriptname != 'admin.
     <link rel="stylesheet" href="../../library/theme/lte/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="../../library/theme/lte/ionicons/css/ionicons.min.css">
     <link rel="stylesheet" href="../../library/theme/lte/adminlte/dist/css/AdminLTE.css">
-    <link rel="stylesheet" href="../../library/theme/lte/adminlte/dist/css/skins/skin-gazie.css"> <!-- _all-skins.min.css">-->
+    <!-- <link rel="stylesheet" href="../../library/theme/lte/adminlte/dist/css/skins/skin-gazie.css">  _all-skins.min.css">-->
     <link href="../../js/jquery.ui/jquery-ui.css" rel="stylesheet">
 		<script src="../../js/jquery/jquery.js"></script>
 

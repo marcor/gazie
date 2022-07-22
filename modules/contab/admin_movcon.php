@@ -36,17 +36,15 @@ if (!isset($_POST['ritorno'])) {
 }
 
 if ((isset($_POST['Update'])) or ( isset($_GET['Update']))) {
-    if (!isset($_GET['id_tes'])) {
-        header("Location: " . $_POST['ritorno']);
-        exit;
-    } else {
-        $_POST['id_tes'] = $_GET['id_tes'];
-    }
-    $toDo = 'update';
-	$class_btn_confirm='btn-warning';
+  if (!isset($_GET['id_tes'])) {
+      header("Location: " . $_POST['ritorno']);
+      exit;
+  } else {
+      $_POST['id_tes'] = $_GET['id_tes'];
+  }
+  $toDo = 'update';
 } else {
-    $toDo = 'insert';
-	$class_btn_confirm='btn-success';
+  $toDo = 'insert';
 }
 
 if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo accesso per UPDATE
@@ -1497,16 +1495,9 @@ echo "</script>\n";
                     }
                     echo "<option value=\"" . $row['codice'] . "\"" . $selected . ">" . $row['codice'] . " - " . $row['descri'] . "</option>\n";
                 }
-                /*
-                  echo "</select> &nbsp;<input type=\"image\" name=\"inscau\" src=\"../../library/images/vbut.gif\" title=\"".$script_transl['v_caucon']."!\" $tabsmt ></td></tr>\n"; */
-
-
-                /** ENRICO FEDELE */
-                /* glyph-icon */
                 echo '  </select>&nbsp;<button type="submit" class="btn btn-default btn-sm" name="inscau" title="' . $script_transl['v_caucon'] . '!" ' . $tabsmt . '><i class="glyphicon glyphicon-ok"></i></button>
 		</td>
 	   </tr>';
-                /** ENRICO FEDELE */
                 echo "<tr>\n";
                 echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['descri'] . "</td>\n";
                 echo "\t<td colspan=\"5\" class=\"FacetDataTD\"><input type=\"text\" name=\"descrizion\" value=\"" . $form['descrizion'] . "\" maxlength=\"100\"  /></td>\n";
@@ -1632,53 +1623,54 @@ echo "</script>\n";
     <?php
 //inserimento movimento iva
 	if($form['registroiva'] == 9){ // ho un versamento IVA
-		  // rigo di input non utilizzato
-		  echo '<input type="hidden" value="' . $_POST['rigiva'] . '" name="rigiva">';
-		  echo '<input type="hidden" name="insert_imponi" value="' . $form['insert_imponi']. '">';
-          echo '<input type="hidden" name="insert_codiva" value="' . $form['insert_codiva'] . '">';
-          echo '<input type="hidden" name="operation_type" value="' . $form['operation_type'] . '">';
-		  // rigo unico indice zero
-		  echo '<input type="hidden" name="id_rig_ri[0]" value="' . $form['id_rig_ri'][0] . '">';
-		  echo '<input type="hidden" name="imponi_ri[0]" value="' . $form['imponi_ri'][0] . '">';
-          echo '<input type="hidden" name="codiva_ri[0]" value="' . $form['codiva_ri'][0] . '">';
-          echo '<input type="hidden" name="reverse_charge_ri[0]" value="' . $form['reverse_charge_ri'][0] . '">';
-          echo '<input type="hidden" name="operation_type_ri[0]" value="' . $form['operation_type_ri'][0] . '">';
-          // creo l'array da passare alla funzione per la creazione della tabella responsive
-          $resprow[0] = array(
-              array('head' => $script_transl["vat"], 'class' => 'text-center',
-                  'value' => 'VERSAMENTO DEBITO IVA'),
-              array('head' => $script_transl["tax"], 'class' => 'text-right numeric',
-                  'value' => '<input type="number" step="0.01" name="impost_ri[0]" value="' . $form['impost_ri'][0]. '" maxlength="13"  tabindex="20" id="versamentoIVA" />'),
-              array('head' => $script_transl["datliq"], 'class' => 'text-right numeric',
-                    'value' => '<input type="text" id="datliq" name="datliq" value="' . $form['datliq'] . '" />'),
-          );
-		  $gForm->gazResponsiveTable($resprow, 'gaz-responsive-table');
+		// rigo di input non utilizzato
+		echo '<input type="hidden" value="' . $_POST['rigiva'] . '" name="rigiva">';
+		echo '<input type="hidden" name="insert_imponi" value="' . $form['insert_imponi']. '">';
+    echo '<input type="hidden" name="insert_codiva" value="' . $form['insert_codiva'] . '">';
+    echo '<input type="hidden" name="operation_type" value="' . $form['operation_type'] . '">';
+		// rigo unico indice zero
+		echo '<input type="hidden" name="id_rig_ri[0]" value="' . $form['id_rig_ri'][0] . '">';
+		echo '<input type="hidden" name="imponi_ri[0]" value="' . $form['imponi_ri'][0] . '">';
+    echo '<input type="hidden" name="codiva_ri[0]" value="' . $form['codiva_ri'][0] . '">';
+    echo '<input type="hidden" name="reverse_charge_ri[0]" value="' . $form['reverse_charge_ri'][0] . '">';
+    echo '<input type="hidden" name="operation_type_ri[0]" value="' . $form['operation_type_ri'][0] . '">';
+    // creo l'array da passare alla funzione per la creazione della tabella responsive
+    $resprow[0] = array(
+        array('head' => $script_transl["vat"], 'class' => 'text-center',
+            'value' => 'VERSAMENTO DEBITO IVA'),
+        array('head' => $script_transl["tax"], 'class' => 'text-right numeric',
+            'value' => '<input type="number" step="0.01" name="impost_ri[0]" value="' . $form['impost_ri'][0]. '" maxlength="13"  tabindex="20" id="versamentoIVA" />'),
+        array('head' => $script_transl["datliq"], 'class' => 'text-right numeric',
+              'value' => '<input type="text" id="datliq" name="datliq" value="' . $form['datliq'] . '" />'),
+    );
+		$gForm->gazResponsiveTable($resprow, 'gaz-responsive-table');
 	}elseif($form["registroiva"] > 0) {
-        if (substr($form['reverse_charge'],0,2) == 'N6') {
-            $gForm->toast("L'aliquota I.V.A. selezionata (natura=N6) prevede che al termine dell'inserimento del movimento venga aggiunto un rigo sul Registro IVA vendite (REVERSE CHARGE)", 'alert-last-row', 'alert-success');
-        } elseif ($form['reverse_charge'] >= 1) { // vengo da un reverse charge già inserito
-            $gForm->toast('Il movimento ha una aliquota IVA (natura=N6) che ha aggiunto un rigo (n.<a  href="select_partit.php?id=' . $form['reverse_charge'] . '">' . $form['reverse_charge'] . "</a>) sul Registro IVA vendite per REVERSE CHARGE", 'alert-last-row', 'alert-success');
-        }
-        if ($_POST['rigiva'] == 0) { //se non ci sono righi tabulo
-            $tabimp = ' tabindex="20" ';
-            $tabsmt = ' tabindex="21" ';
-        } else {
-            $tabimp = '';
-            $tabsmt = '';
-        }
-        ?>
-        <div class="panel panel-default">
+    if (substr($form['reverse_charge'],0,2) == 'N6') {
+        $gForm->toast("L'aliquota I.V.A. selezionata (natura=N6) prevede che al termine dell'inserimento del movimento venga aggiunto un rigo sul Registro IVA vendite (REVERSE CHARGE)", 'alert-last-row', 'alert-success');
+    } elseif ($form['reverse_charge'] >= 1) { // vengo da un reverse charge già inserito
+        $gForm->toast('Il movimento ha una aliquota IVA (natura=N6) che ha aggiunto un rigo (n.<a  href="select_partit.php?id=' . $form['reverse_charge'] . '">' . $form['reverse_charge'] . "</a>) sul Registro IVA vendite per REVERSE CHARGE", 'alert-last-row', 'alert-success');
+    }
+    if ($_POST['rigiva'] == 0) { //se non ci sono righi tabulo
+        $tabimp = ' tabindex="20" ';
+        $tabsmt = ' tabindex="21" ';
+    } else {
+        $tabimp = '';
+        $tabsmt = '';
+    }
+    ?>
+  <div align="center"><b><?php echo $script_transl['insiva']; ?></b></div>
+        <div class="panel input-area">
             <div class="container-fluid">
                 <ul class="nav nav-tabs">
                     <li class="active bg-info"><a data-toggle="tab" href="#insdoc"><i class="glyphicon glyphicon-indent-right"></i> <?php echo $script_transl['insiva']; ?></a></li>
                 </ul>
-                <div class="tab-content col-sm-12 col-md-12 col-lg-12 bg-info">
+                <div class="col-sm-12">
                     <div id="insdoc" class="tab-pane fade in active">
-						<div class="form-group col-md-6 col-lg-3 nopadding">
+						<div class="form-group col-md-6 col-lg-3">
                             <label for="taxable" class="col-sm-6 control-label"><?php echo $script_transl['taxable']; ?></label>
                             <input class="col-sm-6" type="text" <?php echo $tabimp; ?> placeholder="<?php echo $script_transl['taxable']; ?>" value="<?php echo $form['insert_imponi']; ?>" name="insert_imponi" />
                         </div>
-						<div class="form-group col-md-6 col-lg-2 nopadding">
+						<div class="form-group col-md-6 col-lg-2">
                             <label for="insert_codiva" class="col-sm-4 control-label"><?php echo $script_transl['vat']; ?></label>
                             <div>
                                 <?php
@@ -1688,18 +1680,18 @@ echo "</script>\n";
                                 ?>
                             </div>
                         </div>
-						<div class="form-group col-md-6 col-lg-3 nopadding">
+						<div class="form-group col-md-6 col-lg-3">
                              <label for="operation_type" class="col-sm-6 control-label"><?php echo $script_transl['operation_type']; ?></label>
                              <?php
                              $gForm->selectFromXML('../../library/include/operation_type.xml', 'operation_type', 'operation_type', $form['operation_type'], true, '', 'col-sm-6');
                              ?>
                         </div>
-						<div class="form-group col-md-6 col-lg-3 nopadding">
+						<div class="form-group col-md-6 col-lg-3">
 							<label for="datliq" class="col-sm-6 control-label"><?php echo $script_transl['datliq']; ?></label>
 							<input class="col-sm-6" type="text" id="datliq" name="datliq" value="<?php echo $form['datliq']; ?>">
                         </div>
-						<div class="form-group col-md-6 col-lg-1 nopadding">
-                             <button type="submit" class="btn btn-default btn-sm" name="adi" title="<?php echo $script_transl['addrow']; ?>" <?php echo $tabsmt; ?> ><i class="glyphicon glyphicon-ok"></i></button>
+						<div class="form-group col-md-6 col-lg-1 text-center">
+                             <button type="submit" class="btn btn-success btn-sm" name="adi" <?php echo $tabsmt; ?> ><?php echo $script_transl['addrow']; ?> <i class="glyphicon glyphicon-ok"></i></button>
                         </div>
                     </div>
                 </div><!-- chiude tab-pane  -->
@@ -1753,28 +1745,25 @@ echo "</script>\n";
         $payacc = gaz_dbi_get_row($gTables['clfoco'], "codice", $form['pay_closure']);
         $gForm->toast("ATTENZIONE!!! Il pagamento <span style='background-color: yellow;'>" . $pay['descri'] . "</span> prevede che al termine della registrazione siano aggiunti due righi per la chiusura automatica della partita sul conto: <span style='background-color: yellow;'>" . $pay['pagaut'] . '-' . $payacc['descri'] . "</span>", 'alert-last-row', 'alert-success');  //lo mostriamo
     }
-    echo "<div class=\"table-responsive\"><table class=\"Tlarge table table-striped table-condensed\">\n";
-    echo "<tr><td class=\"bg-info\"></td><td class=\"bg-info\">" . $script_transl['mas'] . "</td><td class=\"bg-info\">" . $script_transl['sub'] . "</td><td class=\"bg-info\">" . $script_transl['amount'] . "</td><td class=\"bg-info\">" . $script_transl['daav'] . "</td><td class=\"bg-info\">" . $script_transl['addrow'] . "!</td></tr>\n";
+    echo "<div class=\"table-responsive\"><table class=\"table input-area\">\n";
+    echo "<tr><td></td><td><b>" . $script_transl['mas'] . "</b></td><td><b>" . $script_transl['sub'] . "<b></td><td></b>" . $script_transl['amount'] . "</b></td><td><b>" . $script_transl['daav'] . "</b></td><td></td></tr>\n";
     echo "<tr>\n";
-    echo "<td class=\"bg-info\">#</td><td class=\"bg-info\">";
+    echo "<td>#</td><td>";
     $gForm->selMasterAcc('insert_mastro', $form['insert_mastro'], 'insert_mastro');
     echo "</td>\n";
-    echo "<td class=\"bg-info\">\n";
+    echo "<td>\n";
     $gForm->lockSubtoMaster($form['insert_mastro'], 'insert_conto');
     $gForm->sub_Account('insert_conto', $form['insert_conto'], $form['search']['insert_conto'], $form['hidden_req'], $script_transl['mesg']);
     echo "</td>\n";
-    echo "<td class=\"bg-info\"><div onmousedown=\"toggleContent('insert')\" class=\"clickarea\" style=\"cursor:pointer;\">";
+    echo "<td><div onmousedown=\"toggleContent('insert')\" class=\"clickarea\" style=\"cursor:pointer;\">";
     echo "<input style=\"text-align:right;\" type=\"text\" value=\"\" maxlength=\"13\" id=\"insert_import\" name=\"insert_import\"> &crarr;</div>\n";
     $gForm->settleAccount('insert', $form['insert_conto'], sprintf("%04d%02d%02d", $form['date_reg_Y'], $form['date_reg_M'], $form['date_reg_D']));
     echo "</td>";
-    echo "\t<td class=\"bg-info\">\n";
+    echo "\t<td>\n";
     $gForm->variousSelect('insert_darave', $script_transl['daav_value'], $form['insert_darave'], 'FacetSelect', false);
     echo "\t </td>\n";
-    echo '  <td class="bg-info" align="right">
-			<button type="submit" class="btn btn-default btn-sm" name="add" title="' . $script_transl['addrow'] . '"><i class="glyphicon glyphicon-ok"></i></button>
-		</td>
-	  </tr>';
-    echo "<tr><td class=\"FacetColumnTD text-center\" colspan=\"6\"><b>Righi inseriti:</b></td></tr>";
+    echo '  <td align="center"><button type="submit" class="btn btn-success btn-sm" name="add">'. $script_transl['addrow'] . '<i class="glyphicon glyphicon-ok"></i></button></td></tr>';
+    echo '</table><div class="text-center"><b>Righi inseriti:</b></div><table class="Tlarge table table-striped table-condensed">';
 //fine rigo inserimento
 // inizio righi già inseriti
 // faccio un primo ciclo del form per sommare e analizzare gli sbilanciamenti
@@ -1888,7 +1877,7 @@ echo "</script>\n";
     echo "\n</td>";
 	echo '<td>'.$diffV.'</td>';
     echo '<td colspan=2 class="text-center">';
-    echo '<input name="ins" id="preventDuplicate" class="btn '.$class_btn_confirm.'" onClick="chkSubmit();" type="submit" ' . $i_but . ' tabindex="99" value="' . ucfirst($script_transl[$toDo]) . '">';
+    echo '<input name="ins" id="preventDuplicate" class="btn btn-warning" onClick="chkSubmit();" type="submit" ' . $i_but . ' tabindex="99" value="' . ucfirst($script_transl[$toDo]) . '">';
     echo "</td></tr></table></div>";
 
 // INIZIO creazione dialog-schedule dei partner

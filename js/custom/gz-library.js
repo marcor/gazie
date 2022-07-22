@@ -27,23 +27,18 @@ $(document).ready(function () {
  	$("td>input[maxlength]").each(function(index){
 		var ml = parseInt($(this).attr('maxlength'));
         if (ml>=6){ $(this).attr('size', ml) } else { $(this).attr('size', ml/2) }
-		if (ml>=22){ $(this).attr('style', 'width: 100%;')}
+		if (ml>=33){ $(this).attr('style', 'width: 100%;')}
     });
-
     gzTooltip();
-
-    $(".Tlarge").addClass('table table-striped table-bordered table-condensed');
     $("#alert-discount").fadeTo(2500, 1500).slideUp(750, function () {
         $("#alert-discount").alert('close');
     });
-
     var current = $("#alert-last-row").css('color');
     $("#alert-last-row")
             .animate({backgroundColor: '#faebcc'}, 2000)
             .animate({backgroundColor: '#d6e9c6'}, 2000)
             .animate({backgroundColor: '#faebcc'}, 2000)
             .animate({backgroundColor: '#d6e9c6'}, 2000);
-
 			$('#products-list > tbody > tr:first').before($('#products-list-last'));
     $('.products-list-last').effect("highlight", {times: 1}, 5000);
     $('#products-list-last').toggleClass('products-list-last products-list-last-moved');

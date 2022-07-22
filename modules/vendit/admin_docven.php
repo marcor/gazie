@@ -2507,6 +2507,7 @@ foreach ($form['rows'] as $k => $v) {
 	'<input type="hidden" value="' . $v['recip_stocc'] . '" name="rows[' . $k . '][recip_stocc]" />';
 	'<input type="hidden" value="' . $v['recip_stocc_destin'] . '" name="rows[' . $k . '][recip_stocc_destin]" />';
     echo '<tr>';
+    $selected_lot=false;
     switch ($v['tiprig']) {
         case "0":
             if ($v['gooser']==1){
@@ -3323,7 +3324,7 @@ $magazz->selectIdWarehouse('in_id_warehouse',$form["in_id_warehouse"],false,'col
 	<input type="hidden" value="<?php echo $form['spevar']; ?>" name="spevar">
 	<input type="hidden" value="<?php echo $form['cauven']; ?>" name="cauven">
 	<input type="hidden" value="<?php echo $form['caucon']; ?>" name="caucon">
-	<div class="box-primary table-responsive"><table class="Tlarge">
+	<div class="box-primary table-responsive"><table class="Tlarge table table-bordered table-condensed">
 <?php
 $somma_spese = $form['traspo'] + $form['speban'] * $form['numrat'] + $form['spevar'];
 $calc->add_value_to_VAT_castle($castle, $somma_spese, $form['expense_vat']);

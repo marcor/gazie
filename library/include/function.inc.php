@@ -1943,7 +1943,7 @@ class GAzieForm {
       // $rows[row][col]=array('title'=>'nome_colonna','value'=>'valore','type'=>'es_input','class'=>'classe_bootstrap',table_id=>'gaz-resposive_table')
       // eventualmente si può valorizzare $rowshead e $rowsfoot per scrivere un rigo prima o dopo di quello di riferimento
       ?>
-      <div class="panel panel-default" >
+      <div class="panel panel-success" >
         <div id="<?php echo $id; ?>"  class="table-responsive" style="min-height: 160px;">
           <table class="col-xs-12 table-striped table-condensed cf">
             <thead class="cf">

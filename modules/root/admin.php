@@ -174,7 +174,7 @@ $(function(){
 	}
 });
 </script>
-<div class="container-fluid gaz-body">
+<div class="container-fluid">
   <form method="POST" name="gaz_form">
     <input type="hidden" value="<?php echo $form['hidden_req'];?>" name="hidden_req" />
     <div class="container" style="width: auto;">

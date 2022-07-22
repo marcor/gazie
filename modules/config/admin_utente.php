@@ -434,7 +434,7 @@ $(function(){
 		$( "#dialog_module_card" ).dialog({
 			minHeight: 1,
 			width: 370,
-      position: { my: "top+100", at: "top+100", of: "div.container-fluid.gaz-body,div.wrapper div.content-wrapper",collision:" none" },
+      position: { my: "top+100", at: "top+100", of: "div.container-fluid,div.wrapper div.content-wrapper",collision:" none" },
       modal: "true",
 			show: "blind",
 			hide: "explode",

@@ -65,11 +65,9 @@ if ((isset($_GET['Update']) && !isset($_GET['id_tes'])) && !isset($_GET['tipdoc'
 }
 
 if ((isset($_POST['Update'])) || ( isset($_GET['Update']))) {
-    $toDo = 'update';
-	$class_btn_confirm='btn-warning';
+  $toDo = 'update';
 } else {
-    $toDo = 'insert';
-	$class_btn_confirm='btn-success';
+  $toDo = 'insert';
 }
 
 if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il primo accesso
@@ -2272,7 +2270,7 @@ echo '<input type="hidden" value="' . $strArrayDest . '" name="rs_destinazioni">
 							<div class="col-sm-10 col-xs-10" align="right">
 							</div>
 							<div class="col-sm-2 col-xs-2" align="right">
-							<input class="btn btn-block <?php echo $class_btn_confirm; ?>" id="preventDuplicate" onClick="chkSubmit();" type="submit" name="ddt" value="Acquisisci DDT">
+							<input class="btn btn-block btn-warning" id="preventDuplicate" onClick="chkSubmit();" type="submit" name="ddt" value="Acquisisci DDT">
 							</div>
 						</div>
 					</div><!-- chiude DDT container  -->
@@ -2281,7 +2279,7 @@ echo '<input type="hidden" value="' . $strArrayDest . '" name="rs_destinazioni">
 				?>
         </div><!-- chiude container  -->
     </div><!-- chiude panel  -->
-
+    <div align="center"><b>Corpo</b></div>
 		<input type="hidden" value="<?php echo $form['in_codice_fornitore']; ?>" name="in_codice_fornitore" />
 		<input type="hidden" value="<?php echo $form['in_descri']; ?>" name="in_descri" />
 		<input type="hidden" value="<?php echo $form['in_pervat']; ?>" name="in_pervat" />
@@ -2720,7 +2718,9 @@ echo '<input type="hidden" value="' . $strArrayDest . '" name="rs_destinazioni">
 				$form['volume']=$volume;
 			}
 			$gForm->gazResponsiveTable($resprow, 'gaz-responsive-table',$rowshead);
-		}
+		} else {
+    echo '<div id="alert-zerorows" class="alert alert-danger col-xs-12">' . $script_transl['zero_rows'] . '</div>';
+    }
 		$class_conf_row='btn-success';
 		if (substr($form['in_status'],0,6)=='UPDROW'){
 			$nr=substr($form['in_status'],6)+1;
@@ -2732,8 +2732,8 @@ echo '<input type="hidden" value="' . $strArrayDest . '" name="rs_destinazioni">
 
 		if ($ddtchecked < 1 ){ // se non ci sono DDT selezionati apro input manuale righi doc
 		?>
-		<div class="panel panel-info">
-		  <div class="container-fluid bg-info">
+		<div class="panel input-area">
+		  <div class="container-fluid">
 				<ul class="nav nav-tabs">
 					<li><a href="#insrow1"> <?php echo $script_transl['conf_row']; ?> </a></li>
 					<li><a href="#" id="addmodal" href="#myModal" data-toggle="modal" data-target="#edit-modal" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-export"></i><?php echo $script_transl['add_article']; ?></a></li>
@@ -2809,8 +2809,7 @@ $magazz->selectIdWarehouse('in_id_warehouse',$form["in_id_warehouse"],false,'col
 ?>
 									</div>
 									<div class="col-xs-12 col-sm-6 text-right">
-									<button type="submit" tabindex="7" class="btn <?php echo $class_conf_row; ?> btn-xs" name="in_submit">
-										<?php echo $script_transl['conf_row']; ?>&nbsp;<i class="glyphicon glyphicon-ok"></i>
+									<button type="submit" tabindex="7" class="btn <?php echo $class_conf_row; ?>" name="in_submit">Inserisci il rigo &nbsp;<i class="glyphicon glyphicon-ok"></i>
 									</button>
 									</div>
 						</div>
@@ -2819,11 +2818,12 @@ $magazz->selectIdWarehouse('in_id_warehouse',$form["in_id_warehouse"],false,'col
 			</div><!-- chiude panel-body  -->
 		  </div><!-- chiude container  -->
 		</div><!-- chiude panel  -->
+
 		<?php
 		}
 if (count($form['rows']) > 0) {
 	?>
-	<br />
+  <div align="center"><b>Piede</b></div>
 	<div class="panel panel-default">
 	<div class="container-fluid">
 	<?php
@@ -3022,7 +3022,7 @@ if (count($form['rows']) > 0) {
 		<?php
 	}
 	?>
-	<div class="form-group"><div class="col-lg-6"></div><div class="col-lg-3"><input class="btn btn-block <?php echo $class_btn_confirm; ?>" id="preventDuplicate" onClick="chkSubmit();" type="submit" name="ins" value="<?php
+	<div class="form-group"><div class="col-lg-6"></div><div class="col-lg-3"><input class="btn btn-block btn-warning" id="preventDuplicate" onClick="chkSubmit();" type="submit" name="ins" value="<?php
 	if ($toDo == 'insert'){ // inserimento
 		echo $script_transl['insert'].' '.$title;
 	} else { // update

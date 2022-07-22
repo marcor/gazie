@@ -184,12 +184,6 @@ table.selectTable td {
 .panel-title {
 	vertical-align: middle;
 }
-.panel-info > .panel-heading {
-	background-color: #a8bce2 !important;
-	border-color: #88c086;
-	color: #123311;
-}
-
 .form-logo {
 }
 .form-main {
@@ -304,7 +298,9 @@ table.selectTable td {
 .panel-default {
   background-color: #e7ece7;
 }
-
+.input-area {
+  background-color: #b9c6db;
+}
 /**************************************
 ************** JQUERY UI **************
 ***************************************/
@@ -353,4 +349,8 @@ div.ui-dialog-buttonpane.ui-widget-content div.ui-dialog-buttonset button.btn.bt
 }
 .table-striped > tbody > tr:nth-of-type(2n+1) {
 	background-color: #e9e9e9;
+}
+.Tlarge.table-bordered {
+	border: 2px solid #bbbbbb;
+  box-shadow: 1px 1px 1px rgba(1,1,1,.5);
 }

@@ -123,6 +123,9 @@ td.ui-datepicker-other-month>a.ui-state-default.ui-priority-secondary{
 .panel-default {
   background-color: #e7ece7;
 }
+.input-area {
+  background-color: #b9c6db;
+}
 .navbar-nav > .user-menu > .dropdown-menu > li.user-header {
 	background-color: #4f4e4e;
 }
@@ -134,4 +137,8 @@ td.ui-datepicker-other-month>a.ui-state-default.ui-priority-secondary{
 }
 .content-header > .breadcrumb {
 	background-color: #b7b9b9;
+}
+.Tlarge.table-bordered {
+	border: 2px solid #bbbbbb;
+  box-shadow: 1px 1px 1px rgba(1,1,1,.5);
 }
