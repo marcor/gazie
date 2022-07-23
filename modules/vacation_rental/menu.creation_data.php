@@ -10,7 +10,7 @@
 $dbname = constant("Database");
 
 //Aggiunta di tabelle aziendali specifiche del modulo Vacation Rental
-$tn = array('rental_events','rental_prices','rental_ical','rental_extra','rental_discounts','rental_payments');
+$tn = array('rental_events','rental_prices','rental_ical','rental_extra','rental_discounts','rental_payments','rental_feedbacks','rental_feedback_elements','rental_feedback_scores');
 $idaz = 1;
 if (isset($_SESSION['company_id'])) {
     $idaz = sprintf('%03d', $_SESSION['company_id']);
@@ -68,5 +68,6 @@ $update_db[]="INSERT INTO ".$table_prefix."_XXXcompany_config (`id`, `descriptio
 $update_db[]="CREATE TABLE `".$dbname.$table_prefix."_XXXrental_feedback_elements` ( `id` INT(11) NOT NULL AUTO_INCREMENT , `element` VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL , `facility` INT(9) NULL COMMENT 'eventuale riferimento alla struttura' , `status` VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL , PRIMARY KEY (`id`)) ENGINE = MyISAM;";
 $update_db[]="CREATE TABLE `".$dbname.$table_prefix."_XXXrental_feedbacks` ( `id` INT(12) NOT NULL AUTO_INCREMENT , `reservation_id` INT(32) NOT NULL , `text` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL , `text_reply` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL, `house_code` VARCHAR(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL , `customer_anagra_id` INT(9) NOT NULL , `created_date` DATETIME NOT NULL, `modified_date` DATETIME NOT NULL, `status` INT(1) NOT NULL DEFAULT '0' COMMENT '0= in attesa di approvazione\r\n1=approvato\r\n2=bloccato' , PRIMARY KEY (`id`)) ENGINE = MyISAM;";
 $update_db[]="CREATE TABLE `".$dbname.$table_prefix."_XXXrental_feedback_scores` ( `id` INT(12) NOT NULL AUTO_INCREMENT , `score` TINYINT(3) NOT NULL , `feedback_id` INT(12) NOT NULL , `element_id` INT(11) NOT NULL , PRIMARY KEY (`id`)) ENGINE = MyISAM; ";
+$update_db[]="ALTER TABLE ".$table_prefix."_XXXrental_feedbacks ADD INDEX(`reservation_id`);";
 ?>
 
