@@ -1533,22 +1533,23 @@ echo "</script>\n";
                 <ul class="nav nav-tabs">
                     <li class="active bg-info"><a data-toggle="tab" href="#insdoc"><i class="glyphicon glyphicon-tag"></i> <?php echo $script_transl['insdoc']; ?></a></li>
 					<?php
-					if (isset($_POST['Insert'])) {
-						$urldoc = '';
-					} else if ($form['registroiva'] == 2 || $form['registroiva'] == 4) {
-						if ($form['codcausale'] == 'FAD') {
-							$urldoc = '../vendit/report_docven.php?sezione=' . $testata['seziva'] . '&protoc=' . $testata['protoc'] . '&anno=' . intval(substr($testata['datdoc'], 0, 4)) . '&info=none';
-						} else {
-							$urldoc = '../vendit/admin_docven.php?Update&id_tes='.$form['id_doc'];
-						}
-					} else if ($form['registroiva'] == 6) {
-						$urldoc = '../acquis/admin_docacq.php?Update&id_tes='.$form['id_doc'];
-					}
-					if (!empty($urldoc)) {
-					?>
-					<li><a href="<?php echo $urldoc; ?>" target="_blank">Apri il documento contabilizzato</a></li>
-					<?php
-					}
+					$urldoc = '';
+					if ($toDo=='update') {
+            switch ($form['codcausale']){
+              case "FAD":
+                $urldoc = '../vendit/report_docven.php?sezione=' . $form['sezioneiva'] . '&protoc=' . $form['protocollo'] . '&anno=' . intval(substr($form['datdoc'], 6, 4)) . '&info=none';
+              break;
+              case "FAI":
+              $urldoc = '../vendit/admin_docven.php?Update&id_tes='.$form['id_doc'];
+              break;
+              case "AFA":
+              $urldoc = '../acquis/admin_docacq.php?Update&id_tes='.$form['id_doc'];
+              break;
+            }
+            ?>
+            <li><a href="<?php echo $urldoc; ?>" target="_blank">Documento di origine</a></li>
+            <?php
+          }
 					?>
                 </ul>
                 <div class="tab-content col-sm-12 col-md-12 col-lg-12 bg-info">

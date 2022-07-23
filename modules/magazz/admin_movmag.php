@@ -1003,13 +1003,11 @@ $select_production->output($form['coseprod']);
 echo '</td><td>Magazzino</td><td>';
 $gForm->selectIdWarehouse('id_warehouse',$form["id_warehouse"],false,'col-xs-12');
 echo "</td>\n";
-echo "</tr><tr><td colspan=\"3\"><input type=\"reset\" name=\"Cancel\" value=\"" . $script_transl['cancel'] . "\">\n";
-echo "<input type=\"submit\" name=\"Return\" value=\"" . $script_transl['return'] . "\">\n";
-echo "</td><td align=\"right\">\n";
+echo '</tr><tr ><td colspan=4 class="FacetFooterTD text-center">';
 if ($toDo == 'update') {
-    echo '<input type="submit" accesskey="m" name="Insert" value="' . ucfirst($script_transl['update']) . '"></td></tr><tr></tr>';
+    echo '<input type="submit" class="btn btn-warning" accesskey="m" name="Insert" value="' . ucfirst($script_transl['update']) . '"></td></tr><tr></tr>';
 } else {
-    echo '<input type="submit" accesskey="i" name="Insert" value="' . ucfirst($script_transl['insert']) . '"></td></tr><tr></tr>';
+    echo '<input type="submit" class="btn btn-warning" accesskey="i" name="Insert" value="' . ucfirst($script_transl['insert']) . '"></td></tr><tr></tr>';
 }
 echo "</td></tr></table>\n";
 ?>

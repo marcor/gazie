@@ -391,7 +391,7 @@ if (isset($_SESSION['print_request']) && intval($_SESSION['print_request'])>0){
                                 <?php echo "<a href=\"admin_destinazioni.php?codice=".$destina["codice"]."&Update\">".$destina["unita_locale1"]."</a>"; ?>
                             </td>
                             <?php
-                            echo "<td class=\"alert alert-danger\" ><div class=\"btn btn-xs btn-".$btnclass."\">" . $script_transl['from_suppl'] . "</div></td>";
+                            echo "<td><div class=\"btn btn-xs btn-".$btnclass."\">" . $script_transl['from_suppl'] . "</div></td>";
 
                             $urlPrintDoc = "../acquis/stampa_docacq.php?id_tes=" . $r["id_tes"] . "&template=DDT";
                             $urlPrintEtichette = "stampa_docven.php?id_tes=" . $r["id_tes"] . "&template=Etichette";

@@ -28,16 +28,17 @@ input[type=number] {
     display: none;
 }
 .gaz-nav {
-    min-width: 3000px;
+  min-width: 3000px;
 }
 table {
-    border-spacing: 1px;
+  border-spacing: 1px;
 }
 table.Tlarge {
     border : solid 1px;
 }
 .table {
-    margin-bottom: 5px;
+  margin-bottom: 5px;
+  border-radius: 5px;
 }
 .FacetFormTABLE,table.Tmiddle,table.Tsmall {
 	border: 1px solid #87b8d0;
@@ -631,8 +632,8 @@ label {
 .table > tfoot > tr > td,
 .table > tfoot > tr > th,
 .table > thead > tr > td,
-.table > thead > tr > th{
-    padding: 1px;
+.table > thead > tr > th {
+  padding-top: 5px;
 }
 
 .table,
