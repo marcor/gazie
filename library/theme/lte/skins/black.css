@@ -166,9 +166,6 @@ a, .panel-info {
 .bg-danger {
 	background-color: #460d0d;
 }
-.input-area {
-  background-color: #122e5b;
-}
 .box-header {
 	color: #fff;
 }
@@ -206,4 +203,10 @@ a, .panel-info {
 }
 .table > tbody > tr.success > td, .table > tbody > tr.success > th, .table > tbody > tr > td.success, .table > tbody > tr > th.success, .table > tfoot > tr.success > td, .table > tfoot > tr.success > th, .table > tfoot > tr > td.success, .table > tfoot > tr > th.success, .table > thead > tr.success > td, .table > thead > tr.success > th, .table > thead > tr > td.success, .table > thead > tr > th.success {
 	background-color: #13240c;
+}
+.table-bordered > thead > tr > th, .table-bordered > tbody > tr > th, .table-bordered > tfoot > tr > th, .table-bordered > thead > tr > td, .table-bordered > tbody > tr > td, .table-bordered > tfoot > tr > td {
+	border: 1px solid #4f4747;
+}
+.input-area {
+  background-color: #122e5b;
 }

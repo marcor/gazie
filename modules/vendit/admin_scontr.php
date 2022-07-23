@@ -158,7 +158,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['rows'] = array();
     $next_row = 0;
     if (isset($_POST['rows'])) {
-
         foreach ($_POST['rows'] as $next_row => $v) {
             $form['rows'][$next_row]['tiprig'] = intval($v['tiprig']);
             $form['rows'][$next_row]['codart'] = substr($v['codart'], 0, 32);
@@ -198,14 +197,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['cod_operazione'] = $v['cod_operazione'];
             $form['rows'][$next_row]['recip_stocc'] = $v['recip_stocc'];
             $form['rows'][$next_row]['recip_stocc_destin'] = $v['recip_stocc_destin'];
-
             // ripartisco i lotti automaticamente solo se ancora non è mai stato fatto
             if ( $form['rows'][$next_row]['lot_or_serial'] > 0 && intval($form['rows'][$next_row]['id_lotmag'])==0 && $form['rows'][$next_row]['quanti']>0) {
               $lm->getAvailableLots($form['rows'][$next_row]['codart'], $form['rows'][$next_row]['id_mag']);
               $ld = $lm->divideLots($form['rows'][$next_row]['quanti']);
-              /* ripartisco la quantità introdotta tra i vari lotti disponibili per l'articolo
-               * e se è il caso creo più righi
-               */
+              // ripartisco la quantità introdotta tra i vari lotti disponibili per l'articolo  e se è il caso creo più righi
               $i = $next_row;
               foreach ($lm->divided as $k => $v) {
                   if ($v['qua'] >= 0.00001) {
@@ -218,7 +214,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                   }
               }
             }
-
             if (isset($_POST['upd_row'])) {
                 $key_row = key($_POST['upd_row']);
                 if ($key_row == $next_row) {
@@ -269,7 +264,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['sconto'] = $form['rows'][0]['new_body_discount'];
         }
     }
-
     // Se viene inviata la richiesta di conferma totale ...
     if (isset($_POST['ins'])) {
         if (!gaz_format_date($form["datemi"], 'chk')) {
@@ -1052,7 +1046,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
 ?>
     });
 </script>
-<form class="form-horizontal" role="form" method="post" name="docven" enctype="multipart/form-data" >
+<form role="form" method="post" name="docven" enctype="multipart/form-data" >
     <input type="hidden" name="<?php echo ucfirst($toDo); ?>" value="">
     <input type="hidden" value="<?php echo $form['id_tes']; ?>" name="id_tes">
     <input type="hidden" value="<?php echo $form['tipdoc']; ?>" name="tipdoc">
@@ -1170,7 +1164,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                         </div>
                     </div>
                 </div>
-            </div> <!-- chiude row  -->
+            </div>
         </div><!-- chiude container  -->
     </div><!-- chiude panel  -->
     <div align="center"><b>Corpo</b></div>
@@ -1446,51 +1440,41 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
           <li><a data-toggle="pill" href="#insrow2"><i class="glyphicon glyphicon-eye-open"></i> <?php echo $script_transl['other_row']; ?> </a></li>
           <li><a href="#" id="addmodal" href="#myModal" data-toggle="modal" data-target="#edit-modal" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-export"></i><?php echo $script_transl['add_article']; ?></a></li>
       </ul>
-
-    <div class="panel input-area">
-        <div class="form-horizontal">
-            <div id="insrow1" class="tab-pane fade in active">
-                <div class="row">
-                    <div class="col-sm-2">
-                        <div class="form-group">
-                            <label for="tiprig" class="col-sm-4 control-label"><?php echo $script_transl['tiprig']; ?></label>
-                            <div class="col-sm-8">
-                                <?php $gForm->variousSelect('in_tiprig', $script_transl['tiprig_value'], $form['in_tiprig'], false, true); ?>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label for="item" class="col-sm-1 control-label"><?php echo $script_transl['item']; ?></label>
-                            <?php
-                            $select_artico = new selectartico("in_codart");
-                            $select_artico->addSelected($form['in_codart']);
-                            $select_artico->output(substr($form['cosear'], 0,32), 'C', "col-sm-4");
-                            ?>
-
-						<?php
-						// Antonio Germani - input con pistola lettore codice a barre
+    <div class="panel input-area tab-content">
+        <div id="insrow1" class="tab-pane fade in active row">
+          <div class="col-xs-12 col-md-6 col-lg-3">
+            <div class="form-group">
+                    <label for="tiprig" class="control-label"><?php echo $script_transl['tiprig']; ?></label>
+                    <?php $gForm->variousSelect('in_tiprig', $script_transl['tiprig_value'], $form['in_tiprig'], false, true); ?>
+            </div>
+            </div>
+            <div class="col-xs-12 col-md-6 col-lg-3">
+                <div class="form-group">
+                    <label for="item" class="control-label"><?php echo $script_transl['item']; ?></label>
+                    <?php
+                    $select_artico = new selectartico("in_codart");
+                    $select_artico->addSelected($form['in_codart']);
+                    $select_artico->output(substr($form['cosear'], 0,32), 'C');
+              // Antonio Germani - input con pistola lettore codice a barre
 							if ($form['ok_barcode']!="ok"){
 								?>
-										<button type="submit" name="button_ok_barcode" class="btn btn-info btn-xs col-sm-2" title="inserisci con pistola Barcode">
+										<button type="submit" name="button_ok_barcode" class="btn btn-info btn-xs" title="inserisci con pistola Barcode">
 										 Barcode <i class="glyphicon glyphicon-barcode"></i>
 										</button>
 								<?php
 							} else {
 								if ($form['in_barcode']==""){
 								?>
-
-										<input  type="text" value="<?php echo $form['in_barcode']; ?>" name="in_barcode" class="col-sm-4" onchange="this.form.submit()" />
-										<button type="submit"  name="no_barcode" title="Togli con pistola Barcode" class="btn btn-edit btn-xs col-sm-2">
+										<input  type="text" value="<?php echo $form['in_barcode']; ?>" name="in_barcode" onchange="this.form.submit()" />
+										<button type="submit"  name="no_barcode" title="Togli con pistola Barcode" class="btn btn-success btn-xs col-sm-2">
 										<span class="glyphicon glyphicon-remove"> Barcode</span>
 										</button>
 								<?php
 								} elseif ($form['in_barcode']=="NOT FOUND") {
 									$form['in_barcode']="";
 									?>
-
-										<input style="border: 3px solid red;"  type="text" value="<?php echo $form['in_barcode']; ?>" class="col-sm-4" name="in_barcode" onchange="this.form.submit()" />
-										<button type="submit"  name="no_barcode" title="Togli con pistola Barcode" class="btn btn-edit btn-xs col-sm-2">
+										<input style="border: 3px solid red;"  type="text" value="<?php echo $form['in_barcode']; ?>" name="in_barcode" onchange="this.form.submit()" />
+										<button type="submit"  name="no_barcode" title="Togli con pistola Barcode" class="btn btn-success btn-xs col-sm-2">
 										<span class="glyphicon glyphicon-remove"> Barcode</span>
 									<?php
 								}
@@ -1499,59 +1483,54 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
 						?>
 						</div>
 					</div>
-                    <div class="col-sm-2">
+          <div class="col-xs-12 col-md-6 col-lg-3">
 					<?php if ($form['ok_barcode']!="ok"){?>
-                        <div class="form-group">
-                            <label for="quanti" class="col-sm-6 control-label"><?php echo $script_transl['quanti']; ?></label>
-                            <input class="col-sm-6" type="number" step="any" tabindex=6 value="<?php echo $form['in_quanti']; ?>" name="in_quanti" />
-                        </div>
+            <div class="form-group">
+                <label for="quanti" class="control-label"><?php echo $script_transl['quanti']; ?></label>
+                <input type="number" step="any" tabindex=6 value="<?php echo $form['in_quanti']; ?>" name="in_quanti" />
+            </div>
 					<?php } ?>
-                    </div>
+          </div>
 					<?php if ($form['ok_barcode']!="ok"){?>
-                    <div class="col-sm-2">
-                        <div class="form-group text-center">
-                            <button type="submit"  tabindex=7 class="btn btn-success col-sm-12" name="in_submit">
-                                <?php echo $script_transl['insert'] . $script_transl['thisrow']; ?>&nbsp;<i class="glyphicon glyphicon-ok"></i>
-                            </button>
-                        </div>
-                    </div>
+          <div class="col-xs-12 col-md-6 col-lg-3">
+              <div class="form-group text-center">
+                  <button type="submit"  tabindex=7 class="btn btn-success" name="in_submit">
+                      <?php echo $script_transl['insert'] . $script_transl['thisrow']; ?>&nbsp;<i class="glyphicon glyphicon-ok"></i>
+                  </button>
+              </div>
+          </div>
 					<?php } ?>
-                </div>
             </div><!-- chiude tab-pane  -->
-            <div id="insrow2" class="tab-pane fade">
-                <div class="row">
-                    <div class="col-sm-6 col-md-3 col-lg-3">
-                        <div class="form-group">
-                            <label for="sconto" class="col-sm-6 control-label"><?php echo $script_transl['sconto']; ?></label>
-                            <input class="col-sm-6" type="number" step="0.01" value="<?php echo $form['in_sconto']; ?>" name="in_sconto" />
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-md-3 col-lg-3">
-                        <div class="form-group">
-                            <label for="vat_constrain" class="col-sm-6 control-label"><?php echo $script_transl['vat_constrain'].' '.$form['in_codvat']; ?></label>
-                            <?php $gForm->selectRepartoIVA($form['in_codvat'],$form['id_cash']); ?>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-md-3 col-lg-3">
-                        <div class="form-group">
-                            <label for="codric" class="col-sm-4 control-label"><?php echo $script_transl['codric']; ?></label>
-                            <?php
-                            $select_codric = new selectconven("in_codric");
-                            $select_codric->addSelected($form['in_codric']);
-                            $select_codric->output(substr($form['in_codric'], 0, 1), 'col-sm-8');
-                            ?>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-md-3 col-lg-3">
-                        <div class="form-group">
-                            <label for="provvigione" class="col-sm-6 control-label"><?php echo $script_transl['provvigione']; ?></label>
-                            <input class="col-sm-6" type="number" step="any" value="<?php echo $form['in_provvigione']; ?>" name="in_provvigione" />
-                        </div>
-                    </div>
-                </div>
+            <div id="insrow2" class="tab-pane fade row">
+              <div class="col-xs-12 col-md-6 col-lg-3">
+                  <div class="form-group">
+                      <label for="sconto" class="control-label"><?php echo $script_transl['sconto']; ?></label>
+                      <input type="number" step="0.01" value="<?php echo $form['in_sconto']; ?>" name="in_sconto" />
+                  </div>
+              </div>
+              <div class="col-xs-12 col-md-6 col-lg-3">
+                  <div class="form-group">
+                      <label for="vat_constrain" class="control-label"><?php echo $script_transl['vat_constrain']; ?></label>
+                      <?php $gForm->selectRepartoIVA($form['in_codvat'],$form['id_cash']); ?>
+                  </div>
+              </div>
+              <div class="col-xs-12 col-md-6 col-lg-3">
+                  <div class="form-group">
+                      <label for="codric" class="control-label"><?php echo $script_transl['codric']; ?></label>
+                      <?php
+                      $select_codric = new selectconven("in_codric");
+                      $select_codric->addSelected($form['in_codric']);
+                      $select_codric->output(substr($form['in_codric'], 0, 1));
+                      ?>
+                  </div>
+              </div>
+              <div class="col-sm-12 col-md-6 col-lg-3">
+                  <div class="form-group">
+                      <label for="provvigione" class="control-label"><?php echo $script_transl['provvigione']; ?></label>
+                      <input type="number" step="any" value="<?php echo $form['in_provvigione']; ?>" name="in_provvigione" />
+                  </div>
+              </div>
             </div><!-- chiude tab-pane  -->
-        </div><!-- chiude tab-content  -->
-
     </div><!-- chiude panel  -->
     <?php
     if ($next_row > 0) {
