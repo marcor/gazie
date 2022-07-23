@@ -1163,8 +1163,8 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
                       <input type="hidden" name="SIAN_comp<?php echo $nc; ?>" value="<?php echo $row['SIAN']; ?>">
                       <input type="text" class="FacetSelect" name="artcomp<?php echo $nc; ?>" value="<?php echo $codartlot['codart']; ?>" readonly="readonly">
                       <input type="hidden" name="prezzo_comp<?php echo $nc; ?>" value="<?php echo $price_comp; ?>">
-                      <input type="hidden" name="old_quanti_comp<?php echo $nc; ?>" value="<?php echo $form['old_quanti_comp'][$nc]; ?>">
-                      <input type="hidden" name="id_mov<?php echo $nc; ?>" value="<?php echo $form['id_mov'][$nc]; ?>">
+                      <input type="hidden" name="old_quanti_comp<?php echo $nc; ?>" value="<?php echo (isset($form['old_quanti_comp'][$nc]))?$form['old_quanti_comp'][$nc]:0; ?>">
+                      <input type="hidden" name="id_mov<?php echo $nc; ?>" value="<?php echo (isset($form['id_mov'][$nc]))?$form['id_mov'][$nc]:0; ?>">
                       <input type="hidden" name="quality_comp<?php echo $nc; ?>" value="<?php echo $row['quality']; ?>">
                       <input type="hidden" name="quanti_comp<?php echo $nc; ?>" value="<?php echo floatval(preg_replace('/[^\d.]/', '', number_format((($qta*$perc_util)/100),8))); ?>"> <!-- quantità utilizzata di ogni componente   -->
                       <input type="hidden" name="id_lot_comp<?php echo $nc, $l; ?>" value="<?php echo $idlot; ?>">
