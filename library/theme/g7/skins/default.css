@@ -3,15 +3,14 @@ body {
 	color: #000;
 	background-color: #f3f5f9;
 }
+mark {
+  background-color: #ff0;
+}
 .img-circle.dit-picture,.text-center>a>.img-circle{
 	border-radius: 10px;
 }
 select:focus, input:focus {
 	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px rgba(0, 0, 255, 0.6);
-}
-mark {
-    background-color: #ff0;
-    padding: 0em;
 }
 .FacetFormTABLE,table.Tmiddle,table.Tsmall {
 	background-color: #ebf2f49e;
@@ -353,4 +352,38 @@ div.ui-dialog-buttonpane.ui-widget-content div.ui-dialog-buttonset button.btn.bt
 .Tlarge.table-bordered {
 	border: 2px solid #bbbbbb;
   box-shadow: 1px 1px 1px rgba(1,1,1,.5);
+}
+.form-control {
+    color: #212121;
+}
+.btn-custom {
+    color: #fff;
+    background-color: #99d197;
+}
+.btn-custom:hover, .btn-custom:focus {
+    color: #fff;
+}
+.btn-cont {
+    background-color: #aae2a8;
+}
+.btn-elimina {
+    color: #ff3939;
+}
+.btn-xml {
+    color: #0000ff;
+}
+.btn.disabled {
+    pointer-events: auto;
+}
+.btn-effetti {
+    background-color: #D4CB6A;
+}
+.btn-riba {
+    background-color: #FFF7AA;
+}
+.btn-fatt {
+    background-color: #d4cb6a;
+}
+.btn-pagamento {
+    color: #66aa66;
 }

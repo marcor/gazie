@@ -2,11 +2,13 @@
             STRUTTURA E FONTS
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 body {
-    font-family : Arial, Tahoma, Verdana, Helvetica;
-    background-attachment : fixed;
-    /* impostare qua la dimensione dei caratteri*/
-    font-size: 14px;
+  font-family : Arial, Tahoma, Verdana, Helvetica;
+  background-attachment : fixed;
+  font-size: 14px;
 	padding-bottom: 70px;
+}
+mark {
+  padding: 0em;
 }
 input, select {
     border-radius: 4px;
@@ -18,10 +20,6 @@ input[type=number] {
     width: 150px;
     box-shadow: 0 0 5px 5px;
     border-radius: 48%;
-}
-mark {
-    background-color: #ff0;
-    padding: 0em;
 }
 #loader-icon {
     position:fixed;
@@ -116,21 +114,6 @@ table.selectTable td {
     margin: 2px 2px;
     padding: 2px 5px 2px 5px;
 }
-.dispari {
-    /*background-color : #b8dcb7;*/
-}
-.FacetDataTDevidenziaOK {
-    /*background-color : #FFE13C;*/
-}
-.FacetDataTDevidenziaCL {
-    /*background-color : #00FF3C;*/
-}
-.FacetDataTDevidenziaBL {
-    /*background-color : #AAAAFF;*/
-}
-.FacetDataTDevidenziaKO {
-    /*background-color : #FF8888;*/
-}
 .FacetDataTDsmall {
 	font-size : 90%;
   border-bottom: 1px solid;
@@ -139,27 +122,11 @@ table.selectTable td {
 .FacetDataTDsmall a {
   	font-size : 90%;
 }
-.FacetDataTDsmallRed {
-    /*background-color : #c9edc8;*/
-}
-.FacetDataTDred {
-    /*background-color : #C9EDC8;*/
-}
-.FacetColumnTD {
-    /*background-color : #DAEADA;*/
-}
 .FacetAltDataTD {
-    /*background-color : #D5F1D4;*/
-    font-size : 110px;
+  font-size : 110px;
 }
 .FacetSeparatorTD {
     font-size : 85%;
-}
-.FacetFooterTD {
-    /*background-color : #D5F1D4;*/
-}
-.FacetDisabledTD {
-    /*background-color : #D5F1D4;*/
 }
 .FacetMainMenu {
     color : yellow;
@@ -170,7 +137,6 @@ table.selectTable td {
     border-right : 1px solid #000000;
     border-top : 1px solid #000000;
     border-bottom : 1px solid #000000;
-    /*background-color : #EFEFEF;*/
 }
 .FacetInput {
     border-bottom : 1px solid #000000;
@@ -217,33 +183,26 @@ table.selectTable td {
     min-height: 40px;
     margin-bottom: 20px;
 }
-
 div.help {
     margin: 15px 20px;
     text-align: justify;
-}
-.nav-boot {
-    /*background-color : #aae2a8;*/
 }
 .nav-first {
     margin-bottom: 0px;
     padding-top: auto;
     padding-bottom: auto;
 }
-
 .nav-mb {
     margin-bottom: 5px;
 }
 .nav-tabs {
     border-bottom: 0px;
 }
-
 div.FacetFormHeaderFont {
     font-size: 90%;
     margin-top: 10px;
     margin-bottom: 1px;
 }
-
 .vcenter {
     padding-top:7px;
     padding-right:8px;
@@ -361,40 +320,6 @@ input.input-xs {
 /*    --------------------------------------------------
         :: Inputs & Buttons
         -------------------------------------------------- */
-.form-control {
-    color: #212121;
-}
-.btn-custom {
-    color: #fff;
-    background-color: #99d197;
-}
-.btn-custom:hover, .btn-custom:focus {
-    color: #fff;
-}
-.btn-cont {
-    background-color: #aae2a8;
-}
-.btn-elimina {
-    color: #ff3939;
-}
-.btn-xml {
-    color: #0000ff;
-}
-.btn.disabled {
-    pointer-events: auto;
-}
-.btn-effetti {
-    background-color: #D4CB6A;
-}
-.btn-riba {
-    background-color: #FFF7AA;
-}
-.btn-fatt {
-    background-color: #d4cb6a;
-}
-.btn-pagamento {
-    color: #66aa66;
-}
 .btn-articolo {
     padding: 3px 2px 5px 2px;
 }
