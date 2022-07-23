@@ -264,3 +264,6 @@ a, .panel-info {
 .table > thead > tr > th {
 	border-top-color: #252a48;
 }
+.ui-dialog-content.ui-widget-content table#tblAppendGrid.table thead.thead-light tr th{
+  background-color: #ccc;
+}
