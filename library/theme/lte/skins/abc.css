@@ -111,20 +111,26 @@ html body.skin-blue.sidebar-mini.sidebar-collapse form div.wrapper header.main-h
     color : #000;
 }
 .gaz-attivo {
-    background-color: #88D6FF;
+  background-color: #E3F5FF;
+  color : #2d15d2;
 }
 .gaz-passivo {
-    background-color: #D6FF88;
+  background-color: #FFF6EF;
+  color : #a65601;
 }
 .gaz-costi {
-    background-color: #D688FF;
+  background-color: #FDD;
+  color : #912626;
 }
 .gaz-ricavi {
-    background-color: #FFD688;
+  background-color: #EEFDED;
+  color : #045102;
 }
 .gaz-transitori {
-    background-color: #FF88D6;
+  background-color: #F4D5FF;
+  color : #72019b;
 }
+
 td.ui-datepicker-other-month>a.ui-state-default.ui-priority-secondary{
 	color: #034802;
 	background: #ccccff;
@@ -145,7 +151,7 @@ td.ui-datepicker-other-month>a.ui-state-default.ui-priority-secondary{
 }
 
 
-.btn-avvisare 
+.btn-avvisare
 {
     background-color: #FF88D6;
     color: #444;
@@ -177,7 +183,7 @@ td.ui-datepicker-other-month>a.ui-state-default.ui-priority-secondary{
 /*
     tabelle di selezione pagina
 */
-.nav-pills > li 
+.nav-pills > li
 {
     border-top: 1px solid #222d32;
     border-left: 1px solid #222d32;
@@ -203,4 +209,3 @@ td.ui-datepicker-other-month>a.ui-state-default.ui-priority-secondary{
     font-weight: bold;
     animation: blink 0.5s infinite;
 }
-  

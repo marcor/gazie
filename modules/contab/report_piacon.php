@@ -45,7 +45,7 @@ $script_transl = HeadMain();
 <style>
 .collapsible td.gaz-attivo.text-danger {
   cursor: n-resize;
-} 
+}
 </style>
 <div class="FacetFormHeaderFont text-center"><?php echo $script_transl['title']; ?></div>
 <div class="alert alert-danger text-center" role="alert"><?php echo $script_transl['msg1']; ?></div>
@@ -55,7 +55,7 @@ $(function() {
 	$('.dialog_delete').click(function() {
 		$("p#idcodice").html($(this).attr("ref"));
 		$("p#iddescri").html($(this).attr("descri"));
-		var id = $(this).attr('ref');		
+		var id = $(this).attr('ref');
 		$( "#dialog_delete" ).dialog({
 			minHeight: 1,
 			width: "auto",
@@ -63,8 +63,8 @@ $(function() {
 			show: "blind",
 			hide: "explode",
 			buttons: {
-				delete:{ 
-					text:'Elimina', 
+				delete:{
+					text:'Elimina',
 					'class':'btn btn-danger delete-button',
 					click:function (event, ui) {
 					$.ajax({
@@ -82,7 +82,7 @@ $(function() {
 				}
 			}
 		});
-		$("#dialog_delete" ).dialog( "open" );  
+		$("#dialog_delete" ).dialog( "open" );
 	});
 });
 </script>
@@ -119,98 +119,83 @@ $(function() {
             echo '					</select>
 					</td>
 				</tr>';
-            $where = "    (codice < " . $admin_aziend['mascli'] . "000001 OR codice > " . $admin_aziend['mascli'] . "999999)
-          AND (codice < " . $admin_aziend['masfor'] . "000001 OR codice > " . $admin_aziend['masfor'] . "999999)";
-
-            $select = " SUM(import*(darave='D')) AS dare, 
-			SUM(import*(darave='A')) AS avere";
-
-            $table = $gTables['rigmoc'] . " LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoc'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes ";
-
-            $where2 = " AND datreg BETWEEN " . $date_ini . " AND " . $final_date . " GROUP BY codcon";
-
-            $rs = gaz_dbi_dyn_query('codice,descri', $gTables['clfoco'], $where, 'codice');
-
-            $collapse = 0;
-            
-            $css_class = array ("gaz-attivo","gaz-passivo","gaz-costi","gaz-ricavi","gaz-transitori");
-            
-            while ($r = gaz_dbi_fetch_array($rs)) {
-				unset ($conferma); $check_moc=0;
-				$conctrl = substr($r['codice'],3);
-				$masctrl = substr($r['codice'],0,3);
-				$mas0000 = $masctrl."000000";
-				if ($conctrl == 0) {
-					$result = gaz_dbi_dyn_query ('*', $gTables['clfoco'], "codice like '$masctrl%' and codice <> '$mas0000'");
-					$conferma = gaz_dbi_fetch_array($result);
-				}
-				$rs_check_moc = gaz_dbi_dyn_query("codcon", $gTables['rigmoc'], "codcon = '{$r['codice']}'","id_rig asc",0,1);
-				$check_moc = gaz_dbi_num_rows($rs_check_moc);
-				
-                $rs2 = gaz_dbi_dyn_query($select, $table, 'codcon=' . $r['codice'] . $where2, 'codcon');
-                $r2 = gaz_dbi_fetch_array($rs2);
-                if (!$r2) $r2 = array('dare' => 0, 'avere' => 0);
-                $color_class = $css_class[substr($r['codice'],0,1)-1];
-                if (substr($r["codice"], 3) == '000000') {
-                    $collapse = $r["codice"];
-                    echo '<tr class="collapsible" data-toggle="collapse" data-target=".' . $collapse . '">	
-			<td class="'.$color_class.'">
-				<a class="btn btn-xs btn-edit" href="admin_piacon.php?Update&amp;codice=' . $r["codice"] . '" title="' . $script_transl['edit_master'] . '" >
-					<i class="glyphicon glyphicon-edit"></i>&nbsp;' . substr($r["codice"], 0, 3) . '
-				</a>
-			</td>
-			<td class="'.$color_class.'"></td>
-			<td class="'.$color_class.' text-danger" colspan="5"><strong><i class="glyphicon glyphicon-list"></i> ' . $r["descri"] . '</strong></td>
-			<td class="'.$color_class.' text-center">';
-			if (isset($conferma) OR $check_moc>0){
-			?>
-			<button title="Non è possibile cancellare questo conto: il mastro deve essere vuoto e non ci possono essere movimenti contabili." class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-remove"></i></button>
-			<?php
-			} else {
-				?>
-				<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il conto" ref="<?php echo $r['codice'];?>" descri="<?php echo $r['descri'];?>">
-					<i class="glyphicon glyphicon-remove"></i>
-				</a>
-				<?php
-			}
-			echo "</td></tr>";
-                } else {
-                    echo '<tr class="' . $collapse.' collapse tr_piacon" aria-expanded="false">
-			<td class="noborder tr_piacon"> </td>
-			<td class="'.$color_class.'">
-				<a class="btn btn-xs btn-default" href="admin_piacon.php?Update&amp;codice=' . $r["codice"] . '" title="' . $script_transl['edit_account'] . '">
-					<i class="glyphicon glyphicon-edit"></i>&nbsp;' . substr($r["codice"], 3) . '
-				</a>
-			</td>
-			<td class="'.$color_class.'">' . $r["descri"] . ' </td>
-			<td class="'.$color_class.' text-right">' . gaz_format_number($r2["dare"]) . ' </td>
-			<td class="'.$color_class.' text-right">' . gaz_format_number($r2["avere"]) . ' </td>
-			<td class="'.$color_class.' text-right">' . gaz_format_number($r2["dare"] - $r2["avere"]) . ' </td>
-			<td class="'.$color_class.' text-center" title="Visualizza e stampa il paritario">
-				<a class="btn btn-xs btn-default" href="select_partit.php?id=' . $r["codice"] . '" target="_blank">
-					<i class="glyphicon glyphicon-check"></i>&nbsp;<i class="glyphicon glyphicon-print"></i>
-				</a>
-			</td>
-			<td class="'.$color_class.' text-center">';
-			if (isset($conferma) OR $check_moc>0){
-			?>
-				<a class="btn btn-xs btn-default btn-elimina " title="Non è possibile cancellare questo conto: il mastro deve essere vuoto e non ci possono essere movimenti contabili.">
-					<i class="glyphicon glyphicon-ban-circle"></i>
-				</a>			
-			<?php
-			} else {
-				?>
-				<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il conto" ref="<?php echo $r['codice'];?>" descri="<?php echo $r['descri'];?>">
-					<i class="glyphicon glyphicon-remove"></i>
-				</a>
-			<?php
-			}				
-			echo "</td></tr>";
-                }
-            }
-            ?>
-        </tbody>
-    </table></div>
+$where = "(codice < " . $admin_aziend['mascli'] . "000001 OR codice > " . $admin_aziend['mascli'] . "999999) AND (codice < " . $admin_aziend['masfor'] . "000001 OR codice > " . $admin_aziend['masfor'] . "999999)";
+$select = " SUM(import*(darave='D')) AS dare, SUM(import*(darave='A')) AS avere";
+$table = $gTables['rigmoc'] . " LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoc'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes ";
+$where2 = " AND datreg BETWEEN " . $date_ini . " AND " . $final_date . " GROUP BY codcon";
+$rs = gaz_dbi_dyn_query('codice,descri', $gTables['clfoco'], $where, 'codice');
+$collapse = 0;
+$css_class = ["gaz-attivo","gaz-passivo","gaz-costi","gaz-ricavi","gaz-transitori"];
+$section = [1=>"Attività",2=>"Passività",3=>"Costi",4=>"Ricavi",5=>"Transitori"];
+$ctrl_section = 0;
+while ($r = gaz_dbi_fetch_array($rs)) {
+	unset ($conferma);
+  $check_moc=0;
+	$conctrl = substr($r['codice'],3);
+	$v_section = (int)substr($r['codice'],0,1);
+	$masctrl = substr($r['codice'],0,3);
+	$mas0000 = $masctrl."000000";
+	if ($conctrl == 0) {
+		$result = gaz_dbi_dyn_query ('*', $gTables['clfoco'], "codice like '$masctrl%' and codice <> '$mas0000'");
+		$conferma = gaz_dbi_fetch_array($result);
+	}
+	$rs_check_moc = gaz_dbi_dyn_query("codcon", $gTables['rigmoc'], "codcon = '{$r['codice']}'","id_rig asc",0,1);
+	$check_moc = gaz_dbi_num_rows($rs_check_moc);
+  $rs2 = gaz_dbi_dyn_query($select, $table, 'codcon=' . $r['codice'] . $where2, 'codcon');
+  $r2 = gaz_dbi_fetch_array($rs2);
+  if (!$r2) $r2 = array('dare' => 0, 'avere' => 0);
+    $color_class = $css_class[substr($r['codice'],0,1)-1];
+    if (substr($r['codice'],0,1)>$ctrl_section){
+      echo '<tr><td></td><td  colspan=6 class="text-center '.$color_class.'"><h4>'.$section[$v_section].'</h4></td><td></td></tr>';
+    }
+    if (substr($r["codice"], 3) == '000000') {
+      $collapse = $r["codice"];
+      echo '<tr class="collapsible" data-toggle="collapse" data-target=".' . $collapse . '"><td class="'.$color_class.'"><a class="btn btn-xs btn-edit" href="admin_piacon.php?Update&amp;codice=' . $r["codice"] . '" title="' . $script_transl['edit_master'] . '" ><i class="glyphicon glyphicon-edit"></i>&nbsp;' . substr($r["codice"], 0, 3) . '</a></td>
+      <td class="'.$color_class.'"></td>
+      <td class="'.$color_class.'" colspan="5"><strong><i class="glyphicon glyphicon-list"></i> ' . $r["descri"] . '</strong></td>
+      <td class="'.$color_class.' text-center">';
+      if (isset($conferma) OR $check_moc>0){
+      ?>
+        <button title="Non è possibile cancellare questo conto: il mastro deve essere vuoto e non ci possono essere movimenti contabili." class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-remove"></i></button>
+      <?php
+      } else {
+        ?>
+        <a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il conto" ref="<?php echo $r['codice'];?>" descri="<?php echo $r['descri'];?>">
+          <i class="glyphicon glyphicon-remove"></i>
+        </a>
+        <?php
+      }
+      echo "</td></tr>";
+    } else {
+      echo '<tr class="' . $collapse.' collapse tr_piacon" aria-expanded="false"><td class="noborder tr_piacon"> </td>
+            <td class="'.$color_class.'"><a class="btn btn-xs btn-default" href="admin_piacon.php?Update&amp;codice=' . $r["codice"] . '" title="' . $script_transl['edit_account'] . '"><i class="glyphicon glyphicon-edit"></i>&nbsp;' . substr($r["codice"], 3) . '</a></td>
+            <td class="'.$color_class.'">' . $r["descri"] . ' </td>
+            <td class="'.$color_class.' text-right">' . gaz_format_number($r2["dare"]) . ' </td>
+            <td class="'.$color_class.' text-right">' . gaz_format_number($r2["avere"]) . ' </td>
+            <td class="'.$color_class.' text-right">' . gaz_format_number($r2["dare"] - $r2["avere"]) . ' </td>
+            <td class="'.$color_class.' text-center" title="Visualizza e stampa il paritario"><a class="btn btn-xs btn-default" href="select_partit.php?id=' . $r["codice"] . '" target="_blank"> <i class="glyphicon glyphicon-check"></i>&nbsp;<i class="glyphicon glyphicon-print"></i></a></td>
+            <td class="'.$color_class.' text-center">';
+              if (isset($conferma) OR $check_moc>0){
+              ?>
+                <a class="btn btn-xs btn-default btn-elimina " title="Non è possibile cancellare questo conto: il mastro deve essere vuoto e non ci possono essere movimenti contabili.">
+                  <i class="glyphicon glyphicon-ban-circle"></i>
+                </a>
+              <?php
+              } else {
+                ?>
+                <a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il conto" ref="<?php echo $r['codice'];?>" descri="<?php echo $r['descri'];?>">
+                  <i class="glyphicon glyphicon-remove"></i>
+                </a>
+              <?php
+              }
+      echo "</td></tr>";
+    }
+	$ctrl_section = $v_section;
+}
+?>
+      </tbody>
+    </table>
+  </div>
 </form>
 <?php
 require("../../library/include/footer.php");

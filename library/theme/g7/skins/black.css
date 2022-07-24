@@ -103,18 +103,23 @@ html body.skin-blue.sidebar-mini.sidebar-collapse form div.wrapper header.main-h
 }
 .gaz-attivo {
   background-color: #E3F5FF;
+  color : #2d15d2;
 }
 .gaz-passivo {
   background-color: #FFF6EF;
+  color : #a65601;
 }
 .gaz-costi {
   background-color: #FDD;
+  color : #912626;
 }
 .gaz-ricavi {
   background-color: #EEFDED;
+  color : #045102;
 }
 .gaz-transitori {
   background-color: #F4D5FF;
+  color : #72019b;
 }
 td.ui-datepicker-other-month>a.ui-state-default.ui-priority-secondary{
 	color: #034802;
