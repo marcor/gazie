@@ -1334,7 +1334,7 @@ if ($modal_ok_insert === true) {
     <?php } ?>
             </div><!-- chiude tab-pane  -->
           </div>
-        <div class="col-sm-12">
+        <div class="col-sm-12 FacetFooterTD">
     <?php
     /** ENRICO FEDELE */
     /* SOlo se non sono in finestra modale */

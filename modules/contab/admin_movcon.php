@@ -1883,7 +1883,7 @@ echo "</script>\n";
     echo '  <td align="center"><button type="submit" class="btn btn-success btn-sm" name="add">'. $script_transl['addrow'] . '<i class="glyphicon glyphicon-ok"></i></button></td></tr>';
     echo '</table>';
     echo "</div>";
-    echo '<br/><div class="text-center"><input name="ins" id="preventDuplicate" class="btn btn-warning" onClick="chkSubmit();" type="submit" ' . $i_but . ' tabindex="99" value="' . ucfirst($script_transl[$toDo]) . ' il movimento contabile"></div>';
+    echo '<br/><div class="text-center FacetFooterTD"><input name="ins" id="preventDuplicate" class="btn btn-warning" onClick="chkSubmit();" type="submit" ' . $i_but . ' tabindex="99" value="' . ucfirst($script_transl[$toDo]) . ' il movimento contabile"></div>';
 
 // INIZIO creazione dialog-schedule dei partner
     for ($i = 0; $i < $_POST['rigcon']; $i++) {

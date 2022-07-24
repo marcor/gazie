@@ -354,9 +354,9 @@ echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['cover'] . "</td><td 
 $gForm->selCheckbox('cover', $form['cover']);
 echo "</td>\n";
 echo "</tr>\n";
-echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
-echo "<td align=\"left\"><input type=\"submit\" name=\"return\" value=\"" . $script_transl['return'] . "\">\n";
-echo '<td colspan="3" align="right"> <input type="submit" accesskey="i" name="preview" value="';
+echo "\t<tr class=\"FacetFooterTD\">\n";
+echo "<td></td>";
+echo '<td colspan="3" align="center"> <input type="submit" class="btn btn-warning" accesskey="i" name="preview" value="';
 echo $script_transl['view'];
 echo '" tabindex="100" >';
 echo "\t </td>\n";

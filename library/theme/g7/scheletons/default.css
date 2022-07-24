@@ -708,9 +708,9 @@ label {
         background-color: rgba(0, 0, 0, 0.04);
     }
 }
-    #gaz-responsive-table table{
-        padding: 2px;
-    }
+#gaz-responsive-table table{
+    padding: 2px;
+}
 
 .gaz-table-form {
     max-width: 990px;
@@ -718,15 +718,6 @@ label {
     margin-left: auto;
     margin-right: auto;
 }
-
-.gaz-table-form .form-group {
-    border-top:1px solid #ddd;
-}
-
-.gaz-table-form .form-group > label {
-    background-color: rgba(0, 0, 0, 0.04);
-}
-
 .ui-sortable-handle{
 	padding: 2px;
 }

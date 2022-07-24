@@ -212,12 +212,12 @@ echo "\t </select>\n";
 ?>
 </td>
 <tr>
-<tr>
-<td class="FacetFieldCaptionTD"><input type="submit" name="Return" value="Indietro">&nbsp;
+<tr class="FacetFooterTD">
+<td>
 </td>
-<td align="right" class="FacetFooterTD">
+<td align="center" ">
 <?php
-echo "<input type=\"submit\" class=\"btn btn-default\" name=\"stampa\" value=\"Stampa\" >\n";
+echo "<input type=\"submit\" class=\"btn btn-warning\" name=\"stampa\" value=\"Stampa\" >\n";
 ?>
 </td>
 </tr>

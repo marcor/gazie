@@ -43,7 +43,7 @@ input, textarea {
 	border: 1px solid #888;
 }
 .FacetColumnTD {
-  background-color: #daeada;
+  background-color: #4d121d;
   color: #fff;
 }
 .content-wrapper {
@@ -231,4 +231,7 @@ a, .panel-info {
 }
 .ui-dialog-content.ui-widget-content table#tblAppendGrid.table thead.thead-light tr th{
   background-color: #ccc;
+}
+.content-header > .breadcrumb > li > a {
+	background-color: transparent;
 }

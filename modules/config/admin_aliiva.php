@@ -164,12 +164,8 @@ echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl['annota'] . "</td
      <td class=\"FacetDataTD\">\n";
 echo '<textarea name="sedleg" rows="2" cols="60" maxlength="254" >'. $form['annota'].'</textarea>';
 echo "</td></tr>";
-echo "<tr>\n
-      <td class=\"FacetFieldCaptionTD\">
-      <input type=\"submit\" name=\"Return\" value=\"" . ucfirst($script_transl['return']) . "\">\n
-      <input type=\"reset\" name=\"Cancel\" value=\"" . ucfirst($script_transl['cancel']) . "\">\n
-      </td><td class=\"FacetDataTD\" align=\"right\">\n";
-echo '<input name="Submit" title="Accetta tutto e modifica" type="submit" value=' . ucfirst($script_transl['submit']) . '>';
+echo '<tr class="FacetFooterTD"><td></td><td align="center">';
+echo '<input name="Submit" class="btn btn-warning" title="Accetta tutto e modifica" type="submit" value=' . ucfirst($script_transl['submit']) . '>';
 ?>
 </td>
 </tr>

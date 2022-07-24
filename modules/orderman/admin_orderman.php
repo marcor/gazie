@@ -950,45 +950,45 @@ if ($toDo == 'update') {
     $title = ucwords($script_transl['ins_this']);
 }
 //echo "<pre>",print_r($form);
-print "<form method=\"POST\" name=\"myform\" enctype=\"multipart/form-data\">\n";
-print "<input type=\"hidden\" name=\"" . ucfirst($toDo) . "\" value=\"\">\n";
-print "<input type=\"hidden\" value=\"" . $_POST['ritorno'] . "\" name=\"ritorno\">\n";
-print "<input type=\"hidden\" name=\"hidden_req\" value=\"TRUE\">\n"; // per auto submit on change select input
-print "<div align=\"center\" class=\"FacetFormHeaderFont\">$title</div>";
-print "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" class=\"FacetFormTABLE\" align=\"center\">\n";
-$class="btn-success";$addvalue="";
+echo "<form method=\"POST\" name=\"myform\" enctype=\"multipart/form-data\">\n";
+echo "<input type=\"hidden\" name=\"" . ucfirst($toDo) . "\" value=\"\">\n";
+echo "<input type=\"hidden\" value=\"" . $_POST['ritorno'] . "\" name=\"ritorno\">\n";
+echo "<input type=\"hidden\" name=\"hidden_req\" value=\"TRUE\">\n"; // per auto submit on change select input
+echo "<div align=\"center\" class=\"FacetFormHeaderFont\">$title</div>";
+echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" class=\"FacetFormTABLE\" align=\"center\">\n";
+$addvalue="";
 if (!empty($msg)) {
-    $message = "";
-    $rsmsg = array_slice(explode('+', chop($msg)), 0, -1);
-    foreach ($rsmsg as $value) {
-        $message.= $script_transl['error'] . "! -> ";
-        $rsval = explode('-', chop($value));
-        foreach ($rsval as $valmsg) {
-            $message.= $script_transl[$valmsg] . " ";
-        }
-        $message.= "<br />";
-    }
-    echo '<tr><td colspan="5" class="FacetDataTDred">' . $message . "</td></tr>\n";
+  $message = "";
+  $rsmsg = array_slice(explode('+', chop($msg)), 0, -1);
+  foreach ($rsmsg as $value) {
+      $message.= $script_transl['error'] . "! -> ";
+      $rsval = explode('-', chop($value));
+      foreach ($rsval as $valmsg) {
+          $message.= $script_transl[$valmsg] . " ";
+      }
+      $message.= "<br />";
+  }
+  echo '<tr><td colspan="5" class="FacetDataTDred">' . $message . "</td></tr>\n";
 }
 if (!empty($warnmsg)) {
-    $message = "";
-	$class="btn-danger"; $addvalue=" nonostante l'avviso";
-    $rsmsg = array_slice(explode('+', chop($warnmsg)), 0, -1);
-    foreach ($rsmsg as $value) {
-        $message.= $script_transl['warning'] . "! -> ";
-        $rsval = explode('-', chop($value));
-        foreach ($rsval as $valmsg) {
-            $message.= $script_transl[$valmsg] . " ";
-        }
-        $message.= "<br />";
+  $message = "";
+	$addvalue=" nonostante l'avviso";
+  $rsmsg = array_slice(explode('+', chop($warnmsg)), 0, -1);
+  foreach ($rsmsg as $value) {
+    $message.= $script_transl['warning'] . "! -> ";
+    $rsval = explode('-', chop($value));
+    foreach ($rsval as $valmsg) {
+        $message.= $script_transl[$valmsg] . " ";
     }
-    echo '<tr><td colspan="5" class="FacetDataTDred">' . $message . "</td></tr>\n";
+    $message.= "<br />";
+  }
+  echo '<tr><td colspan="5" class="FacetDataTDred">' . $message . "</td></tr>\n";
 }
 if ($toDo == 'update') {
-    print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[0]</td><td class=\"FacetDataTD\"><input type=\"hidden\" name=\"id\" value=\"" . $form['id'] . "\" />" . $form['id'] . "</td></tr>\n";
+  echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[0]</td><td class=\"FacetDataTD\"><input type=\"hidden\" name=\"id\" value=\"" . $form['id'] . "\" />" . $form['id'] . "</td></tr>\n";
 }
 // Antonio Germani > inserimento tipo di produzione
-print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"FacetDataTD\">";
+echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"FacetDataTD\">";
 ?>
 <script>
   $(function() {
@@ -1609,7 +1609,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 	</tr>
 	<?php
 } else { // se è produzione agricola
-   print "<tr><td><input type=\"hidden\" name=\"order\" value=\"\">";
+   echo "<tr><td><input type=\"hidden\" name=\"order\" value=\"\">";
 	?>
 	<!-- Antonio Germani > inserimento articolo	con autocomplete dalla tabella artico-->
 	<tr>
@@ -1691,9 +1691,9 @@ if (!isset($form['datemi']) || strlen($form['datemi'])==0 || intval($form['datem
 }
 // Antonio Germani > DURATA produzione
 
-print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[11]</td>";
+echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[11]</td>";
 
-print "<td class=\"FacetDataTD\"><input type=\"number\" name=\"day_of_validity\" min=\"0\" maxlength=\"3\" step=\"any\"  size=\"10\" value=\"" . $form['day_of_validity'] . "\"  /></td></tr>\n";
+echo "<td class=\"FacetDataTD\"><input type=\"number\" name=\"day_of_validity\" min=\"0\" maxlength=\"3\" step=\"any\"  size=\"10\" value=\"" . $form['day_of_validity'] . "\"  /></td></tr>\n";
 /*Antonio Germani LUOGO di produzione  */
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[7] . "</td><td class=\"FacetDataTD\">\n";
 // SELECT luogo di produzione da campi
@@ -1729,16 +1729,16 @@ if ($sel==0){
 
 <!-- Inserimento data inizio lavori -->
 <tr>
-  <td class=\"FacetFieldCaptionTD\"><?php echo $script_transl[33]; ?></td>
-  <td class=\"FacetDataTD\">
+  <td class="FacetFieldCaptionTD"><?php echo $script_transl[33]; ?></td>
+  <td class="FacetDataTD">
   <?php echo gaz_select_data ( "iniprod", $form['iniprod'] ),"&nbsp; Ora inizio ", gaz_select_ora ( "iniprodtime", $form['iniprodtime'] ); ?>
   </td>
 </tr>
 
 <!-- Inserimento data fine lavori -->
 <tr>
-  <td class=\"FacetFieldCaptionTD\"><?php echo $script_transl[34]; ?></td>
-  <td class=\"FacetDataTD\">
+  <td class="FacetFieldCaptionTD"><?php echo $script_transl[34]; ?></td>
+  <td class="FacetDataTD">
   <?php echo gaz_select_data ( "fineprod", $form['fineprod'] ),"&nbsp;Ora fine ", gaz_select_ora ( "fineprodtime", $form['fineprodtime'] ); ?>
   </td>
 </tr>
@@ -1796,31 +1796,29 @@ if ($form['order_type'] <> "AGR") { // input esclusi se NON produzione agricola
 
     // fine LOTTI in entrata
 } else { //se è produzione agricola
-  print "<tr><td><input type=\"hidden\" name=\"nmov\" value=\"0\">";
-  print "<input type=\"hidden\" name=\"nmovdb\" value=\"\">\n";
-  // print "<input type=\"hidden\" name=\"staff0\" value=\"\">\n";
-  print "<input type=\"hidden\" name=\"filename\" value=\"\">\n";
-  print "<input type=\"hidden\" name=\"expiry\" value=\"\">\n";
-  print "<input type=\"hidden\" name=\"identifier\" value=\"\">\n";
-  print "<input type=\"hidden\" name=\"id_lotmag\" value=\"\">\n";
-	print "<input type=\"hidden\" name=\"SIAN\" value=\"\">\n";
-	print "<input type=\"hidden\" name=\"quality\" value=\"\">\n";
-  print "<input type=\"hidden\" name=\"lot_or_serial\" value=\"\"></td></tr>";
+  echo "<tr><td><input type=\"hidden\" name=\"nmov\" value=\"0\">";
+  echo "<input type=\"hidden\" name=\"nmovdb\" value=\"\">\n";
+  // echo "<input type=\"hidden\" name=\"staff0\" value=\"\">\n";
+  echo "<input type=\"hidden\" name=\"filename\" value=\"\">\n";
+  echo "<input type=\"hidden\" name=\"expiry\" value=\"\">\n";
+  echo "<input type=\"hidden\" name=\"identifier\" value=\"\">\n";
+  echo "<input type=\"hidden\" name=\"id_lotmag\" value=\"\">\n";
+	echo "<input type=\"hidden\" name=\"SIAN\" value=\"\">\n";
+	echo "<input type=\"hidden\" name=\"quality\" value=\"\">\n";
+  echo "<input type=\"hidden\" name=\"lot_or_serial\" value=\"\"></td></tr>";
 }
 if ($popup <> 1) {
-    //ANNULLA/RESET NON FUNZIONA DA RIVEDERE > print "<tr><td class=\"FacetFieldCaptionTD\"><input type=\"reset\" name=\"Cancel\" value=\"".$script_transl['cancel']."\">\n";
-    print "<tr><td style=\"padding-top: 10px; text-align:center;\" class=\"FacetDataTD\" >\n";
-    print "<input type=\"submit\" name=\"Return\" value=\"" . $script_transl['return'] . "\">\n</td><td style=\"padding-top: 10px; text-align:center;\" class=\"FacetDataTD\">";
+  echo '<tr><td></td><td class="text-center" >';
 } else {
-    print "<tr><td>&nbsp;</td><td style=\"padding-top: 10px; text-align:center;\" class=\"FacetDataTD\" >";
+  echo '<tr class="FacetFooterTD"><td></td><td class="text-center" >';
 }
 
 if ($toDo == 'update') {
-    print '<input type="submit" accesskey="m" class="btn '.$class.'" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="' . ucfirst($script_transl['update']) . $addvalue . '">';
+    echo '<input type="submit" accesskey="m" class="btn btn-warning" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="' . ucfirst($script_transl['update']) . $addvalue . '">';
 } else {
-    print '<input type="submit" accesskey="i" class="btn '.$class.'" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="' . ucfirst($script_transl['insert']) . $addvalue . '">';
+    echo '<input type="submit" accesskey="i" class="btn btn-warning" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="' . ucfirst($script_transl['insert']) . $addvalue . '">';
 }
-print "</td></tr></table>\n";
+echo "</td></tr></table>\n";
 ?>
 </form>
 <?php

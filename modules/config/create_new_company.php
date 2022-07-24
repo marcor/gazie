@@ -34,7 +34,7 @@ function createNewTable($table, $new_id) {
 
     $key = 'Create Table';
     if (array_key_exists('Create View', $row)) $key = 'Create View';
-	// aggiung una query per l'azzeramento dell'eventuale auto_increment 
+	// aggiung una query per l'azzeramento dell'eventuale auto_increment
 	$prep_sql=$row[$key].";\n";
 	if (preg_match("/AUTO_INCREMENT=/i", $prep_sql) && preg_match("/$table_prefix\_[0-9]{3}/", $prep_sql)) {
 		$prep_sql."ALTER TABLE `".$table."` AUTO_INCREMENT=0;\n";
@@ -107,7 +107,7 @@ if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
                     // svuoto la colonna val
                     $sql = " UPDATE `" . preg_replace("/$table_prefix\_[0-9]{3}/", $table_prefix . sprintf('_%03d', $form['codice']), $r[0]) . "`  SET val ='' ;\n\n";
                     gaz_dbi_query($sql);
-                } elseif (preg_match("/[a-zA-Z0-9]*.company_data$/", $r[0])) { // questa tabella con altri dati aziendali la popolo ma senza valori della colonna "data" 
+                } elseif (preg_match("/[a-zA-Z0-9]*.company_data$/", $r[0])) { // questa tabella con altri dati aziendali la popolo ma senza valori della colonna "data"
                     $sql = " INSERT INTO `" . preg_replace("/$table_prefix\_[0-9]{3}/", $table_prefix . sprintf('_%03d', $form['codice']), $r[0]) . "`  SELECT * FROM `" . $r[0] . "` ;\n\n";
                     gaz_dbi_query($sql);
                     // svuoto la colonna data
@@ -190,16 +190,16 @@ if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
                 mkdir($dst, 0740);
 				$src = '../../library/images/default';
 				$dir = opendir($src);
-				while(false !== ( $file = readdir($dir)) ) { 
-					if (( $file != '.' ) && ( $file != '..' )) { 
-						if ( is_dir($src . '/' . $file) ) { 
-							// recurse_copy($src . '/' . $file,$dst . '/' . $file); 
-						} else { 
-							copy($src . '/' . $file,$dst . '/' . $file); 
-						} 
-					} 
-				} 
-				closedir($dir); 
+				while(false !== ( $file = readdir($dir)) ) {
+					if (( $file != '.' ) && ( $file != '..' )) {
+						if ( is_dir($src . '/' . $file) ) {
+							// recurse_copy($src . '/' . $file,$dst . '/' . $file);
+						} else {
+							copy($src . '/' . $file,$dst . '/' . $file);
+						}
+					}
+				}
+				closedir($dir);
 				// creo la subdir per contenere le immagini relative all'azienda specifica
 				$dirimg = DATA_DIR . 'files/' . $form['codice'] . '/images';
                 mkdir($dirimg, 0740);
@@ -266,13 +266,10 @@ $gForm->selCheckbox('users', $form['users']);
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['sqn'] . "</td>";
+echo "\t<td class=\"FacetFooterTD\">".$script_transl['sqn']."</td>";
 echo "\t </td>\n";
-echo "\t<td  class=\"FacetDataTD\">\n";
-echo '<input name="Return" type="submit" value="' . $script_transl['return'] . '">';
-echo "\t </td>\n";
-echo "\t<td  class=\"FacetDataTD\" align=\"right\">\n";
-echo '<input name="Submit" type="submit" value="' . ucfirst($script_transl['submit']) . '">';
+echo '<td colspan=2 class="FacetFooterTD text-center">';
+echo '<input name="Submit" class="btn btn-warning" type="submit" value="'.ucfirst($script_transl['submit']).'">';
 echo "\t </td>\n";
 echo "</tr>\n";
 ?>

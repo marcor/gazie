@@ -237,15 +237,12 @@ echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[13] . "</td>
      <td class=\"FacetDataTD\">\n";
 echo "\t<input type=\"text\" name=\"annota\" value=\"" . $form['annota'] . "\" maxlength=\"50\"  class=\"FacetInput\">\n";
 echo "</td></tr>";
-echo "<tr>\n
-      <td class=\"FacetFieldCaptionTD\">
-      <input type=\"submit\" name=\"Return\" value=\"" . ucfirst($script_transl['return']) . "\">\n
-      <input type=\"reset\" name=\"Cancel\" value=\"" . ucfirst($script_transl['cancel']) . "\">\n
-      </td><td class=\"FacetDataTD\" align=\"right\">\n";
+echo "<tr class=\"FacetFooterTD\"><td>
+      </td><td align=\"center\">\n";
 if ($toDo == 'update') {
-    echo '<input name="Submit" title="Accetta tutto e modifica" type="submit" value="Modifica">';
+    echo '<input name="Submit" class="btn btn-warning" title="Accetta tutto e modifica" type="submit" value="Modifica">';
 } else {
-    echo '<input name="Submit" title="Accetta tutto e inserisce" type="submit" value="Inserisci">';
+    echo '<input name="Submit" class="btn btn-warning" title="Accetta tutto e inserisce" type="submit" value="Inserisci">';
 }
 ?>
 </td>

@@ -201,7 +201,7 @@ echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['eof']."</td><td  class=\"FacetDataTD\">\n";
 $gForm->variousSelect('addbol',$script_transl['eof_value'],$form['addbol'],'FacetSelect',0,'eof');
 echo "\t </td>\n";
-// qui aggiungo i dati necessari in fase di pagamento delle fatture di acquisto con bonifico bancario (sullo scadenzario) per poter proporre le eventuali spese per bonifico ed il relativo conto di costo di addebito 
+// qui aggiungo i dati necessari in fase di pagamento delle fatture di acquisto con bonifico bancario (sullo scadenzario) per poter proporre le eventuali spese per bonifico ed il relativo conto di costo di addebito
 echo "</tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['transfer_fees']."</td><td class=\"FacetDataTD\">
        <input type=\"text\" name=\"maxrat\" value=\"".$form['maxrat']."\" maxlength=\"5\"  />
@@ -225,15 +225,13 @@ print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[12] </td><td class=\
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[13] </td><td class=\"FacetDataTD\">
        <input type=\"text\" name=\"annota\" value=\"".$form['annota']."\" maxlength=\"50\"  />
        </td></tr>\n";
-print "<tr><td class=\"FacetFieldCaptionTD\"><input type=\"reset\" name=\"Cancel\" value=\"".$script_transl['cancel']."\">\n";
-print "</td><td class=\"FacetDataTD\" align=\"right\">\n";
-print "<input type=\"submit\" name=\"Return\" value=\"".$script_transl['return']."\">\n";
-if ($toDo == 'update') {
-   print '<input type="submit" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="'.ucfirst($script_transl['update']).'!"></td></tr><tr></tr>';
-} else {
-   print '<input type="submit" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="'.ucfirst($script_transl['insert']).'!"></td></tr><tr></tr>';
-}
-print "</td></tr></table>\n";
+print "<tr>\n";
+echo "\t<td class=\"FacetFooterTD\">".$script_transl['sqn']."</td>";
+echo "\t </td>\n";
+echo '<td colspan=2 class="FacetFooterTD text-center">';
+echo '<input name="ins" class="btn btn-warning" type="submit" value="'.ucfirst($script_transl[$toDo]).'">';
+echo "\t </td>\n";
+print "</tr></table>\n";
 ?>
 </form>
 <?php

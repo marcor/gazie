@@ -294,14 +294,11 @@ echo "\t<td >".$script_transl['cigcup']." </td>\n";
 echo "\t<td colspan=\"2\" >
       <input type=\"text\" name=\"cigcup\" value=\"".$form['cigcup']."\"  maxlength=\"40\"   /></td>\n";
 echo "</tr>\n";
-echo "<tr>\n";
+echo "<tr class=\"FacetFooterTD\">\n";
 echo "\t<td >".$script_transl['sqn']."</td>";
 echo "\t </td>\n";
-echo "\t<td  >\n";
-echo '<input name="Return" type="submit" value="'.$script_transl['return'].'">';
-echo "\t </td>\n";
-echo "\t<td   align=\"right\">\n";
-echo '<input name="Submit" type="submit" value="'.ucfirst($script_transl[$toDo]).'">';
+echo "\t<td align=\"center\">\n";
+echo '<input name="Submit" class="btn btn-warning" type="submit" value="'.ucfirst($script_transl[$toDo]).'">';
 echo "\t </td>\n";
 echo "</tr>\n";
 ?>

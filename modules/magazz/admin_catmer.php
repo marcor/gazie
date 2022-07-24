@@ -132,7 +132,7 @@ echo "<form method=\"POST\" enctype=\"multipart/form-data\">\n";
 echo "<input type=\"hidden\" name=\"".ucfirst($toDo)."\" value=\"\">\n";
 echo "<input type=\"hidden\" value=\"".$_POST['ritorno']."\" name=\"ritorno\">\n";
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">$title</div>";
-echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" class=\"FacetFormTABLE\" align=\"center\">\n";
+echo "<table class=\"Tmiddle table\">\n";
 if (!empty($msg)) {
     $message = "";
     $rsmsg = array_slice( explode('+',chop($msg)),0,-1);
@@ -151,7 +151,7 @@ if ($toDo == 'update') {
 } else {
    echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"codice\" value=\"".$form['codice']."\" maxlength=\"3\"  /></td></tr>\n";
 }
-echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[2]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"descri\" value=\"".$form['descri']."\" maxlength=\"50\"  /></td></tr>\n";
+echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[2]*</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"descri\" value=\"".$form['descri']."\" maxlength=\"50\"  /></td></tr>\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\"><img src=\"../root/view.php?table=catmer&value=".$form['codice']."\" width=\"100\"></td>";
 echo "<td class=\"FacetDataTD\" align=\"center\">$script_transl[3]<br><input name=\"userfile\" type=\"file\" class=\"FacetDataTD\"></td>";
 echo "</tr>\n";
@@ -184,13 +184,11 @@ echo "</tr>\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[11]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"ref_ecommerce_id_category\" value=\"".$form['ref_ecommerce_id_category']."\" maxlength=\"4\"  /></td></tr>\n";
 echo "<tr>\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[5]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"annota\" value=\"".$form['annota']."\" maxlength=\"50\"  />\n";
-echo "</select></td></tr><tr><td class=\"FacetFieldCaptionTD\">\n";
-echo "</td><td class=\"FacetDataTD\" align=\"right\">\n";
-if ($toDo == 'update') {
-   echo '<input type="submit" accesskey="m" name="ins" id="preventDuplicate" class="btn btn-warning pull-left" onClick="chkSubmit();" value="'.ucfirst($script_transl['update']).'"></td></tr><tr></tr>';
-} else {
-   echo '<input type="submit" accesskey="i" name="ins" id="preventDuplicate" class="btn btn-success pull-left" onClick="chkSubmit();" value="'.ucfirst($script_transl['insert']).'"></td></tr><tr></tr>';
-}
+echo "</select></td></tr><tr>";
+echo "\t<td class=\"FacetFooterTD\">".$script_transl['sqn']."</td>";
+echo "\t </td>\n";
+echo '<td colspan=2 class="FacetFooterTD text-center">';
+echo '<input name="ins" class="btn btn-warning" type="submit" value="'.ucfirst($script_transl[$toDo]).'">';
 echo "</td></tr></table>\n";
 ?>
 </form>

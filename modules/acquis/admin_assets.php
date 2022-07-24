@@ -721,16 +721,10 @@ if ($toDo == 'update') { // allerto che le modifiche devono essere fatte anche s
                     </div>
                 </div>
             </div> <!-- chiude row  -->
-        </div><!-- chiude container  -->
-    </div><!-- chiude panel  -->
-    <div class="panel panel-info">
-        <div class="container-fluid">
             <div class="row">
-                    <div class="form-group">
-                        <div class="col-sm-12 text-center alert-success">
-                            <input name="ins" id="preventDuplicate" onClick="chkSubmit();" type="submit" value="<?php echo ucfirst($script_transl[$toDo]); ?>">
-                        </div>
-                    </div>
+              <div class=" col-xs-12 text-center FacetFooterTD">
+                <input name="ins" class="btn btn-warning" id="preventDuplicate" onClick="chkSubmit();" type="submit" value="<?php echo ucfirst($script_transl[$toDo]); ?>">
+              </div>
             </div> <!-- chiude row  -->
         </div><!-- chiude container  -->
     </div><!-- chiude panel  -->

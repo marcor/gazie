@@ -144,45 +144,45 @@ if ($form['id'] == 0 ) { // inserimento
 <?php
 }
 ?>
-<div class="panel panel-default gaz-table-form div-bordered">
+<div class="panel panel-default gaz-table-form">
   <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="name" class="col-sm-4 control-label"><?php echo $script_transl['name']; ?> *</label>
-                    <input class="col-sm-8" type="text" value="<?php echo $form['name']; ?>" name="name" minlenght="4" maxlength="50"/>
-                </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="name" class="col-sm-4 control-label"><?php echo $script_transl['name']; ?> *</label>
+                <input class="col-sm-8" type="text" value="<?php echo $form['name']; ?>" name="name" minlenght="4" maxlength="50"/>
             </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="image" class="col-sm-4 control-label"><img src="../root/view.php?table=warehouse&field=id&value=<?php echo $form['id']; ?>" width="100" >*</label>
-                    <div class="col-sm-8"><?php echo $script_transl['image']; ?><input type="file" name="userfile" /></div>
-                </div>
+        </div>
+    </div><!-- chiude row  -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="image" class="col-sm-4 control-label"><img src="../root/view.php?table=warehouse&field=id&value=<?php echo $form['id']; ?>" width="100" >*</label>
+                <div class="col-sm-8"><?php echo $script_transl['image']; ?><input type="file" name="userfile" /></div>
             </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="web_url" class="col-sm-4 control-label"><?php echo $script_transl['web_url']; ?></label>
-                    <input class="col-sm-8" type="text" value="<?php echo $form['web_url']; ?>" name="web_url" maxlength="255"/>
-                </div>
+        </div>
+    </div><!-- chiude row  -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="web_url" class="col-sm-4 control-label"><?php echo $script_transl['web_url']; ?></label>
+                <input class="col-sm-8" type="text" value="<?php echo $form['web_url']; ?>" name="web_url" maxlength="255"/>
             </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="note_other" class="col-sm-4 control-label"><?php echo $script_transl['note_other']; ?></label>
-                    <input class="col-sm-4" type="text" value="<?php echo $form['note_other']; ?>" name="note_other" id="note_other" maxlength="50"/>
-                </div>
+        </div>
+    </div><!-- chiude row  -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="note_other" class="col-sm-4 control-label"><?php echo $script_transl['note_other']; ?></label>
+                <input class="col-sm-4" type="text" value="<?php echo $form['note_other']; ?>" name="note_other" id="note_other" maxlength="50"/>
             </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12 text-center">
-            <input class="btn btn-warning" id="preventDuplicate" onClick="chkSubmit();" type="submit" name="ins" value="<?php echo $script_transl['submit']; ?>" />
-            </div>
-        </div><!-- chiude row  -->
+        </div>
+    </div><!-- chiude row  -->
+    <div class="row">
+        <div class="col-md-12 text-center FacetFooterTD">
+        <input class="btn btn-warning" id="preventDuplicate" onClick="chkSubmit();" type="submit" name="ins" value="<?php echo $script_transl['submit']; ?>" />
+        </div>
+    </div><!-- chiude row  -->
   </div>
 </div>
 </div>

@@ -41,14 +41,14 @@ if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
         if (strlen($form["ragso1"]) < 4) {
             if (!empty($form["legrap_pf_nome"]) && !empty($form["legrap_pf_cognome"]) && $form["sexper"] != 'G') {// setto la ragione sociale con l'eventuale legale rappresentante
                 $form["ragso1"] = strtoupper($form["legrap_pf_cognome"] . ' ' . $form["legrap_pf_nome"]);
-            } else { // altrimenti do errore                
+            } else { // altrimenti do errore
                 $msg['err'][] = 'ragso1';
             }
         }
         if (empty($form["indspe"])) {
             $msg['err'][] = 'indspe';
         }
-        // faccio i controlli sul codice postale 
+        // faccio i controlli sul codice postale
         $rs_pc = gaz_dbi_get_row($gTables['country'], 'iso', $form["country"]);
         if ( gaz_dbi_get_row($gTables['company_config'], 'var', 'check_cust_address')['val']==1 ) {
           $cap = new postal_code;
@@ -363,13 +363,13 @@ if (count($msg['err']) > 0) { // ho un errore
             </div>
         </div><!-- chiude row  -->
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-12 FacetFooterTD">
                 <div class="form-group text-center">
                     <input class="btn btn-warning" name="Submit" type="submit" value="<?php echo ucfirst($script_transl['update']); ?>">
                 </div>
             </div>
         </div><!-- chiude row  -->
-    </div> <!-- chiude container --> 
+    </div> <!-- chiude container -->
 </div><!-- chiude panel -->
 </form>
 <?php
