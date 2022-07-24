@@ -318,7 +318,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
         if ( $posizione == "report_received.php" ) $posizione = "report_scontr.php";
         if ( strpos($posizione, "VOG")!==false ) $posizione = "report_broven.php?auxil=VOR";
         $result    = gaz_dbi_dyn_query("*", $gTables['menu_module'] , ' link="'.$posizione.'" ',' id',0,1);
-        if (gaz_dbi_num_rows($result) > 0) {
+        if (!gaz_dbi_num_rows($result) > 0) {
           $posizionex = explode ("?",$posizione );
           $result    = gaz_dbi_dyn_query("*", $gTables['menu_module'] , ' link="'.$posizionex[0].'" ',' id',0,1);
         }
