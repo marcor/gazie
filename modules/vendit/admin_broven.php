@@ -1791,9 +1791,8 @@ foreach ($form['rows'] as $k => $v) {
 				$btn_class = 'btn-info';
 				$btn_title = " Senza magazzino";
 			}
-            /* Peso */
             $peso = 0;
-            if ($v['pesosp'] <> 0) {
+            if (is_numeric($v['pesosp']) && $v['pesosp'] <> 0) {
                 $peso = gaz_format_number($v['quanti'] / $v['pesosp']);
             }
             echo '	<td>
@@ -2352,7 +2351,7 @@ if ($next_row > 0) {
 					<td colspan="2" class="text-right">
 						<input name="prestampa" class="btn btn-info" onClick="preStampa();" type="button" value="Prestampa">
 					</td>
-					<td colspan="4" class="text-center">
+					<td colspan="4" class="text-center FacetFooterTD">
 						<input name="ins" class="btn '.$class_btn_confirm.'" id="preventDuplicate" onClick="chkSubmit();" type="submit" value="' . ucfirst($script_transl[$toDo]) . '">
 					</td>
 				';

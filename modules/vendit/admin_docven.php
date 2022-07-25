@@ -3519,7 +3519,7 @@ if ($next_row > 0) {
 		$addvalue=" Nonostante l'errore";
 	}
     echo '		<tr>
-					<td colspan="8" class="text-center FacetFieldCaptionTD">
+					<td colspan="8" class="text-center FacetFooterTD">
 						<input name="ins" class="btn '.$class_btn_confirm.'" id="preventDuplicate" onClick="chkSubmit();" type="submit" value="' . ucfirst($script_transl[$toDo]). @$addvalue . '">
 					</td>
 				</tr>';

@@ -544,21 +544,52 @@ echo "\t<td colspan=\"6\">\n";
 echo "<textarea id=\"body_text\" name=\"body_text\" class=\"mceClass\" style=\"width:100%;height:400px;\" >".$form['body_text']."</textarea>\n";
 echo "</td></tr>\n";
 echo "</table></div>\n";
-echo "<div class=\"table-responsive\"><table class=\"Tlarge table table-striped table-bordered table-condensed\">\n";
+echo "<div class=\"table-responsive\"><table class=\"Tlarge table table-striped\">\n";
+if ($next_row>0) {
+    echo "<tr class=\"bg-info text-center\"><td colspan=\"8\"><b>".$script_transl['insrow']."</b></td></tr>\n";
+    foreach ($form['rows'] as $k=>$val) {
+            $nr=$k+1;
+            $aliiva = gaz_dbi_get_row($gTables['aliiva'],'codice',$val['vat_code']);
+            echo "<input type=\"hidden\" value=\"".$val['status']."\" name=\"rows[$k][status]\">\n";
+            echo "<input type=\"hidden\" value=\"".$val['vat_code']."\" name=\"rows[$k][vat_code]\">\n";
+            echo "<input type=\"hidden\" value=\"".$val['cod_revenue']."\" name=\"rows[$k][cod_revenue]\">\n";
+            echo "<tr class=\"FacetFieldCaptionTD\">\n";
+            echo "<td colspan=\"3\">$nr<input type=\"text\" name=\"rows[$k][descri]\" value=\"".$val['descri']."\" maxlength=\"100\" />
+                  ".$script_transl['cod_revenue'].": ".$val['cod_revenue']." - ".$aliiva['descri']."</td>\n";
+            echo "<td><input type=\"text\" name=\"rows[$k][unimis]\" value=\"".$val['unimis']."\" maxlength=\"3\" /></td>\n";
+            echo "<td><input type=\"text\" style=\"text-align:right\" name=\"rows[$k][quanti]\" value=\"".$val['quanti']."\" maxlength=\"11\" /></td>\n";
+            echo "<td><input type=\"text\" style=\"text-align:right\" name=\"rows[$k][price]\" value=\"".$val['price']."\" maxlength=\"15\" /></td>\n";
+            echo "<td><input type=\"text\" style=\"text-align:right\" name=\"rows[$k][discount]\" value=\"".$val['discount']."\" maxlength=\"4\" /></td>\n";
+
+			//echo "<td align=\"right\"><input type=\"image\" name=\"del[$k]\" src=\"../../library/images/xbut.gif\" title=\"".$script_transl['delete'].$script_transl['thisrow']."!\" /></td></tr>\n";
+
+		   /** ENRICO FEDELE */
+		   /* glyph icon */
+		   echo '  <td align="right">
+					 <button type="submit" class="btn btn-default btn-sm" name="del['.$k.']" title="'.$script_transl['delete'].$script_transl['thisrow'].'"><i class="glyphicon glyphicon-remove"></i></button>
+				   </td>
+				 </tr>';
+		   /** ENRICO FEDELE */
+
+			echo "\t </tr>\n";
+    }
+}
+echo "</table></div><br/>\n";
+echo "<div class=\"table-responsive\"><table class=\"Tlarge table input-area\">\n";
 echo "<tr>\n";
-echo "\t<td colspan=\"8\" align=\"center\">".$script_transl['rows_title']."</td>\n";
+echo "\t<td colspan=\"8\" align=\"center\"><b>".$script_transl['rows_title']."</b></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "<input type=\"hidden\" value=\"".$form['hidden_req']."\" name=\"hidden_req\" />\n";
 echo "<input type=\"hidden\" value=\"".$form['in_status']."\" name=\"in_status\" />\n";
-echo "\t<tr class=\"FacetColumnTD\" align=\"center\">\n";
+echo "\t<tr align=\"center\">\n";
 echo "\t<td colspan=\"3\">".$script_transl['descri']."</td>\n";
 echo "\t<td>".$script_transl['unimis']."</td>\n";
 echo "\t<td>".$script_transl['quanti']."</td>\n";
 echo "\t<td>".$script_transl['price']."</td>\n";
 echo "\t<td>".$script_transl['discount']."</td>\n";
 echo "</tr>\n";
-echo "<tr class=\"FacetColumnTD\" align=\"center\">\n";
+echo "<tr align=\"center\">\n";
 echo "<td colspan=\"3\">\n";
 echo "<input type=\"text\" value=\"".$form['in_descri']."\" maxlength=\"100\" name=\"in_descri\">\n";
 echo "\t </td>\n";
@@ -575,16 +606,10 @@ echo "<td>\n";
 echo "<input type=\"text\" style=\"text-align:right\" value=\"".$form['in_discount']."\" maxlength=\"4\" name=\"in_discount\">";
 echo "\t </td>\n";
 echo "<td align=\"right\">\n";
-//echo "<input type=\"image\" name=\"in_submit\" src=\"../../library/images/vbut.gif\" title=\"".$script_transl['submit'].$script_transl['thisrow']."!\">\n";
-
-/** ENRICO FEDELE */
-/* glyph-icon */
-echo '&nbsp;<button type="submit" class="btn btn-default btn-sm" name="in_submit" title="'.$script_transl['submit'].$script_transl['thisrow'].'"><i class="glyphicon glyphicon-ok"></i></button>';
-	   /** ENRICO FEDELE */
-
+echo '&nbsp;<button type="submit" class="btn btn-success" name="in_submit"><i class="glyphicon glyphicon-ok"></i> '.$script_transl['insert'].$script_transl['thisrow'].'</button>';
 echo "\t </td>\n";
 echo "\t </tr>\n";
-echo "\t<tr class=\"FacetColumnTD\">\n";
+echo "\t<tr>\n";
 echo "<td colspan=\"7\">\n";
 echo $script_transl['vat_code'].' :';
 $gForm->selectFromDB('aliiva','in_vat_code','codice',$form['in_vat_code'],'codice',0,' - ','descri');
@@ -594,37 +619,8 @@ $select_cod_revenue -> addSelected($form['in_cod_revenue']);
 $select_cod_revenue -> output(substr($form['in_cod_revenue'],0,1));
 echo "\t </td>\n";
 echo "\t </tr>\n";
-if ($next_row>0) {
-    echo "<tr class=\"FacetFieldCaptionTD\"><td colspan=\"8\">".$script_transl['insrow']." :</td></tr>\n";
-    foreach ($form['rows'] as $k=>$val) {
-            $nr=$k+1;
-            $aliiva = gaz_dbi_get_row($gTables['aliiva'],'codice',$val['vat_code']);
-            echo "<input type=\"hidden\" value=\"".$val['status']."\" name=\"rows[$k][status]\">\n";
-            echo "<input type=\"hidden\" value=\"".$val['vat_code']."\" name=\"rows[$k][vat_code]\">\n";
-            echo "<input type=\"hidden\" value=\"".$val['cod_revenue']."\" name=\"rows[$k][cod_revenue]\">\n";
-            echo "<tr class=\"FacetFieldCaptionTD\">\n";
-            echo "<td colspan=\"3\">$nr<input type=\"text\" name=\"rows[$k][descri]\" value=\"".$val['descri']."\" maxlength=\"100\" />
-                  ".$script_transl['cod_revenue'].": ".$val['cod_revenue']." - ".$aliiva['descri']."</td>\n";
-            echo "<td><input type=\"text\" name=\"rows[$k][unimis]\" value=\"".$val['unimis']."\" maxlength=\"3\" /></td>\n";
-            echo "<td><input type=\"text\" style=\"text-align:right\" name=\"rows[$k][quanti]\" value=\"".$val['quanti']."\" maxlength=\"11\" /></td>\n";
-            echo "<td><input type=\"text\" style=\"text-align:right\" name=\"rows[$k][price]\" value=\"".$val['price']."\" maxlength=\"15\" /></td>\n";
-            echo "<td><input type=\"text\" style=\"text-align:right\" name=\"rows[$k][discount]\" value=\"".$val['discount']."\" maxlength=\"4\" /></td>\n";
-            
-			//echo "<td align=\"right\"><input type=\"image\" name=\"del[$k]\" src=\"../../library/images/xbut.gif\" title=\"".$script_transl['delete'].$script_transl['thisrow']."!\" /></td></tr>\n";
-            
-		   /** ENRICO FEDELE */
-		   /* glyph icon */
-		   echo '  <td align="right">
-					 <button type="submit" class="btn btn-default btn-sm" name="del['.$k.']" title="'.$script_transl['delete'].$script_transl['thisrow'].'"><i class="glyphicon glyphicon-remove"></i></button>
-				   </td>
-				 </tr>';
-		   /** ENRICO FEDELE */
-			
-			echo "\t </tr>\n";
-    }
-}
-echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
-echo '<td colspan="6" align="right"> <input type="submit" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="';
+echo "\t<tr class=\"FacetFooterTD\">\n";
+echo '<td colspan=8 align="center"> <input type="submit" class="btn btn-warning" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="';
 echo $script_transl['submit'];
 echo '" tabindex="100" >';
 echo "\t </td>\n";

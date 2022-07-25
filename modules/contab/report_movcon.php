@@ -252,7 +252,6 @@ function printPdf(urlPrintDoc){
 <?php
 $anagrafica = new Anagrafica();
 while ($a_row = gaz_dbi_fetch_array($result)) {
-
     $paymov = false;
     if (substr($a_row["clfoco"], 0, 3) == $admin_aziend['mascli'] || substr($a_row["clfoco"], 0, 3) == $admin_aziend['masfor']) {
         if (substr($a_row["clfoco"], 0, 3) == $admin_aziend['mascli']) {
@@ -265,18 +264,18 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     } elseif(substr($a_row["clfoco"], 0, 3) == $admin_aziend['mas_staff']){
         $account = $anagrafica->getPartner($a_row["clfoco"], true);
         if ((!empty($account['descri']) || !empty($a_row['numdoc'])) && $a_row['caucon'] != 'APE' && $a_row['caucon'] != 'CHI'){
-            $a_row['descri'].=' ('.$account['descri'].')';
+            $a_row['descri'].=' ('.($account==null?'':$account['descri']).')';
         }
-	}
+    }
     // INIZIO crezione tabella per la visualizzazione sul tootip di tutto il movimento e facccio la somma del totale movimento
     $res_rig = gaz_dbi_dyn_query("*", $gTables['rigmoc'], 'id_tes=' . $a_row["id_tes"], 'id_rig');
     $tt = '<table><tr style="background-color: #fff; color: #000;"><td colspan=3 >' . $a_row['descri'] . '</td></tr>';
     $tot = 0.00;
     while ($rr = gaz_dbi_fetch_array($res_rig)) {
         $account = $anagrafica->getPartner($rr["codcon"], true);
-        $tt .= '<tr><td align="left">' .htmlspecialchars( $account['descri'] ) . '</td><td align=right>' . $rr['import'] . '</td><td align=right>' . $rr['darave'] . '</td></tr>';
+        $tt .= '<tr><td align="left">'.($account==null?'':htmlspecialchars($account['descri'])).'</td><td align=right>'.$rr['import'].'</td><td align=right>' . $rr['darave'] . '</td></tr>';
         if ($rr['darave'] == 'D') {
-            $tot += $rr['import'];
+          $tot += $rr['import'];
         }
     }
     $tt .= '</table>';

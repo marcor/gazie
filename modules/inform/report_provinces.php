@@ -10,10 +10,12 @@
   modificarlo secondo i  termini della Licenza Pubblica Generica GNU
   come e` pubblicata dalla Free Software Foundation; o la versione 2
   della licenza o (a propria scelta) una versione successiva.
+
   Questo programma  e` distribuito nella speranza  che sia utile, ma
   SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
   NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
   veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
+
   Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
   Generica GNU insieme a   questo programma; in caso  contrario,  si
   scriva   alla   Free  Software Foundation, 51 Franklin Street,
@@ -45,13 +47,13 @@ require("../../library/include/header.php");
     $(window).load(function () {
         loadmore();
     });
-                                   
+
     function loadmore()
     {
         var rn = $("#row_no").val();
         var ob = $("#order_by").val();
         var so = $("#sort").val();
-        
+
         $.ajax({
             type: 'post',
             url: 'report_provinces_scroll.php',
@@ -92,7 +94,7 @@ require("../../library/include/header.php");
                 } else {
                     $("#sort").val('ASC');
                 }
-            } else { // una colonna diversa la cambio 
+            } else { // una colonna diversa la cambio
                 $("#order_by").val(v);
             }
             $("#row_no").val(0); // quando richiedo un nuovo ordinamento devo necessariamente ricominciare da zero
@@ -110,14 +112,14 @@ $gForm = new informForm();
 	<div class="panel panel-info">
 		<div class="container-fluid">
 			<div class="row">
-				<div class="col-lg-4">
-                <a class="btn btn-sm btn-edit" href="admin_provinces.php?Insert">
-                    <i class="glyphicon glyphicon-edit">				
+				<div class="col-xs-12 text-center">
+          <a class="btn btn-edit" href="admin_provinces.php?Insert">
+          <i class="glyphicon glyphicon-edit">
+					</i>
 					<?php
 					echo $script_transl['insert_pro'];
 					?>
-					</i>
-                </a>
+          </a>
 				</div>
 			</div>
 		</div>
@@ -126,7 +128,7 @@ $gForm = new informForm();
         <div id="gaz-responsive-table"  class="container-fluid">
             <table class="table table-responsive table-striped table-condensed cf">
                 <thead>
-                    <tr class="bg-success">              
+                    <tr class="bg-success">
                         <th>
                             <a href="#" class="orby" data-order="id">
                                 <?php echo $script_transl["id"]; ?>
@@ -155,19 +157,19 @@ $gForm = new informForm();
                         <th class="text-center">
                             <?php echo $script_transl["delete"]; ?>
                         </th>
-                    </tr>      
-                </thead>    
+                    </tr>
+                </thead>
                 <tbody id="all_rows">
-                </tbody>     
+                </tbody>
             </table>
-        </div>  
+        </div>
     </div>
     <input type="hidden" name="row_no" id="row_no" value="<?php echo $rn; ?>">
     <input type="hidden" name="order_by" id="order_by" value="<?php echo $ob; ?>">
     <input type="hidden" name="sort" id="sort" value="<?php echo $so; ?>">
 </form>
 <div id="loader-icon"><img src="../../library/images/ui-anim_basic_16x16.gif" />
-</div>  
+</div>
 <?php
 require("../../library/include/footer.php");
 ?>

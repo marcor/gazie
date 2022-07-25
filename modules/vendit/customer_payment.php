@@ -26,7 +26,7 @@ $msg = '';
 $paymov = new Schedule;
 $anagrafica = new Anagrafica();
 
-// funzione di utilità generale per catturare lo stdout di altre funzioni 
+// funzione di utilità generale per catturare lo stdout di altre funzioni
 function capture($fun, ...$args) {
     ob_start();
     $fun(...$args);
@@ -83,7 +83,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
         foreach ($_POST['paymov'] as $k => $v) {
             $form['paymov'][$k] = $v;  // qui dovrei fare il parsing
             $add_desc[$k] = 0.00;
-            foreach ($v as $ki => $vi) { // calcolo il totale 
+            foreach ($v as $ki => $vi) { // calcolo il totale
                 $acc_tot += $vi['amount'];
                 $add_desc[$k] += $vi['amount'];
             }
@@ -198,7 +198,7 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup'));
         cal.setReturnFunction('setMultipleValues');
         cal.showCalendar('anchor', mdy);
     }
-    // ricalcolo i valori in caso di cambiamenti sugli importi 
+    // ricalcolo i valori in caso di cambiamenti sugli importi
     $(document).ready(function () {
         $('#tablebody tr td [opcl]').change(function () {
             var sum = 0;
@@ -242,18 +242,18 @@ if (!empty($msg)) {
     echo '<tr><td colspan="2" class="FacetDataTDred">' . $gForm->outputErrors($msg, $script_transl['mesg']) . "</td></tr>\n";
 }
 
-$selectDate = capture(array($gForm, 'CalendarPopup'), 
-    'date_ini', 
-    $form['date_ini_D'], 
-    $form['date_ini_M'], 
-    $form['date_ini_Y'], 
+$selectDate = capture(array($gForm, 'CalendarPopup'),
+    'date_ini',
+    $form['date_ini_D'],
+    $form['date_ini_M'],
+    $form['date_ini_Y'],
     'FacetSelect', 1);
 
-$selectCustomer = capture(array($gForm, 'selectCustomer'), 
-    'partner', 
-    $form['partner'], 
-    $form['search']['partner'], 
-    $form['hidden_req'], 
+$selectCustomer = capture(array($gForm, 'selectCustomer'),
+    'partner',
+    $form['partner'],
+    $form['search']['partner'],
+    $form['hidden_req'],
     $script_transl['mesg']);
 ?>
         <tr>
@@ -275,7 +275,7 @@ $masban = $admin_aziend['masban'] * 1000000;
 $casse = substr($admin_aziend['cassa_'], 0, 3);
 $mascas = $casse * 1000000;
 //recupero i conti correnti
-$res = gaz_dbi_dyn_query('*', $gTables['clfoco'], "(codice LIKE '$casse%' AND codice > '$mascas') or (codice LIKE '{$admin_aziend['masban']}%' AND codice > '$masban')", "codice ASC"); 
+$res = gaz_dbi_dyn_query('*', $gTables['clfoco'], "(codice LIKE '$casse%' AND codice > '$mascas') or (codice LIKE '{$admin_aziend['masban']}%' AND codice > '$masban')", "codice ASC");
 echo '                <option value="0">--------------------------</option>' . "\n";
 while ($conto = gaz_dbi_fetch_array($res)) {
     $sel = "";
@@ -300,7 +300,7 @@ echo <<<END
 <!-- inizio modifica FP 09/01/2016 descrizione modificabile -->
         <tr>
             <td class="FacetFieldCaptionTD" colspan="2">{$script_transl['descr_mov']}</td>
-            <td class="FacetDataTD"> 
+            <td class="FacetDataTD">
                 <input type="text" name="descr_mov" value="{$form['descr_mov']}" maxlength="85">
             </td>
         </tr>
@@ -324,12 +324,12 @@ if ($form['partner'] > 100000000) { // partner selezionato
 
     <table id="tablebody" border="1" width="100%">
         <tr>
-            $linkHeadersOutput 
+            $linkHeadersOutput
         </tr>
 END;
 
     $saldoscadenzario = 0.00;
-    $form_tot=0.00;    
+    $form_tot=0.00;
     foreach ($paymov->PartnerStatus as $k => $v) {
         /** inizio modifica FP 28/11/2015
          * selezione solo il documento richiesto
@@ -353,8 +353,8 @@ END;
             echo ' n.' . $paymov->docData[$k]['numdoc'] . '/' . $paymov->docData[$k]['seziva'] . ' ' . $paymov->docData[$k]['datdoc'];
         }
 echo <<<END
-            
-                </a> 
+
+                </a>
                 REF: $k
             </td>
         </tr>
@@ -379,7 +379,7 @@ END;
                 $gg_esposti = $vi['expo_day'];
 //            if ($vi['cl_val'] == (float) $vi['op_val']) {
                 if ($diffValClOp < 0.01) {
-                    $vi['status'] = 2; // la partita è chiusa ma è esposta a rischio insolvenza 
+                    $vi['status'] = 2; // la partita è chiusa ma è esposta a rischio insolvenza
                     $class_paymov = 'FacetDataTDevidenziaOK';
                 }
             } else {
@@ -406,8 +406,8 @@ END;
             foreach ($vi['cl_rig_data'] as $vj) {
                 echo <<<END
 
-                <a class="btn btn-xs btn-edit"  
-                    href="../contab/admin_movcon.php?id_tes={$vj['id_tes']}&amp;Update" 
+                <a class="btn btn-xs btn-edit"
+                    href="../contab/admin_movcon.php?id_tes={$vj['id_tes']}&amp;Update"
                     title="{$script_transl['update']}:{$vj['descri']} € {$gaz_format_number($vj['import'])}">
                     <i class="glyphicon glyphicon-edit"></i>
                     {$vj['id_tes']}
@@ -419,14 +419,14 @@ END;
             }
             echo <<<END
 
-                $v_chiusura 
+                $v_chiusura
             </td>
             <td align="center"> $d_chiusura </td>
             <td align="center"> $gg_esposti </td>
             <td align="center"> {$script_transl['status_value'][$vi['status']]} &nbsp;</td>
 END;
         }
-        
+
         if (!isset($_POST['paymov'])) {
             $form['paymov'][$k][$ki]['amount'] = $amount;
             $form['paymov'][$k][$ki]['id_tesdoc_ref'] = $k;
@@ -447,10 +447,10 @@ END;
         <tr>
             <td colspan="7"></td>
             <td align="right">
-                <input style="text-align: right" type="text" 
-                    name="paymov[$k][$ki][amount]" 
-                    orival="$orival" 
-                    opcl="$open" 
+                <input style="text-align: right" type="text"
+                    name="paymov[$k][$ki][amount]"
+                    orival="$orival"
+                    opcl="$open"
                     value="$orival">
             </td>
         </tr>
@@ -461,17 +461,17 @@ END;
     echo '<tr><td colspan=4>';
 
     // se sto guardando solo un documento specifico non controllo lo sbilancio
-    if ($saldoscadenzario < $saldocontabile && !$isDocumentoSelezionato) {   
-        echo '<a class="btn btn-xs btn-danger col-xs-12" href="../inform/reconstruction_schedule.php?id_partner='.$form['partner'].'">Differenza saldi € '. gaz_format_number(abs($saldocontabile+$saldoscadenzario)).' prova a riallineare al saldo contabile di <b>€ '. gaz_format_number(abs($saldocontabile)).'</b></a>';
-            
+    if ($saldoscadenzario < $saldocontabile && !$isDocumentoSelezionato) {
+        echo '<a class="btn btn-danger col-xs-12" href="../inform/reconstruction_schedule.php?id_partner='.$form['partner'].'">Differenza saldi € '. gaz_format_number(abs($saldocontabile+$saldoscadenzario)).' prova a riallineare al saldo contabile di <b>€ '. gaz_format_number(abs($saldocontabile)).'</b></a>';
+
     }
-    echo '</td><td class="FacetFieldCaptionTD text-center" colspan=3 >
-                <input name="ins" id="preventDuplicate" 
-                    onClick="chkSubmit();" 
-                    type="submit" 
+    echo '</td><td class="FacetFooterTD text-center" colspan=3 >
+                <input class="btn btn-warning" name="ins" id="preventDuplicate"
+                    onClick="chkSubmit();"
+                    type="submit"
                     value="'.strtoupper($script_transl['insert']).'">
             </td><td class="text-right"><b>Totale: </b><input type="text" class="text-right" value="' . number_format($form_tot, 2, '.', '') . '" id="total" /></td>
-            
+
         </tr>
     </table>
 </form>';

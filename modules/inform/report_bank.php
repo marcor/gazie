@@ -44,8 +44,8 @@ $sortable_headers = array  (
 );
 $tablejoin = $gTables['bank']. " LEFT JOIN " . $gTables['municipalities'] . " ON " . $gTables['bank'] . ".id_municipalities = " . $gTables['municipalities'] . ".id";
 $ts = new TableSorter(
-    $tablejoin, 
-    $passo, 
+    $tablejoin,
+    $passo,
     ['codabi'=>'asc','codcab'=>'asc']
     );
 ?>
@@ -64,8 +64,8 @@ $(function() {
 			show: "blind",
 			hide: "explode",
 			buttons: {
-				delete:{ 
-					text:'Aggiungi', 
+				delete:{
+					text:'Aggiungi',
 					'class':'btn btn-danger delete-button',
 					click:function (event, ui) {
 					$.ajax({
@@ -82,7 +82,7 @@ $(function() {
 				}
 			}
 		});
-		$("#dialog_banapp" ).dialog( "open" );  
+		$("#dialog_banapp" ).dialog( "open" );
 	});
 
     $("#dialog_delete").dialog({ autoOpen: false });
@@ -97,8 +97,8 @@ $(function() {
 			show: "blind",
 			hide: "explode",
 			buttons: {
-				delete:{ 
-					text:'Elimina', 
+				delete:{
+					text:'Elimina',
 					'class':'btn btn-danger delete-button',
 					click:function (event, ui) {
 					$.ajax({
@@ -116,7 +116,7 @@ $(function() {
 				}
 			}
 		});
-		$("#dialog_delete" ).dialog( "open" );  
+		$("#dialog_delete" ).dialog( "open" );
 	});
 
 	$( "#suggest_search" ).autocomplete({
@@ -183,8 +183,8 @@ echo '</tr>';
 while ($r = gaz_dbi_fetch_array($result)) {
     $banapp = gaz_dbi_get_row($gTables['banapp'], 'codabi', $r['codabi'], "AND codcab ='".$r['codcab']."'");
     echo "<tr>\n";
-    echo '<td>
-    <a class="btn btn-xs btn-default" href="./admin_bank.php?id='.$r['id'].'" ><i class="glyphicon glyphicon-edit"></i> '.$r['id'].'</a>';
+    echo '<td align="center">
+    <a class="btn btn-xs btn-edit" href="./admin_bank.php?id='.$r['id'].'" ><i class="glyphicon glyphicon-edit"></i> '.$r['id'].'</a>';
     echo '</td>';
     echo '<td class="text-center">'.$r['codabi'];
     echo "</td>\n";

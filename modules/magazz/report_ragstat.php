@@ -57,7 +57,7 @@ $recordnav -> output();
 ?>
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
 <div class="table-responsive">
-<table class="Tlarge table-striped">
+<table class="Tlarge table">
     <thead>
         <tr>
         	<td></td>

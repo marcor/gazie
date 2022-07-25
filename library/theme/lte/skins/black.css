@@ -88,12 +88,11 @@ html body.skin-blue.sidebar-mini.sidebar-collapse form div.wrapper header.main-h
   width: 65px;
 }
 .row.alternate-row-odd{
-  background-color: #eeeeee;
+  background-color: #eeeeee2b;
 }
 .row.alternate-row-even{
-  background-color: #cccccc;
+  background-color: #cccccc08;
 }
-
 .btn-effetti {
   background-color: #D4CB6A;
   color : #fff;
@@ -136,6 +135,11 @@ td.ui-datepicker-other-month>a.ui-state-default.ui-priority-secondary{
 .btn-edit {
 	background-color: #449d44;
 	color: #FFFFFF;
+	box-shadow: 1px 1px 1px 1px gray;
+}
+.btn-default {
+	background-color: #ddd;
+	color: #000;
 	box-shadow: 1px 1px 1px 1px gray;
 }
 .panel {
@@ -234,4 +238,15 @@ a, .panel-info {
 }
 .content-header > .breadcrumb > li > a {
 	background-color: transparent;
+}
+nav.navbar.navbar-static-top.company-color-bright {
+	background: linear-gradient(to right, #0000 0%, #02020236 70%) no-repeat;
+}
+.modal .panel-body {
+	color: #fdf8cc;
+}
+div#fattura-container {
+	background-color: #fff;
+	padding: 30px;
+	color: #000;
 }

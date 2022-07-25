@@ -90,10 +90,8 @@ table.selectTable td {
 	color : #000000;
 	font-size : 110%;
 }
-.FacetSeparatorTD {
-}
 .FacetFooterTD {
-	background-color : #c3d9fb;
+	background-color : #ece3dc;
 	color : #000000;
 }
 .FacetDisabledTD {

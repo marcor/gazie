@@ -350,13 +350,6 @@ table.Tmiddle tr>td, table.Tsmall tr>td {
 {
     border-top: 0px solid;
 }
-.main-header {
-    border-collapse: separate;
-    /*border: 1px solid;*/
-}
-.logo {
-
-}
 .panel {
 	-webkit-box-shadow: 2px 1px 1px rgba(1,1,1,.5);
 	box-shadow: 2px 1px 1px rgba(1,1,1,.5);
@@ -637,12 +630,18 @@ table.xdebug-error{
   padding-top: 0px;
   padding-bottom: 0px;
 }
-.navbar-nav > li > a {
-	padding-top: 3px;
-	padding-bottom: 3px;
+.navbar-nav > li > #docmodal {
+	padding-top: 10px;
+	padding-bottom: 8px;
 }
 section.content-header div h1 {
   font-size: 2em;
 	margin-top: 8px;
 	margin-bottom: 6px;
+}
+.gaz-table-form {
+	max-width: 990px;
+	float: none;
+	margin-left: auto;
+	margin-right: auto;
 }

@@ -130,7 +130,7 @@ if ($toDo == 'update') {
 }
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[2]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"descri\" value=\"".$form['descri']."\" maxlength=\"50\"  /></td></tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\"><img src=\"../root/view.php?table=ragstat&value=".$form['codice']."\" width=\"100\"></td>";
-print "<td class=\"FacetDataTD\" align=\"center\">$script_transl[3]<br><input name=\"userfile\" type=\"file\" class=\"FacetDataTD\"></td>";
+print "<td class=\"FacetDataTD\">$script_transl[3]<br><input name=\"userfile\" type=\"file\" class=\"FacetDataTD\"></td>";
 print "</tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[4]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"ricarico\" value=\"".$form['ricarico']."\" maxlength=\"4\"  /></td></tr>\n";
 echo "<tr>\n";
@@ -139,8 +139,8 @@ echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
       <input type=\"text\" name=\"web_url\" value=\"".$form['web_url']."\" maxlength=\"255\"  /></td>\n";
 echo "</tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[5]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"annota\" value=\"".$form['annota']."\" maxlength=\"50\"  />\n";
-print "</select></td></tr><tr><td class=\"FacetFieldCaptionTD\">";
-print "</td><td class=\"FacetDataTD\" align=\"right\">\n";
+print "</select></td></tr><trclass=\"FacetFooterTD\"><td>";
+print "</td><td class=\"FacetDataTD\" align=\"center\">\n";
 if ($toDo == 'update') {
    print '<input type="submit" class="btn btn-warning" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="'.ucfirst($script_transl['update']).'"></td></tr><tr></tr>';
 } else {

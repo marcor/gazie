@@ -45,15 +45,15 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
     } else {
         $where = "id LIKE '" . $ca . "'";
     }
-    
+
     $gForm = new informForm();
     $result = gaz_dbi_dyn_query('*', $gTables['municipalities'], $where, $ob . ' ' . $so, $no, PER_PAGE);
     while ($row = gaz_dbi_fetch_array($result)) {
         $provinces = gaz_dbi_get_row($gTables['provinces'], "id", $row["id_province"]);
         ?>
-        <tr>              
-            <td data-title="<?php echo $script_transl["id"]; ?>">
-                <a class="btn btn-xs btn-default" href="../inform/admin_municipalities.php?Update&id=<?php echo $row['id']; ?>" ><i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $row['id']; ?></a>
+        <tr>
+            <td data-title="<?php echo $script_transl["id"]; ?>" class="text-center">
+                <a class="btn btn-xs btn-edit" href="../inform/admin_municipalities.php?Update&id=<?php echo $row['id']; ?>" ><i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $row['id']; ?></a>
             </td>
             <td data-title="<?php echo $script_transl["name"]; ?>">
                 <span class="gazie-tooltip" data-type="product-thumb" data-id="<?php echo $row["name"]; ?>" data-label="<?php echo $row['name']; ?>"><?php echo $row["name"]; ?></span>
@@ -72,7 +72,7 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
                     <i class="glyphicon glyphicon-remove"></i>
                 </a>
             </td>
-        </tr>  
+        </tr>
         <?php
     }
     exit();

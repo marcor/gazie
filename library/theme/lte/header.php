@@ -113,7 +113,6 @@ if (isset( $scriptname) && $scriptname != $prev_script && $scriptname != 'admin.
         <style>
             .company-color, .company-color-bright, li.user-header {
               background-color: #<?php echo $admin_aziend['colore']; ?>;
-              filter: brightness(120%);
               color: black;
             }
             .company-color-logo {
@@ -337,7 +336,7 @@ setInterval(menu_check_from_modules,<?php echo intval((int)$period*60000);?>);
                             <!-- Messages: style can be found in dropdown.less-->
                             <li class="dropdown messages-menu">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                    <i class="fa fa-star" style="color: yellow"></i>
+                                    <i class="fa fa-star" style="color: yellow; text-shadow: 0 0 10px #000;"></i>
                                     <!--<span class="label label-success">4</span>-->
                                 </a>
                                 <ul class="dropdown-menu">
@@ -403,7 +402,7 @@ setInterval(menu_check_from_modules,<?php echo intval((int)$period*60000);?>);
                             <!-- Sezione link più usati -->
                             <li class="dropdown messages-menu">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                    <i class="fa fa-clock-o"></i>
+                                    <i class="fa fa-clock-o" style="color: #a200fb; text-shadow: 0 0 10px #db00fb;"></i>
                                     <!--<span class="label label-success">4</span>-->
                                 </a>
                                 <ul class="dropdown-menu">
@@ -475,7 +474,7 @@ setInterval(menu_check_from_modules,<?php echo intval((int)$period*60000);?>);
                             <!-- User Account: style can be found in dropdown.less -->
                             <li class="dropdown user user-menu">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                    <img src="<?php echo '../root/view.php?table=admin&field=user_name&value=' . $admin_aziend["user_name"]; ?>" class="user-image" alt="User Image">
+                                    <img src="<?php echo '../root/view.php?table=admin&field=user_name&value=' . $admin_aziend["user_name"]; ?>" class="user-image" alt="User Image" style="box-shadow: 0 0 10px #000;">
                                     <span class="hidden-xs"><?php echo $admin_aziend['user_firstname'] . ' ' . $admin_aziend['user_lastname']; ?></span>
                                 </a>
                                 <ul class="dropdown-menu">

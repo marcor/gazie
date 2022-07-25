@@ -67,7 +67,7 @@ function dialogSchedule(paymov) {
     //disegno la singola riga della table
     function updateCloseFormRiga(id_sub, id, ex, am) {
         $("#pm_form_container_" + nrow + " tbody").append('<tr id="pm_form_' + id_sub + '">' +
-                '<td><button id="unlink_' + id_sub + '"><img id="image_unlink_' + id_sub + '" src="../../library/images/link_break.png" width="12" /></button> ' + id + '</td>' +
+                '<td><button class="btn btn-xs btn-default" id="unlink_' + id_sub + '"><img id="image_unlink_' + id_sub + '" src="../../library/images/link_break.png" width="12" /></button> ' + id + '</td>' +
                 '<td class="ui-widget-right ui-widget-content " ><input id="form_' + nrow + '_' + id_sub + '_expiry" type="text" name="paymov[' + nrow + '][' + id_sub + '][expiry]" value="' + ex + '" id="post_' + nrow + '_' + id_sub + '_expiry" /></td>' +
                 '<td class="ui-widget-right ui-widget-content " ><input id="form_' + nrow + '_' + id_sub + '_amount" style="text-align:right;" type="text" name="paymov[' + nrow + '][' + id_sub + '][amount]" value="' + am + '" id="post_' + nrow + '_' + id_sub + '_amount" /></td>' +
                 '<td class="ui-widget-right ui-widget-content " ><button id="btn_' + id_sub + '" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-remove"></i></button></td>' +
@@ -128,7 +128,7 @@ function dialogSchedule(paymov) {
 
     function updateOpenFormRiga(id_sub, id, ex, am) {
         $("#pm_form_container_" + nrow + " tbody").append('<tr id="pm_form_' + id_sub + '">' +
-                '<td><button id="unlink_' + id_sub + '"><img id="image_unlink_' + id_sub + '" src="../../library/images/link_break.png" width="12" /></button> ' + id + '</td>' +
+                '<td><button class="btn btn-xs btn-default" id="unlink_' + id_sub + '"><img id="image_unlink_' + id_sub + '" src="../../library/images/link_break.png" width="12" /></button> ' + id + '</td>' +
                 '<td class="ui-widget-right ui-widget-content " ><input id="form_' + nrow + '_' + id_sub + '_expiry" type="text" name="paymov[' + nrow + '][' + id_sub + '][expiry]" value="' + ex + '" id="post_' + nrow + '_' + id_sub + '_expiry" /></td>' +
                 '<td class="ui-widget-right ui-widget-content " ><input id="form_' + nrow + '_' + id_sub + '_amount" style="text-align:right;" type="text" name="paymov[' + nrow + '][' + id_sub + '][amount]" value="' + am + '" id="post_' + nrow + '_' + id_sub + '_amount" /></td>' +
                 '<td class="ui-widget-right ui-widget-content " ><button id="btn_' + id_sub + '" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-remove"></i></button></td>' +

@@ -22,5 +22,22 @@
     Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
 --------------------------------------------------------------------------
 */
-include("docume_finann.php");
+require("../../library/include/datlib.inc.php");
+
+$admin_aziend=checkAdmin();
+
+require("../../library/include/header.php");
+$script_transl=HeadMain();
+//
+// Se esiste, viene incluso il file "help/italian/docume_finean_help.php",
+// o l'equivalente di un altro linguaggio.
+//
+echo '<div class="help">';
+if (file_exists("help/".$admin_aziend['lang']."/docume_finann_help.php")) {
+    include("help/".$admin_aziend['lang']."/docume_finann_help.php");
+}
+?>
+</div>
+<?php
+require("../../library/include/footer.php");
 ?>

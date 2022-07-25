@@ -322,7 +322,7 @@ echo "\t </select>\n";
 <?php
 if ($message == "")
   {
-    echo "<tr><td class=\"FacetFieldCaptionTD\"> </td><td align=\"right\" nowrap class=\"FacetFooterTD\"><input type=\"submit\" name=\"Return\" value=\"Indietro\"> <input type=\"submit\" name=\"visualizza\" value=\"Visualizza l'anteprima\"> </td></tr>";
+    echo "<tr class=\"FacetFooterTD\"><td></td><td align=\"right\" nowrap ><input type=\"submit\" class=\"btn btn-info\" name=\"visualizza\" value=\"Visualizza l'anteprima\"> </td></tr>";
   }
 echo "</table>";
 //
@@ -438,7 +438,7 @@ if (isset($_GET['visualizza']) and $message == "")
           }
         else
           {
-            echo "<tr><td colspan=\"4\" align=\"center\"><input type=\"submit\" name=\"stampa\" value=\"STAMPA IL BILANCIO CEE !\"></td></tr>\n";
+            echo "<tr><td colspan=\"4\" class=\"FacetFooterTD text-center\"><input type=\"submit\" class=\"btn btn-warning\" name=\"stampa\" value=\"STAMPA IL BILANCIO CEE !\"></td></tr>\n";
           }
         echo "<tr><td colspan=\"4\"><hr></td></tr>\n";
         echo "<tr><td><hr></td><td align=\"center\" class=\"FacetFormHeaderFont\">SITUAZIONE PATRIMONIALE AL ".$_GET['giofin']."-".$_GET['mesfin']."-".$_GET['annfin']."</td><td colspan=\"2\"><hr></td></tr>\n";
@@ -1854,13 +1854,6 @@ if (isset($_GET['visualizza']) and $message == "")
         //
         echo "</table>\n";
       }
-    ////
-    //// Diag.
-    ////
-    //foreach ($bil as $x => $valor)
-    //  {
-    //    echo "<p>".$x." ".$valor."</p>";
-    //  }
   }
 ?>
 </form>

@@ -319,17 +319,6 @@ for ($counter = 1; $counter <= 10; $counter++) {
    echo "\t\t <option value=\"" . $counter . "\" $selected >" . $script_transl[0][$counter] . "</option>\n";
 }
 echo "</select></td></tr>\n";
-
-//echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl['tipoSelezione'] . "</td>"
-// . "<td class=\"FacetDataTD\">\n<select name=\"tipo_selezione\" class=\"FacetSelect\">\n"
-// . "<option value=\"1\" selected>Tutti i filtri</option>\n"
-// . "<option value=\"2\">Cliente</option>\n"
-// . "<option value=\"3\">Data</option>\n"
-// . "<option value=\"4\">Numero</option>\n"
-// . "<option value=\"5\">Protocollo</option>\n"
-// . "<option value=\"6\">Agente</option>\n"
-// . "</select></td></tr>\n";
-
 echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[8]</td>";
 echo "<td class=\"FacetDataTD\">";
 $messaggio = '';
@@ -454,15 +443,10 @@ $select_agente->addSelected($form["id_agente"]);
 $select_agente->output();
 echo "</td></tr>\n";
 
-echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl['tipoStampa'] . "</td>"
- . "<td class=\"FacetDataTD\">\n<select name=\"tipo_stampa\" class=\"FacetSelect\">\n"
- . "<option value=\"0\" selected>Tutti i documenti</option>\n"
- . "<option value=\"1\">Non stampare eMail</option>\n"
- . "<option value=\"2\">Invia solo eMail</option>\n";
-
-echo "<tr>\n
-     <td class=\"FacetFieldCaptionTD\"><input type=\"submit\" name=\"Return\" value=\"" . ucfirst($script_transl['return']) . "\"></td>\n
-     <td align=\"right\" class=\"FacetFooterTD\"><input type=\"submit\" name=\"Print\" value=\"" . ucfirst($script_transl['print']) . "\"></td>\n
+echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl['tipoStampa'] . "</td><td class=\"FacetDataTD\">\n<select name=\"tipo_stampa\" class=\"FacetSelect\">\n<option value=\"0\" selected>Tutti i documenti</option><option value=\"1\">Non stampare eMail</option><option value=\"2\">Invia solo eMail</option></tr>\n";
+echo "<tr class=\"FacetFooterTD\">
+     <td></td>\n
+     <td align=\"center\"><input type=\"submit\" class=\"btn btn-warning\" name=\"Print\" value=\"" . ucfirst($script_transl['print']) . "\"></td>\n
      </tr>\n";
 ?>
 </table>

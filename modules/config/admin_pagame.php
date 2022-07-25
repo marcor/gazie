@@ -101,6 +101,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['numrat'] = 0;
     $form['tiprat'] = 'M';
     $form['fae_mode'] = '';
+    $form['web_payment_ref'] = '';
     $form['id_bank'] = 0;
     $form['annota'] = '';
 }

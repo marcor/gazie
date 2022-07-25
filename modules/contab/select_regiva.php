@@ -356,7 +356,7 @@ echo "</td>\n";
 echo "</tr>\n";
 echo "\t<tr class=\"FacetFooterTD\">\n";
 echo "<td></td>";
-echo '<td colspan="3" align="center"> <input type="submit" class="btn btn-warning" accesskey="i" name="preview" value="';
+echo '<td colspan="3" align="center"> <input type="submit" class="btn btn-info" accesskey="i" name="preview" value="';
 echo $script_transl['view'];
 echo '" tabindex="100" >';
 echo "\t </td>\n";
@@ -489,8 +489,8 @@ if (isset($_POST['preview']) and $msg == '') {
         echo "<tr><td colspan=2></td><td>" . $script_transl['t_gen'] . "</td><td align=\"right\">" . gaz_format_number($totale) . " &nbsp;</td><td align=\"right\">" . gaz_format_number($totimponi, 2, '.', '') . " &nbsp;</td><td></td><td align=\"right\">" . gaz_format_number($totimpost, 2, '.', '') . " &nbsp;</td></tr>";
         echo "<tr><td colspan=2></td><td class=\"info\">" .$script_transl['t_liq'] . "</td><td align=\"right\">" . gaz_format_number($totimponi_liq+$totimpost_liq) . " &nbsp;</td><td align=\"right\">" . gaz_format_number($totimponi_liq, 2, '.', '') . " &nbsp;</td><td colspan=\"2\"></td><td align=\"center\" class=\"info\">" . gaz_format_number($totimpost_liq, 2, '.', '') . " &nbsp;</td></tr>";
         if ($err == 0) {
-            echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
-            echo '<td colspan="8" align="right"><input type="submit" name="print" value="';
+            echo "\t<tr>\n";
+            echo '<td class="FacetFooterTD" colspan="8" align="center"><input type="submit" class="btn btn-warning" name="print" value="';
             echo $script_transl['print'];
             echo '">';
             echo "\t </td>\n";

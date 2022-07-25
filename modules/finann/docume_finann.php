@@ -33,8 +33,8 @@ $admin_aziend=checkAdmin();
 // o l'equivalente di un altro linguaggio.
 //
 echo '<div class="help">';
-if (file_exists("help/".$admin_aziend['lang']."/docume_finean_help.php")) {
-    include("help/".$admin_aziend['lang']."/docume_finean_help.php");
+if (file_exists("help/".$admin_aziend['lang']."/docume_finann_help.php")) {
+    include("help/".$admin_aziend['lang']."/docume_finann_help.php");
 }
 ?>
 </div>

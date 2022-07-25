@@ -233,7 +233,7 @@ if (!empty($msg)) {
     echo '<tr><td class="FacetDataTDred" colspan=2>' . $gForm->outputErrors($msg, $script_transl['errors']) . "</td></tr>\n";
 }
 echo "<tr>\n";
-echo "<td class=\"text-right\">" . $script_transl['date_emi'] . " : </td><td class=\"text-left\">\n";
+echo "<td class=\"text-right\">" . $script_transl['date_emi'] . " : </td><td>\n";
 $gForm->CalendarPopup('date_emi', $form['date_emi_D'], $form['date_emi_M'], $form['date_emi_Y'], 'FacetSelect', 1);
 echo "</td>\n";
 echo "</tr>\n";
@@ -243,7 +243,7 @@ $rsbanacc=$gForm->selectBanacc($form['bank']);
 if ($form['bank'] > 0) {
     $form['eof']=($rsbanacc)?'eof':'';
 }
-echo " " . $script_transl['eof'];
+echo "<br/>" . $script_transl['eof'];
 $gForm->selCheckbox('eof', $form['eof'], $script_transl['eof_title']);
 echo "</td>\n";
 echo "</tr>\n";
@@ -271,8 +271,8 @@ echo "<td class=\"text-right\">" . $script_transl['period'] . " : </td>
 echo "</td>\n";
 echo "</tr>\n";
 echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
-echo "<td align=\"left\"><input type=\"submit\" name=\"return\" value=\"" . $script_transl['return'] . "\">\n";
-echo '<td align="right"> <input type="submit" accesskey="i" name="preview" value="';
+echo "<td></td>";
+echo '<td align="center"> <input type="submit" class="btn btn-info" accesskey="i" name="preview" value="';
 echo $script_transl['view'];
 echo '" tabindex="100" >';
 echo "\t </td>\n";
@@ -282,7 +282,7 @@ if (isset($_POST['preview']) && $msg == '') {
     $date_ini = sprintf("%04d%02d%02d", $form['date_ini_Y'], $form['date_ini_M'], $form['date_ini_D']);
     $date_fin = sprintf("%04d%02d%02d", $form['date_fin_Y'], $form['date_fin_M'], $form['date_fin_D']);
     $r = getData($date_ini, $date_fin, $form['num_ini'], $form['num_fin'],$form['bank']);
-    echo '<div class="table-responsive text-center">'."<table class=\"Tlarge\">";
+    echo '<div class="table-responsive text-center">'."<table class=\"Tlarge table\">";
     if (sizeof($r['data']) > 0) {
         echo '<tr>';
         echo '<td colspan="7" align="center" class="FacetDataTD">' . $script_transl['preview'] . "</td>\n";
@@ -311,9 +311,8 @@ if (isset($_POST['preview']) && $msg == '') {
         }
         echo '<tr><td colspan="5" class="text-right">Tutti</td><td><input type="checkbox" id="selall" checked ></td></tr><tr><td colspan="5" class="FacetDataTD text-right"><b>'.$script_transl['tot'] . " n." . $r['tot']['num'] . ' ' . $admin_aziend['html_symbol'] . ' <span id="totval">' . gaz_format_number($r['tot']['value']) . '</span></b></td>';
         echo "</tr><tr><td></td></tr>";
-        echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
-		echo '<td  class="text-right" colspan="5"><input type="submit" class="btn btn-warning" name="submit"  id="submitform" value="' . $script_transl['submit'] . '" accesskey="c" />';
-
+        echo "\t<tr>\n";
+		echo '<td class="FacetFooterTD" class="text-center" colspan="6"><input type="submit" class="btn btn-warning" name="submit"  id="submitform" value="' . $script_transl['submit'] . '" accesskey="c" />';
         echo "\t </td>\n";
         echo "\t </tr>\n";
     } else {

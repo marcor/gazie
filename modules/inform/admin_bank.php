@@ -68,7 +68,7 @@ if ( !isset($_POST['hidden_req']) && isset($_GET['id']) && intval($_GET['id']) >
     if ($form['id']==0) {
         $dupli = gaz_dbi_get_row($gTables['bank'], 'codabi', intval($form['codabi']), " AND codcab = ".intval($form['codcab']));
         if ($dupli) {
-            $msg['err'][] = 'exist';    
+            $msg['err'][] = 'exist';
         }
     }
 
@@ -83,7 +83,7 @@ if ( !isset($_POST['hidden_req']) && isset($_GET['id']) && intval($_GET['id']) >
         exit;
     }
     }
-    
+
 } elseif ( !isset($_POST['hidden_req']) && !isset($_GET['id'])) { //al primo accesso allo script per insert
     $form = gaz_dbi_fields('bank');
     $form['iso_country'] = $admin_aziend['country'];
@@ -91,7 +91,7 @@ if ( !isset($_POST['hidden_req']) && isset($_GET['id']) && intval($_GET['id']) >
     $form['hidden_req'] = '';
 	$form['id_municipalities']=0;
     $form['search_municipalities'] = '';
-    $form['descri_municipalities'] = '';    
+    $form['descri_municipalities'] = '';
 }
 
 require("../../library/include/header.php");
@@ -134,10 +134,10 @@ if (count($msg['war']) > 0) { // ho un alert
     $gForm->gazHeadMessage($msg['war'], $script_transl['war'], 'war');
 }
 ?>
-<div class="col-sm-4"></div><div class="col-sm-4 text-right"><input class="btn btn-info" id="preventDuplicate" onClick="chkSubmit();" type="submit" name="ins" value="<?php echo ucfirst($script_transl[($form['id']>0)?'update':'insert']); ?>"/></div><div class="col-sm-4"></div>
 
 <div class="panel panel-default gaz-table-form div-bordered">
   <div class="container-fluid">
+<div class="col-xs-12 text-right FacetFooterTd"><input class="btn btn-warning" id="preventDuplicate" onClick="chkSubmit();" type="submit" name="ins" value="<?php echo ucfirst($script_transl[($form['id']>0)?'update':'insert']); ?>"/></div>
         <div class="row">
             <div class="col-md-12">
                 <div class="form-group">
@@ -193,7 +193,7 @@ $gForm->selectFromDB('country', 'iso_country', 'iso', $form['iso_country'], 'iso
                 <div class="form-group">
                     <label for="id_municipalities" class="col-sm-4 control-label"><?php echo $script_transl['id_municipalities']; ?></label>
     <?php
-    $gForm->selectMunicipalities($form['search_municipalities'], $form['id_municipalities']);    
+    $gForm->selectMunicipalities($form['search_municipalities'], $form['id_municipalities']);
 
 //$gForm->selectFromDB('municipalities', 'id_municipalities', 'id', $form['id_municipalities'], 'name', 1, ' - ', 'name');
     ?>

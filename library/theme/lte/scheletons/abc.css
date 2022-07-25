@@ -275,19 +275,10 @@ div.panel.panel-default div.container-fluid div.form-row div.form-group.col-md-6
     padding-bottom: 30px;
 }
 
-/*
-**    tabelle di report
-*/
-
 .table {
-    margin-bottom: 0px;
+  margin-bottom: 0px;
+	min-height: .01%;
 }
-
-
-/*
-**    inserimento articoli in magazzino
-*/
-
 .col-sm-4.control-label {
     text-align: right;
     vertical-align: middle;
@@ -377,4 +368,26 @@ select#in_codric {
 table.xdebug-error{
   z-index: 2000;
   position: relative;
+}
+.navbar-nav > li > #docmodal {
+	padding-top: 10px;
+	padding-bottom: 8px;
+}
+section.content-header div h1 {
+  font-size: 2em;
+	margin-top: 8px;
+	margin-bottom: 6px;
+}
+.FacetFormTABLE,table.Tmiddle,table.Tsmall {
+	box-shadow: 1px 1px 1px 1px #0b3505;
+	border: 1px solid #5a8c3d;
+	border-collapse: unset;
+  margin-left: auto;
+  margin-right: auto;
+}
+.gaz-table-form {
+	max-width: 990px;
+	float: none;
+	margin-left: auto;
+	margin-right: auto;
 }

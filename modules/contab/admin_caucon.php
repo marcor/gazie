@@ -47,8 +47,8 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form["insdoc"] = $cau["insdoc"];
     $form["regiva"] = $cau["regiva"];
     $form["operat"] = $cau["operat"];
-    $form["n_rows"] = 0;    
-    //recupero i righi 
+    $form["n_rows"] = 0;
+    //recupero i righi
     $rs_rows = gaz_dbi_dyn_query("*", $gTables['caucon_rows'], "caucon_cod = '" . $cau["codice"] . "'",'n_order');
     $i = 0;
     while ($row = gaz_dbi_fetch_array($rs_rows)) {
@@ -68,14 +68,14 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form["insdoc"] = intval($_POST["insdoc"]);
     $form["regiva"] = intval($_POST["regiva"]);
     $form["operat"] = intval($_POST["operat"]);
-    $form["n_rows"] = intval($_POST["n_rows"]);    
+    $form["n_rows"] = intval($_POST["n_rows"]);
 	$del=false;
     $chk_acc=false;
     for ($i = 1; $i <= $form['n_rows']; $i++) {
 		if ($del){ // sottraggo all'indice perché è avvenuta una eliminazione
 			$j=$i-1;
 		} else {
-			$j=$i;			
+			$j=$i;
 		}
 		$form['rows'][$j]['clfoco_mastro'] = intval($_POST['rows'][$i]['clfoco_mastro']);
         $form['clfoco_sub'.$j] = intval($_POST['clfoco_sub'.$i]);
@@ -94,13 +94,13 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 				unset($form['search']['clfoco_sub' . $i]);
 				unset($form['rows'][$i]);
 				$del=true; // da questo momento sottraggo all'indice
-			} 
+			}
 		}
-	}	
-	if ($del){ // sottraggo dal numero righi perché è avvenuta una eliminazione
-		$form["n_rows"]--;    
 	}
-	
+	if ($del){ // sottraggo dal numero righi perché è avvenuta una eliminazione
+		$form["n_rows"]--;
+	}
+
 	if (isset($_POST['insrow'])) {    // Se viene inviata la richiesta di inserimento rigo
 		$form["n_rows"]++;
         $form['rows'][$form["n_rows"]]['clfoco_mastro'] = 0;
@@ -111,8 +111,8 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 	}
 	if (isset($_POST['confirm'])) {
 		if ($toDo == 'insert') {  //se è un'inserimento
-         if ($chk_acc) $msg['err'][] = "clfoco_ref"; 
-         if (empty($form["descri"])) $msg['err'][] = "descri"; 
+         if ($chk_acc) $msg['err'][] = "clfoco_ref";
+         if (empty($form["descri"])) $msg['err'][] = "descri";
          if (!empty($form["codice"])) {
             $rs_cau = gaz_dbi_dyn_query("*", $gTables['caucon'], "codice = '".$form["codice"]."'","codice DESC",0,1);
             $rs = gaz_dbi_fetch_array($rs_cau);
@@ -127,7 +127,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
                      $msg['err'][] = "APE";
                    break;
                    case "AMM":
-                     $msg['err'][] = "AMM"; 
+                     $msg['err'][] = "AMM";
                    break;
             }
          } else {
@@ -146,8 +146,8 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
             exit;
          }
        } else { //è una modifica
-         if (empty($form["descri"])) $msg['err'][] = "descri"; 
-         if ($chk_acc) $msg['err'][] = "clfoco_ref"; 
+         if (empty($form["descri"])) $msg['err'][] = "descri";
+         if ($chk_acc) $msg['err'][] = "clfoco_ref";
          if (count($msg['err']) < 1) {// nessun errore
             // aggiorno il db
             gaz_dbi_table_update('caucon',$form['codice'],$form);
@@ -177,14 +177,14 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form["insdoc"] = 0;
     $form["regiva"] = 0;
     $form["operat"] = 0;
-    $form["n_rows"] = 0;    
+    $form["n_rows"] = 0;
 }
 require("../../library/include/header.php");
 $script_transl=HeadMain();
 ?>
 <script type="text/javascript">
     $(function () {
-		$('.dropdownmenustyle').selectmenu({ change: function( event, ui ) {  this.form.submit(); }});  
+		$('.dropdownmenustyle').selectmenu({ change: function( event, ui ) {  this.form.submit(); }});
 	});
 </script>
 <?php
@@ -287,9 +287,9 @@ if (count($msg['err']) > 0) { // ho un errore
                     <div class="form-group">
                         <label for="clfoco_sub" class="col-sm-6 control-label"><?php echo $script_transl['clfoco_sub']; ?></label>
                         <?php
-						$gForm->selSubAccount('clfoco_sub' . $k, $form['clfoco_sub' . $k], 
-						$form['search']['clfoco_sub' . $k], 
-						$form['hidden_req'], 
+						$gForm->selSubAccount('clfoco_sub' . $k, $form['clfoco_sub' . $k],
+						$form['search']['clfoco_sub' . $k],
+						$form['hidden_req'],
 						$script_transl['mesg'],'col-sm-6');
                         ?>
                     </div>
@@ -322,25 +322,21 @@ if (count($msg['err']) > 0) { // ho un errore
 }
 ?>
             <div class="row">
-                <div class="col-sm-6 col-md-4 col-lg-2">
-                <input class="bg-edit" tabindex=10 onClick="chkSubmit();" type="submit" name="insrow" value="<?php echo $script_transl['add_row'];?>"> 
-                </div>
-				<div class="col-sm-6 col-md-8 col-lg-10">
+                <div class="col-xs-12 text-right">
+                  <input class="btn btn-success" tabindex=10 onClick="chkSubmit();" type="submit" name="insrow" value="<?php echo $script_transl['add_row'];?>">
                 </div>
 			</div><!-- chiude row  -->
         </div><!-- chiude container  -->
 	</div><!-- chiude panel  -->
 <?php
 if ($form['n_rows'] >= 1) {
-?>                
+?>
             <div class="row">
-				<div class="col-xs-6 col-md-8 col-lg-10">
-                </div>
-				<div class="col-xs-6 col-md-4 col-lg-2">
-                <input class="btn btn-warning" tabindex=10 onClick="chkSubmit();" type="submit" name="confirm" value="<?php echo ucfirst($script_transl[$toDo]);?>"> 
-                </div>
+              <div class="col-xs-12 FacetFooterTD text-center">
+                <input class="btn btn-warning" tabindex=10 onClick="chkSubmit();" type="submit" name="confirm" value="<?php echo ucfirst($script_transl[$toDo]);?>">
+              </div>
 	        </div><!-- chiude row  -->
-  	
+
 <?php
 }
 ?>

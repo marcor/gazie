@@ -88,8 +88,7 @@ if ((isset($_GET['Update']) and !isset($_GET['codice'])) or isset($_POST['Return
     header("Location: " . $_POST['ritorno']);
     exit;
 }
-if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani   ***  Se NON è IL PRIMO ACCESSO ***
-  //echo"<pre>",print_r($_POST);
+if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ // se NON è il primo accesso
   $form = gaz_dbi_parse_post('orderman');
   $form['order_type'] = $_POST['order_type'];
   $form['description'] = $_POST['description'];
@@ -228,11 +227,8 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
           $form['quanti_comp'][$m] = $_POST['quanti_comp' . $m];
           $form['prezzo_comp'][$m] = $_POST['prezzo_comp' . $m];
           $form['q_lot_comp'][$m] = $_POST['q_lot_comp' . $m];
-
-
           $form['id_mov'][$m]=$_POST['id_mov' . $m];
           $form['old_quanti_comp'][$m]=$_POST['old_quanti_comp' . $m];
-
           $form['recip_stocc_comp'][$m] = (isset($_POST['recip_stocc_comp' . $m]))?$_POST['recip_stocc_comp' . $m]:"";
           if (strlen($form['recip_stocc_comp'][$m])>0 AND intval($form['cod_operazione'] >0 AND intval($form['cod_operazione'])<4)) { // se sono operazioni che producono olio confezionato
             $var_orig = $campsilos->getContentSil($form['recip_stocc_comp'][$m]);
@@ -267,9 +263,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
           $form['old_quanti_comp'][0]=0;
       }
     }
-
     // Se viene inviata la richiesta di conferma totale ... ******   CONTROLLO ERRORI   ******
-
     $form['datemi'] = $form['anninp'] . "-" . $form['mesinp'] . "-" . $form['gioinp'];
     if (isset($_POST['ins'])) {
 
@@ -697,10 +691,9 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
           exit;
         }
     }
-    //  fine scrittura database §§§§§§§§§§§§§§§§§§§§§§§§§§§§
+    //  fine scrittura database
 
-} elseif ((!isset($_POST['Update'])) and (isset($_GET['Update']))) {//  **  se e' il primo accesso per UPDATE  **
-
+} elseif ((!isset($_POST['Update'])) and (isset($_GET['Update']))) {//   se e' il primo accesso per UPDATE
   if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
 		// allineo l'e-commerce con eventuali ordini non ancora caricati
 		$gs=$admin_aziend['synccommerce_classname'];
@@ -823,8 +816,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
         $form['numcomp'] = $m;
       }
     }
-//echo "<pre>",print_r($form);die;
-  // Antonio Germani - se è presente, recupero il file documento lotto
+  // se è presente, recupero il file documento lotto
   $form['filename'] = "";
   if (file_exists(DATA_DIR.'files/' . $admin_aziend['company_id']) > 0) {
       // recupero il filename dal filesystem
@@ -845,7 +837,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 
   $form['cosear'] = "";
 
-} else {                 //                  **   se e' il primo accesso per INSERT    **
+} else {                 //  se e' il primo accesso per INSERT
 	if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
 		// allineo l'e-commerce con eventuali ordini non ancora caricati
 		$gs=$admin_aziend['synccommerce_classname'];
@@ -854,80 +846,78 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 			$gSync->get_sync_status(0);
 		}
 	}
-    $form['ritorno'] = $_SERVER['HTTP_REFERER'];
+  $form['ritorno'] = $_SERVER['HTTP_REFERER'];
 	$form['numdoc']="";
-    if (isset($_GET['type'])) { // controllo se proviene anche da una richiesta del modulo camp
-        $form['order_type'] = substr($_GET['type'],0,3);
-    } else { // altrimenti prendo quello in configurazione azienda
-        $form['order_type'] = $admin_aziend['order_type'];
-    }
-    $form['description'] = "";
-    $form['id_tesbro'] = "";
-    $form['add_info'] = "";
-    $form['gioinp'] = date("d");
-    $form['mesinp'] = date("m");
-    $form['anninp'] = date("Y");
-    $form['datemi'] = date("Y-m-d", time());
-    $form['iniprod'] = date ("d-m-Y");
-    $form['iniprodtime'] = date ("H:i");
-    $form['fineprod'] = date ("d-m-Y");
-    $form['fineprodtime'] = date ("H:i");
-    $form['day_of_validity'] = "";
-    $form["campo_impianto"] = "";
-    $form['order'] = 0;
-    $form['coseor'] = "";
-    $form['codart'] = "";
-    $form['cosear'] = "";
-    $form['mov'] = 0;
-    $form['nmov'] = 0;
-    $form['nmovdb'] = 0;
-    //$form['staff'][$form['mov']] = "";
-    $form['filename'] = "";
-    $form['identifier'] = "";
-    $form['expiry'] = "";
-    $form['lot_or_serial'] = "";
-    $form['SIAN'] = "";
-    $form['quality'] = "";
-    $form['cod_operazione']="";
-    $form['recip_stocc']="";
-    $form['recip_stocc_destin']="";
-    $form['datreg'] = date("Y-m-d");
-    $form['quantip'] = "";
-    $form['quantipord'] = "";
-    $form['id_movmag'] = "";
-    $form['id_lotmag'] = "";
-    $form['numcomp'] = 0;
-    $resartico['lot_or_serial']="";
-    $resartico['good_or_service']="";
-    $resartico['unimis']="";
-    $form['id_tes']="";
-    $form['id_staff_def']=0;
+  if (isset($_GET['type'])) { // controllo se proviene anche da una richiesta del modulo camp
+      $form['order_type'] = substr($_GET['type'],0,3);
+  } else { // altrimenti prendo quello in configurazione azienda
+      $form['order_type'] = $admin_aziend['order_type'];
+  }
+  $form['description'] = "";
+  $form['id_tesbro'] = "";
+  $form['add_info'] = "";
+  $form['gioinp'] = date("d");
+  $form['mesinp'] = date("m");
+  $form['anninp'] = date("Y");
+  $form['datemi'] = date("Y-m-d", time());
+  $form['iniprod'] = date ("d-m-Y");
+  $form['iniprodtime'] = date ("H:i");
+  $form['fineprod'] = date ("d-m-Y");
+  $form['fineprodtime'] = date ("H:i");
+  $form['day_of_validity'] = "";
+  $form["campo_impianto"] = "";
+  $form['order'] = 0;
+  $form['coseor'] = "";
+  $form['codart'] = "";
+  $form['cosear'] = "";
+  $form['mov'] = 0;
+  $form['nmov'] = 0;
+  $form['nmovdb'] = 0;
+  $form['filename'] = "";
+  $form['identifier'] = "";
+  $form['expiry'] = "";
+  $form['lot_or_serial'] = "";
+  $form['SIAN'] = "";
+  $form['quality'] = "";
+  $form['cod_operazione']="";
+  $form['recip_stocc']="";
+  $form['recip_stocc_destin']="";
+  $form['datreg'] = date("Y-m-d");
+  $form['quantip'] = "";
+  $form['quantipord'] = "";
+  $form['id_movmag'] = "";
+  $form['id_lotmag'] = "";
+  $form['numcomp'] = 0;
+  $resartico['lot_or_serial']="";
+  $resartico['good_or_service']="";
+  $resartico['unimis']="";
+  $form['id_tes']="";
+  $form['id_staff_def']=0;
 }
 if (isset($_POST['Cancel'])) { // se è stato premuto ANNULLA
-    $form['hidden_req'] = '';
-    $form['order_type'] = "";
-    $form['description'] = "";
-    $form['id_tesbro'] = "";
-    $form['add_info'] = "";
-    $form['gioinp'] = date("d");
-    $form['mesinp'] = date("m");
-    $form['anninp'] = date("Y");
-    $form['day_of_validity'] = "";
-    $form["campo_impianto"] = "";
-    $form['order'] = "";
-    $form['codart'] = "";
-    $form['mov'] = 0;
-    $form['nmov'] = 0;
-    $form['nmovdb'] = 0;
-    //$form['staff'][$form['mov']] = "";
+  $form['hidden_req'] = '';
+  $form['order_type'] = "";
+  $form['description'] = "";
+  $form['id_tesbro'] = "";
+  $form['add_info'] = "";
+  $form['gioinp'] = date("d");
+  $form['mesinp'] = date("m");
+  $form['anninp'] = date("Y");
+  $form['day_of_validity'] = "";
+  $form["campo_impianto"] = "";
+  $form['order'] = "";
+  $form['codart'] = "";
+  $form['mov'] = 0;
+  $form['nmov'] = 0;
+  $form['nmovdb'] = 0;
 	$form['id_staff_def']=0;
-    $form['filename'] = "";
-    $form['identifier'] = "";
-    $form['expiry'] = "";
-    $form['quantip'] = "";
-    $form['id_movmag'] = "";
-    $form['id_lotmag'] = "";
-    $form['numcomp'] = 0;
+  $form['filename'] = "";
+  $form['identifier'] = "";
+  $form['expiry'] = "";
+  $form['quantip'] = "";
+  $form['id_movmag'] = "";
+  $form['id_lotmag'] = "";
+  $form['numcomp'] = 0;
 }
 if (!empty($_FILES['docfile_']['name'])) { // Antonio Germani - se c'è un nome in $_FILES
     $prefix = $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'];
@@ -1047,7 +1037,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 		</td>
 	</tr>
 	<?php
-    if ($form['order'] > 0 && $toDo != "update") { // se c'è un ordine e non siamo in update seleziono l'articolo fra quelli ordinati
+  if ($form['order'] > 0 && $toDo != 'update') { // se c'è un ordine e non siamo in update seleziono l'articolo fra quelli ordinati
 		echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[9] . "</td><td class=\"FacetDataTD\">\n";
 		// SELECT articolo da rigbro
 		$gForm->selectFromDB('rigbro', 'cosear','codart', $form['codart'], 'id_tes', 1, ' - ','descri','TRUE','FacetSelect' , null, '','id_tes = '. $form['id_tes'].' ');
@@ -1514,7 +1504,6 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 					}
 				}
 				echo '<input type="hidden" name="numcomp" value="' . $nc . '">'; // Antonio Germani - Nota bene: numcomp ha sempre una unità in più! Non l'ho tolta per distinguere se c'è un solo componente o nessuno.
-
 		?>
 		</div>	<!-- chiude container  -->
 		<?php
@@ -1523,7 +1512,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 	</td>
 	</tr>
 	<?php // Antonio Germani - Inizio form SIAN
-	if ($form['SIAN']>0 AND $form['order_type'] == "IND"){ // se l'articolo prevede un movimento SIAN e siamo su prod.industriale
+	if ($form['SIAN'] > 0 && $form['order_type'] == "IND") { // se l'articolo prevede un movimento SIAN e siamo su prod.industriale
 		$rescampbase = gaz_dbi_get_row($gTables['camp_artico'], "codice", $form['codart']);
 		echo "<tr><td class=\"FacetFieldCaptionTD\">Gestione SIAN</td>";
 		echo "<td>";
@@ -1706,12 +1695,7 @@ echo "<tr><td class=\"FacetFieldCaptionTD\">Responsabile/addetto produzione</td>
 ?>
 <select name="id_staff_def" onchange="this.form.submit()">
 <?php
-$sql = gaz_dbi_dyn_query ($gTables['anagra'].".* ",
- $gTables['anagra']."
- LEFT JOIN ".$gTables['clfoco']." on (".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id)
- LEFT JOIN ".$gTables['staff']." on (".$gTables['staff'].".id_clfoco = ".$gTables['clfoco'].".codice)
- LEFT JOIN ".$gTables['admin']." on (".$gTables['admin'].".id_anagra = ".$gTables['anagra'].".id)",
- "(".$gTables['staff'].".id_clfoco > 0 OR ". $gTables['admin'] .".id_anagra > 0) AND (". $gTables['staff'] .".end_date >= '". $form['datemi'] ."' OR ". $gTables['staff'] .".end_date IS NULL)");
+$sql = gaz_dbi_query("SELECT ".$gTables['anagra'].".* FROM ".$gTables['staff']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['staff'].".id_clfoco = ".$gTables['clfoco'].".codice LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id UNION SELECT ".$gTables['anagra'].".*  FROM ".$gTables['admin']." LEFT JOIN ".$gTables['anagra']." ON ".$gTables['admin'].".id_anagra = ".$gTables['anagra'].".id WHERE 1" );
 $sel=0;
 while ($row = $sql->fetch_assoc()){
 	$selected = "";
@@ -1808,7 +1792,7 @@ if ($form['order_type'] <> "AGR") { // input esclusi se NON produzione agricola
   echo "<input type=\"hidden\" name=\"lot_or_serial\" value=\"\"></td></tr>";
 }
 if ($popup <> 1) {
-  echo '<tr><td></td><td class="text-center" >';
+  echo '<tr class="FacetFooterTD"><td></td><td class="text-center" >';
 } else {
   echo '<tr class="FacetFooterTD"><td></td><td class="text-center" >';
 }

@@ -454,7 +454,7 @@ if (isset($invoices['data'])) {
                 if ($vr == 'maybe') {
                     echo " &nbsp;<input class=\"btn btn-xs btn-warning\" type=\"submit\" name=\"no_change[$kr]\" value=\"Escludi!\" />";
                 } else {
-                    echo " &nbsp;<input class=\"btn btn-xs btn-success\" type=\"submit\" name=\"yes_change[$kr]\" value=\"Escludi!\" />";
+                    echo " &nbsp;<input class=\"btn btn-xs btn-info\" type=\"submit\" name=\"yes_change[$kr]\" value=\"Escludi!\" />";
                 }
                 echo "</td>";
                 echo "</tr>\n";
@@ -530,7 +530,7 @@ if (isset($invoices['data'])) {
             echo "</tr>\n";
         }
     }
-    echo "<tr><td  align=\"right\" colspan=\"8\"><input type=\"submit\" name=\"genera\" value=\"CONFERMA LA GENERAZIONE DELLE FATTURE COME DA ANTEPRIMA\"></td></tr>";
+    echo "<tr class=\"text-center\"><td align=\"center\" colspan=\"8\"><input class=\"btn btn-warning\" type=\"submit\" name=\"genera\" value=\"CONFERMA LA GENERAZIONE DELLE FATTURE COME DA ANTEPRIMA\"></td></tr>";
 } else {
     echo "<tr><td class=\"FacetDataTDred\" colspan=\"7\" align=\"right\">Non ci sono DdT  da fatturare</td></tr>";
 }

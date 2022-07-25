@@ -28,9 +28,9 @@ require("../../library/include/calsca.inc.php");
 $msg = '';
 if (isset($_POST['group_rid']) && $_POST['group_rid']=='no'){
   $group_rid_n='checked';
-  $group_rid_y='';  
+  $group_rid_y='';
 } else {
-  $group_rid_y='checked';  
+  $group_rid_y='checked';
   $group_rid_n='';
 };
 
@@ -50,7 +50,7 @@ function getDocumentsBill($upd = false,$group_rid=false) {
     $orderby = "datfat ASC, protoc ASC, id_tes ASC";
     $result = gaz_dbi_dyn_query('tesdoc.*,
                         pay.tippag,pay.numrat,pay.tipdec,pay.giodec,pay.tiprat,pay.mesesc,pay.giosuc,customer.codice, customer.speban AS addebitospese, customer.iban,
-                        CONCAT(anagraf.ragso1,\' \',anagraf.ragso2) AS ragsoc,CONCAT(anagraf.citspe,\' (\',anagraf.prospe,\')\') AS citta, 
+                        CONCAT(anagraf.ragso1,\' \',anagraf.ragso2) AS ragsoc,CONCAT(anagraf.citspe,\' (\',anagraf.prospe,\')\') AS citta,
                         files.id_doc AS mndtritdinf, files.custom_field AS files_data ', $from, $where, $orderby);
     $doc = array();
     $ctrlp = 0;
@@ -75,7 +75,7 @@ function getDocumentsBill($upd = false,$group_rid=false) {
             $n_vat_decalc = 0;
             $totimpdoc = 0;
             $spese_incasso = $tes['numrat'] * $tes['speban'];
-            $cigcup = ''; /* aggiungo un solo valore di CIG CUP per ogni testata 
+            $cigcup = ''; /* aggiungo un solo valore di CIG CUP per ogni testata
              * che andrò a valorizzare solo se incontrerò questi sui righi tipo 11 e 12
              */
             $taxstamp = 0;
@@ -147,7 +147,7 @@ function getDocumentsBill($upd = false,$group_rid=false) {
         }
         $doc[$ctrlp]['acc'][$admin_aziend['boleff']]['import'] += $doc[$ctrlp]['tes']['taxstamp'] + $calc->pay_taxstamp;
     }
-    
+
     // INIZIO ciclo delle fatture che dovranno generare effetti con le singole scadenze
     $ctrl_date = '';
     $effetti=[];
@@ -179,18 +179,18 @@ function getDocumentsBill($upd = false,$group_rid=false) {
                     $n_type = 'R';
                 }
                 // valorizzo l'indice con una chiave clfoco-scaden (cliente-scadenza che eventualemente mi servirà sotto per accumulare in un unico RID le scadenze dello stesso cliente
-                // per fare l'accumulo in fase di emissione della distinta RID darò lo stesso progressivo a righi diversi della tabella gaz_NNNeffett 
+                // per fare l'accumulo in fase di emissione della distinta RID darò lo stesso progressivo a righi diversi della tabella gaz_NNNeffett
                 // controllo se il cliente ha già generato un rid con la stessa scadenza
                 if (isset($cliscad[$v['tes']['clfoco'].$v['tes']['scaden']]) && $v['tes']['tipeff']=='I' && $group_rid) { // se ho chiesto il raggruppamento dei RID il progressivo sarà lo stesso a parità di scadenza
                     $v['tes']['progre'] = $cliscad[$v['tes']['clfoco'].$v['tes']['scaden']]['progre'];
                     $effetti[$cliscad[$v['tes']['clfoco'].$v['tes']['scaden']]['key']]['raggru'] = 1; //segno come accumulato anche l'effetto precedente con lo stesso cliente-scadenza
-                    $effetti[$cliscad[$v['tes']['clfoco'].$v['tes']['scaden']]['key']]['status'] = 'RAGGRUPPA'; // per visualizzare sui report, nonincide sulla logica 
+                    $effetti[$cliscad[$v['tes']['clfoco'].$v['tes']['scaden']]['key']]['status'] = 'RAGGRUPPA'; // per visualizzare sui report, nonincide sulla logica
                     $v['tes']['raggru'] = 1;
                     $v['tes']['status'] = 'RAGGRUPPA';
                 } else { // altrimenti il progressivo NON sarà rivisto per l'accumulo
                     $cliscad[$v['tes']['clfoco'].$v['tes']['scaden']] = ['progre'=>$n[$n_type],'key'=>$ke];
                     $v['tes']['raggru'] = 0;
-                    $v['tes']['progre'] = $n[$n_type]; 
+                    $v['tes']['progre'] = $n[$n_type];
                     $n[$n_type] ++;
                 }
                 $v['tes']['datemi'] = $v['tes']['datfat'];
@@ -209,7 +209,7 @@ function getDocumentsBill($upd = false,$group_rid=false) {
         $ctrl_date = substr($v['tes']['datfat'], 0, 4);
     }
     // FINE ciclo fatture con effetti con o senza progressivi raggruppati, pronti per essere visualizzati o inseriti sul db in base alla scelta
-    
+
     if ($upd) { // ho scelto di generarle
         foreach ($effetti as $k=>$v) {
             effettInsert($v);
@@ -262,7 +262,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
         $rs = getDocumentsBill(true,($group_rid_y=='checked'?true:false));
         header("Location: report_effett.php");
         exit;
-    } 
+    }
 }
 
 require("../../library/include/header.php");
@@ -274,8 +274,8 @@ $gForm = new GAzieForm();
 ?>
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['title'];?></div>
 <div class="panel panel-info div-bordered">
- <div class="panel-body"> 
-  <div class="container-fluid">  
+ <div class="panel-body">
+  <div class="container-fluid">
    <div class="row">
     <div class="form-group col-xs-12 col-sm-6 col-md-4 bg-info text-center">Genera un solo RID per lo stesso cliente con le stesse scadenze</div>
     <div class="form-group col-xs-12 col-sm-6 col-md-4 text-center">
@@ -284,7 +284,7 @@ $gForm = new GAzieForm();
       <input name="group_rid" type="radio" value="no" id="group_rid_n" <?php echo $group_rid_n; ?>>
       <label for="group_rid_n">NO</label>
     </div>
-    <div class="form-group col-xs-12 col-sm-6 col-md-4 text-center"><input type="submit" class="bg-success" name="preview" value="<?php echo $script_transl['view'];?>">
+    <div class="form-group col-xs-12 col-sm-6 col-md-4 text-center"><input type="submit" class="btn btn-info" name="preview" value="<?php echo $script_transl['view'];?>">
     </div>
    </div>
   </div>
@@ -318,7 +318,7 @@ if (isset($_POST['preview'])) {
         if ($ctrl_date <> substr($v['datfat'], 0, 4)) {
             $n = getReceiptNumber($v['datfat']);
         }
-        if (strlen($v['iban'])<20&&$v['tippag']=='I') { // non c'è l'iban 
+        if (strlen($v['iban'])<20&&$v['tippag']=='I') { // non c'è l'iban
             $errors=true;
             $e=$script_transl['errors']['noiban'];
         }
@@ -350,7 +350,7 @@ if (isset($_POST['preview'])) {
         echo "</td></tr>\n";
         $ctrldoc=$v['protoc'];
     }
-    
+
     foreach ($tot_type as $k_t => $v_t) {
         if ($v_t > 0) {
             echo "\t<tr>\n";
@@ -365,7 +365,7 @@ if (isset($_POST['preview'])) {
     }
     echo "\t<tr>\n";
     echo "\t </tr></table>\n";
-    echo '<div class="text-center">'.($errors?'<span class="bg-danger text-danger">Attenzione!!! Puoi generare gli effetti ma devi essere consapevole degli errori sopra riportati</span><br/>':'').'<button type="submit" class="btn btn-warning" name="submit">'.$script_transl['submit'].'</button>';
+    echo '<div class="text-center">'.($errors?'<span class="gaz-costi">Attenzione!!! Puoi generare gli effetti ma devi essere consapevole degli errori sopra riportati</span><br/>':'').'<button type="submit" class="btn btn-warning" name="submit">'.$script_transl['submit'].'</button>';
     echo "\t </td>\n";
 
 }

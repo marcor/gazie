@@ -1514,8 +1514,8 @@ echo "	</td>
                                 <input type=\"hidden\" name=\"destin\" value=\"" . $form['destin'] . "\" />
 						</td>\n";
     } else {
-        echo "			<td class=\"FacetDataTD\">";
-        echo "				<textarea rows=\"1\" cols=\"30\" name=\"destin\" class=\"FacetInput\">" . $form["destin"] . "</textarea>
+        echo '<td class="FacetDataTD text-center" colspan=2>';
+        echo "<textarea rows=\"1\" cols=\"40\" name=\"destin\" class=\"FacetInput\">" . $form["destin"] . "</textarea>
 						</td>
 						<input type=\"hidden\" name=\"id_des_same_company\" value=\"" . $form['id_des_same_company'] . "\">
 						<input type=\"hidden\" name=\"id_des\" value=\"" . $form['id_des'] . "\">
@@ -1559,8 +1559,8 @@ if ($next_row > 0) {
 				<td class="text-right">' . number_format($totivafat, 2, '.', '') . '</td>
 				<td class="text-right">' . $quatot . '</td>
 				<td class="text-right">' . number_format(($totimpfat + $totivafat), 2, '.', '') . '</td>
-			  </tr></table></div></br>';
-  echo '<div class="col-xs-12 text-center">';
+			  </tr></table>';
+  echo '<div class="col-xs-12 FacetFooterTD text-center">';
   if ($toDo == 'update') {
     echo '<input type="submit" class="btn btn-warning" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="Modifica" />';
   } else {
@@ -1568,7 +1568,7 @@ if ($next_row > 0) {
   }
   echo '</div>';
 } else {
-  echo '</table></div>';
+  echo '</table>';
 }
 // *** FINE FOOTER
 ?></div></form>

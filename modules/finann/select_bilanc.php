@@ -284,8 +284,8 @@ echo "\t</select>";
 echo "</td>\n</tr>\n";
 
 if ($msg == "") {
-    echo "<tr><td align=\"center\" colspan=\"2\"> <input type=\"submit\" name=\"Return\" value=\"".$script_transl['return']."\"></td>"
-	    ."<td align=\"center\" colspan=\"2\"><input type=\"submit\" name=\"anteprima\" value=\"".$script_transl['view']."\">&nbsp;</td></tr>\n";
+    echo "<tr class=\"FacetFooterTD\"><td></td>"
+	    ."<td align=\"center\" colspan=\"3\"><input type=\"submit\" class=\"btn btn-info\" name=\"anteprima\" value=\"".$script_transl['view']."\">&nbsp;</td></tr>\n";
 }
 echo "</table>\n";
 
@@ -439,10 +439,10 @@ if (!empty($_GET['anteprima']) && empty($msg)) {
            echo "<tr><td colspan=\"2\"></td><td colspan=\"2\"><hr></td><tr>";
            echo "<tr><td colspan=\"3\"></td><td align=\"right\" class=\"FacetDataTD\">".gaz_format_number(-$totmas)."</td><tr>";
 	    }
-        if ($ctrl_bal == 0 ) {
-          echo "<tr><td colspan=\"4\" align=\"center\"><input type=\"submit\" name=\"stampa\" value=\"".ucfirst($script_transl['print'].$script_transl[0])."\"></td></tr>";
-        }
-        echo "</table>\n";
+      if ($ctrl_bal == 0 ) {
+        echo "<tr class=\"FacetFooterTD\"><td colspan=\"4\" align=\"center\"><input type=\"submit\" class=\"btn btn-warning\" name=\"stampa\" value=\"".ucfirst($script_transl['print'].$script_transl[0])."\"></td></tr>";
+      }
+      echo "</table>\n";
     }
 }
 ?>
