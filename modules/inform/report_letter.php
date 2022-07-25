@@ -181,7 +181,7 @@ $recordnav = new recordnav($table, $where, $limit, $passo);
 $recordnav -> output();
 while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "<tr class=\"FacetDataTD\">\n";
-    echo "<td align=\"right\"><a href=\"admin_letter.php?id_let=".$a_row["id_let"]."&Update\" title=\"".ucfirst($script_transl['update'])."!\">".$a_row["id_let"]."</a> &nbsp</td>";
+    echo "<td align=\"center\"><a class=\"btn btn-edit btn-xs\" href=\"admin_letter.php?id_let=".$a_row["id_let"]."&Update\" title=\"".ucfirst($script_transl['update'])."!\">".$a_row["id_let"]."</a> &nbsp</td>";
     echo "<td align=\"center\">".$a_row["write_date"]." &nbsp;</td>\n";
     echo "<td align=\"center\">".$a_row["numero"]."</td>\n";
     echo "<td align=\"center\">".$a_row["tipo"]."</td>\n";

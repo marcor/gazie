@@ -136,7 +136,7 @@ print "<input type=\"hidden\" name=\"".ucfirst($toDo)."\" value=\"\">\n";
 print "<input type=\"hidden\" value=\"".$_POST['ritorno']."\" name=\"ritorno\">\n";
 print "<input type=\"hidden\" value=\"".$form['used_from_modules']."\" name=\"used_from_modules\">\n";
 print "<div align=\"center\" class=\"FacetFormHeaderFont\">$title</div>";
-print "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" class=\"FacetFormTABLE\" align=\"center\">\n";
+print "<table class=\"gaz-table-form\">\n";
 if (!empty($msg)) {
     $message = "";
     $rsmsg = array_slice( explode('+',chop($msg)),0,-1);
@@ -181,17 +181,16 @@ echo "<tr><td>";
 	</td>
 </tr>
 <tr>
-	<td class="FacetFieldCaptionTD">
-	</td>
-	<td class="FacetDataTD" align="right">
-		<input type="submit" name="Return" value="<?php echo $script_transl['return']; ?>">
+	<td class="FacetFooterTD text-center" colspan=2 >
 <?php
 if ($toDo == 'update') {
-   print '<input type="submit" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="'.ucfirst($script_transl['update']).'!"></td></tr>';
+   print '<input type="submit" accesskey="m" class="btn btn-warning" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="'.ucfirst($script_transl['update']).'!">';
 } else {
-   print '<input type="submit" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="'.ucfirst($script_transl['insert']).'!"></td></tr>';
+   print '<input type="submit" accesskey="i" class="btn btn-warning" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="'.ucfirst($script_transl['insert']).'!">';
 }
 ?>
+</td>
+</tr>
 </table>
 </form>
 <?php

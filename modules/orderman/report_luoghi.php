@@ -101,7 +101,7 @@ $recordnav -> output();
         <p>Descrizione</p>
         <p class="ui-state-highlight" id="iddescri"></p>
 	</div>
-    <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+    <table class="Tlarge table">
     	<thead>
             <tr>
                 <td></td>
@@ -142,8 +142,8 @@ $recordnav -> output();
 
 while ($a_row = gaz_dbi_fetch_array($result)) {
 ?>		<tr class="FacetDataTD">
-			<td>
-				<a class="btn btn-xs btn-success btn-block" href="admin_luoghi.php?Update&codice=<?php echo $a_row["codice"]; ?>">
+			<td class="text-center">
+				<a class="btn btn-xs btn-edit" href="admin_luoghi.php?Update&codice=<?php echo $a_row["codice"]; ?>">
 					<i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $a_row["codice"];?>
 				</a>
 			</td>
@@ -187,12 +187,9 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 
 </form>
 <form method="post" action="stampa_luoghi.php">
-	<table>
-		<tr class="FacetFieldCaptionTD">
-			<td colspan="7" align="right"><input type="submit" name="print" value="<?php echo $script_transl['print'];?>">
-            </td>
-        </tr>
-    </table>
+	<div class="FacetFooterTD text-center col-xs-12">
+	<input type="submit" class="btn btn-warning" name="print" value="<?php echo $script_transl['print'];?>">
+  </div>
 </form>
 <?php
 require("../../library/include/footer.php");

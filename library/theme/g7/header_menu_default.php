@@ -67,7 +67,7 @@ function menu_alerts_check(mod,title,button,label,link,style){
 	// questa funzione attiva l'alert sulla barra del menù e viene richiamata sia dalla funzione menu_check_from_modules() dal browser tramite setInterval che alla fine della pagina (lato server) quando il controllo fatto dal php tramite $_SESSION['menu_alerts_lastcheck'] è scaduto
     // faccio append solo se già non esiste
 	style = style || 0;
-    if (style.length >= 2) { // solo se style è valorizzato faccio l'alert sul menu 
+    if (style.length >= 2) { // solo se style è valorizzato faccio l'alert sul menu
         $("div.blink").html( '<a mod="'+mod+'" class="btn btn-'+style+' dialog_menu_alerts" title="'+title.replace(/(<([^>]+)>)/ig,"")+'" >'+button+'</a>').click(function() {
 			$("p#diatitle").html(title);
 			$( "#dialog_menu_alerts" ).dialog({
@@ -78,9 +78,9 @@ function menu_alerts_check(mod,title,button,label,link,style){
 				show: "blind",
 				hide: "explode",
 				buttons: {
-					'confirm':{ 
-						text: label, 
-						'class':'btn btn-confirm', 
+					'confirm':{
+						text: label,
+						'class':'btn btn-confirm',
 						click:function (event, ui) {
 						$.ajax({
 							data: {'mod':mod },
@@ -91,8 +91,8 @@ function menu_alerts_check(mod,title,button,label,link,style){
 							}
 						});
 					}},
-					delete:{ 
-						text:'Posponi', 
+					delete:{
+						text:'Posponi',
 						'class':'btn btn-danger',
 						click:function (event, ui) {
 						$.ajax({
@@ -109,13 +109,13 @@ function menu_alerts_check(mod,title,button,label,link,style){
 					}
 				}
 			});
-			$("#dialog_menu_alerts" ).dialog( "open" );  
+			$("#dialog_menu_alerts" ).dialog( "open" );
 		});
-    } 
+    }
 }
 
 function menu_check_from_modules() {
-    // chiamata al server per aggiornare il tempo dell'ultimo controllo    
+    // chiamata al server per aggiornare il tempo dell'ultimo controllo
 	$.ajax({
 		type: 'GET',
 		url: "../root/session_menu_alert_lastcheck.php",
@@ -129,12 +129,12 @@ function menu_check_from_modules() {
           var link = '';
           var mod = '';
           // controllo la presenza di nuove notifiche
-          $.ajax({ 
-            type: 'GET', 
-            url: '../root/get_sync_status_ajax.php', 
-            data: {}, 
+          $.ajax({
+            type: 'GET',
+            url: '../root/get_sync_status_ajax.php',
+            data: {},
             dataType: 'json',
-            success: function (data) { 
+            success: function (data) {
               $.each(data, function(i, v) {
                 // nome modulo
                 title = v['title'];
@@ -148,29 +148,29 @@ function menu_check_from_modules() {
                 menu_alerts_check(mod,title,button,label,link,style);
               });
             }
-          });	        
+          });
         }
 	});
 }
 function opendoc(module) {
-	//twitter bootstrap script		
+	//twitter bootstrap script
 	$.ajax({
 		type: "POST",
 		url: module,
 		data: 'mode=modal', // da lasciare perché alcuni moduli usano mode
-		success: function (msg) {                    
+		success: function (msg) {
 			$("#doc_modal .modal-sm").css('width', '80%');
 			$("#doc_modal .modal-body").html(msg);
 		},
 		error: function () {
 			alert("Errore apertura documentazione");
 		}
-	});	
+	});
 };
 
 </script>
 <!-- Navbar static top per menu multilivello responsive -->
-		<div style="display:none" id="dialog_menu_alerts" title="">        
+		<div style="display:none" id="dialog_menu_alerts" title="">
 			<p class="ui-state-highlight" id="diatitle"></p>
 		</div>
 		<div id="doc_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -180,12 +180,12 @@ function opendoc(module) {
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 						<h4 class="modal-title" id="myModalLabel"><?php echo "Documentazione"; ?></h4>
 					</div>
-					<div class="modal-body edit-content small"></div>					
+					<div class="modal-body edit-content small"></div>
 				</div>
 			</div>
 		</div>
 <div class="navbar navbar-default" role="navigation">
-    <div id="l-wrapper" class="navbar-header company-color">
+    <div id="l-wrapper" class="navbar-header company-color" style="padding-top: 8px; padding-bottom: 8px;">
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
             <span class="sr-only">Toggle navigation</span>
             <span class="icon-bar"></span>
@@ -195,17 +195,17 @@ function opendoc(module) {
         <a  href="../../modules/root/admin.php"> <?php echo strtoupper($admin_aziend["ragso1"]); ?>
         </a>
     </div>
-    
-	<div class="blink" align="center" style="position:absolute; right:3px; padding:2px;"></div>												
 
-    
+	<div class="blink" align="center" style="position:absolute; right:3px; padding:2px;"></div>
+
+
     <div class="collapse navbar-collapse">
         <ul class="nav navbar-nav">
             <?php
-            // stampo la prima voce della barra del menù con il dropdown dei moduli 
+            // stampo la prima voce della barra del menù con il dropdown dei moduli
             $i = 0;
             foreach ($menuArray as $menu_modules_val) {
-                if ($i == 0) { // sul modulo attivo non permetto i submenu in quanto verrano messi sulla barra orizzontale 
+                if ($i == 0) { // sul modulo attivo non permetto i submenu in quanto verrano messi sulla barra orizzontale
                     echo "\t\t\t\t<li>" . '<a class="dropdown-toggle" data-toggle="dropdown"><img src="' . $menu_modules_val["icon"] . '" width="32"/>&nbsp;' . $menu_modules_val['name'] . '<span class="caret"></span></a>';
                     echo "\n\t\t\t\t\t" . '<ul class="dropdown-menu">' . "\n";
                 } else {
@@ -223,7 +223,7 @@ function opendoc(module) {
         <?php
         $i = 0;
         foreach ($menuArray[0] as $menu) {
-            // stampo nella barra del menù il dropdown del modulo 
+            // stampo nella barra del menù il dropdown del modulo
             $icon_lnk = '';
             if (isset($menu['icon']) && preg_match("/^[A-Za-z0-9!@#$%&()*;:_.'\/\\\\ ]+\.png$/", $menu['icon'])) {
                 $icon_lnk = '<img src="' . $menu['icon'] . '" width="32" />';
@@ -244,11 +244,11 @@ function opendoc(module) {
         ?>
         <li id="user-position">
 			<div>
-                <img src="../root/view.php?table=admin&field=user_name&value=<?php echo $admin_aziend["user_name"] ?>" height="30" title="<?php echo $admin_aziend['user_lastname'] . ' ' . $admin_aziend['user_firstname']; ?>" >				
+                <img src="../root/view.php?table=admin&field=user_name&value=<?php echo $admin_aziend["user_name"] ?>" height="30" title="<?php echo $admin_aziend['user_lastname'] . ' ' . $admin_aziend['user_firstname']; ?>" >
 			</div>
         </li>
-	
+
         </ul>
     </div>
-	
+
 </div><!-- chiude navbar -->

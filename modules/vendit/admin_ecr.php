@@ -32,8 +32,8 @@ if (isset($_GET['id_cash'])||isset($_POST['id_cash'])) {
     $toDo = 'insert';
 }
 
-// le variabili sottostanti mi serviranno per rendere attivo il tab desiderato, in caso di un post derivante da un aggiunta righi oppure qualora si debba riferire ad un errore  
-$homeactive='';$repartiactive='';$tenderactive='';$utentiactive=''; 
+// le variabili sottostanti mi serviranno per rendere attivo il tab desiderato, in caso di un post derivante da un aggiunta righi oppure qualora si debba riferire ad un errore
+$homeactive='';$repartiactive='';$tenderactive='';$utentiactive='';
 if (isset($_POST['insreparto'])) {
     $repartiactive='active';
 } elseif (isset($_POST['instender'])) {
@@ -41,7 +41,7 @@ if (isset($_POST['insreparto'])) {
 } elseif (isset($_POST['insutente'])) {
     $utentiactive='active';
 } else {
-  $homeactive='active';  
+  $homeactive='active';
 }
 
 if (isset($_POST['id_cash'])) {   //se non e' il primo accesso
@@ -66,7 +66,7 @@ if (isset($_POST['id_cash'])) {   //se non e' il primo accesso
       $form['reparti'][$nreparto]['reparto'] = '';
       $form['reparti'][$nreparto]['descrizione'] ='';
       $nreparto++;
-  }  
+  }
   $ntender = 0;
   if (isset($_POST['tenders'])) {
     foreach ($_POST['tenders'] as $ntender => $val) {
@@ -81,8 +81,8 @@ if (isset($_POST['id_cash'])) {   //se non e' il primo accesso
       $form['tenders'][$ntender]['tender'] = '';
       $form['tenders'][$ntender]['descrizione'] ='';
       $ntender++;
-  } 
-  // utenti abilitati 
+  }
+  // utenti abilitati
   $accutenti=[];
   foreach ($_POST['utenti'] as $k => $v) {
     $form['utenti'][$k]['nickname'] = $k;
@@ -96,18 +96,18 @@ if (isset($_POST['id_cash'])) {   //se non e' il primo accesso
     }
   }
 
-  // Se viene inviata la richiesta eliminare un reparto 
+  // Se viene inviata la richiesta eliminare un reparto
   if (isset($_POST['repartidel'])) {
       $delri = key($_POST['repartidel']);
       array_splice($form['reparti'], $delri, 1);
-      $homeactive='';$repartiactive='active';$tenderactive='';$utentiactive=''; 
+      $homeactive='';$repartiactive='active';$tenderactive='';$utentiactive='';
   }
 
-  // Se viene inviata la richiesta eliminare un tender 
+  // Se viene inviata la richiesta eliminare un tender
   if (isset($_POST['tendersdel'])) {
       $delri = key($_POST['tendersdel']);
       array_splice($form['tenders'], $delri, 1);
-      $homeactive='';$repartiactive='';$tenderactive='active';$utentiactive=''; 
+      $homeactive='';$repartiactive='';$tenderactive='active';$utentiactive='';
   }
 
   if (isset($_POST['Submit'])) { // conferma tutto
@@ -188,7 +188,7 @@ if (isset($_POST['id_cash'])) {   //se non e' il primo accesso
     $toDo = 'update';
     $form = gaz_dbi_get_row($gTables['cash_register'], 'id_cash', intval($_GET['id_cash']));
 
-    // prendo tutti gli utenti dell'azienda 
+    // prendo tutti gli utenti dell'azienda
     $accutenti=json_decode($form['enabled_users']);
     $rsusr = gaz_dbi_dyn_query($gTables['admin_module'].".adminid AS nickname, ".$gTables['admin'].".user_firstname AS nome, ".$gTables['admin'].".user_lastname AS cognome", $gTables['admin_module'].' LEFT JOIN '.$gTables['admin']." ON ".$gTables['admin_module'].".adminid = ".$gTables['admin'].".user_name ", "moduleid = 2 AND ".$gTables['admin_module'].".company_id = " . $admin_aziend['company_id'], "adminid");
     while ($usr = gaz_dbi_fetch_array($rsusr)) {
@@ -199,7 +199,7 @@ if (isset($_POST['id_cash'])) {   //se non e' il primo accesso
             $form['utenti'][$usr['nickname']]['abilit'] = '';
         }
     }
-    
+
     // inizio reparti
     $nreparto = 0;
     $rs_row = gaz_dbi_dyn_query("*", $gTables['cash_register_reparto'], "cash_register_id_cash = " . $form['id_cash'], "reparto ASC");
@@ -223,7 +223,7 @@ if (isset($_POST['id_cash'])) {   //se non e' il primo accesso
     $form = gaz_dbi_fields('cash_register');
     $form['reparti']=[];
     $form['tenders']=[];
-    // prendo tutti gli utenti dell'azienda 
+    // prendo tutti gli utenti dell'azienda
     $rsusr = gaz_dbi_dyn_query($gTables['admin_module'].".adminid AS nickname, ".$gTables['admin'].".user_firstname AS nome, ".$gTables['admin'].".user_lastname AS cognome", $gTables['admin_module'].' LEFT JOIN '.$gTables['admin']." ON ".$gTables['admin_module'].".adminid = ".$gTables['admin'].".user_name ", "moduleid = 2 AND ".$gTables['admin_module'].".company_id = " . $admin_aziend['company_id'], "adminid");
     while ($usr = gaz_dbi_fetch_array($rsusr)) {
         $form['utenti'][$usr['nickname']]=$usr;
@@ -233,7 +233,7 @@ if (isset($_POST['id_cash'])) {   //se non e' il primo accesso
 require("../../library/include/header.php");
 $script_transl = HeadMain();
 $gForm = new venditForm();
-// ultimo utente 
+// ultimo utente
 $last_urs = gaz_dbi_get_row ($gTables['admin'], 'user_name', $form['adminid'] );
 $lu=$last_urs?$last_urs['user_name']:'Mai utilizzato';
 ?>
@@ -257,23 +257,23 @@ $lu=$last_urs?$last_urs['user_name']:'Mai utilizzato';
                 <li class="<?php echo $tenderactive; ?>"><a data-toggle="pill" href="#tenders">Tender</a></li>
                 <li class="<?php echo $utentiactive; ?>"><a data-toggle="pill" href="#utenti">Utenti</a></li>
                 <li style="float: right;"><?php echo '<input name="Submit" type="submit" class="btn btn-warning" value="' . ucfirst($script_transl[$toDo]) . '" />'; ?></li>
-            </ul>  
+            </ul>
 
-          
+
             <div class="tab-content">
               <div id="home" class="tab-pane fade in <?php echo $homeactive; ?>">
                  <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="id_cash" class="col-xs-4 control-label"><?php echo $script_transl['id_cash']; ?></label>
-                            <?php 
+                            <?php
                             if ($form["id_cash"]<=0) { ?>
                                 <div class="col-xs-8" > nuovo</div>
-                            <?php 
+                            <?php
                             } else { ?>
                                 <div class="col-xs-8" ><?php echo $form["id_cash"]; ?></div>
-                            <?php 
-                            } 
+                            <?php
+                            }
                             ?>
                             <input type="hidden" value="<?php echo $form["id_cash"]; ?>" name="id_cash" />
                             </div>
@@ -354,7 +354,7 @@ $lu=$last_urs?$last_urs['user_name']:'Mai utilizzato';
               </div><!-- chiude tab-pane  -->
 
               <div id="reparti" class="tab-pane fade in <?php echo $repartiactive; ?>">
-                
+
 <?php
 if (count($form['reparti']) > 0) {
 ?>
@@ -375,12 +375,12 @@ if (count($form['reparti']) > 0) {
 ?>
 <tr><td>
     <input type="hidden" name="<?php echo 'reparti[' . $k . '][id_cash_register_reparto]'; ?>" value="<?php echo $v['id_cash_register_reparto']; ?>"/><?php echo $k+1; ?>
-    </td> 
+    </td>
     <td>
     <?php
     $gForm->selectFromDB('aliiva', 'reparti[' . $k . '][aliiva_codice]', 'codice',  $v['aliiva_codice'], 'codice', true, ' - ', 'descri', '', 'col-sm-8', null, 'style="max-width: 350px;"');
     ?>
-    </td> 
+    </td>
     <td>
 	<input class="col-xs-12" type="text" name="<?php echo 'reparti[' . $k . '][reparto]'; ?>" value="<?php echo $v['reparto']; ?>"  maxlength="8" minlength="1" placeholder=" compreso tra 1 e 8 caratteri" />
     </td>
@@ -422,12 +422,12 @@ if (count($form['tenders']) > 0) {
 ?>
 <tr><td>
     <input type="hidden" name="<?php echo 'tenders[' . $k . '][id_cash_register_tender]'; ?>" value="<?php echo $v['id_cash_register_tender']; ?>"/><?php echo $k+1; ?>
-    </td> 
+    </td>
     <td>
     <?php
     $gForm->selectFromDB('pagame', 'tenders[' . $k . '][pagame_codice]', 'codice',  $v['pagame_codice'], 'codice', true, ' - ', 'descri', '', 'col-sm-8', null, 'style="max-width: 350px;"');
     ?>
-    </td> 
+    </td>
     <td>
 	<input class="col-xs-12" type="text" name="<?php echo 'tenders[' . $k . '][tender]'; ?>" value="<?php echo $v['tender']; ?>"  maxlength="8" minlength="1" placeholder=" compreso tra 1 e 8 caratteri" />
     </td>
@@ -453,12 +453,12 @@ if (count($form['tenders']) > 0) {
 <div class="h3">Abilitazione utenti</div>
 <?php
 foreach ($form['utenti'] as $k => $v) {
-    if ($v['abilit']=='uon'){
-     $uon='checked';   
-     $uoff='';   
+    if (isset($v['abilit']) && $v['abilit']=='uon'){
+     $uon='checked';
+     $uoff='';
     } else {
-     $uon='';   
-     $uoff='checked';   
+     $uon='';
+     $uoff='checked';
     }
 ?>
 <input type="hidden" name="<?php echo 'utenti[' . $v['nickname'] . '][nome]'; ?>" value="<?php echo $v['nome']; ?>"  >
