@@ -407,7 +407,9 @@ div.ui-dialog-buttonpane.ui-widget-content div.ui-dialog-buttonset button.btn.bt
 .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
 	font-size: 14px;
 	color: #0d0d0d;
-	background-color: #eee;
-  border: 2px;
+  border: 1px;
 	border-style: solid;
+}
+.ui-selectmenu-button span.ui-selectmenu-text {
+	background-color: #eee;
 }

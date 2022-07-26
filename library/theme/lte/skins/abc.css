@@ -202,3 +202,12 @@ td.ui-datepicker-other-month>a.ui-state-default.ui-priority-secondary{
 .table-striped > tbody > tr:nth-of-type(even) {
     background-color: #f9f9f9;
 }
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+	font-size: 14px;
+	color: #0d0d0d;
+  border: 1px;
+	border-style: solid;
+}
+.ui-selectmenu-button span.ui-selectmenu-text {
+	background-color: #eee;
+}
