@@ -945,7 +945,7 @@ echo "<input type=\"hidden\" name=\"" . ucfirst($toDo) . "\" value=\"\">\n";
 echo "<input type=\"hidden\" value=\"" . $_POST['ritorno'] . "\" name=\"ritorno\">\n";
 echo "<input type=\"hidden\" name=\"hidden_req\" value=\"TRUE\">\n"; // per auto submit on change select input
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">$title</div>";
-echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" class=\"FacetFormTABLE\" align=\"center\">\n";
+echo "<table class=\"Tmiddle table-striped\" align=\"center\">\n";
 $addvalue="";
 if (!empty($msg)) {
   $message = "";

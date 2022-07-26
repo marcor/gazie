@@ -39,7 +39,7 @@ require("../../library/include/header.php");
 $script_transl=HeadMain('','','report_backup');
 print "<form method=\"POST\">\n";
 print "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['warning'].'!!! '.$script_transl['title']."</div>\n";
-print "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" class=\"FacetFormTABLE\" align=\"center\">\n";
+print "<table class=\"Tmiddle table-striped\" align=\"center\">\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['sure']."</td><td class=\"FacetDataTD\">".$_GET["id"]."</td></tr>";
 
 print "<td align=\"right\"><input type=\"submit\" name=\"Return\" value=\"".$script_transl['return']."\"></td><td align=\"right\"><input type=\"submit\" name=\"Delete\" value=\"".strtoupper($script_transl['delete'])."!\"></td></tr>";

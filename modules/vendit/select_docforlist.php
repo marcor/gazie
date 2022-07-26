@@ -251,7 +251,7 @@ for ($counter = 1; $counter <= 9; $counter++) {
 }
 echo "</select>\n";
 echo "</div>";
-echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" class=\"FacetFormTABLE\" align=\"center\">";
+echo "<table class=\"Tmiddle table-striped\" align=\"center\">";
 if (!empty($msg)) {
    $message = "";
    $rsmsg = array_slice(explode('+', chop($msg)), 0, -1);

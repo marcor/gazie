@@ -144,7 +144,7 @@ print "<input type=\"hidden\" name=\"".ucfirst($toDo)."\" value=\"\">\n";
 print "<input type=\"hidden\" value=\"".$_POST['ritorno']."\" name=\"ritorno\">\n";
 print "<input type=\"hidden\" value=\"".$form['id_anagra']."\" name=\"id_anagra\">\n";
 print "<div align=\"center\" class=\"FacetFormHeaderFont\">$title</div>";
-print "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" class=\"FacetFormTABLE\" align=\"center\">\n";
+print "<table class=\"Tmiddle table-striped\" align=\"center\">\n";
 if (!empty($msg)) {
     $message = "";
     $rsmsg = array_slice( explode('+',chop($msg)),0,-1);

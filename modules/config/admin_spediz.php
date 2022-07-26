@@ -92,7 +92,7 @@ if ($toDo == 'insert') {
    echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['upd_this']." '".$form['codice']."'</div>\n";
    echo "<input type=\"hidden\" value=\"".$form['codice']."\" name=\"codice\" />\n";
 }
-echo "<table class=\"Tmiddle\">\n";
+echo "<table class=\"Tmiddle table-striped\">\n";
 if (!empty($msg)) {
     echo '<tr><td colspan="3" class="FacetDataTDred">'.$gForm->outputErrors($msg,$script_transl['errors'])."</td></tr>\n";
 }

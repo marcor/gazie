@@ -79,7 +79,7 @@ require("../../library/include/header.php");
 echo "<form method=\"POST\" name=\"myform\">";
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">$title</div>\n";
 
-echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" class=\"FacetFormTABLE\" align=\"center\">\n";
+echo "<table class=\"Tmiddle table-striped\" align=\"center\">\n";
 
 echo '<tr><td colspan="5" class="FacetDataTDred" align="center">' . "Procedura di aggiornamento della tabella fitofarmaci" . "</td></tr>\n";
 echo "<tr><td class=\"FacetDataTD\">\n";

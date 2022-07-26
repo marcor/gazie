@@ -120,7 +120,7 @@ $script_transl = HeadMain();
 echo "<form method=\"POST\">";
 echo "<input type=\"hidden\" name=\"ritorno\" value=\"".$form['ritorno']."\">\n";
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl[0]."</div>";
-echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" class=\"FacetFormTABLE\" align=\"center\">";
+echo "<table class=\"Tmiddle table-striped\" align=\"center\">";
 if (!empty($msg)) {
     $message = "";
     $rsmsg = array_slice( explode('+',chop($msg)),0,-1);

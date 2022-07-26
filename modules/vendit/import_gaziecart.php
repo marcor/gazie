@@ -221,7 +221,7 @@ echo "<input type=\"hidden\" value=\"" . $form['ritorno'] . "\" name=\"ritorno\"
 echo "<input type=\"hidden\" value=\"\" name=\"search['none']\">\n";
 echo "<input type=\"hidden\" value=\"" . $form['vat'] . "\" name=\"vat\">\n";
 echo "<input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />\n";
-echo "<table class=\"Tmiddle\">\n";
+echo "<table class=\"Tmiddle table-striped\">\n";
 if (!empty($msg)) {
     echo '<tr><td colspan="6" class="FacetDataTDred">' . $gForm->outputErrors($msg, $script_transl['errors']) . "</td></tr>\n";
 }

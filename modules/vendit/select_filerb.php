@@ -270,9 +270,9 @@ echo "<td class=\"text-right\">" . $script_transl['period'] . " : </td>
       <td class=\"text-left\"><input type=\"submit\" name=\"period\" value=\"" . $script_transl['period_value'] . "\">";
 echo "</td>\n";
 echo "</tr>\n";
-echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
-echo "<td></td>";
-echo '<td align="center"> <input type="submit" class="btn btn-info" accesskey="i" name="preview" value="';
+echo "\t<tr>\n";
+echo "<td class=\"FacetFooterTD\"></td>";
+echo '<td class="FacetFooterTD" align="center"> <input type="submit" class="btn btn-info" accesskey="i" name="preview" value="';
 echo $script_transl['view'];
 echo '" tabindex="100" >';
 echo "\t </td>\n";

@@ -139,7 +139,7 @@ echo "<input type=\"hidden\" name=\"extension\" value=\"".$form['extension']."\"
 echo "<input type=\"hidden\" name=\"item_ref\" value=\"".$form['item_ref']."\">\n";
 echo "<input type=\"hidden\" name=\"id_ref\" value=\"1\">\n";
 echo "<input type=\"hidden\" name=\"".ucfirst($toDo)."\" value=\"\">";
-echo "<table class=\"Tmiddle\">\n";
+echo "<table class=\"Tmiddle table-striped\">\n";
 if (!empty($msg)) {
     echo '<tr><td colspan="3" class="FacetDataTDred">'.$gForm->outputErrors($msg,$script_transl['errors'])."</td></tr>\n";
 }

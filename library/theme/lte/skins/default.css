@@ -16,7 +16,7 @@ body {
     border-color: #000;
 }
 .FacetFieldCaptionTD {
-    background-color: #c4c7ca;
+    background-color: #c4c7caab;
     color: #000;
 }
 th {
@@ -153,7 +153,8 @@ td.ui-datepicker-other-month>a.ui-state-default.ui-priority-secondary{
 .tab-content{
   background-color:#fff;
 }
-.tab-content > .tab-pane > div.row:nth-of-type(2n+1) {
+.tab-content > .tab-pane > div.row:nth-of-type(odd),
+.gaz-table-form div.container-fluid div.row:nth-of-type(odd) {
 	background-color: #f9f9f9;
 }
 .table-striped > tbody > tr:nth-of-type(odd) {

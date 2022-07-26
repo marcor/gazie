@@ -47,7 +47,7 @@ require("../../library/include/header.php");
 $script_transl = HeadMain('', '', 'admin_letter');
 print "<form method=\"POST\">\n";
 print "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['warning'] . '!!! ' . $script_transl['delete'] . $script_transl['title'] . "</div>\n";
-print "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" class=\"FacetFormTABLE\" align=\"center\">\n";
+print "<table class=\"Tmiddle table-striped\" align=\"center\">\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[3] . "</td><td class=\"FacetDataTD\">" . $form['numero'] . "</td></tr>";
 print "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[1] . "</td><td class=\"FacetDataTD\">" . $form['write_date'] . "</td></tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[2] . "</td><td class=\"FacetDataTD\">" . $partner['ragso1'] . "</td></tr>\n";

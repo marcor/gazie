@@ -142,7 +142,7 @@ echo "\t </td>\n";
 echo "</tr></table>\n";
 if (isset($_POST['Submit'])) { // conferma
    $attempts=4;
-   echo "<table class=\"Tmiddle\">\n";
+   echo "<table class=\"Tmiddle table-striped\">\n";
    //preparazione dati XML
    if ($form['listin'] =='web'){
        $lst = 'web_price';

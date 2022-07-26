@@ -463,7 +463,7 @@ require("../../library/include/header.php");
 $script_transl = HeadMain();
 echo "<form method=\"GET\">\n";
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . ucfirst($script_transl[0]) . "</div>\n";
-echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" class=\"FacetFormTABLE\" align=\"center\">\n";
+echo "<table class=\"Tmiddle table-striped\" align=\"center\">\n";
 if (!empty($msg)) {
     $message = "";
     $rsmsg = array_slice(explode('+', chop($msg)), 0, -1);

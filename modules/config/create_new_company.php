@@ -232,7 +232,7 @@ echo "<form method=\"POST\">";
 echo "<input type=\"hidden\" name=\"ritorno\" value=\"" . $form['ritorno'] . "\">\n";
 $gForm = new GAzieForm();
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['title'] . "</div>\n";
-echo "<table class=\"Tmiddle\">\n";
+echo "<table class=\"Tmiddle table-striped\">\n";
 if (!empty($msg)) {
     echo '<tr><td colspan="3" class="FacetDataTDred">' . $gForm->outputErrors($msg, $script_transl['errors']) . "</td></tr>\n";
 }

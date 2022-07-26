@@ -108,7 +108,7 @@ if ($toDo == 'insert') {
    echo "<input type=\"hidden\" value=\"".intval($form['codice']/1000000)."\" name=\"mas\" />\n";
    echo "<input type=\"hidden\" value=\"".($form['codice']-intval($form['codice']/1000000)*1000000)."\" name=\"sub\" />\n";
 }
-echo "<table class=\"Tmiddle\">\n";
+echo "<table class=\"Tmiddle table-striped\">\n";
 if (!empty($msg)) {
     echo '<tr><td colspan="3" class="FacetDataTDred">'.$gForm->outputErrors($msg,$script_transl['errors'])."</td></tr>\n";
 }

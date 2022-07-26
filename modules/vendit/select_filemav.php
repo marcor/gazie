@@ -202,7 +202,7 @@ echo "<input type=\"hidden\" value=\"".$form['ritorno']."\" name=\"ritorno\" />\
 $gForm = new venditForm();
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['title'];
 echo "</div>\n";
-echo "<table class=\"Tmiddle\">\n";
+echo "<table class=\"Tmiddle table-striped\">\n";
 if (!empty($msg)) {
     echo '<tr><td class="FacetDataTDred">' . $gForm->outputErrors($msg, $script_transl['errors']) . "</td></tr>\n";
 }

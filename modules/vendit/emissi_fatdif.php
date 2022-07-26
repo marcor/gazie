@@ -362,7 +362,7 @@ for ($counter = 1; $counter <= 9; $counter++) {
 }
 echo "</select>\n";
 echo "</div>\n";
-echo "<table class=\"Tmiddle\">\n";
+echo "<table class=\"Tmiddle table-striped\">\n";
 if (!empty($msg)) {
     echo '<tr><td colspan="2" class="FacetDataTDred">' . $gForm->outputErrors($msg, $script_transl['errors']) . "</td></tr>\n";
 }

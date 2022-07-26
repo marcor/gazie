@@ -157,7 +157,7 @@ echo "<input type=\"hidden\" value=\"".$form['ritorno']."\" name=\"ritorno\" />\
 $gForm = new GazieForm();
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['title'];
 echo "</div>\n";
-echo "<table class=\"Tsmall\" align=\"center\">\n";
+echo "<table class=\"Tmiddle table-striped\">\n";
 if (!empty($msg)) {
     echo '<tr><td colspan="2" class="FacetDataTDred">'.$gForm->outputErrors($msg,$script_transl['errors'])."</td></tr>\n";
 }
@@ -176,9 +176,9 @@ echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['num_fin']."</td>\n";
 echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"num_fin\" value=\"".$form['num_fin']."\" maxlength=\"9\"  /></td>\n";
 echo "</tr>\n";
-echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
-echo "<td align=\"left\"><input type=\"submit\" name=\"return\" value=\"".$script_transl['return']."\">\n";
-echo '<td align="right"> <input type="submit" accesskey="i" name="preview" value="';
+echo "\t<tr>\n";
+echo "<td class=\"FacetFooterTD\"></td>\n";
+echo '<td class="FacetFooterTD text-center"><input type="submit" class="btn btn-info" accesskey="i" name="preview" value="';
 echo $script_transl['view'];
 echo '" tabindex="100" >';
 echo "\t </td>\n";
@@ -190,7 +190,7 @@ $date_fin =  sprintf("%04d%02d%02d",$form['date_fin_Y'],$form['date_fin_M'],$for
 
 if (isset($_POST['preview']) and $msg=='') {
   $m=getMovements($date_ini,$date_fin,$form['num_ini'],$form['num_fin']);
-  echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
+  echo "<table class=\"Tlarge table table-striped table-responsive\">";
   if (sizeof($m) > 0) {
         $ctr_mv='';
         echo "<tr>";
@@ -212,8 +212,8 @@ if (isset($_POST['preview']) and $msg=='') {
             echo "</tr>\n";
             $ctr_mv = $mv['tipeff'];
          }
-         echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
-         echo '<td colspan="7" align="right"><input type="submit" name="print" value="';
+         echo "\t<tr>\n";
+         echo '<td class="FacetFooterTD text-center" colspan=7><input type="submit" class="btn btn-warning" name="print" value="';
          echo $script_transl['print'];
          echo '">';
          echo "\t </td>\n";

@@ -285,7 +285,7 @@ echo "<input type=\"hidden\" value=\"" . $form['ritorno'] . "\" name=\"ritorno\"
 $gForm = new contabForm();
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['title'];
 echo "</div>\n";
-echo "<table class=\"Tmiddle\">\n";
+echo "<table class=\"Tmiddle table-striped\">\n";
 if (!empty($msg)) {
     echo '<tr><td colspan="2" class="FacetDataTDred">' . $gForm->outputErrors($msg, $script_transl['errors']) . "</td></tr>\n";
 }

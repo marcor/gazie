@@ -43,7 +43,7 @@ $form['nome_fito']="";
 
 print "<form method=\"POST\" enctype=\"multipart/form-data\" id=\"consult-product\">\n";
 print "<div align=\"center\" class=\"FacetFormHeaderFont\">CONSULTAZIONE DATABASE FITOFARMACI</div>";
-print "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" class=\"FacetFormTABLE\" align=\"center\">\n";
+print "<table class=\"Tmiddle table-striped\" align=\"center\">\n";
 if (!empty($msg)) {
     $message = "";
     $rsmsg = array_slice( explode('+',chop($msg)),0,-1);

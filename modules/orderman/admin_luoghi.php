@@ -136,7 +136,7 @@ print "<input type=\"hidden\" name=\"".ucfirst($toDo)."\" value=\"\">\n";
 print "<input type=\"hidden\" value=\"".$_POST['ritorno']."\" name=\"ritorno\">\n";
 print "<input type=\"hidden\" value=\"".$form['used_from_modules']."\" name=\"used_from_modules\">\n";
 print "<div align=\"center\" class=\"FacetFormHeaderFont\">$title</div>";
-print "<table class=\"gaz-table-form\">\n";
+print "<table class=\"gaz-table-form table-striped\">\n";
 if (!empty($msg)) {
     $message = "";
     $rsmsg = array_slice( explode('+',chop($msg)),0,-1);

@@ -142,7 +142,7 @@ require("../../library/include/header.php");
 $script_transl=HeadMain('','','report_backup');
 print "<form method=\"POST\">\n";
 print "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['warning']." il database verrà eliminato e sarà sostituito con il seguente</div>\n";
-print "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" class=\"FacetFormTABLE\" align=\"center\">\n";
+print "<table class=\"Tmiddle table-striped\" align=\"center\">\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['sure']."</td><td class=\"FacetDataTD\">".$_GET["id"]."</td></tr>";
 print "<tr><td class=\"FacetFieldCaptionTD\">Scrivi \"accetto\"</td><td><input autocomplete=\"off\" name=\"Conferma\" value=\"\" /></td></tr>";
 print "<tr></tr><td align=\"right\"><input type=\"submit\" name=\"Return\" value=\"".$script_transl['return']."\"></td><td align=\"right\"><input type=\"submit\" name=\"Recover\" value=\"".strtoupper($script_transl['recover'])."!\"></td></tr>";

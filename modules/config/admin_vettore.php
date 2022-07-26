@@ -104,7 +104,7 @@ if ( !isset($_POST['hidden_req']) && isset($_GET['codice']) && intval($_GET['cod
             $form['partita_iva'] = $form["pariva"];
             $form['codice_fiscale'] = $form["codfis"];
             if ($form['id_anagra']==0) { // ho un inserimento
-                if ($form['hidden_req'] == 'useanagra') { // ho già l'anagrafica la devo solo linkare 
+                if ($form['hidden_req'] == 'useanagra') { // ho già l'anagrafica la devo solo linkare
                     $form['id_anagra'] = $sameidfis['id'];
                     $form['ragione_sociale'] = $sameidfis["ragso1"].' '.$sameidfis["ragso2"];
                     $form['indirizzo'] = $sameidfis["indspe"];
@@ -203,7 +203,7 @@ if ($sameidfis && $form['id_anagra'] == 0 ) {
 <?php
 }
 ?>
-<div class="panel panel-default gaz-table-form div-bordered">
+<div class="panel panel-default gaz-table-form">
   <div class="container-fluid">
         <div class="row">
             <div class="col-md-12">
@@ -251,7 +251,7 @@ $gForm->variousSelect('sexper', $script_transl['sexper_value'], $form['sexper'])
             <div class="col-md-12">
                 <div class="form-group">
                     <label for="citspe" class="col-sm-4 control-label"><?php echo $script_transl['citspe']; ?></label>
-                    <input class="col-sm-4" type="text" id="search_location" value="<?php echo $form['citspe']; ?>" name="citspe" maxlength="60"/> 
+                    <input class="col-sm-4" type="text" id="search_location" value="<?php echo $form['citspe']; ?>" name="citspe" maxlength="60"/>
                     <div class="text-right"><input class="col-sm-1" type="text" id="search_location-prospe" value="<?php echo $form['prospe']; ?>" name="prospe" maxlength="2"/></div>
                 </div>
             </div>
