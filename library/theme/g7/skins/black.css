@@ -283,3 +283,15 @@ div#fattura-container {
 	padding: 30px;
 	color: #000;
 }
+.nav-pills > li {
+	border-top: 1px solid #dddd32;
+	border-left: 1px solid #dddd32;
+	border-right: 1px solid #dddd32;
+	border-top-left-radius: 4px;
+	border-top-right-radius: 4px;
+  background-color: #0000001c;
+}
+.nav-pills > li.active > a, .nav-pills > li.active > a:focus, .nav-pills > li.active > a:hover {
+	color: #000;
+	background-color: #70afff;
+}

@@ -38,7 +38,7 @@ if (!isset($_GET['date']) ) {
 }
 require("../../config/templates/report_template.php");
 $gazTimeFormatter->setPattern('dd MMMM yyyy');
-$luogo_data = $admin_aziend['citspe'] . ", lì " . ucwords($gazTimeFormatter->format($gazTime));
+$luogo_data = $admin_aziend['citspe'] . ", lì " . ucwords($gazTimeFormatter->format(new DateTime()));
 $item_head = array('top'=>array(array('lun' => 80,'nam'=>'Descrizione'),
                                 array('lun' => 25,'nam'=>'Numero Conto')
                                )
