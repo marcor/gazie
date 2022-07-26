@@ -244,7 +244,7 @@ function opendoc(module) {
         ?>
         <li id="user-position">
 			<div>
-                <img src="../root/view.php?table=admin&field=user_name&value=<?php echo $admin_aziend["user_name"] ?>" height="30" title="<?php echo $admin_aziend['user_lastname'] . ' ' . $admin_aziend['user_firstname']; ?>" >
+        <a href="../config/admin_utente.php?user_name=<?php echo $admin_aziend["user_name"] ?>&Update"><img src="../root/view.php?table=admin&field=user_name&value=<?php echo $admin_aziend["user_name"] ?>" height="30" title="<?php echo $admin_aziend['user_lastname'] . ' ' . $admin_aziend['user_firstname']; ?>" ></a>
 			</div>
         </li>
 

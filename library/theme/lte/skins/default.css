@@ -170,3 +170,14 @@ td.ui-datepicker-other-month>a.ui-state-default.ui-priority-secondary{
 	border-top-left-radius: 4px;
 	border-top-right-radius: 4px;
 }
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+	font-size: 14px;
+	color: #0d0d0d;
+}
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+	font-size: 14px;
+	color: #0d0d0d;
+	background-color: #eee;
+  border: 2px;
+	border-style: solid;
+}
