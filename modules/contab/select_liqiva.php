@@ -449,9 +449,8 @@ if ($form['date_fin_M'] == 12) {
 	echo "</td>\n";
 	echo "</tr>\n";
 }
-echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
-echo "<td align=\"left\"><input type=\"submit\" name=\"return\" value=\"".$script_transl['return']."\">\n";
-echo '<td colspan="3" align="right"> <input type="submit" accesskey="i" name="preview" value="';
+echo "\t<tr>\n";
+echo '<td colspan=4 class="FacetFooterTD text-center"><input type="submit" class="btn btn-info" accesskey="i" name="preview" value="';
 echo $script_transl['view'];
 echo '" tabindex="100" >';
 echo "\t </td>\n";
@@ -508,7 +507,7 @@ if (isset($_POST['preview']) and $msg=='') {
 		}
         if ($err==0) {
             echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
-            echo '<td colspan="7" align="right"><input type="submit" name="print" value="';
+            echo '<td colspan=8 class="FacetFooterTD text-center"><input type="submit" class="btn btn-warning" name="print" value="';
             echo $script_transl['print'];
             echo '">';
             echo "\t </td>\n";
@@ -522,7 +521,7 @@ if (isset($_POST['preview']) and $msg=='') {
   echo "</table>\n";
   $r=sales_by_region($date_ini,$date_fin);
 ?>
-<table name="elenco" class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+<table name="elenco" class="Tlarge table table-striped"><tbody>
 	<tr><td colspan="8" class="text-center"><b><?php echo $admin_aziend['ragso1'];?> <br/>
 	 RIPARTIZIONE DELLE VENDITE PER TIPO CLIENTI E NAZIONI-REGIONI-PROVINCIE</b><br/>
 	 <?php echo 'dal '.$form['date_ini_D'].'-'.$form['date_ini_M'].'-'.$form['date_ini_Y'].' al '.$form['date_fin_D'].'-'.$form['date_fin_M'].'-'.$form['date_fin_Y'];?>
@@ -576,22 +575,22 @@ if (isset($_POST['preview']) and $msg=='') {
 		  $r['italia']['totali']['iva_consfin']+=$va['iva'];
 		  $r['italia']['totali']['imponibile_consfin']+=$va['imponibile'];
 ?>
-	<tr class="danger">
-		<td class="text-right" colspan="6"><b>Aggiungo i valori derivanti alle vendite fatte a consumatori finali anonimi ----> </b> </td>
-		<td class="text-right"><?php echo gaz_format_number($va['imponibile']); ?></td>
-		<td class="text-right"><?php echo gaz_format_number($va['iva']); ?></td>
+	<tr>
+		<td class="text-right gaz-costi" colspan="6"><b>Aggiungo i valori derivanti alle vendite fatte a consumatori finali anonimi ----> </b> </td>
+		<td class="text-right gaz-costi"><?php echo gaz_format_number($va['imponibile']); ?></td>
+		<td class="text-right gaz-costi"><?php echo gaz_format_number($va['iva']); ?></td>
 	</tr>
 <?php
 	  }
 ?>
-	<tr class="info">
-		<td colspan="2">Totali <b><?php echo $ctrl_regione; ?></b></td>
-		<td class="text-right"><?php echo gaz_format_number($r['italia'][$ctrl_regione]['totale_imponibile']); ?> </td>
-		<td class="text-right"><?php echo gaz_format_number($r['italia'][$ctrl_regione]['totale_iva']); ?> </td>
-		<td class="text-right"><?php echo gaz_format_number($r['italia'][$ctrl_regione]['imponibile_aziende']); ?> </td>
-		<td class="text-right"><?php echo gaz_format_number($r['italia'][$ctrl_regione]['iva_aziende']); ?> </td>
-		<td class="text-right"><?php if ($r['italia'][$ctrl_regione]['imponibile_consfin']>=0.01) { echo '<span  style="background-color:#FFAAFF;"><b>'.rif_dichiarazione_iva($ctrl_codice_regione,$year=2019).'-1 <br/>'.gaz_format_number($r['italia'][$ctrl_regione]['imponibile_consfin']).'</b></span>';} ?></td>
-		<td class="text-right"><?php if ($r['italia'][$ctrl_regione]['iva_consfin']>=0.01) { echo '<span  style="background-color:#FFAAFF;"><b>'.rif_dichiarazione_iva($ctrl_codice_regione,$year=2019).'-2 <br/>'.gaz_format_number($r['italia'][$ctrl_regione]['iva_consfin']).'</b></span>';} ?></td>
+	<tr>
+		<td colspan="2" class="gaz-attivo">Totali <b><?php echo $ctrl_regione; ?></b></td>
+		<td class="text-right gaz-attivo"><?php echo gaz_format_number($r['italia'][$ctrl_regione]['totale_imponibile']); ?> </td>
+		<td class="text-right gaz-attivo"><?php echo gaz_format_number($r['italia'][$ctrl_regione]['totale_iva']); ?> </td>
+		<td class="text-right gaz-attivo"><?php echo gaz_format_number($r['italia'][$ctrl_regione]['imponibile_aziende']); ?> </td>
+		<td class="text-right gaz-attivo"><?php echo gaz_format_number($r['italia'][$ctrl_regione]['iva_aziende']); ?> </td>
+		<td class="text-right gaz-attivo"><?php if ($r['italia'][$ctrl_regione]['imponibile_consfin']>=0.01) { echo '<span><b>'.rif_dichiarazione_iva($ctrl_codice_regione,$year=2019).'-1 <br/>'.gaz_format_number($r['italia'][$ctrl_regione]['imponibile_consfin']).'</b></span>';} ?></td>
+		<td class="text-right gaz-attivo"><?php if ($r['italia'][$ctrl_regione]['iva_consfin']>=0.01) { echo '<span><b>'.rif_dichiarazione_iva($ctrl_codice_regione,$year=2019).'-2 <br/>'.gaz_format_number($r['italia'][$ctrl_regione]['iva_consfin']).'</b></span>';} ?></td>
 	</tr>
 <?php
 	 }
@@ -619,31 +618,31 @@ if (isset($_POST['preview']) and $msg=='') {
 		  $r['italia']['totali']['iva_consfin']+=$va['iva'];
 		  $r['italia']['totali']['imponibile_consfin']+=$va['imponibile'];
 ?>
-	<tr class="danger">
-		<td class="text-right" colspan="6"><b>Aggiungo i valori derivanti alle vendite fatte a consumatori finali anonimi ----></b></td>
-		<td class="text-right"><?php echo gaz_format_number($va['imponibile']); ?></td>
-		<td class="text-right"><?php echo gaz_format_number($va['iva']); ?></td>
+	<tr>
+		<td class="text-right gaz-costi" colspan="6"><b>Aggiungo i valori derivanti alle vendite fatte a consumatori finali anonimi ----></b></td>
+		<td class="text-right gaz-costi"><?php echo gaz_format_number($va['imponibile']); ?></td>
+		<td class="text-right gaz-costi"><?php echo gaz_format_number($va['iva']); ?></td>
 	</tr>
 <?php
 	  }
 ?>
-	<tr class="info">
-		<td colspan="2">Totali <b><?php echo $ctrl_regione; ?></b></td>
-		<td class="text-right"><?php echo gaz_format_number($r['italia'][$ctrl_regione]['totale_imponibile']); ?> </td>
-		<td class="text-right"><?php echo gaz_format_number($r['italia'][$ctrl_regione]['totale_iva']); ?> </td>
-		<td class="text-right"><?php echo gaz_format_number($r['italia'][$ctrl_regione]['imponibile_aziende']); ?> </td>
-		<td class="text-right"><?php echo gaz_format_number($r['italia'][$ctrl_regione]['iva_aziende']); ?> </td>
-		<td class="text-right"><?php if ($r['italia'][$ctrl_regione]['imponibile_consfin']>=0.01) { echo '<span  style="background-color:#FFAAFF;"><b>'.rif_dichiarazione_iva($ctrl_codice_regione,$year=2019).'-1 <br/>'.gaz_format_number($r['italia'][$ctrl_regione]['imponibile_consfin']).'</b></span>';} ?></td>
-		<td class="text-right"><?php if ($r['italia'][$ctrl_regione]['iva_consfin']>=0.01) { echo '<span  style="background-color:#FFAAFF;"><b>'.rif_dichiarazione_iva($ctrl_codice_regione,$year=2019).'-2 <br/>'.gaz_format_number($r['italia'][$ctrl_regione]['iva_consfin']).'</b></span>';} ?></td>
+	<tr>
+		<td colspan="2" class="gaz-attivo">Totali <b><?php echo $ctrl_regione; ?></b></td>
+		<td class="text-right gaz-attivo"><?php echo gaz_format_number($r['italia'][$ctrl_regione]['totale_imponibile']); ?> </td>
+		<td class="text-right gaz-attivo"><?php echo gaz_format_number($r['italia'][$ctrl_regione]['totale_iva']); ?> </td>
+		<td class="text-right gaz-attivo"><?php echo gaz_format_number($r['italia'][$ctrl_regione]['imponibile_aziende']); ?> </td>
+		<td class="text-right gaz-attivo"><?php echo gaz_format_number($r['italia'][$ctrl_regione]['iva_aziende']); ?> </td>
+		<td class="text-right gaz-attivo"><?php if ($r['italia'][$ctrl_regione]['imponibile_consfin']>=0.01) { echo '<span><b>'.rif_dichiarazione_iva($ctrl_codice_regione,$year=2019).'-1 <br/>'.gaz_format_number($r['italia'][$ctrl_regione]['imponibile_consfin']).'</b></span>';} ?></td>
+		<td class="text-right"><?php if ($r['italia'][$ctrl_regione]['iva_consfin']>=0.01) { echo '<span><b>'.rif_dichiarazione_iva($ctrl_codice_regione,$year=2019).'-2 <br/>'.gaz_format_number($r['italia'][$ctrl_regione]['iva_consfin']).'</b></span>';} ?></td>
 	</tr>
-	<tr class="info">
-		<td colspan="2"><b>TOTALI ITALIA</b></td>
-		<td class="text-right"><?php echo '<b style="background-color:#FFAAFF;">VT1-1 <br/>'.gaz_format_number($r['italia']['totali']['totale_imponibile']); ?></b></td>
-		<td class="text-right"><?php echo '<b style="background-color:#FFAAFF;">VT1-2 <br/>'.gaz_format_number($r['italia']['totali']['totale_iva']); ?></b></td>
-		<td class="text-right"><?php echo '<b style="background-color:#FFAAFF;">VT1-5 <br/>'.gaz_format_number($r['italia']['totali']['imponibile_aziende']); ?></b></td>
-		<td class="text-right"><?php echo '<b style="background-color:#FFAAFF;">VT1-6 <br/>'.gaz_format_number($r['italia']['totali']['iva_aziende']); ?></b></td>
-		<td class="text-right"><?php echo '<b style="background-color:#FFAAFF;">VT1-3 <br/>'.gaz_format_number($r['italia']['totali']['imponibile_consfin']); ?></b></td>
-		<td class="text-right"><?php echo '<b style="background-color:#FFAAFF;">VT1-4 <br/>'.gaz_format_number($r['italia']['totali']['iva_consfin']); ?> </b></td>
+	<tr>
+		<td colspan="2" class="gaz-attivo"><b>TOTALI ITALIA</b></td>
+		<td class="text-right gaz-attivo"><?php echo '<b>VT1-1 <br/>'.gaz_format_number($r['italia']['totali']['totale_imponibile']); ?></b></td>
+		<td class="text-right gaz-attivo"><?php echo '<b>VT1-2 <br/>'.gaz_format_number($r['italia']['totali']['totale_iva']); ?></b></td>
+		<td class="text-right gaz-attivo"><?php echo '<b>VT1-5 <br/>'.gaz_format_number($r['italia']['totali']['imponibile_aziende']); ?></b></td>
+		<td class="text-right gaz-attivo"><?php echo '<b>VT1-6 <br/>'.gaz_format_number($r['italia']['totali']['iva_aziende']); ?></b></td>
+		<td class="text-right gaz-attivo"><?php echo '<b>VT1-3 <br/>'.gaz_format_number($r['italia']['totali']['imponibile_consfin']); ?></b></td>
+		<td class="text-right gaz-attivo"><?php echo '<b>VT1-4 <br/>'.gaz_format_number($r['italia']['totali']['iva_consfin']); ?> </b></td>
 	</tr>
 <?php
   }
@@ -665,9 +664,10 @@ if (isset($_POST['preview']) and $msg=='') {
 	}
   }
 ?>
+</tbody>
 </table>
-<div class="text-center alert alert-success">
-	  <input name="prestampa" id="preventDuplicate" onClick="preStampa();" type="button" value="STAMPA RIPARTO TIPO VENDITE">
+<div class="text-center FacetFooterTD">
+	  <input name="prestampa" class="btn btn-warning" id="preventDuplicate" onClick="preStampa();" type="button" value="STAMPA RIPARTO TIPO VENDITE">
 </div>
 <?php
 }

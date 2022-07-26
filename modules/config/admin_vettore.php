@@ -359,7 +359,7 @@ $gForm->selectFromDB('currencies', 'id_currency', 'id', $form['id_currency'], 'i
             </div>
         </div><!-- chiude row  -->
         <div class="row">
-            <div class="col-md-12 text-center">
+            <div class="col-md-12 FacetFooterTD text-center">
             <input class="btn btn-warning" id="preventDuplicate" onClick="chkSubmit();" type="submit" name="ins" value="<?php echo $script_transl['confirm_entry'.$upd]; ?>" />
             </div>
         </div><!-- chiude row  -->

@@ -49,8 +49,8 @@ table.selectTable td {
 	font-weight : bold;
 }
 .FacetFieldCaptionTD {
-	background-color: #C3C5CC;
-	color: #000000;
+	background-color: #c4c7caab;
+	color: #000;
 }
 .FacetDataTRstart td {
 	border-top-color: white;
@@ -349,9 +349,6 @@ div.ui-dialog-buttonpane.ui-widget-content div.ui-dialog-buttonset button.btn.bt
     font-weight: bold;
     animation: blink 0.5s infinite;
 }
-.table-striped > tbody > tr:nth-of-type(2n+1) {
-	background-color: #e9e9e9;
-}
 .Tlarge.table-bordered {
 	border: 2px solid #bbbbbb;
   box-shadow: 1px 1px 1px rgba(1,1,1,.5);
@@ -389,4 +386,14 @@ div.ui-dialog-buttonpane.ui-widget-content div.ui-dialog-buttonset button.btn.bt
 }
 .btn-pagamento {
     color: #66aa66;
+}
+.tab-content > .tab-pane > div.row:nth-of-type(odd),
+.gaz-table-form div.container-fluid div.row:nth-of-type(odd) {
+	background-color: #f9f9f9;
+}
+.table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: #e9e9e9;
+}
+.table-striped > tbody > tr:nth-of-type(even) {
+    background-color: #f9f9f9;
 }
