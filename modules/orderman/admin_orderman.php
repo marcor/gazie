@@ -1695,7 +1695,10 @@ echo "<tr><td class=\"FacetFieldCaptionTD\">Responsabile/addetto produzione</td>
 ?>
 <select name="id_staff_def" onchange="this.form.submit()">
 <?php
-$sql = gaz_dbi_query("SELECT ".$gTables['anagra'].".* FROM ".$gTables['staff']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['staff'].".id_clfoco = ".$gTables['clfoco'].".codice LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id UNION SELECT ".$gTables['anagra'].".*  FROM ".$gTables['admin']." LEFT JOIN ".$gTables['anagra']." ON ".$gTables['admin'].".id_anagra = ".$gTables['anagra'].".id WHERE 1" );
+$sql = gaz_dbi_query("SELECT ".$gTables['anagra'].".* FROM ".$gTables['staff']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['staff'].".id_clfoco = ".$gTables['clfoco'].".codice LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id ".
+// tolgo l'UNION con gli utenti
+//UNION SELECT ".$gTables['anagra'].".*  FROM ".$gTables['admin']." LEFT JOIN ".$gTables['anagra']." ON ".$gTables['admin'].".id_anagra = ".$gTables['anagra'].".id
+" WHERE 1" );
 $sel=0;
 while ($row = $sql->fetch_assoc()){
 	$selected = "";
