@@ -1750,7 +1750,7 @@ echo "</script>\n";
         $gForm->toast("ATTENZIONE!!! Il pagamento <span style='background-color: yellow;'>" . $pay['descri'] . "</span> prevede che al termine della registrazione siano aggiunti due righi per la chiusura automatica della partita sul conto: <span style='background-color: yellow;'>" . $pay['pagaut'] . '-' . $payacc['descri'] . "</span>", 'alert-last-row', 'alert-success');  //lo mostriamo
     }
     echo "<div class=\"panel panel-succes table-responsive\">";
-    echo '<table class="Tlarge table table-striped table-condensed">';
+    echo '<table class="Tlarge table table-striped">';
 //fine rigo inserimento
 // inizio righi già inseriti
 // faccio un primo ciclo del form per sommare e analizzare gli sbilanciamenti
@@ -1790,8 +1790,14 @@ echo "</script>\n";
         $diffV = ' <input style="text-align:center;" value="' . $script_transl['bal'] . '" type="text" name="diffV" disabled />';
     }
 //fine analisi sbilanciamento
-
+if ( $_POST['rigcon']>=1){
+?>
+<thead><tr><th></th><th>Mastro</th><th>Conto</th><th class="text-center">Dare</th><th class="text-center"><i class="glyphicon glyphicon-refresh"></i></th><th class="text-center">Avere</th><th>X</th></tr></thead>
+<?php
+}
     for ($i = 0; $i < $_POST['rigcon']; $i++) {
+        echo "<input type=\"hidden\" id=\"id_rig_rc$i\" name=\"id_rig_rc[$i]\" value=\"" . $form['id_rig_rc'][$i] . "\">\n";
+        echo "<input type=\"hidden\" id=\"paymov_op_cl$i\" name=\"paymov_op_cl[$i]\" value=\"" . $form['paymov_op_cl'][$i] . "\">\n";
         if ($form['registroiva'] > 0 and ( substr($form['conto_rc' . $i], 0, 3) == $admin_aziend['mascli'] or
                 substr($form['conto_rc' . $i], 0, 3) == $admin_aziend['masfor'])) {
             $form['insert_partner'] = $form['conto_rc' . $i];
@@ -1815,11 +1821,7 @@ echo "</script>\n";
         if ($val < 0.01) {
             $valsty = ' style="text-align:right; background-color:#FFAAAA;" ';
         }
-        echo "<td>
-          <input type=\"text\" name=\"importorc[$i]\" id=\"impoRC$i\" value=\"$val\" $valsty onchange=\"updateTot($i,this);\" maxlength=\"13\" tabindex=\"" . (30 + $i * 2) . "\" >\n";
-        echo "<input type=\"hidden\" id=\"id_rig_rc$i\" name=\"id_rig_rc[$i]\" value=\"" . $form['id_rig_rc'][$i] . "\">\n";
-        echo "<input type=\"hidden\" id=\"paymov_op_cl$i\" name=\"paymov_op_cl[$i]\" value=\"" . $form['paymov_op_cl'][$i] . "\">\n";
-        // inizio input degli sbilanci
+        $acc_amount = "<td class=\"text-center\"><input type=\"text\" name=\"importorc[$i]\" id=\"impoRC$i\" value=\"$val\" $valsty onchange=\"updateTot($i,this);\" maxlength=\"13\" tabindex=\"" . (30 + $i * 2) . "\" >";
         if ($form['darave_rc'][$i] == 'D' && $form['tot_D'] > $form['tot_A'] ||
                 $form['darave_rc'][$i] == 'A' && $form['tot_A'] > $form['tot_D']) {
             $r_but = ' value="&dArr;" title="' . $script_transl['subval'] . ' ';
@@ -1834,20 +1836,23 @@ echo "</script>\n";
         } else {                                     //bilanciato
             $r_but = ' value="&hArr;" disabled';
         }
-        echo "<input type=\"button\" id=\"balbRC$i\" name=\"balb[$i]\" $r_but  onclick=\"balance($i);\"/>\n";
-        echo "</td>";
-        //fine input degli sbilanci
-        echo "<td><select class=\"FacetSelect\" id=\"daavRC$i\" name=\"darave_rc[$i]\" onchange=\"this.form.submit()\" tabindex=\"" . (31 + $i * 2) . "\">";
+        $acc_amount .= "<input type=\"button\" id=\"balbRC$i\" name=\"balb[$i]\" $r_but  onclick=\"balance($i);\"/></td>";
+        $acc_darave = "<td class=\"text-center\"><select class=\"FacetSelect\" id=\"daavRC$i\" name=\"darave_rc[$i]\" onchange=\"this.form.submit()\" tabindex=\"" . (31 + $i * 2) . "\">";
         foreach ($script_transl['daav_value'] as $key => $value) {
-            $selected = "";
-            if ($form["darave_rc"][$i] == $key) {
-                $selected = " selected ";
-            }
-            echo "<option value=\"" . $key . "\"" . $selected . ">" . $value . "</option>\n";
+          $selected = "";
+          if ($form["darave_rc"][$i] == $key) {
+              $selected = " selected ";
+          }
+          $acc_darave .= "<option value=\"" . $key . "\"" . $selected . ">" . $key . "</option>\n";
         }
-        echo "</select></td>\n";
-        echo '  <td class="text-right">
-			  <button type="submit" class="btn btn-default btn-sm" name="del[' . $i . ']" title="' . $script_transl['delrow'] . '!"><i class="glyphicon glyphicon-remove"></i></button>
+        $acc_darave .= "</select></td>\n";
+        if ($form['darave_rc'][$i]=='D') {
+          echo $acc_amount.$acc_darave.'<td></td>';
+        } else {
+          echo '<td></td>'.$acc_darave.$acc_amount;
+        }
+        echo '  <td>
+			  <button type="submit" class="btn btn-default btn-elimina btn-sm" name="del[' . $i . ']" title="' . $script_transl['delrow'] . '!"><i class="glyphicon glyphicon-remove"></i></button>
 			</td>
 		  </tr>';
     }
@@ -1855,13 +1860,12 @@ echo "</script>\n";
 //faccio il post del numero di righi
     echo "<input type=\"hidden\" value=\"" . $_POST['rigcon'] . "\" name=\"rigcon\">";
     echo "<input type=\"hidden\" value=\"" . $form['id_testata'] . "\" name=\"id_testata\">";
-    echo "<tr><td class=\"text-center\" colspan=\"6\"><b>Totali:</b></td></tr>";
-    echo '<tr><td colspan=6 class="text-center">';
-    echo  $script_transl['tot_d'] . ": <input type=\"button\" $d_but value=\"" . number_format($form['tot_D'], 2, '.', '') . "\" id=\"tot_D\" name=\"tot_D\" onclick=\"tot_bal('D');\" />\n";
+    echo '<tr><td colspan=3 class="text-right bg-info"><b>Totali:</b> '.$diffV.'</td><td class="bg-info text-center">';
+    echo "DARE: <input type=\"button\" $d_but value=\"" . number_format($form['tot_D'], 2, '.', '') . "\" id=\"tot_D\" name=\"tot_D\" onclick=\"tot_bal('D');\" />\n";
 
-    echo ''. $script_transl['tot_a'] . ' :';
+    echo '<td colspan=2 class="bg-info text-center">AVERE: ';
     echo "<input type=\"button\" $a_but value=\"" . number_format($form['tot_A'], 2, '.', '') . "\" id=\"tot_A\" name=\"tot_A\" onclick=\"tot_bal('A');\" />\n";
-    echo $diffV.'</td>';
+    echo '</td><td class="bg-info"></td>';
     echo "</tr></table>";
     echo "<table class=\"table input-area\">\n";
     echo "<tr><td></td><td><b>" . $script_transl['mas'] . "</b></td><td><b>" . $script_transl['sub'] . "<b></td><td></b>" . $script_transl['amount'] . "</b></td><td><b>" . $script_transl['daav'] . "</b></td><td></td></tr>\n";
