@@ -45,7 +45,7 @@ DELLA CARTELLA "gazie" COMPRESO IL PRESENTE "gconfig.php"
     exit('Accesso diretto non consentito');
 }
 //versione software
-define('GAZIE_VERSION', '8.04');
+define('GAZIE_VERSION', '8.05');
 
 $fileConfPers=dirname(__FILE__) . '/gconfig.myconf.php';
 if (file_exists($fileConfPers)) {
