@@ -267,11 +267,7 @@ $strScript = array(
         'cm_fin' => 'Categoria merceologica fine ',
         'art_fin' => 'Articolo fine ',
         'date_fin' => 'Data registrazione fine ',
-        'header' => array('Data' => '', 'Causale' => '', 'Magazzino' => '', 'Descrizione<br \>documento' => '',
-            'Prezzo' => '', 'UM' => '', 'Quantit&agrave;' => '',
-            'Valore<br \>carico' => '', 'Valore<br \> scarico' => '',
-            'Quantit&agrave;<br \>giacenza' => '', 'Valore<br \>giacenza' => ''
-        ),
+        'header' => array('Data' => '', 'Causale' => '', 'Magazzino' => '', 'Descrizione documento' => '', 'Prezzo' => '', 'UM' => '', 'Quantità' => '', 'Valore carico' => '', 'Valore scarico' => '', 'Quantità giacenza' => '', 'Valore giacenza' => '' ),
         'tot' => 'Consistenza'
       ),
     "stampa_schart.php" =>

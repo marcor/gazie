@@ -1944,7 +1944,7 @@ class GAzieForm {
       // eventualmente si può valorizzare $rowshead e $rowsfoot per scrivere un rigo prima o dopo di quello di riferimento
       ?>
       <div class="panel panel-success" >
-        <div id="<?php echo $id; ?>"  class="table-responsive" style="min-height: 160px;">
+        <div id="<?php echo $id; ?>"  class="table-responsive" style="min-height: 80px;">
           <table class="col-xs-12 table-striped table-condensed cf">
             <thead class="cf">
               <tr class="bg-success">
