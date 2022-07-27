@@ -348,72 +348,69 @@ echo "</table>\n";
 
 //recupero tutti i movimenti contabili dei conti insieme alle relative testate...
 if (isset($_POST['preview']) and $msg == '') {
-    $span = 6;
-    $totdare = 0.00;
-    $totavere = 0.00;
-    $saldo = $saldo_precedente;
-    $m = getMovements($form['account_ini'], $form['account_fin'], $date_ini, $date_fin);
-    echo "<div class=\"table-responsive\"><table class=\"Tlarge table table-striped\">";
-    if (sizeof($m) > 0) {
-        if ($form['account_ini'] < $form['account_fin']) {
-            $trsl=array_keys($script_transl['header1']);
-            echo '<thead><tr><th>'.$trsl[0].'</th><th class="text-center">'.$trsl[1].'</th><th>'.$trsl[2].'</th><th class="text-right">'.$trsl[3].'</th><th class="text-right">'.$trsl[4].'</th><th class="text-right">'.$trsl[5].'</th></tr></thead>';
-            foreach ($m as $key => $mv) {
-                echo "<tr>
-                      <td>" . $mv["codice"] . " &nbsp;</td>";
-                echo '<td class="text-center">' . $mv["rows"] . " &nbsp</td>";
-                echo "<td>" . $mv["tesdes"] . " &nbsp;</td>";
-                echo "<td align=\"right\">" . gaz_format_number($mv['dare']) . " &nbsp;</td>";
-                echo "<td align=\"right\">" . gaz_format_number($mv['avere']) . " &nbsp;</td>";
-                echo "<td align=\"right\">" . gaz_format_number($mv['dare'] - $mv['avere']) . " &nbsp;</td>
-                      </tr>";
-            }
-        } else {
-            $trsl=array_keys($script_transl['header2']);
-            echo '<thead><tr><th>'.$trsl[0].'</th><th>'.$trsl[1].'</th><th>'.$trsl[2].'</th><th class="text-center">'.$trsl[3].'</th><th class="text-center">'.$trsl[4].'</th><th class="text-center">'.$trsl[5].'</th><th class="text-right">'.$trsl[6].'</th><th class="text-right">'.$trsl[7].'</th><th class="text-right">'.$trsl[8].'</th></tr></thead>';
-            $span = 9;
-            echo "<tr class=\"FacetDataTD\"><td colspan=\"8\" align=\"right\"><b>SALDO PRECEDENTE &nbsp;</b></td>";
-            echo "<td align=\"right\"><b>" . gaz_format_number($saldo_precedente) . " &nbsp;</b></td></tr>";
-
-            foreach ($m as $key => $mv) {
-                $totdare+= $mv['dare'];
-                $totavere+= $mv['avere'];
-                $saldo += $mv['dare'];
-                $saldo -= $mv['avere'];
-                echo "<tr class=\"FacetDataTD\">
-                      <td>" . gaz_format_date($mv["datreg"]) . " &nbsp;</td>";
-                echo "<td><a target=\"_blank\" class=\"btn btn-edit btn-xs\" href=\"admin_movcon.php?id_tes=" . $mv["id_tes"] . "&Update\">" . $mv["id_tes"] . "</a> &nbsp</td>";
-                echo '<td><div class="gazie-tooltip" data-type="movcon-thumb" data-id="' . $mv["id_tes"] . '" data-title="' . str_replace("\"", "'", $mv["tt"]) . '" >' . $mv["tesdes"] . '</div></td>';
-                if (!empty($mv['numdoc'])) {
-                    echo "<td align=\"center\">" . $mv["protoc"] . " &nbsp;</td>";
-                    echo "<td align=\"center\">" . $mv["numdoc"] . " &nbsp;</td>";
-                    echo "<td align=\"center\">" . gaz_format_date($mv["datdoc"]) . " &nbsp;</td>";
-                } else {
-                    echo "<td colspan=\"3\"></td>";
-                }
-                echo "<td align=\"right\">" . gaz_format_number($mv['dare']) . " &nbsp;</td>";
-                echo "<td align=\"right\">" . gaz_format_number($mv['avere']) . " &nbsp;</td>";
-                echo "<td align=\"right\">" . gaz_format_number($saldo) . " &nbsp;</td></tr>";
-            }
-
-			echo "<tr class=\"FacetDataTD\"><td colspan=\"9\" align=\"right\"></td></tr>";
-			echo "<tr class=\"FacetDataTD\"><td colspan=\"5\" align=\"right\"></td>";
-			echo "<td align=\"center\"><b>" . "SALDO PERIODO" . "</b></td>";
-			echo "<td align=\"right\"><b>" . gaz_format_number($totdare) . " &nbsp;</b></td>";
-			echo "<td align=\"right\"><b>" . gaz_format_number($totavere) . " &nbsp;</b></td>";
-			echo "<td align=\"right\"><b>" . gaz_format_number($saldo) . " &nbsp;</b></td>";
-        }
-
-        echo "\t<tr>\n";
-        echo '<td colspan="' . $span . '" class="FacetFooterTD text-center"><input class="btn btn-warning" type="submit" name="print" value="';
-        echo $script_transl['print'];
-        echo '">';
-        echo "\t </td>\n";
-        echo "\t </tr>\n";
+  $span = 6;
+  $totdare = 0.00;
+  $totavere = 0.00;
+  $saldo = $saldo_precedente;
+  $m = getMovements($form['account_ini'], $form['account_fin'], $date_ini, $date_fin);
+  echo "<div class=\"table-responsive\"><table class=\"Tlarge table table-striped\">";
+  if (sizeof($m) > 0) {
+    if ($form['account_ini'] < $form['account_fin']) {
+      $trsl=array_keys($script_transl['header1']);
+      echo '<thead><tr><th>'.$trsl[0].'</th><th class="text-center">'.$trsl[1].'</th><th>'.$trsl[2].'</th><th class="text-right">'.$trsl[3].'</th><th class="text-right">'.$trsl[4].'</th><th class="text-right">'.$trsl[5].'</th></tr></thead>';
+      foreach ($m as $key => $mv) {
+        echo "<tr>
+              <td>" . $mv["codice"] . " &nbsp;</td>";
+        echo '<td class="text-center">' . $mv["rows"] . " &nbsp</td>";
+        echo "<td>" . $mv["tesdes"] . " &nbsp;</td>";
+        echo "<td align=\"right\">" . gaz_format_number($mv['dare']) . " &nbsp;</td>";
+        echo "<td align=\"right\">" . gaz_format_number($mv['avere']) . " &nbsp;</td>";
+        echo "<td align=\"right\">" . gaz_format_number($mv['dare'] - $mv['avere']) . " &nbsp;</td>
+              </tr>";
+      }
     } else {
-        echo "<tr><td class=\"FacetDataTDred\" align=\"center\">" . $script_transl['errors'][4] . "</td></tr>\n";
+      $trsl=array_keys($script_transl['header2']);
+      echo '<thead><tr><th>'.$trsl[0].'</th><th>'.$trsl[1].'</th><th>'.$trsl[2].'</th><th class="text-center">'.$trsl[3].'</th><th class="text-center">'.$trsl[4].'</th><th class="text-center">'.$trsl[5].'</th><th class="text-right">'.$trsl[6].'</th><th class="text-right">'.$trsl[7].'</th><th class="text-right">'.$trsl[8].'</th></tr></thead>';
+      $span = 9;
+      echo "<tr class=\"FacetDataTD\"><td colspan=\"8\" align=\"right\"><b>SALDO PRECEDENTE &nbsp;</b></td>";
+      echo "<td align=\"right\"><b>" . gaz_format_number($saldo_precedente) . " &nbsp;</b></td></tr>";
+      foreach ($m as $key => $mv) {
+          $totdare+= $mv['dare'];
+          $totavere+= $mv['avere'];
+          $saldo += $mv['dare'];
+          $saldo -= $mv['avere'];
+          echo "<tr class=\"FacetDataTD\">
+                <td>" . gaz_format_date($mv["datreg"]) . " &nbsp;</td>";
+          echo "<td><a target=\"_blank\" class=\"btn btn-edit btn-xs\" href=\"admin_movcon.php?id_tes=" . $mv["id_tes"] . "&Update\">" . $mv["id_tes"] . "</a> &nbsp</td>";
+          echo '<td><div class="gazie-tooltip" data-type="movcon-thumb" data-id="' . $mv["id_tes"] . '" data-title="' . str_replace("\"", "'", $mv["tt"]) . '" >' . $mv["tesdes"] . '</div></td>';
+          if (!empty($mv['numdoc'])) {
+              echo "<td align=\"center\">" . $mv["protoc"] . " &nbsp;</td>";
+              echo "<td align=\"center\">" . $mv["numdoc"] . " &nbsp;</td>";
+              echo "<td align=\"center\">" . gaz_format_date($mv["datdoc"]) . " &nbsp;</td>";
+          } else {
+              echo "<td colspan=\"3\"></td>";
+          }
+          echo "<td align=\"right\">" .(($mv['dare']>=0.01)?gaz_format_number($mv['dare']):''). " &nbsp;</td>";
+          echo "<td align=\"right\">" .(($mv['avere']>=0.01)?gaz_format_number($mv['avere']):''). " &nbsp;</td>";
+          echo "<td align=\"right\">" . gaz_format_number($saldo) . " &nbsp;</td></tr>";
+      }
+      echo "<tr class=\"FacetDataTD\"><td colspan=\"9\" align=\"right\"></td></tr>";
+      echo "<tr class=\"FacetDataTD\"><td colspan=\"5\" align=\"right\"></td>";
+      echo "<td align=\"center\"><b>" . "SALDO PERIODO" . "</b></td>";
+      echo "<td align=\"right\"><b>" . gaz_format_number($totdare) . " &nbsp;</b></td>";
+      echo "<td align=\"right\"><b>" . gaz_format_number($totavere) . " &nbsp;</b></td>";
+      echo "<td align=\"right\"><b>" . gaz_format_number($saldo) . " &nbsp;</b></td>";
     }
-    echo "</table></div></form>";
+    echo "\t<tr>\n";
+    echo '<td colspan="' . $span . '" class="FacetFooterTD text-center"><input class="btn btn-warning" type="submit" name="print" value="';
+    echo $script_transl['print'];
+    echo '">';
+    echo "\t </td>\n";
+    echo "\t </tr>\n";
+  } else {
+    echo "<tr><td class=\"FacetDataTDred\" align=\"center\">" . $script_transl['errors'][4] . "</td></tr>\n";
+  }
+  echo "</table></div></form>";
 }
 ?>
 <?php
