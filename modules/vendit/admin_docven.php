@@ -3284,6 +3284,17 @@ if ($toDo == "insert"){
         <div class="row">
 
 <?php
+$class_conf_row='btn-success';
+$descributton = $script_transl['insert'];
+$nurig = count($form['rows'])+1;
+$expsts = explode('UPDROW',$form['in_status']);
+if (isset($expsts[1])){
+  $nurig = (int)$expsts[1]+1;
+  $class_conf_row = 'btn-warning';
+  $descributton = $script_transl['update'];
+}
+$descributton .= ' il rigo '.$nurig;
+
 if (substr($form['in_status'], 0, 6) != "UPDROW") { //se non è un rigo da modificare
 ?>
             <div class="col-sm-6 col-md-3 col-lg-7">
@@ -3309,7 +3320,7 @@ $magazz->selectIdWarehouse('in_id_warehouse',$form["in_id_warehouse"],false,'col
 ?>
 			</div>
             <div class="form-group col-sm-6 col-md-3 col-lg-2 text-right">
-                <button type="submit" class="btn btn-success" name="in_submit" tabindex="6"><?php echo $script_transl['insert'] . $script_transl['thisrow'] ?><i class="glyphicon glyphicon-ok"></i></button>
+                <button type="submit" class="btn <?php echo $class_conf_row; ?>" name="in_submit" tabindex="6"><?php echo $descributton; ?><i class="glyphicon glyphicon-ok"></i></button>
             </div>
 		</div>
 	</div><!-- chiude container-fuid -->

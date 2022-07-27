@@ -214,8 +214,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['in_quality'] = $form['rows'][$k_row]['quality'];
                     $form['in_id_mag'] = $form['rows'][$k_row]['id_mag'];
                     $form['in_extdoc'] = $form['rows'][$k_row]['extdoc'];
-					$orderman = gaz_dbi_get_row($gTables['orderman'], "id", $form['rows'][$k_row]['id_orderman']);
-                    $form['coseprod'] = $orderman['description'];
+                    $orderman = gaz_dbi_get_row($gTables['orderman'], "id", $form['rows'][$k_row]['id_orderman']);
+                    $form['coseprod'] =$orderman?$orderman['description']:'';
                     $form['in_id_orderman'] = $form['rows'][$k_row]['id_orderman'];
                     $form['in_annota'] = $form['rows'][$k_row]['annota'];
                     $form['in_larghezza'] = $form['rows'][$k_row]['larghezza'];
@@ -1425,6 +1425,17 @@ if (count($form['rows']) > 0) {
 echo '	</tbody>
 	  </table></div>';
 // *** INIZIO RIGO DI INPUT
+		$class_conf_row='btn-success';
+    $descributton = $script_transl['insert'];
+    $nurig = count($form['rows'])+1;
+    $expsts = explode('_',$form['in_status']);
+    if (isset($expsts[1])){
+      $nurig = (int)$expsts[1]+1;
+      $class_conf_row = 'btn-warning';
+      $descributton = $script_transl['update'];
+    }
+    $descributton .= ' il rigo '.$nurig;
+
 echo "<div class=\"FacetSeparatorTD\" align=\"center\"><b>$script_transl[1]</b></div>\n";
 echo "<div class=\"table-responsive\"><table class=\"table input-area\">\n";
 echo "<input type=\"hidden\" value=\"{$form['in_codice_fornitore']}\" name=\"in_codice_fornitore\" />\n";
@@ -1453,7 +1464,7 @@ echo '&nbsp;<a href="#" id="addmodal" href="#myModal" data-toggle="modal" data-t
 echo "</td><td>$script_transl[16]: <input type=\"text\" value=\"{$form['in_quanti']}\" maxlength=\"11\" name=\"in_quanti\" tabindex=\"5\" accesskey=\"q\">\n";
 echo '  </td>
 		<td align="right">
-			<button type="submit" class="btn btn-success" name="in_submit" tabindex="6">'.$script_transl['insert'] . $script_transl['thisrow'].'<i class="glyphicon glyphicon-ok"></i></button>
+			<button type="submit" class="btn '.$class_conf_row.'" name="in_submit" tabindex="6">'.$descributton.'<i class="glyphicon glyphicon-ok"></i></button>
 		</td>
 	   </tr>';
 echo "</td></tr>\n";

@@ -391,10 +391,6 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
 					$form['in_recip_stocc'] = $form['rows'][$key_row]['recip_stocc'];
 					$form['in_recip_stocc_destin'] = $form['rows'][$key_row]['recip_stocc_destin'];
                     $form['in_status'] = "UPDROW" . $key_row;
-
-                    /** inizio modifica FP 09/01/2016
-                     * descrizione modificabile
-                     */
 // sottrazione ai totali peso,pezzi,volume
                     $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['rows'][$key_row]['codart']);
                     $form['net_weight'] -= $form['rows'][$key_row]['quanti'] * $artico['peso_specifico'];
@@ -1158,6 +1154,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$old_key]['sconto'] = 0;
             }
             ksort($form['rows']);
+            $form['in_status']='';
         } else { //se è un rigo da inserire
             $form['rows'][$i]['tiprig'] = $form['in_tiprig'];
             $form['rows'][$i]['descri'] = $form['in_descri'];
@@ -2722,15 +2719,16 @@ echo '<input type="hidden" value="' . $strArrayDest . '" name="rs_destinazioni">
     echo '<div id="alert-zerorows" class="alert alert-danger col-xs-12">' . $script_transl['zero_rows'] . '</div>';
     }
 		$class_conf_row='btn-success';
-		if (substr($form['in_status'],0,6)=='UPDROW'){
-			$nr=substr($form['in_status'],6)+1;
-			$script_transl['conf_row'] = $script_transl['update'];
-			$class_conf_row='btn-warning';
-		} else {
-			$script_transl['conf_row'] = $script_transl['insert'];
-		}
-
+    $descributton = $script_transl['insert'];
+    $nurig = count($form['rows'])+1;
 		if ($ddtchecked < 1 ){ // se non ci sono DDT selezionati apro input manuale righi doc
+      $expsts = explode('UPDROW',$form['in_status']);
+      if (isset($expsts[1])){
+        $nurig = (int)$expsts[1]+1;
+        $class_conf_row = 'btn-warning';
+        $descributton = $script_transl['update'];
+      }
+      $descributton .= ' il rigo '.$nurig;
 		?>
 		<div class="panel input-area">
 		  <div class="container-fluid">
@@ -2809,7 +2807,7 @@ $magazz->selectIdWarehouse('in_id_warehouse',$form["in_id_warehouse"],false,'col
 ?>
 									</div>
 									<div class="col-xs-12 col-sm-6 text-right">
-									<button type="submit" tabindex="7" class="btn <?php echo $class_conf_row; ?>" name="in_submit">Inserisci il rigo &nbsp;<i class="glyphicon glyphicon-ok"></i>
+									<button type="submit" tabindex="7" class="btn <?php echo $class_conf_row; ?>" name="in_submit"><?php echo $descributton; ?><i class="glyphicon glyphicon-ok"></i>
 									</button>
 									</div>
 						</div>

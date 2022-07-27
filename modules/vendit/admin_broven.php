@@ -273,7 +273,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['in_descri'] = $form['rows'][$k_row]['descri'];
                     $form['in_tiprig'] = $form['rows'][$k_row]['tiprig'];
                     $form['in_codart'] = $form['rows'][$k_row]['codart'];
-					$form['in_good_or_service'] = $form['rows'][$k_row]['good_or_service'];
+                    $form['in_good_or_service'] = $form['rows'][$k_row]['good_or_service'];
                     $form['in_pervat'] = $form['rows'][$k_row]['pervat'];
                     $form['in_tipiva'] = $form['rows'][$k_row]['tipiva'];
                     $form['in_ritenuta'] = $form['rows'][$k_row]['ritenuta'];
@@ -281,7 +281,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['in_prelis'] = $form['rows'][$k_row]['prelis'];
                     $form['in_sconto'] = $form['rows'][$k_row]['sconto'];
                     $form['in_quanti'] = $form['rows'][$k_row]['quanti'];
-                    //$form['in_codvat'] = $form['rows'][$k_row]['codvat'];
                     $form['in_codric'] = $form['rows'][$k_row]['codric'];
                     $form['in_provvigione'] = $form['rows'][$k_row]['provvigione'];
                     $form['in_id_mag'] = $form['rows'][$k_row]['id_mag'];
@@ -291,15 +290,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['in_pesosp'] = $form['rows'][$k_row]['pesosp'];
                     $form['in_extdoc'] = $form['rows'][$k_row]['extdoc'];
                     $form['in_status'] = "UPDROW" . $k_row;
-                    /* if ($form['in_artsea'] == 'D') {
-                      $artico_u = gaz_dbi_get_row($gTables['artico'], 'codice', $form['rows'][$k_row]['codart']);
-                      $form['cosear'] = $artico_u['descri'];
-                      } elseif ($form['in_artsea'] == 'B') {
-                      $artico_u = gaz_dbi_get_row($gTables['artico'], 'codice', $form['rows'][$k_row]['codart']);
-                      $form['cosear'] = $artico_u['barcode'];
-                      } else { */
                     $form['cosear'] = $form['rows'][$k_row]['codart'];
-                    //}
                     array_splice($form['rows'], $k_row, 1);
                     $next_row--;
                 }
@@ -2108,7 +2099,16 @@ foreach ($form['rows'] as $k => $v) {
 if (isset($ultimoprezzo) && $ultimoprezzo<>'') {
     $msgtoast = $upd_mm->toast(" <strong>Ultime vendite:</strong>".$ultimoprezzo, 'alert-last-row', 'alert-success');
 }
-
+$class_conf_row='btn-success';
+$descributton = $script_transl['insert'];
+$nurig = count($form['rows'])+1;
+$expsts = explode('UPDROW',$form['in_status']);
+if (isset($expsts[1])){
+  $nurig = (int)$expsts[1]+1;
+  $class_conf_row = 'btn-warning';
+  $descributton = $script_transl['update'];
+}
+$descributton .= ' il rigo '.$nurig;
 if (count($form['rows']) > 0) {
   $msgtoast = $upd_mm->toast($msgtoast);  //lo mostriamo
   if (isset($_POST['in_submit']) && count($form['rows']) > 5) {
@@ -2175,7 +2175,7 @@ $select_in_codvat->output();
 ?>
 </td>
 <td>
-  <button type="submit" class="btn btn-success" name="in_submit" tabindex="6"><?php echo $script_transl['insert'] . $script_transl['thisrow'] ?>
+  <button type="submit" class="btn <?php echo $class_conf_row; ?>" name="in_submit" tabindex="6"><?php echo $descributton ?>
     <i class="glyphicon glyphicon-ok"></i>
   </button>
 </td>
