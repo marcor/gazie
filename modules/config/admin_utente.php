@@ -744,8 +744,8 @@ if ($admin_aziend['Abilit']==9){
 		<p class="ui-state-highlight" id="iddescri"></p>
 		<table id="tblAppendGrid"></table>
 	</div>
-	<div class="gaz-table-form" style="padding-bottom: 3000px;">
-    <p><b>Sei un amministratore: <a data-toggle="collapse" class="btn btn-danger" href="#gconfig" aria-expanded="false" aria-controls="gconfig"> puoi modificare i dati globali dell'installazione  ↓ </a>  </b></p>
+	<div style="padding-top: 30px; padding-bottom: 3000px;">
+    <div class="col-sm-12 col-md-1"></div><div class="col-sm-12 col-md-11"><b>Gli amministratore possono </b> <a data-toggle="collapse" class="btn btn-sm btn-warning" href="#gconfig" aria-expanded="false" aria-controls="gconfig"> accedere ai dati globali ↕ </a></div>
     <div class="collapse" id="gconfig">
       <iframe src="../../modules/root/set_config_data.php?iframe=TRUE" title="Configurazione globale" width="100%" height="1330"  frameBorder="0"></iframe>
     </div>

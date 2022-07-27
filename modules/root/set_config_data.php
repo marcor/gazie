@@ -57,11 +57,13 @@ if ($_GET['iframe']="TRUE"){
 	.divlarge{
 		width: 100%;
 	}
+  .sidebar-collapse form div.wrapper div.content-wrapper {
+    margin-left: 0px !important;
+  }
 	</style>
 	<?php
 }
 ?>
-<div class="tab-content divlarge divborder">
   <div id="generale" class="tab-pane fade in active">
     <form class="form-horizontal" method="post">
       <div class="FacetDataTD">
@@ -122,7 +124,3 @@ if ($_GET['iframe']="TRUE"){
       </div>
     </form>
   </div>
-</div>
-<?php
-require("../../library/include/footer.php");
-?>
