@@ -429,6 +429,39 @@ $(function() {
 		$("#dialog_delete" ).dialog( "open" );
 	});
 
+  $("#dialog_feedback").dialog({ autoOpen: false });
+	$('.dialog_feedback').click(function() {
+    var ref = $(this).attr('ref');
+    var feed_text = $(this).attr('feed_text');
+    $("#feedback_text").html($(this).attr("feed_text"));
+      // Carico i voti e i relativi elementi
+		 $.ajax({
+      data: {'opt':'load_votes',term:ref},
+      type: 'GET',
+      url: '../vacation_rental/ajax_request.php',
+      success: function(output){
+        // visualizzo gli elementi e i voti nel dialog
+        $.each(JSON.parse(output), function(idx, obj) {
+          $("#feedback_vote").append(obj.element+': '+obj.score+' stelle<br>');
+        });
+      }
+    });
+    $( "#dialog_feedback" ).dialog({
+      minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+        "Chiudi": function() {
+          $(this).dialog("destroy");
+					$(this).dialog("close");
+				}
+      }
+    });
+		$("#dialog_feedback" ).dialog( "open" );
+	});
+
   $("#dialog_stato_lavorazione").dialog({ autoOpen: false });
 	$('.dialog_stato_lavorazione').click(function() {
 		$("p#id_status").html($(this).attr("refsta"));
@@ -630,6 +663,11 @@ $ts->output_navbar();
       </div>
       <?php } ?>
   </div>
+  <div style="display:none" id="dialog_feedback" title="Recensione lasciata dal cliente">
+      <p><b>Recensione:</b></p>
+      <p class="ui-state-highlight" id="feedback_text"></p>
+      <span id="feedback_element"></span><p class="ui-state-highlight" id="feedback_vote"></p>
+  </div>
   <input type="hidden" name="auxil" value="<?php echo $tipo; ?>">
   <div style="display:none" id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">
       <p id="mail_alert1"><?php echo $script_transl['mail_alert1']; ?></p>
@@ -728,12 +766,12 @@ $ts->output_navbar();
         $res1hp=gaz_dbi_get_row($gTables['company_config'], 'var', 'enable_lh_print_dialog');
         $enable_lh_print_dialog=(isset($res1hp))?$res1hp['val']:0;
         //recupero le testate in base alle scelte impostate
-        $result = gaz_dbi_dyn_query(cols_from($gTables['tesbro'], "*") . ", " .
+        $result = gaz_dbi_dyn_query(cols_from($gTables['tesbro'], "*") . ", " .cols_from($gTables['rental_feedbacks'], "id AS id_feedback","text") . ", " .
         cols_from($gTables['anagra'],
             "ragso1","ragso2","citspe","custom_field AS anagra_custom_field",
             "e_mail AS base_mail","id") . ", " .
         cols_from($gTables["destina"], "unita_locale1").", ".cols_from($gTables["rental_events"], "start","end","house_code","checked_in_date","checked_out_date"),
-        $tesbro_e_destina." LEFT JOIN ".$gTables['rental_events']." ON  ".$gTables['rental_events'].".id_tesbro = ".$gTables['tesbro'].".id_tes AND ".$gTables['rental_events'].".type = 'ALLOGGIO' ",
+        $tesbro_e_destina." LEFT JOIN ".$gTables['rental_events']." ON  ".$gTables['rental_events'].".id_tesbro = ".$gTables['tesbro'].".id_tes AND ".$gTables['rental_events'].".type = 'ALLOGGIO' LEFT JOIN ".$gTables['rental_feedbacks']." ON  ".$gTables['rental_feedbacks'].".reservation_id = ".$gTables['rental_events'].".id" ,
         $ts->where." AND template = 'booking' ", $ts->orderby,
         $ts->getOffset(), $ts->getLimit(),$gTables['rental_events'].".id_tesbro");
         $ctrlprotoc = "";
@@ -759,15 +797,18 @@ $ts->output_navbar();
 
             if (strtotime($r['checked_out_date'])){
               $check_inout="OUT";
+              $check_icon="log-out";
               $ckdate=date ('d-m-Y H:i', strtotime($r['checked_out_date']));
               $title = "Checked-in ".date ('d-m-Y H:i', strtotime($r['checked_in_date']))." - Checked-out ".date ('d-m-Y H:i', strtotime($r['checked_out_date']));
             }elseif (strtotime($r['checked_in_date'])){
               $check_inout="IN";
+              $check_icon="log-in";
               $ckdate=date ('d-m-Y H:i', strtotime($r['checked_in_date']));
               $title = "Checked-in ".date ('d-m-Y H:i', strtotime($r['checked_in_date']));
             }else {
               $check_inout="PENDING";
               $ckdate="";
+              $check_icon="unchecked";
               $title = "in attesa di check-in";
             }
 
@@ -851,7 +892,7 @@ $ts->output_navbar();
               // Se l'ordine e' da evadere , verifica lo status ed
               // eventualmente lo aggiorna.
               //
-              echo "<td style='text-align: center;'>";
+              echo "<td style='text-align: left;'>";
               if ($remains_atleastone && !$processed_atleastone) {
                   // L'ordine e'  da evadere.
 
@@ -870,12 +911,19 @@ $ts->output_navbar();
                       echo "><i class=\"glyphicon glyphicon-piggy-bank\" title=\"Pagamenti\"></i></a>";
 
                       ?>&nbsp;&nbsp;<a title="Stato della prenotazione" class="btn btn-xs <?php echo $stato_btn; ?> dialog_stato_lavorazione" refsta="<?php echo $r['id_tes']; ?>" prodes="<?php echo $r['ragso1']," ",$r['ragso2']; ?>" prosta="<?php echo $r['status']; ?>" cust_mail="<?php echo $r['base_mail']; ?>">
-                          <i class="glyphicon glyphicon-compressed"></i><?php echo $r['status']; ?>
+                          <i class="glyphicon glyphicon-modal-window">&nbsp;</i><?php echo $r['status']; ?>
                         </a>
                         &nbsp;&nbsp;<a title="Accettazione: <?php echo $title; ?>" class="btn btn-xs <?php echo $stato_check_btn; ?> dialog_check_inout" refcheck="<?php echo $r['id_tes']; ?>" prodes="<?php echo $r['ragso1']," ",$r['ragso2']; ?>" prostacheck="<?php echo $check_inout; ?>" cust_mail="<?php echo $r['base_mail']; ?>" ckdate="<?php echo $ckdate; ?>">
-                          <i class="glyphicon glyphicon-compressed"></i><?php echo "CHECK ",$check_inout; ?>
+                          <i class="glyphicon glyphicon-<?php echo $check_icon; ?>">&nbsp;</i><?php echo "CHECK ",$check_inout; ?>
                         </a>
-                      <?php
+                        <?php
+                         if (isset($r['text'])){// se c'è una recensione inserisco icona
+                           ?>
+                          &nbsp;&nbsp;<a title="Recensione" class="btn btn-xs btn-success dialog_feedback" ref="<?php echo $r['id_feedback']; ?>" feed_text="<?php echo $r['text']; ?>">
+                            <i class="glyphicon glyphicon-comment"></i>
+                          </a>
+                        <?php
+                         }
                   }
               } elseif ($remains_atleastone) {
                   // l'ordine è parzialmente evaso, mostro lista documenti e tasto per evadere rimanenze

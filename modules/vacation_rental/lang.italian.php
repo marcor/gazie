@@ -414,7 +414,8 @@ $strScript = array(
 			'email-validate' => 'L\'indirizzo email non è scritto correttamente',
       'inexistent_booking' => 'La prenotazione NON esiste',
       'wrong_data' => 'I dati inseriti non sono corretti',
-      'too_many_error' => 'Accesso BLOCCATO per troppi errori. Riprovare più tardi'
+      'too_many_error' => 'Accesso BLOCCATO per troppi errori. Riprovare più tardi',
+      'text_missing' => 'Il testo della recensione è mancante o troppo corto'
         ),
         'war' => array(
             'ok' => 'ok riempitura array'

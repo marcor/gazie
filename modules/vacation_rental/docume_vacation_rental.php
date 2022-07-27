@@ -94,6 +94,7 @@ $admin_aziend=checkAdmin(9);
         <li>Possibilita di richiedere il pagamento della prenotazione a favore di soggetti diversi dall'azienda di GAzie (proprietario)</li>
         <li>Sincronizzazione bidirezionale delle disponibilità con altri portali di prenotazioni (Airbnb, Booking, Tripadvisor, etc) tramite ICal in entrata (necessita di cron-job) e in uscita</li>
         <li>Pagina front-end di accesso utente alla prenotazione con possibilità di effettuare pagamenti</li>
+        <li>Gestione dei feedback. Al check-out verrà inviata, al cliente, la richiesta di lasciare una recensione con voti su elementi personalizzabili e commento</li>
       </ul>
       <p>Per la versione PRO contattare lo sviluppatore: Antonio Germani Massignano (AP) https://www.programmisitiweb.lacasettabio.it - telefono +39 340 50 11 912</p>
     </div>

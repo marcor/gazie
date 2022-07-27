@@ -649,7 +649,8 @@ $strScript = array(
 			'email-validate' => 'The e-mail address you wrote ha a wrong form',
       'inexistent_booking' => 'There is no booking with this number',
       'wrong_data' => 'Wrong data',
-      'too_many_error' => 'Too many errors. Your access is blocked. Please, try later'
+      'too_many_error' => 'Too many errors. Your access is blocked. Please, try later',
+      'text_missing' => 'Feedback text is missing or too short'
         ),
         'war' => array(
             'ok' => 'ok riempitura array'

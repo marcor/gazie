@@ -57,21 +57,33 @@ if (isset($_GET['term'])) {
         $lastbuys= $libFunc->getLastBuys($codice,false);
         echo json_encode($lastbuys);
       break;
-	  case 'group':
+      case 'group':
         $codice= intval($_GET['term']);
-		$query = "SELECT descri, id_artico_group FROM " . $gTables['artico_group'] . " WHERE id_artico_group ='". $codice ."' LIMIT 1";
-		$result = gaz_dbi_query($query);
-		$n=0;
-		while ($res = $result->fetch_assoc()){
-			$return[$n]=$res;
-			$n++;
-		}
-		$query = "SELECT codice, descri FROM " . $gTables['artico'] . " WHERE id_artico_group ='". $codice ."'";
-		$result = gaz_dbi_query($query);
-		while ($res = $result->fetch_assoc()){
-			$return[$n]=$res;
-			$n++;
-		}
+        $query = "SELECT descri, id_artico_group FROM " . $gTables['artico_group'] . " WHERE id_artico_group ='". $codice ."' LIMIT 1";
+        $result = gaz_dbi_query($query);
+        $n=0;
+        while ($res = $result->fetch_assoc()){
+          $return[$n]=$res;
+          $n++;
+        }
+        $query = "SELECT codice, descri FROM " . $gTables['artico'] . " WHERE id_artico_group ='". $codice ."'";
+        $result = gaz_dbi_query($query);
+        while ($res = $result->fetch_assoc()){
+          $return[$n]=$res;
+          $n++;
+        }
+        echo json_encode($return);
+      break;
+      case'load_votes':
+        $return=array();
+        $codice= intval($_GET['term']);
+        $query = "SELECT score, element FROM ". $gTables['rental_feedback_scores'] ." LEFT JOIN ". $gTables['rental_feedback_elements'] ." ON ". $gTables['rental_feedback_elements'] .".id =  ". $gTables['rental_feedback_scores'] .".element_id WHERE feedback_id ='". $codice ."' ORDER BY ". $gTables['rental_feedback_scores'] .".id ASC";
+        $result = gaz_dbi_query($query);
+        $n=0;
+        while ($res = $result->fetch_assoc()){
+          $return[$n]=$res;
+          $n++;
+        }
         echo json_encode($return);
       break;
       default:
