@@ -376,7 +376,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                     $form['in_id_mag'] = $form['rows'][$key_row]['id_mag'];
                     $form['in_id_warehouse'] = $form['rows'][$key_row]['id_warehouse'];
                     $form['in_id_order'] = $form['rows'][$key_row]['id_order'];
-					$orderman = gaz_dbi_get_row($gTables['orderman'], "id", $form['rows'][$key_row]['id_orderman']);
+                    $orderman = gaz_dbi_get_row($gTables['orderman'], "id", $form['rows'][$key_row]['id_orderman']);
                     $form['coseprod'] =($orderman)?$orderman['description']:'';
                     $form['in_id_orderman'] = $form['rows'][$key_row]['id_orderman'];
                     $form['in_annota'] = $form['rows'][$key_row]['annota'];
@@ -384,14 +384,14 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                     $form['in_gooser'] = $form['rows'][$key_row]['gooser'];
                     $form['in_scorta'] = $form['rows'][$key_row]['scorta'];
                     $form['in_quamag'] = $form['rows'][$key_row]['quamag'];
-					$form['in_quality'] = $form['rows'][$key_row]['quality'];
+                    $form['in_quality'] = $form['rows'][$key_row]['quality'];
                     $form['in_lot_or_serial'] = $form['rows'][$key_row]['lot_or_serial'];
-					$form['in_SIAN'] = $form['rows'][$key_row]['SIAN'];
-					$form['in_cod_operazione'] = $form['rows'][$key_row]['cod_operazione'];
-					$form['in_recip_stocc'] = $form['rows'][$key_row]['recip_stocc'];
-					$form['in_recip_stocc_destin'] = $form['rows'][$key_row]['recip_stocc_destin'];
+                    $form['in_SIAN'] = $form['rows'][$key_row]['SIAN'];
+                    $form['in_cod_operazione'] = $form['rows'][$key_row]['cod_operazione'];
+                    $form['in_recip_stocc'] = $form['rows'][$key_row]['recip_stocc'];
+                    $form['in_recip_stocc_destin'] = $form['rows'][$key_row]['recip_stocc_destin'];
                     $form['in_status'] = "UPDROW" . $key_row;
-// sottrazione ai totali peso,pezzi,volume
+                    // sottrazione ai totali peso,pezzi,volume
                     $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['rows'][$key_row]['codart']);
                     $form['net_weight'] -= $form['rows'][$key_row]['quanti'] * $artico['peso_specifico'];
                     $form['gross_weight'] -= $form['rows'][$key_row]['quanti'] * $artico['peso_specifico'];

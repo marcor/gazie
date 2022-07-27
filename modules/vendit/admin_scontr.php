@@ -238,7 +238,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['in_lot_or_serial'] = $form['rows'][$key_row]['lot_or_serial'];
                     $form['in_id_lotmag'] = $form['rows'][$key_row]['id_lotmag'];
                     $getlot = $lm->getLot(intval($form['rows'][$key_row]['id_lotmag']));
-                    $form['in_identifier'] = $getlot['identifier'];
+                    $form['in_identifier'] = $getlot?$getlot['identifier']:'';
                     $form['in_status'] = "UPDROW" . $key_row;
                     $form['cosear'] = $form['rows'][$key_row]['codart'];
                     $form['in_SIAN'] = $form['rows'][$key_row]['SIAN'];
@@ -1434,6 +1434,17 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
     } else {
     echo '<div id="alert-zerorows" class="alert alert-danger col-xs-12">Il documento non contiene righi o prodotti, compila la ricerca articoli nella sezione corpo per aggiungerne, inserisci il valore % per avere una lista completa o per effettuare una ricerca parziale</div>';
     }
+		$class_conf_row='btn-success';
+    $descributton = $script_transl['insert'];
+    $nurig = count($form['rows'])+1;
+    $expsts = explode('UPDROW',$form['in_status']);
+    if (isset($expsts[1])){
+      $nurig = (int)$expsts[1]+1;
+      $class_conf_row = 'btn-warning';
+      $descributton = $script_transl['update'];
+    }
+    $descributton .= ' il rigo '.$nurig;
+
     ?>
       <ul class="nav nav-tabs">
           <li class="active"><a data-toggle="pill" href="#insrow1"> <?php echo $script_transl['conf_row']; ?> </a></li>
@@ -1494,8 +1505,8 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
 					<?php if ($form['ok_barcode']!="ok"){?>
           <div class="col-xs-12 col-md-6 col-lg-3">
               <div class="form-group text-center">
-                  <button type="submit"  tabindex=7 class="btn btn-success" name="in_submit">
-                      <?php echo $script_transl['insert'] . $script_transl['thisrow']; ?>&nbsp;<i class="glyphicon glyphicon-ok"></i>
+                  <button type="submit"  tabindex=7 class="btn <?php echo $class_conf_row; ?>" name="in_submit">
+                      <?php echo $descributton; ?>&nbsp;<i class="glyphicon glyphicon-ok"></i>
                   </button>
               </div>
           </div>
