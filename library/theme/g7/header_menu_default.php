@@ -192,7 +192,7 @@ function opendoc(module) {
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-        <a  href="../../modules/root/admin.php"> <?php echo strtoupper($admin_aziend["ragso1"]); ?>
+        <a href="../../modules/root/admin.php" class="company-color" > <?php echo strtoupper($admin_aziend["ragso1"]); ?>
         </a>
     </div>
 
