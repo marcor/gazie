@@ -215,7 +215,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 	$form['date_fin_Y'] = date('Y');
 	$form['curr_doc'] = 0;
 	if (in_array($send_fae_zip_package['val'],$sync_mods)){
-		$res_faesync=gaz_dbi_dyn_query("*", $gTables['files'], "item_ref='faesync' AND status = 0", "id_doc DESC", 0);
+		$res_faesync=gaz_dbi_dyn_query("*", $gTables['files'], "item_ref='faesync' AND status = 0", "custom_field, last_modified", 0);
 	}
 } else { // accessi successivi
 	$form['fattura_elettronica_original_name'] = filter_var($_POST['fattura_elettronica_original_name'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -242,9 +242,13 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 	}
 
 	if (isset($_POST['Submit_file']) || isset($_POST['fae_from_sync'])) { // conferma invio upload file
-		if (isset($_POST['fae_from_sync'])){
+  	$form['datreg']=gaz_format_date($_POST['custom_field'.intval($_POST['fae_from_sync'])], false, false);
+    $_POST['datreg']=$form['datreg'];
+    if (isset($_POST['fae_from_sync'])){
 			$_POST['fae_original_name']=$_POST['fae_original_name'.intval($_POST['fae_from_sync'])];
+
 		}
+
         if (!empty($_FILES['userfile']['name'])) {
 
             if (!( $_FILES['userfile']['type'] == "application/pkcs7-mime" || $_FILES['userfile']['type'] == "application/pkcs7" || $_FILES['userfile']['type'] == "text/xml")) {
@@ -323,6 +327,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 
 	$tesdoc = gaz_dbi_get_row($gTables['tesdoc'], 'BINARY fattura_elettronica_original_name', $form["fattura_elettronica_original_name"]);
 	if (!empty($form['fattura_elettronica_original_name'])) { // c'è anche sul database, è una modifica
+
       if ($tesdoc){
 		$toDo = 'update';
 		$form['datreg'] = gaz_format_date($tesdoc['datreg'], false, false);
@@ -332,6 +337,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		$toDo = 'insert';
 
       }
+
 		// INIZIO acquisizione e pulizia file xml o p7m
 		//echo"",print_r($form);
 		$file_name = DATA_DIR . 'files/' . $admin_aziend['codice'] . '/' . $form['fattura_elettronica_original_name'];
@@ -340,7 +346,6 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		}
 		$p7mContent = @file_get_contents($file_name);
 		$p7mContent = tryBase64Decode($p7mContent);
-
 
 		$tmpfatt = tempnam(DATA_DIR . 'files/tmp/', 'ricfat');
 		file_put_contents($tmpfatt, $p7mContent);
@@ -1668,16 +1673,17 @@ if ($toDo=='insert' || $toDo=='update' ) {
 							<label for="image" class="col-sm-4 control-label">Queste fatture, arrivate via PEC, sono ancora da acquisire</label>
 							<div class="col-sm-8">
 							<?php
+              $disable='';
 							foreach($res_faesync as $faesync){
 								?>
 								<p>
 								<?php echo $faesync['title']," ";?>
-								<input type="submit" name="fae_from_sync" class="btn btn-default" value="<?php echo $faesync['id_doc'],".",$faesync['extension'];?>">
+								<input type="submit" <?php echo $disable; ?> name="fae_from_sync" class="btn btn-default" value="<?php echo $faesync['id_doc'],".",$faesync['extension'];?>">
 								<input type="hidden" name="fae_original_name<?php echo $faesync['id_doc'];?>" class="btn btn-default" value="<?php echo $faesync['title'];?>">
+                <input type="hidden" name="custom_field<?php echo $faesync['id_doc'];?>" value="<?php echo substr($faesync['custom_field'],0,10);?>">
 								</p>
-
-
 								<?php
+                $disable='disabled';
 							}
 							?>
 
