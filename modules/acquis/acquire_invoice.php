@@ -215,7 +215,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 	$form['date_fin_Y'] = date('Y');
 	$form['curr_doc'] = 0;
 	if (in_array($send_fae_zip_package['val'],$sync_mods)){
-		$res_faesync=gaz_dbi_dyn_query("*", $gTables['files'], "item_ref='faesync' AND status = 0", "custom_field, last_modified", 0);
+		$res_faesync=gaz_dbi_dyn_query("*", $gTables['files'], "item_ref='faesync' AND status = 0", "table_name_ref", 0);
 	}
 } else { // accessi successivi
 	$form['fattura_elettronica_original_name'] = filter_var($_POST['fattura_elettronica_original_name'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -242,8 +242,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 	}
 
 	if (isset($_POST['Submit_file']) || isset($_POST['fae_from_sync'])) { // conferma invio upload file
-    if (strtotime($_POST['custom_field'.intval($_POST['fae_from_sync'])])>0){// se è una data
-      $form['datreg']=gaz_format_date($_POST['custom_field'.intval($_POST['fae_from_sync'])], false, false);
+    if (strtotime($_POST['table_name_ref'.intval($_POST['fae_from_sync'])])>0){// se è una data
+      $form['datreg']=gaz_format_date($_POST['table_name_ref'.intval($_POST['fae_from_sync'])], false, false);
       $_POST['datreg']=$form['datreg'];
     }
     if (isset($_POST['fae_from_sync'])){
@@ -1682,7 +1682,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
 								<?php echo $faesync['title']," ";?>
 								<input type="submit" <?php echo $disable; ?> name="fae_from_sync" class="btn btn-default" value="<?php echo $faesync['id_doc'],".",$faesync['extension'];?>">
 								<input type="hidden" name="fae_original_name<?php echo $faesync['id_doc'];?>" class="btn btn-default" value="<?php echo $faesync['title'];?>">
-                <input type="hidden" name="custom_field<?php echo $faesync['id_doc'];?>" value="<?php echo substr($faesync['custom_field'],0,10);?>">
+                <input type="hidden" name="table_name_ref<?php echo $faesync['id_doc'];?>" value="<?php echo substr($faesync['table_name_ref'],0,10);?>">
 								</p>
 								<?php
                 $disable='disabled';
