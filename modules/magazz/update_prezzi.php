@@ -275,7 +275,7 @@ if (isset($_POST['preview']) and $msg=='') {
 		foreach ($m AS $key => $mv) {
       if ($mv['catmer']>$ctr_mv){
         $cm=gaz_dbi_get_row($gTables['catmer'],'codice',$mv['catmer']);
-        echo "<tr><td colspan=7><h4>".$mv['catmer'].' - '.$cm['descri']." </h4></td></tr>\n";
+        echo '<tr><td colspan=7 class="bg-info"><strong>'.$mv['catmer'].' - '.$cm['descri']."</strong></td></tr>\n";
       }
       echo "<tr><td></td>\n";
       echo "<td>".$mv['codice']." &nbsp;</td>";
