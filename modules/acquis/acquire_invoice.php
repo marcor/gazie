@@ -242,8 +242,10 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 	}
 
 	if (isset($_POST['Submit_file']) || isset($_POST['fae_from_sync'])) { // conferma invio upload file
-  	$form['datreg']=gaz_format_date($_POST['custom_field'.intval($_POST['fae_from_sync'])], false, false);
-    $_POST['datreg']=$form['datreg'];
+    if (strtotime($_POST['custom_field'.intval($_POST['fae_from_sync'])])>0){// se è una data
+      $form['datreg']=gaz_format_date($_POST['custom_field'.intval($_POST['fae_from_sync'])], false, false);
+      $_POST['datreg']=$form['datreg'];
+    }
     if (isset($_POST['fae_from_sync'])){
 			$_POST['fae_original_name']=$_POST['fae_original_name'.intval($_POST['fae_from_sync'])];
 
