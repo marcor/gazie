@@ -433,6 +433,23 @@ $(function() {
 	$('.dialog_feedback').click(function() {
     var ref = $(this).attr('ref');
     var feed_text = $(this).attr('feed_text');
+    var feed_status = $(this).attr('feed_status');
+    $("#sel_stato_feedback").val(feed_status);// imposto lo status nella select
+    $('#sel_stato_feedback').on('change', function () {
+      if (confirm("Confermi di voler cambiare stato?")){
+        var feed_status = $("#sel_stato_feedback").val();
+        $.ajax({
+          data: {'opt':'change_feed_status',term:ref,status:feed_status},
+          type: 'GET',
+          url: '../vacation_rental/ajax_request.php',
+          dataType: 'text',
+          success: function(response){
+            //alert(response);
+            window.location.replace("./report_booking.php");
+          }
+        });
+      }
+    });
     $("#feedback_text").html($(this).attr("feed_text"));
       // Carico i voti e i relativi elementi
 		 $.ajax({
@@ -454,8 +471,9 @@ $(function() {
 			hide: "explode",
 			buttons: {
         "Chiudi": function() {
-          $(this).dialog("destroy");
-					$(this).dialog("close");
+          $("#feedback_vote").html('');
+          $("#sel_stato_feedback").val('')
+					$(this).dialog("destroy");
 				}
       }
     });
@@ -667,6 +685,11 @@ $ts->output_navbar();
       <p><b>Recensione:</b></p>
       <p class="ui-state-highlight" id="feedback_text"></p>
       <span id="feedback_element"></span><p class="ui-state-highlight" id="feedback_vote"></p>
+      <select name="sel_stato_feedback" id="sel_stato_feedback">
+          <option value="0">IN ATTESA di approvazione</option>
+          <option value="1">APPROVATO</option>
+          <option value="2">BLOCCATO</option>
+      </select>
   </div>
   <input type="hidden" name="auxil" value="<?php echo $tipo; ?>">
   <div style="display:none" id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">
@@ -766,7 +789,7 @@ $ts->output_navbar();
         $res1hp=gaz_dbi_get_row($gTables['company_config'], 'var', 'enable_lh_print_dialog');
         $enable_lh_print_dialog=(isset($res1hp))?$res1hp['val']:0;
         //recupero le testate in base alle scelte impostate
-        $result = gaz_dbi_dyn_query(cols_from($gTables['tesbro'], "*") . ", " .cols_from($gTables['rental_feedbacks'], "id AS id_feedback","text") . ", " .
+        $result = gaz_dbi_dyn_query(cols_from($gTables['tesbro'], "*") . ", " .cols_from($gTables['rental_feedbacks'], "id AS id_feedback","text","status AS feed_status") . ", " .
         cols_from($gTables['anagra'],
             "ragso1","ragso2","citspe","custom_field AS anagra_custom_field",
             "e_mail AS base_mail","id") . ", " .
@@ -837,6 +860,12 @@ $ts->output_navbar();
               $stato_btn = 'btn-info';
             }elseif ($r['status']=='CANCELLED'){
               $stato_btn = 'btn-danger';
+            }
+            $feed_stato_btn = 'btn-default';
+            if ($r['feed_status']==1){
+              $feed_stato_btn = 'btn-success';
+            }elseif ($r['feed_status']==2){
+              $feed_stato_btn = 'btn-danger';
             }
 
             $remains_atleastone = false; // Almeno un rigo e' rimasto da evadere.
@@ -919,7 +948,7 @@ $ts->output_navbar();
                         <?php
                          if (isset($r['text'])){// se c'è una recensione inserisco icona
                            ?>
-                          &nbsp;&nbsp;<a title="Recensione" class="btn btn-xs btn-success dialog_feedback" ref="<?php echo $r['id_feedback']; ?>" feed_text="<?php echo $r['text']; ?>">
+                          &nbsp;&nbsp;<a title="Recensione" class="btn btn-xs <?php echo $feed_stato_btn; ?> dialog_feedback" ref="<?php echo $r['id_feedback']; ?>" feed_text="<?php echo $r['text']; ?>" feed_status="<?php echo $r['feed_status']; ?>">
                             <i class="glyphicon glyphicon-comment"></i>
                           </a>
                         <?php

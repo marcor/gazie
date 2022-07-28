@@ -40,6 +40,7 @@ require("../../library/include/datlib.inc.php");
 require("../../modules/magazz/lib.function.php");
 $admin_aziend=checkAdmin();
 $libFunc = new magazzForm();
+
 if (isset($_GET['term'])) {
     if (isset($_GET['opt'])) {
         $opt = $_GET['opt'];
@@ -85,6 +86,11 @@ if (isset($_GET['term'])) {
           $n++;
         }
         echo json_encode($return);
+      break;
+      case'change_feed_status':
+        $codice= intval($_GET['term']);
+        $query = "UPDATE ".$gTables['rental_feedbacks']." SET status = ". intval($_GET['status']) ." WHERE id = ".$codice;
+        gaz_dbi_query($query);
       break;
       default:
       return false;
