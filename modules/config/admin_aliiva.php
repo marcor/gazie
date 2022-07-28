@@ -164,7 +164,7 @@ echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl['annota'] . "</td
      <td class=\"FacetDataTD\">\n";
 echo '<textarea name="sedleg" rows="2" cols="60" maxlength="254" >'. $form['annota'].'</textarea>';
 echo "</td></tr>";
-echo '<tr class="FacetFooterTD"><td></td><td align="center">';
+echo '<tr><td colspan=2 class="FacetFooterTD text-center">';
 echo '<input name="Submit" class="btn btn-warning" title="Accetta tutto e modifica" type="submit" value=' . ucfirst($script_transl['submit']) . '>';
 ?>
 </td>

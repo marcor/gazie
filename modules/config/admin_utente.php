@@ -734,7 +734,7 @@ if ($user_data["Abilit"] == 9) {
 
 ?>
 </table><br/>
-<div class="text-center"><input name="Submit" class="btn btn-warning" type="submit" value="<?php echo ucfirst($script_transl[$toDo]); ?>"></div>
+<div class="FacetFooterTD text-center"><input name="Submit" class="btn btn-warning" type="submit" value="<?php echo ucfirst($script_transl[$toDo]); ?>"></div>
 </form>
 <?php
 if ($admin_aziend['Abilit']==9){

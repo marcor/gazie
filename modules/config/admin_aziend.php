@@ -1342,7 +1342,7 @@ if (count($msg['err']) > 0) { // ho un errore
             </div><!-- chiude row  -->
           </div><!-- chiude tab-pane  -->
         </div><!-- chiude container  -->
-        <div class="text-center">
+        <div class="FacetFooterTD text-center">
             <input class="btn btn-warning" name="Submit" type="submit" value="<?php echo ucfirst($script_transl[$toDo]); ?>">
         </div>
     </div><!-- chiude panel  -->

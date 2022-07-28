@@ -238,8 +238,7 @@ echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[13] . "</td>
      <td class=\"FacetDataTD\">\n";
 echo "\t<input type=\"text\" name=\"annota\" value=\"" . $form['annota'] . "\" maxlength=\"50\"  class=\"FacetInput\">\n";
 echo "</td></tr>";
-echo "<tr class=\"FacetFooterTD\"><td>
-      </td><td align=\"center\">\n";
+echo "<tr><td colspan=2 class=\"FacetFooterTD text-center\">\n";
 if ($toDo == 'update') {
     echo '<input name="Submit" class="btn btn-warning" title="Accetta tutto e modifica" type="submit" value="Modifica">';
 } else {
