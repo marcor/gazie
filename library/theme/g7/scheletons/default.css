@@ -732,10 +732,9 @@ label {
 .ui-state-default,
 .ui-widget-content .ui-state-default,
 .ui-widget-header .ui-state-default {
-    border: 0px;
-    border-radius: 4px;
-    font-weight: normal;
-    background: none;
+  border: 0px;
+  border-radius: 4px;
+  font-weight: normal;
 }
 .ui-selectmenu-button span.ui-selectmenu-text {
     padding: 3px 3px 3px 3px;

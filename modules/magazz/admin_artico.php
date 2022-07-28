@@ -932,7 +932,7 @@ if ($modal_ok_insert === true) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="valore" class="col-sm-4 control-label">Magazzino, Scaffale</label>
-                						<div class="col-sm-8"><a class="btn btn-info dialog_artico_position" artico_name="<?php echo $form['descri']; ?>" codart="<?php echo $form['codice']; ?>" ><i class="glyphicon glyphicon-object-align-horizontal"></i> Posizione</a><?php echo $accpos; ?></div>
+                						<div class="col-sm-8"><a class="btn btn-info dialog_artico_position" artico_name="<?php echo $form['descri']; ?>" codart="<?php echo $form['codice']; ?>" ><i class="glyphicon glyphicon-map-marker"></i> Posizione</a><?php echo $accpos; ?></div>
                         </div>
                     </div>
                 </div><!-- chiude row  -->

@@ -358,11 +358,13 @@ function dialogSchedule(paymov) {
             getSamePaymov(tesdoc_ref, id_rig, false);
             getOtherMov(clfoco, tesdoc_ref, true);
         },
-        buttons: {
-			"Conferma/chiudi": function () {
-                $(this).dialog("close");
-            }
-        },
+        buttons: [{
+          text: "Conferma e chiudi",
+          "class": "btn btn-warning",
+          click: function() {
+            $( this ).dialog( "close" );
+          }
+        }],
         beforeClose: function (event, ui) {
             if (!checkField(true) || !checkTot('Il totale delle scadenze non coincide con il totale rigo')) {
                 return false;
