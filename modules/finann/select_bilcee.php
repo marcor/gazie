@@ -82,6 +82,8 @@ $bil["aB034"] = 0;
 $bil["aC"] = 0;
 $bil["aC01"] = 0;
 $bil["aC02"] = 0;
+$bil["aC03"] = 0;
+$bil["aC04"] = 0;
 $bil["aC011"] = 0;
 $bil["aC012"] = 0;
 $bil["aC013"] = 0;
@@ -94,6 +96,7 @@ $bil["aC024"] = 0;
 $bil["aC024b"] = 0;
 $bil["aC024c"] = 0;
 $bil["aC025"] = 0;
+$bil["aC03"] = 0;
 $bil["aC031"] = 0;
 $bil["aC032"] = 0;
 $bil["aC033"] = 0;
@@ -322,7 +325,7 @@ echo "\t </select>\n";
 <?php
 if ($message == "")
   {
-    echo "<tr class=\"FacetFooterTD\"><td></td><td align=\"right\" nowrap ><input type=\"submit\" class=\"btn btn-info\" name=\"visualizza\" value=\"Visualizza l'anteprima\"> </td></tr>";
+    echo "<tr><td class=\"bg-info text-center\" colspan=2><input type=\"submit\" class=\"btn btn-info\" name=\"visualizza\" value=\"Visualizza l'anteprima\"></td></tr>";
   }
 echo "</table>";
 //
@@ -501,7 +504,7 @@ if (isset($_GET['visualizza']) and $message == "")
                             $stampaval = "(".number_format(-$value,2,'.','').")";
                           }
                         $descricon=gaz_dbi_get_row($gTables['clfoco'],"codice",$key);
-                        echo "<tr><td></td><td style=\"color: red;\">\"".$key." - ".$descricon["descri"]."\" non riclassificato</td><td>Euro</td><td align=\"right\">".$stampaval."</td></tr>\n";
+                        echo "<tr><td></td><td style=\"color: red;\">\"".$key." - ".($descricon?$descricon["descri"]:'')."\" non riclassificato</td><td>Euro</td><td align=\"right\">".$stampaval."</td></tr>\n";
                       }
                   }
                 if($totrom > 0)
@@ -596,7 +599,7 @@ if (isset($_GET['visualizza']) and $message == "")
                     else
                       {
                         $descricon=gaz_dbi_get_row($gTables['clfoco'],"codice",$key);
-                        echo "<tr><td></td><td style=\"color: red;\">\"".$key." - ".$descricon["descri"]."\" non riclassificato</td><td>Euro</td><td align=\"right\">".$stampaval."</td></tr>\n";
+                        echo "<tr><td></td><td style=\"color: red;\">\"".$key." - ".($descricon?$descricon["descri"]:'')."\" non riclassificato</td><td>Euro</td><td align=\"right\">".$stampaval."</td></tr>\n";
                       }
                   }
                 if($totrom > 0)
@@ -682,7 +685,7 @@ if (isset($_GET['visualizza']) and $message == "")
                     else
                       {
                         $descricon=gaz_dbi_get_row($gTables['clfoco'],"codice",$key);
-                        echo "<tr><td></td><td style=\"color: red;\">\"".$key." - ".$descricon["descri"]."\" non riclassificato</td><td>Euro</td><td align=\"right\">".$stampaval."</td></tr>\n";
+                        echo "<tr><td></td><td style=\"color: red;\">\"".$key." - ".($descricon?$descricon["descri"]:'')."\" non riclassificato</td><td>Euro</td><td align=\"right\">".$stampaval."</td></tr>\n";
                       }
                   }
                 if($totrom > 0)

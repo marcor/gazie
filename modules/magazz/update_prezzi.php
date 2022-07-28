@@ -242,9 +242,7 @@ echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['weight_valadd']."</td>\n";
 echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"weight_valadd\" value=\"".$form['weight_valadd']."\" align=\"right\" maxlength=\"9\"  /></td>\n";
 echo "</tr>\n";
-echo "\t<tr class=\"FacetFooterTD\">\n";
-echo "<td align=\"left\">";
-echo '<td align="center"><input type="submit" class="btn btn-warning" accesskey="i" name="preview" value="';
+echo '<tr><td class="bg-info text-center" colspan=2><input type="submit" class="btn btn-info" accesskey="i" name="preview" value="';
 echo $script_transl['view'];
 echo '" tabindex="100" >';
 echo "\t </td>\n";
@@ -253,7 +251,7 @@ echo "</table>\n";
 
 if (isset($_POST['preview']) and $msg=='') {
   $m=getItems($form['cm_ini'],$form['cm_fin'],$form['art_ini'],$form['art_fin']);
-  echo "<table class=\"Tmiddle table-striped table-responsive\">";
+  echo "<table class=\"Tmiddle table-striped\">";
   if (sizeof($m) > 0) {
         if ($form['lis_bas']=='0') {
            $name_bas='preacq';
@@ -277,22 +275,22 @@ if (isset($_POST['preview']) and $msg=='') {
 		foreach ($m AS $key => $mv) {
       if ($mv['catmer']>$ctr_mv){
         $cm=gaz_dbi_get_row($gTables['catmer'],'codice',$mv['catmer']);
-        echo "<tr><td class=\"FacetFieldCaptionTD\">".$mv['catmer'].' - '.$cm['descri']." &nbsp</td><td colspan=\"5\"></td></tr>\n";
+        echo "<tr><td colspan=7><h4>".$mv['catmer'].' - '.$cm['descri']." </h4></td></tr>\n";
       }
       echo "<tr><td></td>\n";
-      echo "<td class=\"FacetDataTD\">".$mv['codice']." &nbsp;</td>";
-      echo "<td class=\"FacetDataTD\">".$mv['descri']." &nbsp;</td>";
-      echo "<td align=\"right\" class=\"FacetDataTD\">".$mv['unimis']." &nbsp;</td>\n";
-      echo "<td align=\"right\" class=\"FacetDataTD\">".number_format($mv[$name_bas],$admin_aziend['decimal_price'],',','')." &nbsp;</td>\n";
-      echo "<td align=\"right\" class=\"FacetDataTD\">".number_format($mv['peso_specifico']*$form['weight_valadd'],$admin_aziend['decimal_price'],',','')." (".$mv['peso_specifico'].") &nbsp;</td>\n";
-      echo "<td align=\"right\" class=\"FacetDataTD\">".
+      echo "<td>".$mv['codice']." &nbsp;</td>";
+      echo "<td>".$mv['descri']." &nbsp;</td>";
+      echo "<td align=\"right\">".$mv['unimis']." &nbsp;</td>\n";
+      echo "<td align=\"right\">".number_format($mv[$name_bas],$admin_aziend['decimal_price'],',','')." &nbsp;</td>\n";
+      echo "<td align=\"right\">".number_format($mv['peso_specifico']*$form['weight_valadd'],$admin_aziend['decimal_price'],',','')." (".$mv['peso_specifico'].") &nbsp;</td>\n";
+      echo "<td align=\"right\">".
            number_format(compute_new_price($mv[$name_bas],$mv[$name_obj],$form['valore'],$form['mode'],$form['round_mode'],$form['weight_valadd'],$mv['peso_specifico']),$admin_aziend['decimal_price'],',','')." &nbsp;</td>";
       echo "</tr>\n";
       $ctr_mv=$mv['catmer'];
     }
-    echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
-    echo '<td colspan="6" align="right"><input type="submit" class="btn btn-warning" name="submit" value="';
-    echo $script_transl['submit'];
+    echo "\t<tr>\n";
+    echo '<td colspan=7 class="FacetFooterTD text-center"><input type="submit" class="btn btn-warning" name="submit" value="';
+    echo strtoupper($script_transl['submit'].' '.$script_transl['update']);
     echo '">';
     echo "\t </td>\n";
     echo "\t </tr>\n";

@@ -241,7 +241,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
     if ($row['depli'] < 1) {
         continue;
     }
-    if (intval($_GET['bc']) == 1) { // per stampare i barcode in luogo delle immagini
+    if (isset($_GET['bc']) && intval($_GET['bc']) == 1) { // per stampare i barcode in luogo delle immagini
         $row['imaart'] = '';
         $row['imacat'] = '';
     } else {
@@ -255,7 +255,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
         $price = $row['prezzo'];
     }
     if ($row['codcat'] <> $ctrl_cm) {
-		if ($_GET['jumpcat']!="on"){
+		if (!isset($_GET['bc']) || $_GET['jumpcat']!="on"){
 			if ($pdf->GetY() > 250) {
 				$pdf->AddPage();
 			}

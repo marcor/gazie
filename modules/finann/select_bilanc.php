@@ -284,8 +284,7 @@ echo "\t</select>";
 echo "</td>\n</tr>\n";
 
 if ($msg == "") {
-    echo "<tr class=\"FacetFooterTD\"><td></td>"
-	    ."<td align=\"center\" colspan=\"3\"><input type=\"submit\" class=\"btn btn-info\" name=\"anteprima\" value=\"".$script_transl['view']."\">&nbsp;</td></tr>\n";
+  echo "<tr><td class=\"bg-info text-center\" colspan=4><input type=\"submit\" class=\"btn btn-info\" name=\"anteprima\" value=\"".$script_transl['view']."\">&nbsp;</td></tr>\n";
 }
 echo "</table>\n";
 

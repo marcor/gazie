@@ -444,10 +444,7 @@ $select_agente->output();
 echo "</td></tr>\n";
 
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl['tipoStampa'] . "</td><td class=\"FacetDataTD\">\n<select name=\"tipo_stampa\" class=\"FacetSelect\">\n<option value=\"0\" selected>Tutti i documenti</option><option value=\"1\">Non stampare eMail</option><option value=\"2\">Invia solo eMail</option></tr>\n";
-echo "<tr class=\"FacetFooterTD\">
-     <td></td>\n
-     <td align=\"center\"><input type=\"submit\" class=\"btn btn-warning\" name=\"Print\" value=\"" . ucfirst($script_transl['print']) . "\"></td>\n
-     </tr>\n";
+echo '<tr><td class="FacetFooterTD text-center" colspan=2><input type="submit" class="btn btn-warning" name="Print" value="' . ucfirst($script_transl['print']) . "\"></td></tr>\n";
 ?>
 </table>
 </form>

@@ -1794,11 +1794,7 @@ if ($form['order_type'] <> "AGR") { // input esclusi se NON produzione agricola
 	echo "<input type=\"hidden\" name=\"quality\" value=\"\">\n";
   echo "<input type=\"hidden\" name=\"lot_or_serial\" value=\"\"></td></tr>";
 }
-if ($popup <> 1) {
-  echo '<tr class="FacetFooterTD"><td></td><td class="text-center" >';
-} else {
-  echo '<tr class="FacetFooterTD"><td></td><td class="text-center" >';
-}
+echo '<tr><td colspan=2 class="FacetFooterTD text-center" >';
 
 if ($toDo == 'update') {
     echo '<input type="submit" accesskey="m" class="btn btn-warning" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="' . ucfirst($script_transl['update']) . $addvalue . '">';
