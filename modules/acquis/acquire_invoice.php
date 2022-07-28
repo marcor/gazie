@@ -1675,17 +1675,17 @@ if ($toDo=='insert' || $toDo=='update' ) {
 							<label for="image" class="col-sm-4 control-label">Queste fatture, arrivate via PEC, sono ancora da acquisire</label>
 							<div class="col-sm-8">
 							<?php
-              $disable='';
+              $disable='class="btn btn-success"';
 							foreach($res_faesync as $faesync){
 								?>
 								<p>
 								<?php echo $faesync['title']," ";?>
-								<input type="submit" <?php echo $disable; ?> name="fae_from_sync" class="btn btn-default" value="<?php echo $faesync['id_doc'],".",$faesync['extension'];?>">
-								<input type="hidden" name="fae_original_name<?php echo $faesync['id_doc'];?>" class="btn btn-default" value="<?php echo $faesync['title'];?>">
+								<input type="submit" <?php echo $disable; ?> name="fae_from_sync" value="<?php echo 'Doc ID file: '.$faesync['id_doc']; ?>">
+								<input type="hidden" name="fae_original_name<?php echo $faesync['id_doc'];?>" value="<?php echo $faesync['title'];?>">
                 <input type="hidden" name="table_name_ref<?php echo $faesync['id_doc'];?>" value="<?php echo substr($faesync['table_name_ref'],0,10);?>">
 								</p>
 								<?php
-                $disable='disabled';
+                $disable = 'class="btn btn-default" disabled title="registrare in ordine di arrivo al Sistema di Interscambio"';
 							}
 							?>
 
