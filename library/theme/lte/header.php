@@ -132,6 +132,9 @@ if (isset( $scriptname) && $scriptname != $prev_script && $scriptname != 'admin.
             .ui-dialog-buttonset>button.btn.btn-confirm:first-child {
                 background-color: #f9b54d;
             }
+            .dropdown-menu > li.user-body > a {
+              white-space: normal;
+            }
         </style>
 <script>
 $(function() {
@@ -471,7 +474,7 @@ setInterval(menu_check_from_modules,<?php echo intval((int)$period*60000);?>);
                                 <ul class="dropdown-menu">
                                     <!-- User image -->
                                     <li class="user-header"><a href="../config/admin_utente.php?user_name=<?php echo $admin_aziend["user_name"]; ?>&Update">
-                                        <img src="<?php echo '../root/view.php?table=admin&field=user_name&value=' . $admin_aziend["user_name"]; ?>" class="img-circle" alt="User Image" height=80></a>
+                                        <img src="<?php echo '../root/view.php?table=admin&field=user_name&value=' . $admin_aziend["user_name"]; ?>" class="img-circle" alt="User" height=80></a>
                                         <p><?php echo $admin_aziend['user_firstname'] . ' ' . $admin_aziend['user_lastname']; ?>
                                             <small>
                                                 Questo è il tuo <b><?php echo $admin_aziend['Access']; ?>°</b> accesso<br/>
@@ -481,18 +484,14 @@ setInterval(menu_check_from_modules,<?php echo intval((int)$period*60000);?>);
                                     </li>
                                     <!-- Menu Body -->
                                     <li class="user-body">
-                                    <a href="../config/admin_aziend.php">
-                                        <div class="col-xs-4 text-center">
-                                                <img class="img-circle" src="../../modules/root/view.php?table=aziend&value=<?php echo $admin_aziend['company_id']; ?>" width="90" alt="Logo" border="0" >
-
+                                      <a href="../config/admin_aziend.php">
+                                        <div class="col-xs-12 text-center">
+                                          <img class="img-circle" src="../../modules/root/view.php?table=aziend&value=<?php echo $admin_aziend['company_id']; ?>" width=140 alt="Logo" border="0" >
                                         </div>
-                                        <div class="col-xs-8 text-center" align="center">
-                                          <?php echo $admin_aziend['ragso1'] . "<br>" . $admin_aziend['ragso2']; ?>
+                                        <div class="col-xs-12">
+                                          <?php echo $admin_aziend['ragso1'] . " " . $admin_aziend['ragso2']; ?>
                                         </div>
-                                        <!--<div class="col-xs-4 text-center">
-                                          <a href="#">Friends</a>
-                                        </div>-->
-                                    </a>
+                                      </a>
                                     </li>
                                     <!-- Menu Footer-->
                                     <li class="user-footer">
