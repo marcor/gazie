@@ -64,9 +64,16 @@ $(function() {
 			show: "blind",
 			hide: "explode",
 			buttons: {
+   			close: {
+					text:'Non eliminare',
+					'class':'btn btn-default',
+          click:function() {
+            $(this).dialog("close");
+          }
+        },
 				delete:{
 					text:'Aggiungi',
-					'class':'btn btn-danger delete-button',
+					'class':'btn btn-danger',
 					click:function (event, ui) {
 					$.ajax({
 						data: {'type':'add_banapp',ref:id},
@@ -76,10 +83,7 @@ $(function() {
 							window.location.replace("./report_bank.php?abi=All&sea_id="+id);
 						}
 					});
-				}},
-				"Non aggiungere": function() {
-					$(this).dialog("close");
-				}
+				}}
 			}
 		});
 		$("#dialog_banapp" ).dialog( "open" );
@@ -99,7 +103,7 @@ $(function() {
 			buttons: {
 				delete:{
 					text:'Elimina',
-					'class':'btn btn-danger delete-button',
+					'class':'btn btn-danger',
 					click:function (event, ui) {
 					$.ajax({
 						data: {'type':'del_bank',ref:id},
@@ -111,9 +115,13 @@ $(function() {
 						}
 					});
 				}},
-				"Non eliminare": function() {
-					$(this).dialog("close");
-				}
+   			close: {
+					text:'Non eliminare',
+					'class':'btn btn-default',
+          click:function() {
+            $(this).dialog("close");
+          }
+        }
 			}
 		});
 		$("#dialog_delete" ).dialog( "open" );

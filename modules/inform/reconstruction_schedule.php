@@ -119,7 +119,7 @@ $( function() {
 			buttons: {
 				delete:{
 					text:'Allinea ad € '+val_amount,
-					'class':'btn btn-danger delete-button',
+					'class':'btn btn-danger',
 					click:function (event, ui) {
 					$.ajax({
 						data: {type:'align_schedule', ref:id_partner, val:val_amount},

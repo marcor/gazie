@@ -150,9 +150,16 @@ $(function() {
 			show: "blind",
 			hide: "explode",
 			buttons: {
+   			close: {
+					text:'Non eliminare',
+					'class':'btn btn-default',
+          click:function() {
+            $(this).dialog("close");
+          }
+        },
 				delete:{
 					text:'Elimina',
-					'class':'btn btn-danger delete-button',
+					'class':'btn btn-danger',
 					click:function (event, ui) {
 					$.ajax({
 						data: {'type':'movcon',id_tes:id},
@@ -163,10 +170,7 @@ $(function() {
 							window.location.replace("./report_movcon.php");
 						}
 					});
-				}},
-				"Non eliminare": function() {
-					$(this).dialog("close");
-				}
+				}}
 			}
 		});
 		$("#dialog_delete" ).dialog( "open" );

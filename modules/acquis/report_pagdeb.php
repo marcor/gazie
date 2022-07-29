@@ -73,9 +73,16 @@ $(function() {
 			show: "blind",
 			hide: "explode",
 			buttons: {
-				delete:{ 
-					text:'Elimina', 
-					'class':'btn btn-danger delete-button',
+   			close: {
+					text:'Non eliminare',
+					'class':'btn btn-default',
+          click:function() {
+            $(this).dialog("close");
+          }
+        },
+				delete:{
+					text:'Elimina',
+					'class':'btn btn-danger',
 					click:function (event, ui) {
 					$.ajax({
 						data: {'type':'pagdeb',id_tes:id},
@@ -86,24 +93,21 @@ $(function() {
 							window.location.replace("./report_pagdeb.php");
 						}
 					});
-				}},
-				"Non eliminare": function() {
-					$(this).dialog("close");
-				}
+				}}
 			}
 		});
-		$("#dialog_delete" ).dialog( "open" );  
+		$("#dialog_delete" ).dialog( "open" );
 	});
 });
 function printPdf(urlPrintDoc){
-	$(function(){			
+	$(function(){
 		$('#framePdf').attr('src',urlPrintDoc);
 		$('#framePdf').css({'height': '100%'});
 		$('.framePdf').css({'display': 'block','width': '90%', 'height': '80%', 'z-index':'2000'});
 		$('#closePdf').on( "click", function() {
 			$('.framePdf').css({'display': 'none'});
-		});	
-	});	
+		});
+	});
 };
 </script>
 <form method="GET" >
@@ -120,7 +124,7 @@ function printPdf(urlPrintDoc){
         <p class="ui-state-highlight" id="idcodice"></p>
         <p>Fornitore</p>
         <p class="ui-state-highlight" id="iddescri"></p>
-	</div>	
+	</div>
 <div class="table-responsive">
 <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
 <tr>
@@ -197,10 +201,10 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "<td align=\"center\">".$a_row["numdoc"]." &nbsp;</td>";
     echo "<td align=\"center\">".$a_row["datemi"]." &nbsp;</td>";
     echo "<td>".$fornitore["ragso1"]."&nbsp;</td>";
-    echo "<td align=\"right\">".$a_row["portos"]." &nbsp;</td>";	
+    echo "<td align=\"right\">".$a_row["portos"]." &nbsp;</td>";
 	echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" style=\"cursor:pointer;\" onclick=\"printPdf('".$modulo."')\"><i class=\"glyphicon glyphicon-print\" title=\"Stampa documento PDF\"></i></a></td>
 			  <td align=\"center\">";
-	?>			
+	?>
 	<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Elimina questo documento" ref="<?php echo $a_row['id_tes'];?>" fornitore="<?php echo $fornitore['ragso1']; ?>">
 		<i class="glyphicon glyphicon-remove"></i>
 	</a>

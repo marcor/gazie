@@ -105,9 +105,16 @@ $(function() {
 			show: "blind",
 			hide: "explode",
 			buttons: {
+   			close: {
+					text:'Non eliminare',
+					'class':'btn btn-default',
+          click:function() {
+            $(this).dialog("close");
+          }
+        },
 				delete:{
 					text:'Elimina',
-					'class':'btn btn-danger delete-button',
+					'class':'btn btn-danger',
 					click:function (event, ui) {
 					$.ajax({
 						data: {'type':'docacq',id_tes:id},
@@ -118,10 +125,7 @@ $(function() {
 							window.location.replace("./report_docacq.php");
 						}
 					});
-				}},
-				"Non eliminare": function() {
-					$(this).dialog("close");
-				}
+				}}
 			}
 		});
 		$("#dialog_delete" ).dialog( "open" );
@@ -228,7 +232,7 @@ $(function() {
 			buttons: {
 				delete:{
 					text:'Elimina il pacchetto',
-					'class':'btn btn-danger delete-button',
+					'class':'btn btn-danger',
 					click:function (event, ui) {
 					$.ajax({
 						data: {'type':'packacq','ref':id},

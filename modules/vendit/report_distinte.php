@@ -49,10 +49,10 @@ $sortable_headers = array  (
 echo "<div align='center' class='FacetFormHeaderFont '>{$script_transl['title']}</div>\n";
 $table = $gTables['effett']." LEFT JOIN ".$gTables['files']." ON (".$gTables['effett'].".id_distinta = ".$gTables['files'].".id_doc)
 		 LEFT JOIN ".$gTables['clfoco']." ON (".$gTables['effett'].".banacc = ".$gTables['clfoco'].".codice)";
- 
+
 $t = new TableSorter(
-    $table, 
-    $passo, 
+    $table,
+    $passo,
     ['id_doc' => 'desc'],
     ['item_ref'=>'distinta'],
     ['id_distinta'],
@@ -81,9 +81,16 @@ $(function() {
 			show: "blind",
 			hide: "explode",
 			buttons: {
-				delete:{ 
-					text:'Elimina', 
-					'class':'btn btn-danger delete-button',
+   			close: {
+					text:'Non eliminare',
+					'class':'btn btn-default',
+          click:function() {
+            $(this).dialog("close");
+          }
+        },
+				delete:{
+					text:'Elimina',
+					'class':'btn btn-danger',
 					click:function (event, ui) {
 					$.ajax({
 						data: {'type':'distinte',ref:id},
@@ -94,13 +101,10 @@ $(function() {
 							window.location.replace("./report_distinte.php");
 						}
 					});
-				}},
-				"Non eliminare": function() {
-					$(this).dialog("close");
-				}
+				}}
 			}
 		});
-		$("#dialog_delete" ).dialog( "open" );  
+		$("#dialog_delete" ).dialog( "open" );
 	});
 });
 </script>
@@ -146,7 +150,7 @@ while ($r = gaz_dbi_fetch_array($rs)) {
     // controllo possibile cancellazione distinta solo se la prima scadenza è maggiore di oggi
     $expire = strtotime($r['minsca']);
     $disabled=($expire < $today)?'disabled':'';
-    $dialogdel=($expire < $today)?'':'dialog_delete';   
+    $dialogdel=($expire < $today)?'':'dialog_delete';
 ?>
 <tr>
     <td class="text-center"><?php echo $r["id_doc"]; ?></td>
@@ -159,7 +163,7 @@ while ($r = gaz_dbi_fetch_array($rs)) {
     <a class="btn btn-xs btn-default btn-elimina <?php echo $dialogdel; ?>" title="Cancella la distinta <?php echo $script_transl['tipeff_value'][$r['tipeff']]; ?>" ref="<?php echo $r['id_doc'];?>" filename="<?php echo $r['title']; ?>" tipeff="<?php echo $script_transl['tipeff_value'][$r['tipeff']]; ?>" <?php echo $disabled; ?> ><i class="glyphicon glyphicon-remove"></i></a>
     </td>
 </tr>
-<?php    
+<?php
 }
 ?>
      </table>

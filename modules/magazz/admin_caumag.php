@@ -153,8 +153,7 @@ for ($counter = -1; $counter <= 1; $counter++) {
     print "<option value=\"$counter\" $selected > " . $script_transl[$counter + 9] . "</option>\n";
 }
 print "</select></td></tr>\n";
-print "<tr><td class=\"FacetFieldCaptionTD\">";
-print "</td><td class=\"FacetDataTD\" align=\"right\">\n";
+print "<tr><td class=\"FacetFooterTD text-center\" colspan=2>\n";
 if ($toDo == 'update') {
     print '<input type="submit" class="btn btn-warning" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="' . ucfirst($script_transl['update']) . '"></td></tr><tr></tr>';
 } else {

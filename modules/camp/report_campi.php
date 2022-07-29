@@ -6,28 +6,28 @@
 	  (http://www.devincentiis.it)
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
-	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP 
+	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP
 	  Copyright (C) 2018-2021 - Antonio Germani, Massignano (AP)
-	  https://www.lacasettabio.it 
+	  https://www.lacasettabio.it
 	  https://www.programmisitiweb.lacasettabio.it
 	  --------------------------------------------------------------------------
 	  Questo programma e` free software;   e` lecito redistribuirlo  e/o
 	  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
 	  come e` pubblicata dalla Free Software Foundation; o la versione 2
 	  della licenza o (a propria scelta) una versione successiva.
-	
+
 	  Questo programma  e` distribuito nella speranza  che sia utile, ma
 	  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
 	  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
 	  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
-	
+
 	  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
 	  Generica GNU insieme a   questo programma; in caso  contrario,  si
 	  scriva   alla   Free  Software Foundation,  Inc.,   59
 	  Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
-	  --------------------------------------------------------------------------	 
+	  --------------------------------------------------------------------------
 	  # free to use, Author name and references must be left untouched  #
-	  --------------------------------------------------------------------------	  
+	  --------------------------------------------------------------------------
 */
 // >> Gestione campi o appezzamenti di terreno <<
 
@@ -70,9 +70,16 @@ $(function() {
 			show: "blind",
 			hide: "explode",
 			buttons: {
-				delete:{ 
-					text:'Elimina', 
-					'class':'btn btn-danger delete-button',
+   			close: {
+					text:'Non eliminare',
+					'class':'btn btn-default',
+          click:function() {
+            $(this).dialog("close");
+          }
+        },
+				delete:{
+					text:'Elimina',
+					'class':'btn btn-danger',
 					click:function (event, ui) {
 					$.ajax({
 						data: {'type':'campi',ref:id},
@@ -83,13 +90,10 @@ $(function() {
 							window.location.replace("./report_campi.php");
 						}
 					});
-				}},
-				"Non eliminare": function() {
-					$(this).dialog("close");
-				}
+				}}
 			}
 		});
-		$("#dialog_delete" ).dialog( "open" );  
+		$("#dialog_delete" ).dialog( "open" );
 	});
 });
 </script>
@@ -145,7 +149,7 @@ $recordnav -> output();
 
 
 while ($a_row = gaz_dbi_fetch_array($result)) {
-?>		
+?>
 			<tr class="FacetDataTD">
 			<td>
 				<a class="btn btn-xs btn-success btn-block" href="admin_campi.php?Update&codice=<?php echo $a_row["codice"]; ?>">
@@ -155,8 +159,8 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			<td>
 				<span class="gazie-tooltip" data-type="campi-thumb" data-id="<?php echo $a_row['codice']; ?>" data-title="<?php echo $a_row['annota']; ?>"><?php echo $a_row["descri"]; ?></span>
 			</td>
-								
-			<td align="center"> <img width="100" style="cursor: zoom-in;" 
+
+			<td align="center"> <img width="100" style="cursor: zoom-in;"
 			<?php echo 'src="data:image/jpeg;base64,'.base64_encode( $a_row['image'] ).'"';?>
 			onclick="this.width=500;" ondblclick="this.width=100;" title="<?php echo $a_row["descri"]; ?>" alt="IMG non presente" /></td>
 			<?php
@@ -189,7 +193,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 		</tbody>
 	</table>
 </form>
-		
+
 <form method="post" action="stampa_campi.php">
 	<table>
 		<tr class=\"FacetFieldCaptionTD\">

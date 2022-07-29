@@ -48,8 +48,8 @@ if (isset($_POST['hidden_req'])) { // accessi successivi allo script
                     <tr>
                         <th class="FacetFieldCaptionTD">ID</th>
                         <th class="FacetFieldCaptionTD"><?php echo $script_transl['anno']; ?></th>
-                        <th class="FacetFieldCaptionTD"><?php echo $script_transl['periodicita']; ?></th>            
-                        <th class="FacetFieldCaptionTD"><?php echo $script_transl['trimestre_semestre']; ?></th>            
+                        <th class="FacetFieldCaptionTD"><?php echo $script_transl['periodicita']; ?></th>
+                        <th class="FacetFieldCaptionTD"><?php echo $script_transl['trimestre_semestre']; ?></th>
                         <th class="FacetFieldCaptionTD">File DTE</th>
                         <th class="FacetFieldCaptionTD">File DTR</th>
                         <th class="FacetFieldCaptionTD">File ZIP</th>
@@ -68,7 +68,7 @@ if (isset($_POST['hidden_req'])) { // accessi successivi allo script
                                 echo "<td align=\"center\">" . $row['nome_file_DTE'] . " &nbsp;</td>";
                                 echo "<td align=\"center\">" . $row['nome_file_DTR'] . " &nbsp;</td>";
                                 echo '<td align="center"><a class="btn btn-xs btn-default" href="download_comunicazione_dati_fatture.php?id='.$row["id"].'">'. $row['nome_file_ZIP'] .'<i class="glyphicon glyphicon-download"></i></a> &nbsp;</td>';
-                                if ( $admin_aziend['Abilit']==9 ) 
+                                if ( $admin_aziend['Abilit']==9 )
                                     echo '<td align="center"><a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="'.$row['id'].'"><i class="glyphicon glyphicon-remove"></i></a> &nbsp;</td>';
                                 echo "</tr>";
                             }
@@ -91,9 +91,16 @@ $(function() {
 			show: "blind",
 			hide: "explode",
 			buttons: {
-				delete:{ 
-					text:'Elimina', 
-					'class':'btn btn-danger delete-button',
+   			close: {
+					text:'Non eliminare',
+					'class':'btn btn-default',
+          click:function() {
+            $(this).dialog("close");
+          }
+        },
+				delete:{
+					text:'Elimina',
+					'class':'btn btn-danger',
 					click:function (event, ui) {
 					$.ajax({
 						data: {'type':'comunicazioni_dati_fatture',ref:id},
@@ -104,13 +111,10 @@ $(function() {
 							window.location.replace("./report_comunicazioni_dati_fatture.php");
 						}
 					});
-				}},
-				"Non eliminare": function() {
-					$(this).dialog("close");
-				}
+				}}
 			}
 		});
-		$("#dialog_delete" ).dialog( "open" );  
+		$("#dialog_delete" ).dialog( "open" );
 	});
 });
 </script>
@@ -137,7 +141,7 @@ $(function() {
         <p id="report_alert1"><?php echo $script_transl['report_alert1']; ?></p>
         <p class="ui-state-highlight" id="report1"></p>
     </div>
-    
+
     <div style="display:none" id="dialog3" title="<?php echo $script_transl['faesdi_alert0']; ?>">
         <p id="faesdi_alert1"><?php echo $script_transl['faesdi_alert1']; ?></p>
         <p class="ui-state-highlight" id="mailpecsdi"></p>

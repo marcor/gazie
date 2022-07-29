@@ -380,7 +380,7 @@ $(function () {
                 },
                 confirm:{
                     text:'Conferma',
-                    'class':'btn btn-danger delete-button',
+                    'class':'btn btn-danger',
                     click:function (event, ui) {
                         $("[id='lotContent"+codart+"']").html('');
 						// prima di chiudere dovrò appendere gli elementi input sul form padre per fare il post dei valori settati con il dialog (lato browser) e non perderli in conferma e/o preview

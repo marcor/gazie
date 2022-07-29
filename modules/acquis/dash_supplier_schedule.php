@@ -155,7 +155,7 @@ if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
 				buttons: {
 					delete:{
 						text:'Elimina',
-						'class':'btn btn-danger delete-button',
+						'class':'btn btn-danger',
 						click:function (event, ui) {
 						$.ajax({
 							data: {'type':'supplier_schedule',ref:id_tesdoc_ref},

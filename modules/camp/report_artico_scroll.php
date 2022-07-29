@@ -6,28 +6,28 @@
 	  (http://www.devincentiis.it)
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
-	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP 
+	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP
 	  Copyright (C) 2018-2021 - Antonio Germani, Massignano (AP)
-	  https://www.lacasettabio.it 
+	  https://www.lacasettabio.it
 	  https://www.programmisitiweb.lacasettabio.it
 	  --------------------------------------------------------------------------
 	  Questo programma e` free software;   e` lecito redistribuirlo  e/o
 	  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
 	  come e` pubblicata dalla Free Software Foundation; o la versione 2
 	  della licenza o (a propria scelta) una versione successiva.
-	
+
 	  Questo programma  e` distribuito nella speranza  che sia utile, ma
 	  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
 	  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
 	  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
-	
+
 	  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
 	  Generica GNU insieme a   questo programma; in caso  contrario,  si
 	  scriva   alla   Free  Software Foundation,  Inc.,   59
 	  Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
-	  --------------------------------------------------------------------------	 
+	  --------------------------------------------------------------------------
 	  # free to use, Author name and references must be left untouched  #
-	  --------------------------------------------------------------------------	  
+	  --------------------------------------------------------------------------
 */
 // prevent direct access
 $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND
@@ -59,8 +59,8 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
     $ob = filter_input(INPUT_POST, 'orderby');
     $so = filter_input(INPUT_POST, 'sort');
     $ca = filter_input(INPUT_POST, 'codart');
-	$mt = filter_input(INPUT_POST, 'mostra'); 
-	
+	$mt = filter_input(INPUT_POST, 'mostra');
+
     if (empty($ca)) {
         $where = '1';
     } else {
@@ -78,7 +78,7 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
 		if ($row['good_or_service']!=1){
 			$mv = $gForm->getStockValue(false, $row['codice']);
 			$magval = array_pop($mv);
-			
+
 			if (isset($magval['q_g']) && round($magval['q_g'],6) == "-0"){
 				$magval['q_g'] = 0;
 			} elseif ($magval==0){
@@ -111,8 +111,8 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
             $gooser_i = 'shopping-cart';
         } else if ($row["good_or_service"] == 2) {
             $gooser_i = 'tasks';
-        } 
-       
+        }
+
         $com = '';
         if ($admin_aziend['conmag'] > 0 && $row["good_or_service"] <= 0) {
             $com = '<a class="btn btn-xs btn-default" href="../camp/camp_select_schart.php?di=0101' . date('Y') . '&df=' . date('dmY') . '&id=' . $row['codice'] . '" target="_blank">
@@ -121,10 +121,10 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
         }
 		/*Antonio Germani prendo descrizione categoria merceologica */
 		$catmer = gaz_dbi_get_row($gTables['catmer'], 'codice',$row['catmer']);
-		$descatmer=$catmer['descri'];	 
-        ?>		
-		
-        <tr>      
+		$descatmer=$catmer['descri'];
+        ?>
+
+        <tr>
             <td data-title="<?php echo $script_transl["codice"]; ?>">
                 <a class="btn btn-xs btn-default" href="../camp/camp_admin_artico.php?Update&codice=<?php echo $row['codice']; ?>" ><i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $row['codice']; ?></a>
             </td>
@@ -152,7 +152,7 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
 			<?php echo "T+"; }?>
             </td>
             <td data-title="<?php echo $script_transl["good_or_service"]; ?>" class="text-center">
-                <?php echo $ldoc; ?> &nbsp;   <i class="glyphicon glyphicon-<?php echo $gooser_i; ?>"></i> 
+                <?php echo $ldoc; ?> &nbsp;   <i class="glyphicon glyphicon-<?php echo $gooser_i; ?>"></i>
             </td>
             <td data-title="<?php echo $script_transl["catmer"]; ?>" class="text-left">
                 <?php echo $row["catmer"]," ",$descatmer; ?>
@@ -160,9 +160,9 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
             <td data-title="<?php echo $script_transl["unimis"]; ?>">
                 <?php echo $row["unimis"]; ?>
             </td>
-            
+
             <td data-title="<?php echo $script_transl["stock"]; ?>" title="Visualizza scheda prodotto" class="text-center <?php echo $class; ?>">
-               <?php $print_magval=str_replace(",","",$magval['q_g']);echo gaz_format_quantity($print_magval,1,$admin_aziend['decimal_quantity']); echo '<p style="float:right;">'.$com.'</p></td><td title="Visualizza lotti">'; 
+               <?php $print_magval=str_replace(",","",$magval['q_g']);echo gaz_format_quantity($print_magval,1,$admin_aziend['decimal_quantity']); echo '<p style="float:right;">'.$com.'</p></td><td title="Visualizza lotti">';
 			   if (intval($row['lot_or_serial'])>0) {
 			   ?>
 			   <a  class="btn btn-info btn-md" href="javascript:;" onclick="window.open('<?php echo"../../modules/magazz/mostra_lotti.php?codice=".$row['codice'];?>', 'titolo', 'menubar=no, toolbar=no, width=800, height=400, left=80%, top=80%, resizable, status, scrollbars=1, location');">
@@ -179,8 +179,8 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
 					<i class="glyphicon glyphicon-remove"></i>
 				</a>
             </td>
-        </tr>  
-        <?php		
+        </tr>
+        <?php
     }
 	?>
 	<script>
@@ -197,9 +197,16 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
 				show: "blind",
 				hide: "explode",
 				buttons: {
-					delete:{ 
-						text:'Elimina', 
-						'class':'btn btn-danger delete-button',
+   			close: {
+					text:'Non eliminare',
+					'class':'btn btn-default',
+          click:function() {
+            $(this).dialog("close");
+          }
+        },
+					delete:{
+						text:'Elimina',
+						'class':'btn btn-danger',
 						click:function (event, ui) {
 						$.ajax({
 							data: {'type':'artico',ref:id},
@@ -210,13 +217,10 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
 								window.location.replace("./camp_report_artico.php");
 							}
 						});
-					}},
-					"Non eliminare": function() {
-						$(this).dialog("close");
-					}
+					}}
 				}
 			});
-			$("#dialog_delete" ).dialog( "open" );  
+			$("#dialog_delete" ).dialog( "open" );
 		});
 	});
 	</script>

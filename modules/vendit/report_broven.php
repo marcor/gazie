@@ -198,14 +198,14 @@ function choice_template(modulo) {
 		width: "400",
 		buttons:[{
 			text: "Su carta bianca ",
-			"class": 'btn',
+			"class": 'btn btn-default',
 			click: function () {
 				window.location.href = modulo;
 			},
 		},
 		{
 			text: "Su carta intestata ",
-			"class": 'btn',
+			"class": 'btn btn-info',
 			click: function () {
 				window.location.href = modulo+'&lh';
 			},
@@ -233,7 +233,7 @@ $(function() {
 			buttons: {
 				delete:{
 					text:'Elimina',
-					'class':'btn btn-danger delete-button',
+					'class':'btn btn-danger',
 					click:function (event, ui) {
 					$.ajax({
 						data: {'type':'broven',id_tes:id},
@@ -245,9 +245,13 @@ $(function() {
 						}
 					});
 				}},
-				"Non eliminare": function() {
-					$(this).dialog("close");
-				}
+   			close: {
+					text:'Non eliminare',
+					'class':'btn btn-default',
+          click:function() {
+            $(this).dialog("close");
+          }
+        }
 			}
 		});
 		$("#dialog_delete" ).dialog( "open" );

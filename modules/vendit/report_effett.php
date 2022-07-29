@@ -57,7 +57,7 @@ $(function() {
 	$('.dialog_delete').click(function() {
 		$("p#idcodice").html($(this).attr("ref"));
 		$("p#iddescri").html($(this).attr("ragso"));
-		var id = $(this).attr('ref');		
+		var id = $(this).attr('ref');
 		$( "#dialog_delete" ).dialog({
 			minHeight: 1,
 			width: "auto",
@@ -65,9 +65,16 @@ $(function() {
 			show: "blind",
 			hide: "explode",
 			buttons: {
-				delete:{ 
-					text:'Elimina', 
-					'class':'btn btn-danger delete-button',
+   			close: {
+					text:'Non eliminare',
+					'class':'btn btn-default',
+          click:function() {
+            $(this).dialog("close");
+          }
+        },
+				delete:{
+					text:'Elimina',
+					'class':'btn btn-danger',
 					click:function (event, ui) {
 					$.ajax({
 						data: {'type':'effett',id_tes:id},
@@ -78,13 +85,10 @@ $(function() {
 							window.location.replace("./report_effett.php");
 						}
 					});
-				}},
-				"Non eliminare": function() {
-					$(this).dialog("close");
-				}
+				}}
 			}
 		});
-		$("#dialog_delete" ).dialog( "open" );  
+		$("#dialog_delete" ).dialog( "open" );
 	});
 });
 </script>

@@ -323,25 +323,25 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
           $result    = gaz_dbi_dyn_query("*", $gTables['menu_module'] , ' link="'.$posizionex[0].'" ',' id',0,1);
         }
         $riga = gaz_dbi_fetch_array($result);
-        if ($riga && $riga["id"]!="" ) {
-          // siamo su una pagina di 2 livello nel menu principale
+        if ($riga && $riga["id"]!="" ) { // siamo su una pagina di 2 livello nel menu principale
           $result2 = gaz_dbi_dyn_query("*", $gTables['menu_script'] , ' id_menu='.$riga["id"].' ','id',0);
           echo "<div><ol class=\"breadcrumb\">";
           while ($r = gaz_dbi_fetch_array($result2)) {
             $linkbase =  pathinfo($r['link'], PATHINFO_FILENAME);
             if ( $admin_aziend["Abilit"]>=$r["accesskey"] && !in_array($linkbase,$acc_excluded) ) echo '<li><a href="'.$r["link"].'">'.stripslashes ($transl[$module]["m3"][$r["translate_key"]]["1"]).'</a></li>';
           }
-        } else {
-          // siamo su una pagina di 3 livello nel menu principale
+        } else { // siamo su una pagina di 3 livello nel menu principale
           $result3    = gaz_dbi_dyn_query("*", $gTables['menu_script'] , ' link="'.$posizione.'"',' id',0,1);
-          if ( $ms = gaz_dbi_fetch_array($result3) ) {
-              // disegno i bottoni di accesso alle funzioni di questa pagina
+          if ( $ms = gaz_dbi_fetch_array($result3) ) { // disegno i bottoni di accesso alle funzioni di questa pagina
               $posizionex = explode ("?",$posizione );
-              $result4    = gaz_dbi_dyn_query($gTables['menu_script'].".*", $gTables['menu_script']. " LEFT JOIN ".$gTables['menu_module']." ON ".$gTables['menu_script'].".id_menu = ".$gTables['menu_module'].".id LEFT JOIN ".$gTables['module']." ON ".$gTables['menu_module'].".id_module = ".$gTables['module'].".id", $gTables['menu_script'].".id_menu =".$ms['id_menu']." AND ".$gTables['module'].".name = '".$module."'",'name',0,99);
-              echo "<div><ol class=\"breadcrumb\">";
+              $result4    = gaz_dbi_dyn_query($gTables['menu_script'].".*,".$gTables['menu_module'].".link AS lmm,".$gTables['menu_module'].".translate_key AS tmm ", $gTables['menu_script']. " LEFT JOIN ".$gTables['menu_module']." ON ".$gTables['menu_script'].".id_menu = ".$gTables['menu_module'].".id LEFT JOIN ".$gTables['module']." ON ".$gTables['menu_module'].".id_module = ".$gTables['module'].".id", $gTables['menu_script'].".id_menu =".$ms['id_menu']." AND ".$gTables['module'].".name = '".$module."'",'name',0,99);
+              echo '<div><ol class="breadcrumb">';
+              $first=true;
               while ($r = gaz_dbi_fetch_array($result4)) {
+                if ($first) echo '<li><b class="FacetFooterTD"><a href="'.$r["lmm"].'">'.$transl[$module]["m2"][$r["tmm"]]["1"].'</a></b></li>';
                 $linkbase =  pathinfo($r['link'], PATHINFO_FILENAME);
                 if ( $admin_aziend["Abilit"]>=$r["accesskey"] && !in_array($linkbase,$acc_excluded)) echo '<li><a href="'.$r["link"].'">'.stripslashes ($transl[$module]["m3"][$r["translate_key"]]["1"]).'</a></li>';
+                $first=false;
               }
           }
         }

@@ -65,9 +65,16 @@ $(function() {
 			show: "blind",
 			hide: "explode",
 			buttons: {
+   			close: {
+					text:'Non eliminare',
+					'class':'btn btn-default',
+          click:function() {
+            $(this).dialog("close");
+          }
+        },
 				delete:{
 					text:'Elimina',
-					'class':'btn btn-danger delete-button',
+					'class':'btn btn-danger',
 					click:function (event, ui) {
 					$.ajax({
 						data: {'type':'luoghi',ref:id},
@@ -78,10 +85,7 @@ $(function() {
 							window.location.replace("./report_luoghi.php");
 						}
 					});
-				}},
-				"Non eliminare": function() {
-					$(this).dialog("close");
-				}
+				}}
 			}
 		});
 		$("#dialog_delete" ).dialog( "open" );
@@ -101,7 +105,8 @@ $recordnav -> output();
         <p>Descrizione</p>
         <p class="ui-state-highlight" id="iddescri"></p>
 	</div>
-    <table class="Tlarge table">
+  <div class="table-responsive">
+    <table class="Tlarge table table-striped table-bordered">
     	<thead>
             <tr>
                 <td></td>
@@ -126,7 +131,7 @@ $recordnav -> output();
 
 							"Note" => "annota",
 
-							"Mappa di Google" => "web_url",
+							"Mappa" => "web_url",
 
 							"Cancella"    => ""
 							);
@@ -151,9 +156,9 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 				<span class="gazie-tooltip" data-type="campi-thumb" data-id="<?php echo $a_row['codice']; ?>" data-title="<?php echo $a_row['annota']; ?>"><?php echo $a_row["descri"]; ?></span>
 			</td>
 
-			<td align="center"> <img width="100" style="cursor: -moz-zoom-in;"
+			<td align="center"> <img height=200 style="cursor: -moz-zoom-in;"
 			<?php echo 'src="data:image/jpeg;base64,'.base64_encode( $a_row['image'] ).'"';?>
-			onclick="this.width=500;" ondblclick="this.width=100;" title="<?php echo $a_row["descri"]; ?>" alt="IMG non presente" /></td>
+			onclick="this.height=500;" ondblclick="this.height=200;" title="<?php echo $a_row["descri"]; ?>" alt="IMG non presente" /></td>
 
 			<td align="center"><?php echo $a_row["annota"];?></td>
 
@@ -184,7 +189,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 ?>
 		</tbody>
 	</table>
-
+</div>
 </form>
 <form method="post" action="stampa_luoghi.php">
 	<div class="FacetFooterTD text-center col-xs-12">

@@ -106,7 +106,7 @@ $pdf = new Report_template('L','mm','A4',true,'UTF-8',false,true);
 $gazTimeFormatter->setPattern('dd MMMM yyyy');
 if ($_GET['pr']==1){
   $title = array('luogo_data'=>$luogo_data,
-               'title'=>"GIORNALE DI MAGAZZINO".$title." dal ".$gazTimeFormatter->format(new DateTime('@'.$utsri))." al ".$gazTimeFormatter->format(new DateTime('@'.$utsrf))." - ".$_GET['sb'],
+               'title'=>"GIORNALE DI MAGAZZINO".$title." dal ".$gazTimeFormatter->format(new DateTime('@'.$utsri))." al ".$gazTimeFormatter->format(new DateTime('@'.$utsrf))." - ".(isset($_GET['sb'])?$_GET['sb']:''),
                'hile'=>array(array('lun' => 20,'nam'=>'Data Reg.'),
                              array('lun' => 36,'nam'=>'Causale'),
                              array('lun' => 83,'nam'=>'Articolo'),

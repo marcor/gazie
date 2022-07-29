@@ -68,23 +68,28 @@ $(function() {
 			show: "blind",
 			hide: "explode",
 			buttons: {
+   			close: {
+					text:'Non eliminare',
+					'class':'btn btn-default',
+          click:function() {
+            $(this).dialog("close");
+          }
+        },
 				delete:{
 					text:'Elimina',
-					'class':'btn btn-danger delete-button',
+					'class':'btn btn-danger',
 					click:function (event, ui) {
-					$.ajax({
-						data: {'type':'caumag',ref:id},
-						type: 'POST',
-						url: '../magazz/delete.php',
-						success: function(output){
-		                    //alert(output);
-							window.location.replace("./report_caumag.php");
-						}
-					});
-				}},
-				"Non eliminare": function() {
-					$(this).dialog("close");
-				}
+            $.ajax({
+              data: {'type':'caumag',ref:id},
+              type: 'POST',
+              url: '../magazz/delete.php',
+              success: function(output){
+                          //alert(output);
+                window.location.replace("./report_caumag.php");
+              }
+            });
+          }
+        }
 			}
 		});
 		$("#dialog_delete" ).dialog( "open" );

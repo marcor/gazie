@@ -75,9 +75,16 @@ $(function() {
 			show: "blind",
 			hide: "explode",
 			buttons: {
+   			close: {
+					text:'Non eliminare',
+					'class':'btn btn-default',
+          click:function() {
+            $(this).dialog("close");
+          }
+        },
 				delete:{
 					text:'Elimina',
-					'class':'btn btn-danger delete-button',
+					'class':'btn btn-danger',
 					click:function (event, ui) {
 					$.ajax({
 						data: {'type':'orderman',ref:id,ref2:id2},
@@ -88,10 +95,7 @@ $(function() {
 							window.location.replace("./orderman_report.php");
 						}
 					});
-				}},
-				"Non eliminare": function() {
-					$(this).dialog("close");
-				}
+				}}
 			}
 		});
 		$("#dialog_delete" ).dialog( "open" );
@@ -117,7 +121,7 @@ $(function() {
 			buttons: {
 				delete:{
 					text:'Modifica',
-					'class':'btn btn-danger delete-button',
+					'class':'btn btn-danger',
 					click:function (event, ui) {
 					$.ajax({
 						data: {'type':'set_new_stato_lavorazione','ref':refsta,'new_status':new_stato_lavorazione},

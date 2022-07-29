@@ -60,7 +60,7 @@ $sortable_headers = array  (
 );
 
 echo "<div align='center' class='FacetFormHeaderFont '>{$script_transl[3]}{$script_transl[0]}</div>\n";
- 
+
 $t = new TableSorter($gTables['movmag'], $passo, ['id_mov' => 'desc']);
 $t->output_navbar();
 
@@ -80,9 +80,16 @@ $(function() {
 			show: "blind",
 			hide: "explode",
 			buttons: {
-				delete:{ 
-					text:'Elimina', 
-					'class':'btn btn-danger delete-button',
+   			close: {
+					text:'Non eliminare',
+					'class':'btn btn-default',
+          click:function() {
+            $(this).dialog("close");
+          }
+        },
+				delete:{
+					text:'Elimina',
+					'class':'btn btn-danger',
 					click:function (event, ui) {
 					$.ajax({
 						data: {'type':'movmag',ref:id},
@@ -93,13 +100,10 @@ $(function() {
 							window.location.replace("./report_movmag.php");
 						}
 					});
-				}},
-				"Non eliminare": function() {
-					$(this).dialog("close");
-				}
+				}}
 			}
 		});
-		$("#dialog_delete" ).dialog( "open" );  
+		$("#dialog_delete" ).dialog( "open" );
 	});
 });
 </script>
@@ -159,7 +163,7 @@ $anagrafica = new Anagrafica();
 
 $tot_movimenti = 0;
 
-/* 
+/*
 QUESTA E' LA MATRICE ORIGINALE (PERSONALIZZABILE) DELLA RIGA 'report_movmag_ref_doc' della tabella "gaz_config" in formato json e serve per ottenere i riferimenti al documento di origine in base al "tipdoc" di origine ed al id_rif del movimento di magazzino passata alla funzione NOMEMODULO_prepare_ref_doc_movmag contenuta nel file incluso e presente sul modulo stesso e sempre di nome "prepare_ref_doc_movmag.php"
 {
 "ADT":"acquis",
@@ -168,29 +172,29 @@ QUESTA E' LA MATRICE ORIGINALE (PERSONALIZZABILE) DELLA RIGA 'report_movmag_ref_
 "DDR":"acquis",
 "ADT":"acquis",
 "AFT":"acquis",
-"DDL":"acquis", 
+"DDL":"acquis",
 "RDL":"acquis",
 "DDR":"acquis",
-"VCO":"vendit", 
-"VRI":"vendit", 
-"DDT":"vendit", 
-"FAD":"vendit", 
-"FAI":"vendit", 
-"FAA":"vendit", 
-"FAF":"vendit", 
-"FAQ":"vendit", 
-"FAP":"vendit", 
-"FNC":"vendit", 
-"FND":"vendit", 
-"DDV":"vendit", 
-"RDV":"vendit", 
-"DDY":"vendit", 
+"VCO":"vendit",
+"VRI":"vendit",
+"DDT":"vendit",
+"FAD":"vendit",
+"FAI":"vendit",
+"FAA":"vendit",
+"FAF":"vendit",
+"FAQ":"vendit",
+"FAP":"vendit",
+"FNC":"vendit",
+"FND":"vendit",
+"DDV":"vendit",
+"RDV":"vendit",
+"DDY":"vendit",
 "DDS":"vendit",
-"VPR":"vendit", 
-"VOR":"vendit", 
-"VOW":"vendit", 
-"VOG":"vendit", 
-"CMR":"vendit", 
+"VPR":"vendit",
+"VOR":"vendit",
+"VOW":"vendit",
+"VOG":"vendit",
+"CMR":"vendit",
 "CAM":"camp",
 "PRO":"orderman",
 "MAG":"magazz"
@@ -218,7 +222,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     $valore = CalcolaImportoRigo($r['quanti'], $r['prezzo'], $r['scorig']) ;
     $valore = CalcolaImportoRigo(1, $valore, $r['scochi']) ;
     echo "<tr>\n";
-	
+
     echo "<td>";
 	if ($r['id_rif']==0||$r['tipdoc']=="MAG"||$r['tipdoc']=="PRO"){
         // in caso di movimento proveniente da produzione forzo l'id_rif con id_orderman
@@ -234,7 +238,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     } else {
         echo '<td title="'.$title.'"><a href="admin_movmag.php?id_mov="'.$r["id_mov"].'&Update">'.$r['desdoc']." ".$script_transl[9]." ".gaz_format_date($r["datdoc"])."</a></td>\n";
     }
-    
+
    	echo "<td align=\"center\"><p data-toggle=\"tooltip\" data-placement=\"auto\" title=\"$descri\">".$r["artico"]."</p></td>\n";
 	if ($r['id']>0) {
 		echo "<td align=\"center\"><p data-toggle=\"tooltip\" data-placement=\"auto\" title=\"$expiry\">"."ID:".$r['id']." - ".$r['identifier']."</td>\n";

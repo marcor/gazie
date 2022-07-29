@@ -129,9 +129,6 @@ td.ui-datepicker-other-month>a.ui-state-default.ui-priority-secondary{
 .navbar-nav > .user-menu > .dropdown-menu > .user-footer {
 	background-color: #a1a29f;
 }
-.btn-elimina {
-    color: #ff3939;
-}
 .btn-edit {
 	background-color: #449d44;
 	color: #FFFFFF;
@@ -275,4 +272,10 @@ div#fattura-container {
 }
 .table > tbody > tr.info > td, .table > tbody > tr.info > th, .table > tbody > tr > td.info, .table > tbody > tr > th.info, .table > tfoot > tr.info > td, .table > tfoot > tr.info > th, .table > tfoot > tr > td.info, .table > tfoot > tr > th.info, .table > thead > tr.info > td, .table > thead > tr.info > th, .table > thead > tr > td.info, .table > thead > tr > th.info {
 	background-color: #284360;
+}
+.btn-elimina {
+  color: #ff3939;
+}
+.btn > .ui-button-text {
+ color: #000;
 }

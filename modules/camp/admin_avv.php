@@ -73,7 +73,7 @@ $(function() {
 			buttons: {
 				delete:{ 
 					text:'Elimina', 
-					'class':'btn btn-danger delete-button',
+					'class':'btn btn-danger',
 					click:function (event, ui) {
 					$.ajax({
 						data: {'type':'avversity',ref:id},

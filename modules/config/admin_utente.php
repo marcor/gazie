@@ -441,14 +441,14 @@ $(function(){
 			buttons: {
 				delete:{
 					text:'Annulla',
-					'class':'btn btn-danger delete-button',
+					'class':'btn btn-default',
 					click:function (event, ui) {
 						$(this).dialog("close");
 					}
 				},
 				confirm :{
 				  text:'CONFERMA',
-				  'class':'btn btn-success pull-right btn-conferma',
+				  'class':'btn btn-warning',
 				  click:function() {
 					var msg = null;
 					$.ajax({ // registro con i nuovi dati il cartellino presenze

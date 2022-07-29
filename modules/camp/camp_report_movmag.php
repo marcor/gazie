@@ -6,28 +6,28 @@
 	  (http://www.devincentiis.it)
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
-	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP 
+	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP
 	  Copyright (C) 2018-2021 - Antonio Germani, Massignano (AP)
-	  https://www.lacasettabio.it 
+	  https://www.lacasettabio.it
 	  https://www.programmisitiweb.lacasettabio.it
 	  --------------------------------------------------------------------------
 	  Questo programma e` free software;   e` lecito redistribuirlo  e/o
 	  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
 	  come e` pubblicata dalla Free Software Foundation; o la versione 2
 	  della licenza o (a propria scelta) una versione successiva.
-	
+
 	  Questo programma  e` distribuito nella speranza  che sia utile, ma
 	  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
 	  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
 	  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
-	
+
 	  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
 	  Generica GNU insieme a   questo programma; in caso  contrario,  si
 	  scriva   alla   Free  Software Foundation,  Inc.,   59
 	  Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
-	  --------------------------------------------------------------------------	 
+	  --------------------------------------------------------------------------
 	  # free to use, Author name and references must be left untouched  #
-	  --------------------------------------------------------------------------	  
+	  --------------------------------------------------------------------------
 */
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
@@ -45,27 +45,27 @@ if (isset($_GET['all'])) {
 		$movimento = $_GET['movimento'];
 		$implode[] = $gTables['movmag'].".id_mov = " . $_GET['movimento'];
 	}
-	
+
 	if (isset($_GET['causale']) && !empty($_GET['causale'])) {
 		$causale = $_GET['causale'];
 		$implode[] = "caumag LIKE '" . $_GET['causale'] . "%'";
 	}
-	
+
 	if (isset($_GET['campo']) && !empty($_GET['campo'])) {
 		$campo = $_GET['campo'];
 		$implode[] = "campo_impianto LIKE '%".$_GET['campo']."%'";
 	}
-		
+
 	if (isset($_GET['articolo']) && !empty($_GET['articolo'])) {
 		$articolo = $_GET['articolo'];
 		$implode[] = "artico LIKE '%".$_GET['articolo']."%'";
 	}
-	
+
 	if (isset($_GET['avversita']) && !empty($_GET['avversita'])) {
 		$avversita = $_GET['avversita'];
 		$implode[] = "id_avversita LIKE '%".$_GET['avversita']."%'";
 	}
-		
+
 	$where = implode(" AND ", $implode);
 }
 // escludo i movimenti Acqua dal report
@@ -96,9 +96,16 @@ $(function() {
 			show: "blind",
 			hide: "explode",
 			buttons: {
-				delete:{ 
-					text:'Elimina', 
-					'class':'btn btn-danger delete-button',
+   			close: {
+					text:'Non eliminare',
+					'class':'btn btn-default',
+          click:function() {
+            $(this).dialog("close");
+          }
+        },
+				delete:{
+					text:'Elimina',
+					'class':'btn btn-danger',
 					click:function (event, ui) {
 					$.ajax({
 						data: {'type':'campmovmag',ref:id},
@@ -109,13 +116,10 @@ $(function() {
 							window.location.replace("./camp_report_movmag.php");
 						}
 					});
-				}},
-				"Non eliminare": function() {
-					$(this).dialog("close");
-				}
+				}}
 			}
 		});
-		$("#dialog_delete" ).dialog( "open" );  
+		$("#dialog_delete" ).dialog( "open" );
 	});
 });
 </script>
@@ -164,7 +168,7 @@ $table = $gTables['movmag']." LEFT JOIN ".$gTables['caumag']." on (".$gTables['m
          LEFT JOIN ".$gTables['campi']." ON (".$gTables['movmag'].".campo_impianto = ".$gTables['campi'].".codice)
 		 LEFT JOIN ".$gTables['artico']." ON (".$gTables['movmag'].".artico = ".$gTables['artico'].".codice)
 		 LEFT JOIN ".$gTables['camp_colture']." ON (".$gTables['movmag'].".id_colture = ".$gTables['camp_colture'].".id_colt)
-         LEFT JOIN ".$gTables['rigdoc']." ON (".$gTables['movmag'].".id_rif = ".$gTables['rigdoc'].".id_rig)";  
+         LEFT JOIN ".$gTables['rigdoc']." ON (".$gTables['movmag'].".id_rif = ".$gTables['rigdoc'].".id_rig)";
 		 $result = gaz_dbi_dyn_query ($gTables['movmag'].".*, ".$gTables['camp_colture'].".nome_colt, ".$gTables['campi'].".ricarico AS superf, ".$gTables['campi'].".descri AS descamp, ".$gTables['caumag'].".descri AS descau, ".$gTables['rigdoc'].".id_tes AS testata, " .$gTables['artico'].".unimis, " .$gTables['artico'].".mostra_qdc"
 		 , $table, $where, $orderby, $limit, $passo);// acquisisco solo i movimenti con type_mov=1, cioè generati dal modulo di campagna
 // creo l'array (header => campi) per l'ordinamento dei record
@@ -172,7 +176,7 @@ $headers_mov = array  (
             "n.ID" => "id_mov",
 			$script_transl[4] => "datdoc",
             $script_transl[15] => "datreg",
-            $strScript["camp_admin_movmag.php"][2] => "caumag",            
+            $strScript["camp_admin_movmag.php"][2] => "caumag",
 			$script_transl[11] => "",
 			$script_transl[12] => "",
 			$script_transl[13] => "",
@@ -195,8 +199,8 @@ $tot_movimenti = 0;
 /** ENRICO FEDELE */
 
 while ($a_row = gaz_dbi_fetch_array($result)) {
-	
-		if ($rowanagra = gaz_dbi_get_row($gTables['anagra'], "id", $a_row['clfoco'])){ 
+
+		if ($rowanagra = gaz_dbi_get_row($gTables['anagra'], "id", $a_row['clfoco'])){
 		$operatore =  $rowanagra['ragso1']." ".$rowanagra['ragso2'];
 		} else {
 			$operatore=$a_row["adminid"];
@@ -211,22 +215,22 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			$acqua['quanti']="";
 			$unimis_acqua="";
 		}
-		echo "<tr>\n";		
+		echo "<tr>\n";
 		echo "<td class=\"FacetDataTD\"><a class=\"btn btn-xs btn-default\" href=\"camp_admin_movmag.php?id_mov=".$a_row["id_mov"]."&Update\" title=\"".ucfirst($script_transl['update'])."!\"><i class=\"glyphicon glyphicon-edit text-success\"></i>&nbsp;".$a_row["id_mov"]."</a> &nbsp</td>";
 		echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($a_row["datreg"])." &nbsp;</td>\n";
 		echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($a_row["datdoc"])." &nbsp;</td>\n";
 		echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["caumag"]." - ".$a_row["descau"]."</td>\n";
-		
+
 		// Antonio Germani inserico colonna campi di coltivazione, superficie, coltura
 		echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row['campo_impianto']." - ".$a_row['descamp']." &nbsp;</td>\n";
 		echo "<td class=\"FacetDataTD\" align=\"center\">".str_replace('.', ',',$a_row["superf"])." &nbsp;</td>\n";
 		echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row['id_colture']." - ".$a_row["nome_colt"]." &nbsp";
 		if ($data=json_decode($a_row['custom_field'],true)){// se c'è un json nel custom_field
 			if (is_array($data['camp']) AND strlen($data['camp']['fase_fenologica'])>0){ // se è riferito al modulo camp
-				echo "<br>Fase fenologica: ", $data['camp']['fase_fenologica'];			
+				echo "<br>Fase fenologica: ", $data['camp']['fase_fenologica'];
 			}
 		}
-    	echo "</td>\n";			
+    	echo "</td>\n";
 		echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["artico"]." &nbsp;</td>\n";
 		echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($a_row["quanti"],1,$admin_aziend['decimal_quantity'])." ".$a_row["unimis"]."</td>\n";
 		if ($acqua['quanti']>0){
@@ -236,7 +240,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 		}
 		$res = gaz_dbi_get_row($gTables['camp_avversita'], 'id_avv', $a_row['id_avversita']);
 		echo "<td class=\"FacetDataTD\" align=\"left\">", ($a_row)?$a_row['id_avversita']:0 ," - ", ($res)?$res["nome_avv"]:'' ," </td>\n";
-	
+
 		if ($a_row['id_rif'] == 0 OR $a_row['tipdoc'] == "CAM") {
 			echo "<td class=\"FacetDataTD\" align=\"center\" title=\"\">", $a_row['desdoc'] ,"</td>\n";
 		} else {
@@ -249,28 +253,28 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 				echo "<td class=\"FacetDataTD\" align=\"center\" title=\"\"><a href=\"../vendit/admin_docven.php?Update&id_tes=".$a_row['testata']."\">".$a_row['desdoc']." ".$script_transl[9]." ".gaz_format_date($a_row["datdoc"])."</a></td>\n";
 			}
 		}
-	
+
 		echo "<td class=\"FacetDataTD\" align=\"right\">".$operatore." </td>\n";
-		
+
 		echo "<td class=\"FacetDataTD\" align=\"center\">";
-		
+
 			?>
 			<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $a_row['id_mov'];?>" caudes="<?php echo $a_row['descau']; ?>">
 				<i class="glyphicon glyphicon-remove"></i>
 			</a>
 			<?php
-		
+
 		echo "</td></tr>\n";
 		/* Incremento il totale */
 		$tot_movimenti += $valore;
-		
-	
+
+
 } // end wile
 
 echo "<tr>
 	<td colspan=\"9\" class=\"FacetFieldCaptionTD\" align=\"right\"></td>
 	</tr>";
-	
+
 ?>
         </form>
     </table>

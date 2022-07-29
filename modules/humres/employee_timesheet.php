@@ -223,7 +223,7 @@ require("../../library/include/header.php");
 				buttons: {
 					delete:{
 						text:'Annulla',
-						'class':'btn btn-danger delete-button',
+						'class':'btn btn-default',
 						click:function (event, ui) {
 							$(this).dialog("close");
 						}
@@ -441,7 +441,7 @@ $gForm = new humresForm();
 	<div class="row text-center" style="padding-top:12px;">
 		<?php
     $gazTimeFormatter->setPattern('MMMM yyyy');
-		echo "<td align=\"center\"><a class=\"btn btn-xs btn-warning\" style=\"cursor:pointer;\" onclick=\"printPdf('print_timesheet.php?year=". $form['anno'] ."&month=". $form['mese'] ."')\"><i class=\"glyphicon glyphicon-print\" title=\"Stampa documento PDF\">".$script_transl['print'].$script_transl['title'].' '.ucwords($gazTimeFormatter->format(new DateTime($form['anno'].'-'.$form['mese'].'-01')))."</i></a>";
+		echo "<td align=\"center\"><a class=\"btn btn-warning\" title=\"Stampa documento PDF\" style=\"cursor:pointer;\" onclick=\"printPdf('print_timesheet.php?year=". $form['anno'] ."&month=". $form['mese'] ."')\">".$script_transl['print'].$script_transl['title'].' '.ucwords($gazTimeFormatter->format(new DateTime($form['anno'].'-'.$form['mese'].'-01')))." <i class=\"glyphicon glyphicon-print\" ></i></a>";
 		?>
 	</div>
 </div>
