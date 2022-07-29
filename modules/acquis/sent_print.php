@@ -43,8 +43,7 @@ if (isset($_SESSION['print_request'])){
         $url="setTimeout(\"window.location='".$request['script_name'].".php?";
         unset($request['script_name']);
         foreach($request as $k=>$v){
-          if ($v!=null)           if ($v!=null) $url .=$k.'='.preg_replace("/\'/",'`',$v).'&';
-
+           $url .=$k.'='.preg_replace("/\'/",'`',$v).'&';
         }
         $url .="'\",500)\n";
         //fine formattazione url

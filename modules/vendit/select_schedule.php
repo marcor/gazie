@@ -94,7 +94,6 @@ if (sizeof($scdl->Entries) > 0) {
 	foreach ($scdl->Entries AS $key => $mv) {
         $class_partner = '';
         $class_paymov = '';
-        $class_id_tes = '';
         $partner = '';
         $id_tes = '';
         $paymov = '';
@@ -105,7 +104,6 @@ if (sizeof($scdl->Entries) > 0) {
             $partner = $mv["ragsoc"];
         }
         if ($mv["id_tes"] <> $ctrl_id_tes) {
-            $class_id_tes = 'FacetFieldCaptionTD';
             $id_tes = $mv["id_tes"];
             $mv["datdoc"] = $mv["id_doc"] ? gaz_format_date($mv["datdoc"]) : '';
         } else {
@@ -121,40 +119,37 @@ if (sizeof($scdl->Entries) > 0) {
             $scdl->getStatus($paymov);
             $r = $scdl->Status;
             $status_descr .= $script_transl['status_value'][$r['sta']];
-            // link 
+            // link
             $riscuoti_btn = sprintf('&nbsp; <a title="Riscuoti" class="btn btn-xs btn-default btn-pagamento" href="customer_payment.php?partner=' . $mv["codice"] . '%s"><i class="glyphicon glyphicon-euro"></i></a>',
                 $mv['id_doc'] ? '&amp;numdoc=' . $mv['numdoc'] . '&amp;datdoc=' . gaz_format_date($mv['datdoc'], true) : '');
-
             switch($r['sta']) {
                 case 1: // CHIUSA
-                    $class_paymov = '';
+                    $class_paymov = 'bg-success';
                     $status_del = true;
                     break;
                 case 2: // ESPOSTA
-                    $class_paymov = 'FacetDataTDevidenziaOK';
+                    $class_paymov = 'bg-warning';
                     break;
                 case 3: // SCADUTA
-                    $class_paymov = 'FacetDataTDevidenziaKO';
+                    $class_paymov = 'bg-danger';
                     $status_descr .= $riscuoti_btn;
                     break;
                 case 9: // ANTICIPO
-                    $class_paymov = 'FacetDataTDevidenziaBL';
+                    $class_paymov = 'bg-info';
                     break;
                 default: //APERTA
-                    $class_paymov = 'FacetDataTDevidenziaCL';
+                    $class_paymov = 'bg-default';
                     $status_descr .= $riscuoti_btn;
             }
         }
-        echo "<tr>";
-        echo "<td class=\"$class_partner\">" . $partner . " &nbsp;</td>";
-        echo "<td align=\"center\" class=\"$class_paymov\">" . $paymov . " &nbsp;</td>";
-        echo "<td align=\"center\" class=\"$class_paymov\">" . $status_descr . " &nbsp;</td>";
-        echo "<td align=\"center\" class=\"$class_id_tes\"><a href=\"../contab/admin_movcon.php?id_tes=" . $mv["id_tes"] . "&Update\">" . $id_tes . "</a> &nbsp</td>";
-        echo "<td class=\"$class_id_tes\"><a href=\"../contab/admin_movcon.php?id_tes=" . $mv["id_tes"] . "&Update\">" . $mv['descri'] . "</a> &nbsp;</td>";
-        echo "<td align=\"center\" class=\"FacetDataTD\">" . $mv["numdoc"] . " &nbsp;</td>";
-        echo "<td align=\"center\" class=\"FacetDataTD\">" . $mv["datdoc"] . " &nbsp;</td>";
-        echo "<td align=\"center\" class=\"FacetDataTD\">" . gaz_format_date($mv["datreg"]) . " &nbsp;</td>";
-        /* ENRICO FEDELE */
+        echo '<tr>
+							<td class="' . $class_partner . '">' . $partner . '&nbsp;</td>
+							<td class="' . $class_paymov . ' text-center">' . $paymov . '&nbsp;</td>
+							<td class="' . $class_paymov . ' text-center">' . $status_descr . '&nbsp;</td>
+							<td class="text-center"><a href="../contab/admin_movcon.php?id_tes=' . $mv["id_tes"] . '&Update">' . $mv['descri'] . '</a>&nbsp;</td>
+							<td class="text-center">' . $mv["numdoc"] . '&nbsp;</td>
+							<td class="text-center">' . $mv["datdoc"] . '&nbsp;</td>
+							<td class="text-center">' . gaz_format_date($mv["datreg"]) . '&nbsp;</td>';
         if ($mv['id_rigmoc_pay'] == 0) {
             /* Incremento il totale del dare */
             $tot['dare'] += $mv['amount'];
@@ -185,18 +180,13 @@ if (sizeof($scdl->Entries) > 0) {
     /** ENRICO FEDELE */
     /* Stampo il totale del dare, dell'avere, e la percentuale dell'avere rispetto al totale dare+avere */
     /* Aumento il colspan nell'ultima riga per ricomprendere anche l'ultima colonna, il pulsante stampa ora va sotto opzioni */
-    echo '<tr>
-			<td class="FacetFormHeaderFont text-right" colspan="8">' . $script_transl['total_open'] . '</td>
-			<td class="FacetFormHeaderFont text-right">' . gaz_format_number($tot['dare']) . '</td>
-			<td class="FacetFormHeaderFont text-right">' . gaz_format_number($tot['avere']) . '</td>
-			<td class="FacetFormHeaderFont text-center">' . gaz_format_number(100 * $tot['avere'] / ($tot['dare'] + $tot['avere'])) . ' %</td>
-			<td class="FacetFormHeaderFont text-center"><input type="submit" name="print" value="' . $script_transl['print'] . '"></td>
+    echo '<tr class="FacetFormHeaderFont">
+			<td class="text-right" colspan=7>' . $script_transl['total_open'] . ': </td>
+			<td class="text-right">' . gaz_format_number($tot['dare']) . '</td>
+			<td class="text-right">' . gaz_format_number($tot['avere']) . '</td>
+			<td class="text-center">' . gaz_format_number(100 * $tot['avere'] / ($tot['dare'] + $tot['avere'])) . ' %</td>
+			<td class="text-center"></td></tr><tr><td colspan=11 class="FacetFooterTD text-center"><input type="submit" class="btn btn-warning" name="print" value="' . $script_transl['print'] . '"></td>
 		  </tr>';
-    /*
-      <tr class="FacetFieldCaptionTD">
-      <td colspan="12" class="text-center"></td>
-      </tr>'; */
-    /** ENRICO FEDELE */
 } else {
     echo '	<tr>
 	 			<td class="FacetDataTDred" align="center">' . $script_transl['errors'][1] . '</td>

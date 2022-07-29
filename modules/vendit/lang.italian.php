@@ -308,7 +308,7 @@ $strScript = array("admin_client.php" =>
 			'emptylot' => 'Non è stato inserito il lotto'
 		),
 		'cod_operaz_value' => array(11=>'',0=>'S0-Vendita olio a consumatore finale',1=>'S1-Vendita olio a ditta italiana',2=>'S2-Vendita olio a ditta comunitaria',3=>'S3-Vendita olio a ditta extracomunitaria',4=>'S4-Scarico olio trasferimento stabilimento stessa impresa',5=>'S5-Scarico olio trasferimento a terzista',6=>'S6-Cessione omaggio olio confezionato',7=>'S7-Scarico olio destinato ad altri usi',8=>'S8-Scarico olio autoconsumo',9=>'S9-Trasferimento olio a punti vendita aziendali',10=>'S10-Scarico olio reso al fornitore'),
-        'err' => array( 
+        'err' => array(
 			'37' =>"La data di inizio trasporto non &egrave; corretta!",
             '38' =>"La data di inizio trasporto non pu&ograve; essere precedente alla data di emissione!",
             '39' =>"Non ci sono righi per poter emettere il documento!",
@@ -1114,7 +1114,7 @@ $strScript = array("admin_client.php" =>
     ),
     "accounting_documents.php" =>
     array('title' => 'Genera i movimenti contabili a partire dai documenti fiscali',
-        'err' => 
+        'err' =>
 			['date'=>'Data non corretta',
 			 'nodoc'=>'Non ci sono documenti da contabilizzare nell\'intervallo selezionato',
 			 'nopaymov'=>'Non è stata selezionata la partita di scadenzario che dovrà essere chiusa dalla Nota di Credito'
@@ -1363,7 +1363,7 @@ $strScript = array("admin_client.php" =>
         ),
         /** ENRICO FEDELE */
         /* Aggiunto header per ultima colonna della tabella, per abbellire il layout */
-        'header' => array('Cliente' => '', 'ID Partita' => '', 'Status' => '', 'Mov.Cont.' => '', 'Descrizione' => '',
+        'header' => array('Cliente' => '', 'ID Partita' => '', 'Status' => '',  'Descrizione' => '',
             'N.Doc.' => '', 'Data Doc.' => '', 'Data Reg.' => '', 'Dare' => '', 'Avere' => '',
             'Scadenza' => '', 'Opzioni' => ''
         ),
@@ -1921,7 +1921,7 @@ $strScript = array("admin_client.php" =>
         'adminid' => "Ultimo utente utilizzatore",
         'driver' => "File driver (in /library/cash_register/)",
         'path_data' => "Percoso e/o altri dati",
-        'lotteria_scontrini' => "Stringa tipo rigo '5 = Lotteria Scontrini'" 
+        'lotteria_scontrini' => "Stringa tipo rigo '5 = Lotteria Scontrini'"
         ),
     "browse_document.php" =>
     array('title' => "Lista dei Mandati RID",
@@ -1949,6 +1949,6 @@ $strScript = array("admin_client.php" =>
         'iban' => "IBAN",
         'tipeff' => "Tipo effetti",
         'tipeff_value' => array('B' => 'Ricevute Bancarie', 'I' => 'RID', 'T' => 'Tratte', 'V' => 'MAV'),
-)       
+)
 );
 ?>

@@ -420,7 +420,7 @@ $strScript = array("admin_fornit.php" =>
         'orderby_value' => array(0 => 'Scadenza crescente', 1 => 'Scadenza decrescente',
             2 => 'Fornitore crescente', 3 => 'Fornitore decrescente'
         ),
-        'header' => array('Fornitore' => '', 'ID Partita' => '', 'Status' => '', 'Mov.Cont.' => '', 'Descrizione' => '',
+        'header' => array('Fornitore' => '', 'ID Partita' => '', 'Status' => '',  'Descrizione' => '',
             'N.Doc.' => '', 'Data Doc.' => '', 'Data Reg.' => '', 'Dare' => '', 'Avere' => '',
             'Scadenza' => '',
             'Opzioni' => ''

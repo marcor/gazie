@@ -70,7 +70,7 @@ echo '		  </table></div>';
 $scdl = new Schedule;
 $m = $scdl->getScheduleEntries($form['orderby'], $admin_aziend['masfor']);
 
-echo '<div class="table-responsive"><table class="Tlarge table table-striped table-bordered table-condensed">';
+echo '<div class="table-responsive"><table class="Tlarge table table-striped">';
 
 if (sizeof($scdl->Entries) > 0) {
     $ctrl_partner = 0;
@@ -89,23 +89,21 @@ if (sizeof($scdl->Entries) > 0) {
 	foreach ($scdl->Entries AS $key => $mv) {
         $class_partner = '';
         $class_paymov = '';
-        $class_id_tes = '';
         $partner = '';
         $id_tes = '';
         $paymov = '';
         $status_del = false;
         if ($mv['clfoco'] <> $ctrl_partner) {
-            $class_partner = 'FacetDataTDred';
+            $class_partner = '';
             $partner = $mv['ragsoc'];
         }
         if ($mv['id_tes'] <> $ctrl_id_tes) {
-            $class_id_tes = 'FacetFieldCaptionTD';
             $id_tes = $mv['id_tes'];
-			if ($mv['datdoc'] != '0000-00-00') {
-				$mv['datdoc'] = gaz_format_date($mv['datdoc']);
-			} else {
-				$mv['datdoc'] = '';
-			}
+          if ($mv['datdoc'] != '0000-00-00') {
+            $mv['datdoc'] = gaz_format_date($mv['datdoc']);
+          } else {
+            $mv['datdoc'] = '';
+          }
         } else {
             $mv['descri'] = '';
             $mv['numdoc'] = '';
@@ -119,44 +117,43 @@ if (sizeof($scdl->Entries) > 0) {
             $scdl->getStatus($paymov);
             $r = $scdl->Status;
             $status_descr = $script_transl['status_value'][$r['sta']] ;
-            if ($r['sta'] == 1) { // CHIUSA   
-                $class_paymov = '';
+            if ($r['sta'] == 1) { // CHIUSA
+                $class_paymov = 'bg-success';
                 $status_del = true;
-            } elseif ($r['sta'] == 2) { // ESPOSTA  
-                $class_paymov = 'FacetDataTDevidenziaOK';
-            } elseif ($r['sta'] == 3) { // SCADUTA  
-                $class_paymov = 'FacetDataTDevidenziaKO';
+            } elseif ($r['sta'] == 2) { // ESPOSTA
+                $class_paymov = 'bg-warning';
+            } elseif ($r['sta'] == 3) { // SCADUTA
+                $class_paymov = 'bg-danger';
                 $status_descr .= " &nbsp;<a title=\"Riscuoti\" class=\"btn btn-xs btn-default btn-pagamento\" href=\"supplier_payment.php?partner=" . $mv["clfoco"] . "\"><i class=\"glyphicon glyphicon-euro\"></i></a>";
-            } elseif ($r['sta'] == 9) { // PAGAMENTO ANTICIPATO 
-                $class_paymov = 'FacetDataTDevidenziaBL';
-            } else { // APERTA  
-                $class_paymov = 'FacetDataTDevidenziaCL';
+            } elseif ($r['sta'] == 9) { // PAGAMENTO ANTICIPATO
+                $class_paymov = 'bg-info';
+            } else { // APERTA
+                $class_paymov = 'bg-default';
                 $status_descr .= " &nbsp;<a title=\"Riscuoti\" class=\"btn btn-xs btn-default btn-pagamento\" href=\"supplier_payment.php?partner=" . $mv["clfoco"] . "\"><i class=\"glyphicon glyphicon-euro\"></i></a>";
             }
         }
-        echo '		<tr>
+        echo '<tr>
 							<td class="' . $class_partner . '">' . $partner . '&nbsp;</td>
 							<td class="' . $class_paymov . ' text-center">' . $paymov . '&nbsp;</td>
 							<td class="' . $class_paymov . ' text-center">' . $status_descr . '&nbsp;</td>
-							<td class="' . $class_id_tes . ' text-center"><a href="../contab/admin_movcon.php?id_tes=' . $mv["id_tes"] . '&Update">' . $id_tes . '</a>&nbsp</td>
-							<td class="' . $class_id_tes . ' text-center"><a href="../contab/admin_movcon.php?id_tes=' . $mv["id_tes"] . '&Update">' . $mv['descri'] . '</a>&nbsp;</td>
-							<td class="FacetDataTD text-center">' . $mv["numdoc"] . '&nbsp;</td>
-							<td class="FacetDataTD text-center">' . $mv["datdoc"] . '&nbsp;</td>
-							<td class="FacetDataTD text-center">' . gaz_format_date($mv["datreg"]) . '&nbsp;</td>';
+							<td class="text-center"><a href="../contab/admin_movcon.php?id_tes=' . $mv["id_tes"] . '&Update">' . $mv['descri'] . '</a>&nbsp;</td>
+							<td class="text-center">' . $mv["numdoc"] . '&nbsp;</td>
+							<td class="text-center">' . $mv["datdoc"] . '&nbsp;</td>
+							<td class="text-center">' . gaz_format_date($mv["datreg"]) . '&nbsp;</td>';
         if ($mv['darave'] == 'D') {
             $tot['dare'] += $mv["amount"];
             //$tot['avere'] -= $mv["amount"];
 
-            echo '			<td class="FacetDataTD text-center">' . gaz_format_number($mv["amount"]) . '&nbsp;</td>
-								<td class="FacetDataTD text-center"></td>';
+            echo '			<td class="text-center">' . gaz_format_number($mv["amount"]) . '&nbsp;</td>
+								<td class="text-center"></td>';
         } else {
             $tot['avere'] += $mv["amount"];
             $tot['dare'] -= $mv["amount"];
-            echo '			<td class="FacetDataTD text-center"></td>
-								<td class="FacetDataTD text-center">' . gaz_format_number($mv["amount"]) . '&nbsp;</td>';
+            echo '			<td class="text-center"></td>
+								<td class="text-center">' . gaz_format_number($mv["amount"]) . '&nbsp;</td>';
         }
-        echo '				<td class="FacetDataTD text-center">' . gaz_format_date($mv["expiry"]) . '&nbsp;</td>
-								<td class="FacetDataTD text-center">';
+        echo '				<td class="text-center">' . gaz_format_date($mv["expiry"]) . '&nbsp;</td>
+								<td class="text-center">';
         // Permette di cancellare il documento.
         if ($status_del) {
             echo '					<a class="btn btn-xs btn-default btn-elimina" title="Cancella tutti i movimenti relativi a questa partita oramai chiusa (rimarranno comunque i movimenti contabili)" href="delete_schedule.php?id_tesdoc_ref=' . $paymov . '"><i class="glyphicon glyphicon-remove"></i></a>';
@@ -169,12 +166,12 @@ if (sizeof($scdl->Entries) > 0) {
         $ctrl_paymov = $mv["id_tesdoc_ref"];
     }
     echo '					<tr class="FacetFormHeaderFont">
-	 							<td class="FacetFormHeaderFont text-right" colspan="8">' . $script_transl['total_open'] . '</td>
-								<td class="FacetFormHeaderFont text-center">' . gaz_format_number($tot['dare']) . '</td>
-								<td class="FacetFormHeaderFont text-center">' . gaz_format_number($tot['avere']) . '</td>
-								<td class="FacetFormHeaderFont text-center">' . gaz_format_number(100 * abs($tot['dare'] / ($tot['dare'] + $tot['avere']))) . ' %</td>
-								<td class="FacetFormHeaderFont text-center">
-									<input type="submit" name="print" value="' . $script_transl['print'] . '" />
+	 							<td colspan=7 class="text-right">' . $script_transl['total_open'] . ': </td>
+								<td class="text-right">' . gaz_format_number($tot['dare']) . '</td>
+								<td class="text-right">' . gaz_format_number($tot['avere']) . '</td>
+								<td class="text-right">' . gaz_format_number(100 * abs($tot['dare'] / ($tot['dare'] + $tot['avere']))) . ' %</td><td></td></tr><tr>
+								<td colspan=11 class="FacetFooterTD text-center">
+									<input type="submit" class="btn btn-warning" name="print" value="' . $script_transl['print'] . '" />
 								</td>
 							</tr>';
 } else {
