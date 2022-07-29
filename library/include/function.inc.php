@@ -2127,7 +2127,7 @@ class linkHeaders {
         global $flag_order, $script_transl, $auxil, $headers;
         $k = 0; // � l'indice dell'array dei nomi di campo
         foreach ($this->headers as $header => $field) {
-            $style = 'FacetFieldCaptionTD';
+            $style = 'FacetFieldCaptionTD text-center';
             $align = '';
             if ($this->align) { // ho settato i nomi dei campi del db
                 $align = ' style="text-align:' . $this->align[$k] . ';" ';
@@ -2178,7 +2178,7 @@ class TableSorter {
     # header ordinabili
     protected $arrows = ["desc" => "&#9660;", "asc" => "&#9650;", null => ""];
     protected $align = false;                   # TODO
-    protected $style = 'FacetFieldCaptionTD';   # TODO
+    protected $style = 'FacetFieldCaptionTD text-center';   # TODO
 
     # valori di default                Esempi:
     protected $default_search;         # ["caumag" => "1"]

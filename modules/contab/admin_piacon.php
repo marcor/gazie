@@ -163,13 +163,10 @@ echo "\t<td class=\"FacetDataTD\" colspan=\"2\">
       <textarea name=\"annota\" cols=50 rows=10 maxlength=\"100\" >".$form['annota']."</textarea></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['sqn']."</td>";
+echo "\t<td class=\"FacetFooterTD\">".$script_transl['sqn']."</td>";
 echo "\t </td>\n";
-echo "\t<td  class=\"FacetDataTD\">\n";
-echo '<input name="Return" type="submit" value="'.$script_transl['return'].'">';
-echo "\t </td>\n";
-echo "\t<td  class=\"FacetDataTD\" align=\"right\">\n";
-echo '<input name="Submit" type="submit" value="'.ucfirst($script_transl[$toDo]).'">';
+echo "<td  class=\"FacetFooterTD text-center\">";
+echo '<input name="Submit" class="btn btn-warning" type="submit" value="'.ucfirst($script_transl[$toDo]).'">';
 echo "\t </td>\n";
 echo "</tr>\n";
 ?>
