@@ -770,7 +770,7 @@ $(document).ready(function(){
 
   // Un-disable form fields when page loads, in case they click back after submission
   $( "form" ).find( ":input" ).prop( "disabled", false );
-  var _sezi = $("select[name='sezione'] option:selected").text();
+  var _sezi = $("select[name='sezione'] option:selected").text().trim();
   $.each(['FAI','FNC','FND','FAP'], function( i, v ) {
     var _href = $("a[href*='admin_docven.php?Insert&tipdoc=" + v + "']").attr('href');
     $("a[href*='admin_docven.php?Insert&tipdoc=" + v + "']").attr('href', _href + '&seziva=' + _sezi);
