@@ -57,6 +57,7 @@ if ((isset($_POST['type']) && isset($_POST['ref'])) OR (isset($_POST['type']) &&
 				$where[]="title";
 				$where[]=$data['fattura_elettronica_original_name'];
 				$set['custom_field']="";
+        $set['status']=0;
 				gaz_dbi_table_update("files", $where, $set);
 			}
 
@@ -175,8 +176,8 @@ if ((isset($_POST['type']) && isset($_POST['ref'])) OR (isset($_POST['type']) &&
 			$paymov->deleteClosedPaymov(intval($_POST['ref']));
       break;
 	  case "packacq":
-			$name=$_POST['ref'];			
-			gaz_dbi_query("UPDATE " . $gTables['tesdoc'] . " SET fattura_elettronica_zip_package = '' WHERE fattura_elettronica_zip_package = '".$name."'");			
+			$name=$_POST['ref'];
+			gaz_dbi_query("UPDATE " . $gTables['tesdoc'] . " SET fattura_elettronica_zip_package = '' WHERE fattura_elettronica_zip_package = '".$name."'");
       break;
 	}
 }
