@@ -233,7 +233,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		// adesso metto uno ma dovrò proporre il magazzino di riferimento dell'utente
 		$magmodule = gaz_dbi_get_row($gTables['module'], "name",'magazz');
 		$magadmin_module = gaz_dbi_get_row($gTables['admin_module'], "moduleid",$magmodule['id']," AND adminid='{$admin_aziend['user_name']}' AND company_id=" . $admin_aziend['company_id']);
-		$magcustom_field=json_decode($magadmin_module['custom_field']);
+		$magcustom_field=isset($magadmin_module['custom_field'])?json_decode($magadmin_module['custom_field']):false;
 		$form["in_id_warehouse"] = (isset($magcustom_field->user_id_warehouse))?$magcustom_field->user_id_warehouse:0;
 	} else {
 		$form['datreg'] = substr($_POST['datreg'],0,10);
@@ -242,7 +242,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 	}
 
 	if (isset($_POST['Submit_file']) || isset($_POST['fae_from_sync'])) { // conferma invio upload file
-    if (strtotime($_POST['table_name_ref'.intval($_POST['fae_from_sync'])])>0){// se è una data
+    if (isset($_POST['fae_from_sync']) && strtotime($_POST['table_name_ref'.intval($_POST['fae_from_sync'])])>0){// se è una data
       $form['datreg']=gaz_format_date($_POST['table_name_ref'.intval($_POST['fae_from_sync'])], false, false);
       $_POST['datreg']=$form['datreg'];
     }
@@ -698,10 +698,15 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 						$form['codvat_'.$post_nl] = $expect_vat['codice'];
 					} else { // non è quella che mi aspettavo allora provo a trovarne una tra quelle con la stessa aliquota
 						$filter_vat = "aliquo=" . $form['rows'][$nl]['pervat'];
+            $orderby = 'codice ASC';
 						if (!empty($Natura)) {
 							$filter_vat.= " AND fae_natura='" . $Natura . "'";
-						}
-						$rs_last_codvat = gaz_dbi_dyn_query("*", $gTables['aliiva'], $filter_vat . " AND tipiva<>'T'", "codice ASC", 0, 1);
+              if (substr($Natura,0,2)=='N6') { // con il reverse charge (N6.X) propongo quella più adatta ma considero una aliquota con IVA
+                $filter_vat = "fae_natura='" . $Natura . "' AND aliquo >= 0.1";
+                $orderby = 'descri ASC'; // ci vorrebe un similar text con gli acquisti le aliquote
+              }
+            }
+						$rs_last_codvat = gaz_dbi_dyn_query("*", $gTables['aliiva'], $filter_vat . " AND tipiva<>'T'", $orderby, 0, 1);
 						$last_codvat = gaz_dbi_fetch_array($rs_last_codvat);
 						if ($last_codvat) {
 							$form['codvat_'.$post_nl] = $last_codvat['codice'];
