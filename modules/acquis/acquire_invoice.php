@@ -277,7 +277,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
       // della tabella gaz_001files, tabella che dovrà contenere anche il nome originale del file in "title" e "item_ref" = 'faesync'
       // la referenza 'faesync', infatti viene utilizzata per essere richiamate al primo accesso per proporle all'utente
       // vedi $res_faesync qualche rigo sopra
-			copy(DATA_DIR . 'files/' . $admin_aziend['codice'] . '/doc/'.$_POST['fae_from_sync'] , DATA_DIR . 'files/' . $admin_aziend['codice'] . '/'.$_POST['fae_original_name']);
+			copy(DATA_DIR . 'files/' . $admin_aziend['codice'] . '/doc/'.$_POST['fae_from_sync'].".". pathinfo($_POST['fae_original_name'], PATHINFO_EXTENSION) , DATA_DIR . 'files/' . $admin_aziend['codice'] . '/'.$_POST['fae_original_name']);
 			$form['fattura_elettronica_original_name']=$_POST['fae_original_name'];
 			$_POST['Submit_file']="Acquisisci";
 		}
