@@ -49,6 +49,14 @@ if ((isset($_POST['type']) && isset($_POST['ref'])) || (isset($_POST['type'])&&i
       $query="UPDATE ".$gTables['admin_module']." SET custom_field='".$custom_field."' WHERE moduleid=".$module['id']." AND adminid='".substr($_POST['adminid'],0,30)."' AND company_id=" . $admin_aziend['company_id'];
       gaz_dbi_query($query);
 		break;
+		case "aliiva":
+			$i=intval($_POST['ref']);
+			gaz_dbi_del_row($gTables['aliiva'], 'codice', $i);
+    break;
+		case "banapp":
+			$i=intval($_POST['ref']);
+			gaz_dbi_del_row($gTables['banapp'], 'codice', $i);
+    break;
 	}
 }
 ?>

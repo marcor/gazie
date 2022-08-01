@@ -308,3 +308,7 @@ div#fattura-container {
 .btn > .ui-button-text {
  color: #000;
 }
+.ui-widget-content, .ui-widget-content a, .ui-autocomplete li.ui-menu-item {
+	color: #fdf0f0;
+	background-color: #2b2825;
+}

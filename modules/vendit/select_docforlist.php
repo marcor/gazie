@@ -403,8 +403,7 @@ $select_agente->output();
 echo "</td></tr>\n";
 
 echo "<tr>\n
-     <td class=\"FacetFieldCaptionTD\"><input type=\"submit\" name=\"Return\" value=\"" . ucfirst($script_transl['return']) . "\"></td>\n
-     <td align=\"right\" class=\"FacetFooterTD\"><input type=\"submit\" name=\"Print\" value=\"" . ucfirst($script_transl['print']) . "\"></td>\n
+     <td class=\"FacetFooterTD text-center\" colspan=2><input type=\"submit\" class=\"btn btn-warning\" name=\"Print\" value=\"" . ucfirst($script_transl['print']) . "\"></td>\n
      </tr>\n";
 ?>
 </table>

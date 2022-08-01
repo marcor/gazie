@@ -158,9 +158,6 @@ a, .panel-info {
 .panel-danger {
 	border-color: #886464;
 }
-.nav.nav-pills{
-  background-color: #e3d7c9;
-}
 .bg-info {
 	background-color: #0d3346;
 }
@@ -233,7 +230,7 @@ a, .panel-info {
 	border-top-color: #252a48;
 }
 .ui-dialog-content.ui-widget-content table#tblAppendGrid.table thead.thead-light tr th{
-  background-color: #ccc;
+  background-color: #46464d;
 }
 .content-header > .breadcrumb > li > a {
 	background-color: transparent;
@@ -250,20 +247,23 @@ div#fattura-container {
 	color: #000;
 }
 .nav-pills > li,.nav-tabs > li {
-	border-top: 1px solid #222d32;
-	border-left: 1px solid #222d32;
-	border-right: 1px solid #222d32;
+	border-top: 1px solid #d8eff9;
+	border-left: 1px solid #d8eff9;
+	border-right: 1px solid #d8eff9;
 	border-top-left-radius: 4px;
 	border-top-right-radius: 4px;
-  background-color: #0000001c;
+  background-color: #0673ff08;
 }
 .nav-pills > li.active > a, .nav-pills > li.active > a:focus, .nav-pills > li.active > a:hover {
 	color: #000;
-	background-color: #70afff;
+	background-color: #9fc4f2;
+}
+.nav-pills > li > a {
+	color: #eeeaea;
 }
 .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
 	font-size: 14px;
-	color: #fff;
+	color: #fdf0f0;
   border: 2px;
 	border-style: solid;
 }
@@ -278,4 +278,8 @@ div#fattura-container {
 }
 .btn > .ui-button-text {
  color: #000;
+}
+.ui-widget-content, .ui-widget-content a, .ui-autocomplete li.ui-menu-item {
+	color: #fdf0f0;
+	background-color: #2b2825;
 }

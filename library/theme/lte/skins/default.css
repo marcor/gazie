@@ -180,3 +180,7 @@ td.ui-datepicker-other-month>a.ui-state-default.ui-priority-secondary{
 .ui-selectmenu-button span.ui-selectmenu-text {
 	background-color: #eee;
 }
+.ui-widget-content {
+	color: #1e1c1c;
+	background-color: #cec8c2;
+}
