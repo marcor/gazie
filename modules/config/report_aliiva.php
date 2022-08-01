@@ -85,15 +85,15 @@ $recordnav = new recordnav($gTables['aliiva'], $where, $limit, $passo);
 $recordnav -> output();
 echo '<div class="table-responsive"><table class="Tlarge table table-striped table-bordered table-condensed">';
 $headers = array  (
-            $script_transl['codice']=>'codice',
-            $script_transl['descri']=>'descri',
-            $script_transl['type']=>'tipiva',
-            $script_transl['operation_type']=>'operation_type',
-            $script_transl['aliquo']=>'aliquo',
-            $script_transl['taxstamp']=>'taxstamp',
-            $script_transl['fae_natura']=>'fae_natura',
-            $script_transl['delete']=>''
-            );
+  $script_transl['codice']=>'codice',
+  $script_transl['descri']=>'descri',
+  $script_transl['type']=>'tipiva',
+  $script_transl['operation_type']=>'operation_type',
+  $script_transl['aliquo']=>'aliquo',
+  $script_transl['taxstamp']=>'taxstamp',
+  $script_transl['fae_natura']=>'fae_natura',
+  $script_transl['delete']=>''
+);
 $linkHeaders = new linkHeaders($headers);
 $linkHeaders -> output();
 $result = gaz_dbi_dyn_query ('*', $gTables['aliiva'], $where, $orderby, $limit, $passo);

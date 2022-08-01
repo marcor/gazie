@@ -63,7 +63,6 @@ $(function() {
 						type: 'POST',
 						url: '../contab/delete.php',
 						success: function(output){
-		                    //alert(output);
 							window.location.replace("./report_banche.php");
 						}
 					});

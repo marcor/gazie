@@ -25,6 +25,53 @@ $admin_aziend=checkAdmin();
 require("../../library/include/header.php");
 $script_transl = HeadMain('','','admin_imball');
 ?>
+<script>
+$(function() {
+	$("#dialog_delete").dialog({ autoOpen: false });
+	$('.dialog_delete').click(function() {
+		$("p#idcodice").html($(this).attr("ref"));
+		$("p#iddescri").html($(this).attr("ragso"));
+		var id = $(this).attr('ref');
+		$( "#dialog_delete" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+   			close: {
+					text:'Non eliminare',
+					'class':'btn btn-default',
+          click:function() {
+            $(this).dialog("close");
+          }
+        },
+				delete:{
+					text:'Elimina',
+					'class':'btn btn-danger',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'imball',ref:id},
+						type: 'POST',
+						url: '../config/delete.php',
+						success: function(output){
+							window.location.replace("./report_imball.php");
+						}
+					});
+				}}
+			}
+		});
+		$("#dialog_delete" ).dialog( "open" );
+	});
+});
+</script>
+<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
+	<p><b>Imballo:</b></p>
+	<p>Codice:</p>
+	<p class="ui-state-highlight" id="idcodice"></p>
+	<p>Descrizione:</p>
+	<p class="ui-state-highlight" id="iddescri"></p>
+</div>
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['report']; ?></div>
 <?php
 $recordnav = new recordnav($gTables['imball'], $where, $limit, $passo);
@@ -48,8 +95,13 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "<td>".$a_row["descri"]." &nbsp;</td>";
     echo "<td align=\"center\">".$a_row["weight"]." &nbsp;</td>";
     echo "<td align=\"center\">".$a_row["annota"]." &nbsp;</td>";
-    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_imball.php?codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
-    echo "</tr>";
+    ?>
+    <td align="center">
+		<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella l'imballo" ref="<?php echo $a_row['codice'];?>" ragso="<?php echo $a_row['descri'];?>">
+			<i class="glyphicon glyphicon-remove"></i>
+		</a>
+    </td></tr>
+		<?php
 }
 ?>
  </table></div>

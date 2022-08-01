@@ -25,6 +25,53 @@ $admin_aziend=checkAdmin();
 require("../../library/include/header.php");
 $script_transl = HeadMain('','','admin_banapp');
 ?>
+<script>
+$(function() {
+	$("#dialog_delete").dialog({ autoOpen: false });
+	$('.dialog_delete').click(function() {
+		$("p#idcodice").html($(this).attr("ref"));
+		$("p#iddescri").html($(this).attr("ragso"));
+		var id = $(this).attr('ref');
+		$( "#dialog_delete" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+   			close: {
+					text:'Non eliminare',
+					'class':'btn btn-default',
+          click:function() {
+            $(this).dialog("close");
+          }
+        },
+				delete:{
+					text:'Elimina',
+					'class':'btn btn-danger',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'banapp',ref:id},
+						type: 'POST',
+						url: '../config/delete.php',
+						success: function(output){
+							window.location.replace("./report_banapp.php");
+						}
+					});
+				}}
+			}
+		});
+		$("#dialog_delete" ).dialog( "open" );
+	});
+});
+</script>
+<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
+	<p><b>Banca d'appoggio:</b></p>
+	<p>Codice:</p>
+	<p class="ui-state-highlight" id="idcodice"></p>
+	<p>Descrizione:</p>
+	<p class="ui-state-highlight" id="iddescri"></p>
+</div>
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['report']; ?></div>
 <?php
 $recordnav = new recordnav($gTables['banapp'], $where, $limit, $passo);
@@ -47,14 +94,28 @@ $linkHeaders -> output();
 <?php
 $result = gaz_dbi_dyn_query ('*', $gTables['banapp'], $where, $orderby, $limit, $passo);
 while ($a_row = gaz_dbi_fetch_array($result)) {
-    echo "<tr class=\"FacetDataTD\">";
-    echo "<td align=\"center\"><a class=\"btn btn-xs btn-edit\" href=\"admin_banapp.php?Update&codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["codice"]."</a> &nbsp</td>";
-    echo "<td>".$a_row["descri"]." &nbsp;</td>";
-    echo "<td align=\"center\">".$a_row["locali"]." &nbsp;</td>";
-    echo "<td align=\"center\">". sprintf("%'.05d\n", $a_row["codabi"]) ."</td>";
-    echo "<td align=\"center\">". sprintf("%'.05d\n", $a_row["codcab"]) ."</td>";
-    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_banapp.php?codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
-    echo "</tr>";
+	$rs_check_doc = gaz_dbi_dyn_query("id_tes", $gTables['tesdoc'], "banapp = '{$a_row['codice']}'", "id_tes", 0, 1);
+  $check_doc = gaz_dbi_num_rows($rs_check_doc);
+	$rs_check_cli = gaz_dbi_dyn_query("codice", $gTables['clfoco'], "banapp = '{$a_row['codice']}'", "codice", 0, 1);
+  $check_cli = gaz_dbi_num_rows($rs_check_cli);
+  echo "<tr class=\"FacetDataTD\">";
+  echo "<td align=\"center\"><a class=\"btn btn-xs btn-edit\" href=\"admin_banapp.php?Update&codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["codice"]."</a> &nbsp</td>";
+  echo "<td>".$a_row["descri"]." &nbsp;</td>";
+  echo "<td align=\"center\">".$a_row["locali"]." &nbsp;</td>";
+  echo "<td align=\"center\">". sprintf("%'.05d\n", $a_row["codabi"]) ."</td>";
+  echo "<td align=\"center\">". sprintf("%'.05d\n", $a_row["codcab"]) ."</td><td align=\"center\">";
+  if ($check_doc > 0 || $check_cli > 0){
+		?>
+		<button title="Impossibile cancellare perché usata da clienti e/o documenti di vendita" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-remove"></i></button>
+		<?php
+	} else {
+		?>
+		<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella la banca d'appoggio" ref="<?php echo $a_row['codice'];?>" ragso="<?php echo $a_row['descri'];?>">
+			<i class="glyphicon glyphicon-remove"></i>
+		</a>
+		<?php
+	}
+  echo "</td></tr>";
 }
 ?>
  </table></div>

@@ -57,6 +57,33 @@ if ((isset($_POST['type']) && isset($_POST['ref'])) || (isset($_POST['type'])&&i
 			$i=intval($_POST['ref']);
 			gaz_dbi_del_row($gTables['banapp'], 'codice', $i);
     break;
+		case "imball":
+			$i=intval($_POST['ref']);
+			gaz_dbi_del_row($gTables['imball'], 'codice', $i);
+    break;
+		case "pagame":
+			$i=intval($_POST['ref']);
+			gaz_dbi_del_row($gTables['pagame'], 'codice', $i);
+    break;
+		case "portos":
+			$i=intval($_POST['ref']);
+			gaz_dbi_del_row($gTables['portos'], 'codice', $i);
+    break;
+		case "spediz":
+			$i=intval($_POST['ref']);
+			gaz_dbi_del_row($gTables['spediz'], 'codice', $i);
+    break;
+		case "utente":
+			$i=substr($_POST['ref'],0,15);
+      gaz_dbi_del_row($gTables['admin'], "user_name",$i);
+      gaz_dbi_del_row($gTables['admin_module'], "adminid",$i);
+      gaz_dbi_del_row($gTables['admin_config'], "adminid",$i);
+      gaz_dbi_del_row($gTables['breadcrumb'], "adminid",$i."' AND exec_mode> '0");
+    break;
+		case "vettor":
+			$i=intval($_POST['ref']);
+			gaz_dbi_del_row($gTables['vettor'], 'codice', $i);
+    break;
 	}
 }
 ?>
