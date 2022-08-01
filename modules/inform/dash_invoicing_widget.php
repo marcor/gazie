@@ -40,6 +40,17 @@
       </tr>
 <?php
     }
+    $rs_faeacq=gaz_dbi_dyn_query( "COUNT(*) AS cnt", $gTables['files']." AS faeacq", "item_ref = 'faesync' AND status = 0", 'id_doc');
+    $fae_faeacq = gaz_dbi_fetch_array($rs_faeacq);
+    if ($fae_faeacq['cnt']>0){
+?>
+      <tr>
+          <td style="text-align: left;"><b class="text-success">Fatture d'acquisto arrivate</b></td>
+          <td><b><?php echo $fae_faeacq['cnt']; ?></b></td>
+          <td><a class="btn btn-success btn-xs" href="../acquis/acquire_invoice.php">Acquisisci le fatture dei fornitori<i class="glyphicon glyphicon-import"></i></a></td>
+      </tr>
+<?php
+    }
   }
   $rs_fatven=gaz_dbi_dyn_query( "COUNT(DISTINCT CONCAT(YEAR(datreg), protoc)) AS cnt", $gTables['tesdoc'], "id_con = 0 AND tipdoc LIKE 'F%'", 'datreg');
 	$fatven = gaz_dbi_fetch_array($rs_fatven);
