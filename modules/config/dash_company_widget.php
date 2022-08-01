@@ -51,8 +51,8 @@ function selectCompany($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg=
 	</div>
     <div class="flip-image">
         <div class="flip-image-inner">
-            <div class="flip-image-front">
-            <img class="img-circle dit-picture" src="view.php?table=aziend&value=<?php echo $form['company_id']; ?>" alt="Logo" style="max-height: 150px; max-width: 100%;" border="0" title="<?php echo $script_transl['upd_company']; ?>" >
+            <div class="flip-image-front"><a href="../config/admin_aziend.php">
+            <img class="img-circle dit-picture" src="view.php?table=aziend&value=<?php echo $form['company_id']; ?>" alt="Logo" style="max-height: 150px; max-width: 100%;" border="0" title="<?php echo $script_transl['upd_company']; ?>" ></a>
             </div>
             <div class="flip-image-back"><a href="../config/admin_aziend.php"><div style="cursor:pointer;">
             <p><b><?php echo $admin_aziend['ragso1'].' '.$admin_aziend['ragso2']; ?></b></p>
@@ -128,11 +128,5 @@ function selectCompany($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg=
 }
 .flip-image-back>a {
   color: black;
-}
-
-@media screen and (max-width: 767px) {
-  .flip-image-front {
-	width: auto;
-  }
 }
 </style>

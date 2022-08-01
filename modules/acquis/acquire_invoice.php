@@ -1011,7 +1011,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
               $form['rows'][$nl]['pervat'] = $ctrlaliquo;
               $form['codart_'.($nl-1)] = '';
               $form['codvat_'.($nl-1)] = $map_pervat[floatval($ctrlaliquo)];
-              $form['codric_'.($nl-1)] = 0;
+              $form['codric_'.($nl-1)] = intval($form['codric_'.$post_nl]);
               $form['rows'][$nl]['prelis'] = $diffiva;
               $form['rows'][$nl]['amount'] = $diffiva;
             }
@@ -1414,10 +1414,32 @@ $(function(){
         }
     });
 });
+
+function prevXML(urlPrintDoc){
+	$(function(){
+		$('#xmlpreview').attr('src',urlPrintDoc);
+		$('#xmlpreview').css({'height': '100%'});
+		$('.xmlpreview').css({'display': 'block','width': '90%', 'height': '80%', 'z-index':'2000'});
+    $("html, body").delay(100).animate({scrollTop: $('#xmlpreview').offset().top},'slow', function() {
+        $("#xmlpreview").focus();
+    });
+		$('#closeXML').on( "click", function() {
+			$('.xmlpreview').css({'display': 'none'});
+		});
+	});
+};
+
 </script>
 <div align="center" ><b><?php echo $script_transl['title'];?></b></div>
 <form method="POST" name="form" enctype="multipart/form-data" id="add-invoice">
-    <input type="hidden" name="fattura_elettronica_original_name" value="<?php echo $form['fattura_elettronica_original_name']; ?>">
+	<div class="xmlpreview panel panel-success" style="display: none; position: absolute; left: 5%; top: 100px">
+		<div class="col-lg-12">
+			<div class="col-xs-11"><h4>Anteprima fattura</h4></div>
+			<div class="col-xs-1"><h4><button type="button" id="closeXML"><i class="glyphicon glyphicon-remove"></i></button></h4></div>
+		</div>
+		<iframe id="xmlpreview"  style="height: 100%; width: 100%" src=""></iframe>
+	</div>
+   <input type="hidden" name="fattura_elettronica_original_name" value="<?php echo $form['fattura_elettronica_original_name']; ?>">
     <input type="hidden" name="curr_doc" value="<?php echo $form['curr_doc']; ?>">
     <input type="hidden" name="hidden_req" id="hidden_req" value="">
 <?php
@@ -1680,17 +1702,22 @@ if ($toDo=='insert' || $toDo=='update' ) {
 							<label for="image" class="col-sm-4 control-label">Queste fatture, arrivate via PEC, sono ancora da acquisire</label>
 							<div class="col-sm-8">
 							<?php
-              $disable='class="btn btn-success" title="Acquisisci"';
+              $first='class="btn btn-success" title="Acquisisci"';
 							foreach($res_faesync as $faesync){
-								?>
-								<p>
-								<?php echo $faesync['table_name_ref']," ";?>
-								<button type="submit" <?php echo $disable; ?> name="fae_from_sync" value="<?php echo $faesync['id_doc']; ?>"><?php echo $faesync['title']," ";?></button>
-								<input type="hidden" name="fae_original_name<?php echo $faesync['id_doc'];?>" value="<?php echo $faesync['title'];?>">
+                $linkxml = "view_fae.php?id_tes=" . $faesync['id_doc'].'.'. $faesync['extension'].'&fromdoc';
+								echo '<p>'.$faesync['table_name_ref']." ";
+                if ($first) {
+                  echo '<button type="submit" '. $first .' name="fae_from_sync" value="'. $faesync['id_doc'].  '">'.$faesync['title'].' </button>';
+                } else {
+                  echo '<a class="btn btn-default btn-xml" target="_blank" title="Anteprima" onclick="prevXML(\''.$linkxml.'\')">'.$faesync['title'].' <i class="glyphicon glyphicon-eye-open" title="Visualizza"></i></a>';
+
+                }
+                ?>
+                <input type="hidden" name="fae_original_name<?php echo $faesync['id_doc'];?>" value="<?php echo $faesync['title'];?>">
                 <input type="hidden" name="table_name_ref<?php echo $faesync['id_doc'];?>" value="<?php echo substr($faesync['table_name_ref'],0,10);?>">
 								</p>
-								<?php
-                $disable = 'class="btn btn-default" disabled title="registrare in ordine di arrivo al Sistema di Interscambio"';
+                <?php
+                $first=false;
 							}
 							?>
 							</div>

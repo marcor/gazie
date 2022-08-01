@@ -54,7 +54,7 @@ function tryBase64Decode($s)
 function der2smime($file)
 {
     /* COMMENTO per non sovrascrivere il file id_tes.inv
-    
+
 $to = <<<TXT
 MIME-Version: 1.0
 Content-Disposition: attachment; filename="smime.p7m"
@@ -83,11 +83,11 @@ TXT;
     while($count > 0) {
         $last_temp_content=$temp_content;
         $removed_header = str_replace($to,'',$temp_content,$count);
-        if ($count==1){ $restorefile = true; }   
+        if ($count==1){ $restorefile = true; }
         $temp_content = base64_decode($removed_header,true);
     }
     if ($restorefile) { // ripristino il file in formato binario
-        file_put_contents($fn,$last_temp_content); 
+        file_put_contents($fn,$last_temp_content);
     }
     return $last_temp_content;
 }
@@ -166,14 +166,15 @@ if (isset($_POST['Download'])) { // è stato richiesto il download dell'allegato
 }
 
 if (isset($_GET['id_tes'])){
+  if (isset($_GET['fromdoc'])){ // mi viene indicato di attingere dalla cartella /doc
+    $nf=substr($_GET['id_tes'],0,11);
+    $fattxml = DATA_DIR . 'files/' . $admin_aziend["codice"] . '/doc/'.$nf;
+  } else {
     $id=intval($_GET['id_tes']);
- 	//$p7mContent = $fat['fattura_elettronica_original_content'];
-	//$p7mContent = tryBase64Decode($p7mContent);
-	//$fattxml = @tempnam(DATA_DIR . 'files/tmp/', 'fatt');
-	//file_put_contents($fattxml,$p7mContent);
     $fattxml = DATA_DIR . 'files/' . $admin_aziend["codice"] . '/'.$id.'.inv';
-    $p7mContent = file_get_contents($fattxml);
-    $p7mContent = recursiveDecodeContent($p7mContent,$fattxml);
+  }
+  $p7mContent = file_get_contents($fattxml);
+  $p7mContent = recursiveDecodeContent($p7mContent,$fattxml);
 	if (FALSE !== der2smime($fattxml)) {
 	$cert = @tempnam(DATA_DIR . 'files/tmp/', 'pem');
 	$retn = openssl_pkcs7_verify($fattxml, PKCS7_NOVERIFY, $cert);

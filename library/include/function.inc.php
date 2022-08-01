@@ -313,21 +313,19 @@ function gaz_set_time_limit($time) {
 }
 
 function CalcolaImportoRigo($quantita, $prezzo, $sconto, $decimal = 2) {
-
-    if (is_array($sconto)) {
-        $res = 1;
-        foreach ($sconto as $val) {
-			if (!$val){$val=0.00;}
-            $res -= $res * $val / 100;
-        }
-        $res = 1 - $res;
-    } else {
-		if (!$sconto){
-			$sconto=0.00;
-		}
-        $res = $sconto / 100;
+  if (is_array($sconto)) {
+    $res = 1;
+    foreach ($sconto as $val) {
+      if (!$val) $val=0.00;
+      $res -= $res * $val / 100;
     }
-    return round($quantita * ($prezzo - $prezzo * $res), $decimal);
+    $res = 1 - $res;
+  } else {
+    if (!$sconto)	$sconto=0.00;
+    $res = $sconto / 100;
+  }
+  $prezzo=(float)$prezzo;
+  return round((float)$quantita * ($prezzo - $prezzo * (float)$res) , (int)$decimal);
 }
 
 //
@@ -338,11 +336,11 @@ function CalcolaImportoRigo($quantita, $prezzo, $sconto, $decimal = 2) {
 // a un massimo di ulteriori nove caratteri
 //
 function table_prefix_ok($table_prefix) {
-    if (preg_match("/^[g][a][z][a-z0-9]{0,9}$/", $table_prefix) == 1) {
-        return TRUE;
-    } else {
-        return FALSE;
-    }
+  if (preg_match("/^[g][a][z][a-z0-9]{0,9}$/", $table_prefix) == 1) {
+      return TRUE;
+  } else {
+      return FALSE;
+  }
 }
 
 //
