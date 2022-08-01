@@ -231,6 +231,13 @@ $(function() {
 			show: "blind",
 			hide: "explode",
 			buttons: {
+   			close: {
+					text:'Non eliminare',
+					'class':'btn btn-default',
+          click:function() {
+            $(this).dialog("close");
+          }
+        },
 				delete:{
 					text:'Elimina',
 					'class':'btn btn-danger',
@@ -244,14 +251,7 @@ $(function() {
 							window.location.replace("./report_broven.php?auxil=<?php echo $tipo;?>");
 						}
 					});
-				}},
-   			close: {
-					text:'Non eliminare',
-					'class':'btn btn-default',
-          click:function() {
-            $(this).dialog("close");
-          }
-        }
+				}}
 			}
 		});
 		$("#dialog_delete" ).dialog( "open" );
