@@ -683,7 +683,6 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 			// inserisco un documento fittizio in tesdoc al fine di generare un XML dal registro con il sezionale (normalmente 9) del Reverse Charge
 			// stabilisco il tipo di documento per lo SdI (TD16,TD17,TD18,TD19,TD20) e lo insterisco sulla colonna status di tesdoc
 			$status='TD16'; // operazioni interne (italiani)
-      print 'fs:'.$fiscal_rapresentative_country.'<br>';
 			if ($v['tes']['country']<>'IT') {
 				$status='TD17'; // acquisto servizi dall'estero
 				if ( ( $v['tes']['istat_area'] == 11 && $vv['operation_type'] <> 'SERVIZ' ) || $fiscal_rapresentative_country == 'IT' ) { // è un intra  ma devo vedere se sono beni altrimenti lascio TD17
