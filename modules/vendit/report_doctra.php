@@ -291,7 +291,7 @@ if (isset($_SESSION['print_request']) && intval($_SESSION['print_request'])>0){
                             // Colonna protocollo
                             echo "<td class=\"text-center\"><a href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\">" . $r["numdoc"] . "</a> &nbsp;</td>";
                             // Colonna type
-                            echo "<td><a class=\"btn btn-xs btn-primary btn-primary \" href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\">&nbsp;" . $script_transl['ddt_type'][$r["ddt_type"]] . "</a> &nbsp;</td>";
+                            echo "<td><div class=\"btn btn-xs btn-primary btn-primary\">&nbsp;" . $script_transl['ddt_type'][$r["ddt_type"]] . "</div> &nbsp;</td>";
                             // Colonna data emissione
                             echo "<td>" . gaz_format_date($r["datemi"]). " &nbsp;</td>";
                             // Colonna Cliente
@@ -383,7 +383,7 @@ if (isset($_SESSION['print_request']) && intval($_SESSION['print_request'])>0){
                             echo "<td><a class=\"btn btn-xs btn-".$btnclass."\" href=\"../acquis/admin_docacq.php?Update&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-edit\"></i>" . $r["tipdoc"] . "" . $r["id_tes"] . "</a></td>";
                             echo "<td><a href=\"../acquis/admin_docacq.php?Update&id_tes=" . $r["id_tes"] . "\">&nbsp;" . $r["numdoc"] . "</a> &nbsp;</td>";
                             // Colonna type
-                            echo "<td><a class=\"btn btn-xs btn-".$btnclass." \" href=\"../acquis/admin_docacq.php?Update&id_tes=" . $r["id_tes"] . "\">&nbsp;" . $script_transl['ddt_type'][$r["tipdoc"]] . "</a> &nbsp;</td>";
+                            echo "<td><div class=\"btn btn-xs btn-".$btnclass." \" >&nbsp;" . $script_transl['ddt_type'][$r["tipdoc"]] . "</div> &nbsp;</td>";
                             echo "<td>" . gaz_format_date($r["datemi"]) . " &nbsp;</td>";
                             ?>
                             <td class="text-left">
@@ -443,7 +443,7 @@ if (isset($_SESSION['print_request']) && intval($_SESSION['print_request'])>0){
                             // Colonna protocollo
                             echo "<td><a href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\">" . $r["numdoc"] . "</a></td>";
                             // Colonna type
-                            echo "<td><a class=\"btn btn-xs btn-primary btn-primary \" href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\">&nbsp;" . $script_transl['ddt_type'][$r["ddt_type"]] . "</a> &nbsp;</td>";
+                            echo "<td><div class=\"btn btn-xs btn-primary btn-primary \">&nbsp;" . $script_transl['ddt_type'][$r["ddt_type"]] . "</div> &nbsp;</td>";
                             // Colonna Data emissione
                             echo "<td>" . gaz_format_date($r["datemi"]) . " &nbsp;</td>";
                             // Colonna Cliente

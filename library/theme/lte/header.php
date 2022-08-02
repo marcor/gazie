@@ -486,7 +486,7 @@ setInterval(menu_check_from_modules,<?php echo intval((int)$period*60000);?>);
                                     <li class="user-body">
                                       <a href="../config/admin_aziend.php">
                                         <div class="col-xs-12 text-center">
-                                          <img class="img-circle" src="../../modules/root/view.php?table=aziend&value=<?php echo $admin_aziend['company_id']; ?>" width=140 alt="Logo" border="0" >
+                                          <img class="img-circle dit-picture" src="../../modules/root/view.php?table=aziend&value=<?php echo $admin_aziend['company_id']; ?>" height=100 alt="Logo" border="0" >
                                         </div>
                                         <div class="col-xs-12">
                                           <?php echo $admin_aziend['ragso1'] . " " . $admin_aziend['ragso2']; ?>

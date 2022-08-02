@@ -270,9 +270,6 @@ section.content {
 	opacity: 1;
 	filter: alpha(opacity=100);
 }
-.form-control {
-
-}
 .img-circle.dit-picture,.text-center>a>.img-circle{
 	border-radius: 10px;
 }

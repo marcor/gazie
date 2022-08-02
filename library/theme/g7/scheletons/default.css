@@ -16,6 +16,9 @@ input, select {
 input[type=number] {
     text-align:center;
 }
+.img-circle.dit-picture,.text-center>a>.img-circle{
+	border-radius: 10px;
+}
 .usr-picture {
   margin: 10px;
   height: 150px;
