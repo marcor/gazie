@@ -261,12 +261,12 @@ section.content {
 	padding-top: 1px;
 }
 .admin_footer {
-    margin-top: 30px;
+  margin-top: 30px;
 	opacity: 0.5;
 	filter: alpha(opacity=50);
 }
 .admin_footer:hover {
-    margin-top: 30px;
+  margin-top: 30px;
 	opacity: 1;
 	filter: alpha(opacity=100);
 }
@@ -277,8 +277,11 @@ section.content {
 	border-radius: 10px;
 }
 .usr-picture {
-    width: 200px;
-	/*max-width: 200px;*/
+  margin: 10px;
+  height: 150px;
+	max-width: 100%;
+  box-shadow: 0 0 5px 5px;
+  border-radius: 50%;
 }
 .btn {
 	white-space: unset;

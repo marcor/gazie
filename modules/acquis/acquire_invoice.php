@@ -734,6 +734,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$DatiDDT=$doc->getElementsByTagName('DatiDDT');
 				$ctrl_NumeroDDT='';
 				$acc_DataDDT=[];
+        $first=true;
 				foreach ($DatiDDT as $valDatiDDT) { // attraverso DatiDDT
 					$RiferimentoNumeroLinea=$valDatiDDT->getElementsByTagName('RiferimentoNumeroLinea');
 					$numddt=preg_replace('/\D/', '',$valDatiDDT->getElementsByTagName('NumeroDDT')->item(0)->nodeValue);
@@ -749,15 +750,6 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					foreach ($RiferimentoNumeroLinea as $valRiferimentoNumeroLinea) { // attraverso RiferimentoNumeroLinea
             if (isset($nl_NumeroLinea[$valRiferimentoNumeroLinea->nodeValue])){//se esiste la linea indicata dal 'RiferimentoNumeroLinea'
               $nl = $nl_NumeroLinea[$valRiferimentoNumeroLinea->nodeValue];
-              if ($numddt!=$ctrl_NumeroDDT){ // è cambiato controllo, se il rigo che precede questo è un descritto e non ha un riferimento a ddt glielo assegno
-                if (isset($form['rows'][$nl-1]['is_descri'])&&$form['rows'][$nl-1]['is_descri']){
-                  $form['rows'][$nl-1]['NumeroDDT']=$numddt;
-                  $form['rows'][$nl-1]['DataDDT']=$dataddt;
-                  $form['rows'][$nl-1]['exist_ddt']=false;
-                  // è stato assegnato ad un DdT lo rimuovo dall'array $nl_NumeroLinea
-                  unset($nl_NumeroLinea[$form['rows'][$nl-1]['numrig']]);
-                }
-              }
               if (isset($form['clfoco'])&&$existDdT){
                 $form['rows'][$nl]['exist_ddt']=$existDdT;
               } else {
@@ -768,16 +760,17 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
               $form['numddt_'.($nl-1)]=$numddt;
               // è stato assegnato ad un DdT lo rimuovo dall'array $nl_NumeroLinea in modo da poter, eventualmente trattare questi successivamente
               unset($nl_NumeroLinea[$form['rows'][$nl]['numrig']]);
+              $first=false;
               $ctrl_NumeroDDT=$numddt;
             }
 					}
 					$ctrl_NumeroDDT=$numddt;
 					$ctrl_DataDDT=$dataddt;
 				}
-        $first=true;
+
         $numddt_tolast=false;
 				foreach($nl_NumeroLinea as $nl){ // in questo mi ritrovo i righi non assegnati ai ddt specifici (potrebbero essere anche tutti), alcune fatture malfatte non specificano i righi!
-					// in $nl ho l'indice del rigo non assegnato ad alcun DdT
+        // in $nl ho l'indice del rigo non assegnato ad alcun DdT
           if ( count($acc_DataDDT) >= 2 ){ // se la fattura contiene più DDT allora obbligo l'utente a riferirli bene
             // qui distinguo se sono al primo refresh dopo l'upload del file
             if ( empty($_POST['Submit_file']) && !isset($_POST['Select_doc']) && !isset($_POST['resetDdT']) ) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati  dall'utente a meno che sia stato chiesto un reset
@@ -806,7 +799,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
                 $form['rows'][$nl]['DataDDT'] = false;
                 $form['numddt_'.($nl-1)]=$acc_DataDDT[$firstDdT[0]]['Numero'];
               } else {
-                $form['numddt_'.($nl-1)]=false;
+                $form['numddt_'.($nl-1)] = isset($form['numddt_'.($nl-2)])?$form['numddt_'.($nl-2)]:false; // se c'è propongo il rigo che lo precede
               }
             }
           } else { // se la fattura contiene un solo DDT a riferimento allora tutti i righi saranno suoi anche se non riferiti bene, e pertanto non è anomalo
@@ -816,7 +809,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
           }
           $form['rows'][$nl]['exist_ddt']=isset($acc_DataDDT[$form['numddt_'.($nl-1)]]['Exist'])?$acc_DataDDT[$form['numddt_'.($nl-1)]]['Exist']:false;
           if (empty($anomalia) && !$form['rows'][$nl]['NumeroDDT']){
-            $anomalia = 'Anomalia fattura con DdT senza riferimenti sui righi, non è possibile la conferma fino a quando non vengono selezionati tutti';
+            $anomalia = 'Anomalia fattura con DdT con riferimenti sui righi mancanti, selezionare e accettare le scelte prima di cofermare';
           }
           $first=false;
           $resetDdT=true;
@@ -1562,8 +1555,23 @@ if ($toDo=='insert' || $toDo=='update' ) {
             }
             echo '<input type="hidden" name="'.'numddt_'.$k.'" value="'.(isset($form['numddt_'.$k])?$form['numddt_'.$k]:$ctrl_ddt).'" />';
           } else { // qui segnalo le anomalie e faccio le richieste di intervento dell'utente
-            $ctrl_ddt='';
-            $rowshead[$k]='<td colspan=14 class="bg-danger text-danger">'.concileDdT('numddt_'.$k,$form['numddt_'.$k],$acc_DataDDT).' Sul rigo '.($k+1).' manca il riferimento al numero di DdT indicato sulla fattura, &egrave; richiesta la selezione</td>';
+            if ( $v['NumeroDDT']){
+              if ($ctrl_ddt!=$v['NumeroDDT']) { // salto DdT
+                $exist_ddt='';
+                if ($v['exist_ddt']){ // ho un ddt d'acquisto già inserito
+                  $exist_ddt='<span class="warning"> gi&agrave; inserito in data '.gaz_format_date($v['exist_ddt']['datreg']).' <a class="btn btn-xs btn-success" href="admin_docacq.php?id_tes='. $v['exist_ddt']['id_tes'] . '&Update"><i class="glyphicon glyphicon-edit"></i>&nbsp;'.$v['exist_ddt']['id_tes'].'</a></span>';
+                  $tipddt=$v['exist_ddt']['tipdoc'];
+                } else {
+                  $tipddt="Ddt";
+                }
+                $ctrl_ddt=$v['NumeroDDT'];
+                $rowshead[$k]='<td colspan=14><b>da DdT n.'.$v['NumeroDDT'].' del '.gaz_format_date($v['DataDDT']).' '.$exist_ddt.'</b></td>';
+              }
+              echo '<input type="hidden" name="'.'numddt_'.$k.'" value="'.(isset($form['numddt_'.$k])?$form['numddt_'.$k]:$ctrl_ddt).'" />';
+            } else {
+              $ctrl_ddt='';
+              $rowshead[$k]='<td colspan=14 class="bg-danger text-danger">'.concileDdT('numddt_'.$k,$form['numddt_'.$k],$acc_DataDDT).' Sulla fattura manca il riferimento al DdT del rigo '.($k+1).'  accetta la proposta o cambia la selezione</td>';
+            }
           }
         }
 				if ($new_acconcile>100000000){
@@ -1643,18 +1651,19 @@ if ($toDo=='insert' || $toDo=='update' ) {
 			</div>
 			<?php
       if ($resetDdT) {
-        echo '<div class="col-sm-1"><input name="resetDdT" type="submit" class="btn btn-warning" value="Annulla scelte DdT"></div>';
+        echo '<div class="col-sm-2"><input name="resetDdT" type="submit" class="btn btn-warning" value="Annulla scelte DdT"></div>';
+        echo '<div class="col-sm-2 text-center"><input name="ychoice" type="submit" class="btn btn-success" value="Accetta"></div>';
       } else {
-        echo '<div class="col-sm-1"></div>';
+        echo '<div class="col-sm-2"></div>';
       }
 			if (!empty($anomalia)) { // La FAE non ha i riferimenti linea nei ddt
-				echo '<div class="col-sm-7 text-danger bg-warning text-right"><b>'.$anomalia.'</b></div>';
+				echo '<div class="col-sm-5 text-danger bg-warning text-right">'.$anomalia.'</div>';
 			} else {
- 				echo '<div class="col-sm-7 text-danger bg-warning text-right"></div>';
+ 				echo '<div class="col-sm-5 text-danger bg-warning text-right"></div>';
 
       }	?>
 
-				<div class="col-sm-1 text-left">
+				<div class="col-sm-1">
 					<input name="Submit_form" type="submit"
           <?php
 					if ($anomalia!=""){ // La FAE non ha i riferimenti linea nei ddt

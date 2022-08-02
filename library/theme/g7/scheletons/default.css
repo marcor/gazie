@@ -17,9 +17,11 @@ input[type=number] {
     text-align:center;
 }
 .usr-picture {
-    width: 150px;
-    box-shadow: 0 0 5px 5px;
-    border-radius: 48%;
+  margin: 10px;
+  height: 150px;
+	max-width: 100%;
+  box-shadow: 0 0 5px 5px;
+  border-radius: 50%;
 }
 #loader-icon {
     position:fixed;
