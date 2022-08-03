@@ -40,7 +40,7 @@ if ( !isset($_POST['hidden_req']) && isset($_GET['id_tes']) && intval($_GET['id_
 	$form['transfer_fees'] = 0.00;
     $form['description'] = $tesmov['descri'];
 	// riprendo i righi per valorizzare eventuali costi e singoli bonifici
-	$rs = gaz_dbi_dyn_query("*", $gTables['rigmoc']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['rigmoc'].".codcon = ".$gTables['clfoco'].".codice LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id", 
+	$rs = gaz_dbi_dyn_query("*", $gTables['rigmoc']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['rigmoc'].".codcon = ".$gTables['clfoco'].".codice LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id",
 	"id_tes = ".$form['id_tes'], 'id_rig');
 	$form['rows']=[];
     while ($r = gaz_dbi_fetch_array($rs)) { // propongo il form degli stipendi in base ai dati presnti sul db
@@ -67,7 +67,7 @@ if ( !isset($_POST['hidden_req']) && isset($_GET['id_tes']) && intval($_GET['id_
     require("lang." . $admin_aziend['lang'] . ".php");
     $script_transl = $strScript['pay_salary.php'];
     $form['description'] = $script_transl['description_value'];
-	$rs = gaz_dbi_dyn_query("*", $gTables['staff']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['staff'].".id_clfoco = ".$gTables['clfoco'].".codice LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id", 
+	$rs = gaz_dbi_dyn_query("*", $gTables['staff']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['staff'].".id_clfoco = ".$gTables['clfoco'].".codice LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id",
 	" (start_date <= '".gaz_format_date($form['entry_date'],true)."' OR start_date IS NULL) AND (end_date IS NULL OR end_date > '".gaz_format_date($form['entry_date'],true)."' - INTERVAL 3 MONTH OR end_date <= '2010-01-01')", 'id_contract');
 	$form['rows']=[];
     while ($r = gaz_dbi_fetch_array($rs)) { // propongo il form degli stipendi in base ai dati presnti sul db
@@ -149,7 +149,7 @@ if ( !isset($_POST['hidden_req']) && isset($_GET['id_tes']) && intval($_GET['id_
 					$rig_id = rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'D', 'codcon' => $k, 'import' => $v['amount']));
 				}
           }
-          if ($form['transfer_fees'] >= 0.01 && $form['transfer_fees_acc'] > 100000000) { // ho le spese bancarie 
+          if ($form['transfer_fees'] >= 0.01 && $form['transfer_fees_acc'] > 100000000) { // ho le spese bancarie
             rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'D', 'codcon' => $form['transfer_fees_acc'], 'import' => $form['transfer_fees']));
 			$tot += $form['transfer_fees'];
           }
@@ -282,7 +282,7 @@ $upd=($form['id_tes']>0)?'_upd':'';
 				$tot+=$v['amount'];
                 $class = 'check_other';
 				if (strlen($v['iban'])==27) {
-                    $class = 'check_payr'; 
+                    $class = 'check_payr';
                 }
 				echo '<input type="hidden" value="'.$v['ragso1'].'" name="rows['.$k.'][ragso1]" />';
 				echo '<input type="hidden" value="'.$v['ragso2'].'" name="rows['.$k.'][ragso2]" />';
@@ -302,9 +302,9 @@ $upd=($form['id_tes']>0)?'_upd':'';
                         <div class="col-xs-4"><input type="number" step="0.01" min="0.00" max="99999.99" chk_id="<?php echo $k; ?>" name="rows[<?php echo $k?>][amount]" value="<?php echo $v['amount'];?>" class="text-right"/>
                         </div>
 						<div class="col-xs-1 text-right">
-							<input type="checkbox" class="<?php echo $class; ?>" value="<?php echo $v['check_status']; ?>" id="<?php echo $k; ?>" name="rows[<?php echo $k?>][check_status]" <?php echo (!strlen($v['iban'])==27)?'disabled title="Inserire IBAN del fornitore"':''; echo ($v['check_status'])?'checked':false; ?>>                
+							<input type="checkbox" class="<?php echo $class; ?>" value="<?php echo $v['check_status']; ?>" id="<?php echo $k; ?>" name="rows[<?php echo $k?>][check_status]" <?php echo (!strlen($v['iban'])==27)?'disabled title="Inserire IBAN del fornitore"':''; echo ($v['check_status'])?'checked':false; ?>>
 						</div>
-						
+
 						</div>
 					</div>
 					</div><!-- chiude row  -->
@@ -312,8 +312,8 @@ $upd=($form['id_tes']>0)?'_upd':'';
             }
             ?>
             <div class="row">
-                <div class="col-md-12 text-center">
-                <input class="bg-danger" id="preventDuplicate" onClick="chkSubmit();" type="submit" name="ins" value="insert" btn-text="<?php echo $script_transl['confirm_entry'.$upd].' '.$script_transl['total']; ?>"/>
+                <div class="col-xs-12 text-center">
+                <input class="btn btn-warning" id="preventDuplicate" onClick="chkSubmit();" type="submit" name="ins" value="insert" btn-text="<?php echo $script_transl['confirm_entry'.$upd].' '.$script_transl['total']; ?>"/>
                 </div>
             </div><!-- chiude row  -->
         </div> <!-- chiude container -->

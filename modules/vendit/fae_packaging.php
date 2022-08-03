@@ -36,6 +36,7 @@ $invoices = $gForm->getFAEunpacked();
 $inipackable=(count($invoices)>1)?$invoices['head']:[];
 
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
+  $form['ritorno'] = $_SERVER['HTTP_REFERER'];
 	$ultimo_progressivo_invio = $gForm->getLastPack();
 	$progressivo_decimale=substr((decodeFromSendingNumber($ultimo_progressivo_invio,36)+1),-2); // aggiungo 1 al numero in base dieci dell'ultimo progressivo
 	// inizio formattazione popolando l'array con valori adatti a quanto si aspetta la funzione encodeSendingNumber
@@ -52,6 +53,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 } else {    // accessi successivi
 	$form['filename'] = substr($_POST['filename'],0,37);
 	$form['hidden_req'] = htmlentities($_POST['hidden_req']);
+  $form['ritorno'] = $_POST['ritorno'];
 	$form['packable']=$_POST['packable'];
 	if (isset($_POST['packet']) && empty($msg)) {   //confermo la contabilizzazione
 		if (count($invoices['data']) > 0) {
@@ -111,7 +113,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 
 				}
 				$zip->close();
-				header("Location: report_fae_sdi.php");
+        header("Location: " . $form['ritorno']);
 			} else {
 				echo 'La creazione del pacchetto è fallita!';
 			}
@@ -134,9 +136,7 @@ $script_transl = HeadMain('','','fae_packaging');
 <form method="POST">
 <input type="hidden" value="<?php echo $form['hidden_req']; ?>" name="hidden_req" />
 <input type="hidden" value="<?php echo $form['filename']; ?>" name="filename" />
-
-<?php
-?>
+<input type="hidden" value="<?php echo $form['ritorno']; ?>" name="ritorno" />
 <div class="panel panel-info table-responsive">
 <table class="Tmiddle table-striped" align="center">
 <?php

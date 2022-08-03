@@ -272,6 +272,7 @@ section.content {
 }
 .img-circle.dit-picture,.text-center>a>.img-circle{
 	border-radius: 10px;
+	max-width: 100%;
 }
 .usr-picture {
   margin: 10px;
