@@ -803,3 +803,7 @@ form table.GazFormDeleteTable {
   padding-left: 0px !important;
   padding-right: 0px !important;
 }
+#fattura-elettronica {
+	background-color: #fffff9;
+	padding-top: 20px;
+}

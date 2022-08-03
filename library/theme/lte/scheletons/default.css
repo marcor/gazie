@@ -646,3 +646,7 @@ section.content-header div h1 {
 	margin-left: auto;
 	margin-right: auto;
 }
+#fattura-elettronica {
+	background-color: #fffff9;
+	padding-top: 20px;
+}
