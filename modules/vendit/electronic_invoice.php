@@ -34,6 +34,8 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
 	if ($testata['tipdoc']=='VCO'){ // in caso di fattura allegata a scontrino mi baso solo sull'id_tes
 		$where="id_tes = ".$id_testata;
 	}
+} elseif (isset($_GET['zn'])) { // nel caso abbia lo zip
+	$where="filename_zip_package = '".substr($_GET['zn'], 0, 37)."'";
 } else { // in tutti gli altri casi devo passare i valori su $_GET
   if (!isset($_GET['protoc']) || !isset($_GET['year']) || !isset($_GET['seziva'])) {
     header("Location: report_docven.php");
@@ -84,9 +86,21 @@ if (isset($_GET['reinvia'])) {   //se viene richiesto un reinvio con altro nome 
       }
     } elseif(file_exists('../../library/'.$namelib.'/SendFaE.php'))  { // modalità catsrl
       require('../../library/'.$namelib.'/SendFaE.php');
-      // invio tramite le funzioni  della classe per la sincronizzazione con SdI
+      $zn = substr($_GET['zn'], 0, 37); // con questo metodo passo solo lo zip
+      $file_url = DATA_DIR.'files/' . $admin_aziend['codice'] . '/' . $zn;
+      $IdentificativiSdI = SendFattureElettroniche($file_url);
+      if (!empty($IdentificativiSdI)) {
+        if (is_array($IdentificativiSdI)) {
+          gaz_dbi_put_query($gTables['fae_flux'], "filename_zip_package = '" . $zn."'", "flux_status", "@@");
+          foreach ($IdentificativiSdI as $filename_ori=>$IdentificativoSdI) {
+            gaz_dbi_put_query($gTables['fae_flux'], "filename_ori = '" . $filename_ori."'", "id_SDI", $IdentificativoSdI);
+          }
+        } else {
+          echo '<p>' . print_r($IdentificativiSdI, true) . '</p>';
+        }
+      }
+      header('Location: report_fae_sdi.php?post_xml_result=OK');
     }
-
   }
 }
 
