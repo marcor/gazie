@@ -160,6 +160,7 @@ a, .panel-info {
 }
 .bg-info {
 	background-color: #0d3346;
+  color: aqua;
 }
 .bg-success {
 	background-color: #0b1e07;
@@ -240,11 +241,6 @@ nav.navbar.navbar-static-top.company-color-bright {
 }
 .modal .panel-body {
 	color: #fdf8cc;
-}
-div#fattura-container {
-	background-color: #fff;
-	padding: 30px;
-	color: #000;
 }
 .nav-pills > li,.nav-tabs > li {
 	border-top: 1px solid #d8eff9;

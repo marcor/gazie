@@ -161,6 +161,7 @@ a, .panel-info {
 }
 .bg-info {
 	background-color: #0d3346;
+  color: aqua;
 }
 .bg-success {
 	background-color: #0b1e07;
