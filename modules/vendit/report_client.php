@@ -33,34 +33,26 @@ $mascli = $clienti . "000000";
 
 // campi ammissibili per la ricerca
 $search_fields = [
-    'codice'
-    => "codice = $mascli + %d",
-
-    'nome'
-    => "CONCAT(ragso1, ragso2) LIKE '%%%s%%'",
-
-    'codmin'
-    => "codice >= $mascli + GREATEST(%d, 1)",
-
-    'codmax'
-    => "codice <= $mascli + LEAST(%d, 999999)",
-
-    'sexper'
-    => "sexper = '%s'"
+  'codice' => "codice = $mascli + %d",
+  'nome' => "CONCAT(ragso1, ragso2) LIKE '%%%s%%'",
+  'idfisc' => "CONCAT(codfis, pariva) LIKE '%%%s%%'",
+  'codmin' => "codice >= $mascli + GREATEST(%d, 1)",
+  'codmax' => "codice <= $mascli + LEAST(%d, 999999)",
+  'sexper' => "sexper = '%s'"
 ];
 
 // creo l'array (header => campi) per l'ordinamento dei record
 $sortable_headers = array(
-    "Codice" => "codice",
-    "Ragione Sociale" => "ragso1",
-    "Tipo" => "sexper",
-    "Citt&agrave;" => "citspe",
-    "Telefono" => "telefo",
-    "P.IVA - C.F." => "",
-    "Privacy" => "",
-    "Riscuoti" => "",
-    "Visualizza <br /> e/o stampa" => "",
-    "Cancella" => ""
+  "Codice" => "codice",
+  "Ragione Sociale" => "ragso1",
+  "Tipo" => "sexper",
+  "Citt&agrave;" => "citspe",
+  "Telefono" => "telefo",
+  "P.IVA - C.F." => "",
+  "Privacy" => "",
+  "Riscuoti" => "",
+  "Visualizza <br /> e/o stampa" => "",
+  "Cancella" => ""
 );
 
 require("../../library/include/header.php");
@@ -149,15 +141,13 @@ $(function() {
                 &nbsp;
             </td>
             <td class="FacetFieldCaptionTD">
+                <?php gaz_flt_disp_int("idfisc", "C.F. o P.I."); ?>
+            </td>
+            <td class="FacetFieldCaptionTD">
                 &nbsp;
             </td>
             <td class="FacetFieldCaptionTD">
                 &nbsp;
-                <?php // gaz_flt_disp_int("codmin", "Min"); ?>
-            </td>
-            <td class="FacetFieldCaptionTD">
-                &nbsp;
-                <?php // gaz_flt_disp_int("codmax", "Max"); ?>
             </td>
             <td class="FacetFieldCaptionTD">
                 <input type="submit" class="btn btn-sm btn-default" name="search" value="Cerca" tabindex="1" >

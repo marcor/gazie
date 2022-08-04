@@ -33,36 +33,28 @@ $masfor = $fornit . "000000";
 
 // campi ammissibili per la ricerca
 $search_fields = [
-    'codice'
-    => "codice LIKE '$fornit%%%d%%'",
-    'nome'
-    => "CONCAT(ragso1, ragso2) LIKE '%%%s%%'",
-    'tipo'
-    => "sexper = '%s'",
-    'citta'
-    => "citspe = '%s'",
-    'telefono'
-    => "telefo LIKE '%%%s%%'",
-    'fiscali'
-    => "(codfis LIKE '%%%1\$s%%' OR pariva LIKE '%%%1\$s%%')",
-    'codmin'
-    => "codice >= $masfor + GREATEST(%d, 1)",
-    'codmax'
-    => "codice <= $masfor + LEAST(%d, 999999)"
+  'codice' => "codice LIKE '$fornit%%%d%%'",
+  'nome' => "CONCAT(ragso1, ragso2) LIKE '%%%s%%'",
+  'tipo' => "sexper = '%s'",
+  'citta' => "citspe = '%s'",
+  'telefono' => "telefo LIKE '%%%s%%'",
+  'idfisc' => "CONCAT(codfis, pariva) LIKE '%%%s%%'",
+  'codmin' => "codice >= $masfor + GREATEST(%d, 1)",
+  'codmax' => "codice <= $masfor + LEAST(%d, 999999)"
 ];
 
 // creo l'array (header => campi) per l'ordinamento dei record
 $sortable_headers = array(
-    "Codice" => "codice",
-    "Ragione sociale" => "ragso1",
-    "Tipo" => "sexper",
-    "Citt&agrave;" => "citspe",
-    "Telefono" => "",
-    "P.IVA - C.F." => "",
-    "Privacy" => "" ,
-    "Paga" => "" ,
-    "Visualizza<br> e/o stampa" => "",
-    "Cancella" => ""
+  "Codice" => "codice",
+  "Ragione sociale" => "ragso1",
+  "Tipo" => "sexper",
+  "Citt&agrave;" => "citspe",
+  "Telefono" => "",
+  "P.IVA - C.F." => "",
+  "Privacy" => "" ,
+  "Paga" => "" ,
+  "Visualizza<br> e/o stampa" => "",
+  "Cancella" => ""
 );
 
 require("../../library/include/header.php");
@@ -130,46 +122,46 @@ $(function() {
 <div class="table-responsive">
 <table class="Tlarge table table-striped table-bordered table-condensed">
 	<tr>
-	    <td class="FacetFieldCaptionTD">
-                <?php gaz_flt_disp_int("codice", "Cerca cod."); ?>
-	    </td>
-	    <td class="FacetFieldCaptionTD">
-                <?php gaz_flt_disp_int("nome", "Ragione Sociale"); ?>
-	    </td>
-	    <td class="FacetFieldCaptionTD">
-		<select class="form-control input-sm" name="tipo" onchange="this.form.submit()">
-                    <?php
-                    if (!isset($tipo)) $tipo = "";
-                    foreach(['' => $script_transl['tuttitipi'],
-                             'G' => 'Giuridica',
-                             'M' => 'Maschio',
-                             'F' => 'Femmina'] as $t => $desc) {
-                        echo "<option value='$t' " . (($t == $tipo) ? "selected" : "") . ">$desc</option>";
-                    };
-                    ?>
-		</select>
-	    </td>
+	  <td class="FacetFieldCaptionTD">
+      <?php gaz_flt_disp_int("codice", "Cerca cod."); ?>
+	  </td>
+	  <td class="FacetFieldCaptionTD">
+      <?php gaz_flt_disp_int("nome", "Ragione Sociale"); ?>
+	  </td>
+	  <td class="FacetFieldCaptionTD">
+      <select class="form-control input-sm" name="tipo" onchange="this.form.submit()">
+        <?php
+        if (!isset($tipo)) $tipo = "";
+        foreach(['' => $script_transl['tuttitipi'],
+                'G' => 'Giuridica',
+                'M' => 'Maschio',
+                'F' => 'Femmina'] as $t => $desc) {
+            echo "<option value='$t' " . (($t == $tipo) ? "selected" : "") . ">$desc</option>";
+        };
+        ?>
+      </select>
+	  </td>
 		<td class="FacetFieldCaptionTD">
-                    <?php
-                        gaz_flt_disp_select("citta", "citspe as citta",
-					    $partners,
-					    $ts->where, "citspe ASC");
-                    ?>
+    <?php
+      gaz_flt_disp_select("citta", "citspe as citta",
+		  $partners,
+		  $ts->where, "citspe ASC");
+    ?>
 		</td>
 		<td class="FacetFieldCaptionTD">
-                    <?php gaz_flt_disp_int("telefono", "Cerca tel."); ?>
+    <?php gaz_flt_disp_int("telefono", "Cerca tel."); ?>
 		</td>
 		<td class="FacetFieldCaptionTD">
-	            <?php gaz_flt_disp_int("fiscali", "Cerca fisc."); ?>
+    <?php gaz_flt_disp_int("idfisc", "C.F. o P.I."); ?>
 		</td>
 		<td class="FacetFieldCaptionTD"></td>
 		<td class="FacetFieldCaptionTD"></td>
 		<td class="FacetFieldCaptionTD">
-                    <input type="submit" class="btn btn-sm btn-default" name="search" value="Cerca" tabindex="1" />
-                    <?php $ts->output_order_form(); ?>
+      <input type="submit" class="btn btn-sm btn-default" name="search" value="Cerca" tabindex="1" />
+      <?php $ts->output_order_form(); ?>
 		</td>
 		<td class="FacetFieldCaptionTD" colspan="1">
-		    <a class="btn btn-sm btn-default" href="?">Reset</a>
+      <a class="btn btn-sm btn-default" href="?">Reset</a>
 		</td>
 	</tr>
 <tr>

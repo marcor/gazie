@@ -22,11 +22,8 @@ body {
 th {
     background-color: #201e1d;
 }
-th a {
-    color: #fff;
-}
 th a:hover {
-    color: #eee;
+    color: #ffa906;
 }
 .main-footer {
 	background: #444;
