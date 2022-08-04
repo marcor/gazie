@@ -16,14 +16,11 @@ body {
     border-color: #000;
 }
 .FacetFieldCaptionTD {
-    background-color: #c4c7caab;
+    background-color: #9b9b8aab;
     color: #000;
 }
 th {
     background-color : #c4c7ca;
-}
-th a {
-    color: #000;
 }
 th a:hover {
     color: #eee;

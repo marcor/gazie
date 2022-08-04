@@ -198,19 +198,19 @@ $ts->output_navbar();
 	<div class="table-responsive">
     <table class="Tlarge table table-striped table-bordered table-condensed ">
 	<tr>
-	<tr>
-		<td class="FacetFieldCaptionTD">
+	<tr class="FacetFieldCaptionTD">
+		<td>
 			<input type="text" name="asset" placeholder="id" class="input-sm form-control" value="<?php echo (isset($asset))? $asset : ""; ?>" maxlength="15">
 		</td>
-		<td class="FacetFieldCaptionTD">
+		<td>
 			<input type="text" name="descri" placeholder="descrizione" class="input-sm form-control" value="<?php echo (isset($descri))? $descri : ""; ?>" maxlength="15">
     </td>
-		<td class="FacetFieldCaptionTD">
+		<td>
     </td>
-		<td class="FacetFieldCaptionTD">
+		<td>
 			<input type="text" name="ainfo" placeholder="add_info" class="input-sm form-control" value="<?php echo (isset($ainfo))? $ainfo : ""; ?>" maxlength="15">
     </td>
-		<td class="FacetFieldCaptionTD" colspan="12">
+		<td  colspan="12">
 			<input type="submit" class="btn btn-sm btn-default" name="search" value="<?php echo $script_transl['search'];?>" onClick="javascript:document.report.all.value=1;">
 			<a class="btn btn-sm btn-default" href="?">Reset</a>
 			<?php  $ts->output_order_form(); ?>

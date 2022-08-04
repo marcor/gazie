@@ -472,6 +472,30 @@ $(function(){
 		});
 		$("#dialog_module_card" ).dialog( "open" );
 	});
+  $('#login-password, #user_password_new, #user_password_ver').keypress(function(e) {
+    var s = String.fromCharCode( e.which );
+    var pfield = $(this).position();
+    if ((s.toUpperCase() === s && s.toLowerCase() !== s && !e.shiftKey) || (s.toUpperCase() !== s && s.toLowerCase() === s && e.shiftKey)){
+      if ($(this).parent().find('#capsalert').length < 1) {
+        $('#capsalert').remove();
+        $(this).after('<b id="capsalert" onclick="$(this).remove();">Caps-Lock on! Lettere maiuscole !</b>');
+        $('#capsalert')
+          .css('position', 'absolute')
+          .css('top', (pfield.top + $(this).outerHeight() + 1) + 'px')
+          .css('left', (pfield.left) + 'px')
+          .css('border-radius', '5px')
+          .css('padding', '5px')
+          .css('cursor', 'pointer')
+          .css('background-color', '#ffe599')
+          .css('border', '1px solid #e6ab00');
+        setTimeout(function(){
+          $('#capsalert').remove();
+        },'5000');
+      }
+    } else {
+      $('#capsalert').remove();
+    }
+  });
 });
 </script>
 <form method="POST" enctype="multipart/form-data"  autocomplete="off">
@@ -623,11 +647,6 @@ if ($toDo == 'insert') {
 <tr>
 <td class="FacetFieldCaptionTD"><?php echo $script_transl['user_password_old'] ?></td>
 <td colspan="2" class="FacetDataTD"><input title="Vecchia password" type="password" id="login-password" name="user_password_old" value="<?php echo $form["user_password_old"]; ?>" maxlength="40" class="FacetInput" id="ppass" /><div class="FacetDataTDred" id="pmsg"></div>&nbsp;</td>
-</tr>
-<tr>
-<td class="FacetFieldCaptionTD" colspan="3">
-<div id="capsWarning" class="alert alert-warning col-sm-12" style="display:none;">Blocco maiuscole attivato! Caps lock on! Bloqueo de mayusculas!</div>
-</td>
 </tr>
 <tr>
 <td class="FacetFieldCaptionTD"><?php echo $script_transl['user_password_new']; ?> </td>
