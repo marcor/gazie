@@ -33,6 +33,7 @@ $stato_lavorazione = array(0 => "aperto", 1 => "in attesa", 2 => "in lavorazione
 $search_fields = [
     'asset' => "id = %d",
     'descri' => "description LIKE '%%%s%%'",
+    'ainfo' => "add_info LIKE '%%%s%%'",
     'camp' => "campo_impianto = %d",
 ];
 
@@ -203,7 +204,12 @@ $ts->output_navbar();
 		</td>
 		<td class="FacetFieldCaptionTD">
 			<input type="text" name="descri" placeholder="descrizione" class="input-sm form-control" value="<?php echo (isset($descri))? $descri : ""; ?>" maxlength="15">
-        </td>
+    </td>
+		<td class="FacetFieldCaptionTD">
+    </td>
+		<td class="FacetFieldCaptionTD">
+			<input type="text" name="ainfo" placeholder="add_info" class="input-sm form-control" value="<?php echo (isset($ainfo))? $ainfo : ""; ?>" maxlength="15">
+    </td>
 		<td class="FacetFieldCaptionTD" colspan="12">
 			<input type="submit" class="btn btn-sm btn-default" name="search" value="<?php echo $script_transl['search'];?>" onClick="javascript:document.report.all.value=1;">
 			<a class="btn btn-sm btn-default" href="?">Reset</a>
