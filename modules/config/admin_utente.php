@@ -478,7 +478,7 @@ $(function(){
     if ((s.toUpperCase() === s && s.toLowerCase() !== s && !e.shiftKey) || (s.toUpperCase() !== s && s.toLowerCase() === s && e.shiftKey)){
       if ($(this).parent().find('#capsalert').length < 1) {
         $('#capsalert').remove();
-        $(this).after('<b id="capsalert" onclick="$(this).remove();">Caps-Lock on! Lettere maiuscole !</b>');
+        $(this).after('<b id="capsalert" onclick="$(this).remove();">Lettere maiuscole attivo, Caps-Lock on!</b>');
         $('#capsalert')
           .css('position', 'absolute')
           .css('top', (pfield.top + $(this).outerHeight() + 1) + 'px')
