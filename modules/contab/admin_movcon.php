@@ -284,10 +284,6 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
 
 
     // Se viene inviata la richiesta di conferma della causale la carico con le relative contropartite...
-    /** ENRICO FEDELE */
-    /* Con button non funziona _x */
-    //if (isset($_POST['inscau_x'])) {
-    /** ENRICO FEDELE */
     if (isset($_POST['inscau'])) {
         // Se la descrizione è vuota e la causale è stata selezionata
         if (!empty($form['codcausale']) and empty($form['descrizion'])) {
@@ -502,41 +498,38 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
     }
     // Se viene inviata la richiesta di eliminazione, elimina il rigo iva
     if (isset($_POST['dei'])) {
-        $delri = key($_POST['dei']);
-        $cod = array_splice($form['codiva_ri'], $delri, 1);
-        array_splice($form['imponi_ri'], $delri, 1);
-        array_splice($form['impost_ri'], $delri, 1);
-        array_splice($form['operation_type_ri'], $delri, 1);
-        $_POST['rigiva'] --;
-        if (intval($form['reverse_charge']) >= 1) {
-            // se sto eliminando un rigo che aveva già generato un movimento in registro vendite lo dovrò eliminare
-            $form['reverse_charge'] = 'del';
-        } elseif (substr($form['reverse_charge'],0,2) == 'N6') {
-            // se sto eliminando un rigo che NON aveva  generato un movimento in registro vendite mi basta deselez
-            $ivarigo = gaz_dbi_get_row($gTables['aliiva'], "codice", $cod[0]);
-            if (substr($ivarigo['fae_natura'],0,2) == 'N6') {
-                $form['reverse_charge'] = '';
-            }
-        }
+      $delri = key($_POST['dei']);
+      $cod = array_splice($form['codiva_ri'], $delri, 1);
+      array_splice($form['imponi_ri'], $delri, 1);
+      array_splice($form['impost_ri'], $delri, 1);
+      array_splice($form['operation_type_ri'], $delri, 1);
+      $_POST['rigiva'] --;
+      if (intval($form['reverse_charge']) >= 1) {
+          // se sto eliminando un rigo che aveva già generato un movimento in registro vendite lo dovrò eliminare
+          $form['reverse_charge'] = 'del';
+      } elseif (substr($form['reverse_charge'],0,2) == 'N6') {
+          // se sto eliminando un rigo che NON aveva  generato un movimento in registro vendite mi basta deselez
+          $ivarigo = gaz_dbi_get_row($gTables['aliiva'], "codice", $cod[0]);
+          if (substr($ivarigo['fae_natura'],0,2) == 'N6') {
+              $form['reverse_charge'] = '';
+          }
+      }
     }
 
-    /* Se viene inviata la richiesta di bilanciamento dei righi contabili
-      aggiungo il valore pasato al primo rigo. E' un più rudimentale,
-      si potrebbe fare meglio e molto più intelligente, ma non ho tempo...
-     */
+    // Se viene inviata la richiesta di bilanciamento dei righi contabili aggiungo il valore pasato al primo rigo (rudimentale)  si potrebbe fare meglio e in modo più intelligente, ma non ho tempo...
     if (isset($_POST['balb'])) {
-        $bb = floatval($_POST['diffV']);
-        if ($bb > 0) { //eccesso in dare
-            $key = array_search('A', $form['darave_rc']);
-            if ($key || $key === 0) {
-                $form['importorc'][$key] += $bb;
-            }
-        } else {        //eccesso in avere
-            $key = array_search('D', $form['darave_rc']);
-            if ($key || $key === 0) {
-                $form['importorc'][$key] -= $bb;
-            }
+      $bb = floatval($_POST['diffV']);
+      if ($bb > 0) { //eccesso in dare
+        $key = array_search('A', $form['darave_rc']);
+        if ($key || $key === 0) {
+            $form['importorc'][$key] += $bb;
         }
+      } else {        //eccesso in avere
+        $key = array_search('D', $form['darave_rc']);
+        if ($key || $key === 0) {
+            $form['importorc'][$key] -= $bb;
+        }
+      }
     }
 
     // Se viene inviata la richiesta di conferma totale ...
@@ -1726,7 +1719,7 @@ echo "</script>\n";
 							<input class="col-sm-6" type="text" id="datliq" name="datliq" value="<?php echo $form['datliq']; ?>">
                         </div>
 						<div class="form-group col-md-6 col-lg-1 text-center">
-                             <button type="submit" class="btn btn-success btn-sm" name="adi" <?php echo $tabsmt; ?> ><?php echo $script_transl['addrow']; ?> <i class="glyphicon glyphicon-ok"></i></button>
+                             <button type="submit" class="btn btn-success btn-sm" name="adi" <?php echo $tabsmt; ?> ><?php echo $script_transl['addrow']; ?> IVA <i class="glyphicon glyphicon-ok"></i></button>
                         </div>
                     </div>
                 </div>
@@ -1884,7 +1877,7 @@ if ( $_POST['rigcon']>=1){
     echo "\t<td>\n";
     $gForm->variousSelect('insert_darave', $script_transl['daav_value'], $form['insert_darave'], 'FacetSelect', false);
     echo "\t </td>\n";
-    echo '  <td align="center"><button type="submit" class="btn btn-success btn-sm" name="add">'. $script_transl['addrow'] . '<i class="glyphicon glyphicon-ok"></i></button></td></tr>';
+    echo '  <td align="center"><button type="submit" class="btn btn-success btn-sm" name="add">'. $script_transl['addrow'] . ' contabile <i class="glyphicon glyphicon-ok"></i></button></td></tr>';
     echo '</table>';
     echo "</div>";
     echo '<br/><div class="text-center FacetFooterTD"><input name="ins" id="preventDuplicate" class="btn btn-warning" onClick="chkSubmit();" type="submit" ' . $i_but . ' tabindex="99" value="' . ucfirst($script_transl[$toDo]) . ' il movimento contabile"></div>';
