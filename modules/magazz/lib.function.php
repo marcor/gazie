@@ -341,7 +341,7 @@ class magazzForm extends GAzieForm {
 		$art=gaz_dbi_get_row($gTables['artico'], "codice", $codcomp);
 		$data=$this->getBOM($codcomp);
 		if (count($data)>=1){
-        echo '<div class="panel panel-default"><div class="panel-heading"><h4>Distinta base della composizione: '.$codcomp.'-'.$art['descri']."\n</h4>".'</div><div class="panel-body"><ul class="col-xs-12 col-md-11 col-lg-10">';
+        echo '<div class="panel panel-default"><div class="panel-heading"><h4>Distinta base della composizione: '.$codcomp.'-'.$art['descri']."\n</h4>".'</div><div class="panel-body"><ul class="col-xs-12 col-md-11 col-lg-10 distintabase">';
 		foreach($data as $k0=>$v0) {
 			$icona=(is_array($v0['codice_artico_base']))?'<a class="btn btn-xs btn-warning"><i class="glyphicon glyphicon-list"></i></a>':'';
 			echo '<li class="collapsible" id="'.$v0[2].'" data-toggle="collapse" data-target=".' . $v0[2] . '"><div style="background-color: #'.$color.'"><a class="btn btn-xs btn-success" href="admin_artico.php?Update&amp;codice=' . $v0[2] . '">'.$v0[2].'</a> - '.$v0['descri'].' '.$icona.' <span class="pull-right"> '.$v0['unimis'].': '.floatval($v0['quantita_artico_base']).'</span></div>';
@@ -412,7 +412,7 @@ class magazzForm extends GAzieForm {
 		$acc=$this->getLevelfromDB($codcomp);
 		$c='eeeeee';
 		if (count($acc)>=1){
-         echo '<div class="panel panel-default"><div class="panel-heading"><h4>'.$codcomp.'-'.$art['descri']. ' è un articolo contenuto nelle seguenti composizioni:</h4></div><div class="panel-body"><ul class="col-xs-12 col-md-11 col-lg-10">';
+         echo '<div class="panel panel-default"><div class="panel-heading"><h4>'.$codcomp.'-'.$art['descri']. ' è un articolo contenuto nelle seguenti composizioni:</h4></div><div class="panel-body"><ul class="col-xs-12 col-md-11 col-lg-10 distintabase">';
 		 foreach ($acc as $k0=>$v0){
 			//$icona=(is_array($v0['codice_artico_base']))?'<a class="btn btn-xs btn-info"><i class="glyphicon glyphicon-list"></i></a>':'';
 			echo '<li><div style="background-color: #'.$c.'"><a class="btn btn-xs btn-success" href="admin_artico.php?Update&amp;codice=' . $v0['codice'] . '">'.$v0['codice'].'</a> - '.$v0['descri'].'<span class="pull-right">  pz: '.floatval($v0['quantita_artico_base']).'</span></div>';

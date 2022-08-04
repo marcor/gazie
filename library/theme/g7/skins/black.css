@@ -25,11 +25,8 @@ mark {
 th {
     background-color: #201e1d;
 }
-th a {
-    color: #fff;
-}
 th a:hover {
-    color: #eee;
+    color: #f9b070;
 }
 .main-footer {
 	background: #444;
@@ -312,4 +309,7 @@ div#fattura-container {
 .ui-widget-content, .ui-widget-content a, .ui-autocomplete li.ui-menu-item {
 	color: #fdf0f0;
 	background-color: #25242d;
+}
+ul.distintabase {
+	color: #000;
 }
