@@ -1119,13 +1119,20 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
     $totpar = $totpar + $XMLvars->impbol;
   }
   $ex = new Expiry;
-  if ($XMLvars->totriport <= -0.01){  // se la fattura contiene dei righi di tipo 3 la cui somma è negativa ( ad esempio quando si vuole stornare dalle rate uno o più note credito
+  $totpagini=$totpag;
+  if ($XMLvars->totriport <= -0.01){  // se la fattura contiene dei righi di tipo 3 la cui somma è negativa ( ad esempio quando si vuole stornare dalle rate uno o più note credito) quello tolto dal
     $totpag += $XMLvars->totriport;
   }
   $ratpag = $ex->CalcExpiry($totpag, $XMLvars->tesdoc["datfat"], $XMLvars->pagame['tipdec'], $XMLvars->pagame['giodec'], $XMLvars->pagame['numrat'], $XMLvars->pagame['tiprat'], $XMLvars->pagame['mesesc'], $XMLvars->pagame['giosuc']);
   // echo  "<pre>",print_r($ratpag),echo  "</pre>";
   if ($XMLvars->totriport <= -0.01){  // se la fattura contiene dei righi di tipo 3 la cui somma è negativa ( ad esempio quando si vuole stornare dalle rate uno o più note credito) quello tolto dal calcolo delle rate lo aggiungo come valore ad una nuova scadenze
+    $ctrltot=round(($totpagini+$XMLvars->totriport),2);
     $ratpag[] = ['date'=>$XMLvars->tesdoc["datfat"],'amount'=>$XMLvars->totriport];
+    if ($ctrltot <= -0.01){ // ho uno storno negativo, salto completamente l'indicazione del pagamento
+      $ratpag=[];
+    } elseif($ctrltot==0.00){ // fattura stornata esattamente tutta
+      $ratpag=[0=>['date'=>$XMLvars->tesdoc["datfat"],'amount'=>$XMLvars->totriport]];
+    }
   }
 
   if ($XMLvars->pagame['numrat'] > 1) {
@@ -1456,7 +1463,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
         $el->appendChild($el1);
         $el1 = $domDoc->createElement("DataScadenzaPagamento", $v['date']); // 2.4.2.5
         $el->appendChild($el1);
-        $el1 = $domDoc->createElement("ImportoPagamento", -$v['amount']); // 2.4.2.6
+        $el1 = $domDoc->createElement("ImportoPagamento", number_format(-$v['amount'],2,'.','')); // 2.4.2.6
         $el->appendChild($el1);
       } else {
         $el1 = $domDoc->createElement("Beneficiario",
@@ -1466,7 +1473,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
         $el->appendChild($el1);
         $el1 = $domDoc->createElement("DataScadenzaPagamento", $v['date']); // 2.4.2.5
         $el->appendChild($el1);
-        $el1 = $domDoc->createElement("ImportoPagamento", $v['amount']); // 2.4.2.6
+        $el1 = $domDoc->createElement("ImportoPagamento", number_format($v['amount'],2,'.','')); // 2.4.2.6
         $el->appendChild($el1);
         if ($XMLvars->pagame['tippag'] == 'B') { // se il pagamento è una RiBa indico CAB e ABI
             $el1 = $domDoc->createElement("ABI", str_pad($XMLvars->banapp['codabi'], 5, '0', STR_PAD_LEFT)); // 2.4.2.14
