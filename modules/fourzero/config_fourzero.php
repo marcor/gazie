@@ -35,8 +35,8 @@ $script_transl = HeadMain();
       </div>
       <ul>
         <li>Il modulo <b>Industria 4.0</b> è sviluppato in base alle specifiche necessità delle aziende. </li>
-        <li>Vengono realizzati collegamenti ad-hoc con le macchine per le lavorazioni, i dispositivi di rilevamento, gli strumenti di misura e la sensoristica.</li>
-        <li>Ogni macchina genererà i reports delle lavorazioni eseguite e si interfaccerà con il modulo <b>Produzioni</b>
+        <li>Le macchine per le lavorazioni, i dispositivi di rilevamento, gli strumenti di misura, i sensori si avvalgono dei più svariati protocolli di comunicazione: OPC-UA, MQTT, ecc. GAzie tramite layer realizzati con Node Red, con linguaggi o programmi specifici consentirà l'invio e la ricezione di dati formattati all'occorrenza.</li>
+        <li>Il flusso su ogni dispositivo, monitorato, produrrà tutti i reports delle lavorazioni eseguite, dei valori misurati e si interfaccerà con il modulo <b>Produzioni</b>
         <li>Verranno ricordate le scadenze delle manutenzioni, delle revisioni, delle sostituzioni e le verifiche programmate.</li>
       </ul>
       <p class="text-info"> Se vuoi creare un sistema informativo su misura per la tua azienda o per qualsiasi altro chiarimento contatta l'autore:</p>
