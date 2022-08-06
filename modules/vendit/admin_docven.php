@@ -907,7 +907,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
             $_SESSION['template'] = '';
           }
           if (intval($backDocList)==0){ // tornare a nuovo inserimento
-            header("Location: admin_docven.php?Insert&tipdoc=". $form['tipdoc'] .".php");
+            header("Location: admin_docven.php?Insert&tipdoc=". $form['tipdoc']);
             exit;
           } else {// tornare a report
             if (substr($form['tipdoc'], 0, 1)=="D"){ // documento di trasporto
