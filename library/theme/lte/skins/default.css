@@ -154,7 +154,7 @@ td.ui-datepicker-other-month>a.ui-state-default.ui-priority-secondary{
 .gaz-table-form div.container-fluid div.row:nth-of-type(odd) {
 	background-color: #f9f9f9;
 }
-.table-striped > tbody > tr:nth-of-type(odd) {
+.table-striped > tbody > tr:nth-of-type(odd), .flip-image-front {
     background-color: #e9e9e9;
 }
 .table-striped > tbody > tr:nth-of-type(even) {
