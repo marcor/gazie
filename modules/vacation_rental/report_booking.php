@@ -793,8 +793,8 @@ $ts->output_navbar();
         cols_from($gTables['anagra'],
             "ragso1","ragso2","citspe","custom_field AS anagra_custom_field",
             "e_mail AS base_mail","id") . ", " .
-        cols_from($gTables["destina"], "unita_locale1").", ".cols_from($gTables["rental_events"], "start","end","house_code","checked_in_date","checked_out_date"),
-        $tesbro_e_destina." LEFT JOIN ".$gTables['rental_events']." ON  ".$gTables['rental_events'].".id_tesbro = ".$gTables['tesbro'].".id_tes AND ".$gTables['rental_events'].".type = 'ALLOGGIO' LEFT JOIN ".$gTables['rental_feedbacks']." ON  ".$gTables['rental_feedbacks'].".reservation_id = ".$gTables['rental_events'].".id" ,
+        cols_from($gTables["destina"], "unita_locale1").", ".cols_from($gTables["rental_events"], "start","end","house_code","checked_in_date","checked_out_date","id_tesbro"),
+        $tesbro_e_destina." LEFT JOIN ".$gTables['rental_events']." ON  ".$gTables['rental_events'].".id_tesbro = ".$gTables['tesbro'].".id_tes AND ".$gTables['rental_events'].".type = 'ALLOGGIO' LEFT JOIN ".$gTables['rental_feedbacks']." ON  ".$gTables['rental_feedbacks'].".reservation_id = ".$gTables['rental_events'].".id_tesbro" ,
         $ts->where." AND template = 'booking' ", $ts->orderby,
         $ts->getOffset(), $ts->getLimit(),$gTables['rental_events'].".id_tesbro");
         $ctrlprotoc = "";
