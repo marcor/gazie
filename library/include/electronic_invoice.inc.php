@@ -1444,8 +1444,8 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
     $el->appendChild($el1);
     $results->appendChild($el);
   }
-  if ($XMLvars->TipoDocumento=='TD04' || $XMLvars->reverse ){
-    // in caso di nota credito o di reverse charge salto i DatiPagamento
+  if ($XMLvars->TipoDocumento=='TD04' || $XMLvars->reverse || count($ratpag)<1){
+    // in caso di nota credito, di reverse charge, e di righi con variazione al totale fattura (tipo 3 ) che stornano oltre il totale fattura salto i DatiPagamento che non sono comunque obbligatori <0.N>
   } else {
     // elementi dei <DatiPagamento> (2.4)
     $results = $xpath->query("//FatturaElettronicaBody")->item(0);
