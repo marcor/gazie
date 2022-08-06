@@ -658,6 +658,11 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
 		$azTables=$GLOBALS['azTables'];
 		global $link;
 		$link=$GLOBALS['link'];
+    if (!isset($lang_template) || $lang_template==''){
+      $lang="italian";
+    }
+    require("./lang." . $lang . ".php");
+    $script_transl = $strScript["admin_booking.php"];
     $sql = "SELECT val FROM ".$azTables."company_config"." WHERE var = 'vacation_url_user' LIMIT 1";
     if ($result = mysqli_query($link, $sql)) {
       $res = mysqli_fetch_assoc($result);
@@ -757,7 +762,7 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
         $content->mimeType = "application/pdf";
         $mail_message="";
         if (strlen($vacation_url_user)>3 && $templateName!=='Lease'){ // se non ivio un contratto ed è impostata la user url, la comunico insieme ai codici di accesso
-          $mail_message = "<p>Le inviamo, in allegato, una copia della sua prenotazione</p><p>Per accedere alla prenotazione online e controllarne stato e pagamento usi questo link <a href = '".$vacation_url_user."'> ".$vacation_url_user."</a> e i seguenti codici di accesso:</p><p>Password: <b>".$access."</b></p>Numero ID: <b>".$testata['id_tes']."</b></p><p>Numero prenotazione: <b>".$testata['numdoc']."</b></p><p>- </p><p>Grazie, cordiali saluti</p>";
+          $mail_message = $script_transl['access1']." <a href = '".$vacation_url_user."'> ".$vacation_url_user."</a> ".$script_transl['access2'].":</p><p>Password: <b>".$access."</b></p>ID: <b>".$testata['id_tes']."</b></p><p>".$script_transl['booking_number'].": <b>".$testata['numdoc']."</b></p><p>- </p><p>".$script_transl['best_regards']."</p>";
         }
         $gMail = new GAzieMail();
         $gMail->sendMail($docVars->azienda, $docVars->user, $content, $docVars->client,$mail_message);

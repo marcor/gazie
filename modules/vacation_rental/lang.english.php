@@ -478,7 +478,11 @@ $strScript = array(
         'last_row' => 'Ultimo rigo inserito',
         'Security deposit to be paid in cash at check-in: EURO',
         'In the absence of damages, the deposit will be returned at check-out',
-        'Owner'
+        'Owner',
+        'access1' => '<p>We are sending you a copy of your booking as an attachment</p><p>To access the online booking and check its status and payment, use this link',
+        'access2' => 'and the following access codes',
+        'booking_number' => 'Booking number',
+        'best_regards' => 'Thanks and best regards'
     ),
     "admin_house.php" =>
       array('title' => 'Gestione degli alloggi',
@@ -761,7 +765,8 @@ $strScript = array(
     'booking_number' => 'Booking number',
     'deposit_return' => 'If there is no damage, the security deposit will be returned at check-out',
     'ask_feedback' => 'Thank you for being our guest, we hope you enjoyed your stay. <br> Total satisfaction of our guests is our goal. Your review is greatly appreciated, just take a few minutes and leave a review by clicking on the link below, please.',
-    'ask_feedback2' => 'Your judgment is very important to us. <br> Hoping to see you again soon <br> Sincerely'
+    'ask_feedback2' => 'Your judgment is very important to us. <br> Hoping to see you again soon <br> Sincerely',
+    'use_access' => 'To log in, use the following access codes'
     ),
 
   "admin_extra.php" =>

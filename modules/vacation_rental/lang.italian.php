@@ -239,7 +239,11 @@ $strScript = array(
         'last_row' => 'Ultimo rigo inserito',
         'Deposito cauzionale da versare in contanti al check-in: EURO ',
         'In assenza di danni il deposito sarà restituito al check-out',
-        'Proprietario'
+        'Proprietario',
+        'access1' => '<p>Le inviamo, in allegato, una copia della sua prenotazione</p><p>Per accedere alla prenotazione online e controllarne stato e pagamento usi questo link',
+        'access2' => 'e i seguenti codici di accesso',
+        'booking_number' => 'Numero prenotazione',
+        'best_regards' => 'Grazie, cordiali saluti'
     ),
     "admin_house.php" =>
       array('title' => 'Gestione degli alloggi',
@@ -526,7 +530,8 @@ $strScript = array(
     'booking_number' => 'Numero prenotazione',
     'deposit_return' => 'In assenza di danni, il deposito cauzionale sarà restituito al check-out',
     'ask_feedback' => 'Grazie per essere stato nostro ospite, speriamo che il soggiorno sia stato di suo gradimento.<br>La soddisfazione totale degli ospiti è il nostro obbiettivo. Una sua recensione sarebbe molto apprezzata, ci dedichi solo pochi minuti e lasci una recensione cliccando sul link sottostante, per favore.',
-    'ask_feedback2' => 'Il suo giudizio è molto importante per noi. <br>Sperando di rivederla presto <br> Cordiali saluti'
+    'ask_feedback2' => 'Il suo giudizio è molto importante per noi. <br>Sperando di rivederla presto <br> Cordiali saluti',
+    'use_access' => 'Per accedere usi i seguenti codici di accesso'
     ),
 
   "admin_extra.php" =>
@@ -651,6 +656,16 @@ $strScript = array(
     'accettazione2' => 'Per ogni controversia in ordine all\'esecuzione del presente contratto viene tra le parti convenuta ed accettata la competenza esclusiva del foro di Fermo.',
     'sign-online' => 'Firmato digitalmente on-line',
     'sign' => 'Firmato',
+    ),
+    "review_viewer.php" =>
+    array('title' => 'Visualizzatore di recensioni',
+        'err' => array(
+			'date_uguali'=> 'Le date di check-in e check-out sono uguali'
+        ),
+        'war' => array(
+          'ok' => 'ok riempitura array'
+		),
+		'guest'=>'Ospiti'
     )
 );
 ?>
