@@ -1564,7 +1564,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
           $form['rows'][$next_row]['tipiva'] = $iva_row['tipiva'];
         }
         $form['rows'][$next_row]['ritenuta'] = $form['in_ritenuta'];
-      } elseif ($form['in_tiprig'] == 2) { //descittivo
+      } elseif ($form['in_tiprig'] == 2) { //descrittivo
         $form['rows'][$next_row]['codart'] = "";
         $form['rows'][$next_row]['annota'] = "";
         $form['rows'][$next_row]['pesosp'] = "";
@@ -1578,7 +1578,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$next_row]['tipiva'] = 0;
         $form['rows'][$next_row]['ritenuta'] = 0;
         $form['rows'][$next_row]['codvat'] = 0;
-      } elseif ($form['in_tiprig'] == 3) {   //var tot
+      } elseif ($form['in_tiprig'] == 3) {   // variazione totale a pagare
         $form['rows'][$next_row]['codart'] = "";
         $form['rows'][$next_row]['annota'] = "";
         $form['rows'][$next_row]['pesosp'] = "";
@@ -1589,9 +1589,8 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$next_row]['codric'] = $form['in_codric'];
         $form['rows'][$next_row]['sconto'] = 0;
         $form['rows'][$next_row]['codvat'] = $form['in_codvat'];
-        $iva_row = gaz_dbi_get_row($gTables['aliiva'], "codice", $form['in_codvat']);
-        $form['rows'][$next_row]['pervat'] = $iva_row['aliquo'];
-        $form['rows'][$next_row]['tipiva'] = $iva_row['tipiva'];
+        $form['rows'][$next_row]['pervat'] = 0;
+        $form['rows'][$next_row]['tipiva'] = 0;
         $form['rows'][$next_row]['ritenuta'] = 0;
       } elseif ($form['in_tiprig'] == 4) { // cassa previdenziale
         $form['rows'][$next_row]['codart'] = $admin_aziend['fae_tipo_cassa'];// propongo quella aziendale uso il codice articolo
@@ -1646,7 +1645,9 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
 					|| $form['in_tiprig'] == 13 || $form['in_tiprig'] == 14
 					|| $form['in_tiprig'] == 15 || $form['in_tiprig'] == 16
 					|| $form['in_tiprig'] == 21 || $form['in_tiprig'] == 25
-					|| $form['in_tiprig'] == 26 || $form['in_tiprig'] == 31 || $form['in_tiprig'] == 17) { //per  fattura elettronica riferibili ad altri righi o a tutto il documento
+					|| $form['in_tiprig'] == 26 || $form['in_tiprig'] == 31
+          || $form['in_tiprig'] == 17 || $form['in_tiprig'] == 50
+          || $form['in_tiprig'] == 51) { // per  altri righi diversi
         $form['rows'][$next_row]['codart'] = "";
         $form['rows'][$next_row]['annota'] = "";
         $form['rows'][$next_row]['pesosp'] = "";
@@ -2461,7 +2462,7 @@ foreach ($form['rows'] as $k => $v) {
             $v_for_castle = CalcolaImportoRigo(1, $v['prelis'], $form['sconto']);
         }
         if ($v['tiprig'] == 4) {// e se del tipo cassa previdenziale
-            $imprig = round($v['provvigione']* $v['prelis']/100,2);
+            $imprig = round((float)$v['provvigione']*$v['prelis']/100,2);
             $v_for_castle =  $imprig;
         }
         if (!isset($castle[$v['codvat']])) {
@@ -3007,8 +3008,8 @@ echo '<td>
                         <td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\" >
                             <input class=\"btn btn-xs btn-secondary\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
                         </td>
-			<td colspan=\"9\">Fase dello stato di avanzamento
-                            <input type=\"number\" step=1 min=1 max=999 name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\" /> </td>
+			<td colspan=9>Fase dello stato di avanzamento:
+      <input type=\"number\" step=1 min=1 max=999 name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"20\" /> </td>
 			<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" />
 			<input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" />
 			<input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" />
@@ -3056,8 +3057,7 @@ echo '<td>
                         <td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\" >
                             <input class=\"btn btn-xs btn-secondary btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
                         </td>
-			<td colspan=\"9\">Data prima immatricolazione
-                            <input type=\"date\" name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\"  /> KM percorsi:<input type=\"number\" step=1 min=0 max=1000000  name=\"rows[$k][quanti]\" value=\"".$v['quanti']."\" /></td>
+			<td colspan=9 >Data prima immatricolazione: <input type=\"date\" name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"20\"  />  KM percorsi:<input type=\"number\" step=1 min=0 max=1000000  name=\"rows[$k][quanti]\" value=\"".$v['quanti']."\" /></td>
 			<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" />
 
 			<input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" />
