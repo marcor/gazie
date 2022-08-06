@@ -213,9 +213,6 @@ a, .panel-info {
 .input-area {
   background-color: #122e5b;
 }
-.company-color {
-  color: #000;
-}
 .FacetFooterTD {
 	background-color: #484b77;
 }
@@ -269,13 +266,46 @@ nav.navbar.navbar-static-top.company-color-bright {
 .btn-elimina {
   color: #ff3939;
 }
-.btn > .ui-button-text {
- color: #000;
-}
 .ui-widget-content, .ui-widget-content a, .ui-autocomplete li.ui-menu-item {
 	color: #fdf0f0;
 	background-color: #25242d;
 }
-ul.distintabase {
-  color: #000;
+.table > tbody > tr.danger > td,
+.table > tbody > tr.danger > th,
+.table > tbody > tr > td.danger,
+.table > tbody > tr > th.danger,
+.table > tfoot > tr.danger > td,
+.table > tfoot > tr.danger > th,
+.table > tfoot > tr > td.danger,
+.table > tfoot > tr > th.danger,
+.table > thead > tr.danger > td,
+.table > thead > tr.danger > th,
+.table > thead > tr > td.danger,
+.table > thead > tr > th.danger {
+	background-color: #f003;
+}
+.table > tbody > tr.warning > td,
+.table > tbody > tr.warning > th,
+.table > tbody > tr > td.warning,
+.table > tbody > tr > th.warning,
+.table > tfoot > tr.warning > td,
+.table > tfoot > tr.warning > th,
+.table > tfoot > tr > td.warning,
+.table > tfoot > tr > th.warning,
+.table > thead > tr.warning > td,
+.table > thead > tr.warning > th,
+.table > thead > tr > td.warning,
+.table > thead > tr > th.warning {
+	background-color: #fb45;
+}
+.company-color,
+.btn > .ui-button-text,
+ul.distintabase,
+.ui-state-highlight,
+.ui-widget-content .ui-state-highlight,
+.ui-widget-header .ui-state-highlight,
+.ui-state-active,
+.ui-widget-content .ui-state-active,
+.ui-widget-header .ui-state-active {
+	color: #000;
 }
