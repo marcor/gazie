@@ -209,6 +209,9 @@ div.panel.panel-default div.container-fluid div.form-row div.form-group.col-md-6
 	padding-top: 2px;
 	height: 28px;
 }
+div.table-responsive, table.FacetFormTABLE, table.GazFormDeleteTable, table.table-bordered, div.div-bordered {
+	border-radius: 4px;
+}
 
 .panel-default {
   background-color: #dfe4ea;;
