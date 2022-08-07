@@ -1490,19 +1490,19 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
   }
   // faccio l'encode in base 36 per ricavare il progressivo unico di invio
 	if($XMLvars->reverse){ // è una autofattura reverse charge encodo così:
-		/*  dovrò modificare la matrice in questo con valore fisso "59" sulle prime due cifre, ovvero parto da un numero decimale 59000000
+		/*  dovrò modificare la matrice in questo con valore fisso "5" sulla prima cifre, e faccio uno shift degli altri
 		  ------------------------- SCHEMA DEI DATI PER AUTOFATTURE  ------------------
 		  |  VALORE FISSO   |  ANNO DOCUMENTO  | N.REINVII |    NUMERO PROTOCOLLO     |
 		  |    INT (2 )     |      INT(1)      |   INT(1)  |        INT(4)            |
-		  |       "59       |        9         |     9     |         9999             |
+		  |       "5"       |        9         |     9     |         9999             |
 		  | $data[sezione]  |   $data[anno] $data[fae_reinvii]  $data[protocollo]     |
-		  -------------------------------------------------------------------------------------------------------------------
+		  -----------------------------------------------------------------------------
 		 */
 		$data = ['azienda' => $XMLvars->azienda['codice'],
-			'sezione' => 5,
-			'anno' => 2009,
-			'fae_reinvii'=> substr($XMLvars->docRelDate,3,1),
-			'protocollo' =>intval($XMLvars->fae_reinvii*10000+ $XMLvars->protoc)];
+			'sezione' => 5, // nel revere uso sempre 5 per non sovrapporre con le sezioni di vendita (max4)
+			'anno' => '200'.$XMLvars->seziva,  // ed uso la sezione del reverse ( lo passo come anno )
+			'fae_reinvii'=> substr($XMLvars->docRelDate,3,1), // in reinvii ci passo l'anno
+			'protocollo' =>intval($XMLvars->fae_reinvii*10000+ $XMLvars->protoc)]; // sul progressivo ci sarà una cifra in meno perché sulla prima c'è il reinvio
 	} else {
 		$data = ['azienda' => $XMLvars->azienda['codice'],
 			'anno' => $XMLvars->docRelDate,
@@ -1518,19 +1518,19 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
   if ( $XMLvars->fae_reinvii >=1 ){
     // faccio l'encode in base 36 per ricavare il progressivo unico di invio
 		if($XMLvars->reverse){ // è una autofattura reverse charge encodo così:
-			/*  dovrò modificare la matrice in questo con valore fisso "59" sulle prime due cifre, ovvero parto da un numero decimale 59000000
+			/*  dovrò modificare la matrice in questo con valore fisso "5" sulla prima cifre, e faccio uno shift degli altri
 			  ------------------------- SCHEMA DEI DATI PER AUTOFATTURE  ------------------
 			  |  VALORE FISSO   |  ANNO DOCUMENTO  | N.REINVII |    NUMERO PROTOCOLLO     |
 			  |    INT (2 )     |      INT(1)      |   INT(1)  |        INT(4)            |
 			  |       "59       |        9         |     9     |         9999             |
 			  | $data[sezione]  |   $data[anno] $data[fae_reinvii]  $data[protocollo]     |
-			  -------------------------------------------------------------------------------------------------------------------
+			  -----------------------------------------------------------------------------
 			 */
 			$parent = ['azienda' => $XMLvars->azienda['codice'],
-				'sezione' => 5,
-				'anno' => 2009,
-				'fae_reinvii'=> substr($XMLvars->docRelDate,3,1),
-				'protocollo' =>intval(($XMLvars->fae_reinvii-1)*10000+ $XMLvars->protoc)];
+				'sezione' => 5, // nel revere uso sempre 5 per non sovrapporre con le sezioni di vendita (max4)
+				'anno' => '200'.$XMLvars->seziva, // ed uso la sezione del reverse ( lo passo come anno )
+				'fae_reinvii'=> substr($XMLvars->docRelDate,3,1), // in reinvii ci passo l'anno
+				'protocollo' =>intval(($XMLvars->fae_reinvii-1)*10000+ $XMLvars->protoc)]; // sul progressivo ci sarà una cifra in meno perché sulla prima c'è il reinvio
 		} else {
 			$parent = array('azienda' => $XMLvars->azienda['codice'],
 				'anno' => $XMLvars->docRelDate,
