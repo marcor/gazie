@@ -31,7 +31,7 @@ $link -> set_charset("utf8");
 $data = array();
 
 if(isset($_GET['id'])){
-  $sql = "SELECT * FROM ".$azTables."rental_events WHERE house_code='".substr(mysqli_escape_string($link,$_GET['id']), 0, 32)."' AND start >= ".date('Y-m-d')." ORDER BY id ASC";
+  $sql = "SELECT * FROM ".$azTables."rental_events WHERE house_code='".substr(mysqli_escape_string($link,$_GET['id']), 0, 32)."' AND start >= '".date('Y-m-d')."' ORDER BY id ASC";
   $result = mysqli_query($link, $sql);
 	foreach($result as $row){
 		$data[] = array(

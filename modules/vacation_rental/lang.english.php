@@ -867,6 +867,20 @@ $strScript = array(
     'accettazione2' => 'For any dispute regarding the execution of this contract, the exclusive jurisdiction of the court of Fermo (Italy) is agreed and accepted between the parties.',
     'sign-online' => 'Digitally signed online',
     'sign' => 'Signed',
+    ),
+    "review_viewer.php" =>
+    array('title' => 'Reviews viewer',
+        'err' => array(
+			'date_uguali'=> 'Le date di check-in e check-out sono uguali'
+        ),
+        'war' => array(
+          'ok' => 'ok riempitura array'
+		),
+		'guest'=>'Guests',
+    'opinion' => 'Accommodation ratings',
+    'average' => 'Overall average rating',
+    'guest_reviews' => 'Guest reviews',
+    'no_review' => 'There are no reviews yet'
     )
 );
 ?>

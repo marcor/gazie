@@ -655,7 +655,7 @@ $strScript = array(
     'accettazione1' => 'Il presente contratto è stato letto accettato e sottoscritto on-line con la spunta sull\'apposita casella. Sarà pertanto valido a tutti gli effetti di legge anche in mancanza della firma fisica.',
     'accettazione2' => 'Per ogni controversia in ordine all\'esecuzione del presente contratto viene tra le parti convenuta ed accettata la competenza esclusiva del foro di Fermo.',
     'sign-online' => 'Firmato digitalmente on-line',
-    'sign' => 'Firmato',
+    'sign' => 'Firmato'
     ),
     "review_viewer.php" =>
     array('title' => 'Visualizzatore di recensioni',
@@ -665,7 +665,11 @@ $strScript = array(
         'war' => array(
           'ok' => 'ok riempitura array'
 		),
-		'guest'=>'Ospiti'
+		'guest'=>'Ospiti',
+    'opinion' => 'Valutazioni alloggio',
+    'average' => 'Valutazione media generale',
+    'guest_reviews' => 'Recensioni degli ospiti',
+    'no_review' => 'Non ci sono ancora recensioni'
     )
 );
 ?>

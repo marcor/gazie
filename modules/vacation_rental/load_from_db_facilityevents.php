@@ -8,7 +8,7 @@
   E' possibile usare questo modulo solo dietro autorizzazione dell'autore
   --------------------------------------------------------------------------
  */
- 
+
 //require("../../library/include/datlib.inc.php");
 include ("../../config/config/gconfig.myconf.php");
 
@@ -41,7 +41,7 @@ $resulth = mysqli_query($link, $sql);
 
 foreach ($resulth as $resh){ // per ogni alloggio
 	// prendo gli eventi a partire da oggi
-	$sql = "SELECT * FROM ".$azTables."rental_events WHERE house_code='".substr($resh['codice'], 0, 32)."' AND start >= ".date('Y-m-d')." ORDER BY id ASC";
+	$sql = "SELECT * FROM ".$azTables."rental_events WHERE house_code='".substr($resh['codice'], 0, 32)."' AND start >= '".date('Y-m-d')."' ORDER BY id ASC";
   $result = mysqli_query($link, $sql);
   foreach($result as $row){
 		$data[] = array(
