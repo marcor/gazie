@@ -341,7 +341,6 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
       }
 
 		// INIZIO acquisizione e pulizia file xml o p7m
-		//echo"",print_r($form);
 		$file_name = DATA_DIR . 'files/' . $admin_aziend['codice'] . '/' . $form['fattura_elettronica_original_name'];
 		if (!isset($_POST['datreg'])&& !$tesdoc){
 			$form['datreg'] = date("d/m/Y",filemtime($file_name));
@@ -814,6 +813,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
           $first=false;
           $resetDdT=true;
 				}
+
+
         // ricontrollo per segnalare anomalia nel caso in cui non tutti i ddt siano stati utilizzati dai righi
         $ddtused=[];
         foreach ( $form['rows'] as $vrow){
@@ -909,28 +910,30 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			}
 			//	Se presenti, trasformo gli sconti/maggiorazioni del campo 2.1.1.8 <ScontoMaggiorazione> in righe forfait
 			if ($xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiGenerali/DatiGeneraliDocumento/ScontoMaggiorazione")->length >= 1) {
-				$sconto_totale_incondizionato = array();
+				$sconto_totale_incondizionato = [];
 				$sconto_maggiorazione = $xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiGenerali/DatiGeneraliDocumento/ScontoMaggiorazione");
 				foreach ($sconto_maggiorazione as $sconti) { // potrei avere più elementi 2.2.1.10 <ScontoMaggiorazione>
-					if ($sconti->getElementsByTagName('Percentuale')->length >= 1 && $sconti->getElementsByTagName('Percentuale')->item(0)->nodeValue>=0.00001) {
-						$sconto_totale_incondizionato[] = $sconti->getElementsByTagName('Percentuale')->item(0)->nodeValue;
-					} else {
-						$nl++;
-						$form['rows'][$nl]['tiprig'] = 1;
-						$form['rows'][$nl]['codice_fornitore'] = '';
-						$form['rows'][$nl]['descri'] = '';
-						$form['rows'][$nl]['unimis'] = '';
-						$form['rows'][$nl]['quanti'] = '';
-						$form['rows'][$nl]['sconto'] = '';
-						$form['rows'][$nl]['ritenuta'] = '';
-						$form['rows'][$nl]['pervat'] = '';
-						$form['codart_'.($nl-1)] = '';
-						$form['codvat_'.($nl-1)] = '';
-						$form['codric_'.($nl-1)] = '';
-						$sconto_incondizionato = ($sconti->getElementsByTagName('Tipo')->item(0)->nodeValue == 'SC' ? -$sconti->getElementsByTagName('Importo')->item(0)->nodeValue : $sconti->getElementsByTagName('Importo')->item(0)->nodeValue);
-						$form['rows'][$nl]['prelis'] = $sconto_incondizionato;
-						$form['rows'][$nl]['amount'] = $sconto_incondizionato;
-					}
+					$sconto_incondizionato = ($sconti->getElementsByTagName('Tipo')->item(0)->nodeValue == 'SC' ? -$sconti->getElementsByTagName('Importo')->item(0)->nodeValue : $sconti->getElementsByTagName('Importo')->item(0)->nodeValue);
+          if ($sconti->getElementsByTagName('Percentuale')->length >= 1 && $sconti->getElementsByTagName('Percentuale')->item(0)->nodeValue>=0.00001) {
+            $sconto_totale_incondizionato[] = $sconti->getElementsByTagName('Percentuale')->item(0)->nodeValue;
+          } else {
+            if (abs($sconto_incondizionato)>=0.00001) {
+              $nl++;
+              $form['rows'][$nl]['tiprig'] = 1;
+              $form['rows'][$nl]['codice_fornitore'] = '';
+              $form['rows'][$nl]['descri'] = 'Sconto';
+              $form['rows'][$nl]['unimis'] = '';
+              $form['rows'][$nl]['quanti'] = '';
+              $form['rows'][$nl]['sconto'] = '';
+              $form['rows'][$nl]['ritenuta'] = '';
+              $form['rows'][$nl]['pervat'] = '';
+              $form['codart_'.($nl-1)] = '';
+              $form['codvat_'.($nl-1)] = '';
+              $form['codric_'.($nl-1)] = '';
+              $form['rows'][$nl]['prelis'] = $sconto_incondizionato;
+              $form['rows'][$nl]['amount'] = $sconto_incondizionato;
+            }
+          }
 				}
 				if (count($sconto_totale_incondizionato) > 0) {
 					$is=1;
