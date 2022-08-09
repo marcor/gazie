@@ -691,8 +691,8 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                 gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigdoc' AND id_ref", $val_old_row['id_rig']);
             }
             // riscrivo mov mag
-            if ( ($tipo_composti['val']=="STD" || $form['rows'][($i+1)]['tiprig']!=210) && intval($val_old_row['id_mag'])>0 &&  !empty($form['rows'][$i]['codart'])) {
-              $id_mag=$magazz->uploadMag($val_old_row['id_rig'], $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag'],0,0,'',$form['rows'][$i]['id_warehouse']);
+            if ( ($tipo_composti['val']=="STD" || $form['rows'][($i+1)]['tiprig']!=210) && !empty($form['rows'][$i]['codart'])) {
+              $id_mag=$magazz->uploadMag((int)$val_old_row['id_rig'], $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag'],0,0,'',$form['rows'][$i]['id_warehouse']);
               gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $val_old_row['id_rig'], 'id_mag', $id_mag); // inserisco il riferimento movmag nel rigo doc
               if ($form['rows'][$i]['SIAN'] > 0) { // se l'articolo deve movimentare il SIAN creo anche il movimento
                 $value_sian['cod_operazione']= $form['rows'][$i]['cod_operazione'];
