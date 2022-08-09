@@ -164,7 +164,7 @@ function confirFae(link){
         break;
         case "DI":
             $("#dialog_fae_content_DI").addClass("bg-default");
-            $("#dialog_fae_content_DI span").html("<p class=\'text-center\'><a href=\'"+link.href+"&invia"+sdiflux+"\' class=\'btn btn-default\'><b><i class=\'glyphicon glyphicon-send\'></i> Invia solo " + $("#doc1_"+tes_id).attr("dialog_fae_filename")+ "</i> </b></a></p><p><a href=\'"+zipref+"\' class=\'btn btn-warning\'><b><i class=\'glyphicon glyphicon-compressed\'> </i> Impacchetta con eventuali altri precedenti</b></a></p>");
+            $("#dialog_fae_content_DI span").html("<p class=\'text-center\'><a href=\'"+link.href+"&invia"+sdiflux+"\' class=\'btn btn-default\'><b><i class=\'glyphicon glyphicon-send\'></i> Invia solo " + $("#doc1_"+tes_id).attr("dialog_fae_filename")+ "</i> </b></a></p><p><a href=\'..\\vendit\\"+zipref+"\' class=\'btn btn-warning\'><b><i class=\'glyphicon glyphicon-compressed\'> </i> Impacchetta con eventuali altri precedenti</b></a></p>");
             $("#dialog_fae_content_DI").show();
             console.log(flux_status);
         break;
@@ -448,11 +448,15 @@ while ($row = gaz_dbi_fetch_array($result)) {
       }
       if ($sdi_flux) { // ho un modulo per la gestione dei flussi con il SdI: posso visualizzare lo stato
         $zip_ref = 'fae_packaging.php?sdiflux='.$sdi_flux;
-        $last_flux_status = explode(',',$revch['refs_flux_status'])[0];
+        if ($revch['refs_flux_status']==null) {
+          $last_flux_status = '';
+        } else {
+          $last_flux_status = explode(',',$revch['refs_flux_status'])[0];
+        }
         $sdihilight = ( !empty($revch['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][1] : 'default';
         $sdilabel = ( !empty($revch['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][0] : 'da inviare';
         if ( $last_flux_status == '' ) { $last_flux_status = 'DI'; }
-        if ( strlen($revch['fattura_elettronica_zip_package'])>10 && $last_flux_status = 'DI') { // il documento è impacchettato e da inviare
+        if (is_string($revch['fattura_elettronica_zip_package']) && strlen($revch['fattura_elettronica_zip_package'])>10 && $last_flux_status == 'DI') { // il documento è impacchettato e da inviare
           $revch['fae_attuale'] = $revch['fattura_elettronica_zip_package'];
           $sdihilight = ( !empty($revch['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][1] : 'default';
           $sdilabel = ( !empty($revch['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][0] : 'ZIP da inviare';
@@ -478,10 +482,10 @@ while ($row = gaz_dbi_fetch_array($result)) {
           $sdititle = 'Il file '.$revch['fae_attuale'].' è stato inviato al Sistema di Interscambio, attendere la risposta di presa in carico ';
           break;
         case "RC":
-          $sdititle = 'Il file '.$revch['fae_attuale'].' è stato inviato e consegnato al cliente ';
+          $sdititle = 'Il file '.$revch['fae_attuale'].' è stato inviato e consegnato al Sistema di Interscambio ';
           break;
         case "MC":
-          $sdititle = 'Il file '.$revch['fae_attuale'].' è stato inviato e ma non consegnato al cliente ';
+          $sdititle = 'Il file '.$revch['fae_attuale'].' è in mancata consegna ';
           break;
         case "NS":
           $sdititle = 'Il file '.$revch['fae_attuale'].' è stato Scartato, correggi prima di fare il reinviio ';
