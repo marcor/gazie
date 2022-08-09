@@ -744,113 +744,113 @@ class magazzForm extends GAzieForm {
         return $return_val;
     }
 
-    function uploadMag($id_rigo_doc = '0', $tipdoc='', $numdoc=0, $seziva='', $datdoc='', $clfoco=0, $sconto_chiusura=0, $caumag='', $codart='', $quantita=0, $prezzo=0, $sconto_rigo=0, $id_movmag = 0, $stock_eval_method = null, $data_from_admin_mov = false, $protoc = '',$id_lotmag=0,$id_orderman=0,$campo_impianto=0,$custom_field='',$id_warehouse=0) {  // su id_rigo_doc 0 per inserire 1 o + per fare l'upload 'DEL' per eliminare il movimento
-        // in $data_from_admin_mov  ci sono i dati in più provenienti da admin_movmag (desdoc,operat, datreg)
-        global $gTables, $admin_aziend;
+  function uploadMag($id_rigo_doc = '0', $tipdoc='', $numdoc=0, $seziva='', $datdoc='', $clfoco=0, $sconto_chiusura=0, $caumag='', $codart='', $quantita=0, $prezzo=0, $sconto_rigo=0, $id_movmag = 0, $stock_eval_method = null, $data_from_admin_mov = false, $protoc = '',$id_lotmag=0,$id_orderman=0,$campo_impianto=0,$custom_field='',$id_warehouse=0) {  // su id_rigo_doc 0 per inserire 1 o + per fare l'upload 'DEL' per eliminare il movimento
+    // in $data_from_admin_mov  ci sono i dati in più provenienti da admin_movmag (desdoc,operat, datreg)
+    global $gTables, $admin_aziend;
 		$synccommerce=explode(',',$admin_aziend['gazSynchro'])[0];
-        $admin_aziend['synccommerce_classname'] = preg_replace("/[^a-zA-Z]/", "",$synccommerce)."gazSynchro";
+    $admin_aziend['synccommerce_classname'] = preg_replace("/[^a-zA-Z]/", "",$synccommerce)."gazSynchro";
 
-        $docOperat = $this->getOperators();
-        if ($tipdoc == 'FAD') {  // per il magazzino una fattura differita è come dire DDT
-            $tipdoc = 'DDT';
-        }
-        if ($tipdoc == 'AFT') {  // per il magazzino una fattura differita acquisto è come dire DDT acquisto
-            $tipdoc = 'ADT';
-        }
-        if (substr($tipdoc, 0, 1) == 'A' or $tipdoc == 'DDR' or $tipdoc == 'DDL' or $tipdoc == 'RDL') { //documento di acquisto
-            require("../../modules/acquis/lang." . $admin_aziend['lang'] . ".php");
-            $desdoc = $strScript['admin_docacq.php'][0][$tipdoc];
-        } elseif ($tipdoc == 'INV') {
-            require("../../modules/magazz/lang." . $admin_aziend['lang'] . ".php");
-            $desdoc = $strScript['admin_artico.php']['esiste'];
-        }  elseif ($tipdoc == 'MAG') {
-            $desdoc = 'Scarico per Produzione senza lotto';
-        } elseif ($tipdoc == 'CAM') {
-            $desdoc = 'Registro di campagna';
-        } elseif ($tipdoc == 'WTR') {
-            $desdoc = 'Trasferimento tra magazzini';
-        } else {//documento di vendita
-            require("../../modules/vendit/lang." . $admin_aziend['lang'] . ".php");
-            $desdoc = $strScript['admin_docven.php']['doc_name'][$tipdoc];
-        }
-        if (substr($tipdoc, 0, 1) == 'D' || $tipdoc == 'VCO') {
-            $desdoc .= " n." . $numdoc;
-            if ($seziva != '')
-                $desdoc .= "/" . $seziva;
-        } else {
-            $desdoc .= " n." . $numdoc;
-            if ($seziva != '')
-                $desdoc .= "/" . $seziva;
-            $desdoc .= " prot." . $protoc;
-            if ($seziva != '')
-                $desdoc .= "/" . $seziva;
-        }
-        $new_caumag = gaz_dbi_get_row($gTables['caumag'], 'codice', $caumag);
-        $operat = ($new_caumag)?$new_caumag['operat']:0;
-        if (!$data_from_admin_mov) {         // se viene da un documento
-            $datreg = $datdoc;               // la data di registrazione coincide con quella del documento
-            $operat = $docOperat[$tipdoc];    // e la descrizione la ricavo dal tipo documento
-        } else {                            // se � stato passato l'array dei dati
-            $datreg = $data_from_admin_mov['datreg']; // prendo la descrizione e l'operatore da questo
-            $operat = $data_from_admin_mov['operat'];
-            $desdoc = $data_from_admin_mov['desdoc'];
-		}
-        $row_movmag = array('caumag' => $caumag,
-            'operat' => $operat,
-            'datreg' => $datreg,
-            'tipdoc' => $tipdoc,
-            'desdoc' => $desdoc,
-            'datdoc' => $datdoc,
-            'clfoco' => $clfoco,
-            'scochi' => $sconto_chiusura,
-            'id_rif' => $id_rigo_doc,
-            'artico' => $codart,
-            'id_warehouse' => $id_warehouse,
-            'quanti' => $quantita,
-            'prezzo' => $prezzo,
-            'scorig' => $sconto_rigo,
-            'id_lotmag'=>$id_lotmag,
-			'id_orderman'=>$id_orderman,
-			'campo_impianto'=>$campo_impianto,
-			'custom_field'=>$custom_field,
-			'synccommerce_classname'=>$admin_aziend['synccommerce_classname']);
-        if ($id_movmag == 0) {                             // si deve inserire un nuovo movimento
-            $id_movmag = movmagInsert($row_movmag);
-            //gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $id_rigo_doc, 'id_mag', gaz_dbi_last_id());
-            gaz_dbi_query("UPDATE " . $gTables['rigdoc'] . " SET id_mag = " . $id_movmag . " WHERE `id_rig` = $id_rigo_doc ");
-        } elseif ($id_rigo_doc === 'DEL') {                 // si deve eliminare un movimento esistente
-            $old_movmag = gaz_dbi_get_row($gTables['movmag'], 'id_mov', $id_movmag);
-            $old_caumag = gaz_dbi_get_row($gTables['caumag'], 'codice', $old_movmag['caumag']);
-            gaz_dbi_del_row($gTables['movmag'], 'id_mov', $id_movmag);
-            $codart = $old_movmag['artico'];
-            if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
-                // aggiorno l'e-commerce ove presente
-                $gs=$admin_aziend['synccommerce_classname'];
-                $gSync = new $gs();
-				if($gSync->api_token && isset($codart)){
-					$gSync->SetProductQuantity($codart);
-				}
-			}
-        } else {   // si deve modificare un movimento esistente
-            $old_movmag = gaz_dbi_get_row($gTables['movmag'], 'id_mov', $id_movmag);
-            $old_caumag = gaz_dbi_get_row($gTables['caumag'], 'codice', $old_movmag['caumag']);
-            $id = array('id_mov', $id_movmag);
-            if (!isset($new_caumag['operat'])) {
-                $new_caumag['operat'] = 0;
-            }
-            if (!isset($old_caumag['operat'])) {
-                $old_caumag['operat'] = 0;
-            }
-            movmagUpdate($id, $row_movmag);
-        }
-        return $id_movmag;
+    $docOperat = $this->getOperators();
+    if ($tipdoc == 'FAD') {  // per il magazzino una fattura differita è come dire DDT
+        $tipdoc = 'DDT';
     }
-
-    /* sends a Javascript toast to the client */
+    if ($tipdoc == 'AFT') {  // per il magazzino una fattura differita acquisto è come dire DDT acquisto
+        $tipdoc = 'ADT';
+    }
+    if (substr($tipdoc, 0, 1) == 'A' or $tipdoc == 'DDR' or $tipdoc == 'DDL' or $tipdoc == 'RDL') { //documento di acquisto
+        require("../../modules/acquis/lang." . $admin_aziend['lang'] . ".php");
+        $desdoc = $strScript['admin_docacq.php'][0][$tipdoc];
+    } elseif ($tipdoc == 'INV') {
+        require("../../modules/magazz/lang." . $admin_aziend['lang'] . ".php");
+        $desdoc = $strScript['admin_artico.php']['esiste'];
+    }  elseif ($tipdoc == 'MAG') {
+        $desdoc = 'Scarico per Produzione senza lotto';
+    } elseif ($tipdoc == 'CAM') {
+        $desdoc = 'Registro di campagna';
+    } elseif ($tipdoc == 'WTR') {
+        $desdoc = 'Trasferimento tra magazzini';
+    } else {//documento di vendita
+        require("../../modules/vendit/lang." . $admin_aziend['lang'] . ".php");
+        $desdoc = $strScript['admin_docven.php']['doc_name'][$tipdoc];
+    }
+    if (substr($tipdoc, 0, 1) == 'D' || $tipdoc == 'VCO') {
+        $desdoc .= " n." . $numdoc;
+        if ($seziva != '')
+            $desdoc .= "/" . $seziva;
+    } else {
+        $desdoc .= " n." . $numdoc;
+        if ($seziva != '')
+            $desdoc .= "/" . $seziva;
+        $desdoc .= " prot." . $protoc;
+        if ($seziva != '')
+            $desdoc .= "/" . $seziva;
+    }
+    $new_caumag = gaz_dbi_get_row($gTables['caumag'], 'codice', $caumag);
+    $operat = ($new_caumag)?$new_caumag['operat']:0;
+    if (!$data_from_admin_mov) {         // se viene da un documento
+        $datreg = $datdoc;               // la data di registrazione coincide con quella del documento
+        $operat = $docOperat[$tipdoc];    // e la descrizione la ricavo dal tipo documento
+    } else {                            // se � stato passato l'array dei dati
+        $datreg = $data_from_admin_mov['datreg']; // prendo la descrizione e l'operatore da questo
+        $operat = $data_from_admin_mov['operat'];
+        $desdoc = $data_from_admin_mov['desdoc'];
+		}
+    $row_movmag = array('caumag' => $caumag,
+      'operat' => $operat,
+      'datreg' => $datreg,
+      'tipdoc' => $tipdoc,
+      'desdoc' => $desdoc,
+      'datdoc' => $datdoc,
+      'clfoco' => $clfoco,
+      'scochi' => $sconto_chiusura,
+      'id_rif' => $id_rigo_doc,
+      'artico' => $codart,
+      'id_warehouse' => $id_warehouse,
+      'quanti' => $quantita,
+      'prezzo' => $prezzo,
+      'scorig' => $sconto_rigo,
+      'id_lotmag'=>$id_lotmag,
+      'id_orderman'=>$id_orderman,
+      'campo_impianto'=>$campo_impianto,
+      'custom_field'=>$custom_field,
+      'synccommerce_classname'=>$admin_aziend['synccommerce_classname']);
+      if ($id_movmag == 0) {                             // si deve inserire un nuovo movimento
+        $id_movmag = movmagInsert($row_movmag);
+        //gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $id_rigo_doc, 'id_mag', gaz_dbi_last_id());
+        gaz_dbi_query("UPDATE " . $gTables['rigdoc'] . " SET id_mag = " . $id_movmag . " WHERE `id_rig` = $id_rigo_doc ");
+      } elseif ($id_rigo_doc === 'DEL') {                 // si deve eliminare un movimento esistente
+        $old_movmag = gaz_dbi_get_row($gTables['movmag'], 'id_mov', $id_movmag);
+        if ($old_movmag) {
+          $old_caumag = gaz_dbi_get_row($gTables['caumag'], 'codice', $old_movmag['caumag']);
+          $codart = $old_movmag['artico'];
+        }
+        gaz_dbi_del_row($gTables['movmag'], 'id_mov', $id_movmag);
+        if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
+          // aggiorno l'e-commerce ove presente
+          $gs=$admin_aziend['synccommerce_classname'];
+          $gSync = new $gs();
+          if($gSync->api_token && isset($codart)){
+            $gSync->SetProductQuantity($codart);
+          }
+        }
+      } else {   // si deve modificare un movimento esistente
+        $old_movmag = gaz_dbi_get_row($gTables['movmag'], 'id_mov', $id_movmag);
+        if ($old_movmag) {
+          $old_caumag = gaz_dbi_get_row($gTables['caumag'], 'codice', $old_movmag['caumag']);
+        }
+        $id = array('id_mov', $id_movmag);
+        if (!isset($new_caumag['operat'])) {
+            $new_caumag['operat'] = 0;
+        }
+        if (!isset($old_caumag['operat'])) {
+            $old_caumag['operat'] = 0;
+        }
+        movmagUpdate($id, $row_movmag);
+      }
+      return $id_movmag;
+  }
 
     function toast($message, $id = 'alert-discount', $class = 'alert-warning') {
-        /*
-          echo "<script type='text/javascript'>toast('$message');</script>"; */
         if (!empty($message)) {
             echo '<div class="container">
 					<div id="' . $id . '" class="row alert ' . $class . ' fade in" role="alert">
