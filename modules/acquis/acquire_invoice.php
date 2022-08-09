@@ -792,14 +792,31 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
             } else { // sono al primo ingresso dopo l'upload del file, chiedo l'intervento dell'utente sul rigo mettendolo a false
               $form['rows'][$nl]['NumeroDDT']=false;
               $form['rows'][$nl]['DataDDT']=false;
-              if($first) { // almeno il primo rigo si suppone faccia parte della primo DdT, per gli altri  è necessario l'intervento dell'utente
+              $isdescri = (abs($form['rows'][$nl]['amount']) < 0.01) ? true : false;
+              if($first) { // almeno il primo rigo si suppone faccia parte del primo DdT, per gli altri  è necessario l'intervento dell'utente
+                $jumpddt = false;
                 $firstDdT=array_keys($acc_DataDDT);
+                $nddt = count($firstDdT)-1;
+                $ddtpointer=0;
                 $form['rows'][$nl]['NumeroDDT'] = false;
                 $form['rows'][$nl]['DataDDT'] = false;
                 $form['numddt_'.($nl-1)]=$acc_DataDDT[$firstDdT[0]]['Numero'];
-              } else {
-                $form['numddt_'.($nl-1)] = isset($form['numddt_'.($nl-2)])?$form['numddt_'.($nl-2)]:false; // se c'è propongo il rigo che lo precede
+              } else { // i righi successivi saranno del primo fino a quando non trovo uno decrittivo ovvero on un amount a zero
+                if ($isdescri&&!$prevdescri) { // è descrittivo e il precedente non lo era
+                  if (!$jumpddt) $jumpddt = true; // e vengo da un non descrittivo allora salto
+                } else { // è con importo modifico lo stato di jump per poter fare un nuovo salto
+                  $jumpddt = false;
+                }
+                if ( $jumpddt && $ddtpointer < $nddt ) {
+                  $ddtpointer++;
+                  $form['rows'][$nl]['NumeroDDT'] = false;
+                  $form['rows'][$nl]['DataDDT'] = false;
+                  $form['numddt_'.($nl-1)]=$acc_DataDDT[$firstDdT[$ddtpointer]]['Numero'];
+                } else {
+                  $form['numddt_'.($nl-1)] = isset($form['numddt_'.($nl-2)])?$form['numddt_'.($nl-2)]:false; // se c'è propongo il rigo che lo precede
+                }
               }
+              $prevdescri=$isdescri;
             }
           } else { // se la fattura contiene un solo DDT a riferimento allora tutti i righi saranno suoi anche se non riferiti bene, e pertanto non è anomalo
             $form['rows'][$nl]['NumeroDDT']=$numddt;
