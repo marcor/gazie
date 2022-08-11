@@ -33,7 +33,7 @@
 
 class DocContabVars {
 
-    function setData($gTables, $tesdoc, $testat, $tableName, $ecr = false, $genTables="", $azTables="") {
+  function setData($gTables, $tesdoc, $testat, $tableName, $ecr = false, $genTables="", $azTables="") {
 
 
         $link=$GLOBALS['link'];
@@ -174,16 +174,16 @@ class DocContabVars {
         }
 
         //$this->client = $anagrafica->getPartner($tesdoc['clfoco']);
-		$sql = "SELECT * FROM ". $azTables."clfoco" . " LEFT JOIN " . $genTables."anagra" . " ON " . $azTables."clfoco" . ".id_anagra = " . $genTables."anagra" . ".id WHERE codice = '".$tesdoc['clfoco']."' LIMIT 1";
+        $sql = "SELECT * FROM ". $azTables."clfoco" . " LEFT JOIN " . $genTables."anagra" . " ON " . $azTables."clfoco" . ".id_anagra = " . $genTables."anagra" . ".id WHERE codice = '".$tesdoc['clfoco']."' LIMIT 1";
         if ($result = mysqli_query($link, $sql)) {
           $this->client = mysqli_fetch_array($result);
         }else{
           echo "Error: " . $sql . "<br>" . mysqli_error($link);
         }
 
-		if(!$this->client){
-			$this->client=['ragso1'=>'Anonimo','ragso2'=>'','pec_email'=>'','fe_cod_univoco'=>'','fe_cod_univoco'=>'','indspe'=>'','citspe'=>'','country'=>'IT','capspe'=>'','prospe'=>'','pariva'=>'','pariva'=>'','codfis'=>'','sedleg'=>'','fiscal_rapresentative_id'=>''];
-		}
+        if(!$this->client){
+          $this->client=['ragso1'=>'Anonimo','ragso2'=>'','pec_email'=>'','fe_cod_univoco'=>'','fe_cod_univoco'=>'','indspe'=>'','citspe'=>'','country'=>'IT','capspe'=>'','prospe'=>'','pariva'=>'','pariva'=>'','codfis'=>'','sedleg'=>'','fiscal_rapresentative_id'=>''];
+        }
         if ( $this->client['country']!=="IT" ) {
             $this->descri_partner = 'Customer';
         } else {
@@ -200,17 +200,17 @@ class DocContabVars {
         $this->cliente2 = $this->client['ragso2'];
         $this->cliente3 = $this->client['indspe'];
         if (!empty($this->client['citspe'])) {
-			if ($this->client['country'] == 'IT') {
-				$this->client['capspe'] = sprintf("%05d",$this->client['capspe']);
-				$this->cliente4 = (($this->client['capspe']=='00000') ? '' : $this->client['capspe'].' ') . strtoupper($this->client['citspe']) . ' ' . strtoupper($this->client['prospe']);
-			} else {
-				$this->cliente4 = (empty($this->client['capspe']) ? '' : $this->client['capspe'].' ') . strtoupper($this->client['citspe']) . ' ' . strtoupper($this->client['prospe']);
-			}
+          if ($this->client['country'] == 'IT') {
+            $this->client['capspe'] = sprintf("%05d",$this->client['capspe']);
+            $this->cliente4 = (($this->client['capspe']=='00000') ? '' : $this->client['capspe'].' ') . strtoupper($this->client['citspe']) . ' ' . strtoupper($this->client['prospe']);
+          } else {
+            $this->cliente4 = (empty($this->client['capspe']) ? '' : $this->client['capspe'].' ') . strtoupper($this->client['citspe']) . ' ' . strtoupper($this->client['prospe']);
+          }
         } else {
             $this->cliente4 = '';
         }
 
-          $sql = "SELECT * FROM ".$genTables."country"." WHERE iso = '".$this->client['country']."' LIMIT 1";
+        $sql = "SELECT * FROM ".$genTables."country"." WHERE iso = '".$this->client['country']."' LIMIT 1";
         if ($result = mysqli_query($link, $sql)) {
           $rescou = mysqli_fetch_assoc($result);
         }else{
@@ -254,16 +254,16 @@ class DocContabVars {
         $this->id_agente = $resag;
 
         //$this->rs_agente = ($this->id_agente)?$anagrafica->getPartner($this->id_agente['id_fornitore']):'';
-		if ($this->id_agente){
-			$sql = "SELECT * FROM ". $azTables."clfoco" . " LEFT JOIN " . $genTables."anagra" . " ON " . $azTables."clfoco" . ".id_anagra = " . $genTables."anagra" . ".id WHERE codice = '".$this->id_agente['id_fornitore']."' LIMIT 1";
-			if ($result = mysqli_query($link, $sql)) {
-			  $this->rs_agente = mysqli_fetch_array($result);
-			}else{
-			  echo "Error: " . $sql . "<br>" . mysqli_error($link);
-			}
-		}else{
-			$this->rs_agente='';
-		}
+        if ($this->id_agente){
+          $sql = "SELECT * FROM ". $azTables."clfoco" . " LEFT JOIN " . $genTables."anagra" . " ON " . $azTables."clfoco" . ".id_anagra = " . $genTables."anagra" . ".id WHERE codice = '".$this->id_agente['id_fornitore']."' LIMIT 1";
+          if ($result = mysqli_query($link, $sql)) {
+            $this->rs_agente = mysqli_fetch_array($result);
+          }else{
+            echo "Error: " . $sql . "<br>" . mysqli_error($link);
+          }
+        }else{
+          $this->rs_agente='';
+        }
 
         $this->name_agente = ($this->id_agente)?substr($this->rs_agente['ragso1'] . " " . $this->rs_agente['ragso2'], 0, 47):'';
 
@@ -294,7 +294,7 @@ class DocContabVars {
             $this->c_Attenzione = '';
         }
         //$this->client = $anagrafica->getPartner($tesdoc['clfoco']);
-		$sql = "SELECT * FROM ". $azTables."clfoco" . " LEFT JOIN " . $genTables."anagra" . " ON " . $azTables."clfoco" . ".id_anagra = " . $genTables."anagra" . ".id WHERE codice = '".$tesdoc['clfoco']."' LIMIT 1";
+        $sql = "SELECT * FROM ". $azTables."clfoco" . " LEFT JOIN " . $genTables."anagra" . " ON " . $azTables."clfoco" . ".id_anagra = " . $genTables."anagra" . ".id WHERE codice = '".$tesdoc['clfoco']."' LIMIT 1";
         if ($result = mysqli_query($link, $sql)) {
           $this->client = mysqli_fetch_array($result);
         }else{
@@ -312,11 +312,11 @@ class DocContabVars {
 
         $this->docRelNum = $this->tesdoc["numdoc"];    // Numero del documento relativo
         $this->docRelDate = $this->tesdoc["datemi"];    // Data del documento relativo
-		$this->fae_reinvii = '';
+        $this->fae_reinvii = '';
         if (isset($tesdoc['fattura_elettronica_reinvii'])) {
-			$this->fae_reinvii = $this->tesdoc["fattura_elettronica_reinvii"];
-		}
-		$this->efattura='';
+          $this->fae_reinvii = $this->tesdoc["fattura_elettronica_reinvii"];
+        }
+        $this->efattura='';
 
         switch ($tesdoc["tipdoc"]) {
             case "FAD":
@@ -374,44 +374,44 @@ class DocContabVars {
         } else {
             $this->pers_title = 'Spett.le';
         }
-		$admin_aziend['other_email']='';
-		// se ho la mail in testata documento la inserisco sui dati aziendali per poterla passare alla funzione sendMail
-		if (isset($tesdoc["email"])&&strlen($tesdoc["email"])>10){
-			$admin_aziend['other_email']=$tesdoc["email"];
-		}
-        $this->azienda = $admin_aziend;
-		if ($tesdoc['tipdoc'] == 'AFA' || $tesdoc['tipdoc'] == 'AFT') {
-			$clfoco = gaz_dbi_get_row($gTables['clfoco'], "codice", $tesdoc['clfoco']);
-			$this->iban = $clfoco['iban'];
-		}
-        $this->artico_doc = array(); // accumulatore referenze ai documenti degli articoli eventualemente da allegare
-		// ATTRIBUISCO UN EVENTUALE REGIME FISCALE DIVERSO DALLA CONFIGURAZIONE AZIENDA SE LA SEZIONE IVA E' LEGATO AD ESSO TRAMITE IL RIGO var='sezione_regime_fiscale' IN gaz_XXXcompany_config
-		$this->regime_fiscale=$this->azienda['fiscal_reg'];
-
-		//if ($fr=getRegimeFiscale($this->tesdoc["seziva"])) $this->regime_fiscale=$fr;
-		$res=false;
-		$sql = "SELECT * FROM ".$azTables."company_config"." WHERE var = 'sezione_regime_fiscale' LIMIT 1";
-        if ($result = mysqli_query($link, $sql)) {
-          $conf_rf = mysqli_fetch_assoc($result);
-        }else{
-          echo "Error: " . $sql . "<br>" . mysqli_error($link);
+        $admin_aziend['other_email']='';
+        // se ho la mail in testata documento la inserisco sui dati aziendali per poterla passare alla funzione sendMail
+        if (isset($tesdoc["email"])&&strlen($tesdoc["email"])>10){
+          $admin_aziend['other_email']=$tesdoc["email"];
         }
-		$rrff=($conf_rf)?trim($conf_rf['val']):0;
-		$rf=explode(';',$rrff);
-		if (isset($rf[0])&&!empty($rf[0])){// ho almeno un altro regime
-			foreach($rf as $v){
-				$exrf=explode('=',$v);
-				if (preg_match("/^([1-8]{1})$/", $exrf[0], $rgsez)&&preg_match("/^(RF[0-9]{2})$/", $exrf[1], $rgrf)){
-					if ($rgsez[1]==$this->tesdoc["seziva"]) $res=$rgrf[1];
-				}
-			}
-		}
-		$fr=$res;
-		if ($fr){
-			$this->regime_fiscale=$fr;
-		}
+            $this->azienda = $admin_aziend;
+        if ($tesdoc['tipdoc'] == 'AFA' || $tesdoc['tipdoc'] == 'AFT') {
+          $clfoco = gaz_dbi_get_row($gTables['clfoco'], "codice", $tesdoc['clfoco']);
+          $this->iban = $clfoco['iban'];
+        }
+            $this->artico_doc = array(); // accumulatore referenze ai documenti degli articoli eventualemente da allegare
+        // ATTRIBUISCO UN EVENTUALE REGIME FISCALE DIVERSO DALLA CONFIGURAZIONE AZIENDA SE LA SEZIONE IVA E' LEGATO AD ESSO TRAMITE IL RIGO var='sezione_regime_fiscale' IN gaz_XXXcompany_config
+        $this->regime_fiscale=$this->azienda['fiscal_reg'];
 
-    }
+        //if ($fr=getRegimeFiscale($this->tesdoc["seziva"])) $this->regime_fiscale=$fr;
+        $res=false;
+        $sql = "SELECT * FROM ".$azTables."company_config"." WHERE var = 'sezione_regime_fiscale' LIMIT 1";
+            if ($result = mysqli_query($link, $sql)) {
+              $conf_rf = mysqli_fetch_assoc($result);
+            }else{
+              echo "Error: " . $sql . "<br>" . mysqli_error($link);
+            }
+        $rrff=($conf_rf)?trim($conf_rf['val']):0;
+        $rf=explode(';',$rrff);
+        if (isset($rf[0])&&!empty($rf[0])){// ho almeno un altro regime
+          foreach($rf as $v){
+            $exrf=explode('=',$v);
+            if (preg_match("/^([1-8]{1})$/", $exrf[0], $rgsez)&&preg_match("/^(RF[0-9]{2})$/", $exrf[1], $rgrf)){
+              if ($rgsez[1]==$this->tesdoc["seziva"]) $res=$rgrf[1];
+            }
+          }
+        }
+        $fr=$res;
+        if ($fr){
+          $this->regime_fiscale=$fr;
+        }
+
+  }
 
     function initializeTotals() {
         // definisco le variabili dei totali

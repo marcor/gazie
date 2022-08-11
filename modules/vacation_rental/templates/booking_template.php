@@ -63,6 +63,7 @@ class Template extends TCPDI {
         $this->cliente5 = $docVars->cliente5;  // P.IVA e C.F.
         $this->agente = $docVars->name_agente;
         $this->status = $docVars->status;
+
         /*
         if ( $docVars->destinazione == "" && isset($docVars->client['destin'])) {
             $this->destinazione = $docVars->client['destin'];
@@ -161,14 +162,8 @@ class Template extends TCPDI {
             $interlinea = $this->GetY();
             $this->Ln(6);
             $this->SetFont('helvetica', '', 9);
-            if (!empty($this->destinazione)) {
-                if (is_array($this->destinazione)) { //quando si vuole indicare un titolo diverso da destinazione si deve passare un array con titolo index 0 e descrizione index 1
-                    $this->Cell(80, 5, $this->destinazione[0], 'LTR', 2, 'L', 1);
-                    $this->MultiCell(80, 4, $this->destinazione[1], 'LBR', 'L');
-                } else {
-                    $this->Cell(80, 5, "Destinazione :", 'LTR', 2, 'L', 1);
-                    $this->MultiCell(80, 4, $this->destinazione, 'LBR', 'L');
-                }
+            if (!empty($this->agente)) {
+              $this->Cell(75, 8, "TOUR OPERATOR: ".$this->agente, 1, 1, 'C', 0, '', 1);
             }
             if ($this->codice_partner > 0){
               $this->SetXY(35, $interlinea - 5);
@@ -233,6 +228,7 @@ class Template extends TCPDI {
               }
               $this->Cell(75, 8, "STATO DELLA PRENOTAZIONE: ".$this->status, 1, 1, 'C', 0, '', 1);
             }
+
             $this->SetFont('helvetica', '', 7);
             if ($this->fiscal_rapresentative) {
                 $this->Cell(115, 8, 'Legale Rappresentante ', 0, 0, 'R');
