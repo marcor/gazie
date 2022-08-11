@@ -957,7 +957,9 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
 								$status='TD17'; // acquisto servizi dall'estero
 								if ($istat_area==11&&$rcv['operation_type']<>'SERVIZ') { // è un intra  ma devo vedere se sono beni altrimenti lascio TD17
 									$status='TD18';
-								}
+								} elseif ( $v['tes']['istat_area'] <> 11 ) { // extra ue
+                  $status='TD19';
+                }
 							}
 							$tesdocVal = ['tipdoc' => 'XFA',
 								'template' => 'FatturaAcquisto',
