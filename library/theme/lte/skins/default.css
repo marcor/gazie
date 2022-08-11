@@ -181,3 +181,7 @@ td.ui-datepicker-other-month>a.ui-state-default.ui-priority-secondary{
 	color: #1e1c1c;
 	background-color: #cec8c2;
 }
+div.tooltip table th {
+	background-color: #014d63;
+  color: #fff5b2;
+}

@@ -417,3 +417,7 @@ div.ui-dialog-buttonpane.ui-widget-content div.ui-dialog-buttonset button.btn.bt
 	color: #1e1c1c;
 	background-color: #d1d5e8;
 }
+div.tooltip table th {
+	background-color: #014d63;
+  color: #fff5b2;
+}
