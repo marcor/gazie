@@ -578,6 +578,7 @@ $strScript = array(
         'durability_mu' => 'Unità di misura durabilità',
         'durability' => 'Valore durabilità',
         'warranty_days' => 'Giorni di garanzia',
+        'id_agent' => 'Proprietario/responsabile',
         'unita_durability' => array('' => '', '>' => '>', '<' => '<', 'H' => 'H', 'D' => 'D', 'M' => 'M'),
 		'deposit_type_value' => array(0 => 'a valore', '1' => 'a percentuale sul totale'),
         'mesg' => array('La ricerca non ha dato risultati!',
@@ -633,14 +634,16 @@ $strScript = array(
 		'price'=>'Price',
 		'search'=>"Search",
 		'open_calendar'=>"Open total calendar",
-		'imposta'=>"For availability and prices set check-in and check-out dates",
+		'imposta'=>"For availability, price or to book, set check-in and check-out date",
 		'risultato'=>"Availability for the dates requested",
 		'book'=>"Book",
 		'nessun_risultato'=>"There is no availability for your requested dates. Try to modify them or look at the calendar.",
     'for_night' => 'for night',
     'nights' => 'nights',
-    'over_guest' => 'Attention: this accommodation is available but has a max capability of',
-    'persons' => 'persons'
+    'over_guest' => 'Attention: this accommodation is available but it has a max capability of',
+    'persons' => 'persons',
+    'avviso' => 'The minimum stay is',
+    'avviso2' => 'There are increasing discounts for 12, 21 and 28 nights.'
     ),
 	"booking_form.php" =>
     array('title' => 'Booking form',

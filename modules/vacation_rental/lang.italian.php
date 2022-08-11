@@ -339,7 +339,7 @@ $strScript = array(
         'durability_mu' => 'Unità di misura durabilità',
         'durability' => 'Valore durabilità',
         'warranty_days' => 'Giorni di garanzia',
-        'id_agent' => 'Agente/Proprietario responsabile',
+        'id_agent' => 'Proprietario/responsabile',
         'unita_durability' => array('' => '', '>' => '>', '<' => '<', 'H' => 'H', 'D' => 'D', 'M' => 'M'),
 		'tur_tax' => 'Tassa turistica',
 		'tur_tax_mode' => 'Modalità Tassa turistica',
@@ -398,14 +398,16 @@ $strScript = array(
 		'price'=>'Prezzo',
 		'search'=>"Cerca",
 		'open_calendar'=>"Apri il calendario generale",
-		'imposta'=>"Per disponibilità e prezzi impostare le date e cercare",
+		'imposta'=>"Per disponibilità, prezzo o prenotazione impostare le date",
 		'risultato'=>"Disponibilità per ",
 		'book'=>"Prenota",
 		'nessun_risultato'=>"Per il periodo selezionato non ci sono disponibilità. Provare a modificare le date o visionare il calendario generale.",
     'for_night' => 'a notte',
     'nights' => 'notti',
     'over_guest' => 'Attenzione: questo alloggio è disponibile ma ha una capienza massima di',
-    'persons' => 'persone'
+    'persons' => 'persone',
+    'avviso' => 'Il soggiorno minimo è di',
+    'avviso2' => 'Ci sono sconti crescenti per 12, 21 e 28 notti.'
     ),
 	"booking_form.php" =>
     array('title' => 'Modulo di prenotazione',

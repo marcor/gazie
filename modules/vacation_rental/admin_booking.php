@@ -175,7 +175,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     }
     $form['banapp'] = $_POST['banapp'];
     $form['vettor'] = $_POST['vettor'];
-    $form['id_agente'] = intval($_POST['id_agente']);
     $form['net_weight'] = floatval($_POST['net_weight']);
     $form['gross_weight'] = floatval($_POST['gross_weight']);
     $form['units'] = intval($_POST['units']);
@@ -192,7 +191,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['cauven'] = $_POST['cauven'];
     $form['caucon'] = $_POST['caucon'];
     $form['caumag'] = $_POST['caumag'];
-    $form['id_agente'] = $_POST['id_agente'];
+    $form['id_agente'] = intval($_POST['id_agente']);
+    $form['id_tourOp'] = intval($_POST['id_tourOp']);
     $form['sconto'] = $_POST['sconto'];
     // inizio rigo di input
     $form['in_descri'] = $_POST['in_descri'];
@@ -625,6 +625,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['destin'] = $old_head['destin'];
                 $form['initra'] = $initra;
                 $form['datemi'] = $datemi;
+                $form['id_agente'] = $form['id_tourOp'];// scambio perché l'agente è il tour operator mentre in id_agente ho il proprietario
                 $codice = array('id_tes', $form['id_tes']);
                 tesbroUpdate($codice, $form);
                 if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
@@ -662,6 +663,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
               $form['template'] = 'booking';
               $form['initra'] = $initra;
               $form['datemi'] = $datemi;
+              $form['id_agente'] = $form['id_tourOp'];// scambio perché l'agente è il tour operator mentre in id_agente ho il proprietario
               $data=[];
               $data= array('vacation_rental'=>array('status' => 'CONFIRMED','ip' => 'diretto'));
               $form['custom_field'] = json_encode($data);
@@ -933,6 +935,19 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         }
         $form['hidden_req'] = '';
     }
+    if ($_POST['hidden_req'] == 'TOUROP') { // da rivedere perché qui, come sopra, non ci passa mai... e poi il proprietario non genera provvigioni mentre il tour operator sì
+        if ($form['id_tourOp'] > 0) { // carico la provvigione standard
+            $provvigione = new Agenti;
+            $form['in_provvigione_tourOp'] = $provvigione->getPercent($form['id_tourOp']);
+            if (isset($_POST['rows'])) {  // aggiorno le provvigioni sui rows
+                foreach ($_POST['rows'] as $k => $val) {
+                    $form['rows'][$k]['provvigione_tourOp'] = $form['in_provvigione_tourOp'];
+                    $form['rows'][$k]['provvigione_tourOp'] = $provvigione->getPercent($form['id_tourOp'], $val['codart']);
+                }
+            }
+        }
+        $form['hidden_req'] = '';
+    }
 
     // Se viene inviata la richiesta di conferma rigo
 
@@ -997,7 +1012,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
       }
       $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['in_codart']);
       if (isset($_POST['in_submit']) && strlen($form['in_codart'])>0 && $form['start']!="" && $form['end']!=""){// se è un alloggio e ci sono le date CALCOLO IL PREZZO
-        $total_price=0;// calcolo del prezzo totale della locazione
+        $total_price=0;// inizializzo calcolo del prezzo totale della locazione
         $start=$form['start'];
         $night=0;
         while (strtotime($start) < strtotime($form['end'])) {// ciclo il periodo della locazione giorno per giorno
@@ -1050,6 +1065,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 					$form['in_total_guests'] = $data['vacation_rental']['total_guests'];
           $form['tur_tax'] = $data['vacation_rental']['tur_tax'];
           $form['tur_tax_mode'] = $data['vacation_rental']['tur_tax_mode'];
+          $form['id_agente'] = $data['vacation_rental']['agent'];// questo è il proprietario
 
 			} elseif (isset($data['vacation_rental']['extra'])){// se è un extra
         $extra = gaz_dbi_get_row($gTables['rental_extra'], "id", $data['vacation_rental']['extra']);
@@ -1336,7 +1352,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 				}
                 $form['rows'][$next_row]['ritenuta'] = $form['in_ritenuta'];
                 $provvigione = new Agenti;
-                $form['rows'][$next_row]['provvigione'] = $provvigione->getPercent($form['id_agente'], $form['in_codart']);
+                $form['rows'][$next_row]['provvigione'] = $provvigione->getPercent($form['id_tourOp'], $form['in_codart']);
                 if (!isset($tmpPrezzoNetto_Sconto) or ( $tmpPrezzoNetto_Sconto >= 0)) { // non ho trovato un prezzo netto per il cliente/articolo
                     if ($form['listin'] == 2) {
                         $form['rows'][$next_row]['prelis'] = number_format($artico['preve2'], $admin_aziend['decimal_price'], '.', '');
@@ -1663,9 +1679,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['banapp'] = $tesbro['banapp'];
     $form['weekday_repeat'] = $tesbro['weekday_repeat'];
     $form['vettor'] = $tesbro['vettor'];
-    $form['id_agente'] = $tesbro['id_agente'];
+    $form['id_tourOp'] = $tesbro['id_agente'];// questo è il tour operator
     $provvigione = new Agenti;
-    $form['in_provvigione'] = $provvigione->getPercent($form['id_agente']);
+    $form['in_provvigione'] = $provvigione->getPercent($form['id_tourOp']);
     $form['net_weight'] = $tesbro['net_weight'];
     $form['gross_weight'] = $tesbro['gross_weight'];
     $form['units'] = $tesbro['units'];
@@ -1707,14 +1723,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['tipiva'] = "";
         }else{
           if (isset ($articolo) && $data = json_decode($articolo['custom_field'], TRUE)) { // se esiste un json nel custom field
-            if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['accommodation_type'])){
+            if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['accommodation_type'])){// è un alloggio
               $form['rows'][$next_row]['accommodation_type'] = $data['vacation_rental']['accommodation_type'];
               $form['rows'][$next_row]['adult'] = $data['vacation_rental']['adult'];
               $form['rows'][$next_row]['child'] = $data['vacation_rental']['child'];
               $form['rows'][$next_row]['total_guests'] = $data['vacation_rental']['total_guests'];
               $form['tur_tax'] = $data['vacation_rental']['tur_tax'];
               $form['tur_tax_mode'] = $data['vacation_rental']['tur_tax_mode'];
-
+              $form['id_agente'] = $data['vacation_rental']['agent'];// questo è il proprietario
             } elseif (is_array($data['vacation_rental']) && isset($data['vacation_rental']['extra'])){
               $form['in_accommodation_type'] = 1;// è un extra
               $form['in_adult'] = 0;
@@ -1859,6 +1875,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['banapp'] = "";
     $form['vettor'] = "";
     $form['id_agente'] = 0;
+    $form['id_tourOp'] = 0;
     $form['net_weight'] = 0;
     $form['gross_weight'] = 0;
     $form['units'] = 0;
@@ -2166,10 +2183,16 @@ echo '			</td>
 				<td class="FacetFieldCaptionTD" title="' . $script_transl['day_of_validity'] . '">' . $script_transl['day_of_validity'] . '</td>
 				<td class="FacetDataTD" title="' . $script_transl['day_of_validity'] . '">
 					<input type="text" value="' . $form['day_of_validity'] . '" name="day_of_validity" maxlength="3" />
-				</td>
-				<td>
-					<input type="hidden" value="' . $form['delivery_time'] . '" name="delivery_time" />
-				</td>
+          <input type="hidden" value="' . $form['delivery_time'] . '" name="delivery_time" />
+        </td>';
+
+echo "<td class=\"FacetFieldCaptionTD\">Tour operator</td>";
+echo "<td  class=\"FacetDataTD\">\n";
+$select_tourOp = new selectAgente("id_tourOp");
+$select_tourOp->addSelected($form["id_tourOp"]);
+$select_tourOp->output();
+
+echo'</td>
 			</tr>
 			<tr>
 			<td class="FacetFieldCaptionTD" title="' . $script_transl['speban_title'] . '">' . $script_transl['speban'] . '</td>
@@ -2183,7 +2206,7 @@ echo '			</td>
 						<input type=\"hidden\" name=\"id_des\" value=\"" . $form['id_des'] . "\">
 						<input type=\"hidden\" name=\"destin\" value=\"" . $form['destin'] . "\"></td>\n";
 
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['id_agente'] . "</td>";
+echo "<td class=\"FacetFieldCaptionTD\">Proprietario</td>";
 echo "<td  class=\"FacetDataTD\">\n";
 $select_agente = new selectAgente("id_agente");
 $select_agente->addSelected($form["id_agente"]);
