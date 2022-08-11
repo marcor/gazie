@@ -685,10 +685,8 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 			$status='TD16'; // operazioni interne (italiani)
 			if ($v['tes']['country']<>'IT') {
 				$status='TD17'; // acquisto servizi dall'estero
-				if ( ( $v['tes']['istat_area'] == 11 && $vv['operation_type'] <> 'SERVIZ' ) || $fiscal_rapresentative_country == 'IT' ) { // è un intra  ma devo vedere se sono beni altrimenti lascio TD17
-					$status='TD18';
-				} elseif ( $v['tes']['istat_area'] <> 11 ) { // extra ue
-					$status='TD19';
+        if ($vv['operation_type']<>'SERVIZ') { // non è un servizio distinguo se intra o extra
+          $status=($v['tes']['istat_area']==11)?'TD18':'TD19';
         }
 			}
 			$tesdocVal = ['tipdoc' => 'XFA',
