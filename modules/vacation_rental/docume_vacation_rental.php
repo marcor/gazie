@@ -52,7 +52,7 @@ $admin_aziend=checkAdmin(9);
 			<p>Copyright (C) - Antonio Germani Massignano (AP) https://www.programmisitiweb.lacasettabio.it - telefono +39 340 50 11 912</p>
 		</h5>
     <h5><b>
-    -------->    Versione 1.0    <---------
+    -------->    Versione 1.3    <---------
     </b></h5>
     <div class="panel panel-info text-left" style="max-width:80%; margin-left:10%; padding:10px;">
 
@@ -63,9 +63,10 @@ $admin_aziend=checkAdmin(9);
           <li>Gestione delle prenotazioni</li>
           <li>Gestione degli extra (anche con quantità limitate) della tassa di soggiorno turistica, della caparra confirmatoria e del deposito cauzionale</li>
           <li>Calendario delle disponibilità</li>
-          <li>Creazione e invio via e-mail del PDF della prenotazione</li>
-          <li>Creazione e invio via e-mail del PDF del contratto di locazione</li>
+          <li>Creazione e stampa o invio via e-mail del PDF della prenotazione</li>
+          <li>Creazione e stampa o invio via e-mail del PDF del contratto di locazione</li>
           <li>Gestione di alloggi con proprietario diverso dall'azienda di GAzie (contratto di locazione specifico)</li>
+          <li>Gestione di un eventuale tour operator che ha venduto la prenotazione</li>
           <li>Gestione dell'accettazione (check-in/check-out) con data e ora e, al check-out, possibilità di inviare e-mail di richiesta recensione</li>
         </ul>
 
@@ -79,15 +80,16 @@ $admin_aziend=checkAdmin(9);
         <li>Gestione delle prenotazioni</li>
         <li>Gestione degli extra (anche con quantità limitate), della tassa di soggiorno turistica, della caparra confirmatoria e del deposito cauzionale</li>
         <li>Calendario delle disponibilità</li>
-        <li>Creazione e invio via e-mail del PDF della prenotazione</li>
-        <li>Creazione e invio via e-mail del PDF del contratto di locazione</li>
+        <li>Creazione e stampa o invio via e-mail del PDF della prenotazione</li>
+        <li>Creazione e stampa o invio via e-mail del PDF del contratto di locazione</li>
         <li>Gestione del Calendario dei prezzi giornalieri per ogni singolo alloggio</li>
         <li>Gestione di alloggi con proprietario diverso dall'azienda di GAzie (contratto di locazione specifico)</li>
+        <li>Gestione di un eventuale tour operator che ha venduto la prenotazione</li>
         <li>Gestione dell'accettazione (check-in/check-out) con data e ora e, al check-out, possibilità di inviare e-mail di richiesta recensione</li>
 
         <p><br>Utilizzabile in un qualsiasi sito web tramite apposito Iframe:</p>
         <li>Front-end per il cliente tramite iframe su qualsiasi sito internet</li>
-        <li>L'Iframe, impostando giorno di check-in e check-out, fornirà disponibilità e prezzi e permetterà la prenotazione immediata online</li>
+        <li>L'Iframe, impostando giorno di check-in e check-out, fornirà al cliente la disponibilità e i prezzi e permetterà la prenotazione immediata online</li>
         <li>Calcolo sconti automatico per alloggio, struttura, numero di notti, periodo limitato e codice sconto</li>
         <li>Visualizzazione calendario delle disponibilità totali</li>
         <li>Pagamenti online con bonifico bancario, carta di credito off-line, PayPal e Stripe(richiede licenza d'uso)</li>

@@ -533,7 +533,8 @@ $strScript = array(
     'deposit_return' => 'In assenza di danni, il deposito cauzionale sarà restituito al check-out',
     'ask_feedback' => 'Grazie per essere stato nostro ospite, speriamo che il soggiorno sia stato di suo gradimento.<br>La soddisfazione totale degli ospiti è il nostro obbiettivo. Una sua recensione sarebbe molto apprezzata, ci dedichi solo pochi minuti e lasci una recensione cliccando sul link sottostante, per favore.',
     'ask_feedback2' => 'Il suo giudizio è molto importante per noi. <br>Sperando di rivederla presto <br> Cordiali saluti',
-    'use_access' => 'Per accedere usi i seguenti codici di accesso'
+    'use_access' => 'Per accedere usi i seguenti codici di accesso',
+    'more_info' => 'Maggiori info'
     ),
 
   "admin_extra.php" =>
@@ -565,7 +566,8 @@ $strScript = array(
 		'annota' => 'Annotazione (da riportare nel contratto di locazione)',
 		'err' => array(
         'valcod' => 'Non hai inserito il codice dell\'extra',
-		'descri' => 'Non hai scritto la descrizione'
+        'descri' => 'Non hai scritto la descrizione',
+        'char' => 'Il codice è stato modificato perché conteneva caratteri speciali non ammessi'
 		),
 		" Extra ",
 		"Descrizione",

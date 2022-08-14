@@ -769,7 +769,8 @@ $strScript = array(
     'deposit_return' => 'If there is no damage, the security deposit will be returned at check-out',
     'ask_feedback' => 'Thank you for being our guest, we hope you enjoyed your stay. <br> Total satisfaction of our guests is our goal. Your review is greatly appreciated, just take a few minutes and leave a review by clicking on the link below, please.',
     'ask_feedback2' => 'Your judgment is very important to us. <br> Hoping to see you again soon <br> Sincerely',
-    'use_access' => 'To log in, use the following access codes'
+    'use_access' => 'To log in, use the following access codes',
+    'more_info' => 'More info'
     ),
 
   "admin_extra.php" =>
@@ -801,7 +802,8 @@ $strScript = array(
 		'annota' => 'Annotazione',
 		'err' => array(
         'valcod' => 'Non hai inserito il codice dell\'extra',
-		'descri' => 'Non hai scritto la descrizione'
+        'descri' => 'Non hai scritto la descrizione',
+        'char' => 'Il codice è stato modificato perché conteneva caratteri speciali non ammessi'
 		),
 		" Extra ",
 		"Descrizione",

@@ -31,7 +31,27 @@ if (isset($_POST['delElement']) && intval($_POST['delElement'])>0){// se è stat
     echo 'Non posso cancellare l\'elemento perché ad esso risulta associato almeno un feedback';
   }
 }
-if (count($_POST) > 1 && !isset($_POST['addElement']) && !isset($_POST['delElement']) ) {
+if (isset($_POST['updElement']) && intval($_POST['updElement'])>0){// se è stato richiesto di modificare un elemento feedback
+  $genclass="";
+  $feedclass="active";
+  $upd=gaz_dbi_get_row($gTables['rental_feedback_elements'], 'id', intval($_POST['updElement']));
+}
+if (isset($_POST['SaveupdElement']) && intval($_POST['SaveupdElement'])>0){// se è stato richiesto di salvare la modifica di un elemento feedback
+  $genclass="";
+  $feedclass="active";
+   $table = 'rental_feedback_elements';
+    $set['element']=  mysqli_real_escape_string($link,substr($_POST['newElement'],0,64));
+    $set['facility']=  intval($_POST['newFacility']);
+    $set['status']=  "MODIFIED";
+    $columns = array('element', 'facility', 'status');
+    $codice=array();
+    $codice[0]="id";
+    $codice[1]=intval($_POST['SaveupdElement']);
+    $newValue = array('element'=>$set['element'], 'facility'=>$set['facility'],'status'=>$set['status']);
+    tableUpdate($table, $columns, $codice, $newValue);
+}
+
+if (count($_POST) > 1 && !isset($_POST['addElement']) && !isset($_POST['delElement']) && !isset($_POST['updElement']) && !isset($_POST['SaveupdElement'])) {
   $_POST  = filter_input_array(INPUT_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
   foreach ($_POST as $k => $v) {
     $value=filter_var($v, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -144,23 +164,50 @@ if (trim($address_for_fae)==''){
                     <button type="submit" class="btn btn-success" name="delElement" value="<?php echo $feedback["id"]; ?>">
                       <i class="glyphicon glyphicon-minus"> Elimina elemento</i>
                     </button>
+                    <button type="submit" class="btn btn-success" name="updElement" value="<?php echo $feedback["id"]; ?>">
+                      <i class="glyphicon glyphicon-edit"> modifica</i>
+                    </button>
                   </div>
                 </div>
                 <?php
               }
             }
+              if (intval($_POST['updElement'])>0){
+                ?>
+                <div class="row">
+                  <div class="form-group" >
+                    <div class="row">
+                      <label for="inputElement" class="col-sm-5 control-label">Modifica struttura</label>
+                        <div class="col-sm-7">
+                        <?php
+                        $gForm->selectFromDB('artico_group', 'newFacility', 'id_artico_group', $upd['facility'], false, 0, ' - ', 'descri', '', 'col-sm-8', array('value'=>0,'descri'=>''), 'tabindex="18" style="max-width: 250px;"');
+                        ?>
+                        </div>
+                    </div>
+                    <label for="inputElement" class="col-sm-5 control-label">Modifica elemento feedback&nbsp;<i class="glyphicon glyphicon-flag" title="accetta tag lingue (<it></it>)"></i></label>
+                    <div class="col-sm-7">
+                      <input type="text" name="newElement" value="<?php echo $upd['element'];?>">
+                      <button type="submit" class="btn btn-success" name="SaveupdElement" value="<?php echo $upd['id']; ?>">
+                        <i class="glyphicon glyphicon-record"> Modifica elemento</i>
+                      </button>
+                    </div>
+                  </div>
+                </div><!-- chiude row  -->
+                <?php
+              }else{
+
               ?>
               <div class="row">
                 <div class="form-group" >
                   <div class="row">
                     <label for="inputElement" class="col-sm-5 control-label">Inserisci eventuale struttura</label>
                       <div class="col-sm-7">
- <?php
+                      <?php
                       $gForm->selectFromDB('artico_group', 'newFacility', 'id_artico_group', 0, false, 0, ' - ', 'descri', '', 'col-sm-8', array('value'=>0,'descri'=>''), 'tabindex="18" style="max-width: 250px;"');
                       ?>
                       </div>
                   </div>
-                  <label for="inputElement" class="col-sm-5 control-label">Inserisci nuovo elemento feedback</label>
+                  <label for="inputElement" class="col-sm-5 control-label">Inserisci nuovo elemento feedback&nbsp;<i class="glyphicon glyphicon-flag" title="accetta tag lingue (<it></it>)"></i></label>
                   <div class="col-sm-7">
                     <input type="text" name="newElement">
                     <button type="submit" class="btn btn-success" name="addElement">
@@ -170,10 +217,7 @@ if (trim($address_for_fae)==''){
                 </div>
               </div><!-- chiude row  -->
               <?php
-            ?>
-
-
-            <?php
+              }
 
             ?>
 
