@@ -13,7 +13,7 @@ $feedclass="";
 if (isset($_POST['addElement'])){// se è stato richiesto di inserire un nuovo elemento feedback
   $genclass="";
   $feedclass="active";
-  if (strlen($_POST['newElement']>2)){// se non è vuoto posso inserire
+  if (strlen($_POST['newElement'])>2){// se non è vuoto posso inserire
     $table = 'rental_feedback_elements';
     $set['element']=  mysqli_real_escape_string($link,substr($_POST['newElement'],0,64));
     $set['facility']=  intval($_POST['newFacility']);
@@ -172,7 +172,7 @@ if (trim($address_for_fae)==''){
                 <?php
               }
             }
-              if (intval($_POST['updElement'])>0){
+              if (isset($_POST['updElement']) && intval($_POST['updElement'])>0){
                 ?>
                 <div class="row">
                   <div class="form-group" >

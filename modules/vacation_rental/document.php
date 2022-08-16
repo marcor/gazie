@@ -658,7 +658,7 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
 		$azTables=$GLOBALS['azTables'];
 		global $link;
 		$link=$GLOBALS['link'];
-    if (!isset($lang_template) || $lang_template==''){
+    if (!isset($lang_template) || $lang_template=='' || $lang_template=false){
       $lang="italian";
     }
     require("./lang." . $lang . ".php");
