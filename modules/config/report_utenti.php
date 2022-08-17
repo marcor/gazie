@@ -94,7 +94,7 @@ $linkHeaders = new linkHeaders($headers_utenti);
 $linkHeaders -> output();
 
 // posso eliminare gli utenti amministratori solo se non sono soli
-$rs_admins = gaz_dbi_dyn_query("user_id", $gTables['admin'], " Abilit = 9 ", "user_id",0,1);
+$rs_admins = gaz_dbi_dyn_query("user_id", $gTables['admin'], " Abilit = 9 ", "user_id",0);
 $admins = gaz_dbi_num_rows($rs_admins);
 
 $result = gaz_dbi_dyn_query ('*', $gTables['admin'], $where, $orderby, $limit, $passo);
