@@ -34,6 +34,7 @@ require("../../library/include/datlib.inc.php");
 require("../../modules/magazz/lib.function.php");
 $admin_aziend=checkAdmin();
 require("../../library/include/header.php");
+$firstpart_ical_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']!='off') ? 'https://'.$_SERVER['SERVER_NAME'] : 'http://'.$_SERVER['SERVER_NAME'];
 // campi ammissibili per la ricerca
 $search_fields = [
     'sea_codice' => "{$gTables['artico']}.codice LIKE '%%%s%%'",
@@ -192,7 +193,7 @@ function openframe(url,codice){
 };
 
 
-function Copy(id) {
+function Copy(id) { // ATTENZIONE questa funzione, se online, richiede che il sito sia in navigazione sicura (https) altrimenti non funziona
 	 /* Get the text field */
   var copyText = document.getElementById("copy"+id);
 
@@ -364,8 +365,8 @@ while ($r1 = gaz_dbi_fetch_array($result)) {
 					echo "cadauno";
 				break;
 			}
-	if ($r['id_artico_group']>0){
-		echo '<a class="btn btn-xs btn-default" title="Struttura"  onclick="getgroup(\''.$r['id_artico_group'].'\');"> <i class="glyphicon glyphicon-level-up"></i> </a> ';
+    if ($r['id_artico_group']>0){
+      echo '<a class="btn btn-xs btn-default" title="Struttura"  onclick="getgroup(\''.$r['id_artico_group'].'\');"> <i class="glyphicon glyphicon-level-up"></i> </a> ';
     }
 			echo "</td>\n";
 			echo '<td class="text-center">'.$r['rif_alloggio'];
@@ -373,15 +374,19 @@ while ($r1 = gaz_dbi_fetch_array($result)) {
 			echo "</td>\n";
 			echo '<td class="text-center">'.$r['catmer'].'-'.$r['descat'];
 			echo "</td>\n";
+      if ($r['max_quantity']>0){
 			?>
 			<td class="text-center">
-				<input type="text" value="<?php echo dirname(__FILE__),"/ical.php?extra_code=",$r['codice']; ?>" id="copy<?php echo $r['codice'];?>" readonly width="100">
+				<input type="text" value="<?php echo $firstpart_ical_url,"/modules/vacation_rental/ical.php?house_code=",$r['codice']; ?>" id="copy<?php echo $r['codice'];?>" readonly width="100">
 				<a class="btn btn-xs btn-default" style="cursor:pointer;" onclick="Copy('<?php echo $r['codice'];?>')">
 					<i class="glyphicon glyphicon-copy" title="Copia url Ical">
 					</i>
 				</a>
 			</td>
 			<?php
+      }else{
+        echo "<td></td>";
+      }
 			echo '<td class="text-center">'.$r['web_price'];
 			echo "</td>\n";
       if ($r['max_quantity']>0){
