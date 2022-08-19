@@ -1455,8 +1455,8 @@ echo "</script>\n";
         echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['upd_this'] . " n." . $form['id_testata'] . "</div>\n";
     }
     ?>
-
-    <table border="0" cellpadding="3" cellspacing="1" class="FacetFormTABLE" align="center">
+<div class="table-responsive">
+    <table class="Tmiddle table-striped">
 
         <?php
         if (!empty($msg)) {
@@ -1512,6 +1512,7 @@ echo "</script>\n";
                 echo "</tr>\n";
                 ?>
     </table>
+  </div>
     <?php
 //inserimento dati documenti
     if ($form["inserimdoc"] == 1) {
@@ -1522,7 +1523,7 @@ echo "</script>\n";
         }
         ?>
         <div class="panel panel-default">
-            <div class="container-fluid">
+            <div>
                 <ul class="nav nav-tabs">
                     <li class="active bg-info"><a data-toggle="tab" href="#insdoc"><i class="glyphicon glyphicon-tag"></i> <?php echo $script_transl['insdoc']; ?></a></li>
 					<?php
