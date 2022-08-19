@@ -16,7 +16,7 @@ if ( is_numeric($_GET['title']) ) {
   $start=substr($_GET['start'],0,10);
   $end=substr($_GET['end'],0,10);
   $err='';
-  while (strtotime($start) < strtotime($end)) {// ciclo il periodo giorno per giorno per vedere se c'è già un prezzo
+  while (strtotime($start) <= strtotime($end)) {// ciclo il periodo giorno per giorno per vedere se c'è già un prezzo
     $what = "title";
     $table = $gTables['rental_prices'];
     $where = "house_code = '".substr($_GET['house_code'],0,32)."' AND start < '". $start ."' AND end >= '". $start."'";

@@ -180,7 +180,7 @@ function openframe(url,codice){
 		$("#titolo").append(codice);
 		$('#framePdf').attr('src',url);
 		$('#framePdf').css({'height': '100%'});
-		$('.framePdf').css({'display': 'block','width': '90%', 'height': '80%', 'z-index':'2000'});
+		$('.framePdf').css({'display': 'block','width': '90%', 'height': '100%', 'z-index':'2000'});
     $("html, body").delay(100).animate({scrollTop: $('#framePdf').offset().top},'slow', function() {
         $("#framePdf").focus();
     });
@@ -224,7 +224,7 @@ $ts->output_navbar();
         <p>Descrizione</p>
         <p class="ui-state-highlight" id="iddescri"></p>
 	</div>
-	<div class="framePdf panel panel-success" style="display: none; position: fixed; left: 5%; top: 10px">
+	<div class="framePdf panel panel-success" style="display: none; position: fixed; left: 5%; top: 5px">
 			<div class="col-lg-12">
 				<h4><div class="col-xs-11" id="titolo" ></div></h4>
 				<div class="col-xs-1"><h4><button type="button" id="closePdf"><i class="glyphicon glyphicon-remove"></i></button></h4></div>
@@ -384,8 +384,12 @@ while ($r1 = gaz_dbi_fetch_array($result)) {
 			<?php
 			echo '<td class="text-center">'.$r['web_price'];
 			echo "</td>\n";
+      if ($r['max_quantity']>0){
 			echo '<td class="text-center"><a class="btn btn-xs btn-default" style="cursor:pointer;" onclick="openframe(\'extra_availability.php?extra_code='.$r["codice"].'\',\'Calendario disponibilità extra: <b>'.$r["codice"].'</b>\')" data-toggle="modal" data-target="#iframe"> <i class="glyphicon glyphicon-calendar" title="Calendario della disponibilità degli extra"></i></a>';
 			echo "</td>\n";
+      }else{
+        echo "<td></td>";
+      }
 			echo '<td class="text-center"><a class="btn btn-xs btn-default" disabled="disabled" title="ancora da sviluppare" href="clone_artico.php?codice='.$r["codice"].'"> <i class="glyphicon glyphicon-export"></i></a>';
 			echo "</td>\n";
 			echo '<td class="text-center"><a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="'. $r['codice'].'" artico="'. $r['descri'].'"> <i class="glyphicon glyphicon-remove"></i></a>';
