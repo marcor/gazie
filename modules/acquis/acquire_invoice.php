@@ -1251,9 +1251,11 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 								$rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = '{$exist_tesdoc['id_tes']}'","id_tes desc");
 								gaz_dbi_del_row($gTables['tesdoc'], "id_tes", $exist_tesdoc['id_tes']);
 								while ($a_row = gaz_dbi_fetch_array($rs_righidel)) {
+                  if ($a_row['id_mag']!=null && $a_row['id_mag']>=1) {
                     $movmag_datreg = gaz_dbi_get_row($gTables['movmag'], "id_mov", $a_row['id_mag'])['datreg'];
-									  gaz_dbi_del_row($gTables['rigdoc'], "id_rig", $a_row['id_rig']);
-									  gaz_dbi_del_row($gTables['movmag'], "id_mov", $a_row['id_mag']);
+                    gaz_dbi_del_row($gTables['rigdoc'], "id_rig", $a_row['id_rig']);
+                    gaz_dbi_del_row($gTables['movmag'], "id_mov", $a_row['id_mag']);
+                  }
 								}
 							}
 							// creo un nuovo tesdoc AFT
