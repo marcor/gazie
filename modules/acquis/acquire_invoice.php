@@ -442,8 +442,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		$val_err = libxml_get_errors(); // se l'xml è valido restituisce 1
 		libxml_clear_errors();
 		if (empty($val_err)){
-			/* INIZIO CONTROLLO NUMERO DATA, ovvero se nonostante il nome del file sia diverso il suo contenuto è già stato importato e già c'è uno con lo stesso tipo_documento-numero_documento-anno-fornitore
-			*/
+			// INIZIO CONTROLLO NUMERO DATA, ovvero se nonostante il nome del file sia diverso il suo contenuto è già stato importato e già c'è uno con lo stesso tipo_documento-numero_documento-anno-fornitore
 			$tipdoc=$tipdoc_conv[$xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiGenerali/DatiGeneraliDocumento/TipoDocumento")->item(0)->nodeValue];
 			$datdoc=$xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiGenerali/DatiGeneraliDocumento/Data")->item(0)->nodeValue;
 			$numdoc=$xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiGenerali/DatiGeneraliDocumento/Numero")->item(0)->nodeValue;
@@ -462,6 +461,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					$codfis=$codiva;
 				}
 			}
+			$nomefornitore=($xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/Anagrafica/Denominazione")->length>=1)?$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/Anagrafica/Denominazione")->item(0)->nodeValue:$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/Anagrafica/Cognome")->item(0)->nodeValue.' '.$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/Anagrafica/Nome")->item(0)->nodeValue;
 			$r_invoice=gaz_dbi_dyn_query("*", $gTables['tesdoc']. " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id", "tipdoc='".$tipdoc."' AND (pariva = '".$codiva."' OR codfis = '".$codfis."') AND datfat='".$datdoc."' AND numfat='".$numdoc."'", "id_tes", 0, 1);
 			$exist_invoice=gaz_dbi_fetch_array($r_invoice);
 			if ($exist_invoice) { // esiste un file che pur avendo un nome diverso è già stato acquisito ed ha lo stesso numero e data
@@ -483,27 +483,26 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$form['pariva'] = $codiva;
 				$form['codfis'] = $codfis;
 				$anagrafica = new Anagrafica();
-                $partner_with_same_pi = $anagrafica->queryPartners('*', "codice BETWEEN " . $admin_aziend['masfor'] . "000000 AND " . $admin_aziend['masfor'] . "999999 AND pariva = '" . $form['pariva'] . "'", "CASE WHEN codfis LIKE '" . $form['codfis'] . "' THEN 1 ELSE 0 END DESC");
-                if ($partner_with_same_pi) { // ho già il fornitore sul piano dei conti
-					$form['clfoco'] = $partner_with_same_pi[0]['codice'];
-					if ($partner_with_same_pi[0]['cosric']>100000000) { // ho un costo legato al fornitore
-						$form['partner_cost'] = $partner_with_same_pi[0]['cosric']; // costo legato al fornitore
-					}
-					$form['pagame'] = $partner_with_same_pi[0]['codpag']; // condizione di pagamento
-					$form['new_acconcile']=0;
-					if ( $partner_with_same_pi[0]['aliiva'] > 0 ){
-						$form['partner_vat'] = $partner_with_same_pi[0]['aliiva'];
-					}
-                } else { // se non ho già un fornitore sul piano dei conti provo a vedere nelle anagrafiche
-                    $rs_anagra_with_same_pi = gaz_dbi_query_anagra(array("*"), $gTables['anagra'], array("pariva" => "='" . $form['pariva'] . "'"), array("pariva" => "DESC"), 0, 1);
-                    $anagra_with_same_pi = gaz_dbi_fetch_array($rs_anagra_with_same_pi);
-                    if ($anagra_with_same_pi) { // c'è già un'anagrafica con la stessa PI non serve reinserirlo ma dovrò metterlo sul piano dei conti
-						$msg['war'][] = 'no_suppl';
-                    } else { // non c'è nemmeno nelle anagrafiche allora attingerò i dati da questa fattura
-						$msg['war'][] = 'no_anagr';
-
-					}
-                }
+        $partner_with_same_pi = $anagrafica->queryPartners('*', "codice BETWEEN " . $admin_aziend['masfor'] . "000000 AND " . $admin_aziend['masfor'] . "999999 AND pariva = '" . $form['pariva'] . "'", "CASE WHEN codfis LIKE '" . $form['codfis'] . "' THEN 1 ELSE 0 END DESC");
+        if ($partner_with_same_pi) { // ho già il fornitore sul piano dei conti
+          $form['clfoco'] = $partner_with_same_pi[0]['codice'];
+          if ($partner_with_same_pi[0]['cosric']>100000000) { // ho un costo legato al fornitore
+            $form['partner_cost'] = $partner_with_same_pi[0]['cosric']; // costo legato al fornitore
+          }
+          $form['pagame'] = $partner_with_same_pi[0]['codpag']; // condizione di pagamento
+          $form['new_acconcile']=0;
+          if ( $partner_with_same_pi[0]['aliiva'] > 0 ){
+            $form['partner_vat'] = $partner_with_same_pi[0]['aliiva'];
+          }
+        } else { // se non ho già un fornitore sul piano dei conti provo a vedere nelle anagrafiche
+          $rs_anagra_with_same_pi = gaz_dbi_query_anagra(array("*"), $gTables['anagra'], array("pariva" => "='" . $form['pariva'] . "'"), array("pariva" => "DESC"), 0, 1);
+          $anagra_with_same_pi = gaz_dbi_fetch_array($rs_anagra_with_same_pi);
+          if ($anagra_with_same_pi) { // c'è già un'anagrafica con la stessa PI non serve reinserirlo ma dovrò metterlo sul piano dei conti
+            $msg['war'][] = 'no_suppl';
+          } else { // non c'è nemmeno nelle anagrafiche allora attingerò i dati da questa fattura
+            $msg['war'][] = 'no_anagr';
+          }
+        }
 			}
 
 		} else {
@@ -1502,6 +1501,8 @@ if ($toDo=='insert' || $toDo=='update' ) {
 	?>
 	<div class="panel panel-default">
 		<div class="panel-heading">
+			<div class="col-xs-12 text-center bg-info"><h4><?php echo $nomefornitore; ?></h4></div>
+			<div class="col-xs-12 text-center bg-warning text-danger"><b><?php echo ($partner_with_same_pi && $partner_with_same_pi[0]['aliiva']>=1)?'AVVISO! L\'anagrafica del fornitore: <a target="_blank" href="admin_fornit.php?Update&codice='.intval(substr($partner_with_same_pi[0]['codice'],3,6)).'"> <b>'.$nomefornitore.'</b></a> ha forzato le aliquote IVA dei righi':''; ?></b></div>
 			<div class="row">
 				<div class="col-sm-12 col-md-12 col-lg-12"><?php echo $script_transl['head_text1']. '<span class="label label-success">'.$form['fattura_elettronica_original_name'] .'</span>'.$script_transl['head_text2']; ?>
 				</div>
