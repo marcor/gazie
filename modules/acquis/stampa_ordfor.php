@@ -32,16 +32,39 @@ if ($tesbro['tipdoc'] <> 'AOR') {
     header("Location: report_broacq.php?flt_tipo='AOR'");
     exit;
 }
+
+function get_template_lang($clfoco) {
+  global $gTables;
+  $lang = false;
+	$rs_customer_language = gaz_dbi_dyn_query("sef",
+	$gTables['clfoco']." LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id
+	LEFT JOIN ".$gTables['languages']." ON ".$gTables['anagra'].".id_language = ".$gTables['languages'].".lang_id",$gTables['clfoco'].".codice = ".$clfoco);
+    if ($rs_customer_language->num_rows > 0) {
+        $customer_language = gaz_dbi_fetch_array($rs_customer_language)['sef'];
+		if (!empty($customer_language)) {
+			switch ($customer_language) {
+				case 'en':
+					$lang = 'english';
+					break;
+				case 'es':
+					$lang = 'espanol';
+					break;
+			}
+		}
+	}
+  return $lang;
+}
+$lang = get_template_lang($tesbro['clfoco']);
 if (isset($_GET['dest'])){
   if ($_GET['dest']=='E'){ //  invio  mail all'indirizzo in testata o in alternativa se sta sul fornitore
   } else { // in dest ho l'indirizzo email quindi lo setto in testata e poi procedo all'invio
 	$tesbro['email']=filter_var($_GET['dest'], FILTER_VALIDATE_EMAIL);
   	$r=gaz_dbi_put_row($gTables['tesbro'], 'id_tes', $testat, 'email',$tesbro['email']);
-  }	
-  createDocument($tesbro, 'OrdineFornitore',$gTables,'rigbro','E');
+  }
+  createDocument($tesbro, 'OrdineFornitore',$gTables,'rigbro','E', $lang);
 } elseif (isset($_GET['production'])){
-  createDocument($tesbro, 'OrdineAcquistoProduzioni',$gTables,'rigbro');
+  createDocument($tesbro, 'OrdineAcquistoProduzioni',$gTables,'rigbro', false, $lang);
 } else {
-  createDocument($tesbro, 'OrdineFornitore',$gTables,'rigbro');
+  createDocument($tesbro, 'OrdineFornitore',$gTables,'rigbro', false, $lang);
 }
  ?>

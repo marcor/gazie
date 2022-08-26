@@ -81,14 +81,9 @@ class DocContabVars {
       if(!$this->client){
         $this->client=['ragso1'=>': ','ragso2'=>'','pec_email'=>'','fe_cod_univoco'=>'','fe_cod_univoco'=>'','indspe'=>'','citspe'=>'','country'=>'IT','capspe'=>'','prospe'=>'','pariva'=>'','pariva'=>'','codfis'=>'','sedleg'=>'','fiscal_rapresentative_id'=>'','stapre'=>''];
       }
-      if ( $this->client['country']!=="IT" ) {
-          $this->descri_partner = 'Customer';
-      } else {
-          $this->descri_partner = 'Cliente';
-      }
-
+      $this->descri_partner =($this->client['country']=="IT")?'Cliente':'Customer';
       if (substr($tesdoc['clfoco'], 0, 3) == $admin_aziend['masfor']) {
-          $this->descri_partner = 'Fornitore';
+          $this->descri_partner =  ($this->client['country']=="IT")?'Fornitore':'Supplier';
       }
       $this->codice_partner = intval(substr($tesdoc['clfoco'], 3, 6));
       $this->cod_univoco = $this->client['fe_cod_univoco'];
@@ -118,7 +113,7 @@ class DocContabVars {
           $this->cliente5 = '';
       }
       if ( $this->client['country']!="IT" && $this->client['country']!="" ) {
-          $this->cliente5 = 'vat num. ' . $this->client['country'] .$this->client['codfis'];
+          $this->cliente5 = 'Fiscal num. ' . $this->client['country'] .$this->client['codfis'];
       } else if (!empty($this->client['pariva'])) { //se c'e' la partita iva
           if (!empty($this->client['codfis']) and $this->client['codfis'] == $this->client['pariva']) {
               $this->cliente5 = 'C.F. e P.I. ' . $this->client['country'] . $this->client['codfis'];
