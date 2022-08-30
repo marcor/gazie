@@ -98,6 +98,9 @@ switch ($_GET['li']) {
    case '3':
       $descrlis = 'di vendita n.3';
       break;
+   case '4':
+      $descrlis = 'di vendita n.3';
+      break;
    case 'web':
       $descrlis = 'di vendita online';
       break;
@@ -245,6 +248,9 @@ switch ($_GET['ts']) {
 				$price = $row['preve2'];
 				break;
 			 case '3':
+				$price = $row['preve3'];
+				break;
+			 case '4':
 				$price = $row['preve3'];
 				break;
 			 case 'web':
