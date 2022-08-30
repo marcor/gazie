@@ -99,11 +99,13 @@ switch ($_GET['li']) {
       $descrlis = 'di vendita n.3';
       break;
    case '4':
-      $descrlis = 'di vendita n.3';
+      $descrlis = 'di vendita n.4';
       break;
    case 'web':
       $descrlis = 'di vendita online';
       break;
+   default:
+      $descrlis = '';
 }
 
 switch ($_GET['ts']) {
@@ -162,6 +164,8 @@ switch ($_GET['ts']) {
 				$price = $row['web_price'] * $row['web_multiplier'];
 				$row['unimis'] = $row['web_mu'];
 				break;
+			 default:
+				$price = $row['preve1'];
 		  }
 		  /** ENRICO FEDELE */
 		  /* Modifico il layout della tabella, grassetto corsivo per categoria merceologica e codice articolo */
