@@ -255,12 +255,14 @@ switch ($_GET['ts']) {
 				$price = $row['preve3'];
 				break;
 			 case '4':
-				$price = $row['preve3'];
+				$price = $row['preve4'];
 				break;
 			 case 'web':
 				$price = $row['web_price'] * $row['web_multiplier'];
 				$row['unimis'] = $row['web_mu'];
 				break;
+			 default:
+				$price = $row['preve1'];
 		  }
 		  /* Alterno il colore delle righe per maggiore leggibilità */
 		  $color == $color1 ? $color = $color2 : $color = $color1;
@@ -319,10 +321,15 @@ switch ($_GET['ts']) {
 				case '3':
 				$price = $row['preve3'];
 				break;
+        case '4':
+				$price = $row['preve4'];
+				break;
 				case 'web':
 				$price = $row['web_price']*$row['web_multiplier'];
 				$row['unimis'] = $row['web_mu'];
 				break;
+        default:
+        $price = $row['preve1'];
 			  }
 			  if ($row["catmer"] <> $ctrlcatmer) {
 				gaz_set_time_limit (30);
