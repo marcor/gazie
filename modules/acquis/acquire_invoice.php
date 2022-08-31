@@ -483,7 +483,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$form['pariva'] = $codiva;
 				$form['codfis'] = $codfis;
 				$anagrafica = new Anagrafica();
-        $partner_with_same_pi = $anagrafica->queryPartners('*', "codice BETWEEN " . $admin_aziend['masfor'] . "000000 AND " . $admin_aziend['masfor'] . "999999 AND pariva = '" . $form['pariva'] . "'", "CASE WHEN codfis LIKE '" . $form['codfis'] . "' THEN 1 ELSE 0 END DESC");
+        $partner_with_same_pi = $anagrafica->queryPartners('*', "codice BETWEEN " . $admin_aziend['masfor'] . "000000 AND " . $admin_aziend['masfor'] . "999999 AND pariva = '" . $form['pariva'] . "'", "CASE WHEN codfis LIKE '" . $form['codfis'] . "' THEN 1 ELSE 0 END DESC, codice DESC");
         if ($partner_with_same_pi) { // ho già il fornitore sul piano dei conti
           $form['clfoco'] = $partner_with_same_pi[0]['codice'];
           if ($partner_with_same_pi[0]['cosric']>100000000) { // ho un costo legato al fornitore
