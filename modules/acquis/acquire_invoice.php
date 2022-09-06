@@ -829,8 +829,6 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
           $first=false;
           $resetDdT=true;
 				}
-
-
         // ricontrollo per segnalare anomalia nel caso in cui non tutti i ddt siano stati utilizzati dai righi
         $ddtused=[];
         foreach ( $form['rows'] as $vrow){
@@ -838,9 +836,9 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
             $ddtused[$vrow['NumeroDDT']]=$vrow['DataDDT'];
           }
         }
-        if (empty($anomalia) && count($acc_DataDDT) > count($ddtused)){
-            $anomalia = 'Anomalia non tutti i DdT indicati sul tracciato sono stati utilizzati';
-            $resetDdT=true;
+        if ( empty($anomalia) && count($acc_DataDDT) > count($ddtused) && count($acc_DataDDT) <= count($form['rows']) ) {
+          $anomalia = 'Anomalia dei '.count($acc_DataDDT).' DdT indicati sul tracciato ne sono stati utilizzati solo '.count($ddtused);
+          $resetDdT=true;
         }
         // fine controllo
 			}
