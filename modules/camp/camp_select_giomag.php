@@ -37,7 +37,10 @@ $msg='';
 function getMovements($where){
 	global $gTables,$admin_aziend;
 	$m=array();
-	$where = "mostra_qdc = '1' AND ".$gTables['movmag'] .".id_rif >= ". $gTables['movmag'] .".id_mov AND ".$where;
+	//$where = "mostra_qdc = 1 AND ".$gTables['movmag'] .".id_rif >= ". $gTables['movmag'] .".id_mov AND ".$where;
+	// il where precedente non caricava gli acquisti dei prodotti agricoli 
+	$where = "mostra_qdc = 1 AND good_or_service = 0 AND ".$where;
+
 	$what=$gTables['movmag'].".*, ".
 		  $gTables['caumag'].".codice, ".$gTables['caumag'].".descri, ".
 		  $gTables['anagra'].".ragso1, ".$gTables['anagra'].".ragso2, ".
