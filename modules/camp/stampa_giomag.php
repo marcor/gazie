@@ -44,7 +44,9 @@ function getMovements($date_ini,$date_fin,$type){
 	if ($type == "di campagna"){
 		$where="mostra_qdc = '1' AND type_mov = '1' AND datreg BETWEEN $date_ini AND $date_fin AND ". $gTables['movmag'] .".id_rif >= ". $gTables['movmag'] .".id_mov" ;
 	} else {
-		$where="mostra_qdc = '1' AND ". $gTables['movmag'].".operat = '1' AND datreg BETWEEN $date_ini AND $date_fin AND ". $gTables['movmag'] .".id_rif >= ". $gTables['movmag'] .".id_mov" ;
+		//$where="mostra_qdc = '1' AND ". $gTables['movmag'].".operat = '1' AND datreg BETWEEN $date_ini AND $date_fin AND ". $gTables['movmag'] .".id_rif >= ". $gTables['movmag'] .".id_mov" ;
+		$where="mostra_qdc = '1' AND ". $gTables['movmag'].".operat = '1' AND datreg BETWEEN $date_ini AND $date_fin AND good_or_service = 0" ;
+
 	}
 	$what=$gTables['movmag'].".*, ".
 		  $gTables['caumag'].".codice, ".$gTables['caumag'].".descri, ".
