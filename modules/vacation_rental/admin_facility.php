@@ -72,6 +72,11 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
   $form['paypal_email'] = $_POST['paypal_email'];
   $form['stripe_pub_key'] = $_POST['stripe_pub_key'];
   $form['stripe_sec_key'] = $_POST['stripe_sec_key'];
+  $form['check_in'] = $_POST['check_in'];
+  $form['check_out'] = $_POST['check_out'];
+  $form['minor'] = $_POST['minor'];
+  $form['tour_tax_from'] = $_POST['tour_tax_from'];
+  $form['tour_tax_to'] = $_POST['tour_tax_to'];
 	$form['ref_ecommerce_id_main_product'] = substr($_POST['ref_ecommerce_id_main_product'], 0, 9);
 	$form['large_descri'] = filter_input(INPUT_POST, 'large_descri');
 	$form['cosear'] = filter_var($_POST['cosear'],FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -217,10 +222,11 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 			$form['large_descri'] = htmlspecialchars_decode (addslashes($form['large_descri']));
 			// aggiorno il db
 			if ($toDo == 'insert') {
-				$array= array('vacation_rental'=>array('facility_type' => '', 'paypal_email' => $form['paypal_email'], 'stripe_pub_key' => $form['stripe_pub_key'], 'stripe_sec_key' => $form['stripe_sec_key']));// creo l'array per il custom field
+				$array= array('vacation_rental'=>array('facility_type' => '', 'paypal_email' => $form['paypal_email'], 'stripe_pub_key' => $form['stripe_pub_key'], 'stripe_sec_key' => $form['stripe_sec_key'], 'check_in' => $form['check_in'], 'check_out' => $form['check_out'], 'minor' => $form['minor'], 'tour_tax_from' => $form['tour_tax_from'], 'tour_tax_to' => $form['tour_tax_to']));// creo l'array per il custom field
 				$form['custom_field'] = json_encode($array);// codifico in json  e lo inserisco nel form
 				gaz_dbi_table_insert('artico_group', $form);
 			} elseif ($toDo == 'update') {
+
 				$custom_field=gaz_dbi_get_row($gTables['artico_group'], "id_artico_group", $form['id_artico_group'])['custom_field']; // carico il vecchio json custom_field
         if ($data = json_decode($custom_field,true)){// se c'è un json
           if (is_array($data['vacation_rental'])){ // se c'è il modulo "vacation rental" lo aggiorno
@@ -228,9 +234,14 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             $data['vacation_rental']['paypal_email']=$_POST['paypal_email'];
             $data['vacation_rental']['stripe_pub_key']=$_POST['stripe_pub_key'];
             $data['vacation_rental']['stripe_sec_key']=$_POST['stripe_sec_key'];
+            $data['vacation_rental']['check_in']=$_POST['check_in'];
+            $data['vacation_rental']['check_out']=$_POST['check_out'];
+            $data['vacation_rental']['minor']=$_POST['minor'];
+            $data['vacation_rental']['tour_tax_from']=$_POST['tour_tax_from'];
+            $data['vacation_rental']['tour_tax_to']=$_POST['tour_tax_to'];
             $form['custom_field'] = json_encode($data);
           } else { //se non c'è il modulo "vacation_rental" lo aggiungo
-            $data['vacation_rental']= array('facility_type' => '', 'paypal_email' => $_POST['paypal_email'], 'stripe_pub_key' => $_POST['stripe_pub_key'], 'stripe_sec_key' => $_POST['stripe_sec_key']);
+            $data['vacation_rental']= array('facility_type' => '', 'paypal_email' => $_POST['paypal_email'], 'stripe_pub_key' => $_POST['stripe_pub_key'], 'stripe_sec_key' => $_POST['stripe_sec_key'], 'check_in' => $_POST['check_in'], 'check_out' => $_POST['check_out'], 'minor' => $_POST['minor'], 'tour_tax_from' => $_POST['tour_tax_from'], 'tour_tax_to' => $_POST['tour_tax_to']);
             $form['custom_field'] = json_encode($data);
           }
         }
@@ -274,17 +285,32 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 				$form['paypal_email'] = (isset($data['vacation_rental']['paypal_email']))?$data['vacation_rental']['paypal_email']:'';
         $form['stripe_pub_key'] = (isset($data['vacation_rental']['stripe_pub_key']))?$data['vacation_rental']['stripe_pub_key']:'';
         $form['stripe_sec_key'] = (isset($data['vacation_rental']['stripe_sec_key']))?$data['vacation_rental']['stripe_sec_key']:'';
+        $form['check_in'] = (isset($data['vacation_rental']['check_in']))?$data['vacation_rental']['check_in']:'';
+        $form['check_out'] = (isset($data['vacation_rental']['check_out']))?$data['vacation_rental']['check_out']:'';
+        $form['minor'] = (isset($data['vacation_rental']['minor']))?$data['vacation_rental']['minor']:'';
+        $form['tour_tax_from'] = (isset($data['vacation_rental']['tour_tax_from']))?$data['vacation_rental']['tour_tax_from']:'';
+        $form['tour_tax_to'] = (isset($data['vacation_rental']['tour_tax_to']))?$data['vacation_rental']['tour_tax_to']:'';
     } else {
 				$form['facility_type'] = '';
 				$form['paypal_email'] ='';
         $form['stripe_pub_key'] = '';
         $form['stripe_sec_key'] = '';
+        $form['check_in'] = "";
+        $form['check_out'] = "";
+        $form['minor'] = "";
+        $form['tour_tax_from'] = "";
+        $form['tour_tax_to'] = "";
     }
 	} else {
     $form['facility_type'] = '';
 		$form['paypal_email'] = '';
     $form['stripe_pub_key'] = '';
     $form['stripe_sec_key'] = '';
+    $form['check_in'] = "";
+    $form['check_out'] = "";
+    $form['minor'] = "";
+    $form['tour_tax_from'] = "";
+    $form['tour_tax_to'] = "";
 	}
 
 	if (isset($_GET['tab']) && $_GET['tab']=="variant"){
@@ -322,6 +348,11 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['paypal_email'] = '';
     $form['stripe_pub_key'] = '';
     $form['stripe_sec_key'] = '';
+    $form['check_in'] = "";
+    $form['check_out'] = "";
+    $form['minor'] = "";
+    $form['tour_tax_from'] = "";
+    $form['tour_tax_to'] = "";
     $form['ref_ecommerce_id_main_product']="";
     $form['id_artico_group'] = "";
 
@@ -537,12 +568,52 @@ function groupErase(group,descri){
 							</div>
 							</div><!-- chiude row  -->
               <div id="webUrl" class="row IERincludeExcludeRow">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label for="stripe_sec_key" class="col-sm-4 control-label">Eventuale secrete Stripe key</label>
-									<input class="col-sm-8" type="password" value="<?php echo $form['stripe_sec_key']; ?>" name="stripe_sec_key" maxlength="60" />
-								</div>
-							</div>
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <label for="stripe_sec_key" class="col-sm-4 control-label">Eventuale secrete Stripe key</label>
+                    <input class="col-sm-8" type="password" value="<?php echo $form['stripe_sec_key']; ?>" name="stripe_sec_key" maxlength="60" />
+                  </div>
+                </div>
+							</div><!-- chiude row  -->
+              <div id="check-in" class="row IERincludeExcludeRow">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <label for="check-in" class="col-sm-4 control-label">Orario check-in</label>
+                    <input class="col-sm-8" type="text" value="<?php echo $form['check_in']; ?>" name="check_in" maxlength="30" />
+                  </div>
+                </div>
+							</div><!-- chiude row  -->
+              <div id="check-out" class="row IERincludeExcludeRow">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <label for="check-out" class="col-sm-4 control-label">Orario check-out</label>
+                    <input class="col-sm-8" type="text" value="<?php echo $form['check_out']; ?>" name="check_out" maxlength="30" />
+                  </div>
+                </div>
+							</div><!-- chiude row  -->
+              <div id="minor" class="row IERincludeExcludeRow">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <label for="minor" class="col-sm-4 control-label">Età massima bambini/minorenni</label>
+                    <input class="col-sm-8" type="text" value="<?php echo $form['minor']; ?>" name="minor" maxlength="2" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" />
+                  </div>
+                </div>
+							</div><!-- chiude row  -->
+              <div id="limit-tour-tax-from" class="row IERincludeExcludeRow">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <label for="limit-tour-tax-from" class="col-sm-4 control-label">Tassa turistica a partire dal</label>
+                    <input class="col-sm-8" type="date" value="<?php echo $form['tour_tax_from']; ?>" name="tour_tax_from"  />
+                  </div>
+                </div>
+							</div><!-- chiude row  -->
+              <div id="limit-tour-tax-to" class="row IERincludeExcludeRow">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <label for="limit-tour-tax-to" class="col-sm-4 control-label">Tassa turistica fino al</label>
+                    <input class="col-sm-8" type="date" value="<?php echo $form['tour_tax_to']; ?>" name="tour_tax_to"  />
+                  </div>
+                </div>
 							</div><!-- chiude row  -->
 							<!--+ DC - 06/02/2019 div class="row" --->
 							<div id="depliPublic" class="row IERincludeExcludeRow">
