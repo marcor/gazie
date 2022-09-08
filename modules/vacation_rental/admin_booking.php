@@ -91,6 +91,32 @@ if ((isset($_POST['Update'])) or ( isset($_GET['Update']))) {
 
 if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il primo accesso
     //qui si dovrebbe fare un parsing di quanto arriva dal browser...
+    if ($_POST['in_codart']!==$_POST['cosear']){// è appena stato selezionato un inserimento articoloalloggio
+      $artico = gaz_dbi_get_row($gTables['artico'], "codice", $_POST['cosear']);
+      if ($data = json_decode($artico['custom_field'], TRUE)) { // se esiste un json nel custom field dell'articolo
+        if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['accommodation_type'])){// se è un alloggio
+          $facility = gaz_dbi_get_row($gTables['artico_group'], "id_artico_group", $artico['id_artico_group']);// leggo la struttura
+          if ($data = json_decode($facility['custom_field'], TRUE)) { // se esiste un json nel custom field della struttura
+            if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['facility_type'])){// se è una struttura prendo i dati che mi serviranno
+              $form['minor']=(isset($data['vacation_rental']['minor']))?$data['vacation_rental']['minor']:'12';// se non c'è l'età dei minori la imposto a 12 anni d'ufficio
+              $form['tour_tax_from']=(isset($data['vacation_rental']['tour_tax_from']))?$data['vacation_rental']['tour_tax_from']:'';
+              $form['tour_tax_to']=(isset($data['vacation_rental']['tour_tax_to']))?$data['vacation_rental']['tour_tax_to']:'';
+              $form['tour_tax_day']=(isset($data['vacation_rental']['tour_tax_day']))?$data['vacation_rental']['tour_tax_day']:'';
+            }
+          }
+        }
+      }else{
+        $form['minor']=(intval($_POST['minor'])>0)?$_POST['minor']:'';
+        $form['tour_tax_from']=(intval($_POST['tour_tax_from'])>0)?$_POST['tour_tax_from']:'';
+        $form['tour_tax_to']=(intval($_POST['tour_tax_to'])>0)?$_POST['tour_tax_to']:'';
+        $form['tour_tax_day']=(intval($_POST['tour_tax_day'])>0)?$_POST['tour_tax_day']:'';
+      }
+    }else{
+      $form['minor']=(intval($_POST['minor'])>0)?$_POST['minor']:'';
+      $form['tour_tax_from']=(intval($_POST['tour_tax_from'])>0)?$_POST['tour_tax_from']:'';
+      $form['tour_tax_to']=(intval($_POST['tour_tax_to'])>0)?$_POST['tour_tax_to']:'';
+      $form['tour_tax_day']=(intval($_POST['tour_tax_day'])>0)?$_POST['tour_tax_day']:'';
+    }
 
     $form['id_tes'] = $_POST['id_tes'];
     $anagrafica = new Anagrafica();
@@ -560,7 +586,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     }
                     $i++;
                 }
-                //qualora i nuovi rows fossero di pi� dei vecchi inserisco l'eccedenza
+                //qualora i nuovi rows fossero di più dei vecchi inserisco l'eccedenza
                 for ($i = $i; $i <= $count; $i++) {
                     array_push($syncarticols,$form['rows'][$i]['codart']);// Antonio Germani - aggiungo il codice articolo all'array per la sincronizzazione e-commerce
                     $form['rows'][$i]['id_tes'] = $form['id_tes'];
@@ -1057,7 +1083,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 
 		// carico i dati del json articolo
 		if ($data = json_decode($artico['custom_field'], TRUE)) { // se esiste un json nel custom field
-
 			if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['accommodation_type'])){// se è un alloggio
 					$form['in_accommodation_type'] = $data['vacation_rental']['accommodation_type'];
 					$form['in_adult'] = $data['vacation_rental']['adult'];
@@ -1066,7 +1091,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
           $form['tur_tax'] = $data['vacation_rental']['tur_tax'];
           $form['tur_tax_mode'] = $data['vacation_rental']['tur_tax_mode'];
           $form['id_agente'] = $data['vacation_rental']['agent'];// questo è il proprietario
-
 			} elseif (isset($data['vacation_rental']['extra'])){// se è un extra
         $extra = gaz_dbi_get_row($gTables['rental_extra'], "id", $data['vacation_rental']['extra']);
 
@@ -1116,6 +1140,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['in_total_guests'] = 0;
       }
 		} elseif ($form['in_codart']=="TASSA-TURISTICA") {//SE E' tassa turistica
+
         // calcolo prezzo tassa turistica
         switch ($form['tur_tax_mode']) {//0 => 'a persona', '1' => 'a persona escluso i minori', '2' => 'a notte', '3' => 'a notte escluso i minori'
           case "0":
@@ -1125,10 +1150,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $tot_turtax=floatval($form['tur_tax'])*(intval($form['adult']));
             break;
           case "2":
-            $tot_turtax=(floatval($form['tur_tax'])*(intval($form['nights'])))*(intval($form['adult'])+intval($form['adult']));
+            $daytopay=tour_tax_daytopay($night,$form['start'],$form['end'],$form['tour_tax_from'],$form['tour_tax_to'],$form['tour_tax_day']);
+            $tot_turtax=(floatval($form['tur_tax'])*(intval($daytopay)))*(intval($form['adult'])+intval($form['child']));
             break;
           case "3":
-            $tot_turtax=(floatval($form['tur_tax'])*(intval($form['nights'])))*(intval($form['adult']));
+            $daytopay=tour_tax_daytopay($night,$form['start'],$form['end'],$form['tour_tax_from'],$form['tour_tax_to'],$form['tour_tax_day']);
+            $tot_turtax=(floatval($form['tur_tax'])*(intval($daytopay)))*(intval($form['adult']));
             break;
           case "4":
             $tot_turtax=$form['tur_tax'];
@@ -1802,6 +1829,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['end'] = "";
     $form['adult'] = 0;
     $form['child'] = 0;
+    $form['minor'] = '12';// di defaul imposto l'età dei minori a 12 anni; si cambierà in automatico qualora impostata nella struttura
+    $form['tour_tax_from'] = "";
+    $form['tour_tax_to'] = "";
+    $form['tour_tax_day'] = "";
     $form['extra'] = "";
     $form['qtaextra'] = 0;
     $form['tur_tax'] =0;
@@ -2061,6 +2092,10 @@ echo '	<input type="hidden" name="' . ucfirst($toDo) . '" value="" />
     <input type="hidden" value="' . ((isset($form['tur_tax']))?$form['tur_tax']:"") . '" name="tur_tax" />
     <input type="hidden" value="' . ((isset($form['tur_tax_mode']))?$form['tur_tax_mode']:"") . '" name="tur_tax_mode" />
 		<input type="hidden" value="' . (isset($_POST['last_focus']) ? $_POST['last_focus'] : "") . '" name="last_focus" />
+    <input type="hidden" value="' . $form['minor'] . '" name="minor" />
+    <input type="hidden" value="' . $form['tour_tax_from'] . '" name="tour_tax_from" />
+    <input type="hidden" value="' . $form['tour_tax_to'] . '" name="tour_tax_to" />
+    <input type="hidden" value="' . $form['tour_tax_day'] . '" name="tour_tax_day" />
 		<div align="center" class="FacetFormHeaderFont">' . $title . '  a :';
 $select_cliente = new selectPartner('clfoco');
 $select_cliente->selectDocPartner('clfoco', $form['clfoco'], $form['search']['clfoco'], 'clfoco', $script_transl['mesg'], $admin_aziend['mascli']);
@@ -2809,7 +2844,7 @@ echo '<div class="fissa" ><div class="FacetSeparatorTD" align="center">Inserimen
 			</td>
 		</tr>
 		<tr>
-			<td class="FacetFieldCaptionTD text-right">Numero minori di anni 12</td>
+			<td class="FacetFieldCaptionTD text-right">Numero minori di anni <?php echo $form['minor']; ?></td>
 			<td class="FacetDataTD">
 				<input type="number" name="child" value="<?php echo $form['child']; ?>" min="0" max="5" class="FacetInput">
 			</td>

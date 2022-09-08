@@ -52,7 +52,7 @@ $admin_aziend=checkAdmin(9);
 			<p>Copyright (C) - Antonio Germani Massignano (AP) https://www.programmisitiweb.lacasettabio.it - telefono +39 340 50 11 912</p>
 		</h5>
     <h5><b>
-    -------->    Versione 1.3    <---------
+    -------->    Versione 2.0    <---------
     </b></h5>
     <div class="panel panel-info text-left" style="max-width:80%; margin-left:10%; padding:10px;">
 
@@ -92,13 +92,15 @@ $admin_aziend=checkAdmin(9);
         <li>L'Iframe, impostando giorno di check-in e check-out, fornirà al cliente la disponibilità e i prezzi e permetterà la prenotazione immediata online</li>
         <li>Calcolo sconti automatico per alloggio, struttura, numero di notti, periodo limitato e codice sconto</li>
         <li>Visualizzazione calendario delle disponibilità totali</li>
+        <li>Visualizzazione delle recensioni nel front-end</li>
         <li>Pagamenti online con bonifico bancario, carta di credito off-line, PayPal e Stripe(richiede licenza d'uso)</li>
         <li>Possibilita di richiedere il pagamento della prenotazione a favore di soggetti diversi dall'azienda di GAzie (proprietario)</li>
         <li>Sincronizzazione bidirezionale delle disponibilità con altri portali di prenotazioni (Airbnb, Booking, Tripadvisor, etc) tramite ICal in entrata (necessita di cron-job) e in uscita</li>
-        <li>Pagina front-end di accesso utente alla prenotazione con possibilità di effettuare pagamenti</li>
+        <li>Pagina front-end di accesso utente alla prenotazione con possibilità di effettuare pagamenti e lasciare la recensione</li>
         <li>Gestione dei feedback. Al check-out verrà inviata, al cliente, la richiesta di lasciare una recensione con voti su elementi personalizzabili e commento</li>
       </ul>
       <p>Per la versione PRO contattare lo sviluppatore: Antonio Germani Massignano (AP) https://www.programmisitiweb.lacasettabio.it - telefono +39 340 50 11 912</p>
+      <p><h3>Sito demo per testare il lato cliente su un sito Joomla di esempio: https://tony.netsons.org/index.php/it/</h3></p>
     </div>
 	</div>
 </div>

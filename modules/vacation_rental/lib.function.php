@@ -52,7 +52,7 @@ function validatecard($cardnumber) {// L' algoritmo di Luhn , noto anche come al
     return $valid;
 }
 
-// Ricerca gli sconti applicabili
+// Ricerca gli sconti applicabili -> vengono esclusi i buoni sconto
 function searchdiscount($house="",$facility="",$start="",$end="",$stay=0,$anagra=0){
   global $link, $azTables;
   $where="";
@@ -81,7 +81,7 @@ function searchdiscount($house="",$facility="",$start="",$end="",$stay=0,$anagra
     $where .= $and." id_anagra = '".$anagra."' OR id_anagra = 0)";
     $and=" AND (";
   }
-  $where .= $and." status = 'CREATED')";
+  $where .= $and." status = 'CREATED' AND (discount_voucher_code = '' OR discount_voucher_code = NULL ))";
   $sql = "SELECT * FROM ".$azTables."rental_discounts".$where." ORDER BY priority DESC, id ASC";
   //echo "<br>query: ",$sql,"<br>";
   if ($result = mysqli_query($link, $sql)) {
@@ -151,6 +151,39 @@ function get_string_lang($string, $lang){
     return $string;
   }
 }
+// calcolo dei giorni da pagare per la tassa turistica
+function tour_tax_daytopay($night,$start,$end,$tour_tax_from,$tour_tax_to,$tour_tax_day){
+  $daytopay=intval($night);
+  if (strtotime($tour_tax_from)){// se è stato impostato un periodo specifico per la tassa turistica
+    if (strtotime($start)>= strtotime($tour_tax_from) && strtotime($start)<= strtotime($tour_tax_to)){// se la data di inizio è dentro al periodo tassa turistica
+     if (strtotime($end) > strtotime($tour_tax_to)){// se la fine prenotazione va fuori dal periodo tassa turistica
+         $diff=date_diff(date_create($tour_tax_to),date_create($start));
+         $daytopay= $diff->format("%a");
+         if ($daytopay==0){// se sono uguali pago una sola notte
+           $daytopay=1;
+         }
+      }else{// se la fine prenotazione è dentro al periodo tassa turistica
+        $diff=date_diff(date_create($end),date_create($tour_tax_to));
+        $daytopay= $diff->format("%a");
+      }
+    }else{// se la data di inizio è fuori dal periodo tassa turistica
+      if (strtotime($end) >= strtotime($tour_tax_from) AND strtotime($end)<= strtotime($tour_tax_to)){// se la fine prenotazione è dentro al periodo tassa turistica
+        $diff=date_diff(date_create($tour_tax_from),date_create($end));
+        $daytopay= $diff->format("%a");
+        if ($daytopay==0){// se sono uguali pago una sola notte
+           $daytopay=1;
+         }
+      }else{// se nemmeno la fine è dentro al periodo tassa turistica
+        $daytopay=''; // Non pago niente
+      }
+    }
+  }
+  if (intval($tour_tax_day) >0 && intval($daytopay) > intval($tour_tax_day)){// se è stato impostato un numero massimo di giorni e i giorni da pagare sono di più di quelli pagabili, li riduco
+    $daytopay=$tour_tax_day;
+  }
+  return $daytopay;
+}
+
 // calcolo totale locazione
 function get_total_booking($tesbro){// da fare ...
   global $link, $azTables;
