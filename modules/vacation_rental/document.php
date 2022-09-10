@@ -33,7 +33,7 @@
 
 class DocContabVars {
 
-  function setData($gTables, $tesdoc, $testat, $tableName, $ecr = false, $genTables="", $azTables="") {
+  function setData($gTables, $tesdoc, $testat, $tableName, $ecr = false, $genTables="", $azTables="", $lang="it") {
 
 
         $link=$GLOBALS['link'];
@@ -438,10 +438,11 @@ class DocContabVars {
         require("./lang." . $lang . ".php");
         $script_transl = $strScript["admin_booking.php"];
 
-        $sql = "SELECT ".$azTables."rigbro".".*, ".$azTables.'aliiva'.".tipiva, ".$azTables.'artico'.".custom_field, ".$azTables.'artico'.".descri AS desart, ".$azTables.'artico'.".annota, ".$azTables.'artico'.".web_url, ".$azTables."rental_events".".* FROM ".$azTables."rigbro"."
+        $sql = "SELECT ".$azTables."rigbro".".*, ".$azTables.'aliiva'.".tipiva, ".$azTables.'artico'.".custom_field, ".$azTables.'artico'.".id_artico_group, ".$azTables.'artico'.".descri AS desart, ".$azTables.'artico'.".annota, ".$azTables.'artico'.".web_url, ".$azTables.'artico_group'.".custom_field AS group_custom_field, ".$azTables."rental_events".".* FROM ".$azTables."rigbro"."
         LEFT JOIN " . $azTables.'aliiva' . " ON codvat=codice
         LEFT JOIN " . $azTables.'artico' . " ON " . $azTables.'artico'.".codice=" . $azTables.'rigbro' . ".codart
         LEFT JOIN " . $azTables.'rental_events' . " ON " . $azTables.'rental_events'.".id_rigbro=" . $azTables.'rigbro' . ".id_rig
+        LEFT JOIN " . $azTables.'artico_group' . " ON ". $azTables.'artico_group'.".id_artico_group = ".$azTables.'artico'.".id_artico_group
         WHERE id_tes = " . $this->testat ." ORDER BY id_tes DESC, id_rig";
         if ($rs_rig = mysqli_query($link, $sql)){
         }else{
@@ -457,7 +458,7 @@ class DocContabVars {
         $this->totiva = 0.00;
         $results = array();
         while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
-          //echo "<br><pre>",print_r($rigo);
+          $rigo['descri'] = get_string_lang($rigo['descri'], substr($lang,0,2));// se multilingua seleziono la descrizione nella lingua richiesta
           $rigo['barcode']="";
           if ($rigo['tiprig'] <= 1 || $rigo['tiprig'] == 4 || $rigo['tiprig'] == 50 || $rigo['tiprig'] == 90) {
               $tipodoc = substr($this->tesdoc["tipdoc"], 0, 1);
@@ -543,6 +544,7 @@ class DocContabVars {
           } else {
             $results[] = $rigo;
           }
+
         }
         if (isset($anagra_prop) || floatval($security_deposit)>0){// se c'è un proprietario
           $nuovi_righi=array();
@@ -662,6 +664,8 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
       $lang="italian";
     }
     require("./lang." . $lang . ".php");
+    $lang=substr($lang,0,2); // faccio diventare simbolo
+
     $script_transl = $strScript["admin_booking.php"];
     $sql = "SELECT val FROM ".$azTables."company_config"." WHERE var = 'vacation_url_user' LIMIT 1";
     if ($result = mysqli_query($link, $sql)) {
@@ -714,13 +718,13 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
         $configTemplate->template=substr($configTemplate->template, 1);
       }
     }
-	$lh=(($dest && $dest == 'H')?'_lh':''); // eventuale scelta di stampare su carta intestata, aggiungo il suffisso "lh";
+    $lh=(($dest && $dest == 'H')?'_lh':''); // eventuale scelta di stampare su carta intestata, aggiungo il suffisso "lh";
 
-	require_once ("templates" . ($configTemplate->template ? '.' . $configTemplate->template : '') . '/' . $templates[$templateName] .$lh. '.php');
-	$pdf = new $templateName();
+    require_once ("templates" . ($configTemplate->template ? '.' . $configTemplate->template : '') . '/' . $templates[$templateName] .$lh. '.php');
+    $pdf = new $templateName();
     $docVars = new DocContabVars();
 
-    $docVars->setData($gTables, $testata, $testata['id_tes'], $rows, false, $genTables, $azTables);
+    $docVars->setData($gTables, $testata, $testata['id_tes'], $rows, false, $genTables, $azTables, $lang);
     $docVars->initializeTotals();
 
 	 // se il template è lease e c'è un proprietario devo intestare il contratto al proprietario

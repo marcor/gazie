@@ -91,7 +91,7 @@ if ((isset($_POST['Update'])) or ( isset($_GET['Update']))) {
 
 if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il primo accesso
     //qui si dovrebbe fare un parsing di quanto arriva dal browser...
-    if ($_POST['in_codart']!==$_POST['cosear']){// è appena stato selezionato un inserimento articoloalloggio
+    if ($_POST['in_codart']!==$_POST['cosear']){// è appena stato selezionato un inserimento articolo alloggio
       $artico = gaz_dbi_get_row($gTables['artico'], "codice", $_POST['cosear']);
       if ($data = json_decode($artico['custom_field'], TRUE)) { // se esiste un json nel custom field dell'articolo
         if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['accommodation_type'])){// se è un alloggio
@@ -1758,6 +1758,24 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
               $form['tur_tax'] = $data['vacation_rental']['tur_tax'];
               $form['tur_tax_mode'] = $data['vacation_rental']['tur_tax_mode'];
               $form['id_agente'] = $data['vacation_rental']['agent'];// questo è il proprietario
+
+              if (intval ($articolo['id_artico_group'])>0){// se l'alloggio fa parte di una struttura
+                $facility = gaz_dbi_get_row($gTables['artico_group'], "id_artico_group", $articolo['id_artico_group']);// leggo la struttura
+                if ($data = json_decode($facility['custom_field'], TRUE)) { // se esiste un json nel custom field della struttura
+                  if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['facility_type'])){// se è una struttura prendo i dati che mi serviranno
+                    $form['minor']=(isset($data['vacation_rental']['minor']))?$data['vacation_rental']['minor']:'12';// se non c'è l'età dei minori la imposto a 12 anni d'ufficio
+                    $form['tour_tax_from']=(isset($data['vacation_rental']['tour_tax_from']))?$data['vacation_rental']['tour_tax_from']:'';
+                    $form['tour_tax_to']=(isset($data['vacation_rental']['tour_tax_to']))?$data['vacation_rental']['tour_tax_to']:'';
+                    $form['tour_tax_day']=(isset($data['vacation_rental']['tour_tax_day']))?$data['vacation_rental']['tour_tax_day']:'';
+                  }
+                }
+              } else{
+                $form['minor']='';
+                $form['tour_tax_from']='';
+                $form['tour_tax_to']='';
+                $form['tour_tax_day']='';
+              }
+
             } elseif (is_array($data['vacation_rental']) && isset($data['vacation_rental']['extra'])){
               $form['in_accommodation_type'] = 1;// è un extra
               $form['in_adult'] = 0;

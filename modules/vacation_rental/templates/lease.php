@@ -65,6 +65,12 @@ class Lease extends Template
       require("./lang." . $admin_aziend['lang'] . ".php");
       $script_transl = $strScript["lease.php"];
 
+      if ($admin_aziend['id_language']==1){
+        $lang="it";
+      }else{
+        $lang="en";
+      }
+
       $lines = $this->docVars->getRigo();
 
       // create HTML content
@@ -72,6 +78,7 @@ class Lease extends Template
       .$script_transl['e']."<b>".$script_transl['conduttore']."</b>"." ".$this->cliente1." ".$this->cliente2." ".$this->cliente3." ".$this->cliente4." "."<br>".$script_transl['body1']."</p>
       <p>1- <b>".$script_transl['oggetto']."</b><br>".$script_transl['body2']."</p>";
       $html .= "<ul>";
+      $tour_tax="";
       foreach ($lines as $rigo){
         //echo "<br><pre>",print_r($rigo);
         if (isset ($rigo['custom_field']) && ($custom = json_decode($rigo['custom_field'],true)) && (json_last_error() == JSON_ERROR_NONE)){
@@ -87,11 +94,28 @@ class Lease extends Template
                   $accomodation_type=$script_transl['bandb'];
                   break;
               }
+
+              if (intval ($rigo['id_artico_group'])>0){// se l'alloggio fa parte di una struttura
+                if ($data = json_decode($rigo['group_custom_field'], TRUE)) { // se esiste un json nel custom field della struttura
+                  if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['facility_type'])){// se è una struttura prendo i dati che mi serviranno
+                    $minor = (isset($data['vacation_rental']['minor']))?$data['vacation_rental']['minor']:'12';// se non c'è l'età dei minori la imposto a 12 anni d'ufficio
+                    $checkin = (isset($data['vacation_rental']['check_in']))?$data['vacation_rental']['check_in']:'15 - 19';// se non c'è un tempo per check-in lo imposto d'ufficio
+                    $checkout = (isset($data['vacation_rental']['check_out']))?$data['vacation_rental']['check_out']:'8 - 10';// se non c'è un tempo per check-out lo imposto d'ufficio
+
+                  }
+                }
+              } else{ // se non fa parte di una struttura imposto d'ufficio i dati mancanti
+                $minor='12';
+                $checkin='15 - 19';
+                $checkout='8 - 10';
+              }
+
               $html .= "<li>".$accomodation_type." denominato ".$rigo['desart'].", ".$rigo['annota'];
               if (strlen($rigo['web_url'])>5){
                 $html .= "<br>".$script_transl['body3'].": ".$rigo['web_url'].". ".$script_transl['body4'];
               }
               $html .= "</li>";
+
               $adult=$rigo['adult'];
               $child=$rigo['child'];
               $start=$rigo['start'];
@@ -99,14 +123,14 @@ class Lease extends Template
               $secdep = $custom['vacation_rental']['security_deposit'];
           }
           if (array_key_exists('extra', $custom['vacation_rental'])) { // è un extra
-              $html .= "<li>".intval($rigo['quanti'])."Extra ".$rigo['desart']." ".$rigo['annota'];
+              $html .= "<li>Q.tà. ".intval($rigo['quanti'])." Extra ".get_string_lang($rigo['desart'], $lang)." ".$rigo['annota'];
               if (strlen($rigo['web_url'])>5){
                 $html .= "<br>   ".$script_transl['body3'].": ".$rigo['web_url'].".   ".$script_transl['body4'];
               }
               $html .= "</li>";
           }
         } elseif($rigo['codart']=="TASSA-TURISTICA"){ // è la tassa turistica
-          $html .= "<li>".$rigo['descri']."</li>";
+          $tour_tax=$script_transl['tour_tax'];
         }
       }
 
@@ -128,14 +152,14 @@ class Lease extends Template
       $html .= "<dl>";
 
       $html .= "<dt>2- <b>".$script_transl['durata']."</b></dt>" ;
-      $html .= "<dd>- ".$script_transl['durata1'].$nights."</dd><dd>- ".$script_transl['durata2'].date("d-m-Y", strtotime($start))."</dd>
-                <dd>- ".$script_transl['durata3'].date("d-m-Y", strtotime($end)).$script_transl['durata4']."</dd>
+      $html .= "<dd>- ".$script_transl['durata1'].$nights."</dd><dd>- ".$script_transl['durata2']." ".date("d-m-Y", strtotime($start))." ".$script_transl['durata2bis']." ".$checkin."</dd>
+                <dd>- ".$script_transl['durata3']." ".date("d-m-Y", strtotime($end))." ".$script_transl['durata2bis']." ".$checkout.". ".$script_transl['durata4']."</dd>
                 <dd>- ".$script_transl['durata5']."</dd>";
 
       $html .= "<dt>3- <b>".$script_transl['canone']."</b></dt>" ;
-      $html .= "<dd>- ".$script_transl['body5'].(intval($adult)+intval($child)).$script_transl['body6'].$adult.$script_transl['body7'].$child.$script_transl['body8']."</dd>";
+      $html .= "<dd>- ".$script_transl['body5'].(intval($adult)+intval($child)).$script_transl['body6'].$adult.$script_transl['body7'].$child.$script_transl['body8'].$minor."</dd>";
 
-      $html .= "<dd>- ".$script_transl['canone1']." € ".number_format(($totamount),2,",",".")." (".$in_words.") ".$script_transl['canone2']."</dd>";
+      $html .= "<dd>- ".$script_transl['canone1']." € ".number_format(($totamount),2,",",".")." (".$in_words.") ".$script_transl['canone2bis'].$tour_tax.$script_transl['canone2']."</dd>";
       if ($secdep>1){// se è previsto un deposito cauzionale lo scrivo
         $html .= "<dd>- ".$script_transl['canone3']." € ".number_format(($secdep),2,",",".")." ".$script_transl['canone4']."</dd>";
       }
