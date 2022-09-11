@@ -654,17 +654,17 @@ class DocContabVars {
 
 }
 
-function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $dest = false, $lang_template=false,$genTables='',$azTables='',$IDaz='',$link='',$id_ag=0) {
+function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $dest = false, $lang_template=false,$genTables='',$azTables='',$IDaz='',$link='',$id_ag=0,$lang='it') {
 
     global $azTables;
 		$azTables=$GLOBALS['azTables'];
 		global $link;
 		$link=$GLOBALS['link'];
-    if (!isset($lang_template) || $lang_template=='' || $lang_template=false){
-      $lang="italian";
+    if (!isset($lang_template) || $lang_template=='' || $lang_template==false){
+      require("./lang.italian.php");
+    }else{
+      require("./lang." . $lang_template . ".php");
     }
-    require("./lang." . $lang . ".php");
-    $lang=substr($lang,0,2); // faccio diventare simbolo
 
     $script_transl = $strScript["admin_booking.php"];
     $sql = "SELECT val FROM ".$azTables."company_config"." WHERE var = 'vacation_url_user' LIMIT 1";

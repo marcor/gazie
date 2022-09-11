@@ -39,15 +39,15 @@ $azTables = constant("table_prefix").$idDB;
 require("document.php");
 $tesbro = gaz_dbi_get_row($gTables['tesbro'],"id_tes", intval($_GET['id_tes']));
 
-$lang = false;
+$lang_template = false;
 $id_anagra = gaz_dbi_get_row($gTables['clfoco'], 'codice', $tesbro['clfoco']);
 $stato = gaz_dbi_get_row($gTables['anagra'], 'id', $id_anagra['id_anagra']);
 if ($stato AND $stato['id_language'] == 1 or $stato['id_language'] == 0){// se è italiano o non è impostato
-    $lang = '';
+    $lang_template = '';$lang="it";
 } elseif ($stato AND $stato['id_language'] == 2 ) {// se è inglese
-  $lang = 'english';
+  $lang_template = 'english';$lang="en";
 }elseif ($stato AND $stato['id_language'] == 3 ) {// se è spagnolo
-  $lang = 'spanish';
+  $lang_template = 'spanish';$lang="es";
 }
 
 if ($tesbro['tipdoc']=='VOR' || $tesbro['tipdoc']=='VOG') {
@@ -62,10 +62,10 @@ if ($tesbro['tipdoc']=='VOR' || $tesbro['tipdoc']=='VOG') {
 	if ($tesbro['template']=='Ticket'){
 		$template='Ticket';
 	}
-    createDocument($tesbro,$template,$gTables,'rigbro',$type,$lang,$genTables,$azTables);
+    createDocument($tesbro,$template,$gTables,'rigbro',$type,$lang_template,$genTables,$azTables,"","","",$lang);
 } elseif ($tesbro['tipdoc']=='VOW'){
 	$type=false;
-    createDocument($tesbro, 'OrdineWeb',$gTables,'rigbro',$type,$lang);
+    createDocument($tesbro, 'OrdineWeb',$gTables,'rigbro',$type,$lang_template);
 } else {
     header("Location: report_booking.php");
     exit;

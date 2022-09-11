@@ -584,16 +584,16 @@ function groupErase(group,descri){
               <div id="check-in" class="row IERincludeExcludeRow">
                 <div class="col-md-12">
                   <div class="form-group">
-                    <label for="check-in" class="col-sm-4 control-label">Orario check-in</label>
-                    <input class="col-sm-8" type="text" value="<?php echo $form['check_in']; ?>" name="check_in" maxlength="30" />
+                    <label for="check-in" class="col-sm-4 control-label">Orario check-in&nbsp;<i class="glyphicon glyphicon-flag" title="accetta tag lingue (<it></it>)"></i></label>
+                    <input class="col-sm-8" type="text" value="<?php echo $form['check_in']; ?>" name="check_in" maxlength="90" />
                   </div>
                 </div>
 							</div><!-- chiude row  -->
               <div id="check-out" class="row IERincludeExcludeRow">
                 <div class="col-md-12">
                   <div class="form-group">
-                    <label for="check-out" class="col-sm-4 control-label">Orario check-out</label>
-                    <input class="col-sm-8" type="text" value="<?php echo $form['check_out']; ?>" name="check_out" maxlength="30" />
+                    <label for="check-out" class="col-sm-4 control-label">Orario check-out&nbsp;<i class="glyphicon glyphicon-flag" title="accetta tag lingue (<it></it>)"></i></label>
+                    <input class="col-sm-8" type="text" value="<?php echo $form['check_out']; ?>" name="check_out" maxlength="90" />
                   </div>
                 </div>
 							</div><!-- chiude row  -->

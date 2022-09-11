@@ -110,7 +110,7 @@ class Lease extends Template
                 $checkout='8 - 10';
               }
 
-              $html .= "<li>".$accomodation_type." denominato ".$rigo['desart'].", ".$rigo['annota'];
+              $html .= "<li>".$accomodation_type." denominato ".get_string_lang($rigo['desart'], $lang).", ".$rigo['annota'];
               if (strlen($rigo['web_url'])>5){
                 $html .= "<br>".$script_transl['body3'].": ".$rigo['web_url'].". ".$script_transl['body4'];
               }
@@ -152,8 +152,8 @@ class Lease extends Template
       $html .= "<dl>";
 
       $html .= "<dt>2- <b>".$script_transl['durata']."</b></dt>" ;
-      $html .= "<dd>- ".$script_transl['durata1'].$nights."</dd><dd>- ".$script_transl['durata2']." ".date("d-m-Y", strtotime($start))." ".$script_transl['durata2bis']." ".$checkin."</dd>
-                <dd>- ".$script_transl['durata3']." ".date("d-m-Y", strtotime($end))." ".$script_transl['durata2bis']." ".$checkout.". ".$script_transl['durata4']."</dd>
+      $html .= "<dd>- ".$script_transl['durata1'].$nights."</dd><dd>- ".$script_transl['durata2']." ".date("d-m-Y", strtotime($start))." ".$script_transl['durata2bis']." ".get_string_lang($checkin, $lang)."</dd>
+                <dd>- ".$script_transl['durata3']." ".date("d-m-Y", strtotime($end))." ".$script_transl['durata2bis']." ".get_string_lang($checkout, $lang).". ".$script_transl['durata4']."</dd>
                 <dd>- ".$script_transl['durata5']."</dd>";
 
       $html .= "<dt>3- <b>".$script_transl['canone']."</b></dt>" ;
