@@ -401,13 +401,13 @@ $strScript = array(
 		'imposta'=>"Per disponibilità, prezzo o prenotazione impostare le date",
 		'risultato'=>"Disponibilità per ",
 		'book'=>"Prenota",
-		'nessun_risultato'=>"Per il periodo selezionato non ci sono disponibilità. Provare a modificare le date o visionare il calendario generale.",
-    'for_night' => 'a notte',
-    'nights' => 'notti',
-    'over_guest' => 'Attenzione: questo alloggio è disponibile ma ha una capienza massima di',
-    'persons' => 'persone',
-    'avviso' => 'Il soggiorno minimo è di',
-    'avviso2' => 'Ci sono sconti crescenti per 12, 21 e 28 notti.'
+		'nessun_risultato'=>"Per il periodo selezionato non ci sono disponibilità. Provare a modificare le date o a visionare il calendario generale.",
+		'for_night' => 'a notte',
+		'nights' => 'notti',
+		'over_guest' => 'Attenzione: questo alloggio è disponibile ma ha una capienza massima di',
+		'persons' => 'persone',
+		'avviso' => 'Il soggiorno minimo è di',
+		'avviso2' => 'Ci sono sconti crescenti per 12, 21 e 28 notti.'
     ),
 	"booking_form.php" =>
     array('title' => 'Modulo di prenotazione',
@@ -536,7 +536,9 @@ $strScript = array(
     'ask_feedback' => 'Grazie per essere stato nostro ospite, speriamo che il soggiorno sia stato di suo gradimento.<br>La soddisfazione totale degli ospiti è il nostro obbiettivo. Una sua recensione sarebbe molto apprezzata, ci dedichi solo pochi minuti e lasci una recensione cliccando sul link sottostante, per favore.',
     'ask_feedback2' => 'Il suo giudizio è molto importante per noi. <br>Sperando di rivederla presto <br> Cordiali saluti',
     'use_access' => 'Per accedere usi i seguenti codici di accesso',
-    'more_info' => 'Maggiori info'
+    'more_info' => 'Maggiori info',
+    'booking_status' => 'Stato della prenotazione',
+    'total_paid' => 'Totale pagato'
     ),
 
   "admin_extra.php" =>

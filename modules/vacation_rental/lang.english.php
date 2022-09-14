@@ -669,7 +669,7 @@ $strScript = array(
 		'rules_button'=>'Lease agreement',
 		'privacy_button'=>'Privacy rules',
 		'title'=>'Booking form',
-    'booking' => 'Prenotazione',
+    'booking' => 'Booking',
 		'submit'=>'Go to summary',
 		'return'=>'Back',
 		'tur_tax' => 'Turist tax',
@@ -773,7 +773,9 @@ $strScript = array(
     'ask_feedback' => 'Thank you for being our guest, we hope you enjoyed your stay. <br> Total satisfaction of our guests is our goal. Your review is greatly appreciated, just take a few minutes and leave a review by clicking on the link below, please.',
     'ask_feedback2' => 'Your judgment is very important to us. <br> Hoping to see you again soon <br> Sincerely',
     'use_access' => 'To log in, use the following access codes',
-    'more_info' => 'More info'
+    'more_info' => 'More info',
+    'booking_status' => 'Booking status',
+    'total_paid' => 'Total paid'
     ),
 
   "admin_extra.php" =>
