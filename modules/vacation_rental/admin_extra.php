@@ -307,7 +307,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     }
 	$form['preve1']=$form['web_price'];// al momento, imposto il prezzo di vendita 1 uguale a quello web
     if ($toDo == 'insert') {
-		$form['codart']=$form['codice'];// il riferimento al codice articolo per la tabella rental_extra
+		$form['codart']=substr($form['codice'],15);// il riferimento al codice articolo per la tabella rental_extra NB:il codice della tab artico ha 15 caratteri
 		$id_extra=gaz_dbi_table_insert('rental_extra', $form);
 		$array= array('vacation_rental'=>array('extra' => $id_extra));// creo l'array per il custom field
 		$form['custom_field'] = json_encode($array);// codifico in json  e lo inserisco nel form
@@ -776,7 +776,7 @@ if ($modal_ok_insert === true) {
               <div class="col-md-12">
                   <div class="form-group">
                       <label for="codice" class="col-sm-4 control-label"><?php echo $script_transl['codice']; ?></label>
-                      <input class="col-sm-4" type="text" value="<?php echo $form["codice"] ?>" name="codice"  maxlength="32" tabindex="1" >
+                      <input class="col-sm-4" type="text" value="<?php echo $form["codice"] ?>" name="codice"  maxlength="15" tabindex="1" >
                   </div>
               </div>
           </div><!-- chiude row  -->
