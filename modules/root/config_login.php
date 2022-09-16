@@ -161,4 +161,7 @@ define("EMAIL_VERIFICATION_URL", getBaseUrl()."login_register.php");
  * This constant will be used in the login and the registration class.
  */
 define("HASH_COST_FACTOR", "10");
+// per GAzie aes_key (colonne criptate)
+define("AES_KEY_SALT","CK4OGOAtec0zgbNoCK4OGOAtec0zgbNoCK4OGOAtec0zgbNoCK4OGOAtec0zgbNo");
+define("AES_KEY_IV","LQjFLCU3sAVplBC3");
 

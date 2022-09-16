@@ -2717,7 +2717,7 @@ class PHPMailer
 			}
             $file_buffer = file_get_contents($path);
             $file_buffer = $this->encodeString($file_buffer, $encoding);
-            if ($magic_quotes) {
+            if (isset($magic_quotes) && $magic_quotes) {
                 if (version_compare(PHP_VERSION, '5.3.0', '<')) {
                     set_magic_quotes_runtime($magic_quotes);
                 } else {

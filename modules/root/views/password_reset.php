@@ -1,14 +1,16 @@
+<?php include('_header.php'); ?>
+<script src='../../js/sha256/forge-sha256.min.js'></script>
 <?php
-include('_header.php');
 if ($login->passwordResetLinkIsValid() == true) {
     ?>
-    <form method="post" action="login_password_reset.php" name="new_password_form">
-        <div class="container">    
-            <div id="loginbox" style="margin-top:50px;" class="mainbox mainbox col-sm-offset-2 col-sm-8">                    
+    <form method="post" onsubmit="document.getElementById('user_password_new').value=forge_sha256(document.getElementById('user_password_new').value);
+document.getElementById('user_password_repeat').value=forge_sha256(document.getElementById('user_password_repeat').value);" action="login_password_reset.php" name="new_password_form" id="resetform">
+        <div class="container">
+            <div id="loginbox" style="margin-top:50px;" class="mainbox mainbox col-sm-offset-2 col-sm-8">
                 <div class="panel panel-info" >
                     <div class="panel-heading panel-gazie">
                         <div class="panel-title">
-                            <?php echo MESSAGE_WELCOME; ?> 
+                            <?php echo MESSAGE_WELCOME; ?>
                         </div>
                         <div style="color: red; float:right; font-size: 100%; position: relative; top:-10px"></div>
                     </div>
@@ -49,8 +51,8 @@ if ($login->passwordResetLinkIsValid() == true) {
                             <a style="float:left;" href="login_user.php"><?php echo WORDING_BACK_TO_LOGIN; ?></a>
                         </div>
 
-                    </div>  
-                </div>  
+                    </div>
+                </div>
             </div>
         </div><!-- chiude div container -->
         <input type='hidden' name='user_name' value='<?php echo htmlspecialchars($_GET['user_name']); ?>' />
@@ -59,12 +61,12 @@ if ($login->passwordResetLinkIsValid() == true) {
     <!-- no data from a password-reset-mail has been provided, so we simply show the request-a-password-reset form -->
 <?php } else { ?>
     <form method="post" action="login_password_reset.php" name="password_reset_form">
-        <div class="container">    
-            <div id="loginbox" style="margin-top:50px;" class="mainbox mainbox col-sm-offset-2 col-sm-8">                    
+        <div class="container">
+            <div id="loginbox" style="margin-top:50px;" class="mainbox mainbox col-sm-offset-2 col-sm-8">
                 <div class="panel panel-info" >
                     <div class="panel-heading panel-gazie">
                         <div class="panel-title">
-                            <?php echo MESSAGE_WELCOME_ADMIN; ?> 
+                            <?php echo MESSAGE_WELCOME_ADMIN; ?>
                         </div>
                         <div style="color: red; float:right; font-size: 100%; position: relative; top:-10px"></div>
                     </div>
@@ -100,8 +102,8 @@ if ($login->passwordResetLinkIsValid() == true) {
                         <div style="padding-bottom: 25px;" class="input-group">
                             <a style="float:left;" href="login_user.php"><?php echo WORDING_BACK_TO_LOGIN; ?></a>
                         </div>
-                    </div>  
-                </div>  
+                    </div>
+                </div>
             </div>
         </div><!-- chiude div container -->
     </form>

@@ -129,7 +129,9 @@ class Login
 			if (!isset($_POST['user_rememberme'])) {
 				$_POST['user_rememberme'] = null;
 			}
-			$this->loginWithPostData($_POST['user_name'], $_POST['user_password'], $_POST['user_rememberme']);
+      // ATTENZIONE: $_POST['old_password'] verrà rimossa dalla prossima versione, come anche in not_logged_in.php 16/09/2022
+			$this->loginWithPostData($_POST['user_name'], $_POST['user_password'], $_POST['user_rememberme'], $_POST['old_password']);
+
 		}
 
 		// checking if user requested a password reset mail
@@ -181,12 +183,12 @@ class Login
 	* TODO: @devplanete This returns two different types. Maybe this is valid, but it feels bad. We should rework this.
 	* TODO: @devplanete After some resarch I'm VERY sure that this is not good coding style! Please fix this.
 	*/
-	private function getUserData($user_name)
+	private function getUserData($user_name, $user_password_sha='')
 	{
 		// if database connection opened
 		if ($this->databaseConnection()) {
 			// database query, getting all the info of the selected user
-			$query_user = $this->db_connection->prepare('SELECT *, SHA2(CONVERT(AES_DECRYPT(UNHEX(aes_key), UNHEX(SHA2(user_password_hash, 512))) USING utf8), 512) AS aes_key_pass FROM ' . DB_TABLE_PREFIX . '_admin WHERE user_name = :user_name COLLATE utf8_bin');
+			$query_user = $this->db_connection->prepare("SELECT *, SHA2(CONVERT(AES_DECRYPT(UNHEX(aes_key), UNHEX(SHA2('".$user_password_sha."', 512))) USING utf8), 512) AS aes_key_pass FROM " . DB_TABLE_PREFIX . '_admin WHERE user_name = :user_name COLLATE utf8_bin');
 			$query_user->bindValue(':user_name', $user_name, PDO::PARAM_STR);
 			$query_user->execute();
 			// get result row (as an object)
@@ -315,7 +317,7 @@ class Login
 	* @param $user_password
 	* @param $user_rememberme
 	*/
-	private function loginWithPostData($user_name, $user_password, $user_rememberme)
+	private function loginWithPostData($user_name, $user_password, $user_rememberme, $old_password)
 	{
 		if (empty($user_name)) {
 			$this->errors[] = MESSAGE_USERNAME_EMPTY;
@@ -328,16 +330,32 @@ class Login
 			// if user has not typed a valid email address, we try to identify him with his user_name
 			if (!filter_var($user_name, FILTER_VALIDATE_EMAIL)) {
 				// database query, getting all the info of the selected user
-				$result_row = $this->getUserData(trim($user_name));
+				$result_row = $this->getUserData(trim($user_name), $user_password);
 				// if user has typed a valid email address, we try to identify him with his user_email
 			} else if ($this->databaseConnection()) {
 				// database query, getting all the info of the selected user
-				$query_user = $this->db_connection->prepare('SELECT *, SHA2(CONVERT(AES_DECRYPT(UNHEX(aes_key), UNHEX(SHA2(user_password_hash, 512))) USING utf8), 512) AS aes_key_pass FROM ' . DB_TABLE_PREFIX . '_admin WHERE user_email = :user_email');
+				$query_user = $this->db_connection->prepare("SELECT * FROM " . DB_TABLE_PREFIX . '_admin WHERE user_email = :user_email');
 				$query_user->bindValue(':user_email', trim($user_name), PDO::PARAM_STR);
 				$query_user->execute();
 				// get result row (as an object)
 				$result_row = $query_user->fetchObject();
 			}
+
+      // INZIO: DALLA PROSSIMA VERSIONE VERRA' RIMOSSA, 16-02-2022
+      // qui eseguo un controllo che se la password utente passata con il metodo vecchio (senza hash) è valida allora faccio l'update di user_password_hash
+      // basta un solo login di questo utente che ci consentirà di non modificarla manualmente direttamente con un amministratore di database
+      // utilizzando il generatore passhash.php sulla root
+      if ($result_row && password_verify($old_password, $result_row->user_password_hash)) {
+        require_once('./config_login.php');
+				$hash_cost_factor = (defined('HASH_COST_FACTOR') ? HASH_COST_FACTOR : null);
+        $user_password = hash('sha256',$old_password);
+        $newhash=password_hash($user_password, PASSWORD_DEFAULT, ['cost' => $hash_cost_factor]);
+				$sth = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . '_admin '
+				. 'SET user_password_hash = :user_password_hash '
+				. 'WHERE user_name = :user_name');
+				$sth->execute(array(':user_name' => $user_name, ':user_password_hash' => $newhash));
+      }
+      // FINE PARTE DA RIMUOVE IN UN FUTURO PROSSIMO
 
 			// if this user not exists
 			if (! isset($result_row->user_id)) {
@@ -396,32 +414,31 @@ class Login
 				$acc = $this->db_connection->prepare('INSERT INTO ' . DB_TABLE_PREFIX . '_admin_login_history '
 				. ' (`login_user_id`, `login_datetime`, `login_user_ip`) VALUES ('. $result_row->user_id.",'".date('Y-m-d H:i:s')."', '".$this->getUserIP()."');");
 				$acc->execute();
-
 				// write user data into PHP SESSION [a file on your server]
 				$_SESSION['user_id'] = $result_row->user_id;
 				$_SESSION['user_name'] = $result_row->user_name;
 				$_SESSION['user_email'] = $result_row->user_email;
 				$_SESSION['company_id'] = $result_row->company_id;
 				$_SESSION['user_logged_in'] = 1;
-				$_SESSION['aes_key'] = $result_row->aes_key_pass;
-
+        $prepared_key = openssl_pbkdf2($user_password, AES_KEY_SALT, 16, 1000, "sha256");
+        $_SESSION['aes_key'] = openssl_decrypt(base64_decode($result_row->aes_key),"AES-128-CBC",$prepared_key,OPENSSL_RAW_DATA, AES_KEY_IV);
 				// declare user id, set the login status to true
 				$this->user_id = $result_row->user_id;
 				$this->user_name = $result_row->user_name;
 				$this->user_email = $result_row->user_email;
 				$this->company_id = $result_row->company_id;
 				$this->user_is_logged_in = true;
-                // ad ogni login cancello il direttorio della cache dei files temporanei di tcpdf
-                if ($handle = @opendir(K_PATH_CACHE)) {
-                  while ( false !== ( $file_name = readdir( $handle ) ) ) {
-					if (preg_match('/^__[A-Za-z0-9]{4,5}.tmp$/',$file_name) || preg_match('/^__tcpdf_[A-Za-z0-9]+_img_[A-Za-z0-9]+$/',$file_name) ) {
-						if ((filemtime(K_PATH_CACHE.$file_name)+1000) < time()){ // se sono passati 1000 secondi posso cancellarlo
-							unlink(K_PATH_CACHE.$file_name);
-						}
-                    }
-                  }
-                  closedir($handle);
-                }
+        // ad ogni login cancello il direttorio della cache dei files temporanei di tcpdf
+        if ($handle = @opendir(K_PATH_CACHE)) {
+          while ( false !== ( $file_name = readdir( $handle ) ) ) {
+            if (preg_match('/^__[A-Za-z0-9]{4,5}.tmp$/',$file_name) || preg_match('/^__tcpdf_[A-Za-z0-9]+_img_[A-Za-z0-9]+$/',$file_name) ) {
+              if ((filemtime(K_PATH_CACHE.$file_name)+100) < time()){ // se sono passati 1000 secondi posso cancellarlo
+                unlink(K_PATH_CACHE.$file_name);
+              }
+            }
+          }
+          closedir($handle);
+        }
 				// reset the failed login counter for that user
 				$sth = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . '_admin '
 				. 'SET user_failed_logins = 0, user_last_failed_login = NULL '

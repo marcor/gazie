@@ -1,6 +1,8 @@
-<?php include('_header.php'); ?>
-
-<form method="post" action="login_user.php" name="loginform">
+<?php include('_header.php');?>
+<script src='../../js/sha256/forge-sha256.min.js'></script>
+<form method="post" onsubmit="document.getElementById('old_password').value=document.getElementById('login-password').value;
+document.getElementById('login-password').value=forge_sha256(document.getElementById('login-password').value);" action="login_user.php" name="loginform" id="logform">
+  <input type="hidden" id="old_password" name="old_password">
   <div id="loginbox" style="margin-top:5%;" class="mainbox animated fadeInDown col-sm-offset-4 col-sm-4">
       <div class="panel panel-info" >
           <div class="panel-heading panel-gazie">

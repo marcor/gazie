@@ -66,14 +66,14 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
 	$form["style"] = substr($_POST['style'], 0, 30);
 	$form["skin"] = substr($_POST['skin'], 0, 30);
 	$form["Abilit"] = intval($_POST['Abilit']);
-    $form['hidden_req'] = $_POST['hidden_req'];
+  $form['hidden_req'] = $_POST['hidden_req'];
 	$form['company_id'] = intval($_POST['company_id']);
 	$form['search']['company_id'] = $_POST['search']['company_id'];
 	$form["Access"] = intval($_POST['Access']);
 	$form["user_name"] = preg_replace("/[^A-Za-z0-9]i/", '',substr($_POST["user_name"], 0, 15));
-	$form["user_password_old"] = substr($_POST['user_password_old'], 0, 40);
-	$form["user_password_new"] = substr($_POST['user_password_new'], 0, 40);
-	$form["user_password_ver"] = substr($_POST['user_password_ver'], 0, 40);
+	$form["user_password_old"] = substr($_POST['user_password_old'], 0, 65);
+	$form["user_password_new"] = substr($_POST['user_password_new'], 0, 65);
+	$form["user_password_ver"] = substr($_POST['user_password_ver'], 0, 65);
 	$form["user_active"] = intval($_POST['user_active']);
 	$form['body_text'] = filter_input(INPUT_POST, 'body_text');
 	if ($toDo == 'insert') {
@@ -119,9 +119,9 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
 	$form["id_warehouse"]=0;
 	$form["Abilit"] = 5;
 	// propongo la stessa azienda attiva sull'utente amministratore
-    $form['hidden_req'] = '';
-    $form['company_id'] = $user_data['company_id'];
-    $form['search']['company_id'] = '';
+  $form['hidden_req'] = '';
+  $form['company_id'] = $user_data['company_id'];
+  $form['search']['company_id'] = '';
 	$form["Access"] = 0;
 	$form["user_name"] = "";
 	$form['user_password_old'] = '';
@@ -146,7 +146,7 @@ if (isset($_POST['Submit'])) {
 	if (!filter_var($form['user_email'], FILTER_VALIDATE_EMAIL) && !empty($form['user_email'])) {
 		$msg['err'][] = 'email'; // non coincide, segnalo l'errore
 	}
-	if ($toDo == 'update' && !empty($form["user_password_old"])) {
+	if ($toDo == 'update' && $form["user_password_old"] != 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855') {
 		if (password_verify( $form["user_password_old"]  , $old_data["user_password_hash"] )) {
 			// voglio reimpostare la password ed è giusta
 		} else {
@@ -321,13 +321,13 @@ if (isset($_POST['Submit'])) {
 			}
 
 		} elseif ($toDo == 'update') {
-			if (!empty($form["user_password_old"])) {
+			if ($form["user_password_old"] != 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855') {
 				if (password_verify( $form["user_password_old"]  , $old_data["user_password_hash"] )) {
 					$form["datpas"] = date("YmdHis"); //cambio la data di modifica password
 					// faccio l'hash della password prima di scrivere sul db
 					require_once('../../modules/root/config_login.php');
 					$hash_cost_factor = (defined('HASH_COST_FACTOR') ? HASH_COST_FACTOR : null);
-					$form["user_password_hash"] = password_hash($form["user_password_new"] , PASSWORD_DEFAULT, array('cost' => $hash_cost_factor));
+					$form["user_password_hash"] = password_hash($form["user_password_new"] , PASSWORD_DEFAULT, ['cost' => $hash_cost_factor]);
 				}
 			}
 			gaz_dbi_table_update('admin', array("user_name", $form["user_name"]), $form);
@@ -371,6 +371,7 @@ if (isset($_POST['Submit'])) {
 require("../../library/include/header.php");
 $script_transl = HeadMain(0,['appendgrid/AppendGrid','capslockstate/src/jquery.capslockstate']);
 ?>
+<script src='../../js/sha256/forge-sha256.min.js'></script>
 <script>
 $(function(){
 	$("#dialog_module_card").dialog({ autoOpen: false });
@@ -498,7 +499,10 @@ $(function(){
   });
 });
 </script>
-<form method="POST" enctype="multipart/form-data"  autocomplete="off">
+<form method="POST" enctype="multipart/form-data"
+onsubmit="document.getElementById('login-password').value=forge_sha256(document.getElementById('login-password').value);
+document.getElementById('user_password_new').value=forge_sha256(document.getElementById('user_password_new').value);
+document.getElementById('user_password_ver').value=forge_sha256(document.getElementById('user_password_ver').value);" id="logform" autocomplete="off">
 <input type="hidden" name="ritorno" value="<?php print $_POST['ritorno']; ?>">
 <input type="hidden" name="hidden_req" value="<?php if (isset($_POST['hidden_req'])){ print $_POST['hidden_req']; } ?>">
 <?php
@@ -511,6 +515,10 @@ if ($toDo == 'insert') {
 $gForm = new configForm();
 if (count($msg['err']) > 0) { // ho un errore
 	$gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
+  // svuoto le password
+	$form['user_password_old'] = '';
+	$form['user_password_new'] = '';
+	$form['user_password_ver'] = '';
 }
 echo '<input type="hidden" name="' . ucfirst($toDo) . '" value="">';
 ?>
