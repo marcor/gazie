@@ -93,7 +93,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     //qui si dovrebbe fare un parsing di quanto arriva dal browser...
     if ($_POST['in_codart']!==$_POST['cosear']){// è appena stato selezionato un inserimento articolo alloggio
       $artico = gaz_dbi_get_row($gTables['artico'], "codice", $_POST['cosear']);
-      if ($data = json_decode($artico['custom_field'], TRUE)) { // se esiste un json nel custom field dell'articolo
+      if ($artico['id_artico_group']>0 && ($data = json_decode($artico['custom_field'], TRUE))) { // se l'alloggio fa parte di una struttura e se esiste un json nel custom field dell'articolo
         if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['accommodation_type'])){// se è un alloggio
           $facility = gaz_dbi_get_row($gTables['artico_group'], "id_artico_group", $artico['id_artico_group']);// leggo la struttura
           if ($data = json_decode($facility['custom_field'], TRUE)) { // se esiste un json nel custom field della struttura
@@ -1125,44 +1125,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             ksort($form['rows']);
         } else { //se è un rigo da inserire
 
-            if ($form['in_tiprig'] == 0) {   // è un rigo normale controllo se l'articolo prevede un rigo testuale che lo precede
-				$article_text = gaz_dbi_get_row($gTables['company_config'], 'var', 'article_text');
-				if ($article_text['val'] < 2){
-					$bodytext = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", 'artico_' . $form['in_codart']);
-				} else {
-					$bodytext = '';
-				}
-                if (!empty($bodytext) && !empty($bodytext['body_text'])) { // il testo aggiuntivo c'è (e non è vuoto)
-                    $form["row_$next_row"] = $bodytext['body_text'];
-                    $form['rows'][$next_row]['tiprig'] = 6;
-                    $form['rows'][$next_row]['descri'] = '';
-                    $form['rows'][$next_row]['id_mag'] = 0;
-                    $form['rows'][$next_row]['id_lotmag'] = 0;
-                    $form['rows'][$next_row]['identifier'] = '';
-                    $form['rows'][$next_row]['cod_operazione'] = 11;
-                    $form['rows'][$next_row]['recip_stocc'] = '';
-                    $form['rows'][$next_row]['recip_stocc_destin'] = '';
-                    $form['rows'][$next_row]['lot_or_serial'] = 0;
-                    $form['rows'][$next_row]['SIAN'] = 0;
-                    $form['rows'][$next_row]['status'] = '';
-                    $form['rows'][$next_row]['scorta'] = 0;
-                    $form['rows'][$next_row]['quamag'] = 0;
-                    $form['rows'][$next_row]['codart'] = '';
-                    $form['rows'][$next_row]['annota'] = '';
-                    $form['rows'][$next_row]['pesosp'] = '';
-                    $form['rows'][$next_row]['gooser'] = 0;
-                    $form['rows'][$next_row]['unimis'] = '';
-                    $form['rows'][$next_row]['quanti'] = 0;
-                    $form['rows'][$next_row]['prelis'] = 0;
-                    $form['rows'][$next_row]['codric'] = 0;
-                    $form['rows'][$next_row]['sconto'] = 0;
-                    $form['rows'][$next_row]['pervat'] = 0;
-                    $form['rows'][$next_row]['tipiva'] = 0;
-                    $form['rows'][$next_row]['ritenuta'] = 0;
-                    $form['rows'][$next_row]['codvat'] = 0;
-                    $next_row++;
-                }
-			}
+
             $form['rows'][$next_row]['tiprig'] = $form['in_tiprig'];
             $form['rows'][$next_row]['id_doc'] = $form['in_id_doc'];
             $form['rows'][$next_row]['descri'] = $form['in_descri'];
@@ -1190,19 +1153,19 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 if ($in_sconto != "#") {
                     $form['rows'][$next_row]['sconto'] = $in_sconto;
                 } else {
-					if ($form["sconto"] > 0) { // gestione sconto cliente sul totale merce o sul rigo
-                        $form['rows'][$next_row]['sconto'] = 0;
-					} elseif (isset($cliente)) {
-						$comp = new venditCalc();
-						$tmpPrezzoNetto_Sconto = $comp->trovaPrezzoNetto_Sconto($cliente['codice'], $form['rows'][$next_row]['codart'], $artico['sconto']);
-						if ($tmpPrezzoNetto_Sconto < 0) { // è un prezzo netto
-							$form['rows'][$next_row]['prelis'] = -$tmpPrezzoNetto_Sconto;
-							$form['rows'][$next_row]['sconto'] = 0;
-						} else {
-							$form['rows'][$next_row]['sconto'] = $tmpPrezzoNetto_Sconto;
-						}
-					}
-				}
+                  if ($form["sconto"] > 0) { // gestione sconto cliente sul totale merce o sul rigo
+                                $form['rows'][$next_row]['sconto'] = 0;
+                  } elseif (isset($cliente)) {
+                    $comp = new venditCalc();
+                    $tmpPrezzoNetto_Sconto = $comp->trovaPrezzoNetto_Sconto($cliente['codice'], $form['rows'][$next_row]['codart'], $artico['sconto']);
+                    if ($tmpPrezzoNetto_Sconto < 0) { // è un prezzo netto
+                      $form['rows'][$next_row]['prelis'] = -$tmpPrezzoNetto_Sconto;
+                      $form['rows'][$next_row]['sconto'] = 0;
+                    } else {
+                      $form['rows'][$next_row]['sconto'] = $tmpPrezzoNetto_Sconto;
+                    }
+                  }
+                }
                 $form['rows'][$next_row]['ritenuta'] = $form['in_ritenuta'];
                 $provvigione = new Agenti;
                 $form['rows'][$next_row]['provvigione'] = $provvigione->getPercent($form['id_tourOp'], $form['in_codart']);
@@ -1375,6 +1338,46 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['tipiva'] = 0;
                 $form['rows'][$next_row]['ritenuta'] = 0;
                 $form['rows'][$next_row]['codvat'] = 0;
+            }
+            if ($form['in_tiprig'] == 0) {   // è un rigo normale controllo se l'articolo prevede un rigo testuale a seguire
+
+              $article_text = gaz_dbi_get_row($gTables['company_config'], 'var', 'article_text');
+              if ($article_text['val'] < 2){
+                $bodytext = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", 'artico_' . $form['in_codart']);
+              } else {
+                $bodytext = '';
+              }
+              if (!empty($bodytext) && !empty($bodytext['body_text'])) { // il testo aggiuntivo c'è (e non è vuoto)
+                $next_row++;
+                $form["row_$next_row"] = $bodytext['body_text'];
+                $form['rows'][$next_row]['tiprig'] = 6;
+                $form['rows'][$next_row]['descri'] = '';
+                $form['rows'][$next_row]['id_mag'] = 0;
+                $form['rows'][$next_row]['id_lotmag'] = 0;
+                $form['rows'][$next_row]['identifier'] = '';
+                $form['rows'][$next_row]['cod_operazione'] = 11;
+                $form['rows'][$next_row]['recip_stocc'] = '';
+                $form['rows'][$next_row]['recip_stocc_destin'] = '';
+                $form['rows'][$next_row]['lot_or_serial'] = 0;
+                $form['rows'][$next_row]['SIAN'] = 0;
+                $form['rows'][$next_row]['status'] = '';
+                $form['rows'][$next_row]['scorta'] = 0;
+                $form['rows'][$next_row]['quamag'] = 0;
+                $form['rows'][$next_row]['codart'] = '';
+                $form['rows'][$next_row]['annota'] = '';
+                $form['rows'][$next_row]['pesosp'] = '';
+                $form['rows'][$next_row]['gooser'] = 0;
+                $form['rows'][$next_row]['unimis'] = '';
+                $form['rows'][$next_row]['quanti'] = 0;
+                $form['rows'][$next_row]['prelis'] = 0;
+                $form['rows'][$next_row]['codric'] = 0;
+                $form['rows'][$next_row]['sconto'] = 0;
+                $form['rows'][$next_row]['pervat'] = 0;
+                $form['rows'][$next_row]['tipiva'] = 0;
+                $form['rows'][$next_row]['ritenuta'] = 0;
+                $form['rows'][$next_row]['codvat'] = 0;
+
+              }
             }
         }
         // reinizializzo rigo di input tranne che per il tipo rigo e aliquota iva
