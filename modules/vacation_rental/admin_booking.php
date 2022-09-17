@@ -470,7 +470,15 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             if ($toDo == 'update') { // e' una modifica
               // cancello tutto
               gaz_dbi_del_row($gTables['tesbro'], "id_tes", $form['id_tes']);
-              gaz_dbi_del_row($gTables['rigbro'], "id_tes", $form['id_tes']);
+
+              $rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes =". intval($form['id_tes']),"id_tes DESC");
+              while ($a_row = gaz_dbi_fetch_array($rs_righidel)) {
+                gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigbro' AND id_ref ",$a_row['id_rig']);
+                gaz_dbi_del_row($gTables['rigbro'], "id_rig", $a_row['id_rig']);
+
+              }
+
+
               gaz_dbi_del_row($gTables['rental_events'], "id_tesbro", $form['id_tes']);
               // dovrò aggiornare tesbro negli eventuali pagamenti effettuati su rental payment ma posso farlo solo dopo aver creato il nuovo tesbro
               $form['status'] = 'UPDATED';
@@ -2142,7 +2150,7 @@ foreach ($form['rows'] as $k => $v) {
     } elseif ($v['tiprig'] == 3) {
         $carry += $v['prelis'];
     }
-    $descrizione = htmlentities($v['descri'], ENT_QUOTES);
+    $descrizione = htmlentities(get_string_lang($v['descri'], strtolower($admin_aziend['country'])), ENT_QUOTES);
 
     echo "<input type=\"hidden\" value=\"" . $v['codart'] . "\" name=\"rows[$k][codart]\">\n";
     echo "<input type=\"hidden\" value=\"" . ((isset($v['accommodation_type'])) ? $v['accommodation_type'] : '') . "\" name=\"rows[$k][accommodation_type]\">\n";
@@ -2298,7 +2306,7 @@ foreach ($form['rows'] as $k => $v) {
 					<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-xs" title="' . $script_transl['3'] . '!">
 						<i class="glyphicon glyphicon-arrow-up"></i>
 					</button>
-		 			<input class="FacetDataTDsmall" type="submit" name="upd_row[' . $k . ']" value="' . $script_transl['typerow'][$v['tiprig']] . '" />
+		 			<!-- <input class="FacetDataTDsmall" type="submit" name="upd_row[' . $k . ']" value="' . $script_transl['typerow'][$v['tiprig']] . '" /> -->
 				</td>
 				<td colspan="10">
 					<textarea id="row_' . $k .
