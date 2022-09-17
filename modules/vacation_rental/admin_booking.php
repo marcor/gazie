@@ -468,278 +468,103 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['clfoco'] = $anagrafica->anagra_to_clfoco($new_clfoco, $admin_aziend['mascli'],$form['pagame']);
             }
             if ($toDo == 'update') { // e' una modifica
-                $old_rows = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes = " . $form['id_tes'], "id_rig asc");
-                $i = 0;$syncarticols=array();
-                $count = count($form['rows']) - 1;
-                while ($val_old_row = gaz_dbi_fetch_array($old_rows)) {
-                  array_push($syncarticols,$val_old_row['codart']);// Antonio Germani - aggiungo il codice articolo all'array per la sincronizzazione e-commerce
-                    if ($i <= $count) { //se il vecchio rigo e' ancora presente nel nuovo lo modifico
-                        $form['rows'][$i]['id_tes'] = $form['id_tes'];
-                        $codice = array('id_rig', $val_old_row['id_rig']);
-                        rigbroUpdate($codice, $form['rows'][$i]);
+              // cancello tutto
+              gaz_dbi_del_row($gTables['tesbro'], "id_tes", $form['id_tes']);
+              gaz_dbi_del_row($gTables['rigbro'], "id_tes", $form['id_tes']);
+              gaz_dbi_del_row($gTables['rental_events'], "id_tesbro", $form['id_tes']);
+              // dovrò aggiornare tesbro negli eventuali pagamenti effettuati su rental payment ma posso farlo solo dopo aver creato il nuovo tesbro
+              $form['status'] = 'UPDATED';
 
-                        // se è un alloggio modifico l'evento rental_events
-                        if ($form['rows'][$i]['accommodation_type']>2){
-                          $rental_row = gaz_dbi_get_row($gTables['rental_events'], 'id_rigbro', $val_old_row['id_rig']);// prima di cancellare o modificare, prendo i dati che c'erano
-                          $form['access_code'] = (isset($rental_row['access_code']))?$rental_row['access_code']:'NULL';
-                          $form['voucher_id'] = (isset($rental_row['voucher_id']))?$rental_row['voucher_id']:'NULL';
-                          $form['checked_in_date'] = (isset($rental_row['checked_in_date']))?$rental_row['checked_in_date']:'NULL';
-                          $form['checked_out_date'] = (isset($rental_row['checked_out_date']))?$rental_row['checked_out_date']:'NULL';
-                          $form['type'] = (isset($rental_row['type']))?$rental_row['type']:'';
-                          $table = 'rental_events';
-                          $form['id_tesbro']=  $form['id_tes'];
-                          switch ($form['rows'][$i]['accommodation_type']) {//3 => 'Appartamento', 4 => 'Casa indipendente', 5=> 'Bed & breakfast'
-                            case "3":
-                              $accomodation_type="Appartamento";
-                              break;
-                            case "4":
-                              $accomodation_type="Casa indipendente";
-                              break;
-                            case "5":
-                              $accomodation_type="Bed & breakfast";
-                              break;
-                          }
-
-                          if (intval($vacation_blockdays)<1){// se non ci sono giorni cuscinetto aggiorno rigo e basta
-                          $form['title']= "Prenotazione ".$accomodation_type." ".$form['rows'][$i]['codart']." - ".$form['search']['clfoco'];
-                          $form['house_code']=$form['rows'][$i]['codart'];
-                          $form['id_rigbro'] = $val_old_row['id_rig'];
-                          $columns = array('id', 'title', 'start', 'end', 'house_code', 'id_tesbro', 'id_rigbro', 'adult', 'child');
-                          $codice[0] = "id_rigbro";
-                          $codice[1] = $val_old_row['id_rig'];
-                          tableUpdate($table, $columns, $codice, $form);
-                          }else{// se ci sono cuscinetti cancello e riscrivo
-                            $realstart=$form['start'];
-                            $realend=$form['end'];
-                            gaz_dbi_del_row($gTables[$table], "id_rigbro", $val_old_row['id_rig']);// cancello il rigo rental_events dell'alloggio
-                            $form['title']= "Prenotazione ".$accomodation_type." ".$form['rows'][$i]['codart']." - ".$form['search']['clfoco'];
-                            $form['house_code']=$form['rows'][$i]['codart'];
-                            $form['type']="ALLOGGIO";
-                            $form['id_rigbro'] = $val_old_row['id_rig'];
-                            $columns = array('id', 'title', 'start', 'end', 'house_code', 'id_tesbro', 'id_rigbro', 'adult', 'child', 'type', 'access_code', 'voucher_id', 'checked_in_date', 'checked_out_date');
-                            tableInsert($table, $columns, $form);// riscrivo l'evento alloggio in rental_events
-                            $query = "DELETE FROM ".$gTables[$table]." WHERE id_tesbro = ".intval($form['id_tesbro'])." AND id_rigbro = 0 AND (type IS NULL OR type = 'NULL')";// cancello i righi dei cuscinetti
-                            gaz_dbi_query($query);
-                            $form['type']="";
-                            $form['start']=$date1 = date("Y-m-d", strtotime($realstart.'- '.intval($vacation_blockdays).' days'));
-                            $form['end']=$date1 = date("Y-m-d", strtotime($realstart.'- 1 days'));
-                            $form['id_rigbro'] = 0;
-                            $form['type'] = "NULL";
-                            $form['access_code'] = "NULL";
-                            $form['voucher_id'] = "NULL";
-                            $form['checked_in_date'] = "NULL";
-                            $form['checked_out_date'] = "NULL";
-                            tableInsert($table, $columns, $form);// scrivo il cuscinetto iniziale start
-                            $form['start']=date("Y-m-d", strtotime($realend));
-                            $form['end']=date("Y-m-d", strtotime($realend.'+ '.intval($vacation_blockdays).' days'));
-                            tableInsert($table, $columns, $form);// scrivo il cuscinetto finale end
-                            $form['start'] = $realstart;
-                            $form['end'] = $realend;
-                          }
-                        }
-                        // se è un alloggio modifico anche l'extra
-      // DA FARE gli extra illimitati non devono andare su rental events
-                        if ($form['rows'][$i]['accommodation_type']==1){
-                          $table = 'rental_events';
-                          $form['id_tesbro']=  $form['id_tes'];
-                          $form['title']= "Prenotazione EXTRA ".$form['rows'][$i]['codart'];
-                          $form['house_code']=$form['rows'][$i]['codart'];
-                          $columns = array('id', 'title', 'start', 'end', 'house_code', 'id_tesbro', 'id_rigbro', 'adult', 'child');
-                          $codice[0] = "id_rigbro";
-                          $codice[1] = $val_old_row['id_rig'];
-                          tableUpdate($table, $columns, $codice, $form);
-                        }
-
-                        if (isset($form["row_$i"]) && $val_old_row['id_body_text'] > 0) { //se è un rigo testo già presente lo modifico
-                            bodytextUpdate(array('id_body', $val_old_row['id_body_text']), array('table_name_ref' => 'rigbro', 'id_ref' => $val_old_row['id_rig'], 'body_text' => $form["row_$i"], 'lang_id' => $admin_aziend['id_language']));
-                            gaz_dbi_put_row($gTables['rigbro'], 'id_rig', $val_old_row['id_rig'], 'id_body_text', $val_old_row['id_body_text']);
-                        } elseif (isset($form["row_$i"]) && $val_old_row['id_body_text'] == 0) { //prima era un rigo diverso da testo
-                            bodytextInsert(array('table_name_ref' => 'rigbro', 'id_ref' => $val_old_row['id_rig'], 'body_text' => $form["row_$i"], 'lang_id' => $admin_aziend['id_language']));
-                            gaz_dbi_put_row($gTables['rigbro'], 'id_rig', $val_old_row['id_rig'], 'id_body_text', gaz_dbi_last_id());
-                        } elseif (!isset($form["row_$i"]) && $val_old_row['id_body_text'] > 0) { //un rigo che prima era testo adesso non lo � pi�
-                            gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigbro' AND id_ref", $val_old_row['id_rig']);
-                        }
-                        if ($form['rows'][$i]['tiprig']==50 && !empty($form['rows'][$i]['extdoc']) && substr($form['rows'][$i]['extdoc'],0,10)!='rigbrodoc_') {
-                            // se a questo rigo corrispondeva un certificato controllo che non sia stato aggiornato, altrimenti lo cambio
-                            $dh = opendir( DATA_DIR . 'files/' . $admin_aziend['company_id'] );
-                            while (false !== ($filename = readdir($dh))) {
-                                $fd = pathinfo($filename);
-                                if ($fd['filename'] == 'rigbrodoc_' . $val_old_row['id_rig']) {
-                                    // cancello il file precedente indipendentemente dall'estensione
-                                    $frep = glob( DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $val_old_row['id_rig'] . '.*');
-                                    foreach ($frep as $fdel) {// prima cancello eventuali precedenti file temporanei
-                                        unlink($fdel);
-                                    }
-                                }
-                            }
-                            $tmp_file = DATA_DIR . 'files/tmp/' . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['extdoc'];
-                      // sposto e rinomino il relativo file temporaneo
-                            $fn = pathinfo($form['rows'][$i]['extdoc']);
-                            rename($tmp_file, DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $val_old_row['id_rig'] . '.' . $fn['extension']);
-                        }
-                    } else { //altrimenti lo elimino
-                        if (intval($val_old_row['id_body_text']) > 0) {  //se c'� un testo allegato al rigo elimino anch'esso
-                            gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigbro' AND id_ref", $val_old_row['id_rig']);
-                        }
-                        gaz_dbi_del_row($gTables['rigbro'], "id_rig", $val_old_row['id_rig']);
-                        gaz_dbi_del_row($gTables['rental_events'], "id_rigbro", $val_old_row['id_rig']);
-                    }
-                    $i++;
-                }
-                //qualora i nuovi rows fossero di più dei vecchi inserisco l'eccedenza
-                for ($i = $i; $i <= $count; $i++) {
-                    array_push($syncarticols,$form['rows'][$i]['codart']);// Antonio Germani - aggiungo il codice articolo all'array per la sincronizzazione e-commerce
-                    $form['rows'][$i]['id_tes'] = $form['id_tes'];
-                    $last_rigbro_id = rigbroInsert($form['rows'][$i]);
-
-                    // se è un alloggio inserisco l'evento alloggio
-                    if ($form['rows'][$i]['accommodation_type']>2){
-                      $table = 'rental_events';
-                      $form['id_rigbro']=  $last_rigbro_id;
-                      switch ($form['rows'][$i]['accommodation_type']) {//3 => 'Appartamento', 4 => 'Casa indipendente', 5=> 'Bed & breakfast'
-                        case "3":
-                          $accomodation_type="Appartamento";
-                          break;
-                        case "4":
-                          $accomodation_type="Casa indipendente";
-                          break;
-                        case "5":
-                          $accomodation_type="Bed & breakfast";
-                          break;
-                      }
-                      $form['title']= "Prenotazione ".$accomodation_type." ".$form['rows'][$i]['codart']." - ".$form['search']['clfoco'];
-                      $form['house_code']=$form['rows'][$i]['codart'];
-                      $form['type']="ALLOGGIO";
-                      $columns = array('id', 'title', 'start', 'end', 'house_code', 'id_tesbro', 'id_rigbro', 'adult', 'child', 'type');
-                      tableInsert($table, $columns, $form);
-                    }
-    // DA FARE gli extra illimitati non devono andare su rental events
-                    // se è un extra lo inserisco
-                    if ($form['rows'][$i]['accommodation_type']==1){
-                      $table = 'rental_events';
-                      $form['id_rigbro']=  $last_rigbro_id;
-                      $form['type']="EXTRA";
-                      $form['title']= "Prenotazione EXTRA ".$form['rows'][$i]['codart'];
-                      $form['house_code']=$form['rows'][$i]['codart'];
-                      $columns = array('id', 'title', 'start', 'end', 'house_code', 'id_tesbro', 'id_rigbro', 'adult', 'child', 'type');
-                      tableInsert($table, $columns, $form);
-                    }
-                    if (!empty($form['rows'][$i]['extdoc'])) {
-                        $tmp_file = DATA_DIR . 'files/tmp/' . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['extdoc'];
-                        // sposto e rinomino il relativo file temporaneo
-                        $fd = pathinfo($form['rows'][$i]['extdoc']);
-                        rename($tmp_file, DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $last_rigbro_id . '.' . $fd['extension']);
-                    }
-                    if (isset($form["row_$i"])) { //se � un rigo testo lo inserisco il contenuto in body_text
-                        bodytextInsert(array('table_name_ref' => 'rigbro', 'id_ref' => $last_rigbro_id, 'body_text' => $form["row_$i"], 'lang_id' => $admin_aziend['id_language']));
-                        gaz_dbi_put_row($gTables['rigbro'], 'id_rig', $last_rigbro_id, 'id_body_text', gaz_dbi_last_id());
-                    }
-                }
-                //modifico la testata con i nuovi dati...
-                $old_head = gaz_dbi_get_row($gTables['tesbro'], 'id_tes', $form['id_tes']);
-                if (substr($form['tipdoc'], 0, 2) == 'DD') { //se � un DDT non fatturato
-                    $form['datfat'] = '';
-                    $form['numfat'] = 0;
-                } else {
-                    $form['datfat'] = $datemi;
-                    $form['numfat'] = $old_head['numfat'];
-                }
-                $form['geneff'] = $old_head['geneff'];
-                $form['id_contract'] = $old_head['id_contract'];
-                $form['id_con'] = $old_head['id_con'];
-                $form['status'] = "MODIFICATO";
-                $form['destin'] = $old_head['destin'];
-                $form['initra'] = $initra;
-                $form['datemi'] = $datemi;
-                $form['id_agente'] = $form['id_tourOp'];// scambio perché l'agente è il tour operator mentre in id_agente ho il proprietario
-                $codice = array('id_tes', $form['id_tes']);
-                tesbroUpdate($codice, $form);
-                if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
-                    // aggiorno l'e-commerce ove presente
-                    $gs=$admin_aziend['synccommerce_classname'];
-                    $gSync = new $gs();
-                    if($gSync->api_token){
-                      foreach ($syncarticols as $syncarticol){
-                        $gSync->SetProductQuantity($syncarticol);
-                      }
-                    }
-                }
-                header("Location: " . $form['ritorno']);
-                exit;
-            } else { // nuovo INSERIMENTO DATA BASE
-
-              //echo "<pre>",print_r($form),"<br>blockdays:",intval($vacation_blockdays);die;
-              // ricavo i progressivi in base al tipo di documento
-              $where = "numdoc desc";
-              $sql_documento = "YEAR(datemi) = " . $form['annemi'] . " and tipdoc = '" . $form['tipdoc'] . "'";
-              $rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesbro'], $sql_documento, $where, 0, 1);
-              $ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
-              // se e' il primo documento dell'anno, resetto il contatore
-              if ($ultimo_documento) {
-                  $form['numdoc'] = $ultimo_documento['numdoc'] + 1;
-              } else {
-                  $form['numdoc'] = 1;
-              }
-              $form['protoc'] = 0;
-              $form['numfat'] = 0;
-              $form['datfat'] = 0;
-              //inserisco la testata
+            } else{
               $form['status'] = 'GENERATO';
-              $form['destin'] = '';
-              $form['template'] = 'booking';
-              $form['initra'] = $initra;
-              $form['datemi'] = $datemi;
-              $form['id_agente'] = $form['id_tourOp'];// scambio perché l'agente è il tour operator mentre in id_agente ho il proprietario
-              $data=[];
-              $data= array('vacation_rental'=>array('status' => 'CONFIRMED','ip' => 'diretto'));
-              $form['custom_field'] = json_encode($data);
-              tesbroInsert($form);
-              //recupero l'id assegnato dall'inserimento
-              $ultimo_id = gaz_dbi_last_id();
-              //inserisco i rows
-              foreach ($form['rows'] as $i => $v) {
-                $form['rows'][$i]['id_tes'] = $ultimo_id;
+            }
+            // INSERIMENTO DATA BASE valido per INSERT e per UPDATE
 
-                //inserisco il rigo
-                $last_rigbro_id = rigbroInsert($form['rows'][$i]);
-                $form['id_rigbro']=  $last_rigbro_id;
-                // se è un alloggio inserisco l'evento in rental_events
-                if ($form['rows'][$i]['accommodation_type']>2){
-                  $table = 'rental_events';
-                  $form['id_tesbro']=  $form['rows'][$i]['id_tes'];
-                  switch ($form['rows'][$i]['accommodation_type']) {//3 => 'Appartamento', 4 => 'Casa indipendente', 5=> 'Bed & breakfast'
-                    case "3":
-                      $accomodation_type="Appartamento";
-                      break;
-                    case "4":
-                      $accomodation_type="Casa indipendente";
-                      break;
-                    case "5":
-                      $accomodation_type="Bed & breakfast";
-                      break;
-                  }
-                  $form['type']="ALLOGGIO";
-                  $form['title']= "Prenotazione ".$accomodation_type." ".$form['rows'][$i]['codart']." - ".$form['search']['clfoco'];
-                  $form['house_code']=$form['rows'][$i]['codart'];
-                  $columns = array('id', 'title', 'start', 'end', 'house_code', 'id_tesbro', 'id_rigbro', 'adult', 'child', 'type');
-                  tableInsert($table, $columns, $form);
-                  if (intval($vacation_blockdays)>0){// se ci sono giorni cuscinetto li aggiungo a rental_events
+            //echo "<pre>",print_r($form),"<br>blockdays:",intval($vacation_blockdays);die;
+            // ricavo i progressivi in base al tipo di documento
+            $where = "numdoc desc";
+            $sql_documento = "YEAR(datemi) = " . $form['annemi'] . " and tipdoc = '" . $form['tipdoc'] . "'";
+            $rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesbro'], $sql_documento, $where, 0, 1);
+            $ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
+            // se e' il primo documento dell'anno, resetto il contatore
+            if ($ultimo_documento) {
+                $form['numdoc'] = $ultimo_documento['numdoc'] + 1;
+            } else {
+                $form['numdoc'] = 1;
+            }
+            $form['protoc'] = 0;
+            $form['numfat'] = 0;
+            $form['datfat'] = 0;
+            //inserisco la testata
 
-                    $realstart=$form['start'];
-                    $realend=$form['end'];
-                    $form['start']=$date1 = date("Y-m-d", strtotime($realstart.'- '.intval($vacation_blockdays).' days'));
-                    $form['end']=$date1 = date("Y-m-d", strtotime($realstart.'- 1 days'));
-                    tableInsert($table, $columns, $form);// scrivo il cuscinetto iniziale
-                    $form['start']=date("Y-m-d", strtotime($realend));
-                    $form['end']=date("Y-m-d", strtotime($realend.'+ '.intval($vacation_blockdays).' days'));
-                    tableInsert($table, $columns, $form);// scrivo il cuscinetto finale
-                    $form['start'] = $realstart;
-                    $form['end'] = $realend;
-                  }
+            $form['destin'] = '';
+            $form['template'] = 'booking';
+            $form['initra'] = $initra;
+            $form['datemi'] = $datemi;
+            $form['id_agente'] = $form['id_tourOp'];// scambio perché l'agente è il tour operator mentre in id_agente ho il proprietario
+            $data=[];
+            $data= array('vacation_rental'=>array('status' => 'CONFIRMED','ip' => 'diretto'));
+            $form['custom_field'] = json_encode($data);
+            tesbroInsert($form);
+            //recupero l'id assegnato dall'inserimento
+            $ultimo_id = gaz_dbi_last_id();
+
+            if ($toDo == 'update') { // se e' una modifica risincronizzo gli eventuali pagamenti con il nuovo id_tesbro
+              $table="rental_payments";
+              $columns = array('id_tesbro');// colonne da aggiornare
+              $codice[0] = "id_tesbro";
+              $codice[1] = $form['id_tes'];
+              $newvalue['id_tesbro'] = $ultimo_id;
+              tableUpdate($table, $columns, $codice, $newvalue);
+            }
+
+            //inserisco i rows
+            foreach ($form['rows'] as $i => $v) {
+              $form['rows'][$i]['id_tes'] = $ultimo_id;
+
+              //inserisco il rigo
+              $last_rigbro_id = rigbroInsert($form['rows'][$i]);
+              $form['id_rigbro']=  $last_rigbro_id;
+              // se è un alloggio inserisco l'evento in rental_events
+              if ($form['rows'][$i]['accommodation_type']>2){
+                $table = 'rental_events';
+                $form['id_tesbro']=  $form['rows'][$i]['id_tes'];
+                switch ($form['rows'][$i]['accommodation_type']) {//3 => 'Appartamento', 4 => 'Casa indipendente', 5=> 'Bed & breakfast'
+                  case "3":
+                    $accomodation_type="Appartamento";
+                    break;
+                  case "4":
+                    $accomodation_type="Casa indipendente";
+                    break;
+                  case "5":
+                    $accomodation_type="Bed & breakfast";
+                    break;
                 }
+                $form['type']="ALLOGGIO";
+                $form['title']= "Prenotazione ".$accomodation_type." ".$form['rows'][$i]['codart']." - ".$form['search']['clfoco'];
+                $form['house_code']=$form['rows'][$i]['codart'];
+                $columns = array('id', 'title', 'start', 'end', 'house_code', 'id_tesbro', 'id_rigbro', 'adult', 'child', 'type');
+                tableInsert($table, $columns, $form);
+                if (intval($vacation_blockdays)>0){// se ci sono giorni cuscinetto li aggiungo a rental_events
+                  $form['type']="PAUSA";
+                  $form['id_rigbro'] = 0;
+                  $realstart=$form['start'];
+                  $realend=$form['end'];
+                  $form['start']=$date1 = date("Y-m-d", strtotime($realstart.'- '.intval($vacation_blockdays).' days'));
+                  $form['end']=$date1 = date("Y-m-d", strtotime($realstart.'- 1 days'));
+                  tableInsert($table, $columns, $form);// scrivo il cuscinetto iniziale
+                  $form['start']=date("Y-m-d", strtotime($realend));
+                  $form['end']=date("Y-m-d", strtotime($realend.'+ '.intval($vacation_blockdays).' days'));
+                  tableInsert($table, $columns, $form);// scrivo il cuscinetto finale
+                  $form['start'] = $realstart;
+                  $form['end'] = $realend;
+                }
+              }
 
-                // se è un extra inserisco anche l'extra in rental_events
-                if ($form['rows'][$i]['accommodation_type']==1){
+              // se è un extra e l'extra prevede dei limiti sulle quantità inserisco anche l'extra in rental_events
+              if ($form['rows'][$i]['accommodation_type']==1){
+                if (gaz_dbi_get_row($gTables['rental_extra'], "codart", $form['rows'][$i]['codart'])['max_quantity']>0){
+                  $form['id_rigbro']=  $last_rigbro_id;// ripristino id_rigbro qualora fosse stato cambiato dai cuscinetti
                   $table = 'rental_events';
                   $form['id_tesbro']=  $form['rows'][$i]['id_tes'];
                   $form['type']="EXTRA";
@@ -748,49 +573,50 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                   $columns = array('id', 'title', 'start', 'end', 'house_code', 'id_tesbro', 'id_rigbro', 'adult', 'child', 'type');
                   tableInsert($table, $columns, $form);
                 }
-
-                // INIZIO INSERIMENTO DOCUMENTI ALLEGATI
-                if (!empty($form['rows'][$i]['extdoc'])) {
-                    $tmp_file = DATA_DIR . 'files/tmp/' . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['extdoc'];
-                    // sposto e rinomino il relativo file temporaneo
-                    $fd = pathinfo($form['rows'][$i]['extdoc']);
-                    rename($tmp_file, DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $last_rigbro_id . '.' . $fd['extension']);
-                }
-                // FINE INSERIMENTO DOCUMENTI ALLEGATI
-
-                if (isset($form["row_$i"])) { //se è un rigo testo lo inserisco in rigbro con il suo contenuto in body_text
-                    bodytextInsert(array('table_name_ref' => 'rigbro', 'id_ref' => $last_rigbro_id, 'body_text' => $form["row_$i"], 'lang_id' => $admin_aziend['id_language']));
-                    gaz_dbi_put_row($gTables['rigbro'], 'id_rig', $last_rigbro_id, 'id_body_text', gaz_dbi_last_id());
-                }
-                if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
-                  // aggiorno l'e-commerce ove presente
-                  $gs=$admin_aziend['synccommerce_classname'];
-                  $gSync = new $gs();
-                  if($gSync->api_token){
-                    $gSync->SetProductQuantity($form['rows'][$i]['codart']);
-                  }
-                }
               }
-              if ($after_newdoc_back_to_doclist==1 && $pdf_to_modal==0) {
-                $_SESSION['print_queue'] = array();
-                $_SESSION['print_queue']['tpDoc'] =  $form['tipdoc'];
-                $_SESSION['print_queue']['idDoc'] = $ultimo_id;
-                $auxil = $form['tipdoc'];
-                if ($auxil == 'VOR') {
-                  $auxil = 'VO_';
-                }
-                header("Location: report_booking.php?auxil=$auxil");
-                exit;
+
+              // INIZIO INSERIMENTO DOCUMENTI ALLEGATI
+              if (!empty($form['rows'][$i]['extdoc'])) {
+                  $tmp_file = DATA_DIR . 'files/tmp/' . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['extdoc'];
+                  // sposto e rinomino il relativo file temporaneo
+                  $fd = pathinfo($form['rows'][$i]['extdoc']);
+                  rename($tmp_file, DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $last_rigbro_id . '.' . $fd['extension']);
               }
-              $_SESSION['print_request'] = $ultimo_id;
-              if ($pdf_to_modal==0){
-                header("Location: invsta_broven.php");
-                exit;
+              // FINE INSERIMENTO DOCUMENTI ALLEGATI
+
+              if (isset($form["row_$i"])) { //se è un rigo testo lo inserisco in rigbro con il suo contenuto in body_text
+                  bodytextInsert(array('table_name_ref' => 'rigbro', 'id_ref' => $last_rigbro_id, 'body_text' => $form["row_$i"], 'lang_id' => $admin_aziend['id_language']));
+                  gaz_dbi_put_row($gTables['rigbro'], 'id_rig', $last_rigbro_id, 'id_body_text', gaz_dbi_last_id());
+              }
+              if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
+                // aggiorno l'e-commerce ove presente
+                $gs=$admin_aziend['synccommerce_classname'];
+                $gSync = new $gs();
+                if($gSync->api_token){
+                  $gSync->SetProductQuantity($form['rows'][$i]['codart']);
+                }
               }
             }
+            if ($after_newdoc_back_to_doclist==1 && $pdf_to_modal==0) {
+              $_SESSION['print_queue'] = array();
+              $_SESSION['print_queue']['tpDoc'] =  $form['tipdoc'];
+              $_SESSION['print_queue']['idDoc'] = $ultimo_id;
+              $auxil = $form['tipdoc'];
+              if ($auxil == 'VOR') {
+                $auxil = 'VO_';
+              }
+              header("Location: report_booking.php?auxil=$auxil");
+              exit;
+            }
+            $_SESSION['print_request'] = $ultimo_id;
+            if ($pdf_to_modal==0){
+              header("Location: invsta_broven.php");
+              exit;
+            }
+
         }
     } elseif (isset($_POST['ord']) and $toDo == 'update') {  // si vuole generare una prenotazione da un preventivo
-    echo "rigo 765, circa, da controllare prima di usare: ancora non si possono creare preventivi per le prenotazioni";die;
+    echo "ATTENZIONE da controllare prima di usare: ancora non si possono creare preventivi per le prenotazioni";die;
         $sezione = $form['seziva'];
         $datemi = $form['annemi'] . "-" . $form['mesemi'] . "-" . $form['gioemi'];
         $utsemi = mktime(0, 0, 0, $form['mesemi'], $form['gioemi'], $form['annemi']);
@@ -1777,10 +1603,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
               }
 
             } elseif (is_array($data['vacation_rental']) && isset($data['vacation_rental']['extra'])){
-              $form['in_accommodation_type'] = 1;// è un extra
-              $form['in_adult'] = 0;
-              $form['in_child'] = 0;
-              $form['in_total_guests'] = 0;
+              $form['rows'][$next_row]['accommodation_type'] = 1;// è un extra
+              $form['rows'][$next_row]['adult'] = 0;
+              $form['rows'][$next_row]['child'] = 0;
+              $form['rows'][$next_row]['total_guests'] = 0;
             } else {
               $form['rows'][$next_row]['accommodation_type'] = 0;
               $form['rows'][$next_row]['adult'] = 0;
