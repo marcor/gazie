@@ -3,14 +3,16 @@ if (isset($_POST['password'])) {
 
 } else {
   $_POST['password']='';
+  $_POST['user_name']='';
 };
 ?>
 <body>
 <title>Trova l'hash della password di GAzie ver.9</title>
 <h1 style="background-color: aquamarine;" >Trova l'hash della password di GAzie ver.9</h1>
 <form method="post">
-<input type="password" name="password" value="<?php echo $_POST['password'];?>" placeholder="password in chiaro">
-<input class="btn btn-info" name="login" type="submit" value="Conferma" >
+<div><input type="text" name="user_name" value="<?php echo $_POST['user_name'];?>" placeholder="nome utente"></div>
+<div><input type="password" name="password" value="<?php echo $_POST['password'];?>" placeholder="password in chiaro">
+     <input class="btn btn-info" name="login" type="submit" value="Conferma" ></div>
 
 </form>
 <?php
@@ -36,7 +38,7 @@ if (isset($_POST['password'])) {
     define("AES_KEY_SALT","CK4OGOAtec0zgbNoCK4OGOAtec0zgbNoCK4OGOAtec0zgbNoCK4OGOAtec0zgbNo");
     define("AES_KEY_IV","LQjFLCU3sAVplBC3");
 
-    $prepared_key = openssl_pbkdf2($sha256password, AES_KEY_SALT, 16, 1000, "sha256");
+    $prepared_key = openssl_pbkdf2($sha256password.$_POST['user_name'], AES_KEY_SALT, 16, 1000, "sha256");
     $ciphertext_b64 = base64_encode(openssl_encrypt($aeskey,"AES-128-CBC",$prepared_key,OPENSSL_RAW_DATA, AES_KEY_IV));
     $aeskey = openssl_decrypt(base64_decode($ciphertext_b64),"AES-128-CBC",$prepared_key,OPENSSL_RAW_DATA, AES_KEY_IV);
     echo "<p>Se si assume di voler usare come chiave di encrypt/decrypt dei campi da proteggere uguale a: <br/><b>".$aeskey . "</b>";

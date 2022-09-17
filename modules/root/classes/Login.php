@@ -420,7 +420,7 @@ class Login
 				$_SESSION['user_email'] = $result_row->user_email;
 				$_SESSION['company_id'] = $result_row->company_id;
 				$_SESSION['user_logged_in'] = 1;
-        $prepared_key = openssl_pbkdf2($user_password, AES_KEY_SALT, 16, 1000, "sha256");
+        $prepared_key = openssl_pbkdf2($user_password.$result_row->user_name, AES_KEY_SALT, 16, 1000, "sha256");
         $_SESSION['aes_key'] = openssl_decrypt(base64_decode($result_row->aes_key),"AES-128-CBC",$prepared_key,OPENSSL_RAW_DATA, AES_KEY_IV);
 				// declare user id, set the login status to true
 				$this->user_id = $result_row->user_id;

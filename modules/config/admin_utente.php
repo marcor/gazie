@@ -292,6 +292,9 @@ if (isset($_POST['Submit'])) {
 			require_once('../../modules/root/config_login.php');
 			$hash_cost_factor = (defined('HASH_COST_FACTOR') ? HASH_COST_FACTOR : null);
 			$form["user_password_hash"] = password_hash($form["user_password_new"] , PASSWORD_DEFAULT, array('cost' => $hash_cost_factor));
+      // ripreparo la chiave per criptare la chiave contenuta in $_SESSION con la nuova password e metterla aes_key di gaz_admin
+      $prepared_key = openssl_pbkdf2($form["user_password_new"].$form["user_name"], AES_KEY_SALT, 16, 1000, "sha256");
+      $form["aes_key"] = base64_encode(openssl_encrypt($_SESSION['aes_key'],"AES-128-CBC",$prepared_key,OPENSSL_RAW_DATA, AES_KEY_IV));
 
 			// Antonio Germani - Creo anche una nuova anagrafica nelle anagrafiche comuni
 			$form['ragso1']=$form['user_lastname'];
@@ -328,6 +331,9 @@ if (isset($_POST['Submit'])) {
 					require_once('../../modules/root/config_login.php');
 					$hash_cost_factor = (defined('HASH_COST_FACTOR') ? HASH_COST_FACTOR : null);
 					$form["user_password_hash"] = password_hash($form["user_password_new"] , PASSWORD_DEFAULT, ['cost' => $hash_cost_factor]);
+          // ripreparo la chiave per criptare la chiave contenuta in $_SESSION con la nuova password e metterla aes_key di gaz_admin
+          $prepared_key = openssl_pbkdf2($form["user_password_new"].$form["user_name"], AES_KEY_SALT, 16, 1000, "sha256");
+          $form["aes_key"] = base64_encode(openssl_encrypt($_SESSION['aes_key'],"AES-128-CBC",$prepared_key,OPENSSL_RAW_DATA, AES_KEY_IV));
 				}
 			}
 			gaz_dbi_table_update('admin', array("user_name", $form["user_name"]), $form);
