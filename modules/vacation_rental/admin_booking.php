@@ -135,7 +135,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['end'] = $_POST['end'];
     $form['adult'] = $_POST['adult'];
     $form['child'] = $_POST['child'];
-    $form['extra'] = (isset($_POST['extra']))?$_POST['extra']:'';
+
+    $form['extra'] = (isset($_POST['extra']))?$_POST['extra']:array();
     $form['qtaextra'] = (isset($_POST['qtaextra']))?$_POST['qtaextra']:0;
     $form['print_total'] = intval($_POST['print_total']);
     $form['delivery_time'] = intval($_POST['delivery_time']);
@@ -384,6 +385,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $next_row++;
         }
     }
+
 	if ($_POST['start'] > $_POST['end']){
 			$msg .= "38+";
 		}
@@ -711,6 +713,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             exit;
         }
     }
+
     // Se viene inviata la richiesta di conferma cliente
     if ($_POST['hidden_req'] == 'clfoco') {
         $anagrafica = new Anagrafica();
@@ -864,11 +867,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$next_row]['quamag'] = 0;
         $form['rows'][$next_row]['tiprig'] = 6;
         $next_row++;
-    } else if ((isset($_POST['in_submit']) && strlen($form['in_codart'])>0 && $form['start']!="" && $form['end']!="") || (isset($_POST['extra_submit']) && strlen($form['extra'])>0 && isset($_POST['rows']))) {// conferma inserimento alloggio o extra
+    } else if ((isset($_POST['in_submit']) && strlen($form['in_codart'])>0 && $form['start']!="" && $form['end']!="") || (isset($_POST['extra_submit']) && strlen($form['extra'][$_POST['extra_submit']])>0 && isset($_POST['rows']))) {// conferma inserimento alloggio o extra
 
-      if (strlen($form['extra'])>0){// se è un extra (ci deve per forza essere l'alloggio e quindi per forza anche le date)
+      if (isset($_POST['extra_submit']) && strlen($form['extra'][$_POST['extra_submit']])>0){// se è un extra (ci deve per forza essere l'alloggio e quindi per forza anche le date)
         // faccio tutto più sotto
-        $form['in_codart']=$form['extra'];
+        $form['in_codart']=$form['extra'][$_POST['extra_submit']];
       }
       $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['in_codart']);
       if (isset($_POST['in_submit']) && strlen($form['in_codart'])>0 && $form['start']!="" && $form['end']!=""){// se è un alloggio e ci sono le date CALCOLO IL PREZZO
@@ -905,18 +908,18 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['in_prelis']=$total_price;
       }
 
-    gaz_dbi_query ("UPDATE ".$gTables['artico']." SET `last_used`='".date("Y-m-d")."' WHERE codice='".$form['in_codart']."';");
-    // addizione ai totali peso,pezzi,volume
-    $form['net_weight'] += $form['in_quanti'] * $artico['peso_specifico'];
-    $form['gross_weight'] += $form['in_quanti'] * $artico['peso_specifico'];
-    if ($artico['pack_units'] > 0) {
-        $form['units'] += intval(round($form['in_quanti'] / $artico['pack_units']));
-    }
-    $form['volume'] += $form['in_quanti'] * $artico['volume_specifico'];
-		$form['in_good_or_service']=$artico['good_or_service'];
+      gaz_dbi_query ("UPDATE ".$gTables['artico']." SET `last_used`='".date("Y-m-d")."' WHERE codice='".$form['in_codart']."';");
+      // addizione ai totali peso,pezzi,volume
+      $form['net_weight'] += $form['in_quanti'] * $artico['peso_specifico'];
+      $form['gross_weight'] += $form['in_quanti'] * $artico['peso_specifico'];
+      if ($artico['pack_units'] > 0) {
+          $form['units'] += intval(round($form['in_quanti'] / $artico['pack_units']));
+      }
+      $form['volume'] += $form['in_quanti'] * $artico['volume_specifico'];
+      $form['in_good_or_service']=$artico['good_or_service'];
 
-		// carico i dati del json articolo
-		if ($data = json_decode($artico['custom_field'], TRUE)) { // se esiste un json nel custom field
+      // carico i dati del json articolo
+      if ($data = json_decode($artico['custom_field'], TRUE)) { // se esiste un json nel custom field
 			if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['accommodation_type'])){// se è un alloggio
 					$form['in_accommodation_type'] = $data['vacation_rental']['accommodation_type'];
 					$form['in_adult'] = $data['vacation_rental']['adult'];
@@ -929,7 +932,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $extra = gaz_dbi_get_row($gTables['rental_extra'], "id", $data['vacation_rental']['extra']);
 
         if ($extra['max_quantity']>0){ //e controllo se si supera il quantitativo massimo disponibile ammesso che ci sia
-          $result=gaz_dbi_query("SELECT SUM(quanti) AS booked FROM ". $gTables['rental_events'] ." LEFT JOIN " . $gTables['rigbro'] . " ON " . $gTables['rental_events'] . ".id_rigbro = " . $gTables['rigbro'] . ".id_rig WHERE (start >= '". $form['start'] ."' AND end <= '". $form['end']."') AND house_code = '".$form['extra']."' ORDER BY id ASC LIMIT 0, 2000000");
+          $result=gaz_dbi_query("SELECT SUM(quanti) AS booked FROM ". $gTables['rental_events'] ." LEFT JOIN " . $gTables['rigbro'] . " ON " . $gTables['rental_events'] . ".id_rigbro = " . $gTables['rigbro'] . ".id_rig WHERE (start >= '". $form['start'] ."' AND end <= '". $form['end']."') AND house_code = '".$form['extra'][$_POST['extra_submit']]."' ORDER BY id ASC LIMIT 0, 2000000");
           $res = $result->fetch_assoc();
           if (floatval($extra['max_quantity'])-floatval($res['booked'])-floatval($form['qtaextra'])<0){
              $msg .= "64+";// Overbooking
@@ -966,7 +969,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['in_prelis']=$artico['web_price'];
             break;
         }
-        $form['extra']="";
+
+        $form['extra'][$_POST['extra_submit']]="";
       } else {
         $form['in_accommodation_type'] = 0;
         $form['in_adult'] = 0;
@@ -1413,6 +1417,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     } else if (isset($_POST['in_submit']) && strlen($form['in_codart'])>0){
 		 $msg .= "62+";// mancano del date check-in e check-out
 	}
+
     // Se viene inviata la richiesta di spostamento verso l'alto del rigo
     if (isset($_POST['upper_row'])) {
         $upp_key = key($_POST['upper_row']);
@@ -1493,7 +1498,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['child'] = $event['child'];
     $form['start'] = $event['start'];
     $form['end'] = $event['end'];
-    $form['extra'] = "";
+    //$form['extra'] = "";
     $form['qtaextra'] ="";
     $form['in_sconto'] = '#';
     /* fine modifica FP */
@@ -1571,6 +1576,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['caucon'] = $tesbro['caucon'];
     $form['sconto'] = $tesbro['sconto'];
     $next_row = 0;
+    $ex=0;
     while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
         $articolo = gaz_dbi_get_row($gTables['artico'], "codice", $rigo['codart']);
         if ($rigo['id_body_text'] > 0) { //se ho un rigo testo
@@ -1588,6 +1594,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         }else{
           if (isset ($articolo) && $data = json_decode($articolo['custom_field'], TRUE)) { // se esiste un json nel custom field
             if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['accommodation_type'])){// è un alloggio
+              $form['extra'][$ex]="";$ex++;// inizializzo a niente il valore dell'input extra
               $form['rows'][$next_row]['accommodation_type'] = $data['vacation_rental']['accommodation_type'];
               $form['rows'][$next_row]['adult'] = $data['vacation_rental']['adult'];
               $form['rows'][$next_row]['child'] = $data['vacation_rental']['child'];
@@ -1688,7 +1695,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['tour_tax_from'] = "";
     $form['tour_tax_to'] = "";
     $form['tour_tax_day'] = "";
-    $form['extra'] = "";
+    $form['extra'] = [];
     $form['qtaextra'] = 0;
     $form['tur_tax'] =0;
     $form['tur_tax_mode'] =0;
@@ -2131,6 +2138,10 @@ $carry = 0;
 $last_row = array();
 $vp = gaz_dbi_get_row($gTables['company_config'], 'var', 'vat_price')['val'];
 
+$lang="it";
+if (isset($cliente['id_language']) && intval($cliente['id_language'])>0 ){
+$lang=gaz_dbi_get_row($gTables['languages'], 'lang_id', $cliente['id_language'])['sef'];
+}
 foreach ($form['rows'] as $k => $v) {
     //creo il castelletto IVA
     $imprig = 0;
@@ -2150,8 +2161,8 @@ foreach ($form['rows'] as $k => $v) {
     } elseif ($v['tiprig'] == 3) {
         $carry += $v['prelis'];
     }
-    $descrizione = htmlentities(get_string_lang($v['descri'], strtolower($admin_aziend['country'])), ENT_QUOTES);
 
+    $descrizione = htmlentities(get_string_lang($v['descri'], $lang), ENT_QUOTES);
     echo "<input type=\"hidden\" value=\"" . $v['codart'] . "\" name=\"rows[$k][codart]\">\n";
     echo "<input type=\"hidden\" value=\"" . ((isset($v['accommodation_type'])) ? $v['accommodation_type'] : '') . "\" name=\"rows[$k][accommodation_type]\">\n";
     echo "<input type=\"hidden\" value=\"" . ((isset($v['adult'])) ? $v['adult'] : '') . "\" name=\"rows[$k][adult]\">\n";
@@ -2631,7 +2642,7 @@ echo '<div class="fissa" ><div class="FacetSeparatorTD" align="center">Inserimen
 
 
 						<?php //
-
+$ex=0;
 						foreach($form['rows'] as $row){
 
 							if (isset ($row['accommodation_type']) && $row['accommodation_type']>2){// è un alloggio (1=extra)
@@ -2646,7 +2657,9 @@ echo '<div class="fissa" ><div class="FacetSeparatorTD" align="center">Inserimen
 								<tr>
 								<td colspan="2">
 								<?php
-								selectFromDBJoin($gTables['artico'].' LEFT JOIN '.$gTables['rental_extra'].' ON '.$gTables['artico'].'.codice = '.$gTables['rental_extra'].'.codart', 'extra','codice', $form['extra'], 'codice', 1, ' - ','descri','TRUE','FacetSelect' , null, '',"(custom_field REGEXP 'extra') AND (rif_alloggio ='".$row['codart']."' OR rif_alloggio = '')");
+                								//selectFromDBJoin($gTables['artico'].' LEFT JOIN '.$gTables['rental_extra'].' ON '.$gTables['artico'].'.codice = '.$gTables['rental_extra'].'.codart', 'extra[]','codice', ((isset($form['extra'][$ex]))?$form['extra'][$ex]:''), 'codice', 1, ' - ','descri','TRUE','FacetSelect' , null, '',"(".$gTables['artico'].".custom_field REGEXP 'extra') AND (".$gTables['rental_extra'].".rif_alloggio ='".$row['codart']."' OR ".$gTables['rental_extra'].".rif_alloggio = '')");
+
+								selectFromDBJoin($gTables['artico'].' LEFT JOIN '.$gTables['rental_extra'].' ON '.$gTables['artico'].'.codice = '.$gTables['rental_extra'].'.codart', 'extra[]','codice', ((isset($form['extra'][$ex]))?$form['extra'][$ex]:''), 'codice', 1, ' - ','descri','TRUE','FacetSelect' , null, '',"(".$gTables['artico'].".custom_field REGEXP 'extra') AND (".$gTables['rental_extra'].".rif_alloggio ='".$row['codart']."' OR ".$gTables['rental_extra'].".rif_alloggio = '')");
 								?>
 								</td>
 
@@ -2654,12 +2667,13 @@ echo '<div class="fissa" ><div class="FacetSeparatorTD" align="center">Inserimen
 								</td>
 									<td colspan="1" class="FacetDataTD">
 										<input type="number" name="qtaextra" value="<?php echo $form['qtaextra']; ?>" min="0" style="max-width: 50px;" >
-										<button type="submit" class="btn btn-default btn-lg" name="extra_submit" title="<?php echo $script_transl['submit'] . $script_transl['thisrow'] ?>" tabindex="6">
+										<button type="submit" class="btn btn-default btn-lg" name="extra_submit" value="<?php echo $ex; ?>" title="<?php echo $script_transl['submit'] . $script_transl['thisrow'] ?>" tabindex="6">
 											<i class="glyphicon glyphicon-ok"></i>
 										</button>
 									</td>
 								</tr>
 								<?php
+                $ex++;
 							}
 
 						}

@@ -305,10 +305,10 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
       $arrayvar= array("var_id" => intval($form['var_id']), "var_name" => strval($form['var_name']));
       $form['ecomm_option_attribute'] = json_encode ($arrayvar);
     }
-	$form['preve1']=$form['web_price'];// al momento, imposto il prezzo di vendita 1 uguale a quello web
+    $form['preve1']=$form['web_price'];// al momento, imposto il prezzo di vendita 1 uguale a quello web
     if ($toDo == 'insert') {
-		$form['codart']=substr($form['codice'],15);// il riferimento al codice articolo per la tabella rental_extra NB:il codice della tab artico ha 15 caratteri
-		$id_extra=gaz_dbi_table_insert('rental_extra', $form);
+		$form['codart']=substr($form['codice'],0,15);// il riferimento al codice articolo per la tabella rental_extra NB:il codice della tab artico ha 15 caratteri
+    $id_extra=gaz_dbi_table_insert('rental_extra', $form);
 		$array= array('vacation_rental'=>array('extra' => $id_extra));// creo l'array per il custom field
 		$form['custom_field'] = json_encode($array);// codifico in json  e lo inserisco nel form
 		gaz_dbi_table_insert('artico', $form);
