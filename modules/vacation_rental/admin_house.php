@@ -142,6 +142,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
   $form['accommodation_type'] = $_POST['accommodation_type'];
   $form['adult'] = $_POST['adult'];
   $form['child'] = $_POST['child'];
+  $form['pause'] = $_POST['pause'];
   $form['total_guests'] = $_POST['total_guests'];
   $form['deposit'] = $_POST['deposit'];
   $form['security_deposit'] = $_POST['security_deposit'];
@@ -319,7 +320,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     }
 	$form['preve1']=$form['web_price'];// al momento imposto il prezzo 1 uguale al webprice
     if ($toDo == 'insert') {
-		$array= array('vacation_rental'=>array('accommodation_type' => $_POST['accommodation_type'],'total_guests' => $_POST['total_guests'],'adult' => $_POST['adult'],'child' => $_POST['child'],'deposit' => $_POST['deposit'],'security_deposit' => $_POST['security_deposit'],'deposit_type' => $_POST['deposit_type'],'tur_tax_mode' => $_POST['tur_tax_mode'],'tur_tax' => $_POST['tur_tax'],'agent' => $_POST['agent']));// creo l'array per il custom field
+		$array= array('vacation_rental'=>array('accommodation_type' => $_POST['accommodation_type'],'total_guests' => $_POST['total_guests'],'adult' => $_POST['adult'],'child' => $_POST['child'],'pause' => $_POST['pause'],'deposit' => $_POST['deposit'],'security_deposit' => $_POST['security_deposit'],'deposit_type' => $_POST['deposit_type'],'tur_tax_mode' => $_POST['tur_tax_mode'],'tur_tax' => $_POST['tur_tax'],'agent' => $_POST['agent']));// creo l'array per il custom field
 		$form['custom_field'] = json_encode($array);// codifico in json  e lo inserisco nel form
 		gaz_dbi_table_insert('artico', $form);
 		if (!empty($tbt)) {
@@ -333,6 +334,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 				$data['vacation_rental']['total_guests']=$_POST['total_guests'];
 				$data['vacation_rental']['adult']=$_POST['adult'];
 				$data['vacation_rental']['child']=$_POST['child'];
+        $data['vacation_rental']['pause']=$_POST['pause'];
 				$data['vacation_rental']['deposit']=$_POST['deposit'];
         $data['vacation_rental']['security_deposit']=$_POST['security_deposit'];
 				$data['vacation_rental']['deposit_type']=$_POST['deposit_type'];
@@ -426,6 +428,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 				$form['accommodation_type'] = $data['vacation_rental']['accommodation_type'];
 				$form['adult'] = $data['vacation_rental']['adult'];
 				$form['child'] = $data['vacation_rental']['child'];
+        $form['pause'] = (isset($data['vacation_rental']['pause']))?$data['vacation_rental']['pause']:'';
 				$form['total_guests'] = $data['vacation_rental']['total_guests'];
 				$form['deposit'] = $data['vacation_rental']['deposit'];
         $form['security_deposit'] = (isset($data['vacation_rental']['security_deposit']))?$data['vacation_rental']['security_deposit']:0;
@@ -438,6 +441,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 				$form['accommodation_type'] = "";
 				$form['adult'] = 0;
 				$form['child'] = 0;
+        $form['pause'] = 0;
 				$form['total_guests'] = 0;
 				$form['deposit'] = 0;
         $form['security_deposit'] = 0;
@@ -450,6 +454,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 		$form['accommodation_type'] = "";
 		$form['adult'] = 0;
 		$form['child'] = 0;
+    $form['pause'] = 0;
 		$form['total_guests'] = 0;
 		$form['deposit'] = 0;
     $form['security_deposit'] = 0;
@@ -516,6 +521,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['accommodation_type'] = '';
     $form['adult'] = 1;
     $form['child'] = 0;
+    $form['pause'] = 0;
     $form['total_guests'] = 0;
     $form['web_public_init'] = 0;
     $form['web_mu'] = "n.";
@@ -1230,7 +1236,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-				<div id="adult" class="row IERincludeExcludeRow">
+                <div id="adult" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="adult" class="col-sm-4 control-label">Numero massimo di adulti</label>
@@ -1238,11 +1244,19 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-				<div id="child" class="row IERincludeExcludeRow">
+                <div id="child" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="child" class="col-sm-4 control-label">Numero massimo di minori di anni 12</label>
                             <input class="col-sm-2" type="number" value="<?php echo $form['child']; ?>" name="child" maxlength="50"/>
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+                <div id="pause" class="row IERincludeExcludeRow">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="pause" class="col-sm-4 control-label">Numero notti da bloccare dopo il checkout</label>
+                            <input class="col-sm-2" type="number" value="<?php echo $form['pause']; ?>" name="pause" maxlength="50"/>
                         </div>
                     </div>
                 </div><!-- chiude row  -->
