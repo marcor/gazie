@@ -164,7 +164,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['status'] = substr($v['status'], 0, 30);
             $form['rows'][$next_row]['descri'] = substr($v['descri'], 0, 100);
             $form['rows'][$next_row]['unimis'] = substr($v['unimis'], 0, 3);
-            if ($v['tiprig'] <= 1) {
+            if ($v['tiprig'] <= 1 || $v['tiprig']== 3) {
                 $form['rows'][$next_row]['prelis'] = number_format(floatval(preg_replace("/\,/", '.', $v['prelis'])), $admin_aziend['decimal_price'], '.', '');
             } else {
                 $form['rows'][$next_row]['prelis'] = 0;
@@ -614,6 +614,16 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$old_key]['unimis'] = "";
                 $form['rows'][$old_key]['quanti'] = 0;
                 $form['rows'][$old_key]['sconto'] = 0;
+            } elseif ($form['in_tiprig'] == 3) { // variazione pagamento
+                $form['rows'][$old_key]['codart'] = "";
+                $form['rows'][$old_key]['annota'] = "";
+                $form['rows'][$old_key]['pesosp'] = "";
+                $form['rows'][$old_key]['unimis'] = "";
+                $form['rows'][$old_key]['quanti'] = 0;
+                $form['rows'][$old_key]['codric'] = 0;
+                $form['rows'][$old_key]['sconto'] = 0;
+                $form['rows'][$old_key]['pervat'] = 0;
+                $form['rows'][$old_key]['codvat'] = 0;
             } elseif ($form['in_tiprig'] == 5) { // lotteria scontrini
                 $form['rows'][$old_key]['codart'] = "";
                 $form['rows'][$old_key]['annota'] = "";
@@ -744,6 +754,18 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 }
                 $provvigione = new Agenti;
                 $form['rows'][$next_row]['provvigione'] = $provvigione->getPercent($form['id_agente']);
+            } elseif ($form['in_tiprig'] == 3) { // variazione pagamento
+                $form['rows'][$next_row]['codart'] = "";
+                $form['rows'][$next_row]['annota'] = "";
+                $form['rows'][$next_row]['pesosp'] = "";
+                $form['rows'][$next_row]['unimis'] = "";
+                $form['rows'][$next_row]['quanti'] = 0;
+                $form['rows'][$next_row]['prelis'] = 0;
+                $form['rows'][$next_row]['pervat'] = 0;
+                $form['rows'][$next_row]['codric'] = 0;
+                $form['rows'][$next_row]['sconto'] = 0;
+                $form['rows'][$next_row]['codvat'] = 0;
+                $form['rows'][$next_row]['provvigione'] = 0;
             } elseif ($form['in_tiprig'] == 2 || $form['in_tiprig'] == 5) { //descrittivo
                 $form['rows'][$next_row]['codart'] = "";
                 $form['rows'][$next_row]['annota'] = "";
@@ -1197,6 +1219,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
       $form['units'] = 0;
       $form['volume'] = 0;
       $vp = gaz_dbi_get_row($gTables['company_config'], 'var', 'vat_price')['val'];
+      $carry = 0;
       foreach ($form['rows'] as $k => $v) {
         $imprig=0;
         // se voglio inserire manualmente il prezzo IVA compresa (configurazione avanzata azienda) attivo il form modale
@@ -1237,6 +1260,8 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                 $v['codart'] ='Forfait';
             } elseif ($v['tiprig'] == 2) {
                 $v['codart'] ='Descrittivo';
+            } elseif ($v['tiprig'] == 3) {
+                $v['codart'] ='Variaz.Pagam.';
             } elseif ($v['tiprig'] == 5) {
                 $v['codart'] ='Lotteria';
                 $v['descri'] = strtoupper($v['descri']);
@@ -1244,18 +1269,21 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
 
             // calcolo importo totale (iva inclusa) del rigo e creazione castelletto IVA
             if ($v['tiprig'] <= 1) {    //ma solo se del tipo normale o forfait
-                if ($v['tiprig'] == 0) { // tipo normale
-                    $tot_row = CalcolaImportoRigo($v['quanti'], $v['prelis'], array($v['sconto'], $form['sconto'], -$v['pervat']));
-                } else {                 // tipo forfait
-                    $tot_row = CalcolaImportoRigo(1, $v['prelis'], -$v['pervat']);
-                }
-                if (!isset($castel[$v['codvat']])) {
-                    $castel[$v['codvat']] = 0.00;
-                }
-                $castel[$v['codvat']]+=$tot_row;
-                // calcolo il totale del rigo stornato dell'iva
-                $imprig = round($tot_row / (1 + $v['pervat'] / 100), 2);
-                $tot+=$tot_row;
+              if ($v['tiprig'] == 0) { // tipo normale
+                  $tot_row = CalcolaImportoRigo($v['quanti'], $v['prelis'], array($v['sconto'], $form['sconto'], -$v['pervat']));
+              } else {                 // tipo forfait
+                  $tot_row = CalcolaImportoRigo(1, $v['prelis'], -$v['pervat']);
+              }
+              if (!isset($castel[$v['codvat']])) {
+                  $castel[$v['codvat']] = 0.00;
+              }
+              $castel[$v['codvat']]+=$tot_row;
+              // calcolo il totale del rigo stornato dell'iva
+              $imprig = round($tot_row / (1 + $v['pervat'] / 100), 2);
+              $tot+=$tot_row;
+            } elseif ($v['tiprig'] == 3) {
+              $carry += $v['prelis'];
+              $tot_row = $v['prelis'];
             }
             // fine calcolo importo rigo, totale e castelletto IVA
             // colonne non editabili
@@ -1412,6 +1440,19 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                     $resprow[$k][5]['value'] = ''; //prelis
                     $resprow[$k][6]['value'] = ''; //sconto
                     $resprow[$k][7]['value'] = ''; //quanti
+                    $resprow[$k][8]['value'] = ''; //prelis
+                    $resprow[$k][9]['value'] = '';
+                    $resprow[$k][10]['value'] = '';
+                    $resprow[$k][11]['value'] = '';
+                    break;
+                case "3":
+                    $resprow[$k][3]['value'] = ''; //unimis
+                    $resprow[$k][4]['value'] = ''; //quanti
+                    // scambio l'input con la colonna dell'importo...
+                    $resprow[$k][7]['value'] = $resprow[$k][5]['value'];
+                    // ... e poi non la visualizzo più
+                    $resprow[$k][5]['value'] = ''; //prelis
+                    $resprow[$k][6]['value'] = ''; //sconto
                     $resprow[$k][8]['value'] = ''; //prelis
                     $resprow[$k][9]['value'] = '';
                     $resprow[$k][10]['value'] = '';
