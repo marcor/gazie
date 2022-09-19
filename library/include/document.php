@@ -280,6 +280,7 @@ class DocContabVars {
         // in caso di scontrino il calcolo dev'essere fatto scorporando dal totale l'IVA
         $rs_rig = gaz_dbi_dyn_query("*", $this->gTables[$this->tableName], "id_tes = $this->testat", "id_rig asc");
         $this->totale = 0;
+        $this->riporto = 0;
         $results = array();
         while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
             // Antonio Germani - se c'è un lotto ne accodo numero e scadenza alla descrizione
@@ -313,6 +314,9 @@ class DocContabVars {
                 $this->castel[$rigo['codvat']]['importo']+=$rigo['importo'];
                 $this->castel[$rigo['codvat']]['iva']+=$rigo['totale'] - $rigo['importo'];
                 $this->totale+=$rigo['totale'];
+            } else if ($rigo['tiprig'] == 3){
+              $rigo['totale'] = $rigo['prelis'];
+              $this->riporto += $rigo['prelis'];
             }
             $results[] = $rigo;
         }

@@ -74,11 +74,11 @@ function getLastNumdoc($year, $seziva, $reg = 4) {
 function getAccountableTickets($id_cash) {
     global $gTables, $admin_aziend;
     $from = $gTables['tesdoc'] . ' AS tesdoc
-         LEFT JOIN ' . $gTables['pagame'] . ' AS pay 
+         LEFT JOIN ' . $gTables['pagame'] . ' AS pay
          ON tesdoc.pagame=pay.codice
-         LEFT JOIN ' . $gTables['clfoco'] . ' AS customer 
+         LEFT JOIN ' . $gTables['clfoco'] . ' AS customer
          ON tesdoc.clfoco=customer.codice
-         LEFT JOIN ' . $gTables['anagra'] . ' AS anagraf 
+         LEFT JOIN ' . $gTables['anagra'] . ' AS anagraf
          ON anagraf.id=customer.id_anagra';
     $where = "id_con = 0 AND id_contract = " . intval($id_cash) . " AND tipdoc = 'VCO'"; // uso impropriamente id_contract per contenere il riferimento all'id dell'ecr (RT) se 0 è un XML
     $orderby = "datemi ASC, numdoc ASC";
@@ -94,6 +94,7 @@ function getAccountableTickets($id_cash) {
         $cast_vat=[];
         $cast_acc=[];
         $tot_tes=0;
+        $carry = 0;
         //recupero i dati righi per creare i castelletti
         $rs_rig = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = " . $tes['id_tes'], "id_rig");
         while ($v = gaz_dbi_fetch_array($rs_rig)) {
@@ -126,7 +127,7 @@ function getAccountableTickets($id_cash) {
                 }
                 $cast_acc[$v['codric']]['A'] += $imprig;
                 // inizio DARE
-                if ($tes['clfoco'] > 100000000) { // c'� un cliente selezionato
+                if ($tes['clfoco'] > 100000000) { // c'è un cliente selezionato
                     if (!isset($cast_acc[$tes['clfoco']]['D'])) {
                         $cast_acc[$tes['clfoco']]['D'] = 0;
                     }
@@ -141,7 +142,7 @@ function getAccountableTickets($id_cash) {
                             }
                             $cast_acc[$tes['incaut']]['D'] += $tot_row;
                     }
-                } else {  // il cliente è anonimo 
+                } else {  // il cliente è anonimo
                     if ($tes['incaut'] > 100000000) { // pagamento che prevede incasso automatico
                         if (!isset($cast_acc[$tes['incaut']]['D'])) {
                             $cast_acc[$tes['incaut']]['D'] = 0;
@@ -154,22 +155,27 @@ function getAccountableTickets($id_cash) {
                         $cast_acc[$admin_aziend['cassa_']]['D'] += $tot_row;
                     }
                 }
+            } elseif ($v['tiprig'] == 3) { // variazione pagamento
+              $carry += $v['prelis'];
             }
         }
         $doc['all'][] = array('tes' => $tes,
             'vat' => $cast_vat,
             'acc' => $cast_acc,
-            'tot' => $tot_tes);
+            'tot' => $tot_tes,
+            'car' => $carry);
         if ($tes['clfoco'] > 100000000) {
             $doc['invoice'][] = array('tes' => $tes,
                 'vat' => $cast_vat,
                 'acc' => $cast_acc,
-                'tot' => $tot_tes);
+                'tot' => $tot_tes,
+                'car' => $carry);
         } else {
             $doc['ticket'][] = array('tes' => $tes,
                 'vat' => $cast_vat,
                 'acc' => $cast_acc,
-                'tot' => $tot_tes);
+                'tot' => $tot_tes,
+                'car' => $carry);
         }
     }
     $doc['tot'] = $tot;
@@ -227,9 +233,9 @@ if (isset($_POST['submit'])) {
                 $tot += round($vv['imponi']+$vv['impost'],2);
                 rigmoiInsert($vv);
             }
-          
-            // calcolo le rate al fine di inserire le partite aperte  
-            $rate = CalcolaScadenze($tot, substr($v['tes']['datfat'], 8, 2), substr($v['tes']['datfat'], 5, 2), substr($v['tes']['datfat'], 0, 4), $v['tes']['tipdec'], $v['tes']['giodec'], $v['tes']['numrat'], $v['tes']['tiprat'], $v['tes']['mesesc'], $v['tes']['giosuc']);
+
+            // calcolo le rate al fine di inserire le partite aperte
+            $rate = CalcolaScadenze( ($tot + $v['car']), substr($v['tes']['datfat'], 8, 2), substr($v['tes']['datfat'], 5, 2), substr($v['tes']['datfat'], 0, 4), $v['tes']['tipdec'], $v['tes']['giodec'], $v['tes']['numrat'], $v['tes']['tiprat'], $v['tes']['mesesc'], $v['tes']['giosuc']);
 
             //inserisco i righi contabili nel db
             foreach ($v['acc'] as $acc_k => $acc_v) {
@@ -247,7 +253,7 @@ if (isset($_POST['submit'])) {
                     }
                 }
             }
-           
+
         }
     }
 
@@ -319,7 +325,7 @@ if (isset($_POST['submit'])) {
 		// FINE CONTABILIZZAZIONE
 
     }
-	if (!$ecr_user){ // NON è un utente abilitato all'invio all'ecr, genererò un file XML 
+	if (!$ecr_user){ // NON è un utente abilitato all'invio all'ecr, genererò un file XML
         // devo accumulare i valori per data di tutto: sia degli anonimi che con fatture
         // INIZIO accumulatore per data
 		$anagrafica = new Anagrafica();
@@ -434,7 +440,7 @@ if (count($msg['war']) == 0) {
 ?>
     <input type="hidden" name="ultimo_file" value="<?php echo $ultimo_file; ?>">
     <div class="col-sm-12 text-center"><input name="Download" type="submit" class="btn btn-success" value="<?php echo $admin_aziend['country'] . $admin_aziend['codfis'] . "_DF_C" . str_pad(intval($ultimo_file), 4, '0', STR_PAD_LEFT) . ".xml"; ?>" /></div>
-<?php	
+<?php
 }
 ?>
 </div>

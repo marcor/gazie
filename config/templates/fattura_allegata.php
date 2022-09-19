@@ -120,6 +120,14 @@ class FatturaAllegata extends Template
                     $this->Cell(75,5,$rigo['descri'],'LR',0,'L');
                     $this->Cell(88,5,'','R',1);
                     break;
+                case "3":
+                    $this->Cell(23, 5,'');
+                    $this->Cell(75, 5, $rigo['descri'],1,0,'L');
+                    $this->Cell(42, 5, '',1);
+                    $this->Cell(18, 5, '');
+                    $this->Cell(10, 5, '');
+                    $this->Cell(18, 5, gaz_format_number($rigo['totale']),1,1,'R');
+                    break;
                 case "11":
                     $this->Cell(25, 5, '', 'L');
                     $this->Cell(80, 5, "Codice Identificativo Gara (CIG): " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
@@ -172,7 +180,7 @@ class FatturaAllegata extends Template
     function pageFooter()
     {
         //effettuo il calcolo degli importi delle scadenze
-        $ratpag = CalcolaScadenze($this->docVars->totale, $this->giorno, $this->mese, $this->anno, $this->pagame['tipdec'],$this->pagame['giodec'],$this->pagame['numrat'],$this->pagame['tiprat'],$this->pagame['mesesc'],$this->pagame['giosuc']);
+        $ratpag = CalcolaScadenze($this->docVars->totale+$this->docVars->riporto, $this->giorno, $this->mese, $this->anno, $this->pagame['tipdec'],$this->pagame['giodec'],$this->pagame['numrat'],$this->pagame['tiprat'],$this->pagame['mesesc'],$this->pagame['giosuc']);
         if ($ratpag){
            //allungo l'array fino alla 4^ scadenza
            $ratpag['import'] = array_pad($ratpag['import'],4,'');
