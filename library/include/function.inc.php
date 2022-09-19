@@ -41,6 +41,7 @@ if (strlen($radix) > 1) {
     session_name(_SESSION_NAME);
 }
 session_start();
+session_gc();
 $prev_script = '';
 if (isset($_SERVER["HTTP_REFERER"])) {
     $prev = explode("?", basename($_SERVER["HTTP_REFERER"]));
