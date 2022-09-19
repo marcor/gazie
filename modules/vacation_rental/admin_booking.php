@@ -535,8 +535,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
               //inserisco il rigo
               $last_rigbro_id = rigbroInsert($form['rows'][$i]);
               $form['id_rigbro']=  $last_rigbro_id;
-              // se è un alloggio inserisco l'evento in rental_events
-              if ($form['rows'][$i]['accommodation_type']>2){
+
+              if ($form['rows'][$i]['accommodation_type']>2){// se è un alloggio inserisco l'evento in rental_events
                 $table = 'rental_events';
                 $form['id_tesbro']=  $form['rows'][$i]['id_tes'];
                 switch ($form['rows'][$i]['accommodation_type']) {//3 => 'Appartamento', 4 => 'Casa indipendente', 5=> 'Bed & breakfast'
@@ -555,16 +555,21 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['house_code']=$form['rows'][$i]['codart'];
                 $columns = array('id', 'title', 'start', 'end', 'house_code', 'id_tesbro', 'id_rigbro', 'adult', 'child', 'type');
                 tableInsert($table, $columns, $form);
-                if (intval($vacation_blockdays)>0){// se ci sono giorni cuscinetto li aggiungo a rental_events
+                $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['rows'][$i]['codart']);
+                $data = json_decode($artico['custom_field'], TRUE);
+                $data['vacation_rental']['pause']=(isset($data['vacation_rental']['pause']))?$data['vacation_rental']['pause']:0;
+                if (intval($vacation_blockdays)>0 ||  intval($data['vacation_rental']['pause'])>0){// se ci sono giorni cuscinetto o pausa li aggiungo a rental_events
                   $form['type']="PAUSA";
                   $form['id_rigbro'] = 0;
                   $realstart=$form['start'];
                   $realend=$form['end'];
-                  $form['start']=$date1 = date("Y-m-d", strtotime($realstart.'- '.intval($vacation_blockdays).' days'));
-                  $form['end']=$date1 = date("Y-m-d", strtotime($realstart.'- 1 days'));
-                  tableInsert($table, $columns, $form);// scrivo il cuscinetto iniziale
+                  if (intval($vacation_blockdays)>0){
+                    $form['start']=$date1 = date("Y-m-d", strtotime($realstart.'- '.intval($vacation_blockdays).' days'));
+                    $form['end']=$date1 = date("Y-m-d", strtotime($realstart.'- 1 days'));
+                    tableInsert($table, $columns, $form);// scrivo il cuscinetto iniziale
+                  }
                   $form['start']=date("Y-m-d", strtotime($realend));
-                  $form['end']=date("Y-m-d", strtotime($realend.'+ '.intval($vacation_blockdays).' days'));
+                  $form['end']=date("Y-m-d", strtotime($realend.'+ '. (intval($vacation_blockdays)+intval($data['vacation_rental']['pause'])) .' days'));
                   tableInsert($table, $columns, $form);// scrivo il cuscinetto finale
                   $form['start'] = $realstart;
                   $form['end'] = $realend;

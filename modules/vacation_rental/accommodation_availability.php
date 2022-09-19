@@ -12,11 +12,12 @@
 <!DOCTYPE html>
 <html lang='en'>
   <head>
+  <meta name='robots' content='noindex,follow' />
     <meta charset='utf-8' />
     <link href='fullcalendar-5.10.2/lib/main.css' rel='stylesheet' />
     <script src='fullcalendar-5.10.2/lib/main.js'></script>
 	<style>
-		.overlay{			
+		.overlay{
 			position: fixed;
 			width: 100%;
 			height: 100%;
@@ -99,12 +100,12 @@ $id=substr($_GET['house_code'],0,32);
 			var start = info.startStr;
 			var end = info.endStr;
 			var xhttp = new XMLHttpRequest();
-		
+
 			xhttp.open("GET", "save_to_db_events.php?title="+ title +"&start="+ start +"&end="+ end +"&house_code=<?php echo $id; ?>", false);
-				
-			xhttp.onreadystatechange = function() {    
-				console.log(this);		   
-			};					
+
+			xhttp.onreadystatechange = function() {
+				console.log(this);
+			};
 			xhttp.send();
 			calendar.refetchEvents();
 			window.location.reload(true);
