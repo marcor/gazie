@@ -34,6 +34,12 @@ require("../../library/include/datlib.inc.php");
 require("../../modules/magazz/lib.function.php");
 $admin_aziend=checkAdmin();
 require("../../library/include/header.php");
+$ivac = gaz_dbi_get_row($gTables['company_config'], 'var', 'vacation_ivac')['val'];
+if ($ivac=="si"){
+  $ivac="IVA compresa";
+}else {
+  $ivac="imponibili";
+}
 $firstpart_ical_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']!='off') ? 'https://'.$_SERVER['SERVER_NAME'] : 'http://'.$_SERVER['SERVER_NAME'];
 // campi ammissibili per la ricerca
 $search_fields = [
@@ -457,7 +463,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 				</a>
 			</td>
 			<?php
-			echo '<td class="text-center"><a class="btn btn-xs btn-default" style="cursor:pointer;" onclick="openframe(\'accommodation_price.php?house_code='.$r["codice"].'\',\'Prezzi <b>'.$r["codice"].'</b>\')" data-toggle="modal" data-target="#iframe"> <i class="glyphicon glyphicon-eur" title="Calendario dei prezzi"></i></a>';
+			echo '<td class="text-center"><a class="btn btn-xs btn-default" style="cursor:pointer;" onclick="openframe(\'accommodation_price.php?house_code='.$r["codice"].'\',\'Prezzi '.$ivac.' <b>'.$r["codice"].'</b>\')" data-toggle="modal" data-target="#iframe"> <i class="glyphicon glyphicon-eur" title="Calendario dei prezzi"></i></a>';
 			echo "</td>\n";
 			echo '<td class="text-center"><a class="btn btn-xs btn-default" style="cursor:pointer;" onclick="openframe(\'accommodation_availability.php?house_code='.$r["codice"].'\',\'Calendario <b>'.$r["codice"].'</b>\')" data-toggle="modal" data-target="#iframe"> <i class="glyphicon glyphicon-calendar" title="Calendario della disponibilità"></i></a>';
 			echo "</td>\n";

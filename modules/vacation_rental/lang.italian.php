@@ -609,7 +609,7 @@ $strScript = array(
         'priority'=> "Priorità su altri sconti (0 nessuna; più alto è il numero maggiore è la priorità)",
         'stop_further_processing'=> "Questo sconto blocca tutti gli altri con minore priorità",
         'id_anagra'=> "ID utente a cui è riservato lo sconto",
-        'reusable' => "Il buono sconto è utilizzabile più volte (0=NO; numero=volte)"
+        'reusable' => "Il buono sconto è utilizzabile più volte (0=infinite; numero=volte)"
     ),
     "lease.php" =>
     array('locatore' => 'Il locatore',

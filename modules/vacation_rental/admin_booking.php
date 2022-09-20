@@ -38,6 +38,7 @@ require("../../modules/acquis/lib.data.php");
 $admin_aziend = checkAdmin();
 $min_stay = gaz_dbi_get_row($gTables['company_config'], 'var', 'vacation_minnights')['val'];
 $vacation_blockdays = gaz_dbi_get_row($gTables['company_config'], 'var', 'vacation_blockdays')['val'];
+$ivac = gaz_dbi_get_row($gTables['company_config'], 'var', 'vacation_ivac')['val'];
 $pdf_to_modal = gaz_dbi_get_row($gTables['company_config'], 'var', 'pdf_reports_send_to_modal')['val'];
 $scorrimento = gaz_dbi_get_row($gTables['company_config'], 'var', 'autoscroll_to_last_row')['val'];
 $after_newdoc_back_to_doclist=gaz_dbi_get_row($gTables['company_config'], 'var', 'after_newdoc_back_to_doclist')['val'];
@@ -900,8 +901,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
           $where = "start < '". $start ."' AND end >= '". $start."'";
           $result = gaz_dbi_dyn_query($what, $table, $where);
           $prezzo = gaz_dbi_fetch_array($result);
+          if (isset($prezzo) && $ivac=="si"){// se i prezzi nel calendario sono iva compresa
+            $iva_perc = gaz_dbi_get_row($gTables['aliiva'], 'codice', $artico['aliiva'])['aliquo'];
+            $prezzo['title']=floatval($prezzo['title'])/floatval("1.".$iva_perc); // scorporo l'iVA
+            echo "-prezzo:",$prezzo['title'];
+          }
           if (isset($prezzo)){
-            $total_price += floatval($prezzo['title']);// aggiungo il prezzo giornaliero torvato
+            $total_price += floatval($prezzo['title']);// aggiungo il prezzo giornaliero trovato
           } else{
             $total_price += floatval($artico['web_price']);// in mancanza del prezzo giornaliero aggiungo il prezzo base
           }
