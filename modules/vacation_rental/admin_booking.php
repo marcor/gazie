@@ -904,7 +904,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
           if (isset($prezzo) && $ivac=="si"){// se i prezzi nel calendario sono iva compresa
             $iva_perc = gaz_dbi_get_row($gTables['aliiva'], 'codice', $artico['aliiva'])['aliquo'];
             $prezzo['title']=floatval($prezzo['title'])/floatval("1.".$iva_perc); // scorporo l'iVA
-            echo "-prezzo:",$prezzo['title'];
           }
           if (isset($prezzo)){
             $total_price += floatval($prezzo['title']);// aggiungo il prezzo giornaliero trovato
