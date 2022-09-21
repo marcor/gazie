@@ -7,7 +7,7 @@
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
 	  Vacation Rental è un modulo creato per GAzie da Antonio Germani, Massignano AP
-	  Copyright (C) 2018-2021 - Antonio Germani, Massignano (AP)
+	  Copyright (C) 2022-2023 - Antonio Germani, Massignano (AP)
 	  https://www.lacasettabio.it
 	  https://www.programmisitiweb.lacasettabio.it
 	  --------------------------------------------------------------------------

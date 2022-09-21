@@ -2,12 +2,10 @@
 /*
   --------------------------------------------------------------------------
   GAzie - MODULO 'VACATION RENTAL'
-  Copyright (C) 2022-20223 - Antonio Germani, Massignano (AP)
+  Copyright (C) 2022-2023 - Antonio Germani, Massignano (AP)
   (http://www.programmisitiweb.lacasettabio.it)
-  Ogni diritto è riservato.
-  E' possibile usare questo modulo solo dietro autorizzazione dell'autore
-  --------------------------------------------------------------------------
 
+  --------------------------------------------------------------------------
  --------------------------------------------------------------------------
                             GAzie - Gestione Azienda
     Copyright (C) 2004-2022 - Antonio De Vincentiis Montesilvano (PE)

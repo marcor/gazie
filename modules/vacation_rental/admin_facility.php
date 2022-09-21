@@ -1,6 +1,12 @@
 <?php
 /*
   --------------------------------------------------------------------------
+  GAzie - MODULO 'VACATION RENTAL'
+  Copyright (C) 2022-2023 - Antonio Germani, Massignano (AP)
+  (http://www.programmisitiweb.lacasettabio.it)
+
+  --------------------------------------------------------------------------
+  --------------------------------------------------------------------------
   GAzie - Gestione Azienda
   Copyright (C) 2004-2022 - Antonio De Vincentiis Montesilvano (PE)
   (http://www.devincentiis.it)
@@ -22,7 +28,7 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
-// prima stesura: Antonio Germani
+
 require("../../library/include/datlib.inc.php");
 require("../../modules/magazz/lib.function.php");
 $admin_aziend = checkAdmin();

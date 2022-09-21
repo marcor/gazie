@@ -2,6 +2,12 @@
 
 /*
   --------------------------------------------------------------------------
+  GAzie - MODULO 'VACATION RENTAL'
+  Copyright (C) 2022-2023 - Antonio Germani, Massignano (AP) - telefono +39 340 50 11 912
+  (http://www.programmisitiweb.lacasettabio.it)
+
+  --------------------------------------------------------------------------
+  --------------------------------------------------------------------------
   GAzie - Gestione Azienda
   Copyright (C) 2004-2022 - Antonio De Vincentiis Montesilvano (PE)
   (http://www.devincentiis.it)
@@ -421,7 +427,9 @@ $strScript = array(
       'inexistent_booking' => 'La prenotazione NON esiste',
       'wrong_data' => 'I dati inseriti non sono corretti',
       'too_many_error' => 'Accesso BLOCCATO per troppi errori. Riprovare più tardi',
-      'text_missing' => 'Il testo della recensione è mancante o troppo corto'
+      'text_missing' => 'Il testo della recensione è mancante o troppo corto',
+      'err_codfis' => 'Errore nel codice fiscale, correggere e riprovare',
+      'coupon_error' => 'Codice sconto non applicato perché non valido',
         ),
         'war' => array(
             'ok' => 'ok riempitura array'
