@@ -28,13 +28,16 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
 */
-if(isset($_GET["id"])){
-	require("../../library/include/datlib.inc.php");
-	$event = gaz_dbi_get_row($gTables['rental_events'], "id", intval($_GET['id']));
-	if (isset($event) && intval($event['id_tesbro'])>0){
-		echo "Non posso cancellare: questa è una prenotazione diretta";
-	} else{
-	gaz_dbi_del_row($gTables['rental_events'], "id", intval($_GET['id']));
-	}
+include_once("manual_settings.php");
+if ($_GET['token'] == md5($token.date('Y-m-d'))){
+  if(isset($_GET["id"])){
+    require("../../library/include/datlib.inc.php");
+    $event = gaz_dbi_get_row($gTables['rental_events'], "id", intval($_GET['id']));
+    if (isset($event) && intval($event['id_tesbro'])>0){
+      echo "Non posso cancellare: questa è una prenotazione diretta";
+    } else{
+    gaz_dbi_del_row($gTables['rental_events'], "id", intval($_GET['id']));
+    }
+  }
 }
 ?>

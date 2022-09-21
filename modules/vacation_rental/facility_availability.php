@@ -57,6 +57,7 @@
 	-->
 <?php
 //require("../../library/include/datlib.inc.php");
+include_once("manual_settings.php");
 $id=substr($_GET['code'],0,9);
 ?>
 
@@ -77,52 +78,16 @@ $id=substr($_GET['code'],0,9);
       timeZone: 'local',
       locale: 'it',
       eventDisplay  : 'block',// tutti gli eventi vengono mostrati con un rettangolo pieno in visualizzazione giornaliera
-      events : 'load_from_db_facilityevents.php?id=<?php echo $id; ?>',
+      events : 'load_from_db_facilityevents.php?id=<?php echo $id; ?>& token=<?php echo md5($token.date('Y-m-d')); ?>',
 	  loading: function( isLoading, view ) {
 			if(isLoading) {// isLoading gives boolean value
 				calendarEl.classList.add("overlay");
 			} else {
 				calendarEl.classList.remove("overlay");
 			}
-		},
+		}
 
 /* ***** L'EVENTO, AD ESEMPIO DI UN GIORNO, COMINCIA ALLE ORE 00:00 DEL GIORNO DI INIZIO E FINISCE ALLE ORE 00:00 DEL GIORNO DOPO (SONO DUE DATE DIFFERENTI MA SONO 24 ORE E QUINDI VIENE MOSTRATO PIENO SOLO UN GIORNO) ***** */
-
-			eventDrop:function(info){
-				 var start = info.event.start;
-				 var end = info.event.end;
-				 var title = info.event.title;
-				 var id = info.event.id;
-				// alert ("update title:"+ title);
-				//alert ("update_db_events.php?title="+ title +"&start="+ start.toISOString() +"&end="+ end.toISOString() +"&id="+ id);
-				 if (end == null){// nel caso di evento di un solo giorno
-					 var end = start;
-				 }
-				 var xhttp = new XMLHttpRequest();
-				 xhttp.open("GET", "update_db_events.php?title="+ title +"&start="+ start.toISOString() +"&end="+ end.toISOString() +"&id="+ id +"&house_code=<?php echo $id; ?>", true);
-				xhttp.send();
-				calendar.refetchEvents();
-				window.location.reload(true);
-			},
-
-			eventResize:function(info){
-				 var start = info.event.start;
-				 var end = info.event.end;
-				 var title = info.event.title;
-				 var id = info.event.id;
-				//alert ("update_isostring=start="+ start.toISOString() +"&end="+ end.toISOString() +"&id="+ id);
-				//alert ("update_normal=start="+ start +"&end="+ end +"&id="+ id);
-				 var xhttp = new XMLHttpRequest();
-				 xhttp.open("GET", "update_db_events.php?title="+ title +"&start="+ start.toISOString() +"&end="+ end.toISOString() +"&id="+ id +"&house_code=<?php echo $id; ?>", true);
-				xhttp.send();
-				calendar.refetchEvents();
-				window.location.reload(true);
-			},
-
-			eventMouseEnter: function (info) {
-				//alert(info.event.title);
-				 document.getElementById("tooltip").innerHTML = this.responseText;
-			}
 
 
 

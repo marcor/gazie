@@ -28,6 +28,7 @@
   --------------------------------------------------------------------------
   */
 require("../../library/include/datlib.inc.php");
+include_once("manual_settings.php");
 ?>
 <!DOCTYPE html>
 <html lang='en'>
@@ -67,7 +68,7 @@ $id=substr($_GET['extra_code'],0,32);
           locale: 'it',
           eventDisplay  : 'block',// tutti gli eventi vengono mostrati con un rettangolo pieno
           displayEventTime : false,
-          events : 'load_from_db_events_extra.php?id=<?php echo $id; ?>',
+          events : 'load_from_db_events_extra.php?id=<?php echo $id; ?>& token=<?php echo md5($token.date('Y-m-d')); ?>',
           loading: function( isLoading, view ) {
             if(isLoading) {// isLoading gives boolean value
               calendarEl.classList.add("overlay");
@@ -87,7 +88,7 @@ $id=substr($_GET['extra_code'],0,32);
 				var start = info.startStr;
 				var end = info.endStr;
 				var xhttp = new XMLHttpRequest();
-				xhttp.open("GET", "save_to_db_events_extra.php?title="+ title +"&start="+ start +"&end="+ end +"&house_code=<?php echo $id; ?>", true);
+				xhttp.open("GET", "save_to_db_events_extra.php?title="+ title +"&start="+ start +"&end="+ end +"&house_code=<?php echo $id; ?>& token=<?php echo md5($token.date('Y-m-d')); ?>", true);
 				xhttp.send();
 				calendar.refetchEvents();
 				window.location.reload(true);
@@ -107,7 +108,7 @@ $id=substr($_GET['extra_code'],0,32);
 					 var end = start;
 				 }
 				 var xhttp = new XMLHttpRequest();
-				 xhttp.open("GET", "update_db_events.php?title="+ title +"&start="+ start.toISOString() +"&end="+ end.toISOString() +"&id="+ id +"&house_code=<?php echo $id; ?>", true);
+				 xhttp.open("GET", "update_db_events.php?title="+ title +"&start="+ start.toISOString() +"&end="+ end.toISOString() +"&id="+ id +"&house_code=<?php echo $id; ?>& token=<?php echo md5($token.date('Y-m-d')); ?>", true);
 				xhttp.send();
 				calendar.refetchEvents();
 				window.location.reload(true);
@@ -124,7 +125,7 @@ $id=substr($_GET['extra_code'],0,32);
 
 
 				 var xhttp = new XMLHttpRequest();
-				 xhttp.open("GET", "update_db_events.php?title="+ title +"&start="+ start.toISOString() +"&end="+ end.toISOString() +"&id="+ id +"&house_code=<?php echo $id; ?>", true);
+				 xhttp.open("GET", "update_db_events.php?title="+ title +"&start="+ start.toISOString() +"&end="+ end.toISOString() +"&id="+ id +"&house_code=<?php echo $id; ?>& token=<?php echo md5($token.date('Y-m-d')); ?>", true);
 				xhttp.send();
 				calendar.refetchEvents();
 				window.location.reload(true);
@@ -146,7 +147,7 @@ $id=substr($_GET['extra_code'],0,32);
 					var id = info.event.id;
 					//alert('Test get id: ' + id);
 					var xhttp = new XMLHttpRequest();
-					 xhttp.open("GET", "delete_db_events.php?id="+ id, true);
+					 xhttp.open("GET", "delete_db_events.php?id="+ id +"& token=<?php echo md5($token.date('Y-m-d')); ?>", true);
 					xhttp.send();
 					calendar.refetchEvents();
 					window.location.reload(true);

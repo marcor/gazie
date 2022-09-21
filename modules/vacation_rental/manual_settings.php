@@ -30,6 +30,6 @@ Copyright (C) - Antonio Germani Massignano (AP) https://www.lacasettabio.it - te
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
 */
-// ID azienda per stabilire a quale ID azienda del data base dovrà accedere il front-end del sito web
-$idDB="_001";
+$idDB="_001";// ID azienda per stabilire a quale ID azienda del data base dovrà accedere il front-end del sito web
+$token="yourtokenword"; // inserisci una parola chiave, che verrà usata dagli script, per bloccare gli accessi diretti.
 ?>
