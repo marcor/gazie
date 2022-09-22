@@ -565,7 +565,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                   $realend=$form['end'];
                   if (intval($vacation_blockdays)>0){
                     $form['start']=$date1 = date("Y-m-d", strtotime($realstart.'- '.intval($vacation_blockdays).' days'));
-                    $form['end']=$date1 = date("Y-m-d", strtotime($realstart.'- 1 days'));
+                    $form['end']=$date1 = date("Y-m-d", strtotime($realstart));
                     tableInsert($table, $columns, $form);// scrivo il cuscinetto iniziale
                   }
                   $form['start']=date("Y-m-d", strtotime($realend));
@@ -887,7 +887,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
           // Controllo disponibilità
           $what = "title";
           $table = $gTables['rental_events'];
-          $where = "house_code = '".$form['in_codart']."' AND start < '". $start ."' AND end >= '". $start."'";
+          $where = "house_code = '".$form['in_codart']."' AND start <= '". $start ."' AND end >= '". date ("Y-m-d", strtotime("+1 days", strtotime($start)))."'";
           $result = gaz_dbi_dyn_query($what, $table, $where);
           $available = gaz_dbi_fetch_array($result);
           if (isset($available)){
