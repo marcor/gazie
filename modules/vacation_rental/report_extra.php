@@ -53,6 +53,7 @@ $sortable_headers = array  (
             "Descrizione"=>'descri',
             "Modalità prezzo" => 'accommodation_type',
 			"Alloggio di appartenenza" => '',
+      "Struttura di appartenenza" => '',
             "Categoria" => 'catmer',
 			"Icalendar url"=>'',
             'Prezzo' => '',
@@ -257,6 +258,8 @@ $ts->output_navbar();
         </td>
 		<td class="FacetFieldCaptionTD">
         </td>
+    <td class="FacetFieldCaptionTD">
+        </td>
 		<td class="FacetFieldCaptionTD">
         <?php gaz_flt_disp_select("codcat", $gTables['catmer'].".codice AS codcat, ". $gTables['catmer'].".descri AS descat", $tablejoin, 1,'codcat ASC','descat'); ?>
         </td>
@@ -277,38 +280,20 @@ $result = gaz_dbi_dyn_query ( $gTables['artico']. ".*, ".$gTables['catmer']. ".d
 echo '<tr>';
 $ts->output_headers();
 echo '</tr>';
+// da configurazione azienda
+$show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
+$tipo_composti = gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti');
 while ($r1 = gaz_dbi_fetch_array($result)) {
 
 			$data = json_decode($r1['custom_field'],true);// trasformo il json custom_field in array
-			$r2 = gaz_dbi_get_row($gTables['rental_extra'], 'id', $data['vacation_rental']['extra']);
+			$r2 = gaz_dbi_get_row($gTables['rental_extra']." LEFT JOIN " . $gTables['artico_group'] . " ON " . $gTables['rental_extra'] . ".rif_facility = " . $gTables['artico_group'] . ".id_artico_group", 'id', $data['vacation_rental']['extra'],'',$gTables['rental_extra'].'.*, '.$gTables['artico_group'].'.descri as facility_descri');
 			$r=array_merge($r1,$r2);
 
 			$r['accommodation_type'] = "";
-			// da configurazione azienda
-			$show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
-			$tipo_composti = gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti');
-			// acquisti
-			// giacenza
-			$mv = $gForm->getStockValue(false, $r['codice']);
-			$magval = array_pop($mv);
-			$magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
-			 if (isset($magval['q_g']) && round($magval['q_g'],6) == "-0"){
-				 $magval['q_g']=0;
-			 }
+
+
 			$class = 'success';
-			if (is_numeric($magval)) { // giacenza = 0
-				$class = 'danger';
-				$magval=[];
-				$magval['q_g']=0;
-			} elseif ($magval['q_g'] < 0) { // giacenza inferiore a 0
-				$class = 'danger';
-			} elseif ($magval['q_g'] > 0) { //
-			  if ($magval['q_g']<=$r['scorta']){
-				$class = 'warning';
-			  }
-			} else { // giacenza = 0
-				$class = 'danger';
-			}
+
 			// contabilizzazione magazzino
 			$com = '';
 			if ($admin_aziend['conmag'] > 0 && $r["good_or_service"] != 1 && $tipo_composti['val']=="STD") {
@@ -369,6 +354,8 @@ while ($r1 = gaz_dbi_fetch_array($result)) {
     }
 			echo "</td>\n";
 			echo '<td class="text-center">'.$r['rif_alloggio'];
+			echo "</td>\n";
+      echo '<td class="text-center">'.$r['rif_facility']."-".$r['facility_descri'];
 			echo "</td>\n";
 			echo "</td>\n";
 			echo '<td class="text-center">'.$r['catmer'].'-'.$r['descat'];

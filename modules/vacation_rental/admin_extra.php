@@ -123,6 +123,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
   $form['var_id'] = (isset($_POST['var_id']))?$_POST['var_id']:'';
   $form['var_name'] = (isset($_POST['var_name']))?$_POST['var_name']:'';
   $form['ref_code'] = substr($_POST['ref_code'], 0,32);
+  $form['rif_facility'] = substr($_POST['rif_facility'], 0,9);
   // i prezzi devono essere arrotondati come richiesti dalle impostazioni aziendali
   $form["preacq"] = number_format($form['preacq'], $admin_aziend['decimal_price'], '.', '');
   $form["preve1"] = number_format($form['preve1'], $admin_aziend['decimal_price'], '.', '');
@@ -383,7 +384,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
       exit;
   }
 } elseif (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo accesso per UPDATE
-    $form1 = gaz_dbi_get_row($gTables['artico'], 'codice', substr($_GET['codice'],0,32));
+  $form1 = gaz_dbi_get_row($gTables['artico'], 'codice', substr($_GET['codice'],0,32));
 	$data = json_decode($form1['custom_field'],true);// trasformo il json custom_field in array
 	$form2 = gaz_dbi_get_row($gTables['rental_extra'], 'id', substr($data['vacation_rental']['extra'],0,32));
 	$form= array_merge($form1, $form2);
@@ -456,6 +457,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['accommodation_type'] = '';
     $form['mod_prezzo'] = '';
     $form['rif_alloggio'] = '';
+    $form['rif_facility'] = '';
     $form['adult'] = 1;
     $form['child'] = 0;
     $form['total_guests'] = 0;
@@ -817,12 +819,23 @@ $(document).ready(function(){
 				<div class="row">
 					<div class="col-md-12">
 						<div class="form-group">
-							<label for="descri" class="col-sm-4 control-label">Codice alloggio</label>
+							<label for="alloggio" class="col-sm-4 control-label">Riferimento alloggio</label>
 							<input class="col-sm8" type="text" id="rifalloggio" name="rifalloggio" value="<?php echo $form['rif_alloggio']; ?>" placeholder="Ricerca codice alloggio" autocomplete="off" tabindex="1">
-							<ul class="dropdown-menu" style="left: 20%; padding: 0px;" id="product_search"></ul>inserire l'alloggio esclusivo oppure lasciare vuoto per tutti gli alloggi
+							<ul class="dropdown-menu" style="left: 20%; padding: 0px;" id="product_search"></ul>Sarà esclusivo per l'alloggio selezionato; lasciare vuoto per tutti gli alloggi
 						</div>
 					</div>
         </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="struttura" class="col-sm-4 control-label">Riferimento struttura</label>
+                  <?php
+                  $gForm->selectFromDB('artico_group', 'rif_facility', 'id_artico_group', $form['rif_facility'], false, 1, ' - ', 'descri', '', 'col-sm-4', null, 'style="max-width: 150px;"');
+                  ?>
+                  Sarà esclusivo per la struttura selezionata; lasciare vuoto per tutte le strutture
+                </div>
+            </div>
+        </div><!-- chiude row  -->
         <div class="row">
             <div class="col-md-12">
                 <div class="form-group">
@@ -847,9 +860,9 @@ $(document).ready(function(){
             <div class="col-md-12">
                 <div class="form-group">
                     <label for="catmer" class="col-sm-4 control-label"><?php echo $script_transl['catmer']; ?></label>
-<?php
-$gForm->selectFromDB('catmer', 'catmer', 'codice', $form['catmer'], false, 1, ' - ', 'descri', '', 'col-sm-8', null, 'style="max-width: 250px;"');
-?>
+                    <?php
+                    $gForm->selectFromDB('catmer', 'catmer', 'codice', $form['catmer'], false, 1, ' - ', 'descri', '', 'col-sm-8', null, 'style="max-width: 250px;"');
+                    ?>
                 </div>
             </div>
         </div><!-- chiude row  -->
