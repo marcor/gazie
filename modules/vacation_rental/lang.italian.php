@@ -470,6 +470,7 @@ $strScript = array(
 		'booking_tot' => 'Totale della locazione',
 		'which_deposit' => 'Importo da pagare per confermare la prenotazione (caparra confirmatoria)',
 		'select_pay_deposit' => 'Seleziona il tipo di pagamento per la caparra',
+    'select_pay_balance' => 'Seleziona il tipo di pagamento per il saldo',
 		'bank_transfer' => 'Bonifico bancario',
 		'credit_card_offline' => 'Carta di credito offline',
 		'payment' => 'Pagamento',
