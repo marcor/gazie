@@ -41,7 +41,7 @@ $strScript = array("admin.php" =>
         'access' => "questo è il tuo ",
         'pass' => "&ordm; accesso!<br />La tua password &egrave; del ",
         'logout' => " Se vuoi uscire clicca sul pulsante ",
-        'company' => " Stai amministrando la ditta:<br /> ",
+        'company' => " Stai amministrando:<br /> ",
         'mesg_co' => array('Non &egrave; stato trovato nulla!', 'Minimo 2 caratteri', 'Cambia azienda di lavoro'),
         'upd_company' => "Modifica la configurazione dell'azienda",
         'business' => "per la gestione aziendale.",

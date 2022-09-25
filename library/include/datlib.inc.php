@@ -52,7 +52,7 @@ if (isset($_SESSION['table_prefix'])) {
 }
 
 // tabelle comuni alle aziende della stessa gestione
-$tn = array('admin','admin_config','admin_module','anagra','aziend','bank','breadcrumb',
+$tn = array('admin','admin_config','admin_module','anagra','anagraes','aziend','bank','breadcrumb',
     'camp_avversita','camp_colture','camp_fitofarmaci','camp_uso_fitofarmaci','classroom',
     'config','country','currencies','currency_history','destina','languages', 'menu_module',
     'menu_script','menu_usage','module','municipalities','provinces','regions','staff_absence_type',

@@ -341,7 +341,7 @@ class Login
 				$result_row = $query_user->fetchObject();
 			}
 
-      // INZIO: DALLA PROSSIMA VERSIONE VERRA' RIMOSSA, 16-02-2022
+      // DALLA PROSSIMA VERSIONE VERRA' RIMOSSA, 16-02-2022
       // qui eseguo un controllo che se la password utente passata con il metodo vecchio (senza hash) è valida allora faccio l'update di user_password_hash
       // basta un solo login di questo utente che ci consentirà di non modificarla manualmente direttamente con un amministratore di database
       // utilizzando il generatore passhash.php sulla root
@@ -350,10 +350,15 @@ class Login
 				$hash_cost_factor = (defined('HASH_COST_FACTOR') ? HASH_COST_FACTOR : null);
         $user_password = hash('sha256',$old_password);
         $newhash=password_hash($user_password, PASSWORD_DEFAULT, ['cost' => $hash_cost_factor]);
+        // creo una chiave casuale per i dati crittati
+        $aeskey = openssl_random_pseudo_bytes(16);
+        $prepared_key = openssl_pbkdf2($user_password.$user_name, AES_KEY_SALT, 16, 1000, "sha256");
+        $ciphertext_b64 = base64_encode(openssl_encrypt($aeskey,"AES-128-CBC",$prepared_key,OPENSSL_RAW_DATA, AES_KEY_IV));
 				$sth = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . '_admin '
-				. 'SET user_password_hash = :user_password_hash '
+				. 'SET user_password_hash = :user_password_hash, aes_key = :aes_key '
 				. 'WHERE user_name = :user_name');
-				$sth->execute(array(':user_name' => $user_name, ':user_password_hash' => $newhash));
+				$sth->execute([':user_name' => $user_name,':aes_key' => $ciphertext_b64,':user_password_hash' => $newhash]);
+        $this->errors[] = 'Per motivi di sicurezza GAzie ha provveduto a ricreare l\'hash della tua password ed a creare una chiave casuale per consentirti di criptare i dati sensibili.<br/>AVRAI ACCESSO AL PROSSIMO TENTATIVO';
       }
       // FINE PARTE DA RIMUOVE IN UN FUTURO PROSSIMO
 
