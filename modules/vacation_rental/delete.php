@@ -80,7 +80,7 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 			//Cancello l'articolo
 			$result = gaz_dbi_del_row($gTables['artico'], "codice", $i);
 			//Cancello anche il rispettivo rigo dalla tabella rental_extra
-			$result = gaz_dbi_del_row($gTables['rental_extra'], "rif_alloggio", $i);
+			$result = gaz_dbi_del_row($gTables['rental_extra'], "codart", $i);
 		break;
 		case "booking":
 			//procedo all'eliminazione della testata e dei righi...
