@@ -351,7 +351,7 @@ class Login
         $user_password = hash('sha256',$old_password);
         $newhash=password_hash($user_password, PASSWORD_DEFAULT, ['cost' => $hash_cost_factor]);
         // creo una chiave casuale per i dati crittati
-        $aeskey = openssl_random_pseudo_bytes(16);
+        $aeskey = random_bytes(16);
         $prepared_key = openssl_pbkdf2($user_password.$user_name, AES_KEY_SALT, 16, 1000, "sha256");
         $ciphertext_b64 = base64_encode(openssl_encrypt($aeskey,"AES-128-CBC",$prepared_key,OPENSSL_RAW_DATA, AES_KEY_IV));
 				$sth = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . '_admin '
