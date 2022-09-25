@@ -34,4 +34,6 @@ ALTER TABLE `gaz_XXXcompany_data`
 	ADD COLUMN `dataes` MEDIUMBLOB NULL COMMENT 'consente l\'utilizzo di AES_ENCRYPT' AFTER `data`,
 	ADD COLUMN `adminid` VARCHAR(20) NOT NULL AFTER `ref`,
 	ADD COLUMN `last_modified` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP AFTER `adminid`;
+ALTER TABLE `gaz_XXXfiles`
+	ADD COLUMN `content` MEDIUMBLOB NULL COMMENT 'per contenere riferimenti o l\'intero file dentro il database, eventualemente criptato' AFTER `title`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )
