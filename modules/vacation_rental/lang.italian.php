@@ -594,6 +594,21 @@ $strScript = array(
 		'mesg' => array('La ricerca non ha dato risultati!',
             'Inserire almeno 1 carattere!',
             'Cambia fornitore'
+      ),
+    'err' => array(
+          'codice' => 'Il codice articolo &egrave; gi&agrave; esistente',
+          'movmag' => 'Si st&agrave; tentando di modificare il codice ad un articolo con dei movimenti di magazzino associati',
+          'filmim' => 'Il file dev\'essere nel formato PNG, JPG, GIF',
+          'filsiz' => 'L\'immagine non dev\'essere pi&ugrave; grande di 64Kb',
+          'valcod' => 'Inserire un codice valido',
+          'descri' => 'Inserire una descrizione',
+          'unimis' => 'Inserire l\'unit&agrave; di misura delle vendite',
+          'aliiva' => 'Inserire l\'aliquota I.V.A.',
+          'lotmag' => 'Per avere la tracciabilità per lotti è necessario attivare la contabilità di magazzino in configurazione azienda',
+          'no_ins' => 'Non sono riuscito ad inserire l\'articolo sul database',
+          'char' => 'Sul codice articolo ho sostituito i caratteri speciali non consentiti con "_" ',
+          'codart_len' => 'Il codice articolo ha una lunghezza diversa da quella stabilita in configurazione avanzata azienda ',
+          'no_web' => 'Per attivare l\'articolo nell\'e-commerce è necessario che sia inserito il riferimento ID e-commerce nella scheda magazzino'
       )
     ),
 	"admin_discount.php" =>
