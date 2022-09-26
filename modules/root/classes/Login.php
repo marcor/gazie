@@ -358,7 +358,7 @@ class Login
 				. 'SET user_password_hash = :user_password_hash, aes_key = :aes_key '
 				. 'WHERE user_name = :user_name');
 				$sth->execute([':user_name' => $user_name,':aes_key' => $ciphertext_b64,':user_password_hash' => $newhash]);
-        $this->errors[] = 'Per motivi di sicurezza GAzie ha provveduto a ricreare l\'hash della tua password ed a creare una chiave casuale per consentirti di criptare i dati sensibili.<br/>AVRAI ACCESSO AL PROSSIMO TENTATIVO';
+        $this->errors[] = 'Per motivi di sicurezza GAzie ha provveduto a ricreare l\'hash della tua password ed a creare una chiave casuale per consentirti di criptare i dati sensibili.<br/><b>AVRAI ACCESSO AL PROSSIMO TENTATIVO</b>';
       }
       // FINE PARTE DA RIMUOVE IN UN FUTURO PROSSIMO
 
