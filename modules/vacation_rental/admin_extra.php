@@ -307,33 +307,34 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     }
     $form['preve1']=$form['web_price'];// al momento, imposto il prezzo di vendita 1 uguale a quello web
     if ($toDo == 'insert') {
-		$form['codart']=substr($form['codice'],0,15);// il riferimento al codice articolo per la tabella rental_extra NB:il codice della tab artico ha 15 caratteri
-    $id_extra=gaz_dbi_table_insert('rental_extra', $form);
-		$array= array('vacation_rental'=>array('extra' => $id_extra));// creo l'array per il custom field
-		$form['custom_field'] = json_encode($array);// codifico in json  e lo inserisco nel form
-		gaz_dbi_table_insert('artico', $form);
-		if (!empty($tbt)) {
-		bodytextInsert(array('table_name_ref' => 'artico_' . $form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
-		}
+      $form['codart']=substr($form['codice'],0,32);// il riferimento al codice articolo per la tabella rental_extra NB:il codice della tab artico ha 32 caratteri
+      $id_extra=gaz_dbi_table_insert('rental_extra', $form);
+      $array= array('vacation_rental'=>array('extra' => $id_extra));// creo l'array per il custom field
+      $form['custom_field'] = json_encode($array);// codifico in json  e lo inserisco nel form
+      gaz_dbi_table_insert('artico', $form);
+      if (!empty($tbt)) {
+        bodytextInsert(array('table_name_ref' => 'artico_' . $form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
+      }
     } elseif ($toDo == 'update') {
-		$custom_field=gaz_dbi_get_row($gTables['artico'], "codice", $form['codice'])['custom_field']; // carico il vecchio json custom_field
-		$data = json_decode($custom_field,true);// trasformo il json custom_field in array
-		$where = array();
-		$where[]="id";
-		$where[]=$data['vacation_rental']['extra'];
-		gaz_dbi_table_update('rental_extra', $where, $form);// aggiorno rental extra
-		gaz_dbi_table_update('artico', $form['ref_code'], $form);// aggiorno l'artico extra
-		$bodytext = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", 'artico_' . $form['codice']);
-		if (empty($tbt) && $bodytext) {
-		  // è vuoto il nuovo ma non lo era prima, allora lo cancello
-		  gaz_dbi_del_row($gTables['body_text'], 'id_body', $bodytext['id_body']);
-		} elseif (!empty($tbt) && $bodytext) {
-		  // c'è e c'era quindi faccio l'update
-		  bodytextUpdate(array('id_body', $bodytext['id_body']), array('table_name_ref' => 'artico_' . $form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
-		} elseif (!empty($tbt)) {
-		  // non c'era lo inserisco
-		  bodytextInsert(array('table_name_ref' => 'artico_' . $form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
-		}
+      $form['codart']=substr($form['codice'],0,32);// il riferimento al codice articolo per la tabella rental_extra NB:il codice della tab artico ha 32 caratteri
+      $custom_field=gaz_dbi_get_row($gTables['artico'], "codice", $form['ref_code'])['custom_field']; // carico il vecchio json custom_field
+      $data = json_decode($custom_field,true);// trasformo il json custom_field in array
+      $where = array();
+      $where[]="id";
+      $where[]=$data['vacation_rental']['extra'];
+      gaz_dbi_table_update('rental_extra', $where, $form);// aggiorno rental extra
+      gaz_dbi_table_update('artico', $form['ref_code'], $form);// aggiorno l'artico extra
+      $bodytext = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", 'artico_' . $form['codice']);
+      if (empty($tbt) && $bodytext) {
+        // è vuoto il nuovo ma non lo era prima, allora lo cancello
+        gaz_dbi_del_row($gTables['body_text'], 'id_body', $bodytext['id_body']);
+      } elseif (!empty($tbt) && $bodytext) {
+        // c'è e c'era quindi faccio l'update
+        bodytextUpdate(array('id_body', $bodytext['id_body']), array('table_name_ref' => 'artico_' . $form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
+      } elseif (!empty($tbt)) {
+        // non c'era lo inserisco
+        bodytextInsert(array('table_name_ref' => 'artico_' . $form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
+      }
     }
     if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
           // aggiorno l'e-commerce ove presente
@@ -463,6 +464,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['total_guests'] = 0;
     $form['max_quantity'] = 0;
     $form['web_public_init'] = 0;
+    $form['web_multiplier'] = 1;
     $form['obligatory'] =0;
     $form['ref_code'] = '';
     $form['aliiva'] = $admin_aziend['preeminent_vat'];
@@ -777,7 +779,7 @@ if ($modal_ok_insert === true) {
               <div class="col-md-12">
                   <div class="form-group">
                       <label for="codice" class="col-sm-4 control-label"><?php echo $script_transl['codice']; ?></label>
-                      <input class="col-sm-4" type="text" value="<?php echo $form["codice"] ?>" name="codice"  maxlength="15" tabindex="1" >
+                      <input class="col-sm-4" type="text" value="<?php echo $form["codice"] ?>" name="codice"  maxlength="32" tabindex="1" >
                   </div>
               </div>
           </div><!-- chiude row  -->
