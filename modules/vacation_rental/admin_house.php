@@ -833,7 +833,7 @@ if ($modal_ok_insert === true) {
         $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
     }
 	if (isset($_SESSION['ok_ins'])){
-        $gForm->toast('L\'articolo ' . $_SESSION['ok_ins'].' è stato inserito con successo, sotto per modificarlo. Oppure puoi: <a class="btn btn-info" href="admin_artico.php?Insert">Inserire uno nuovo articolo</a> ' , 'alert-last-row', 'alert-success');
+        $gForm->toast('L\'articolo ' . $_SESSION['ok_ins'].' è stato inserito con successo, sotto per modificarlo. Oppure puoi: <a class="btn btn-info" href="admin_extra.php?Insert">Inserire uno nuovo articolo</a> ' , 'alert-last-row', 'alert-success');
 		unset($_SESSION['ok_ins']);
 	}
     if ($toDo == 'insert') {

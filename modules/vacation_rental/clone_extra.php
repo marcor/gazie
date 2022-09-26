@@ -43,7 +43,7 @@ if (!isset($_POST['ritorno'])) {
 
 if (isset($_GET['codice']) and ! isset($_POST['back'])) {
     $new_codice = substr($_GET['codice'], 0, 30) . '_2';
-    // controllo che l'articolo non sia stato già duplicato
+    // controllo che l'articolo con il codice creato automaticamente non esista già
     $rs_articolo = gaz_dbi_dyn_query('codice', $gTables['artico'], "codice = '" . $new_codice . "'", "codice DESC", 0, 1);
     $risultato = gaz_dbi_fetch_array($rs_articolo);
     if ($risultato) {
@@ -55,13 +55,19 @@ if (isset($_GET['codice']) and ! isset($_POST['back'])) {
         echo "<input type=\"submit\" value=\"Torna indietro\" name=\"back\"></div>\n";
         echo "</form>\n";
         require("../../library/include/footer.php");
-    } else { // se non è mai stato duplicato posso farlo
+    } else { // se non esiste posso duplicare
         $originalArtico = gaz_dbi_get_row($gTables['artico'], 'codice', substr($_GET['codice'], 0, 32)); //prelevo l'originale
         $originalRentaExtra = gaz_dbi_get_row($gTables['rental_extra'], 'codart', substr($_GET['codice'], 0, 32)); //prelevo l'originale
+        $originalRentaExtra['codart'] = $new_codice;
+        $id_extra=gaz_dbi_table_insert('rental_extra', $originalRentaExtra);
+
+        //$data = json_decode($originalArtico['custom_field'],true);// trasformo il json custom_field in array. NB: al momento questa riga non serve ma potrà servire in futuro qualora il custom field contenesse altri dati
+        $array= array('vacation_rental'=>array('extra' => $id_extra));// creo l'array per il custom field
+        $originalArtico['custom_field'] = json_encode($array);// codifico in json  e lo inserisco nel form
+
         $originalArtico['codice'] = $new_codice;
         gaz_dbi_table_insert('artico', $originalArtico);
-        $originalRentaExtra['codart'] = $new_codice;
-        gaz_dbi_table_insert('rental_extra', $originalRentaExtra);
+
         header("Location: admin_extra.php?codice=" . $new_codice . "&Update");
         exit;
     }

@@ -299,7 +299,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         }
       }
     }
-
+//echo "<pre>",print_r($form);die;
     // se esiste un json per l'attributo della variante dell'e-commerce creo il json
     if (isset ($form['var_id']) && isset ($form['var_name'])){
       $arrayvar= array("var_id" => intval($form['var_id']), "var_name" => strval($form['var_name']));
@@ -414,7 +414,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 			$form['var_name'] = "";
 		}
 	}
-    $form['ref_code'] = $form['codice'];
+    $form['ref_code'] = $form['codice'];// tengo il codice articolo originario nel caso venisse modificato
     // i prezzi devono essere arrotondati come richiesti dalle impostazioni aziendali
     $form["preacq"] = number_format($form['preacq'], $admin_aziend['decimal_price'], '.', '');
     $form["preve1"] = number_format($form['preve1'], $admin_aziend['decimal_price'], '.', '');
