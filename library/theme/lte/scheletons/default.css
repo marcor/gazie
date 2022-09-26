@@ -129,14 +129,15 @@ select {
 }
 
 .form-horizontal .form-group {
-    margin-right: 0px;
-    margin-left: 0px;
+  margin-right: 0px;
+  margin-left: 0px;
 	padding-top: 0px;
 	padding-bottom: 0px;
 }
 
 .form-group {
-	margin-bottom: 5px;
+	margin-top: 8px;
+	margin-bottom: 8px;
 }
 div .panel.panel-default {
 	padding-top: 8px;

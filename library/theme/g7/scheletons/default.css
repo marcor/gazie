@@ -560,9 +560,9 @@ label {
 
 .form-horizontal .form-group .text-left,
 .form-horizontal .form-group label {
-    margin: 3px 0px 0px 0px;
-    padding: 2px 2px 2px 2px;
-    font-size: 80%;
+  margin: 3px 0px 0px 0px;
+  padding: 2px 2px 2px 2px;
+  font-size: 80%;
 }
 
 .form-control {
@@ -570,7 +570,8 @@ label {
 }
 
 .form-group {
-    margin-bottom: 7px;
+	margin-top: 8px;
+  margin-bottom: 8px;
 }
 .container-fluid > .navbar-header {
     margin-right: -10px;

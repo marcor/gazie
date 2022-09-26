@@ -61,22 +61,6 @@ table.selectTable td {
 .dispari {
 	background-color : #b8dcb7;
 }
-.FacetDataTDevidenziaOK {
-	background-color : #FFE13C;
-	color : #000000;
-}
-.FacetDataTDevidenziaCL {
-	background-color : #00FF3C;
-	color : #000000;
-}
-.FacetDataTDevidenziaBL {
-	background-color : #AAAAFF;
-	color : #000000;
-}
-.FacetDataTDevidenziaKO {
-	background-color : #FF8888;
-	color : #000000;
-}
 .FacetDataTDred {
 	background-color: #F955162E;
 	color: #FF0000;
