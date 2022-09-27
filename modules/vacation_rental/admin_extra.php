@@ -123,7 +123,21 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
   $form['var_id'] = (isset($_POST['var_id']))?$_POST['var_id']:'';
   $form['var_name'] = (isset($_POST['var_name']))?$_POST['var_name']:'';
   $form['ref_code'] = substr($_POST['ref_code'], 0,32);
-  $form['rif_facility'] = substr($_POST['rif_facility'], 0,9);
+  $form['rif_facility'] = $_POST['rif_facility'];
+  if (isset($_POST['facility']) && intval($_POST['facility'])>0){// se è stato richiesto di aggiungere una struttura
+    if (strlen($form['rif_facility'])>0){
+      $comma=",";
+    }else{
+      $comma="";
+    }
+    $form['rif_facility']=$form['rif_facility'].$comma.$_POST['facility'];// la aggiungo alla stringa
+  }
+  if (isset($_POST['del_rif_fac'])){// se è stato richiesto di cancellare una struttura a riferimento
+    $form['rif_facility']=explode(',',$form['rif_facility']);
+    unset ($form['rif_facility'][$_POST['del_rif_fac']]);
+    $form['rif_facility']=implode(',',$form['rif_facility']);
+  }
+  $form['facility'] = '';
   // i prezzi devono essere arrotondati come richiesti dalle impostazioni aziendali
   $form["preacq"] = number_format($form['preacq'], $admin_aziend['decimal_price'], '.', '');
   $form["preve1"] = number_format($form['preve1'], $admin_aziend['decimal_price'], '.', '');
@@ -389,7 +403,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	$data = json_decode($form1['custom_field'],true);// trasformo il json custom_field in array
 	$form2 = gaz_dbi_get_row($gTables['rental_extra'], 'id', substr($data['vacation_rental']['extra'],0,32));
 	$form= array_merge($form1, $form2);
-	unset ($form1);unset ($form2);
+  $form['facility']='';
+  unset ($form1);unset ($form2);
 	$query = "SELECT * FROM " . $gTables['rental_ical'] . " WHERE codice_alloggio = '".substr($_GET['codice'],0,32)."' ORDER BY id ASC";
 	$resical = gaz_dbi_query($query);
     /** ENRICO FEDELE */
@@ -459,6 +474,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['mod_prezzo'] = '';
     $form['rif_alloggio'] = '';
     $form['rif_facility'] = '';
+    $form['facility']='';
     $form['adult'] = 1;
     $form['child'] = 0;
     $form['total_guests'] = 0;
@@ -830,11 +846,33 @@ $(document).ready(function(){
         <div class="row">
             <div class="col-md-12">
                 <div class="form-group">
-                    <label for="struttura" class="col-sm-4 control-label">Riferimento struttura</label>
+                    <label for="struttura" class="col-sm-4 control-label">Riferimento esclusivo alle strutture:</label>
+                    <input type="hidden" name="rif_facility" value="<?php echo $form['rif_facility']; ?>" />
                   <?php
-                  $gForm->selectFromDB('artico_group', 'rif_facility', 'id_artico_group', $form['rif_facility'], false, 1, ' - ', 'descri', '', 'col-sm-4', null, 'style="max-width: 150px;"');
+                  if (strlen($form['rif_facility'])>0){
+                    $form['rif_facility']=explode(',',$form['rif_facility']);// trasformo gli eventuali riferimenti a strutture in array
+                    $n=0;
+                    foreach($form['rif_facility'] AS $facil){
+                      ?>
+                      <label>
+                      <?php echo "ID struttura: ", $facil;?>
+                      </label>
+                      <button class="btn btn-xs btn-default" type="submit" value="<?php echo $n;?>" name="del_rif_fac" title="Togli questa struttura ID<?php echo $facil;?>">
+                           <span class="glyphicon glyphicon-trash"></span>
+                      </button>
+                      <?php
+                      $n++;
+                    }
+                  }
+                  $gForm->selectFromDB('artico_group', 'facility', 'id_artico_group', $form['facility'], false, 1, ' - ', 'descri', TRUE, 'col-sm-4', null, 'style="max-width: 150px;"');
                   ?>
-                  Sarà esclusivo per la struttura selezionata; lasciare vuoto per tutte le strutture
+                  Lasciare vuoto per tutte le strutture
+
+                </div>
+                <div class="form-group">
+                <?php
+
+                ?>
                 </div>
             </div>
         </div><!-- chiude row  -->

@@ -1,3 +1,4 @@
+
 <?php
 /*
   --------------------------------------------------------------------------
@@ -2696,8 +2697,7 @@ echo '<div class="fissa" ><div class="FacetSeparatorTD" align="center">Inserimen
 								<tr>
 								<td colspan="2">
 								<?php
-
-								selectFromDBJoin($gTables['artico'].' LEFT JOIN '.$gTables['rental_extra'].' ON '.$gTables['artico'].'.codice = '.$gTables['rental_extra'].'.codart', 'extra[]','codice', ((isset($form['extra'][$ex]))?$form['extra'][$ex]:''), 'codice', 1, ' - ','descri','TRUE','FacetSelect' , null, '',"(".$gTables['artico'].".custom_field REGEXP 'extra') AND (".$gTables['rental_extra'].".rif_alloggio ='".$row['codart']."' OR ".$gTables['rental_extra'].".rif_alloggio = '') AND (".$gTables['rental_extra'].".rif_facility =".$row['facility_id']." OR ".$gTables['rental_extra'].".rif_facility = 0) AND ((".$gTables['artico'].".ref_ecommerce_id_product <> '' AND ".$gTables['artico'].".web_public BETWEEN 1 AND 4) OR (".$gTables['artico'].".ref_ecommerce_id_product = '' AND ".$gTables['artico'].".web_public =0))");
+								selectFromDBJoin($gTables['artico'].' LEFT JOIN '.$gTables['rental_extra'].' ON '.$gTables['artico'].'.codice = '.$gTables['rental_extra'].'.codart', 'extra[]','codice', ((isset($form['extra'][$ex]))?$form['extra'][$ex]:''), 'codice', 1, ' - ','descri','TRUE','FacetSelect' , null, '',"(".$gTables['artico'].".custom_field REGEXP 'extra') AND (".$gTables['rental_extra'].".rif_alloggio ='".$row['codart']."' OR ".$gTables['rental_extra'].".rif_alloggio = '') AND (find_in_set(".$row['facility_id'].",".$gTables['rental_extra'].".rif_facility)>0 OR ".$gTables['rental_extra'].".rif_facility = '') AND ((".$gTables['artico'].".ref_ecommerce_id_product <> '' AND ".$gTables['artico'].".web_public BETWEEN 1 AND 4) OR (".$gTables['artico'].".ref_ecommerce_id_product = '' AND ".$gTables['artico'].".web_public =0))");
 								?>
 								</td>
 
