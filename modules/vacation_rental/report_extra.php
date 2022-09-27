@@ -38,7 +38,7 @@ $firstpart_ical_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']!='off') ? '
 $search_fields = [
     'sea_codice' => "{$gTables['artico']}.codice LIKE '%%%s%%'",
 	'des_artico' => "{$gTables['artico']}.descri LIKE '%%%s%%'",
-
+  'des_facility' => "{$gTables['rental_extra']}.rif_facility LIKE '%%%s%%'",
     'asset' => "id_assets = %d",
     'codcat' => "{$gTables['catmer']}.codice = %d",
 ];
@@ -62,7 +62,7 @@ $sortable_headers = array  (
             'Elimina' => ''
 );
 
-$tablejoin = $gTables['artico']. " LEFT JOIN " . $gTables['catmer'] . " ON " . $gTables['artico'] . ".catmer = " . $gTables['catmer'] . ".codice" ;
+$tablejoin = $gTables['artico']. " LEFT JOIN " . $gTables['catmer'] . " ON " . $gTables['artico'] . ".catmer = " . $gTables['catmer'] . ".codice LEFT JOIN " . $gTables['rental_extra'] . " ON " . $gTables['artico'] . ".codice = " . $gTables['rental_extra'] . ".codart " ;
 
 $ts = new TableSorter(
     $tablejoin,
@@ -259,6 +259,8 @@ $ts->output_navbar();
 		<td class="FacetFieldCaptionTD">
         </td>
     <td class="FacetFieldCaptionTD">
+      <input type="text" name="des_facility" placeholder="ID struttura"  id="suggest_facility_artico" class="input-sm form-control" value="<?php echo (isset($des_facility))? htmlentities($des_facility, ENT_QUOTES) : ""; ?>" maxlength="30">
+
         </td>
 		<td class="FacetFieldCaptionTD">
         <?php gaz_flt_disp_select("codcat", $gTables['catmer'].".codice AS codcat, ". $gTables['catmer'].".descri AS descat", $tablejoin, 1,'codcat ASC','descat'); ?>
@@ -284,16 +286,19 @@ echo '</tr>';
 $show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
 $tipo_composti = gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti');
 while ($r1 = gaz_dbi_fetch_array($result)) {
-
 			$data = json_decode($r1['custom_field'],true);// trasformo il json custom_field in array
-			$r2 = gaz_dbi_get_row($gTables['rental_extra']." LEFT JOIN " . $gTables['artico_group'] . " ON " . $gTables['rental_extra'] . ".rif_facility = " . $gTables['artico_group'] . ".id_artico_group", 'id', $data['vacation_rental']['extra'],'',$gTables['rental_extra'].'.*, '.$gTables['artico_group'].'.descri as facility_descri');
+      $r2 = gaz_dbi_get_row($gTables['rental_extra'], 'id', $data['vacation_rental']['extra']);
+      $rif_facility_arr = explode(',',$r2['rif_facility']);
+      foreach($rif_facility_arr as $facil){
+        if (intval($facil)>0){
+          $r2['riffacility'][$facil]=gaz_dbi_get_row($gTables['artico_group'], 'id_artico_group', $facil)['descri'];
+        }else{
+          $r2['riffacility'][$facil]='';
+        }
+      }
 			$r=array_merge($r1,$r2);
-
 			$r['accommodation_type'] = "";
-
-
 			$class = 'success';
-
 			// contabilizzazione magazzino
 			$com = '';
 			if ($admin_aziend['conmag'] > 0 && $r["good_or_service"] != 1 && $tipo_composti['val']=="STD") {
@@ -355,7 +360,12 @@ while ($r1 = gaz_dbi_fetch_array($result)) {
 			echo "</td>\n";
 			echo '<td class="text-center">'.$r['rif_alloggio'];
 			echo "</td>\n";
-      echo '<td class="text-center">'.$r['rif_facility']."-".$r['facility_descri'];
+      echo '<td class="text-center">';
+       if (count($r['riffacility'])>0){
+         foreach ( $r['riffacility'] as $key => $val){
+           echo $key," - ",$val,"  ";
+         }
+       }
 			echo "</td>\n";
 			echo "</td>\n";
 			echo '<td class="text-center">'.$r['catmer'].'-'.$r['descat'];
