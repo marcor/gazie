@@ -51,12 +51,12 @@ if ($admin_aziend['lang']=="italian"){
 $sortable_headers = array  (
             "Codice" => 'codice',
             "Descrizione"=>'descri',
+            'Prezzo' => '',
             "Modalità prezzo" => 'accommodation_type',
 			"Alloggio di appartenenza" => '',
       "Struttura di appartenenza" => '',
             "Categoria" => 'catmer',
 			"Icalendar url"=>'',
-            'Prezzo' => '',
 			'Disponibilità' => '',
             'Duplica' => '',
             'Elimina' => ''
@@ -258,6 +258,7 @@ $ts->output_navbar();
         </td>
 		<td class="FacetFieldCaptionTD">
         </td>
+    <td class="FacetFieldCaptionTD"></td>
     <td class="FacetFieldCaptionTD">
       <input type="text" name="des_facility" placeholder="ID struttura"  id="suggest_facility_artico" class="input-sm form-control" value="<?php echo (isset($des_facility))? htmlentities($des_facility, ENT_QUOTES) : ""; ?>" maxlength="30">
 
@@ -266,7 +267,7 @@ $ts->output_navbar();
         <?php gaz_flt_disp_select("codcat", $gTables['catmer'].".codice AS codcat, ". $gTables['catmer'].".descri AS descat", $tablejoin, 1,'codcat ASC','descat'); ?>
         </td>
 
-		<td class="FacetFieldCaptionTD"></td>
+
 		<td class="FacetFieldCaptionTD" colspan="7">
 			<input type="submit" class="btn btn-sm btn-default" name="search" value="<?php echo $script_transl['search'];?>" onClick="javascript:document.report.all.value=1;">
 			<a class="btn btn-sm btn-default" href="?">Reset</a>
@@ -336,6 +337,8 @@ while ($r1 = gaz_dbi_fetch_array($result)) {
 			echo '</td>';
 			echo '<td><span class="gazie-tooltip" data-type="product-thumb" data-id="'. $r['codice'] .'" data-title="'. $r['annota'].'" >'.get_string_lang($r['descri'], $lang).'</span>';
 			echo "</td>\n";
+      echo '<td class="text-center">'.$admin_aziend['symbol']," ",gaz_format_quantity($r['web_price'],1,$admin_aziend['decimal_price']);
+			echo "</td>\n";
 			echo '<td class="text-center">';
 			switch($r['mod_prezzo']){// 0 => 'a prenotazione', 1 => 'a persona', 2 => 'a notte', 3 => 'a persona e a notte, 4 => 'cadauno'
 				case "0":
@@ -383,8 +386,7 @@ while ($r1 = gaz_dbi_fetch_array($result)) {
       }else{
         echo "<td></td>";
       }
-			echo '<td class="text-center">'.$r['web_price'];
-			echo "</td>\n";
+
       if ($r['max_quantity']>0){
 			echo '<td class="text-center"><a class="btn btn-xs btn-default" style="cursor:pointer;" onclick="openframe(\'extra_availability.php?extra_code='.$r["codice"].'\',\'Calendario disponibilità extra: <b>'.$r["codice"].'</b>\')" data-toggle="modal" data-target="#iframe"> <i class="glyphicon glyphicon-calendar" title="Calendario della disponibilità degli extra"></i></a>';
 			echo "</td>\n";

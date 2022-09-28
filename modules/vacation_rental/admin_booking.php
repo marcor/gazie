@@ -136,7 +136,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['end'] = $_POST['end'];
     $form['adult'] = $_POST['adult'];
     $form['child'] = $_POST['child'];
-
+    $gen_iva_perc =  $_POST['gen_iva_perc'];
     $form['extra'] = (isset($_POST['extra']))?$_POST['extra']:array();
     $form['qtaextra'] = (isset($_POST['qtaextra']))?$_POST['qtaextra']:0;
     $form['print_total'] = intval($_POST['print_total']);
@@ -887,6 +887,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
       if (isset($_POST['in_submit']) && strlen($form['in_codart'])>0 && $form['start']!="" && $form['end']!=""){// se è un alloggio e ci sono le date CALCOLO IL PREZZO
         $total_price=0;// inizializzo calcolo del prezzo totale della locazione
         $start=$form['start'];
+        $gen_iva_perc = gaz_dbi_get_row($gTables['aliiva'], 'codice', $artico['aliiva'])['aliquo'];
         $night=0;
         while (strtotime($start) < strtotime($form['end'])) {// ciclo il periodo della locazione giorno per giorno
           // Controllo disponibilità
@@ -906,8 +907,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
           $result = gaz_dbi_dyn_query($what, $table, $where);
           $prezzo = gaz_dbi_fetch_array($result);
           if (isset($prezzo) && $ivac=="si"){// se i prezzi nel calendario sono iva compresa
-            $iva_perc = gaz_dbi_get_row($gTables['aliiva'], 'codice', $artico['aliiva'])['aliquo'];
-            $prezzo['title']=floatval($prezzo['title'])/floatval("1.".$iva_perc); // scorporo l'iVA
+
+            $prezzo['title']=floatval($prezzo['title'])/floatval("1.".$gen_iva_perc); // scorporo l'iVA
           }
           if (isset($prezzo)){
             $total_price += floatval($prezzo['title']);// aggiungo il prezzo giornaliero trovato
@@ -1240,6 +1241,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['rows'][$next_row]['codric'] = $artico['codcon'];
                     $form['in_codric'] = $artico['codcon'];
                 }
+                if (intval($form['id_agente'])>0){// se c'è un proprietario (visto che gli extra possono essere in comune fra i vari proprietari)
+                  if (floatval($gen_iva_perc)==0){// e se l'IVA dell'alloggio è zero, vuol dire che il proprietario è un privato
+                    $form['rows'][$next_row]['prelis'] = $form['rows'][$next_row]['prelis'] + (($form['rows'][$next_row]['prelis']*$form['rows'][$next_row]['pervat'])/100);// ci aggiungo l'IVA
+                    $form['rows'][$next_row]['pervat']=0;// e forzo la percentuale iva dell'extra a zero
+                    echo "passato pippo";
+                  }
+                }
                 $mv = $upd_mm->getStockValue(false, $form['in_codart'], $form['annemi'] . '-' . $form['mesemi'] . '-' . $form['gioemi'], $admin_aziend['stock_eval_method']);
                 $magval = array_pop($mv);
                 $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
@@ -1506,6 +1514,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $id_des = $anagrafica->getPartner($tesbro['id_des']);
     $form['id_tes'] = intval($_GET['id_tes']);
     $form['hidden_req'] = '';
+    $gen_iva_perc = 0;
     // inizio rigo di input
     $form['in_descri'] = "";
     $form['in_tiprig'] = 0;
@@ -1724,6 +1733,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     } else {
         $form['tipdoc'] = $_GET['tipdoc'];
     }
+    $gen_iva_perc = 0;
     $form['id_tes'] = "";
     $form['start'] = "";
     $form['end'] = "";
@@ -1982,6 +1992,7 @@ echo "<form method=\"POST\" name=\"broven\" enctype=\"multipart/form-data\">\n";
 $gForm = new venditForm();
 echo '	<input type="hidden" name="' . ucfirst($toDo) . '" value="" />
 		<input type="hidden" value="' . $form['id_tes'] . '" name="id_tes" />
+    <input type="hidden" value="' . $gen_iva_perc . '" name="gen_iva_perc" />
 		<input type="hidden" value="' . $form['indspe'] . '" name="indspe" />
 		<input type="hidden" value="' . $form['tipdoc'] . '" name="tipdoc" />
 		<input type="hidden" value="' . $form['ritorno'] . '" name="ritorno" />
@@ -2679,20 +2690,15 @@ echo '<div class="fissa" ><div class="FacetSeparatorTD" align="center">Inserimen
 					<td colspan="4" class="FacetFieldCaptionTD text-center">Seleziona un extra</td>
 				</tr>
 				<tr>
-
-
 						<?php //
             $ex=0;
 						foreach($form['rows'] as $row){
-
 							if (isset ($row['accommodation_type']) && $row['accommodation_type']>2){// è un alloggio (1=extra)
 								?>
 								<tr>
 
-
 								<td colspan="4" class="FacetFieldCaptionTD text-left"><?php echo "Alloggio ",$row['codart']; ?>
 								</td>
-
 								</tr>
 								<tr>
 								<td colspan="2">
@@ -2700,7 +2706,6 @@ echo '<div class="fissa" ><div class="FacetSeparatorTD" align="center">Inserimen
 								selectFromDBJoin($gTables['artico'].' LEFT JOIN '.$gTables['rental_extra'].' ON '.$gTables['artico'].'.codice = '.$gTables['rental_extra'].'.codart', 'extra[]','codice', ((isset($form['extra'][$ex]))?$form['extra'][$ex]:''), 'codice', 1, ' - ','descri','TRUE','FacetSelect' , null, '',"(".$gTables['artico'].".custom_field REGEXP 'extra') AND (".$gTables['rental_extra'].".rif_alloggio ='".$row['codart']."' OR ".$gTables['rental_extra'].".rif_alloggio = '') AND (find_in_set(".$row['facility_id'].",".$gTables['rental_extra'].".rif_facility)>0 OR ".$gTables['rental_extra'].".rif_facility = '') AND ((".$gTables['artico'].".ref_ecommerce_id_product <> '' AND ".$gTables['artico'].".web_public BETWEEN 1 AND 4) OR (".$gTables['artico'].".ref_ecommerce_id_product = '' AND ".$gTables['artico'].".web_public =0))");
 								?>
 								</td>
-
 								<td colspan="1" class="FacetFieldCaptionTD text-right">Quantità
 								</td>
 									<td colspan="1" class="FacetDataTD">
@@ -2713,12 +2718,9 @@ echo '<div class="fissa" ><div class="FacetSeparatorTD" align="center">Inserimen
 								<?php
                 $ex++;
 							}
-
 						}
 						?>
-
 				</tr>
-
 			</table>
 		</div>
 	</div>

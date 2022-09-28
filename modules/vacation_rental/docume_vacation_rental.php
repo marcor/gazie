@@ -56,8 +56,8 @@ $admin_aziend=checkAdmin(9);
         <ul>
           <li>Gestione degli alloggi e delle strutture</li>
           <li>Gestione delle prenotazioni</li>
-          <li>Gestione degli extra (anche con quantità limitate) della tassa di soggiorno turistica, della caparra confirmatoria e del deposito cauzionale</li>
-          <li>Calendario delle disponibilità</li>
+          <li>Gestione degli extra (anche con quantità limitate), della tassa di soggiorno turistica, della caparra confirmatoria e del deposito cauzionale</li>
+          <li>Calendario delle disponibilità degli alloggi e degli extra se con quantità limitate</li>
           <li>Creazione e stampa o invio via e-mail del PDF della prenotazione</li>
           <li>Creazione e stampa o invio via e-mail del PDF del contratto di locazione</li>
           <li>Gestione di alloggi con proprietario diverso dall'azienda di GAzie (contratto di locazione specifico)</li>
@@ -74,7 +74,7 @@ $admin_aziend=checkAdmin(9);
         <li>Gestione degli alloggi e delle strutture</li>
         <li>Gestione delle prenotazioni</li>
         <li>Gestione degli extra (anche con quantità limitate), della tassa di soggiorno turistica, della caparra confirmatoria e del deposito cauzionale</li>
-        <li>Calendario delle disponibilità</li>
+        <li>Calendario delle disponibilità degli alloggi e degli extra se con quantità limitate</li>
         <li>Creazione e stampa o invio via e-mail del PDF della prenotazione</li>
         <li>Creazione e stampa o invio via e-mail del PDF del contratto di locazione</li>
         <li>Gestione del Calendario dei prezzi giornalieri per ogni singolo alloggio</li>
@@ -96,6 +96,7 @@ $admin_aziend=checkAdmin(9);
       </ul>
       <p>Per la versione PRO contattare lo sviluppatore: Antonio Germani Massignano (AP) https://www.programmisitiweb.lacasettabio.it - telefono +39 340 50 11 912</p>
       <p><h3>Sito demo per testare il lato cliente su un sito Joomla di esempio: https://tony.netsons.org/index.php/it/</h3></p>
+      <p><h3>Per il sito demo gestionale (GAzie) contattare lo sviluppatore per avere senza impegno le chiavi di accesso test</h3></p>
     </div>
 	</div>
 </div>
