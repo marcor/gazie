@@ -583,7 +583,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					$sconti_forfait=array();
 					$sconto_maggiorazione=$item->getElementsByTagName("ScontoMaggiorazione");
 					foreach ($sconto_maggiorazione as $sconti) { // potrei avere più elementi 2.2.1.10 <ScontoMaggiorazione>
-						if ($form['rows'][$nl]['prelis'] < 0.00001) { // se trovo l'elemento 2.2.1.9 <PrezzoUnitario> a zero calcolo lo sconto a forfait
+						if ($form['rows'][$nl]['prelis'] < 0.00000001) { // se trovo l'elemento 2.2.1.9 <PrezzoUnitario> a zero calcolo lo sconto a forfait
 							$sconti_forfait[]=($sconti->getElementsByTagName('Tipo')->item(0)->nodeValue == 'SC' ? -$sconti->getElementsByTagName('Importo')->item(0)->nodeValue : $sconti->getElementsByTagName('Importo')->item(0)->nodeValue);
 						} elseif ($sconti->getElementsByTagName("Importo")->length >= 1 && $item->getElementsByTagName('Importo')->item(0)->nodeValue >= 0.00001){
 							// calcolo la percentuale di sconto partendo dall'importo del rigo e da quello dello sconto, il funzionamento di GAzie prevede la percentuale e non l'importo dello sconto
@@ -620,7 +620,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 
 				// tengo traccia del NumeroLinea e se il rigo è descrittivo
 				$form['rows'][$nl]['numrig'] = $item->getElementsByTagName('NumeroLinea')->item(0)->nodeValue;
-				$form['rows'][$nl]['is_descri'] = ($form['rows'][$nl]['prelis']<0.00001)?1:false;
+				$form['rows'][$nl]['is_descri'] = ($form['rows'][$nl]['prelis']<0.00000001)?1:false;
 
 				$tot_imponi += $form['rows'][$nl]['amount'];
 				if (!empty($form['rows'][$nl]) && !empty($form['rows'][$max_val_linea]) && $form['rows'][$nl]['amount']>$form['rows'][$max_val_linea]['amount']){ // è una linea con valore più alto delle precedenti faccio il push
@@ -1037,7 +1037,6 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 						$kp = $kn-1;
 					}
 				}
-
 				$totdiff=abs($ImponibileImporto-$tot_imponi);
 				// Infine aggiungo un eventuale differenza di centesimo di imponibile sul rigo di maggior valore, questo succede perché il tracciato non è rigoroso nei confronti dell'importo totale dell'elemento
 				if ($totdiff>=0.01){ // qualora ci sia una differenza di almeno 1 cent la aggiunto (o lo sottraggo al rigo di maggior valore
@@ -1226,7 +1225,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 
 				foreach ($form['rows'] as $i => $v) { // inserisco i righi
           $form['rows'][$i]['status']="INSERT";
-					if (abs($v['prelis'])<0.00001) { // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo
+					if (abs($v['prelis'])<0.00000001) { // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo
 						$form['rows'][$i]['tiprig']=2;
 					}
 					if ($form['tipdoc']=="AFC" && $ImportoTotaleDocumento <= -0.01 ) { // capita a volte che dei software malfatti sulle note credito indichino i valori in negativo... allora per renderli compatibili con la contabilizzazione di GAzie invertiamo il segno
@@ -1603,7 +1602,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
 				$codvat_dropdown = $gForm->selectFromDB('aliiva', 'codvat_'.$k, 'codice', $form['codvat_'.$k], 'aliquo', true, '-', 'descri', '', 'col-sm-12 small', null, 'style="max-width: 350px;"', false, true);
 				$codart_select = $gForm->concileArtico('codart_'.$k,(isset($form['search_codart_'.$k]))?$form['search_codart_'.$k]:'',$form['codart_'.$k]);
 				//forzo i valori diversi dalla descrizione a vuoti se è descrittivo
-				if (abs($v['prelis'])<0.00001){ // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo
+				if (abs($v['prelis'])<0.00000001){ // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo
 					$v['codice_fornitore'] = '';
 					$v['unimis'] = '';
 					$v['quanti'] = '';
