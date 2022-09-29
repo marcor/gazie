@@ -249,7 +249,8 @@ $strScript = array(
         'access1' => '<p>Le inviamo, in allegato, una copia della sua prenotazione</p><p>Per accedere alla prenotazione online e controllarne stato e pagamento usi questo link',
         'access2' => 'e i seguenti codici di accesso',
         'booking_number' => 'Numero prenotazione',
-        'best_regards' => 'Grazie, cordiali saluti'
+        'best_regards' => 'Grazie, cordiali saluti',
+		'on_behalf' => 'Locazione effettuata per conto del '
     ),
     "admin_house.php" =>
       array('title' => 'Gestione degli alloggi',

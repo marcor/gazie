@@ -378,7 +378,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 /* Solo se non sono in finestra modale carico il file di lingua del modulo */
 if ($modal === false) {
     require("../../library/include/header.php");
-    $script_transl = HeadMain(0, array('custom/autocomplete'));
+    $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup','custom/autocomplete'));
+
 } else {
     $script = basename($_SERVER['PHP_SELF']);
     require("../../language/" . $admin_aziend['lang'] . "/menu.inc.php");
@@ -439,7 +440,19 @@ function groupErase(group,descri){
 		  }
 		});
 }
+$(function () {
+$(".DateTextBox.NoYear").datepicker();
+$(".DateTextBox.NoYear").datepicker("option", "dateFormat", "dd-mm");
+$("#datepicker_from").datepicker("setDate", "<?php echo $form['tour_tax_from']; ?>");
+$("#datepicker_to").datepicker("setDate", "<?php echo $form['tour_tax_to']; ?>");
+});
 </script>
+<style type="text/css">
+.ui-datepicker-year
+{
+ display:none;
+}
+</style>
 <form method="POST" name="form" enctype="multipart/form-data" id="add-product">
 	<?php
 	if (!empty($form['descri'])) $form['descri'] = htmlentities($form['descri'], ENT_QUOTES);
@@ -615,7 +628,8 @@ function groupErase(group,descri){
                 <div class="col-md-12">
                   <div class="form-group">
                     <label for="limit-tour-tax-from" class="col-sm-4 control-label">Tassa turistica a partire dal</label>
-                    <input class="col-sm-8" type="date" value="<?php echo $form['tour_tax_from']; ?>" name="tour_tax_from"  />
+
+                    <input type="text" id="datepicker_from" class="col-sm-8 DateTextBox NoYear" name="tour_tax_from" />
                   </div>
                 </div>
 							</div><!-- chiude row  -->
@@ -623,7 +637,8 @@ function groupErase(group,descri){
                 <div class="col-md-12">
                   <div class="form-group">
                     <label for="limit-tour-tax-to" class="col-sm-4 control-label">Tassa turistica fino al</label>
-                    <input class="col-sm-8" type="date" value="<?php echo $form['tour_tax_to']; ?>" name="tour_tax_to"  />
+
+                    <input type="text" id="datepicker_to" class="col-sm-8 DateTextBox NoYear" name="tour_tax_to" />
                   </div>
                 </div>
 							</div><!-- chiude row  -->

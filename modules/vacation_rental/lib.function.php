@@ -174,9 +174,12 @@ function get_string_lang($string, $lang){
 
 // calcolo dei giorni da pagare per la tassa turistica
 function tour_tax_daytopay($night,$start,$end,$tour_tax_from,$tour_tax_to,$tour_tax_day){
+  $tour_tax_from=$tour_tax_from."-".substr($start,0,4); // aggiungo l'anno all'inizio pagamento tassa turistica
+  $tour_tax_to=$tour_tax_to."-".substr($end,0,4); // aggiungo l'anno alla fine pagamento tassa turistica
 
   $daytopay=intval($night);
   if (strtotime($tour_tax_from)){// se è stato impostato un periodo specifico per la tassa turistica
+
     if (strtotime($start)>= strtotime($tour_tax_from) && strtotime($start)<= strtotime($tour_tax_to)){// se la data di inizio è dentro al periodo tassa turistica
 
      if (strtotime($end) > strtotime($tour_tax_to)){// se la fine prenotazione va fuori dal periodo tassa turistica
@@ -206,6 +209,7 @@ function tour_tax_daytopay($night,$start,$end,$tour_tax_from,$tour_tax_to,$tour_
   if (intval($tour_tax_day) >0 && intval($daytopay) > intval($tour_tax_day)){// se è stato impostato un numero massimo di giorni e i giorni da pagare sono di più di quelli pagabili, li riduco
     $daytopay=$tour_tax_day;
   }
+
   return $daytopay;
 }
 
