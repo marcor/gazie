@@ -174,8 +174,9 @@ function get_string_lang($string, $lang){
 
 // calcolo dei giorni da pagare per la tassa turistica
 function tour_tax_daytopay($night,$start,$end,$tour_tax_from,$tour_tax_to,$tour_tax_day){
-  $tour_tax_from=$tour_tax_from."-".substr($start,0,4); // aggiungo l'anno all'inizio pagamento tassa turistica
-  $tour_tax_to=$tour_tax_to."-".substr($end,0,4); // aggiungo l'anno alla fine pagamento tassa turistica
+
+  $tour_tax_from=$tour_tax_from."-".date("Y", strtotime($start)); // aggiungo l'anno all'inizio pagamento tassa turistica
+  $tour_tax_to=$tour_tax_to."-".date("Y", strtotime($start)); // aggiungo l'anno alla fine pagamento tassa turistica
 
   $daytopay=intval($night);
   if (strtotime($tour_tax_from)){// se è stato impostato un periodo specifico per la tassa turistica
@@ -184,10 +185,9 @@ function tour_tax_daytopay($night,$start,$end,$tour_tax_from,$tour_tax_to,$tour_
 
      if (strtotime($end) > strtotime($tour_tax_to)){// se la fine prenotazione va fuori dal periodo tassa turistica
          $diff=date_diff(date_create($tour_tax_to),date_create($start));
+
          $daytopay= $diff->format("%a");
-         if ($daytopay==0){// se sono uguali pago una sola notte
-           $daytopay=1;
-         }
+
       }else{// se la fine prenotazione è dentro al periodo tassa turistica
         $diff=date_diff(date_create($end),date_create($start));
         $daytopay= $diff->format("%a");
@@ -196,9 +196,7 @@ function tour_tax_daytopay($night,$start,$end,$tour_tax_from,$tour_tax_to,$tour_
       if (strtotime($end) >= strtotime($tour_tax_from) AND strtotime($end)<= strtotime($tour_tax_to)){// se la fine prenotazione è dentro al periodo tassa turistica
         $diff=date_diff(date_create($end),date_create($tour_tax_from));
         $daytopay= $diff->format("%a");
-        if ($daytopay==0){// se sono uguali pago una sola notte
-           $daytopay=1;
-         }
+
       }else{// se nemmeno la fine è dentro al periodo tassa turistica
         $diff=date_diff(date_create($tour_tax_to),date_create($tour_tax_from));// paga per il periodo della tassa turistica
         $daytopay= $diff->format("%a");
