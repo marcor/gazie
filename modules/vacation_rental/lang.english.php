@@ -463,6 +463,7 @@ $strScript = array(
         "ATTENZIONE OVERBOOKING! Il periodo inserito risulta occupato",
         "ATTENZIONE OVERBOOKING! Non c'è sufficiente disponibilità di questo extra",
         "ATTENZIONE Il numero di notti sono inferiori al soggiorno minimo delle impostazioni generali",
+        "ATTENZIONE il numero di notti supera il massimo consentito",
         'speban' => "Spese incasso",
         'speban_title' => 'Spese incasso non documentate/rate',
         'traspo_title' => 'Spese trasporto non documentate',
@@ -489,7 +490,8 @@ $strScript = array(
         'access1' => '<p>We are sending you a copy of your booking as an attachment</p><p>To access the online booking and check its status and payment, use this link',
         'access2' => 'and the following access codes',
         'booking_number' => 'Booking number',
-        'best_regards' => 'Thanks and best regards'
+        'best_regards' => 'Thanks and best regards',
+		'on_behalf' => 'Rental on behalf of '
     ),
     "admin_house.php" =>
       array('title' => 'Gestione degli alloggi',
@@ -516,7 +518,7 @@ $strScript = array(
         'codice' => "Codice",
         'descri' => "Descrizione",
         'accommodation_type' => "Tipologia di alloggio",
-        'accommodation_type_value' => array(3 => 'Appartamento', 4 => 'Casa indipendente', 5=> 'Bed & breakfast'),
+        'accommodation_type_value' => array(3 => 'Apartament', 4 => 'Vacation house', 5=> 'Bed & breakfast', 6=> 'Room'),
         'body_text' => "Testo descrittivo",
         'lot_or_serial' => 'Lotti o numeri seriali',
         'lot_or_serial_value' => array(0 => 'No', 1 => 'Lotti', 2 => 'Seriale/Matricola'),
@@ -650,7 +652,10 @@ $strScript = array(
     'over_guest' => 'Attention: this accommodation is available but it has a max capability of',
     'persons' => 'persons',
     'avviso' => 'The minimum stay is',
-    'avviso2' => 'There are increasing discounts for 12, 21 and 28 nights.'
+    'avviso2' => 'There are increasing discounts for 12, 21 and 28 nights.',
+    'over_max_booking' => 'Some accommodations have the maximum limit of ',
+    'over_max_booking2' => 'Try to reduce the nights in the request.',
+    'no_search_house' => 'The requested accommodation is not available, check availability in your calendar. Or there are these alternatives:'
     ),
 	"booking_form.php" =>
     array('title' => 'Booking form',

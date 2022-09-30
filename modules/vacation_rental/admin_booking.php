@@ -103,6 +103,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
               $form['tour_tax_from']=(isset($data['vacation_rental']['tour_tax_from']))?$data['vacation_rental']['tour_tax_from']:'';
               $form['tour_tax_to']=(isset($data['vacation_rental']['tour_tax_to']))?$data['vacation_rental']['tour_tax_to']:'';
               $form['tour_tax_day']=(isset($data['vacation_rental']['tour_tax_day']))?$data['vacation_rental']['tour_tax_day']:'';
+              $form['max_booking_days']=(isset($data['vacation_rental']['max_booking_days']))?$data['vacation_rental']['max_booking_days']:'';
             }
           }
         }
@@ -111,12 +112,15 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['tour_tax_from']=(intval($_POST['tour_tax_from'])>0)?$_POST['tour_tax_from']:'';
         $form['tour_tax_to']=(intval($_POST['tour_tax_to'])>0)?$_POST['tour_tax_to']:'';
         $form['tour_tax_day']=(intval($_POST['tour_tax_day'])>0)?$_POST['tour_tax_day']:'';
+        $form['max_booking_days']=(intval($_POST['max_booking_days'])>0)?$_POST['max_booking_days']:'';
       }
     }else{
       $form['minor']=(intval($_POST['minor'])>0)?$_POST['minor']:'';
       $form['tour_tax_from']=(intval($_POST['tour_tax_from'])>0)?$_POST['tour_tax_from']:'';
       $form['tour_tax_to']=(intval($_POST['tour_tax_to'])>0)?$_POST['tour_tax_to']:'';
       $form['tour_tax_day']=(intval($_POST['tour_tax_day'])>0)?$_POST['tour_tax_day']:'';
+      $form['max_booking_days']=(intval($_POST['max_booking_days'])>0)?$_POST['max_booking_days']:'';
+
     }
 
     $form['id_tes'] = $_POST['id_tes'];
@@ -440,6 +444,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         if ($night<intval($min_stay)){
           $msg .= "65+";
         }
+
+        if (intval($form['max_booking_days'])>0 && $night > intval($form['max_booking_days'])){// se si supera il numero delle notti prenotabili consentito
+          $msg .= "66+";
+        }
+
         //controllo che i rows non abbiano descrizioni  e unita' di misura vuote in presenza di quantita diverse da 0
         foreach ($form['rows'] as $i => $v) {
           // controllo capienza ospiti
@@ -635,6 +644,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         }
     } elseif (isset($_POST['ord']) and $toDo == 'update') {  // si vuole generare una prenotazione da un preventivo
     echo "ATTENZIONE da controllare prima di usare: ancora non si possono creare preventivi per le prenotazioni";die;
+        /*
         $sezione = $form['seziva'];
         $datemi = $form['annemi'] . "-" . $form['mesemi'] . "-" . $form['gioemi'];
         $utsemi = mktime(0, 0, 0, $form['mesemi'], $form['gioemi'], $form['annemi']);
@@ -720,6 +730,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             header("Location: invsta_broven.php");
             exit;
         }
+        */
     }
 
     // Se viene inviata la richiesta di conferma cliente
@@ -1656,6 +1667,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['tour_tax_from']=(isset($data['vacation_rental']['tour_tax_from']))?$data['vacation_rental']['tour_tax_from']:'';
                     $form['tour_tax_to']=(isset($data['vacation_rental']['tour_tax_to']))?$data['vacation_rental']['tour_tax_to']:'';
                     $form['tour_tax_day']=(isset($data['vacation_rental']['tour_tax_day']))?$data['vacation_rental']['tour_tax_day']:'';
+                    $form['max_booking_days']=(isset($data['vacation_rental']['max_booking_days']))?$data['vacation_rental']['max_booking_days']:'';
                     $form['rows'][$next_row]['facility_id'] = $articolo['id_artico_group'];
                   }
                 }
@@ -1664,6 +1676,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['tour_tax_from']='';
                 $form['tour_tax_to']='';
                 $form['tour_tax_day']='';
+                $form['max_booking_days']='';
                 $form['rows'][$next_row]['facility_id'] = 0;
               }
 
@@ -1746,6 +1759,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['tour_tax_from'] = "";
     $form['tour_tax_to'] = "";
     $form['tour_tax_day'] = "";
+    $form['max_booking_days'] = "";
     $form['extra'] = [];
     $form['qtaextra'] = 0;
     $form['tur_tax'] =0;
@@ -2011,6 +2025,7 @@ echo '	<input type="hidden" name="' . ucfirst($toDo) . '" value="" />
     <input type="hidden" value="' . $form['tour_tax_from'] . '" name="tour_tax_from" />
     <input type="hidden" value="' . $form['tour_tax_to'] . '" name="tour_tax_to" />
     <input type="hidden" value="' . $form['tour_tax_day'] . '" name="tour_tax_day" />
+    <input type="hidden" value="' . $form['max_booking_days'] . '" name="max_booking_days" />
 		<div align="center" class="FacetFormHeaderFont">' . $title . '  a :';
 $select_cliente = new selectPartner('clfoco');
 $select_cliente->selectDocPartner('clfoco', $form['clfoco'], $form['search']['clfoco'], 'clfoco', $script_transl['mesg'], $admin_aziend['mascli']);

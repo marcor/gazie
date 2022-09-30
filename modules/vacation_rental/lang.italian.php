@@ -223,6 +223,7 @@ $strScript = array(
         "ATTENZIONE OVERBOOKING! Il periodo inserito risulta occupato",
         "ATTENZIONE OVERBOOKING! Non c'è sufficiente disponibilità di questo extra",
         "ATTENZIONE Il numero di notti sono inferiori al soggiorno minimo delle impostazioni generali",
+        "ATTENZIONE il numero di notti supera il massimo consentito",
         'speban' => "Spese incasso",
         'speban_title' => 'Spese incasso non documentate/rate',
         'traspo_title' => 'Spese trasporto non documentate',
@@ -277,7 +278,7 @@ $strScript = array(
         'codice' => "Codice",
         'descri' => "Descrizione",
         'accommodation_type' => "Tipologia di alloggio",
-        'accommodation_type_value' => array(3 => 'Appartamento', 4 => 'Casa indipendente', 5=> 'Bed & breakfast'),
+        'accommodation_type_value' => array(3 => 'Appartamento', 4 => 'Casa vacanze', 5=> 'Bed & breakfast', 6=> 'Camera'),
         'body_text' => "Testo descrittivo",
         'lot_or_serial' => 'Lotti o numeri seriali',
         'lot_or_serial_value' => array(0 => 'No', 1 => 'Lotti', 2 => 'Seriale/Matricola'),
@@ -414,7 +415,10 @@ $strScript = array(
 		'over_guest' => 'Attenzione: questo alloggio è disponibile ma ha una capienza massima di',
 		'persons' => 'persone',
 		'avviso' => 'Il soggiorno minimo è di',
-		'avviso2' => 'Ci sono sconti crescenti per 12, 21 e 28 notti.'
+		'avviso2' => 'Ci sono sconti crescenti per 12, 21 e 28 notti.',
+    'over_max_booking' => 'Alcuni alloggi hanno il limite massimo di ',
+    'over_max_booking2' => 'Prova a ridurre le notti nella richiesta.',
+    'no_search_house' => 'L\'alloggio richiesto non è disponibile, guarda la disponibilità nel suo calendario. Oppure ci sono queste alternative:'
     ),
 	"booking_form.php" =>
     array('title' => 'Modulo di prenotazione',
