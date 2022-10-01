@@ -157,7 +157,7 @@ class Expiry {
     $this->ctrl_day = $uts->format('d');
     $this->ctrl_month = $uts->format('m');
     $this->ctrl_year = $uts->format('Y');
-    return $this->year.'-'.$this->ctrl_month.'-'.$this->ctrl_day;
+    return $this->ctrl_year.'-'.$this->ctrl_month.'-'.$this->ctrl_day;
   }
 }
 ?>
