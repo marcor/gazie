@@ -198,8 +198,12 @@ function tour_tax_daytopay($night,$start,$end,$tour_tax_from,$tour_tax_to,$tour_
         $daytopay= $diff->format("%a");
 
       }else{// se nemmeno la fine è dentro al periodo tassa turistica
-        $diff=date_diff(date_create($tour_tax_to),date_create($tour_tax_from));// paga per il periodo della tassa turistica
-        $daytopay= $diff->format("%a");
+        if (strtotime($start) < strtotime($tour_tax_from)){// vedo se il periodo tassa turistica è totalmente dentro la locazione
+          $diff=date_diff(date_create($tour_tax_to),date_create($tour_tax_from));// paga per il periodo della tassa turistica
+          $daytopay= $diff->format("%a");
+        }else{// se è fuori non paga nulla
+          $daytopay=0;
+        }
       }
     }
   }
