@@ -434,12 +434,12 @@ while ($r = gaz_dbi_fetch_array($result)) {
 			echo '<td><span class="gazie-tooltip" data-type="product-thumb" data-id="'. $r['codice'] .'" data-title="'. $r['annota'].'" >'.get_string_lang($r['descri'], $lang).'</span>';
 			echo "</td>\n";
 			echo '<td class="text-center">';
-			switch($r['accommodation_type']){// 3 => 'Appartamento', 4 => 'Casa indipendente', 5=> 'Bed & breakfast'
+			switch($r['accommodation_type']){// 3 => 'Appartamento', 4 => 'Casa vacanze', 5=> 'Bed & breakfast'
 				case "3":
 					echo "Appartamento";
 				break;
 				case "4":
-					echo "Casa indipendente";
+					echo "Casa vacanze";
 				break;
 				case "5":
 					echo "Bed & breakfast";

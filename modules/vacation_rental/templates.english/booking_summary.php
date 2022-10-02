@@ -139,8 +139,9 @@ class BookingSummary extends Template
         $this->Cell(68,6, '',1,0,'C',1);
         $this->Cell(56,6, 'T O T A L',1,1,'C',1);
         $this->SetFont('helvetica', '', 8);
-        $this->Cell(62,6, $this->pagame['descri'],1,0,'C');
-
+        if (isset($this->pagame['descri'])){
+          $this->Cell(62,6, $this->pagame['descri'],1,0,'C');
+        }
         $this->docVars->setTotal($this->tesdoc['traspo']);
 
         $totimpmer = $this->docVars->totimpmer;

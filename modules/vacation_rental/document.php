@@ -545,13 +545,13 @@ class DocContabVars {
           }
 
         }
-        if (isset($anagra_prop) || floatval($security_deposit)>0){// se c'è un proprietario
-          $nuovi_righi=array();          
+        if (isset($anagra_prop) || floatval($security_deposit)>0){// se c'è un proprietario o un deposito cauzionale
+          $nuovi_righi=array();
           if (floatval($security_deposit)>0){// aggiungo un rigo descrittivo per il deposito cauzionale
-			$nuovi_righi[]=array('tiprig'=>6,'codart'=>'','descri'=>"<b>".$script_transl[66].$security_deposit.". ".$script_transl[67]."</b>",'quanti'=>0, 'unimis'=>'','prelis'=>0,'sconto'=>0,'prelis'=>0,'pervat'=>0,'codric'=>0,'provvigione'=>0,'ritenuta'=>0,'id_order'=>0,'id_mag'=>0,'id_orderman'=>0);
+			$nuovi_righi[]=array('tiprig'=>6,'codart'=>'','descri'=>"<b>".$script_transl[67].$security_deposit.". ".$script_transl[68]."</b>",'quanti'=>0, 'unimis'=>'','prelis'=>0,'sconto'=>0,'prelis'=>0,'pervat'=>0,'codric'=>0,'provvigione'=>0,'ritenuta'=>0,'id_order'=>0,'id_mag'=>0,'id_orderman'=>0);
           }
 		  if (isset($anagra_prop)){// aggiungo un rigo descrittivo per il proprietario
-			$nuovi_righi[]=array('tiprig'=>6,'codart'=>'','descri'=>"<h2>".$script_transl['on_behalf'].$script_transl[68].":<br> ".$anagra_prop['ragso1']." ".$anagra_prop['ragso2']." - ".$anagra_prop['indspe']." - ".$anagra_prop['citspe']." - ".$anagra_prop['prospe']."</h2>",'quanti'=>0, 'unimis'=>'','prelis'=>0,'sconto'=>0,'prelis'=>0,'pervat'=>0,'codric'=>0,'provvigione'=>0,'ritenuta'=>0,'id_order'=>0,'id_mag'=>0,'id_orderman'=>0);
+			$nuovi_righi[]=array('tiprig'=>6,'codart'=>'','descri'=>"<h2>".$script_transl['on_behalf'].$script_transl[69].":<br> ".$anagra_prop['ragso1']." ".$anagra_prop['ragso2']." - ".$anagra_prop['indspe']." - ".$anagra_prop['citspe']." - ".$anagra_prop['prospe']."</h2>",'quanti'=>0, 'unimis'=>'','prelis'=>0,'sconto'=>0,'prelis'=>0,'pervat'=>0,'codric'=>0,'provvigione'=>0,'ritenuta'=>0,'id_order'=>0,'id_mag'=>0,'id_orderman'=>0);
           }
           foreach($nuovi_righi as $v_nr) { // riattraverso l'array dei nuovi righi e sull'ultimo
             $results[] = $v_nr;
