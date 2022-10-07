@@ -599,7 +599,7 @@ class lotmag {
       return $this->lot;
    }
 
-   function getAvailableLots($codart, $excluded_movmag = 0, $date="") {
+   function getAvailableLots($codart, $excluded_movmag = 0, $date="", $negative=0) {
 // restituisce tutti i lotti non completamente venduti ordinandoli in base alla configurazione aziendale (FIFO o LIFO)
 // e propone una ripartizione, se viene passato un movimento di magazzino questo verrà escluso perché si suppone sia lo stesso
 // che si sta modificando
@@ -640,7 +640,7 @@ class lotmag {
       $acc = array();
       $rs = false;
       while ($row = gaz_dbi_fetch_array($result)) {
-         if ($row['rest'] >= 0.00001) { // l'articolo ha almeno un lotto caricato
+         if ($row['rest'] >= 0.00001 || ($negative>0 && $row['rest'] <0) ) { // l'articolo ha almeno un lotto caricato
             $rs = true;
             $acc[] = $row;
          }
