@@ -135,6 +135,10 @@ if (isset( $scriptname) && $scriptname != $prev_script && $scriptname != 'admin.
             .dropdown-menu > li.user-body > a {
               white-space: normal;
             }
+            .sidebar-menu > li:hover > a,
+            .sidebar-menu > li.active > a {
+              border-left-color: #<?php echo $admin_aziend['colore']; ?>;
+            }
         </style>
 <script>
 $(function() {

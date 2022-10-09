@@ -63,7 +63,6 @@ select {
 .skin-blue .sidebar-menu > li.active > a {
   color: #ffffff;
   background: #1e282c;
-  border-left-color: #aae2a8;
 }
 .skin-blue .sidebar-menu > li > .treeview-menu {
   margin: 0 1px;
