@@ -139,6 +139,9 @@ if (isset( $scriptname) && $scriptname != $prev_script && $scriptname != 'admin.
             .sidebar-menu > li.active > a {
               border-left-color: #<?php echo $admin_aziend['colore']; ?>;
             }
+            .sidebar a, treeview-menu > li > a {
+              color: #<?php echo $admin_aziend['colore']; ?>;
+            }
         </style>
 <script>
 $(function() {

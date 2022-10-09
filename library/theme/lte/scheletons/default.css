@@ -68,14 +68,8 @@ select {
   margin: 0 1px;
   background: #2c3b41;
 }
-.skin-blue .sidebar a {
-  color: #b8c7ce;
-}
 .skin-blue .sidebar a:hover {
   text-decoration: none;
-}
-.skin-blue .treeview-menu > li > a {
-  color: #acc6cf; /* 8aa4af */
 }
 .skin-blue .treeview-menu > li.active > a,
 .skin-blue .treeview-menu > li > a:hover {
