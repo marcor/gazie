@@ -32,7 +32,7 @@ function dailyrep($id_con) { // restituisce i righi delle vendite giornaliere de
 	global $gTables;
 	
 	$query ="
-      SELECT ". $gTables['rigdoc'] .".*, ". $gTables['artico'] .".catmer, ". $gTables['catmer'] .".descri AS descri_cat, ". $gTables['tesdoc'] .".*, ". $gTables['aliiva'] .".aliquo
+      SELECT ". $gTables['rigdoc'] .".*, ". $gTables['rigdoc'] .".sconto AS rig_sconto,". $gTables['artico'] .".catmer, ". $gTables['catmer'] .".descri AS descri_cat, ". $gTables['tesdoc'] .".*, ". $gTables['aliiva'] .".aliquo
 	  FROM " . $gTables['tesdoc'] . "
       LEFT JOIN ". $gTables['rigdoc'] ." ON ".$gTables['rigdoc'].".id_tes=".$gTables['tesdoc'].".id_tes 
       LEFT JOIN ". $gTables['artico'] ." ON ".$gTables['artico'].".codice=".$gTables['rigdoc'].".codart 
@@ -45,15 +45,16 @@ function dailyrep($id_con) { // restituisce i righi delle vendite giornaliere de
 	$cat=[];	
 	$lastest="";
 	$n=0;
+	
 	while ($res=$result->fetch_assoc()){ // raggruppo per categoria e faccio le somme per categoria
-		
+	
 		if (!$res['catmer']){
 			$res['catmer']= 9999 + $n;// creo una categoria fittizia
 			$n++;
 		}		
 		if (isset($cat[$res['catmer']]['sum'])){
-			$cat[$res['catmer']]['sum'] += ($res['quanti']*$res['prelis'])-((($res['quanti']*$res['prelis'])*$res['sconto'])/100);
-			$cat[$res['catmer']]['sumvat'] += (((($res['quanti']*$res['prelis'])-((($res['quanti']*$res['prelis'])*$res['sconto'])/100))*$res['pervat'])/100);
+			$cat[$res['catmer']]['sum'] += ($res['quanti']*$res['prelis'])-((($res['quanti']*$res['prelis'])*$res['sconto'])/100)-((($res['quanti']*$res['prelis'])*$res['rig_sconto'])/100);
+			$cat[$res['catmer']]['sumvat'] += (((($res['quanti']*$res['prelis'])-((($res['quanti']*$res['prelis'])*$res['sconto'])/100)-((($res['quanti']*$res['prelis'])*$res['sconto'])/100))*$res['pervat'])/100);
 			$cat[$res['catmer']]['count'] += $res['quanti'];
 			if ($res['id_tes'] <> $lastest){
 				$cat[$res['catmer']]['traspo'] += $res['traspo'];
@@ -64,7 +65,7 @@ function dailyrep($id_con) { // restituisce i righi delle vendite giornaliere de
 				$cat[$res['catmer']]['spevarvat'] += $res['spevar']*$res['aliquo']/100;
 			}
 		} else {
-			$cat[$res['catmer']]['sum'] = ($res['quanti']*$res['prelis'])-((($res['quanti']*$res['prelis'])*$res['sconto'])/100);
+			$cat[$res['catmer']]['sum'] = ($res['quanti']*$res['prelis'])-((($res['quanti']*$res['prelis'])*$res['sconto'])/100)-((($res['quanti']*$res['prelis'])*$res['rig_sconto'])/100);
 			$cat[$res['catmer']]['sumvat'] = (($cat[$res['catmer']]['sum']*$res['pervat'])/100);
 			$cat[$res['catmer']]['count'] = $res['quanti'];
 			$cat[$res['catmer']]['traspo'] = $res['traspo'];
@@ -75,7 +76,7 @@ function dailyrep($id_con) { // restituisce i righi delle vendite giornaliere de
 			$cat[$res['catmer']]['spevarvat'] = $res['spevar']*$res['aliquo']/100;
 		}
 		$cat[$res['catmer']][] = $res;
-		$lastest = $res['id_tes'];
+		$lastest = $res['id_tes'];		
 	}	
 	return $cat;
 }
