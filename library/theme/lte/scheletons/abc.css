@@ -65,6 +65,9 @@
   margin: 0 1px;
   background: #2c3b41;
 }
+.sidebar-menu .treeview-menu.menu-open {
+	background-color: #282728;
+}
 .skin-blue .sidebar a:hover {
   text-decoration: none;
 }
