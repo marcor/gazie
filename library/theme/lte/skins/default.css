@@ -42,9 +42,6 @@ th a:hover {
 #preventDuplicate {
     color: #000;
 }
-.sidebar-menu .treeview-menu > li > a {
-    padding-left: 15px;
-}
 div.th {
 	background: #c4c7ca;
 	border: 1px solid #000;
