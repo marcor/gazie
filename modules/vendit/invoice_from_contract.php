@@ -61,33 +61,15 @@ function getBillableContracts($date_ref = false, $vat_section = 1, $customer = 0
         $selected_customer = " AND " . $gTables['clfoco'] . ".codice=" . $customer;
     }
 
-    $billable = array();
-
-    /*
-      $field = $gTables['contract'].".*,
-      DATE_FORMAT('".$date_ref."','%Y')*12 + DATE_FORMAT('".$date_ref."','%m') AS this_month,
-      YEAR(".$gTables['tesdoc'].".datfat)*12 + MONTH(".$gTables['tesdoc'].".datfat) AS last_month,
-      YEAR(".$gTables['contract'].".start_date)*12 + MONTH(".$gTables['contract'].".start_date) AS start_month,
-      (".$gTables['contract'].".months_duration - PERIOD_DIFF(DATE_FORMAT('".$date_ref."','%Y%m'),
-      EXTRACT(YEAR_MONTH FROM ".$gTables['contract'].".start_date))) AS months_at_end,
-      ".$gTables['tesdoc'].".clfoco, ".$gTables['tesdoc'].".datfat AS df, CONCAT(".$gTables['anagra'].".ragso1,' ',".$gTables['anagra'].".ragso2) AS ragsoc,
-      PERIOD_ADD(EXTRACT(YEAR_MONTH FROM ".$gTables['tesdoc'].".datfat),".$gTables['contract'].".periodicity) AS next_month";
-      $from =  $gTables['contract']." LEFT JOIN ".$gTables['tesdoc'].
-      " ON ".$gTables['contract'].".id_contract=(SELECT ".$gTables['tesdoc'].".id_contract FROM ".$gTables['tesdoc']." WHERE ".$gTables['tesdoc'].".tipdoc='FAI' OR ".$gTables['tesdoc'].".tipdoc='VRI' LIMIT 1)
-      LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['clfoco'].".codice=".$gTables['contract'].".id_customer
-      LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra=".$gTables['anagra'].".id";
-      $where = $gTables['contract'].".vat_section = ".$vat_section." ".$selected_customer;
-      $orderby = $gTables['contract'].".id_contract ASC, ".$gTables['tesdoc'].".datfat ASC, ".$gTables['tesdoc'].".protoc ASC";
-     */
-
-    /* modifica da Claudio Domiziani 29.09.2017 */
-
+    $billable=[];
+    // modifica da Claudio Domiziani 29.09.2017
     $field = $gTables['contract'] . ".*,
                 DATE_FORMAT('" . $date_ref . "','%Y')*12 + DATE_FORMAT('" . $date_ref . "','%m') AS this_month,
                 YEAR(MAX(" . $gTables['tesdoc'] . ".datfat))*12 + MONTH(MAX(" . $gTables['tesdoc'] . ".datfat)) AS last_month,
                 YEAR(" . $gTables['contract'] . ".start_date)*12 + MONTH(" . $gTables['contract'] . ".start_date) AS start_month,
                 (" . $gTables['contract'] . ".months_duration - PERIOD_DIFF(DATE_FORMAT('" . $date_ref . "','%Y%m'),
                 EXTRACT(YEAR_MONTH FROM " . $gTables['contract'] . ".start_date))) AS months_at_end,
+                " . $gTables['clfoco'] . ".speban AS speban,
                 " . $gTables['tesdoc'] . ".clfoco, " . $gTables['tesdoc'] . ".datfat AS df1,
                 CONCAT(" . $gTables['anagra'] . ".ragso1,' '," . $gTables['anagra'] . ".ragso2) AS ragsoc,
                 PERIOD_ADD(EXTRACT(YEAR_MONTH FROM " . $gTables['tesdoc'] . ".datfat)," . $gTables['contract'] . ".periodicity) AS next_month,
@@ -97,24 +79,18 @@ function getBillableContracts($date_ref = false, $vat_section = 1, $customer = 0
                 " . $gTables['contract'] . ".start_date," . $gTables['contract'] . ".months_duration,
                 " . $gTables['contract'] . ".current_fee," . $gTables['contract'] . ".periodicity,
                 MAX(" . $gTables['tesdoc'] . ".datfat), MAX(" . $gTables['tesdoc'] . ".datfat) AS df";
-
     $from = $gTables['contract'] . "
                 INNER JOIN " . $gTables['clfoco'] . " ON " . $gTables['contract'] . ".id_customer = " . $gTables['clfoco'] . ".codice
                 INNER JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id
                 LEFT JOIN " . $gTables['tesdoc'] . " ON " . $gTables['contract'] . ".id_contract = " . $gTables['tesdoc'] . ".id_contract";
-
     $where = $gTables['contract'] . ".vat_section=" . $vat_section . " " . $selected_customer . " AND (" . $gTables['tesdoc'] . ".id_contract IS NULL OR " . $gTables['tesdoc'] . ".datfat>=" . $gTables['contract'] . ".start_date)
                 GROUP BY " . $gTables['contract'] . ".id_contract";
-
     $orderby = $gTables['contract'] . ".start_date ASC, " . $gTables['contract'] . ".doc_number ASC";
-
-    /* FINE MODIFICHE */
-
+    // FINE MODIFICHE
     $result = gaz_dbi_dyn_query($field, $from, $where, $orderby);
     while ($row = gaz_dbi_fetch_array($result)) {
         $billable[$row['id_contract']] = $row;
     }
-
     return $billable;
 }
 
@@ -169,8 +145,7 @@ if (!isset($_POST['vat_section'])) { // al primo accesso
                 $calc->contractCalc($k); // creo e calcolo il castelletto IVA e i totali del contratto
                 $cntr = gaz_dbi_get_row($gTables['contract'], 'id_contract', $k);
                 $paym = gaz_dbi_get_row($gTables['pagame'], 'codice', $cntr['payment_method']);
-                if ($paym['tippag'] == 'B' ||
-                        $paym['tippag'] == 'T') {
+                if ($val['speban'] == 'S' && ($paym['tippag'] == 'B' || $paym['tippag'] == 'T')) {
                     $speban = $admin_aziend['sperib'];
                 } else {
                     $speban = 0;
@@ -203,13 +178,16 @@ if (!isset($_POST['vat_section'])) { // al primo accesso
                 $uts_conclusion = mktime(12,0,0,substr($cntr['conclusion_date'],5,2),substr($cntr['conclusion_date'],8,2),substr($cntr['conclusion_date'],0,4));
                 $gazTimeFormatter->setPattern('dd MMMM yyyy');
                 $conclusion_date = $gazTimeFormatter->format(new DateTime('@'.$uts_conclusion));
-                $rows_data = array('id_tes' => $tesdoc_id, 'tiprig' => 2,
-                    'descri' => $strScript['invoice_from_contract.php']['ref'] .
-                    $conclusion_date
-                );
+                $rows_data = ['id_tes' => $tesdoc_id, 'tiprig' => 2, 'descri' => $strScript['invoice_from_contract.php']['ref'].$conclusion_date];
+                // se ho chiesto l'inserimento del testo del contratto cambio la descrizione
+                if ($val['status']=='ASTEXT') {
+                  $botxt = gaz_dbi_get_row($gTables['body_text'], 'id_body', $val['id_body_text']);
+                  $rows_data['descri'] = strip_tags($botxt['body_text']);
+                }
                 rigdocInsert($rows_data);
                 $cliente = gaz_dbi_get_row($gTables['clfoco'], "codice", $cntr['id_customer']);
-                //formatto il periodo
+                //formatto il periodo ed inserisco un nuovo rigo ma solo se ho il canone
+                $tiprig = ($cntr['current_fee']>=0.01)?1:2;
                 if (empty($val['last_month'])) { //first time
                   $y = floor($val['start_month'] / 12);
                   $m = $val['start_month'] - $y * 12;
@@ -227,10 +205,10 @@ if (!isset($_POST['vat_section'])) { // al primo accesso
                   $period .= ' - ' . $gazTimeFormatter->format(new DateTime('@'.$uts_last));
                 }
                 $vat_per = gaz_dbi_get_row($gTables['aliiva'], 'codice', $cntr['vat_code']);
-                $rows_data = array('id_tes' => $tesdoc_id, 'tiprig' => 1,
+                $rows_data = array('id_tes' => $tesdoc_id, 'tiprig' => $tiprig,
                     'descri' => $strScript['invoice_from_contract.php']['period'] .
                     $strScript['invoice_from_contract.php']['period_value'][$cntr['periodicity']] .
-                    $period,
+                    $period.' ',
                     'prelis' => $fee,
                     'codvat' => $cntr['vat_code'],
                     'pervat' => $vat_per['aliquo'],
@@ -241,26 +219,36 @@ if (!isset($_POST['vat_section'])) { // al primo accesso
                   $rows_data['ritenuta'] = $cliente['ritenuta'];
                 }
                 rigdocInsert($rows_data);
+
+
                 // e se ci sono altri addebiti
                 $rs_rows = gaz_dbi_dyn_query("*", $gTables['contract_row'], "id_contract = " . $val['id_contract'], "id_row ASC");
                 while ($row = gaz_dbi_fetch_array($rs_rows)) {
-                    $vat_per = gaz_dbi_get_row($gTables['aliiva'], 'codice', $row['vat_code']);
-                    $rows_data = array('id_tes' => $tesdoc_id, 'tiprig' => 0,
-                        'descri' => $row['descri'],
-                        'unimis' => $row['unimis'],
-                        'quanti' => $row['quanti'],
-                        'prelis' => $row['price'],
-                        'sconto' => $row['discount'],
-                        'codvat' => $row['vat_code'],
-                        'pervat' => $vat_per['aliquo'],
-                        'codric' => $row['cod_revenue']
-                    );
-                    if ($rows_data['prelis'] != 0) {
-                      if ($cliente['ritenuta'] > 0) {
-                        $rows_data['ritenuta'] = $cliente['ritenuta'];
-                      }
+                  $vat_per = gaz_dbi_get_row($gTables['aliiva'], 'codice', $row['vat_code']);
+                  // il tipo rigo in base ai valori di unimis,quanti e price
+                  $tiprig = 0;
+                  if ( $row['unimis'] == '' && abs($row['quanti']) < 0.00001 && abs($row['price']) < 0.00001 ) { // è descrittivo
+                    $tiprig = 2;
+                  } else if ( $row['unimis'] == '' && abs($row['quanti']) < 0.00001 ) { // forfait
+                    $tiprig = 1;
+                  }
+                  $rows_data = ['id_tes' => $tesdoc_id,
+                    'tiprig' => $tiprig,
+                    'descri' => $row['descri'].' ',
+                    'unimis' => $row['unimis'],
+                    'quanti' => $row['quanti'],
+                    'prelis' => $row['price'],
+                    'sconto' => $row['discount'],
+                    'codvat' => $row['vat_code'],
+                    'pervat' => $vat_per['aliquo'],
+                    'codric' => $row['cod_revenue']
+                  ];
+                  if ($rows_data['prelis'] != 0) {
+                    if ($cliente['ritenuta'] > 0) {
+                      $rows_data['ritenuta'] = $cliente['ritenuta'];
                     }
-                    rigdocInsert($rows_data);
+                  }
+                  rigdocInsert($rows_data);
                 }
             }
         }
@@ -290,34 +278,34 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup'));
 require("lang." . $admin_aziend['lang'] . ".php");
 
 foreach ($billable as $k => $val) {
-    $form['rows'][$val['id_contract']]['doc_number'] = $val['doc_number'];
-    $form['rows'][$val['id_contract']]['start_date'] = $val['start_date'];
-    $form['rows'][$val['id_contract']]['ragsoc'] = $val['ragsoc'];
-    $form['rows'][$val['id_contract']]['current_fee'] = $val['current_fee'];
-    $form['rows'][$val['id_contract']]['df'] = $val['df'];
-    $form['rows'][$val['id_contract']]['months_at_end'] = $val['months_at_end'];
-    $form['rows'][$val['id_contract']]['tacit_renewal'] = $val['tacit_renewal'];
-    $form['rows'][$val['id_contract']]['doc_type'] = $val['doc_type'];
-    if (!empty($val['last_month'])) {
-        $form['rows'][$val['id_contract']]['n_bill'] = floor(($val['this_month'] - $val['last_month']) / $val['periodicity']);
-    } else {
-        $form['rows'][$val['id_contract']]['n_bill'] = floor(1 + ($val['this_month'] - $val['start_month']) / $val['periodicity']);
-    }
-    if ($form['rows'][$val['id_contract']]['n_bill'] > 0) {
-        $form['rows'][$val['id_contract']]['check_' . $k] = 'checked';
-    } else {
-        $form['rows'][$val['id_contract']]['check_' . $k] = '';
-    }
-    //rilevazione errori
-    $form['rows'][$val['id_contract']]['error'] = '';
-    if ($uts_last[$val['doc_type']] > $uts_this_month) { // ci sono fatture o ricevute emesse con date sucessive
-        $form['rows'][$val['id_contract']]['error'] = $script_transl['err_date'];
-        $form['rows'][$val['id_contract']]['check_' . $k] = 'disabled';
-    }
-    if ($val['months_at_end'] <= 0 && $val['tacit_renewal'] == 0) {
-        $form['rows'][$val['id_contract']]['error'] = $script_transl['expired'];
-        $form['rows'][$val['id_contract']]['check_' . $k] = 'disabled';
-    }
+  $form['rows'][$val['id_contract']]['doc_number'] = $val['doc_number'];
+  $form['rows'][$val['id_contract']]['start_date'] = $val['start_date'];
+  $form['rows'][$val['id_contract']]['ragsoc'] = $val['ragsoc'];
+  $form['rows'][$val['id_contract']]['current_fee'] = $val['current_fee'];
+  $form['rows'][$val['id_contract']]['df'] = $val['df'];
+  $form['rows'][$val['id_contract']]['months_at_end'] = $val['months_at_end'];
+  $form['rows'][$val['id_contract']]['tacit_renewal'] = $val['tacit_renewal'];
+  $form['rows'][$val['id_contract']]['doc_type'] = $val['doc_type'];
+  if (!empty($val['last_month'])) {
+      $form['rows'][$val['id_contract']]['n_bill'] = floor(($val['this_month'] - $val['last_month']) / $val['periodicity']);
+  } else {
+      $form['rows'][$val['id_contract']]['n_bill'] = floor(1 + ($val['this_month'] - $val['start_month']) / $val['periodicity']);
+  }
+  if ($form['rows'][$val['id_contract']]['n_bill'] > 0) {
+      $form['rows'][$val['id_contract']]['check_' . $k] = 'checked';
+  } else {
+      $form['rows'][$val['id_contract']]['check_' . $k] = '';
+  }
+  //rilevazione errori
+  $form['rows'][$val['id_contract']]['error'] = '';
+  if ($uts_last[$val['doc_type']] > $uts_this_month) { // ci sono fatture o ricevute emesse con date sucessive
+      $form['rows'][$val['id_contract']]['error'] = $script_transl['err_date'];
+      $form['rows'][$val['id_contract']]['check_' . $k] = 'disabled';
+  }
+  if ($val['months_at_end'] <= 0 && $val['tacit_renewal'] == 0) {
+      $form['rows'][$val['id_contract']]['error'] = $script_transl['expired'];
+      $form['rows'][$val['id_contract']]['check_' . $k] = 'disabled';
+  }
 }
 echo "<script type=\"text/javascript\">
 var cal = new CalendarPopup();

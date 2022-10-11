@@ -81,9 +81,9 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['last_reassessment_D'] = intval($_POST['last_reassessment_D']);
     $form['id_agente'] = intval($_POST['id_agente']);
     $form['provvigione'] = floatval(preg_replace("/\,/",'.',$_POST['provvigione']));
+    $form['status'] = $_POST['status'];
 
     // inizio rigo di input
-    $form['in_status'] = $_POST['in_status'];
     $form['in_descri'] = $_POST['in_descri'];
     $form['in_unimis'] = $_POST['in_unimis'];
     $form['in_quanti'] = gaz_format_quantity($_POST['in_quanti'],0,$admin_aziend['decimal_quantity']);
@@ -96,7 +96,6 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $next_row = 0;
     if (isset($_POST['rows'])) {
        foreach ($_POST['rows'] as $next_row => $value) {
-            $form['rows'][$next_row]['status'] = substr($value['status'],0,30);
             $form['rows'][$next_row]['descri'] = substr($value['descri'],0,100);
             $form['rows'][$next_row]['unimis'] = substr($value['unimis'],0,3);
             $form['rows'][$next_row]['price'] = number_format(preg_replace("/\,/",'.',$value['price']),$admin_aziend['decimal_price'],'.','');
@@ -139,9 +138,9 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
        if (empty ($form["body_text"])) {
           $msg .= "9+";
        }
-       if ($form["current_fee"] <= 0) {
-          $msg .= "10+";
-       }
+       //if ($form["current_fee"] <= 0) { consento che il canone corrente sia a 0, l'eventuale testo del contratto andrà messo come descrittivo
+       //   $msg .= "10+";
+       //}
        //controllo che i rows non abbiano descrizioni e unita' di misura vuote in presenza di quantita diverse da 0
        foreach ($form['rows'] as $i => $value) {
             if (empty($value['descri']) && $value['quanti']>0) {
@@ -228,42 +227,22 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
   //if (isset($_POST['in_submit_x'])) {
   /** ENRICO FEDELE */
   if (isset($_POST['in_submit'])) {
-    if (substr($form['in_status'],0,6) == "UPDROW"){ //se è un rigo da modificare
-         $old_key = intval(substr($form['in_status'],6));
-         $form['rows'][$old_key]['status'] = "UPDATE";
-         $form['rows'][$old_key]['descri'] = $form['in_descri'];
-         $form['rows'][$old_key]['unimis'] = $form['in_unimis'];
-         $form['rows'][$old_key]['quanti'] = $form['in_quanti'];
-         $form['rows'][$old_key]['codart'] = $form['in_codart'];
-         $form['rows'][$old_key]['cod_revenue'] = $form['in_cod_revenue'];
-         $form['rows'][$old_key]['provvigione'] = $form['in_provvigione'];
-         $form['rows'][$old_key]['price'] = number_format($form['in_price'],$admin_aziend['decimal_price'],'.','');
-         $form['rows'][$old_key]['discount'] = $form['in_discount'];
-         $form['rows'][$old_key]['vat_code'] = $form['in_vat_code'];
-         $iva_row = gaz_dbi_get_row($gTables['aliiva'],"codice",$form['in_vat_code']);
-         if ($form['in_type_row'] == 0 ) {  //rigo normale
-         } else {   // rigo di testo
-         }
-         ksort($form['rows']);
-    } else { //se è un rigo da inserire
-         $form['rows'][$next_row]['status'] = 'INSERT';
-         $form['rows'][$next_row]['descri'] = $form['in_descri'];
-         $form['rows'][$next_row]['unimis'] = $form['in_unimis'];
-         $form['rows'][$next_row]['price'] = number_format($form['in_price'],$admin_aziend['decimal_price'],'.','');
-         $form['rows'][$next_row]['cod_revenue'] = $form['in_cod_revenue'];
-         $form['rows'][$next_row]['quanti'] = $form['in_quanti'];
-         $form['rows'][$next_row]['discount'] = $form['in_discount'];
-         $form['rows'][$next_row]['vat_code'] =  $form['in_vat_code'];
-         $form['rows'][$next_row]['cod_revenue'] = $form['in_cod_revenue'];
-    }
-     // reinizializzo rigo di input tranne che tipo rigo, aliquota iva e conto ricavo
-     $form['in_descri'] = "";
-     $form['in_unimis'] = "";
-     $form['in_price'] = 0;
-     $form['in_discount'] = 0;
-     $form['in_quanti'] = 0;
-     // fine reinizializzo rigo input
-     $next_row++;
+    $form['rows'][$next_row]['descri'] = $form['in_descri'];
+    $form['rows'][$next_row]['unimis'] = $form['in_unimis'];
+    $form['rows'][$next_row]['price'] = number_format($form['in_price'],$admin_aziend['decimal_price'],'.','');
+    $form['rows'][$next_row]['cod_revenue'] = $form['in_cod_revenue'];
+    $form['rows'][$next_row]['quanti'] = $form['in_quanti'];
+    $form['rows'][$next_row]['discount'] = $form['in_discount'];
+    $form['rows'][$next_row]['vat_code'] =  $form['in_vat_code'];
+    $form['rows'][$next_row]['cod_revenue'] = $form['in_cod_revenue'];
+    // reinizializzo rigo di input tranne che tipo rigo, aliquota iva e conto ricavo
+    $form['in_descri'] = "";
+    $form['in_unimis'] = "";
+    $form['in_price'] = 0;
+    $form['in_discount'] = 0;
+    $form['in_quanti'] = 0;
+    // fine reinizializzo rigo input
+    $next_row++;
   }
 
   // Se viene inviata la richiesta elimina il rigo corrispondente
@@ -307,9 +286,9 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['periodicity'] = $contract['periodicity'];
     $form['provvigione'] = $contract['provvigione'];
     $form['id_agente'] = $contract['id_agente'];
+    $form['status'] = $contract['status'];
 
     // inizio rigo di input
-    $form['in_status'] = "INSERT";
     $form['in_descri'] = "";
     $form['in_unimis'] = '';
     $form['in_quanti'] = 0;
@@ -330,7 +309,6 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
            $form['rows'][$next_row]['quanti'] = gaz_format_quantity($row['quanti'],0,$admin_aziend['decimal_quantity']);
            $form['rows'][$next_row]['vat_code'] = $row['vat_code'];
            $form['rows'][$next_row]['cod_revenue'] = $row['cod_revenue'];
-           $form['rows'][$next_row]['status'] = $row['status'];
            $next_row++;
     }
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
@@ -383,11 +361,11 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['last_reassessment_D'] = date("d");
     $form['id_agente'] = 0;
     $form['provvigione'] = 0.00;
-    $form['rows'] = array();
+    $form['status'] ='';
+    $form['rows'] = [];
     $next_row = 0;
     $form['hidden_req'] = '';
     // inizio rigo di input
-    $form['in_status'] = "INSERT";
     $form['in_descri'] = "";
     $form['in_type_row'] = 0;
     $form['in_unimis'] = "";
@@ -514,7 +492,7 @@ echo "\t </td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['tacit_renewal']."</td><td class=\"FacetDataTD\">\n";
-$gForm->selectNumber('tacit_renewal',$form['tacit_renewal'],1);
+$gForm->variousSelect('tacit_renewal',$script_transl['tacit_renewal_value'],$form['tacit_renewal'],'',false);
 echo "\t </td>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['cod_revenue']."</td><td class=\"FacetDataTD\">\n";
 $select_cod_revenue = new selectconven('cod_revenue');
@@ -527,7 +505,7 @@ echo "\t </td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">\n".$script_transl['periodic_reassessment']."</td><td  class=\"FacetDataTD\">\n";
-$gForm->selectNumber('periodic_reassessment',$form['periodic_reassessment'],1);
+$gForm->variousSelect('periodic_reassessment',$script_transl['periodic_reassessment_value'],$form['periodic_reassessment'],'',false);
 echo "\t </td>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['vat_code']."</td><td  class=\"FacetDataTD\">\n";
 $gForm->selectFromDB('aliiva','vat_code','codice',$form['vat_code'],'codice',0,' - ','descri');
@@ -537,42 +515,35 @@ $gForm->variousSelect('periodicity',$script_transl['periodicity_value'],$form['p
 echo "\t </td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td colspan=\"6\" align=\"center\">\n";
-echo $script_transl['body_text'];
-echo "</td></tr>\n";
-echo "\t<td colspan=\"6\">\n";
+echo '<td colspan=3 align="right"><b>'.$script_transl['body_text'].'</b></td><td colspan=3>';
+echo $script_transl['status'].': ';
+$gForm->variousSelect('status',$script_transl['status_value'],$form['status'],'',false);
+echo '</td></tr>';
+echo "\t<tr><td colspan=\"6\">\n";
 echo "<textarea id=\"body_text\" name=\"body_text\" class=\"mceClass\" style=\"width:100%;height:400px;\" >".$form['body_text']."</textarea>\n";
 echo "</td></tr>\n";
 echo "</table></div>\n";
 echo "<div class=\"table-responsive\"><table class=\"Tlarge table table-striped\">\n";
 if ($next_row>0) {
-    echo "<tr class=\"bg-info text-center\"><td colspan=\"8\"><b>".$script_transl['insrow']."</b></td></tr>\n";
-    foreach ($form['rows'] as $k=>$val) {
-            $nr=$k+1;
-            $aliiva = gaz_dbi_get_row($gTables['aliiva'],'codice',$val['vat_code']);
-            echo "<input type=\"hidden\" value=\"".$val['status']."\" name=\"rows[$k][status]\">\n";
-            echo "<input type=\"hidden\" value=\"".$val['vat_code']."\" name=\"rows[$k][vat_code]\">\n";
-            echo "<input type=\"hidden\" value=\"".$val['cod_revenue']."\" name=\"rows[$k][cod_revenue]\">\n";
-            echo "<tr class=\"FacetFieldCaptionTD\">\n";
-            echo "<td colspan=\"3\">$nr<input type=\"text\" name=\"rows[$k][descri]\" value=\"".$val['descri']."\" maxlength=\"100\" />
-                  ".$script_transl['cod_revenue'].": ".$val['cod_revenue']." - ".$aliiva['descri']."</td>\n";
-            echo "<td><input type=\"text\" name=\"rows[$k][unimis]\" value=\"".$val['unimis']."\" maxlength=\"3\" /></td>\n";
-            echo "<td><input type=\"text\" style=\"text-align:right\" name=\"rows[$k][quanti]\" value=\"".$val['quanti']."\" maxlength=\"11\" /></td>\n";
-            echo "<td><input type=\"text\" style=\"text-align:right\" name=\"rows[$k][price]\" value=\"".$val['price']."\" maxlength=\"15\" /></td>\n";
-            echo "<td><input type=\"text\" style=\"text-align:right\" name=\"rows[$k][discount]\" value=\"".$val['discount']."\" maxlength=\"4\" /></td>\n";
-
-			//echo "<td align=\"right\"><input type=\"image\" name=\"del[$k]\" src=\"../../library/images/xbut.gif\" title=\"".$script_transl['delete'].$script_transl['thisrow']."!\" /></td></tr>\n";
-
-		   /** ENRICO FEDELE */
-		   /* glyph icon */
-		   echo '  <td align="right">
-					 <button type="submit" class="btn btn-default btn-sm" name="del['.$k.']" title="'.$script_transl['delete'].$script_transl['thisrow'].'"><i class="glyphicon glyphicon-remove"></i></button>
-				   </td>
-				 </tr>';
-		   /** ENRICO FEDELE */
-
-			echo "\t </tr>\n";
-    }
+  echo "<tr class=\"bg-info text-center\"><td colspan=\"8\"><b>".$script_transl['insrow']."</b></td></tr>\n";
+  foreach ($form['rows'] as $k=>$val) {
+    $nr=$k+1;
+    $aliiva = gaz_dbi_get_row($gTables['aliiva'],'codice',$val['vat_code']);
+    echo "<input type=\"hidden\" value=\"".$val['vat_code']."\" name=\"rows[$k][vat_code]\">\n";
+    echo "<input type=\"hidden\" value=\"".$val['cod_revenue']."\" name=\"rows[$k][cod_revenue]\">\n";
+    echo "<tr class=\"FacetFieldCaptionTD\">\n";
+    echo '<td>'.$nr."</td><td colspan=2><input type=\"text\" name=\"rows[$k][descri]\" value=\"".$val['descri']."\" maxlength=\"100\" /><br/>
+          ".$script_transl['cod_revenue'].": ".$val['cod_revenue']." - ".$aliiva['descri']."</td>\n";
+    echo "<td><input type=\"text\" name=\"rows[$k][unimis]\" value=\"".$val['unimis']."\" maxlength=\"3\" /></td>\n";
+    echo "<td><input type=\"text\" style=\"text-align:right\" name=\"rows[$k][quanti]\" value=\"".$val['quanti']."\" maxlength=\"11\" /></td>\n";
+    echo "<td><input type=\"text\" style=\"text-align:right\" name=\"rows[$k][price]\" value=\"".$val['price']."\" maxlength=\"15\" /></td>\n";
+    echo "<td><input type=\"text\" style=\"text-align:right\" name=\"rows[$k][discount]\" value=\"".$val['discount']."\" maxlength=\"4\" /></td>\n";
+	  echo '  <td align="right">
+				 <button type="submit" class="btn btn-default btn-sm" name="del['.$k.']" title="'.$script_transl['delete'].$script_transl['thisrow'].'"><i class="glyphicon glyphicon-remove"></i></button>
+			   </td>
+			 </tr>';
+		echo "\t </tr>\n";
+  }
 }
 echo "</table></div><br/>\n";
 echo "<div class=\"table-responsive\"><table class=\"Tlarge table input-area\">\n";
@@ -581,7 +552,6 @@ echo "\t<td colspan=\"8\" align=\"center\"><b>".$script_transl['rows_title']."</
 echo "</tr>\n";
 echo "<tr>\n";
 echo "<input type=\"hidden\" value=\"".$form['hidden_req']."\" name=\"hidden_req\" />\n";
-echo "<input type=\"hidden\" value=\"".$form['in_status']."\" name=\"in_status\" />\n";
 echo "\t<tr align=\"center\">\n";
 echo "\t<td colspan=\"3\">".$script_transl['descri']."</td>\n";
 echo "\t<td>".$script_transl['unimis']."</td>\n";

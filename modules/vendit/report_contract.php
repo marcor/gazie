@@ -151,7 +151,7 @@ echo "<input type=\"hidden\" name=\"hidden_req\">\n";
     </div>
 <?php
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['title'].$script_transl['vat_section'];
-$gForm->selectNumber('auxil',$auxil,0,1,3,'FacetSelect','auxil');
+$gForm->selectNumber('auxil',$auxil,0,1,9,'FacetSelect','auxil');
 echo "</div>\n";
 if (!isset($_GET['field']) or ($_GET['field'] == 2) or(empty($_GET['field'])))
         $orderby = "conclusion_date DESC, doc_number DESC";
@@ -190,7 +190,7 @@ $headers_tesdoc = array  (
             $script_transl['number'] => "doc_number",
             $script_transl['customer'] => "id_customer",
             $script_transl['current_fee'] => "current_fee",
-            $script_transl['status'] => "",
+            $script_transl['periodicity'] => "periodicity",
             $script_transl['print'] => "",
             "Mail" => "",
             $script_transl['delete'] => ""
@@ -214,7 +214,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
 		}
         print "</td>";
         print "<td class=\"FacetDataTD\" align=\"center\">".$row['current_fee']." &nbsp;</td>";
-        print "<td class=\"FacetDataTD\" align=\"center\">".$row['status']." &nbsp;</td>";
+        print "<td class=\"FacetDataTD\" align=\"center\">".$script_transl['periodicity_value'][$row['periodicity']]." &nbsp;</td>";
 		echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" style=\"cursor:pointer;\" onclick=\"printPdf('print_contract.php?id_contract=".$row['id_contract']."')\"><i class=\"glyphicon glyphicon-print\" title=\"Stampa documento PDF\"></i></a>";
 		// Colonna "Mail"
 		print "<td align=\"center\">";
@@ -234,7 +234,6 @@ while ($row = gaz_dbi_fetch_array($result)) {
         print "</td></tr>\n";
 }
 ?>
-<tr><th class="FacetFieldCaptionTD" colspan="8"></th></tr>
 </form>
 </table>
 </div>

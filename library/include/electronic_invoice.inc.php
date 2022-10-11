@@ -525,10 +525,6 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
       $results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/ProgressivoInvio")->item(0);
       $attrVal = $domDoc->createTextNode($id_progressivo);
       $results->appendChild($attrVal);
-      // Il formato della trasmissione è encodato nei file
-      // $results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/FormatoTrasmissione")->item(0);
-      // $attrVal = $domDoc->createTextNode("SDI11");
-      // $results->appendChild($attrVal);
       $results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/IdTrasmittente/IdCodice")->item(0);
       $attrVal = $domDoc->createTextNode($XMLvars->IdCodice);
       $results->appendChild($attrVal);
@@ -776,6 +772,10 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 					$resfr->appendChild($el);
 				}
 			}
+      // se cliente e fornitore coincidono allora forzo il tipo documento come autofattura TD27
+      if (trim($XMLvars->azienda['pariva'])==trim($XMLvars->client['pariva']) && ( $XMLvars->TipoDocumento=='TD01' || $XMLvars->TipoDocumento=='TD24' )) {
+        $XMLvars->TipoDocumento='TD27';
+      }
       $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/TipoDocumento")->item(0);
       $attrVal = $domDoc->createTextNode($XMLvars->TipoDocumento);
       $results->appendChild($attrVal);
