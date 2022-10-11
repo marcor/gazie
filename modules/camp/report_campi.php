@@ -126,8 +126,8 @@ $recordnav -> output();
             </tr>
             <tr>
 <?php
-	$where .= " AND (used_from_modules LIKE '%".$module."%' OR used_from_modules='' OR used_from_modules='NULL' )"; // visualizzo solo i campi specifici o generici
-	$result = gaz_dbi_dyn_query ('*', $gTables['campi'], $where, $orderby, $limit, $passo);
+  $module = "camp";
+	$where .= " AND (used_from_modules LIKE '%".$module."%' OR used_from_modules='' OR used_from_modules IS NULL )"; // visualizzo solo i campi specifici o generici	$result = gaz_dbi_dyn_query ('*', $gTables['campi'], $where, $orderby, $limit, $passo);
 	// creo l'array (header => campi) per l'ordinamento dei record
 	$headers_campi = array("Codice"      => "codice",
 							"Descrizione" => "descri",
@@ -146,7 +146,6 @@ $recordnav -> output();
         </thead>
         <tbody>
 <?php
-
 
 while ($a_row = gaz_dbi_fetch_array($result)) {
 ?>
