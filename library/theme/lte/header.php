@@ -78,24 +78,30 @@ if (isset( $scriptname) && $scriptname != $prev_script && $scriptname != 'admin.
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title id='title_from_menu'></title>
 		<?php
-        if (substr($admin_aziend['ragso1'],0,16)=='AZIENDA DI PROVA'){ // l'azienda di default prende il maialino
-			$ico=base64_encode(file_get_contents( '../../library/images/favicon.ico' ));
-            $ico114=base64_encode(file_get_contents( '../../library/images/logo_114x114.png' ));
-        } else { // altrimenti prendo le icone create in fase di scelta del logo in configurazione azienda
-            $ico=base64_encode(@file_get_contents( DATA_DIR . 'files/' . $admin_aziend['codice'] . '/favicon.ico' ));
-            $ico114=base64_encode(@file_get_contents( DATA_DIR . 'files/' . $admin_aziend['codice'] . '/logo_114x114.png' ));
-        }
+    if (substr($admin_aziend['ragso1'],0,16)=='AZIENDA DI PROVA'){
+      $ico=base64_encode(file_get_contents( '../../library/images/favicon.ico' ));
+      $ico114=base64_encode(file_get_contents( '../../library/images/logo_114x114.png' ));
+      $sfondo=base64_encode(@file_get_contents( DATA_DIR . 'files/1/images/sfondo.png' ));
+    } else { // altrimenti prendo le icone create in fase di scelta del logo in configurazione azienda
+      $ico=base64_encode(@file_get_contents( DATA_DIR . 'files/' . $admin_aziend['codice'] . '/favicon.ico' ));
+      $ico114=base64_encode(@file_get_contents( DATA_DIR . 'files/' . $admin_aziend['codice'] . '/logo_114x114.png' ));
+      $sfondo=base64_encode(@file_get_contents( DATA_DIR . 'files/' . $admin_aziend['codice'] . '/images/sfondo.png' ));
+    }
+    if (file_exists(DATA_DIR . 'files/' . $admin_aziend['codice'] . '/images/sfondo.png')){
+      $sfondo=base64_encode(@file_get_contents( DATA_DIR . 'files/' . $admin_aziend['codice'] . '/images/sfondo.png' ));
+    } else {
+      $sfondo=base64_encode(@file_get_contents( '../../library/images/sfondo.png' ));
+    }
 		?>
-        <link rel="icon" href="data:image/x-icon;base64,<?php echo $ico?>"  type="image/x-icon" />
-		<link rel="icon" sizes="114x114" href="data:image/x-icon;base64,<?php echo $ico114?>"  type="image/x-icon" />
-		<link rel="apple-touch-icon" href="data:image/x-icon;base64,<?php echo $ico114?>"  type="image/x-icon">
-		<link rel="apple-touch-startup-image" href="data:image/x-icon;base64,<?php echo $ico114?>"  type="image/x-icon">
-		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="data:image/x-icon;base64,<?php echo $ico114?>"  type="image/x-icon" />
+    <link rel="icon" href="data:image/x-icon;base64,<?php echo $ico; ?>"  type="image/x-icon" />
+		<link rel="icon" sizes="114x114" href="data:image/x-icon;base64,<?php echo $ico114; ?>"  type="image/x-icon" />
+		<link rel="apple-touch-icon" href="data:image/x-icon;base64,<?php echo $ico114; ?>"  type="image/x-icon">
+		<link rel="apple-touch-startup-image" href="data:image/x-icon;base64,<?php echo $ico114; ?>"  type="image/x-icon">
+		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="data:image/x-icon;base64,<?php echo $ico114; ?>"  type="image/x-icon" />
     <link href="../../library/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="../../library/theme/lte/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="../../library/theme/lte/ionicons/css/ionicons.min.css">
     <link rel="stylesheet" href="../../library/theme/lte/adminlte/dist/css/AdminLTE.css">
-    <!-- <link rel="stylesheet" href="../../library/theme/lte/adminlte/dist/css/skins/skin-gazie.css">  _all-skins.min.css">-->
     <link href="../../js/jquery.ui/jquery-ui.css" rel="stylesheet">
 		<script src="../../js/jquery/jquery.js"></script>
 
@@ -145,6 +151,10 @@ if (isset( $scriptname) && $scriptname != $prev_script && $scriptname != 'admin.
             .sidebar-menu .treeview-menu.menu-open > li {
               border-left: 2px solid #<?php echo $admin_aziend['colore']; ?>;
             }
+            .content-wrapper {
+              background-image: url("data:image/x-icon;base64,<?php echo $sfondo; ?>");
+            }
+
         </style>
 <script>
 $(function() {

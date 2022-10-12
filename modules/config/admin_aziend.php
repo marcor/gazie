@@ -145,58 +145,73 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             $form['datnas'] = gaz_format_date($form['datnas'], true);
             $form['virtual_stamp_auth_date'] = gaz_format_date($form['virtual_stamp_auth_date'], true);
             if ($_FILES['userfile']['size'] > 0) { //se c'e' una nuova immagine nel buffer
-				require('../../library/php-ico/class-php-ico.php');
-                $form['image'] = file_get_contents($_FILES['userfile']['tmp_name']);
-				// aggiorno anche il set di icone sul filesystem
-				$path = DATA_DIR . 'files/' . $admin_aziend['codice'] . '/';
-				$exten = strtolower(pathinfo($_FILES['userfile']['name'], PATHINFO_EXTENSION));
-				$file_pattern = $path.'original_logo.*' ;
-				array_map( 'unlink', glob( $file_pattern ) );
-				$ori_file = $path.'original_logo.'.$exten;
-				@move_uploaded_file($_FILES['userfile']['tmp_name'], $ori_file);
-				list($width, $height) = getimagesize($ori_file);
-				$ratio=1;
-				if ($width>$height) {
-					$sqr=$width;
-					$offsetX=0;
-					$offsetY=$width-$height;
-				} elseif ($height>$width) {
-					$sqr=$height;
-					$offsetX=$height-$width;
-					$offsetY=0;
-				} else {
-					$sqr=$width;
-					$offsetX=0;
-					$offsetY=0;
-				}
-				switch ($exten){
-					case 'png':
-						$im = @imagecreatefrompng($ori_file);
-					break;
-					case 'gif':
-						$im = @imagecreatefromgif($ori_file);
-					break;
-					default:
-						$im = @imagecreatefromjpeg($ori_file);
-				}
-				if ( false !== $im ) {
-					$dim=array(32,57,64,72,76,114,120,144,152,180);// dimensioni icone
-					foreach($dim as $d){
-						$percent=$sqr/$d;
-						$new_img = imagecreatetruecolor($d,$d);
-						imagecopyresampled($new_img,$im,$offsetX/$percent/2,$offsetY/$percent/2,0,0,$d,$d,$sqr,$sqr);
-						imagealphablending($new_img,FALSE);
-						imagesavealpha($new_img,TRUE);
-						$transp = imagecolorallocatealpha($new_img,255,255,255,127);
-						imagefill($new_img,0,0,$transp);
-						imagepng( $new_img, $path."logo_".$d."x".$d.".png",9);
-						if ($d==72){ // creo le 2 favicon a partire dalle
-							$ico_lib = new PHP_ICO($path."logo_64x64.png",array(array(32,32),array(64,64)));
-							$ico_lib->save_ico($path."favicon.ico");
-						}
-						imagedestroy( $new_img );
-					}
-				}
+              require('../../library/php-ico/class-php-ico.php');
+                      $form['image'] = file_get_contents($_FILES['userfile']['tmp_name']);
+              // aggiorno anche il set di icone sul filesystem
+              $path = DATA_DIR . 'files/' . $admin_aziend['codice'] . '/';
+              $exten = strtolower(pathinfo($_FILES['userfile']['name'], PATHINFO_EXTENSION));
+              $file_pattern = $path.'original_logo.*' ;
+              array_map( 'unlink', glob( $file_pattern ) );
+              $ori_file = $path.'original_logo.'.$exten;
+              @move_uploaded_file($_FILES['userfile']['tmp_name'], $ori_file);
+              list($width, $height) = getimagesize($ori_file);
+              $ratio=1;
+              if ($width>$height) {
+                $sqr=$width;
+                $offsetX=0;
+                $offsetY=$width-$height;
+              } elseif ($height>$width) {
+                $sqr=$height;
+                $offsetX=$height-$width;
+                $offsetY=0;
+              } else {
+                $sqr=$width;
+                $offsetX=0;
+                $offsetY=0;
+              }
+              switch ($exten){
+                case 'png':
+                  $im = @imagecreatefrompng($ori_file);
+                break;
+                case 'gif':
+                  $im = @imagecreatefromgif($ori_file);
+                break;
+                default:
+                  $im = @imagecreatefromjpeg($ori_file);
+              }
+              if ( false !== $im ) {
+                $dim=array(32,57,64,72,76,114,120,144,152,180);// dimensioni icone
+                foreach($dim as $d){
+                  $percent=$sqr/$d;
+                  $new_img = imagecreatetruecolor($d,$d);
+                  imagecopyresampled($new_img,$im,$offsetX/$percent/2,$offsetY/$percent/2,0,0,$d,$d,$sqr,$sqr);
+                  imagealphablending($new_img,FALSE);
+                  imagesavealpha($new_img,TRUE);
+                  $transp = imagecolorallocatealpha($new_img,255,255,255,127);
+                  imagefill($new_img,0,0,$transp);
+                  imagepng( $new_img, $path."logo_".$d."x".$d.".png",9);
+                  if ($d==72){ // creo le 2 favicon a partire dalle
+                    $ico_lib = new PHP_ICO($path."logo_64x64.png",array(array(32,32),array(64,64)));
+                    $ico_lib->save_ico($path."favicon.ico");
+                  }
+                  imagedestroy( $new_img );
+                }
+              }
+              // creo lo sfondo desaturato
+              $width = imagesx($im);
+              $height = imagesy($im);
+              // Create a white background, the same size as the original.
+              $bg = imagecreatetruecolor($width, $height);
+              $white = imagecolorallocate($bg, 225, 225, 225);
+              imagefill($bg, 0, 0, $white);
+              // Merge the two images.
+              imagecopyresampled( $bg, $im, 0, 0, 0, 0, $width, $height, $width, $height);
+              imagefilter($bg, IMG_FILTER_GRAYSCALE);
+              imagefilter($bg, IMG_FILTER_CONTRAST, 80);
+              imagefilter($bg, IMG_FILTER_BRIGHTNESS, 110);
+              imagepng( $bg, $path."images/sfondo.png");
+              imagedestroy($bg);
+              imagedestroy($im);
             }
             // aggiorno il db
             if ($toDo == 'insert') {

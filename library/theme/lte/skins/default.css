@@ -30,7 +30,7 @@ th a:hover {
     color: #000;
 }
 .content-wrapper {
-  background-image: url("../images/sfondo.png");
+  /* background-image: url("../images/sfondo.png"); */
 	background-color: #f3f5f9;
 }
 .logo-lg {

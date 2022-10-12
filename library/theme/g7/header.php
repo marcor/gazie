@@ -19,80 +19,86 @@ if ( isset($maintenance) && $maintenance!=FALSE && $maintenance!=$_SESSION['user
 		<meta name="apple-mobile-web-app-title" content="<?php echo $admin_aziend['ragso1'];?>">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 		<?php
-        if (substr($admin_aziend['ragso1'],0,16)=='AZIENDA DI PROVA'){ // l'azienda di default prende il maialino
+    if (substr($admin_aziend['ragso1'],0,16)=='AZIENDA DI PROVA'){ // l'azienda di default prende il maialino
 			$ico=base64_encode(file_get_contents( '../../library/images/favicon.ico' ));
-            $ico114=base64_encode(file_get_contents( '../../library/images/logo_114x114.png' ));
-        } else { // altrimenti prendo le icone create in fase di scelta del logo in configurazione azienda
-            $ico=base64_encode(@file_get_contents( DATA_DIR . 'files/' . $admin_aziend['codice'] . '/favicon.ico' ));
-            $ico114=base64_encode(@file_get_contents( DATA_DIR . 'files/' . $admin_aziend['codice'] . '/logo_114x114.png' ));
-        }
+      $ico114=base64_encode(file_get_contents( '../../library/images/logo_114x114.png' ));
+    } else { // altrimenti prendo le icone create in fase di scelta del logo in configurazione azienda
+      $ico=base64_encode(@file_get_contents( DATA_DIR . 'files/' . $admin_aziend['codice'] . '/favicon.ico' ));
+      $ico114=base64_encode(@file_get_contents( DATA_DIR . 'files/' . $admin_aziend['codice'] . '/logo_114x114.png' ));
+    }
+    if (file_exists(DATA_DIR . 'files/' . $admin_aziend['codice'] . '/images/sfondo.png')){
+      $sfondo=base64_encode(@file_get_contents( DATA_DIR . 'files/' . $admin_aziend['codice'] . '/images/sfondo.png' ));
+    } else {
+      $sfondo=base64_encode(@file_get_contents( '../../library/images/sfondo.png' ));
+    }
 		?>
-        <link rel="icon" href="data:image/x-icon;base64,<?php echo $ico?>"  type="image/x-icon" />
-		<link rel="icon" sizes="114x114" href="data:image/x-icon;base64,<?php echo $ico114?>"  type="image/x-icon" />
-		<link rel="apple-touch-icon" href="data:image/x-icon;base64,<?php echo $ico114?>"  type="image/x-icon">
-		<link rel="apple-touch-startup-image" href="data:image/x-icon;base64,<?php echo $ico114?>"  type="image/x-icon">
-		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="data:image/x-icon;base64,<?php echo $ico114?>"  type="image/x-icon" />
-        <link href="../../library/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-        <link href="../../js/jquery.ui/jquery-ui.css" rel="stylesheet">
-        <link href="../../library/theme/g7/smartmenus-master/bootstrap/jquery.smartmenus.bootstrap.css" rel="stylesheet" />
-        <script src="../../js/jquery/jquery.js"></script>
-
-        <?php
-        // carico il css strutturale grandezza font, posizione, ecc
-        $style = 'base.css';
-        if (!empty($admin_aziend['style']) && file_exists("../../library/theme/g7/scheletons/" . $admin_aziend['style'])) {
-            $style = $admin_aziend['style'];
-        }
-        // carico i fogli di stile personalizzati nella subdir skin si imposta l'aspetto (colori, font, ecc)
-        $skin = 'base.css';
-        if (!empty($admin_aziend['skin']) && file_exists("../../library/theme/g7/skins/" . $admin_aziend['skin'])) {
-            $skin = $admin_aziend['skin'];
-        }
-
-        function hex_color_mod($hex, $diff) {
-            $rgb = str_split($hex, 2);
-            foreach ($rgb as &$hex) {
-                $dec = hexdec($hex);
-                if ($diff >= 0) {
-                    $dec += $diff;
-                } else {
-                    $dec -= abs($diff);
-                }
-                $dec = max(0, min(255, $dec));
-                $hex = str_pad(dechex($dec), 2, '0', STR_PAD_LEFT);
-            }
-            return '#' . implode($rgb);
-        }
-        ?>
-        <link href="../../library/theme/g7/scheletons/<?php echo $style; ?>" rel="stylesheet" type="text/css" />
-        <link href="../../library/theme/g7/skins/<?php echo $skin; ?>" rel="stylesheet" type="text/css" />
-        <style type="text/css">
-            .navbar-default .navbar-collapse {
-                background-color: <?php echo hex_color_mod($admin_aziend['colore'],20); ?> ;
-            }
-            .company-color {
-                background-color: #<?php echo $admin_aziend['colore']; ?> ;
-            }
-            .dropdown-menu > li > a:hover {
-                background-color: #<?php echo $admin_aziend['colore']; ?> ;
-            }
-            .navbar-default .navbar-nav > li > a:hover {
-                background-color: #<?php echo $admin_aziend['colore']; ?>;
-            }
-			div.blink{
-			  animation:blink 700ms infinite alternate;
-			  padding-top:10px;
-			}
-			div.blink>a.btn{
-			  padding:5px;
-			}
-			@keyframes blink {
-				from { opacity:1; } to { opacity:0; }
-			}
-            .ui-dialog-buttonset>button.btn.btn-confirm:first-child {
-                background-color: #f9b54d;
-            }
-        </style>
+    <link rel="icon" href="data:image/x-icon;base64,<?php echo $ico; ?>"  type="image/x-icon" />
+		<link rel="icon" sizes="114x114" href="data:image/x-icon;base64,<?php echo $ico114; ?>"  type="image/x-icon" />
+		<link rel="apple-touch-icon" href="data:image/x-icon;base64,<?php echo $ico114; ?>"  type="image/x-icon">
+		<link rel="apple-touch-startup-image" href="data:image/x-icon;base64,<?php echo $ico114; ?>"  type="image/x-icon">
+		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="data:image/x-icon;base64,<?php echo $ico114; ?>"  type="image/x-icon" />
+    <link href="../../library/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="../../js/jquery.ui/jquery-ui.css" rel="stylesheet">
+    <link href="../../library/theme/g7/smartmenus-master/bootstrap/jquery.smartmenus.bootstrap.css" rel="stylesheet" />
+    <script src="../../js/jquery/jquery.js"></script>
+    <?php
+    // carico il css strutturale grandezza font, posizione, ecc
+    $style = 'base.css';
+    if (!empty($admin_aziend['style']) && file_exists("../../library/theme/g7/scheletons/" . $admin_aziend['style'])) {
+        $style = $admin_aziend['style'];
+    }
+    // carico i fogli di stile personalizzati nella subdir skin si imposta l'aspetto (colori, font, ecc)
+    $skin = 'base.css';
+    if (!empty($admin_aziend['skin']) && file_exists("../../library/theme/g7/skins/" . $admin_aziend['skin'])) {
+        $skin = $admin_aziend['skin'];
+    }
+    function hex_color_mod($hex, $diff) {
+      $rgb = str_split($hex, 2);
+      foreach ($rgb as &$hex) {
+          $dec = hexdec($hex);
+          if ($diff >= 0) {
+              $dec += $diff;
+          } else {
+              $dec -= abs($diff);
+          }
+          $dec = max(0, min(255, $dec));
+          $hex = str_pad(dechex($dec), 2, '0', STR_PAD_LEFT);
+      }
+      return '#' . implode($rgb);
+    }
+    ?>
+    <link href="../../library/theme/g7/scheletons/<?php echo $style; ?>" rel="stylesheet" type="text/css" />
+    <link href="../../library/theme/g7/skins/<?php echo $skin; ?>" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+      body {
+        background-image: url("data:image/x-icon;base64,<?php echo $sfondo; ?>");
+      }
+      .navbar-default .navbar-collapse {
+          background-color: <?php echo hex_color_mod($admin_aziend['colore'],20); ?> ;
+      }
+      .company-color {
+          background-color: #<?php echo $admin_aziend['colore']; ?> ;
+      }
+      .dropdown-menu > li > a:hover {
+          background-color: #<?php echo $admin_aziend['colore']; ?> ;
+      }
+      .navbar-default .navbar-nav > li > a:hover {
+          background-color: #<?php echo $admin_aziend['colore']; ?>;
+      }
+      div.blink{
+        animation:blink 700ms infinite alternate;
+        padding-top:10px;
+      }
+      div.blink>a.btn{
+        padding:5px;
+      }
+      @keyframes blink {
+        from { opacity:1; } to { opacity:0; }
+      }
+      .ui-dialog-buttonset>button.btn.btn-confirm:first-child {
+        background-color: #f9b54d;
+      }
+    </style>
         <?php
 
         function get_transl_referer($rlink) {
