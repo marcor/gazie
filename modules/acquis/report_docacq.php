@@ -354,7 +354,7 @@ $(function() {
        </tr>
 <?php
 //recupero le testate in base alle scelte impostate
-$result = gaz_dbi_dyn_query($gTables['tesdoc'].".protoc,".$gTables['tesdoc'].".datfat,".$gTables['tesdoc'].".numfat,".$gTables['tesdoc'].".tipdoc,".$gTables['tesdoc'].".clfoco,".$gTables['tesdoc'].".id_tes,".$gTables['tesdoc'].".datreg,".$gTables['tesdoc'].".fattura_elettronica_zip_package,".$gTables['tesdoc'].".fattura_elettronica_original_name,". $gTables['tesdoc'].".id_con,".$gTables['anagra'].".ragso1",$tesdoc_e_partners, $ts->where, $ts->orderby, $ts->getOffset(), $ts->getLimit(),"protoc,datfat");
+$result = gaz_dbi_dyn_query($gTables['anagra'].".ragso1,".$gTables['tesdoc'].".*",$tesdoc_e_partners, $ts->where, $ts->orderby, $ts->getOffset(), $ts->getLimit(),"protoc,datfat");
 $paymov = new Schedule();
 // creo un array con gli ultimi documenti dei vari anni (gli unici eliminabili senza far saltare il protocollo del registro IVA)
 $rs_last_docs = gaz_dbi_query("SELECT id_tes
@@ -431,13 +431,13 @@ while ($row = gaz_dbi_fetch_array($result)) {
     if (isset($revch) && !empty($revch['id_tes'])) {
       $modulo_fae = "../vendit/electronic_invoice.php?id_tes=" . $revch['id_tes'];
       $revch['fae_attuale']="IT" . $admin_aziend['codfis'] . "_".encodeSendingNumber(array('azienda' => $admin_aziend['codice'],
-        'sezione' => 5,
-        'anno' => 2009,
+        'sezione' => $revch['seziva'],
+        'anno' => $revch['datfat'],
         'fae_reinvii'=> substr($revch["datreg"],3,1),
         'protocollo' => intval($revch["fattura_elettronica_reinvii"]*10000+ $revch["protoc"])), 36).".xml";
       $revch['fae_reinvio']="IT" . $admin_aziend['codfis'] . "_".encodeSendingNumber(array('azienda' => $admin_aziend['codice'],
-        'sezione' => 5,
-        'anno' => 2009,
+        'sezione' => $revch['seziva'],
+        'anno' => $revch['datfat'],
         'fae_reinvii'=> substr($revch["datreg"],3,1),
         'protocollo' => intval(($revch["fattura_elettronica_reinvii"]+1)*10000+ $revch["protoc"])), 36).".xml";
       $zipped = (preg_match("/^[A-Z0-9]{13,18}_([a-zA-Z0-9]{5}).zip$/",(is_string($revch['fattura_elettronica_zip_package'])?$revch['fattura_elettronica_zip_package']:''),$match))?$match[1]:false;
