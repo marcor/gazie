@@ -180,13 +180,22 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
                   $im = @imagecreatefromjpeg($ori_file);
               }
               if ( false !== $im ) {
+                // creo lo sfondo desaturato
+                $width = imagesx($im);
+                $height = imagesy($im);
+                // Create a white background, the same size as the original.
+                $bg = imagecreatetruecolor($width, $height);
+                $white = imagecolorallocate($bg, 255, 255, 255);
+                imagefill($bg, 0, 0, $white);
+                // Merge the two images.
+                imagecopyresampled( $bg, $im, 0, 0, 0, 0, $width, $height, $width, $height);
+                imagealphablending($bg,FALSE);
+                imagesavealpha($bg,TRUE);
                 $dim=array(32,57,64,72,76,114,120,144,152,180);// dimensioni icone
                 foreach($dim as $d){
                   $percent=$sqr/$d;
                   $new_img = imagecreatetruecolor($d,$d);
-                  imagecopyresampled($new_img,$im,$offsetX/$percent/2,$offsetY/$percent/2,0,0,$d,$d,$sqr,$sqr);
-                  imagealphablending($new_img,FALSE);
-                  imagesavealpha($new_img,TRUE);
+                  imagecopyresampled($new_img,$bg,$offsetX/$percent/2,$offsetY/$percent/2,0,0,$d,$d,$sqr,$sqr);
                   $transp = imagecolorallocatealpha($new_img,255,255,255,127);
                   imagefill($new_img,0,0,$transp);
                   imagepng( $new_img, $path."logo_".$d."x".$d.".png",9);
@@ -196,22 +205,13 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
                   }
                   imagedestroy( $new_img );
                 }
+                imagefilter($bg, IMG_FILTER_GRAYSCALE);
+                imagefilter($bg, IMG_FILTER_CONTRAST, 80);
+                imagefilter($bg, IMG_FILTER_BRIGHTNESS, 110);
+                imagepng( $bg, $path."images/sfondo.png");
+                imagedestroy($bg);
+                imagedestroy($im);
               }
-              // creo lo sfondo desaturato
-              $width = imagesx($im);
-              $height = imagesy($im);
-              // Create a white background, the same size as the original.
-              $bg = imagecreatetruecolor($width, $height);
-              $white = imagecolorallocate($bg, 225, 225, 225);
-              imagefill($bg, 0, 0, $white);
-              // Merge the two images.
-              imagecopyresampled( $bg, $im, 0, 0, 0, 0, $width, $height, $width, $height);
-              imagefilter($bg, IMG_FILTER_GRAYSCALE);
-              imagefilter($bg, IMG_FILTER_CONTRAST, 80);
-              imagefilter($bg, IMG_FILTER_BRIGHTNESS, 110);
-              imagepng( $bg, $path."images/sfondo.png");
-              imagedestroy($bg);
-              imagedestroy($im);
             }
             // aggiorno il db
             if ($toDo == 'insert') {
