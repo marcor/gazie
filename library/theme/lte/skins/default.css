@@ -39,6 +39,13 @@ th a:hover {
 .FacetFormTABLE,table.Tmiddle,table.Tsmall {
 	background-color: #ebf2f49e;
 }
+.Tlarge.table-bordered {
+	border: 2px solid #bbbbbb;
+  box-shadow: 1px 1px 1px rgba(1,1,1,.5);
+}
+table.Tlarge {
+  background-color: #e6e6e6;
+}
 #preventDuplicate {
     color: #000;
 }
@@ -139,10 +146,6 @@ td.ui-datepicker-other-month>a.ui-state-default.ui-priority-secondary{
 }
 .content-header > .breadcrumb {
 	background-color: #b7b9b9;
-}
-.Tlarge.table-bordered {
-	border: 2px solid #bbbbbb;
-  box-shadow: 1px 1px 1px rgba(1,1,1,.5);
 }
 .tab-content{
   background-color:#fff;

@@ -13,6 +13,9 @@ select:focus, input:focus {
 .FacetFormTABLE,table.Tmiddle,table.Tsmall {
 	background-color: #ebf2f49e;
 }
+table.Tlarge {
+  background-color: #e6e6e6;
+}
 th {
 	background-color: #c4c7ca;
 }
