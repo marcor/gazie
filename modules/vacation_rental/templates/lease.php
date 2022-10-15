@@ -142,7 +142,7 @@ class Lease extends Template
       $totivafat = $this->docVars->totivafat;
       $impbol = $this->docVars->impbol;
       $taxstamp=$this->docVars->taxstamp;
-      $totamount = $totimpfat + $totivafat + $impbol + $taxstamp;
+      $totamount = number_format(($totimpfat + $totivafat + $impbol + $taxstamp),2);
       $locale = 'it_IT';// creo l'importo in lettere
       $fmt = numfmt_create($locale, NumberFormatter::SPELLOUT);
       $in_words = numfmt_format($fmt, $totamount);
