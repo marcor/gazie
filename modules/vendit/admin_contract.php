@@ -52,7 +52,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $cliente = $anagrafica->getPartner(intval($_POST['id_customer']));
     $form['hidden_req'] = $_POST['hidden_req'];
     foreach($_POST['search'] as $k=>$v){
-       $form['search'][$k]=$v;
+      $form['search'][$k]=$v;
     }
     $form['doc_type'] = strtoupper(substr($_POST['doc_type'],0,3));
     $form['id_customer'] = substr($_POST['id_customer'],0,13);
@@ -65,6 +65,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['start_date_M'] = intval($_POST['start_date_M']);
     $form['start_date_D'] = intval($_POST['start_date_D']);
     $form['months_duration'] = intval($_POST['months_duration']);
+    $form['covered_month'] = intval($_POST['covered_month']);
+    $form['covered_year'] = intval($_POST['covered_year']);
     $form['initial_fee'] = floatval(preg_replace("/\,/",'.',$_POST['initial_fee']));
     $form['periodic_reassessment'] = intval($_POST['periodic_reassessment']);
     $form['bank'] = intval($_POST['bank']);
@@ -82,7 +84,6 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['id_agente'] = intval($_POST['id_agente']);
     $form['provvigione'] = floatval(preg_replace("/\,/",'.',$_POST['provvigione']));
     $form['status'] = $_POST['status'];
-
     // inizio rigo di input
     $form['in_descri'] = $_POST['in_descri'];
     $form['in_unimis'] = $_POST['in_unimis'];
@@ -174,7 +175,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
                 contractRowUpdate($form['rows'][$i]);
              }
              bodytextUpdate(array('id_body',$form['id_body_text']),array('table_name_ref'=>'contract','id_ref'=>$form['id_contract'],'body_text'=>$form['body_text'],'lang_id'=>$admin_aziend['id_language']));
-             contractUpdate($form, array('id_contract',$form['id_contract']));
+             $form['data_ordine']= $form['covered_year'].'-'.$form['covered_month'].'-01';
+             contractUpdate($form, array('id_contract',$form['id_contract']),$gTables['tesdoc']);
              header("Location: ".$form['ritorno']);
              exit;
           } else { // e' un'inserimento
@@ -222,10 +224,6 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
   }
 
   // Se viene inviata la richiesta di conferma rigo
-  /** ENRICO FEDELE */
-  /* Con button non funziona _x */
-  //if (isset($_POST['in_submit_x'])) {
-  /** ENRICO FEDELE */
   if (isset($_POST['in_submit'])) {
     $form['rows'][$next_row]['descri'] = $form['in_descri'];
     $form['rows'][$next_row]['unimis'] = $form['in_unimis'];
@@ -254,6 +252,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 
 } elseif ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo accesso per UPDATE
     $contract = gaz_dbi_get_row($gTables['contract'],"id_contract",intval($_GET['id_contract']));
+    $tesdoc = gaz_dbi_get_row($gTables['tesdoc'],"id_contract",intval($_GET['id_contract'])," ORDER BY data_ordine DESC");
     $cliente = $anagrafica->getPartner($contract['id_customer']);
     $form['hidden_req'] = '';
     $form['id_contract'] = $contract['id_contract'];
@@ -269,6 +268,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['start_date_M'] = substr($contract['start_date'],5,2);
     $form['start_date_D'] = substr($contract['start_date'],8,2);
     $form['months_duration'] = $contract['months_duration'];
+    $form['covered_month'] = substr($tesdoc['data_ordine'],5,2);
+    $form['covered_year'] = substr($tesdoc['data_ordine'],0,4);
     $form['initial_fee'] = $contract['initial_fee'];
     $form['periodic_reassessment'] = $contract['periodic_reassessment'];
     $form['bank'] = $contract['bank'];
@@ -344,6 +345,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['start_date_M'] = date("m");
     $form['start_date_D'] = date("d");
     $form['months_duration'] = 12;
+    $form['covered_month'] = '';
+    $form['covered_year'] = '';
     $form['initial_fee'] = 0.00;
     $form['periodic_reassessment'] = 1;
     $form['payment_method'] = 0;
@@ -378,39 +381,11 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 }
 
 require("../../library/include/header.php");
-$script_transl = HeadMain(0,array(/*'tiny_mce/tiny_mce',*/
-                                  /*'boxover/boxover',*/
-                                  'calendarpopup/CalendarPopup',
-                                  'custom/autocomplete'
-                                  /** ENRICO FEDELE */
-								  /*'jquery/jquery-1.7.1.min',
-                                  'jquery/ui/jquery.ui.core',
-                                  'jquery/ui/jquery.ui.widget',
-                                  'jquery/ui/jquery.ui.position',
-                                  'jquery/ui/jquery.ui.autocomplete',*/
-								  /** ENRICO FEDELE */));
+$script_transl = HeadMain(0,array('calendarpopup/CalendarPopup','custom/autocomplete'));
 $title = ucfirst($script_transl['ins_this']);
 if ($toDo=='update'){
   $title = ucfirst($script_transl['upd_this']);
 }
-/*
-echo "<script type=\"text/javascript\">
-          // Initialize TinyMCE with the new plugin and menu button
-          tinyMCE.init({
-          mode : \"specific_textareas\",
-          theme : \"advanced\",
-          forced_root_block : false,
-          force_br_newlines : true,
-          force_p_newlines : false,
-          elements : \"body_text\",
-          plugins : \"table,advlink\",
-          theme_advanced_buttons1 : \"mymenubutton,bold,italic,underline,separator,strikethrough,justifyleft,justifycenter,justifyright,justifyfull,bullist,numlist,undo,redo,|,link,unlink,code,|,formatselect,forecolor,backcolor,|,tablecontrols\",
-          theme_advanced_buttons2 : \"\",
-          theme_advanced_buttons3 : \"\",
-          theme_advanced_toolbar_location : \"external\",
-          theme_advanced_toolbar_align : \"left\",
-          editor_selector  : \"mceClass\",
-          });\n";*/
 echo "<script type=\"text/javascript\">
 var cal = new CalendarPopup();
 var calName = '';
@@ -460,8 +435,9 @@ echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['doc_number']."</td>\
 echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"doc_number\" value=\"".$form['doc_number']."\" align=\"right\" maxlength=\"9\" /></td>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['current_fee']."</td>\n";
 echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"current_fee\" value=\"".$form['current_fee']."\" align=\"right\" maxlength=\"9\" tabindex=\"2\" /></td>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['payment_method']."</td><td  class=\"FacetDataTD\">\n";
-$gForm->selectFromDB('pagame','payment_method','codice',$form['payment_method'],'codice',1,' ','descri');
+echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['start_date']."</td>\n";
+echo "\t<td class=\"FacetDataTD\">\n";
+$gForm->CalendarPopup('start_date',$form['start_date_D'],$form['start_date_M'],$form['start_date_Y']);
 echo "\t </td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
@@ -470,22 +446,18 @@ echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"initial_fee\" valu
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['bank']."</td><td  class=\"FacetDataTD\">\n";
 $gForm->selectFromDB('banapp','bank','codice',$form['bank'],'codice',1,' ','descri');
 echo "</td>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['start_date']."</td>\n";
-echo "\t<td class=\"FacetDataTD\">\n";
-$gForm->CalendarPopup('start_date',$form['start_date_D'],$form['start_date_M'],$form['start_date_Y']);
+echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['payment_method']."</td><td  class=\"FacetDataTD\">\n";
+$gForm->selectFromDB('pagame','payment_method','codice',$form['payment_method'],'codice',1,' ','descri');
 echo "\t </td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['months_duration']."</td>\n";
 echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"months_duration\" value=\"".$form['months_duration']."\" align=\"right\" maxlength=\"3\" />\n";
 echo "\t </td>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['id_agente']."</td><td  class=\"FacetDataTD\">\n";
-$select_agente = new selectAgente("id_agente");
-$select_agente->addSelected($form["id_agente"]);
-$select_agente->output();
-echo " ".$script_transl['provvigione']."\n";
-echo "\t<input type=\"text\" name=\"provvigione\" value=\"".$form['provvigione']."\" align=\"right\" maxlength=\"5\" />\n";
-echo "</td>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['periodicity']."</td><td  class=\"FacetDataTD\">\n";
+$gForm->variousSelect('periodicity',$script_transl['periodicity_value'],$form['periodicity']);
+echo "\t </td>\n";
+
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['doc_type']."</td><td  class=\"FacetDataTD\">\n";
 $gForm->variousSelect('doc_type',$script_transl['doc_type_value'],$form['doc_type']);
 echo "\t </td>\n";
@@ -510,9 +482,40 @@ echo "\t </td>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['vat_code']."</td><td  class=\"FacetDataTD\">\n";
 $gForm->selectFromDB('aliiva','vat_code','codice',$form['vat_code'],'codice',0,' - ','descri');
 echo "</td>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['periodicity']."</td><td  class=\"FacetDataTD\">\n";
-$gForm->variousSelect('periodicity',$script_transl['periodicity_value'],$form['periodicity']);
+echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['id_agente']."</td><td  class=\"FacetDataTD\">\n";
+$select_agente = new selectAgente("id_agente");
+$select_agente->addSelected($form["id_agente"]);
+$select_agente->output();
+echo " ".$script_transl['provvigione']."\n";
+echo "\t<input type=\"text\" name=\"provvigione\" value=\"".$form['provvigione']."\" align=\"right\" maxlength=\"5\" />\n";
+echo "</td>\n";
+echo "</tr>\n";
+echo "<tr>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\"></td><td  class=\"FacetDataTD\">";
 echo "\t </td>\n";
+echo "<td class=\"FacetFieldCaptionTD\"></td><td  class=\"FacetDataTD\">\n";
+echo "</td>\n";
+echo "<td class=\"FacetFieldCaptionTD\">Ultimo mese pagato</td><td  class=\"FacetDataTD\">\n";
+$gazTimeFormatter->setPattern('MMMM');
+echo "\t <select name=\"covered_month\" onchange=\"this.form.submit()\">\n";
+echo "\t <option value=\"\"> - - - - - - </option>\n";
+for ($counter = 1;$counter <= 12;$counter++) {
+	$selected = "";
+	if ($counter == $form['covered_month']) $selected = "selected";
+  $nome_mese = $gazTimeFormatter->format(new DateTime("2000-".$counter."-01"));
+	echo "\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
+}
+echo "\t </select>\n";
+echo "\t <select name=\"covered_year\" onchange=\"this.form.submit()\">\n";
+echo "\t <option value=\"\"> - - - - </option>\n";
+$dmiddle=($form['covered_year']>=2000)?$form['covered_year']:date("Y");
+for ($counter = $dmiddle - 10;$counter <= $dmiddle + 10;$counter++) {
+	$selected = "";
+	if ($counter == $form['covered_year']) $selected = "selected";
+	echo "\t <option value=\"$counter\"  $selected >$counter</option>\n";
+}
+echo "\t </select>\n";
+echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo '<td colspan=3 align="right"><b>'.$script_transl['body_text'].'</b></td><td colspan=3>';

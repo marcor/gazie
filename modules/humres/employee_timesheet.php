@@ -301,6 +301,7 @@ $gForm = new humresForm();
 			<?php
       $gazTimeFormatter->setPattern('MMMM');
 			echo "\t <select name=\"mese\" onchange=\"this.form.submit()\">\n";
+			echo "\t <option value=\"\"> - - - - - - </option>\n";
 			for ($counter = 1;$counter <= 12;$counter++) {
 				$selected = "";
 				if ($counter == $form['mese']) $selected = "selected";
@@ -309,7 +310,9 @@ $gForm = new humresForm();
 			}
 			echo "\t </select>\n";
 			echo "\t <select name=\"anno\" onchange=\"this.form.submit()\">\n";
-			for ($counter = date("Y") - 10;$counter <= date("Y") + 10;$counter++) {
+			echo "\t <option value=\"\"> - - - - </option>\n";
+      $dmiddle=($form['anno']>=2000)?$form['anno']:date("Y");
+			for ($counter = $dmiddle - 10;$counter <= $dmiddle + 10;$counter++) {
 				$selected = "";
 				if ($counter == $form['anno']) $selected = "selected";
 				echo "\t <option value=\"$counter\"  $selected >$counter</option>\n";

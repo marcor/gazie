@@ -693,7 +693,7 @@ $strScript = array("admin_client.php" =>
         'vat_code' => 'Aliquota IVA',
         'body_text' => 'Testo del contratto',
         'last_reassessment' => 'Ultimo adeguamento',
-        'last_document_date' => 'Ultima fattura/ricevuta',
+        'last_document_date' => 'Data ultima emissione',
         'id_agente' => 'Agente',
         'provvigione' => '% provvigione',
         'rows_title' => 'Eventuali altri addebiti e/o descrizioni',
@@ -712,14 +712,23 @@ $strScript = array("admin_client.php" =>
     "invoice_from_contract.php" =>
     array('title' => 'Genera le fatture/ricevute da contratti',
         'vat_section' => ' della sezione IVA n.',
+        'id_contract' => ' ID ',
+        'start_date' => 'Data di inizio',
         'on' => 'alla data del',
         'period' => 'Periodo : ',
         'period_value' => array(1 => 'mese di ', 2 => 'bimestre ', 3 => 'trimestre ', 4 => 'quadrimestre ', 6 => 'semestre ', 12 => 'annualità  '),
+        'periodicity' => 'Periodicità ',
+        'periodicity_value' => array(1 => 'mensile', 2 => 'bimestrale', 3 => 'trimestrale', 4 => 'quadrimestrale', 6 => 'semestrale', 12 => 'annuale'),
         'n_creation' => 'N. doc. da generare',
         'norows' => 'Non ci sono contratti da fatturare',
         'expired' => 'Contratto scaduto',
         'err_date' => 'Data ultima fattura<br />precedente quella selezionata',
-        'ref' => 'Da contratto stipulato in data '
+        'ref' => 'Da contratto stipulato in data ',
+        'current_fee' => 'Canone corrente',
+        'last_document_date' => 'Data ultima emissione',
+        'doc_type' => 'Tipo documento',
+        'doc_type_value' => array('VRI' => 'Ricevuta', 'FAI' => 'Fattura'),
+        'customer' => 'Cliente contraente'
     ),
     "report_scontr.php" =>
     array('title' => 'Scontrini fiscali emessi',

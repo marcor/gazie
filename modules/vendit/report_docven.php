@@ -704,7 +704,7 @@ function printPdf(urlPrintDoc){
                   $con_result = gaz_dbi_dyn_query('*', $gTables['contract'], "id_contract = " . $r["id_contract"], 'conclusion_date DESC');
                   echo "<td align=\"center\">";
                   while ($r_d = gaz_dbi_fetch_array($con_result)) {
-                    echo " <a class=\"btn btn-xs btn-default btn-contr\" title=\"Visualizza il contratto\" href=\"print_contract.php?id_contract=" . $r_d['id_contract'] . "\" style=\"font-size:10px;\"><i class=\"glyphicon glyphicon-list-alt\"></i>&nbsp;Contr." . $r_d['doc_number'] . "</a>\n";
+                    echo " <a class=\"btn btn-xs btn-default btn-contr\" title=\"Visualizza il contratto\" href=\"print_contract.php?id_contract=" . $r_d['id_contract'] . "\" style=\"font-size:10px;\"><i class=\"glyphicon glyphicon-list-alt\"></i>&nbsp;Contr." . $r_d['doc_number'].'/'.substr($r_d['conclusion_date'],0,4) . "</a>\n";
                   }
                   echo "</td>";
                 } else {

@@ -64,22 +64,27 @@ function bodytextUpdate ($codice, $newValue)
     tableUpdate($table, $columns, $codice, $newValue);
 }
 
-function contractUpdate ($newValue,$codice=false)
+function contractUpdate ($newValue,$codice=false,$tesdoc='')
 {
-    // per fare l'upload in $codice dev'essere passato un: array(0=>'id_contract',1=>valore di id_contract da aggiornare)
-    // altrimenti si fa l'insert
-    $table = 'contract';
-    $columns = array( 'id_customer', 'vat_section', 'doc_number', 'doc_type', 'conclusion_date',
-                      'start_date', 'months_duration', 'initial_fee','periodic_reassessment',
-                      'bank', 'periodicity', 'payment_method', 'tacit_renewal', 'current_fee',
-                      'id_con', 'cod_revenue', 'vat_code', 'id_body_text', 'last_reassessment',
-                      'id_agente', 'provvigione', 'status', 'note', 'adminid');
-    $newValue['adminid'] = $_SESSION["user_name"];
-    if (is_array($codice)) {
-       tableUpdate($table, $columns, $codice, $newValue);
-    } else {
-       return tableInsert($table, $columns, $newValue);
+  // per fare l'upload in $codice dev'essere passato un: array(0=>'id_contract',1=>valore di id_contract da aggiornare)
+  // altrimenti si fa l'insert
+  $table = 'contract';
+  $columns = array( 'id_customer', 'vat_section', 'doc_number', 'doc_type', 'conclusion_date',
+                    'start_date', 'months_duration', 'initial_fee','periodic_reassessment',
+                    'bank', 'periodicity', 'payment_method', 'tacit_renewal', 'current_fee',
+                    'id_con', 'cod_revenue', 'vat_code', 'id_body_text', 'last_reassessment',
+                    'id_agente', 'provvigione', 'status', 'note', 'adminid');
+  $newValue['adminid'] = $_SESSION["user_name"];
+  if (is_array($codice)) {
+    tableUpdate($table, $columns, $codice, $newValue);
+    // se ho l'indice data_ordine che è usato per indicare l'ultimo mese  fatturato questo è sull'ultimo tesdoc inserito quindi lo devo cambiare
+    if (strlen($newValue['data_ordine']) >= 6){
+      $sqlquery="UPDATE " . $tesdoc . " SET data_ordine = '".$newValue['data_ordine']."' WHERE id_contract = ".$codice[1]." ORDER BY data_ordine DESC LIMIT 1";
+      gaz_dbi_query($sqlquery);
     }
+  } else {
+    return tableInsert($table, $columns, $newValue);
+  }
 }
 
 function contractRowUpdate ($newValue,$codice=false)
