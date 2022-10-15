@@ -144,7 +144,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
   $form["preve2"] = number_format($form['preve2'], $admin_aziend['decimal_price'], '.', '');
   $form["preve3"] = number_format($form['preve3'], $admin_aziend['decimal_price'], '.', '');
   $form["preve4"] = number_format($form['preve4'], $admin_aziend['decimal_price'], '.', '');
-  $form["web_price"] = number_format($form['web_price'], $admin_aziend['decimal_price'], '.', '');
+  $form["web_price"] = number_format($form['web_price'], 3, '.', '');
   $form['rows'] = array();
   $form['accommodation_type'] = $_POST['accommodation_type'];
   $form['adult'] = $_POST['adult'];
@@ -283,6 +283,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
   }
 
   if (count($msg['err']) == 0) { // ***  NESSUN ERRORE  ***
+
     if (!empty($_FILES['userfile']) && $_FILES['userfile']['size'] > 0) { //se c'e' una nuova immagine nel buffer
 			if ($largeimg==0){
 				$form['image'] = file_get_contents($_FILES['userfile']['tmp_name']);

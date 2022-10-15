@@ -29,6 +29,7 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
+include_once("manual_settings.php");
 require("../../library/include/datlib.inc.php");
 require("../../modules/magazz/lib.function.php");
 $admin_aziend=checkAdmin();
@@ -111,6 +112,47 @@ $(function() {
 		});
 		$("#dialog_delete" ).dialog( "open" );
 	});
+
+  $("#dialog_limit").dialog({ autoOpen: false });
+	$('.dialog_limit').click(function() {
+		$("p#idaccommodation").html($(this).attr("ref"));
+		var idacc = $(this).attr('ref');
+		$( "#dialog_limit" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{
+					text:'Limita',
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+            var start = $('input[name="start"]').val();
+            var end = $('input[name="end"]').val();
+            var token = '<?php echo md5($token.date('Y-m-d'));?>';
+            $.ajax({
+              data: {'start':start,'end':end,'token':token,'house_code':idacc,'title':'Prenotazioni bloccate'},
+              type: 'GET',
+              url: '../vacation_rental/save_to_db_events.php',
+              success: function(output){
+                //alert(output);
+                //alert('Il periodo è stato limitato');
+                $(".start").empty();
+                $(".end").empty();
+                $("#dialog_limit").dialog("close");
+                window.location.replace("./report_accommodation.php");
+              }
+            });
+				}},
+				"Chiudi senza limitare": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		$("#dialog_limit" ).dialog( "open" );
+	});
+
 	$( "#suggest_codice_artico" ).autocomplete({
 		source: "../../modules/root/search.php?opt=suggest_codice_artico",
 		minLength: 3,
@@ -330,6 +372,18 @@ $ts->output_navbar();
 		<div class="list_variants">
 		</div>
 	</div>
+  <div style="display:none; min-width:350px; " id="dialog_limit" title="">
+		<p class="ui-state-highlight" id="idaccommodation"></p>
+		<div class="list_group">
+		</div>
+		<p>Blocca prenotazioni in questo intervallo di date</p>
+		<div class="start">
+    <input type="date" name="start" class="FacetInput">
+		</div>
+    <div class="end">
+    <input type="date" name="end"  class="FacetInput">
+		</div>
+	</div>
 	<div class="table-responsive">
 	<table class="Tlarge table table-striped table-bordered table-condensed">
 	<tr>
@@ -468,7 +522,8 @@ while ($r = gaz_dbi_fetch_array($result)) {
 			echo '<td class="text-center"><a class="btn btn-xs btn-default" style="cursor:pointer;" onclick="openframe(\'accommodation_price.php?house_code='.$r["codice"].'\',\'Prezzi '.$ivac.' <b>'.$r["codice"].'</b>\')" data-toggle="modal" data-target="#iframe"> <i class="glyphicon glyphicon-eur" title="Calendario dei prezzi"></i></a>';
 			echo "</td>\n";
 			echo '<td class="text-center"><a class="btn btn-xs btn-default" style="cursor:pointer;" onclick="openframe(\'accommodation_availability.php?house_code='.$r["codice"].'\',\'Calendario <b>'.$r["codice"].'</b>\')" data-toggle="modal" data-target="#iframe"> <i class="glyphicon glyphicon-calendar" title="Calendario della disponibilità"></i></a>';
-			echo "</td>\n";
+			echo '&nbsp; &nbsp; <a class="btn btn-xs btn-default dialog_limit" ref="'. $r['codice'].'"> <i class="glyphicon glyphicon-tasks" title="Limita lungo periodo""></i></a>';
+      echo "</td>\n";
 			echo '<td class="text-center"><a class="btn btn-xs btn-default" href="clone_house.php?codice='.$r["codice"].'"> <i class="glyphicon glyphicon-export"></i></a>';
 			echo "</td>\n";
 			echo '<td class="text-center"><a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="'. $r['codice'].'" artico="'. $r['descri'].'"> <i class="glyphicon glyphicon-remove"></i></a>';
