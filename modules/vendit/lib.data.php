@@ -78,7 +78,7 @@ function contractUpdate ($newValue,$codice=false,$tesdoc='')
   if (is_array($codice)) {
     tableUpdate($table, $columns, $codice, $newValue);
     // se ho l'indice data_ordine che è usato per indicare l'ultimo mese  fatturato questo è sull'ultimo tesdoc inserito quindi lo devo cambiare
-    if (strlen($newValue['data_ordine']) >= 6){
+    if (strlen($newValue['data_ordine']) >= 9){
       $sqlquery="UPDATE " . $tesdoc . " SET data_ordine = '".$newValue['data_ordine']."' WHERE id_contract = ".$codice[1]." ORDER BY data_ordine DESC LIMIT 1";
       gaz_dbi_query($sqlquery);
     }

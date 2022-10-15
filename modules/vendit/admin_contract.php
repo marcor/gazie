@@ -268,8 +268,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['start_date_M'] = substr($contract['start_date'],5,2);
     $form['start_date_D'] = substr($contract['start_date'],8,2);
     $form['months_duration'] = $contract['months_duration'];
-    $form['covered_month'] = substr($tesdoc['data_ordine'],5,2);
-    $form['covered_year'] = substr($tesdoc['data_ordine'],0,4);
+    $form['covered_month'] = $tesdoc ? substr($tesdoc['data_ordine'],5,2) : '';
+    $form['covered_year'] = $tesdoc ? substr($tesdoc['data_ordine'],0,4) : '';
     $form['initial_fee'] = $contract['initial_fee'];
     $form['periodic_reassessment'] = $contract['periodic_reassessment'];
     $form['bank'] = $contract['bank'];
