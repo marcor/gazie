@@ -247,7 +247,7 @@ $strScript = array("admin_fornit.php" =>
 			),
         'war' => array('serial' => "La quantità è stata forzata ad 1 perché l'articolo prevede il numero di serie",
 		'accounted'=>"Questo documento &egrave; gi&agrave; stato contabilizzato",
-		'siandate' => 'La data di registrazione è precedente all\'ultimo movimento inviato al SIAN. Se si conferma, questo movimento non sarà inviato al SIAN.'
+		'siandate' => 'La data di emissione è precedente all\'ultimo movimento inviato al SIAN tramite file di upload. Se si conferma, GAzie non invierà questo movimento al SIAN .'
 		),
         'customer' => 'Cliente',
         'search_partner' => array('La ricerca non ha dato risultati',
