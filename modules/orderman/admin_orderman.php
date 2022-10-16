@@ -357,7 +357,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ // se NON è il pri
               if ($form['recip_stocc_destin']==$form['recip_stocc']) { // se M1 e i recipienti sono uguali
                 $msg.= "28+";
               }
-              $get_sil=gaz_dbi_get_row($gTables['camp_recip_stocc'],cod_silos,$form['recip_stocc_destin']);
+              $get_sil=gaz_dbi_get_row($gTables['camp_recip_stocc'],'cod_silos',$form['recip_stocc_destin']);
               if ($campsilos -> getCont($form['recip_stocc_destin'])+$form['quantip'] > $get_sil['capacita']){// se non c'è spazio sufficiente nel recipiente di destinazione
                 $msg.= "46+";
               }
