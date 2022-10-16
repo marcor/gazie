@@ -166,14 +166,14 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 
 					if (intval($row['id_orderman'])>0 AND $row['operat']==1){ // se è una produzione e il movimento è di entrata
 						// cerco il movimento/i di scarico connesso/i
-            unset($rs);
+						unset($rs);
 						$rs=gaz_dbi_dyn_query ("*",$gTables['camp_mov_sian'],"id_mov_sian_rif = '".$row['id_mov_sian']."'");
 						$row4['quanti']=0;
 						$row5=gaz_dbi_get_row($gTables['camp_artico'], 'codice', $row['artico']);
 						foreach ($rs as $mov_sian){
 							$rowmag=gaz_dbi_get_row($gTables['movmag'], 'id_mov', $mov_sian['id_movmag']);
 							$row4['quanti']=$row4['quanti']+$rowmag['quanti'];
-              $row['varieta']=$mov_sian['varieta'];
+							$row['varieta']=$mov_sian['varieta'];
 						}
 						$row4['quanti'] = sprintf ("%013d", str_replace(".", "", number_format ($row4['quanti'],3))); // tolgo il separatore decimali perché il SIAN non lo vuole. le ultime tre cifre sono sempre decimali. Aggiungo zeri iniziali.
 						$quantilitri=number_format($row['quanti']*$row5['confezione'],3);// trasformo le confezioni in litri
@@ -199,7 +199,7 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 						$row['confezione']=""; // il campo capacità confezione, pur essendo previsto fra i campi facoltativi, viene rifiutato nei tipi operazione L
 						if ($row['cod_operazione']==1){// Confezionamento con etichettatura
 							$row['numdoc']="";
-              $type_array[6]=str_pad("L", 10); // codice operazione
+							$type_array[6]=str_pad("L", 10); // codice operazione
 							$type_array[23]=sprintf ("%013d",$row4['quanti']); // quantità scarico olio sfuso
 							$type_array[24]=sprintf ("%013d",$quantilitri); // quantità carico olio confezionato in litri
 							$type_array[18]=sprintf ("%02d",$row5['or_macro']); // Codice Origine olio per macro area a fine operazione
@@ -212,7 +212,7 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 						}
 						if ($row['cod_operazione']==2){// Confezionamento senza etichettatura
 							$row['numdoc']="";
-              $type_array[6]=str_pad("L1", 10); // codice operazione
+							$type_array[6]=str_pad("L1", 10); // codice operazione
 							$type_array[23]=sprintf ("%013d",$row4['quanti']); // quantità scarico olio sfuso
 							$type_array[24]=sprintf ("%013d",$quantilitri); // quantità carico olio confezionato in litri
 							$type_array[18]=sprintf ("%02d",$row5['or_macro']); // Codice Origine olio per macro area a fine operazione
@@ -226,7 +226,7 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 						}
 						if ($row['cod_operazione']==3){// Etichettatura
 							$row['numdoc']="";
-              $type_array[6]=str_pad("L2", 10); // codice operazione
+							$type_array[6]=str_pad("L2", 10); // codice operazione
 							$type_array[38]="X"; // Flag NON etichettato
 							$type_array[15]=sprintf ("%02d",$row5['categoria']);// categoria olio fine operazione
 							$type_array[24]=sprintf ("%013d",$quantilitri); // quantità carico olio confezionato in litri
@@ -263,6 +263,7 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 							if (strlen($row['varieta'])>3){
 								$type_array[28]=str_pad(substr($row['varieta'], 0, 300 ), 300); // Note (varietà)
 							}
+							$row['numdoc']="";// azzero numero documento giustificativo perché non ammesso con M1
 						}
 					}
 					if (intval($row['id_orderman'])>0 AND $row['operat']==-1 AND $row['cod_operazione']=="S7") {// è un'uscita di olio per produrre altro
