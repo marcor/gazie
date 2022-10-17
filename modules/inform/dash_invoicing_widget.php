@@ -85,6 +85,28 @@
     </tr>
 <?php
   }
+  $rs_contract=gaz_dbi_dyn_query( "start_date, months_duration, YEAR(MAX(tesdoc.data_ordine))*12 + MONTH(MAX(tesdoc.data_ordine)) AS covered_month, tacit_renewal ",
+  $gTables['contract'] . " AS contract LEFT JOIN ".$gTables['tesdoc']." AS tesdoc ON contract.id_contract=tesdoc.id_contract ",
+  "1", 'contract.id_contract');
+  $contract=0;
+  $now = date("Y")*12+date('m');
+	while ($r = gaz_dbi_fetch_array($rs_contract)) {
+    $endd = substr($r['start_date'],0,4) * 12 + substr($r['start_date'],5,2) + $r['months_duration'];
+    if ( $r['tacit_renewal'] || $endd <= $now ) {
+      if ( $r['covered_month'] < $now ) {
+        $contract ++;
+      }
+    }
+  }
+	if ( $contract >= 1 ) {
+?>
+    <tr>
+        <td style="text-align: left;"><b class="text-warning">Contratti che devono generare fatture</b></td>
+        <td><b><?php echo $contract; ?></b></td>
+        <td><a class="btn btn-danger btn-xs" href="../vendit/invoice_from_contract.php">Genera fatture da contratti<i class="glyphicon glyphicon-export"></i></a></td>
+    </tr>
+<?php
+  }
 ?>
     </tbody>
     </table>

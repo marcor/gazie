@@ -344,7 +344,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['start_date_Y'] = date("Y");
     $form['start_date_M'] = date("m");
     $form['start_date_D'] = date("d");
-    $form['months_duration'] = 12;
+    $form['months_duration'] = 48;
     $form['covered_month'] = '';
     $form['covered_year'] = '';
     $form['initial_fee'] = 0.00;
