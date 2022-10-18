@@ -1390,30 +1390,5 @@ if ($modal_ok_insert === true) {
         });
     });</script>
 <?php
-/** ENRICO FEDELE */
-/* SOlo se non sono in finestra modale */
-if ($modal === false) {
-} else {
-    ?>
-    <script type="text/javascript">
-        $("#add-product").submit(function (e) {
-            $.ajax({
-                type: "POST",
-                url: "../../modules/magazz/admin_artico.php",
-                data: $("#add-product").serialize(), // serializes the form's elements.
-                success: function (data) {
-                    $("#edit-modal .modal-sm").css('width', '100%');
-                    $("#edit-modal .modal-body").html(data);
-                }
-            });
-            e.preventDefault(); // avoid to execute the actual submit of the form.
-        });
-    </script>
-    <?php
-	// solo per evitare errori in finestra modale
-	$period=false;
-	function get_rref_type($value) {
-	}
-}
 require("../../library/include/footer.php");
 ?>
