@@ -86,11 +86,11 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
   <div class="container-fluid">
     <div class="tab-content">
         <div id="generale" class="tab-pane fade in active">
-        <form method="post" id="sbmt-form"> 
-        <?php 
+        <form method="post" id="sbmt-form">
+        <?php
         if ($modal) { ?>
         	<input type="hidden" name="mode" value="modal" />
-        <?php 
+        <?php
         }
         if (isset($_GET["ok_insert"])) { ?>
             <div class="alert alert-success text-center head-msg" role="alert"><b>
@@ -102,7 +102,7 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
                 <?php echo "Il valore immesso non è un JSON valido!<br/>"; ?>
             </b></div>
         <?php }
-        $mail_sender='';        
+        $mail_sender='';
         if (gaz_dbi_num_rows($result) > 0) {
             while ($r = gaz_dbi_fetch_array($result)) {
                 ?>
@@ -130,7 +130,7 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
                 <?php
             }
         }
-        ?>                    
+        ?>
         <div class="row">
             <div class="form-group" >
                 <label class="col-sm-5 control-label"></label>
@@ -154,7 +154,7 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
 </div><!-- chiude panel  -->
 <script>
 if ($(".head-msg").length) {
-} 
+}
 
 $("#btn_send").click( function() {
 	$.ajax({
@@ -164,7 +164,7 @@ $("#btn_send").click( function() {
 		success: function(json) {
 			result = JSON.parse(json);
 			alert(result.send);
-			if (  result.send ) {		
+			if (  result.send ) {
 		  		$("#reply_send").html( "<strong>Invio riuscito</strong><br><div>Controlla se ti è arrivata una email in <i><?php echo $mail_sender; ?></i>!</div>");
 			} else {
 				$("#reply_send").html("<strong>Invio FALLITO!</strong><br><div>Errore: "+result.error+"!</div>");
@@ -177,7 +177,7 @@ $("#btn_send").click( function() {
 });
 <?php
 if ($modal === false) {
-?>    
+?>
 $( "#upsave" ).click(function() {
     $( "#sbmt-form" ).submit();
 });
@@ -215,6 +215,15 @@ $( "#upsave" ).click(function() {
     e.preventDefault(); // avoid to execute the actual submit of the form.
 });
 <?php
+	// solo per evitare errori in finestra modale
+	$period=false;
+	function get_rref_type($value) {
+	}
+  function pulisci_rref_name(){
+  }
+  function printCheckbox(){
+  }
+  $config = new UserConfig;
 }
 ?>
 </script>
@@ -222,6 +231,6 @@ $( "#upsave" ).click(function() {
 require("../../library/include/footer.php");
 
 function isJson($str) {
-	return !preg_match('/[^,:{}\\[\\]0-9.\\-+Eaeflnr-u \\n\\r\\t]/', preg_replace('/"(\\.|[^"\\\\])*"/', '', $str));	
+	return !preg_match('/[^,:{}\\[\\]0-9.\\-+Eaeflnr-u \\n\\r\\t]/', preg_replace('/"(\\.|[^"\\\\])*"/', '', $str));
 }
 ?>

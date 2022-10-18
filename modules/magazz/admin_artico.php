@@ -1343,6 +1343,11 @@ if ($modal === false) {
 	$period=false;
 	function get_rref_type($value) {
 	}
+  function pulisci_rref_name(){
+  }
+  function printCheckbox(){
+  }
+  $config = new UserConfig;
 }
 require("../../library/include/footer.php");
 ?>

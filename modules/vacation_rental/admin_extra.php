@@ -1417,10 +1417,6 @@ if ($modal === false) {
         });
     </script>
     <?php
-	// solo per evitare errori in finestra modale
-	$period=false;
-	function get_rref_type($value) {
-	}
 }
 require("../../library/include/footer.php");
 ?>
