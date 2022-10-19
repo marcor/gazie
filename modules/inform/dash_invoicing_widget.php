@@ -92,8 +92,8 @@
   $now = date("Y")*12+date('m');
 	while ($r = gaz_dbi_fetch_array($rs_contract)) {
     //var_dump($r);
-    $strdate = (strlen($r['start_date'])>7)?(substr($r['start_date'],0,4) * 12 + substr($r['start_date'],5,2)):0;
-    $enddate = (strlen($r['start_date'])>7)?($strdate+$r['months_duration']):0;
+    $strdate = ($r['start_date']!== null && strlen($r['start_date'])>7)?(substr($r['start_date'],0,4) * 12 + substr($r['start_date'],5,2)):0;
+    $enddate = ($r['start_date']!== null && strlen($r['start_date'])>7)?($strdate+$r['months_duration']):0;
     if ( $r['tacit_renewal'] !== null && $strdate < $now && ($enddate < $now || $r['tacit_renewal'] >=1) ) {
       if ( $r['covered_month'] < $now ) {
         $contract ++;
