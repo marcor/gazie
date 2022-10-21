@@ -223,6 +223,9 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                 }
                 $pay = gaz_dbi_get_row($gTables['pagame'], "codice", $form['pagame']);
                 // in caso di pagamento immediato dovrò settare l'importo di chiusura ed il relativo conto
+                if (!$pay){
+                  $pay=['pagaut'=>0,'incaut'=>0];
+                }
                 if ($pay['pagaut'] > 1 && ($form['registroiva'] >= 6 && $form['registroiva'] <= 9) && $form['operatore'] == 1) { // è un documento di acquisto pagato immediatamente (es.contanti-assegno-bancomat-carta)
                     $payacc = gaz_dbi_get_row($gTables['clfoco'], "codice", $pay['pagaut']);
                     $form['pay_closure'] = $payacc['codice'];
@@ -406,7 +409,9 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
         $rigo = $_POST['rigcon'];
         $form['id_rig_rc'][$rigo] = "";
         $form['mastro_rc'][$rigo] = intval($_POST['insert_mastro']);
-        $form['conto_rc' . $rigo] = substr($_POST['insert_conto'], 0, 12);
+        $form['conto_rc'.$rigo] = substr($_POST['insert_conto'], 0, 12);
+        // ripulisco il sotto conto usato
+        $form['insert_conto'] = 0;
         $form['search']['conto_rc' . $rigo] = '';
         $form['darave_rc'][$rigo] = $_POST['insert_darave'];
         $form['importorc'][$rigo] = preg_replace("/\,/", '.', $_POST['insert_import']);
