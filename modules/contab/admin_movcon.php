@@ -410,8 +410,9 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
         $form['id_rig_rc'][$rigo] = "";
         $form['mastro_rc'][$rigo] = intval($_POST['insert_mastro']);
         $form['conto_rc'.$rigo] = substr($_POST['insert_conto'], 0, 12);
-        // ripulisco il sotto conto usato
+        // ripulisco il sottoconto usato
         $form['insert_conto'] = 0;
+        $form['search']['insert_conto'] = '';
         $form['search']['conto_rc' . $rigo] = '';
         $form['darave_rc'][$rigo] = $_POST['insert_darave'];
         $form['importorc'][$rigo] = preg_replace("/\,/", '.', $_POST['insert_import']);
