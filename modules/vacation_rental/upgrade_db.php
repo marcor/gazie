@@ -46,4 +46,5 @@ $upgrade_db[148][]="CREATE TABLE `".$dbname.$table_prefix."_XXXrental_feedback_s
 $upgrade_db[149][]="ALTER TABLE ".$table_prefix."_XXXrental_feedbacks ADD INDEX(`reservation_id`);";
 $upgrade_db[150][]="ALTER TABLE ".$table_prefix."_XXXrental_extra ADD `rif_facility` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci COMMENT 'riferimento ad id_artico_group' AFTER `obligatory`;";
 $upgrade_db[150][]="ALTER TABLE `".$table_prefix."_XXXrental_extra` CHANGE `rif_alloggio` `rif_alloggio` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL; ";
+$upgrade_db[151][]="INSERT INTO ".$table_prefix."_XXXcompany_config (`id`, `description`, `var`, `val`) VALUES (NULL, 'Abilita promemoria x giorni prima del check-in (0=invio disabilitato)', 'reminvacation_day', '0'),(NULL, 'Stato della prenotazione (vuoto=tutti gli stati)', 'reminvacation_status', 'CONFIRMED'),(NULL, 'Abilita promemoria pagamento x giorni dalla creazione della prenotazione (0=invio disabilitato)', 'rempayvacation_day', '0'),(NULL, 'Abilita annullamento prenotazione x giorni dopo il promemoria pagamento (0=disabilitato)', 'rempayvacation_day', '0');";
 ?>

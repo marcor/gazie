@@ -33,6 +33,7 @@ $admin_aziend = checkAdmin(8);
 $gForm = new GazieForm();
 $genclass="active";
 $feedclass="";
+$remclass="";
 
 if (isset($_POST['addElement'])){// se è stato richiesto di inserire un nuovo elemento feedback
   $genclass="";
@@ -91,6 +92,8 @@ $script_transl = HeadMain();
 
 $general = gaz_dbi_dyn_query("*", $gTables['company_config'], " var LIKE 'vacation%'", ' id ASC', 0, 1000);
 $feedbacks = gaz_dbi_query("SELECT * FROM ".$gTables['rental_feedback_elements']." LEFT JOIN " . $gTables['artico_group'] . " ON " . $gTables['rental_feedback_elements'] . ".facility = " . $gTables['artico_group'] . ".id_artico_group ORDER BY id ASC");
+$reminders_in = gaz_dbi_dyn_query("*", $gTables['company_config'], " var LIKE 'reminvacation%'", ' id ASC', 0, 1000);
+$reminders_pay = gaz_dbi_dyn_query("*", $gTables['company_config'], " var LIKE 'rempayvacation%'", ' id ASC', 0, 1000);
 
 ?>
 <div align="center" class="FacetFormHeaderFont">
@@ -108,6 +111,7 @@ if (trim($address_for_fae)==''){
 <ul class="nav nav-pills">
   <li class="<?php echo $genclass; ?>"><a data-toggle="pill" href="#generale">Configurazione</a></li>
   <li class="<?php echo $feedclass; ?>"><a data-toggle="pill" href="#feedback"><b>Recensioni</b></a></li>
+  <li class="<?php echo $remclass; ?>"><a data-toggle="pill" href="#reminder"><b>Promemoria</b></a></li>
   <li style="float: right;"><div class="btn btn-warning" id="upsave">Salva</div></li>
 </ul>
 <?php
@@ -160,10 +164,69 @@ if (trim($address_for_fae)==''){
                   </div>
               </div>
           </div>
-           </form>
-          </div><!-- chiude generale  -->
 
-          <div id="feedback" class="tab-pane fade in <?php echo $feedclass; ?>">
+      </div><!-- chiude generale  -->
+
+
+      <div id="reminder" class="tab-pane fade in <?php echo $feedclass; ?>">
+
+          <div class="row text-info bg-info">
+              IMPOSTAZIONI PER INVIO DI E-MAIL PROMEMORIA (richiede cron-job della versione PRO)
+          </div><!-- chiude row  -->
+          <div class="row text-success">
+              <b>Promemoria prima del check-in</b>
+          </div><!-- chiude row  -->
+            <?php
+            while ($r = gaz_dbi_fetch_array($reminders_in)) {
+                ?>
+                <div class="row">
+                  <div class="form-group" >
+                    <label for="input<?php echo $r["id"]; ?>" class="col-sm-5 control-label"><?php echo $r["description"]; ?></label>
+                    <div class="col-sm-7">
+                        <?php
+                            ?>
+                            <input type="text" class="form-control input-sm" id="input<?php echo $r["id"]; ?>" name="<?php echo $r["var"]; ?>" placeholder="<?php echo $r["var"]; ?>" value="<?php echo $r["val"]; ?>">
+                    </div>
+                  </div>
+                </div><!-- chiude row  -->
+                <?php
+            }
+          ?>
+
+
+          <div class="row text-success">
+              <b>Promemoria pagamento cauzione</b> (le prenotazioni con stato confermato si intendono con caparra pagata)
+          </div><!-- chiude row  -->
+           <?php
+            while ($r = gaz_dbi_fetch_array($reminders_pay)) {
+                ?>
+                <div class="row">
+                  <div class="form-group" >
+                    <label for="input<?php echo $r["id"]; ?>" class="col-sm-5 control-label"><?php echo $r["description"]; ?></label>
+                    <div class="col-sm-7">
+                        <?php
+                            ?>
+                            <input type="text" class="form-control input-sm" id="input<?php echo $r["id"]; ?>" name="<?php echo $r["var"]; ?>" placeholder="<?php echo $r["var"]; ?>" value="<?php echo $r["val"]; ?>">
+                    </div>
+                  </div>
+                </div><!-- chiude row  -->
+                <?php
+            }
+          ?>
+
+          <div class="row">
+              <div class="form-group" >
+                  <label class="col-sm-5 control-label"></label>
+                  <div  style="float: right;">
+                      <button type="submit" class="btn btn-warning">Salva</button>
+                  </div>
+              </div>
+          </div>
+
+        </form>
+      </div><!-- chiude reminder  -->
+
+      <div id="feedback" class="tab-pane fade in <?php echo $feedclass; ?>">
             <form method="post" id="feedback">
             <div class="row text-info bg-info">
               ELEMENTI DEI FEEDBACKS PER GLI ALLOGGI
@@ -246,7 +309,10 @@ if (trim($address_for_fae)==''){
             ?>
 
             </form>
-          </div><!-- chiude feedback  -->
+      </div><!-- chiude feedback  -->
+
+
+
   </div><!-- chiude tab-content  -->
  </div><!-- chiude container-fluid  -->
 </div><!-- chiude panel  -->
