@@ -96,19 +96,19 @@ class silos {
 		$orderby=2;
 		$limit=0;
 		$passo=2000000;
-		
+
 		$where="recip_stocc = '".$codsil."'";
-		
+
 		if (is_array($excluded_movmag)){
 		  $add_excl="";
 		  foreach($excluded_movmag as $each){
-			
+
 			$add_excl.= " AND ".$gTables['movmag'].".id_mov <> ".intval($each);
-			
+
 		  }
 		  $where=$where.$add_excl;
 		}
-	
+
 		if (strlen($codart)>0){
 		  $where=$where." AND artico = '". $codart ."'";
 		}
@@ -329,11 +329,11 @@ class silos {
 		$count[$key2]['totale']= number_format (array_sum($count[$key2]),8); // il totale delle varietà
 
 		// i valori zero o, peggio, negativi sono da escludere
-		$count[$key] = array_filter($count[$key],function($var){return($var > 0);});
-		$count[$key2] = array_filter($count[$key2],function($var){return($var > 0);});
+		$count[$key] = array_filter($count[$key],function($var){return($var >= 0.00000001);});
+		$count[$key2] = array_filter($count[$key2],function($var){return($var > 0.00000001);});
 		if ($var_dichiarabili=="NO"){// se le varietà non sono dichiarabili per contaminazione con partita anonima
-			$totale= $count[$key2]['totale']; // memorizzo il totale delle varietà
-			$count[$key2]=array();//azzero l'array delle varietà
+			$totale= isset($count[$key2]['totale'])?$count[$key2]['totale']:0; // memorizzo il totale delle varietà
+			$count[$key2]=[];//azzero l'array delle varietà
 			$count[$key2]['totale']=$totale;// reimposto solo la quantità totale nell'array
 		}
 
