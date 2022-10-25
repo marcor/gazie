@@ -432,12 +432,12 @@ while ($row = gaz_dbi_fetch_array($result)) {
       $modulo_fae = "../vendit/electronic_invoice.php?id_tes=" . $revch['id_tes'];
       $revch['fae_attuale']="IT" . $admin_aziend['codfis'] . "_".encodeSendingNumber(array('azienda' => $admin_aziend['codice'],
         'sezione' => $revch['seziva'],
-        'anno' => $revch['datfat'],
+        'anno' => substr($revch['datfat'],0,4),
         'fae_reinvii'=> substr($revch["datreg"],3,1),
         'protocollo' => intval($revch["fattura_elettronica_reinvii"]*10000+ $revch["protoc"])), 36).".xml";
       $revch['fae_reinvio']="IT" . $admin_aziend['codfis'] . "_".encodeSendingNumber(array('azienda' => $admin_aziend['codice'],
         'sezione' => $revch['seziva'],
-        'anno' => $revch['datfat'],
+        'anno' => substr($revch['datfat'],0,4),
         'fae_reinvii'=> substr($revch["datreg"],3,1),
         'protocollo' => intval(($revch["fattura_elettronica_reinvii"]+1)*10000+ $revch["protoc"])), 36).".xml";
       $zipped = (preg_match("/^[A-Z0-9]{13,18}_([a-zA-Z0-9]{5}).zip$/",(is_string($revch['fattura_elettronica_zip_package'])?$revch['fattura_elettronica_zip_package']:''),$match))?$match[1]:false;

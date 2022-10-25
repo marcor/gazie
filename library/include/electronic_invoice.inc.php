@@ -187,6 +187,7 @@ class invoiceXMLvars {
         break;
       case "XFA":
       case "XNC":
+        $this->reverse_charge_sez = $admin_aziend['reverse_charge_sez'];
         $this->TipoDocumento = $this->tesdoc["status"];
         $this->reverse = true;
         $this->docRelNum = $this->tesdoc["protoc"].'/'.$this->tesdoc["seziva"]; // sulle autofatture utilizzo il protocollo per avere sequenzialità
@@ -1499,8 +1500,8 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 		  -----------------------------------------------------------------------------
 		 */
 		$data = ['azienda' => $XMLvars->azienda['codice'],
-			'sezione' => 5, // nel revere uso sempre 5 per non sovrapporre con le sezioni di vendita (max4)
-			'anno' => '200'.$XMLvars->seziva,  // ed uso la sezione del reverse ( lo passo come anno )
+			'sezione' => $XMLvars->reverse_charge_sez,
+			'anno' => '200'.$XMLvars->seziva, // uso la sezione del reverse ( lo passo come anno )
 			'fae_reinvii'=> substr($XMLvars->docRelDate,3,1), // in reinvii ci passo l'anno
 			'protocollo' =>intval($XMLvars->fae_reinvii*10000+ $XMLvars->protoc)]; // sul progressivo ci sarà una cifra in meno perché sulla prima c'è il reinvio
 	} else {
@@ -1527,8 +1528,8 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 			  -----------------------------------------------------------------------------
 			 */
 			$parent = ['azienda' => $XMLvars->azienda['codice'],
-				'sezione' => 5, // nel revere uso sempre 5 per non sovrapporre con le sezioni di vendita (max4)
-				'anno' => '200'.$XMLvars->seziva, // ed uso la sezione del reverse ( lo passo come anno )
+				'sezione' => $XMLvars->reverse_charge_sez,
+				'anno' => '200'.$XMLvars->seziva, // uso la sezione del reverse ( lo passo come anno )
 				'fae_reinvii'=> substr($XMLvars->docRelDate,3,1), // in reinvii ci passo l'anno
 				'protocollo' =>intval(($XMLvars->fae_reinvii-1)*10000+ $XMLvars->protoc)]; // sul progressivo ci sarà una cifra in meno perché sulla prima c'è il reinvio
 		} else {
