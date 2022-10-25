@@ -93,9 +93,14 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ // se NON è il pri
   $form['order_type'] = $_POST['order_type'];
   $form['description'] = $_POST['description'];
   $form['add_info'] = $_POST['add_info'];
-  $form['gioinp'] = $_POST['gioinp'];
-  $form['mesinp'] = $_POST['mesinp'];
-  $form['anninp'] = $_POST['anninp'];
+  $form['gioinp'] = intval($_POST['gioinp']);
+  $form['mesinp'] = intval($_POST['mesinp']);
+  $form['anninp'] = intval($_POST['anninp']);
+  if ($form['anninp']<=0){
+    $form['gioinp'] = date("d");
+    $form['mesinp'] = date("m");
+    $form['anninp'] = date("Y");
+  }
   $form['id_tesbro'] = (isset($_POST['id_tesbro']))?$_POST['id_tesbro']:0;
   $form['iniprod'] = (isset($_POST['iniprod']))?$_POST['iniprod']:date ("d-m-Y");
   $form['iniprodtime'] = (isset($_POST['iniprodtime_ora']))?$_POST['iniprodtime_ora'].":".$_POST['iniprodtime_minuti']:date ("H:i");
@@ -1256,7 +1261,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
               }
               // controllo disponibilità in magazzino
               $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
-              if ($toDo == "update") { // se è un update riaggiungo la quantità utilizzata
+              if ($toDo == "update" && isset($form['old_quanti_comp'][$nc])) { // se è un update riaggiungo la quantità utilizzata
                 $magval['q_g'] = $magval['q_g'] + floatval($form['old_quanti_comp'][$nc]);
               }
               ?>
