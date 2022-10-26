@@ -1489,8 +1489,16 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
       $results->appendChild($el);
     }
   }
-  // faccio l'encode in base 36 per ricavare il progressivo unico di invio
-	if($XMLvars->reverse){ // è una autofattura reverse charge encodo così:
+
+	$faename_base = 36;
+	// faccio l'encode in base 36 per ricavare il progressivo unico di invio
+	if ($XMLvars->reverse) {// è una autofattura reverse charge encodo così:
+		$faename_base = 62;
+		$faename_maxsez = 9;
+		if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+			$faename_base = 36;
+			$faename_maxsez = 5;
+		}
 		/*  dovrò modificare la matrice in questo con valore fisso "5" sulla prima cifre, e faccio uno shift degli altri
 		  ------------------------- SCHEMA DEI DATI PER AUTOFATTURE  ------------------
 		  |  VALORE FISSO   |  ANNO DOCUMENTO  | N.REINVII |    NUMERO PROTOCOLLO     |
@@ -1499,26 +1507,31 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 		  | $data[sezione]  |   $data[anno] $data[fae_reinvii]  $data[protocollo]     |
 		  -----------------------------------------------------------------------------
 		 */
-		$data = ['azienda' => $XMLvars->azienda['codice'],
-			'sezione' => $XMLvars->reverse_charge_sez,
+		$data = [
+			'azienda' => $XMLvars->azienda['codice'],
+			'sezione' => min($faename_maxsez, $XMLvars->reverse_charge_sez),
 			'anno' => '200'.$XMLvars->seziva, // uso la sezione del reverse ( lo passo come anno )
-			'fae_reinvii'=> substr($XMLvars->docRelDate,3,1), // in reinvii ci passo l'anno
-			'protocollo' =>intval($XMLvars->fae_reinvii*10000+ $XMLvars->protoc)]; // sul progressivo ci sarà una cifra in meno perché sulla prima c'è il reinvio
+			'fae_reinvii' => substr($XMLvars->docRelDate,3,1), // in reinvii ci passo l'anno
+			'protocollo' => intval($XMLvars->fae_reinvii*10000 + $XMLvars->protoc) // sul progressivo ci sarà una cifra in meno perché sulla prima c'è il reinvio
+		];
 	} else {
-		$data = ['azienda' => $XMLvars->azienda['codice'],
+		$data = [
+			'azienda' => $XMLvars->azienda['codice'],
 			'anno' => $XMLvars->docRelDate,
 			'sezione' => $XMLvars->seziva,
-			'fae_reinvii'=> $XMLvars->fae_reinvii,
-			'protocollo' => $XMLvars->protoc];
+			'fae_reinvii' => $XMLvars->fae_reinvii,
+			'protocollo' => $XMLvars->protoc
+		];
 	}
-  $progressivo_unico_invio = encodeSendingNumber($data, 36);
-  $nome_file = "IT" . $XMLvars->IdCodice . "_" . $progressivo_unico_invio;
-  $id_tes = $XMLvars->tesdoc['id_tes'];
-  $data_ora_exec = date("Y-m-d H:i:s");
-  // se è un reinvio allora faccio l'upload del genitore indicando in filename_son il nome di questo nuovo file
-  if ( $XMLvars->fae_reinvii >=1 ){
-    // faccio l'encode in base 36 per ricavare il progressivo unico di invio
-		if($XMLvars->reverse){ // è una autofattura reverse charge encodo così:
+
+	$progressivo_unico_invio = encodeSendingNumber($data, $faename_base);
+	$nome_file = 'IT' . $XMLvars->IdCodice . '_' . $progressivo_unico_invio;
+	$id_tes = $XMLvars->tesdoc['id_tes'];
+	$data_ora_exec = date('Y-m-d H:i:s');
+	// se è un reinvio allora faccio l'upload del genitore indicando in filename_son il nome di questo nuovo file
+	if ($XMLvars->fae_reinvii >= 1) {
+	// faccio l'encode in base 36 per ricavare il progressivo unico di invio
+		if ($XMLvars->reverse) {// è una autofattura reverse charge encodo così:
 			/*  dovrò modificare la matrice in questo con valore fisso "5" sulla prima cifre, e faccio uno shift degli altri
 			  ------------------------- SCHEMA DEI DATI PER AUTOFATTURE  ------------------
 			  |  VALORE FISSO   |  ANNO DOCUMENTO  | N.REINVII |    NUMERO PROTOCOLLO     |
@@ -1527,22 +1540,27 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 			  | $data[sezione]  |   $data[anno] $data[fae_reinvii]  $data[protocollo]     |
 			  -----------------------------------------------------------------------------
 			 */
-			$parent = ['azienda' => $XMLvars->azienda['codice'],
-				'sezione' => $XMLvars->reverse_charge_sez,
+			$parent = [
+				'azienda' => $XMLvars->azienda['codice'],
+				'sezione' => min($faename_maxsez, $XMLvars->reverse_charge_sez),
 				'anno' => '200'.$XMLvars->seziva, // uso la sezione del reverse ( lo passo come anno )
-				'fae_reinvii'=> substr($XMLvars->docRelDate,3,1), // in reinvii ci passo l'anno
-				'protocollo' =>intval(($XMLvars->fae_reinvii-1)*10000+ $XMLvars->protoc)]; // sul progressivo ci sarà una cifra in meno perché sulla prima c'è il reinvio
+				'fae_reinvii' => substr($XMLvars->docRelDate,3,1), // in reinvii ci passo l'anno
+				'protocollo' => intval(($XMLvars->fae_reinvii-1)*10000 + $XMLvars->protoc) // sul progressivo ci sarà una cifra in meno perché sulla prima c'è il reinvio
+			];
 		} else {
-			$parent = array('azienda' => $XMLvars->azienda['codice'],
+			$parent = [
+				'azienda' => $XMLvars->azienda['codice'],
 				'anno' => $XMLvars->docRelDate,
 				'sezione' => $XMLvars->seziva,
-				'fae_reinvii'=> $XMLvars->fae_reinvii-1,
-				'protocollo' => $XMLvars->protoc);
+				'fae_reinvii' => $XMLvars->fae_reinvii-1,
+				'protocollo' => $XMLvars->protoc
+			];
 		}
-    $parent_progressivo_unico_invio = encodeSendingNumber($parent, 36);
-    $parent_nome_file = "IT" . $XMLvars->IdCodice . "_" . $parent_progressivo_unico_invio;
-    gaz_dbi_query ("UPDATE ".$gTables['fae_flux']." SET `filename_son`='".$nome_file.".xml' WHERE `filename_ori`='".$parent_nome_file . ".xml'");
-  }
+		$parent_progressivo_unico_invio = encodeSendingNumber($parent, $faename_base);
+		$parent_nome_file = 'IT' . $XMLvars->IdCodice . '_' . $parent_progressivo_unico_invio;
+		gaz_dbi_query ("UPDATE ".$gTables['fae_flux']." SET `filename_son`='".$nome_file.".xml' WHERE `filename_ori`='".$parent_nome_file . ".xml'");
+	}
+
 	if ($name_ziparchive) {
 		if ($name_ziparchive != 'from_string.xml') {
 			$verifica = gaz_dbi_get_row($gTables['fae_flux'], 'filename_ori', $nome_file . ".xml");

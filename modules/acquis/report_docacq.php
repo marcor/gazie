@@ -67,11 +67,10 @@ if (count($_GET)<1) {
 	$last = gaz_dbi_fetch_array($rs_last);
 	if ($last) {
 		$default_where=['sezione' => $last['seziva'], 'tipo' => 'AF_', 'anno'=>$last['yearde']];
-    $_GET['anno']=$last['yearde'];
-  } else {
+		$_GET['anno']=$last['yearde'];
+	} else {
 		$default_where=['sezione' => 1, 'tipo' => 'AF_', 'anno'=> date('Y')];
 	}
-
 } else {
 	$si=(isset($_GET['sezione']))?intval($_GET['sezione']):1;
 	$default_where=['sezione' => $si, 'tipo' => 'AF_'];
@@ -349,13 +348,14 @@ $(function() {
         </tr>
         <tr>
 <?php
-  $ts->output_headers();
+			$ts->output_headers();
 ?>
-       </tr>
+        </tr>
 <?php
 //recupero le testate in base alle scelte impostate
 $result = gaz_dbi_dyn_query($gTables['anagra'].".ragso1,".$gTables['tesdoc'].".*",$tesdoc_e_partners, $ts->where, $ts->orderby, $ts->getOffset(), $ts->getLimit(),"protoc,datfat");
 $paymov = new Schedule();
+
 // creo un array con gli ultimi documenti dei vari anni (gli unici eliminabili senza far saltare il protocollo del registro IVA)
 $rs_last_docs = gaz_dbi_query("SELECT id_tes
   FROM ".$gTables['tesdoc']." AS t1
@@ -363,10 +363,11 @@ $rs_last_docs = gaz_dbi_query("SELECT id_tes
   ON t1.protoc = t2.max_protoc WHERE t1.tipdoc LIKE 'AF_' AND t1.seziva = ".$sezione);
 $year_last_protoc_id_tes=[];
 while ($ld = gaz_dbi_fetch_array($rs_last_docs)){
-  $year_last_protoc_id_tes[$ld['id_tes']]=true;
+	$year_last_protoc_id_tes[$ld['id_tes']]=true;
 }
 // fine creazione array con i documenti eliminabili
 $sdi_flux = gaz_dbi_get_row($gTables['company_config'], 'var', 'send_fae_zip_package')['val'];
+
 while ($row = gaz_dbi_fetch_array($result)) {
   // faccio il check per vedere se ci sono righi da trasferire in contabilità di magazzino
   $ck = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes=". $row['id_tes']." AND  LENGTH(TRIM(codart))>=1 AND tiprig=0 AND id_mag=0");
@@ -376,33 +377,33 @@ while ($row = gaz_dbi_fetch_array($result)) {
 	$paymov_status = false;
 	if ($row['id_con'] > 0) {
 		$tesmov = gaz_dbi_get_row($gTables['tesmov'], 'id_tes', $row['id_con']);
-    if ($tesmov) {
-      $paymov->getStatus(substr($tesmov['datreg'],0,4).$tesmov['regiva'].$tesmov['seziva']. str_pad($tesmov['protoc'], 9, 0, STR_PAD_LEFT)); // passo il valore formattato di id_tesdoc_ref
-      $paymov_status = $paymov->Status;
-      // riprendo il rigo  della contabilità con il cliente per avere l'importo
-      $importo = gaz_dbi_get_row($gTables['rigmoc'], 'id_tes', $row['id_con'], "AND codcon = ".$row['clfoco']);
-    }
+		if ($tesmov) {
+			$paymov->getStatus(substr($tesmov['datreg'],0,4).$tesmov['regiva'].$tesmov['seziva']. str_pad($tesmov['protoc'], 9, 0, STR_PAD_LEFT)); // passo il valore formattato di id_tesdoc_ref
+			$paymov_status = $paymov->Status;
+			// riprendo il rigo  della contabilità con il cliente per avere l'importo
+			$importo = gaz_dbi_get_row($gTables['rigmoc'], 'id_tes', $row['id_con'], "AND codcon = ".$row['clfoco']);
+		}
 	}
-  $template="";
-  $y = substr($row['datfat'], 0, 4);
-  $btncol='edit';
-  if ($row["tipdoc"] == 'AFA') {
-    $tipodoc = "Fattura";
-    $modulo = "stampa_docacq.php?id_tes=" . $row['id_tes']."&template=".$template;
-    $modifi = "admin_docacq.php?Update&id_tes=" . $row['id_tes'];
-  } elseif ($row["tipdoc"] == 'AFD') {
-    $tipodoc = "Nota Debito";
-    $modulo = "stampa_docacq.php?id_tes=" . $row['id_tes']."&template=".$template;
-    $modifi = "admin_docacq.php?Update&id_tes=" . $row['id_tes'];
-  } elseif ($row["tipdoc"] == 'AFC') {
-    $tipodoc = "Nota Credito";
-    $modulo = "stampa_docacq.php?id_tes=" . $row['id_tes']."&template=".$template;
-    $modifi = "admin_docacq.php?Update&id_tes=" . $row['id_tes'];
-    $btncol='danger';
-  } elseif ($row["tipdoc"] == 'AFT') {
-    $tipodoc = "Fattura";
-    $modulo = "stampa_docacq.php?id_tes=" . $row['id_tes']."&template=".$template;
-    $modifi = "";
+	$template="";
+	$y = substr($row['datfat'], 0, 4);
+	$btncol='edit';
+	if ($row["tipdoc"] == 'AFA') {
+		$tipodoc = "Fattura";
+		$modulo = "stampa_docacq.php?id_tes=" . $row['id_tes']."&template=".$template;
+		$modifi = "admin_docacq.php?Update&id_tes=" . $row['id_tes'];
+	} elseif ($row["tipdoc"] == 'AFD') {
+		$tipodoc = "Nota Debito";
+		$modulo = "stampa_docacq.php?id_tes=" . $row['id_tes']."&template=".$template;
+		$modifi = "admin_docacq.php?Update&id_tes=" . $row['id_tes'];
+	} elseif ($row["tipdoc"] == 'AFC') {
+		$tipodoc = "Nota Credito";
+		$modulo = "stampa_docacq.php?id_tes=" . $row['id_tes']."&template=".$template;
+		$modifi = "admin_docacq.php?Update&id_tes=" . $row['id_tes'];
+		$btncol='danger';
+	} elseif ($row["tipdoc"] == 'AFT') {
+		$tipodoc = "Fattura";
+		$modulo = "stampa_docacq.php?id_tes=" . $row['id_tes']."&template=".$template;
+		$modifi = "";
 	}
   echo '<tr class="FacetDataTD"><td align="center" class="bg-'.$btncol.'">';
   if (!empty($modifi)) {
@@ -429,75 +430,85 @@ while ($row = gaz_dbi_fetch_array($result)) {
     $existtesmov = gaz_dbi_get_row($gTables['tesmov'], 'id_tes', $row['id_con']);
     $revch = gaz_dbi_get_row($gTables['tesdoc'] . " LEFT JOIN " . $gTables['fae_flux'] . " ON " . $gTables['tesdoc'] . ".id_tes=" . $gTables['fae_flux'] . ".id_tes_ref", $gTables['tesdoc'] . ".datfat", $row['datfat'], "AND " . $gTables['tesdoc'] . ".numfat = '".$row['numfat']."' AND " . $gTables['tesdoc'] . ".clfoco = ".$row['clfoco']." AND " . $gTables['tesdoc'] . ".tipdoc LIKE 'X__'", $gTables['tesdoc'] . ".*, " . $gTables['fae_flux'] . ".flux_descri, GROUP_CONCAT(" . $gTables['fae_flux'] . ".flux_status ORDER BY " . $gTables['fae_flux'] . ".received_date DESC) AS refs_flux_status"); // controllo l'esistenza di una fattura reverse charge per XML
     if (isset($revch) && !empty($revch['id_tes'])) {
-      $modulo_fae = "../vendit/electronic_invoice.php?id_tes=" . $revch['id_tes'];
-      $revch['fae_attuale']="IT" . $admin_aziend['codfis'] . "_".encodeSendingNumber(array('azienda' => $admin_aziend['codice'],
-        'sezione' => $revch['seziva'],
-        'anno' => substr($revch['datfat'],0,4),
-        'fae_reinvii'=> substr($revch["datreg"],3,1),
-        'protocollo' => intval($revch["fattura_elettronica_reinvii"]*10000+ $revch["protoc"])), 36).".xml";
-      $revch['fae_reinvio']="IT" . $admin_aziend['codfis'] . "_".encodeSendingNumber(array('azienda' => $admin_aziend['codice'],
-        'sezione' => $revch['seziva'],
-        'anno' => substr($revch['datfat'],0,4),
-        'fae_reinvii'=> substr($revch["datreg"],3,1),
-        'protocollo' => intval(($revch["fattura_elettronica_reinvii"]+1)*10000+ $revch["protoc"])), 36).".xml";
-      $zipped = (preg_match("/^[A-Z0-9]{13,18}_([a-zA-Z0-9]{5}).zip$/",(is_string($revch['fattura_elettronica_zip_package'])?$revch['fattura_elettronica_zip_package']:''),$match))?$match[1]:false;
-      if ($zipped) { // se è contenuto in un pacchetto di file permetterà sia il download del singolo XML che del pacchetto in cui è contenuto
-        if ($revch['fattura_elettronica_reinvii']==0) {
-          echo '<a class="btn btn-xs btn-success" title="Pacchetto di fatture elettroniche in cui &egrave; contenuta questa fattura" href="../vendit/download_zip_package.php?fn='.$revch['fattura_elettronica_zip_package'].'">'.$zipped.'.zip<i class="glyphicon glyphicon-compressed"></i> </a>';
-        }
-      }
-      if ($sdi_flux) { // ho un modulo per la gestione dei flussi con il SdI: posso visualizzare lo stato
-        $zip_ref = 'fae_packaging.php?sdiflux='.$sdi_flux;
-        if ($revch['refs_flux_status']==null) {
-          $last_flux_status = '';
-        } else {
-          $last_flux_status = explode(',',$revch['refs_flux_status'])[0];
-        }
-        $sdihilight = ( !empty($revch['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][1] : 'default';
-        $sdilabel = ( !empty($revch['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][0] : 'da inviare';
-        if ( $last_flux_status == '' ) { $last_flux_status = 'DI'; }
-        if (is_string($revch['fattura_elettronica_zip_package']) && strlen($revch['fattura_elettronica_zip_package'])>10 && $last_flux_status == 'DI') { // il documento è impacchettato e da inviare
-          $revch['fae_attuale'] = $revch['fattura_elettronica_zip_package'];
-          $sdihilight = ( !empty($revch['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][1] : 'default';
-          $sdilabel = ( !empty($revch['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][0] : 'ZIP da inviare';
-          $last_flux_status = 'ZI';
-        }
-      } else { //// installazione senza gestore dei flussi con il SdI
-        $last_flux_status = ($zipped)?'RZ':'RE'; // gestendo il flusso manualmente darò sempre la possibilità di scegliere se reinviare o scaricare l'xml
-        $zip_ref = 'fae_packaging.php?nolib';
-        $sdihilight = 'default';
-        $sdilabel = 'xml';
-      }
-      switch ($last_flux_status) {
-        case "DI":
-          $sdititle = 'Invia il file '.$revch['fae_attuale'].' o pacchetto';
-          break;
-        case "PC":
-          $sdititle = 'Il file '.$revch['fae_attuale'].' è stato inviato al Sistema di Interscambio, attendere l\'esito ';
-          break;
-        case "RE":
-          $sdititle = 'Invia il file '.$revch['fae_attuale'].' al Sistema di Interscambio ';
-          break;
-        case "IN":
-          $sdititle = 'Il file '.$revch['fae_attuale'].' è stato inviato al Sistema di Interscambio, attendere la risposta di presa in carico ';
-          break;
-        case "RC":
-          $sdititle = 'Il file '.$revch['fae_attuale'].' è stato inviato e consegnato al Sistema di Interscambio ';
-          break;
-        case "MC":
-          $sdititle = 'Il file '.$revch['fae_attuale'].' è in mancata consegna ';
-          break;
-        case "NS":
-          $sdititle = 'Il file '.$revch['fae_attuale'].' è stato Scartato, correggi prima di fare il reinviio ';
-          break;
-        default:
-          $sdititle = 'genera il file '.$revch['fae_attuale'].' o fai il '.intval($revch['fattura_elettronica_reinvii']+1).'° reinvio ';
-          break;
-      }
-      echo '<a class="btn btn-xs btn-'.$sdihilight.' btn-xml" onclick="confirFae(this);return false;" id="doc1_'.$revch['id_tes'].'" dialog_fae_reinvio="'.$revch['fae_reinvio'].'" dialog_flux_descri="'.(is_string($revch['flux_descri'])?htmlentities($revch['flux_descri']):'').'" dialog_fae_sdiflux="'.$sdi_flux.'" dialog_fae_filename="'.$revch['fae_attuale'].'" dialog_fae_numrei="'.$revch['fattura_elettronica_reinvii'].'" dialog_fae_numfat="'. $revch['tipdoc'].' '. $revch['numfat'].'/'. $revch['seziva'].'" dialog_flux_status="'. $last_flux_status.'" target="_blank" href="'.$modulo_fae.'" zip_ref="'.$zip_ref.'" title="'.$sdititle.'"> '.strtoupper($sdilabel).' </a><a class="btn btn-xs btn-default" title="Visualizza in stile" href="../vendit/electronic_invoice.php?id_tes='.$revch['id_tes'].'&viewxml" target="_blank"><i class="glyphicon glyphicon-eye-open"></i> </a>';
-      if ($revch['fattura_elettronica_reinvii'] > 0) {
-        echo '<br/><small>' . $revch['fattura_elettronica_reinvii'] . ($revch['fattura_elettronica_reinvii']==1 ? ' reinvio' : ' reinvii') . '</small><br/>';
-      }
+		$faename_base = 62;
+		$faename_maxsez = 9;
+		if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+			$faename_base = 36;
+			$faename_maxsez = 5;
+		}
+		$modulo_fae = '../vendit/electronic_invoice.php?id_tes=' . $revch['id_tes'];
+		$revch['fae_attuale'] = 'IT' . $admin_aziend['codfis'] . '_' . encodeSendingNumber([
+			'azienda' => $admin_aziend['codice'],
+			'sezione' => min($faename_maxsez, $revch['seziva']),
+			'anno' => '200'.$revch['seziva'],
+			'fae_reinvii' => substr($revch['datreg'],3,1),
+			'protocollo' => intval($revch['fattura_elettronica_reinvii']*10000 + $revch['protoc'])
+		], $faename_base) . '.xml';
+		$revch['fae_reinvio'] = 'IT' . $admin_aziend['codfis'] . '_' . encodeSendingNumber([
+			'azienda' => $admin_aziend['codice'],
+			'sezione' => min($faename_maxsez, $revch['seziva']),
+			'anno' => '200'.$revch['seziva'],
+			'fae_reinvii' => substr($revch['datreg'],3,1),
+			'protocollo' => intval(($revch['fattura_elettronica_reinvii']+1)*10000 + $revch['protoc'])
+		], $faename_base) . '.xml';
+		$zipped = (preg_match("/^[A-Z0-9]{13,18}_([a-zA-Z0-9]{5}).zip$/",(is_string($revch['fattura_elettronica_zip_package'])?$revch['fattura_elettronica_zip_package']:''),$match))?$match[1]:false;
+		if ($zipped) { // se è contenuto in un pacchetto di file permetterà sia il download del singolo XML che del pacchetto in cui è contenuto
+			if ($revch['fattura_elettronica_reinvii']==0) {
+				echo '<a class="btn btn-xs btn-success" title="Pacchetto di fatture elettroniche in cui &egrave; contenuta questa fattura" href="../vendit/download_zip_package.php?fn='.$revch['fattura_elettronica_zip_package'].'">'.$zipped.'.zip<i class="glyphicon glyphicon-compressed"></i> </a>';
+			}
+		}
+		if ($sdi_flux) { // ho un modulo per la gestione dei flussi con il SdI: posso visualizzare lo stato
+			$zip_ref = 'fae_packaging.php?sdiflux='.$sdi_flux;
+			if ($revch['refs_flux_status']==null) {
+				$last_flux_status = '';
+			} else {
+				$last_flux_status = explode(',',$revch['refs_flux_status'])[0];
+			}
+			$sdihilight = ( !empty($revch['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][1] : 'default';
+			$sdilabel = ( !empty($revch['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][0] : 'da inviare';
+			$last_flux_status = (empty($last_flux_status)) ? 'DI' : '';
+			if (is_string($revch['fattura_elettronica_zip_package']) && strlen($revch['fattura_elettronica_zip_package'])>10 && $last_flux_status == 'DI') { // il documento è impacchettato e da inviare
+				$revch['fae_attuale'] = $revch['fattura_elettronica_zip_package'];
+				$sdihilight = ( !empty($revch['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][1] : 'default';
+				$sdilabel = ( !empty($revch['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][0] : 'ZIP da inviare';
+				$last_flux_status = 'ZI';
+			}
+		} else { //// installazione senza gestore dei flussi con il SdI
+			$last_flux_status = ($zipped)?'RZ':'RE'; // gestendo il flusso manualmente darò sempre la possibilità di scegliere se reinviare o scaricare l'xml
+			$zip_ref = 'fae_packaging.php?nolib';
+			$sdihilight = 'default';
+			$sdilabel = 'xml';
+		}
+		switch ($last_flux_status) {
+			case "DI":
+				$sdititle = 'Invia il file '.$revch['fae_attuale'].' o pacchetto';
+				break;
+			case "PC":
+				$sdititle = 'Il file '.$revch['fae_attuale'].' è stato inviato al Sistema di Interscambio, attendere l\'esito ';
+				break;
+			case "RE":
+				$sdititle = 'Invia il file '.$revch['fae_attuale'].' al Sistema di Interscambio ';
+				break;
+			case "IN":
+				$sdititle = 'Il file '.$revch['fae_attuale'].' è stato inviato al Sistema di Interscambio, attendere la risposta di presa in carico ';
+				break;
+			case "RC":
+				$sdititle = 'Il file '.$revch['fae_attuale'].' è stato inviato e consegnato al Sistema di Interscambio ';
+				break;
+			case "MC":
+				$sdititle = 'Il file '.$revch['fae_attuale'].' è stato inviato e consegnato al Sistema di Interscambio ma non consegnato al destinatario ';
+				break;
+			case "NS":
+				$sdititle = 'Il file '.$revch['fae_attuale'].' è stato Scartato, correggi prima di fare il reinviio ';
+				break;
+			default:
+				$sdititle = 'genera il file '.$revch['fae_attuale'].' o fai il '.intval($revch['fattura_elettronica_reinvii']+1).'° reinvio ';
+				break;
+		}
+		echo '<a class="btn btn-xs btn-'.$sdihilight.' btn-xml" onclick="confirFae(this);return false;" id="doc1_'.$revch['id_tes'].'" dialog_fae_reinvio="'.$revch['fae_reinvio'].'" dialog_flux_descri="'.(is_string($revch['flux_descri'])?htmlentities($revch['flux_descri']):'').'" dialog_fae_sdiflux="'.$sdi_flux.'" dialog_fae_filename="'.$revch['fae_attuale'].'" dialog_fae_numrei="'.$revch['fattura_elettronica_reinvii'].'" dialog_fae_numfat="'. $revch['tipdoc'].' '. $revch['numfat'].'/'. $revch['seziva'].'" dialog_flux_status="'. $last_flux_status.'" target="_blank" href="'.$modulo_fae.'" zip_ref="'.$zip_ref.'" title="'.$sdititle.'"> '.strtoupper($sdilabel).' </a><a class="btn btn-xs btn-default" title="Visualizza in stile" href="../vendit/electronic_invoice.php?id_tes='.$revch['id_tes'].'&viewxml" target="_blank"><i class="glyphicon glyphicon-eye-open"></i> </a>';
+		if ($revch['fattura_elettronica_reinvii'] > 0) {
+			echo '<br/><small>' . $revch['fattura_elettronica_reinvii'] . ($revch['fattura_elettronica_reinvii']==1 ? ' reinvio' : ' reinvii') . '</small><br/>';
+		}
     }
 
     if ($existtesmov){
