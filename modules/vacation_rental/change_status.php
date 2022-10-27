@@ -90,6 +90,7 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
         // creo e invio email di conferma
         //Recipients
         $mail->setFrom($admin_aziend['e_mail']); // sender (e-mail dell'account che sta inviando)
+        $mail->addReplyTo($admin_aziend['e_mail']); // reply to sender (e-mail dell'account che sta inviando)
         $mail->addAddress($_POST['cust_mail']);                  // email destinatario
         $mail->addAddress($admin_aziend['e_mail']);             //invio copia a mittente
         $mail->isHTML(true);
@@ -149,6 +150,7 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
         // creo e invio email di conferma
         //Recipients
         $mail->setFrom($admin_aziend['e_mail']); // sender (e-mail dell'account che sta inviando)
+        $mail->addReplyTo($admin_aziend['e_mail']); // reply to sender (e-mail dell'account che sta inviando)
         $mail->addAddress($_POST['cust_mail']);                  // email destinatario
         $mail->addAddress($admin_aziend['e_mail']);             //invio copia a mittente
         $mail->isHTML(true);

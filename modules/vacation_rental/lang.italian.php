@@ -371,7 +371,9 @@ $strScript = array(
             'char' => 'Sul codice alloggio ho sostituito i caratteri speciali non consentiti con "_" ',
             'codart_len' => 'Il codice alloggio ha una lunghezza diversa da quella stabilita in configurazione avanzata azienda per gli articoli ',
             'filmim' => 'Il file dev\'essere nel formato png, x-png, jpg, gif, x-gif, jpeg',
-            'filetoobig' => 'Controllare che il file selezionato non superi le dimensioni impostate nella configurazione php'
+            'filetoobig' => 'Controllare che il file selezionato non superi le dimensioni impostate nella configurazione php',
+            'issue_lat' => 'Errore nella latitudine',
+            'issue_long' => 'Errore nella longitudine'
         ),
         'war' => array(
             'ok_ins' => 'Alloggio inserito con successo'

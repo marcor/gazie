@@ -89,7 +89,9 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	$form['large_descri'] = filter_input(INPUT_POST, 'large_descri');
 	$form['cosear'] = filter_var($_POST['cosear'],FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 	$form['codart'] = filter_var($_POST['codart'],FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-	if ((isset($_GET['tab']) && $_GET['tab']=="variant") || ($_POST['cosear'] <> $_POST['codart']) ){
+	$form['lat'] = $_POST['lat'];
+  $form['long'] = $_POST['long'];
+  if ((isset($_GET['tab']) && $_GET['tab']=="variant") || ($_POST['cosear'] <> $_POST['codart']) ){
 		$cl_home="";
 		$cl_home_tab="";
 		$cl_variant="active";
@@ -100,7 +102,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 		$cl_variant="";
 		$cl_variant_tab="";
 	}
-	if(isset($_POST['codart']) AND isset($_POST['OKsub'])&&$_POST['OKsub']=="Salva"){	// se si salva la selezione degli alloggi facenti parte della struttura
+	if(isset($_POST['codart']) AND isset($_POST['OKsub'])&& $_POST['OKsub']=="Salva"){	// se si salva la selezione degli alloggi facenti parte della struttura
 		if ($toDo == 'insert'){// se è un nuovo inserimento struttura
 			 if (empty($form["descri"])) { // controllo che sia stata inserita almeno la descrizione
 				$msg['err'][] = 'descri';
@@ -152,7 +154,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	/** ENRICO FEDELE */
 	/* Controllo se il submit viene da una modale */
 	if (isset($_POST['Submit']) || ($modal === true && isset($_POST['mode-act']))) { // conferma tutto
-    /** ENRICO FEDELE */
+
 		if ($toDo == 'update') {  // controlli in caso di modifica
 
 		} else {
@@ -214,6 +216,16 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 				$msg['err'][] = 'empty_var';
 			}
 		}
+
+    //Latitude
+    if(strlen($form['lat'])>0 && !preg_match('/^-?(90|[1-8][0-9][.][0-9]{1,20}|[0-9][.][0-9]{1,20})$/', $form['lat'])) {
+      $msg['err'][] = 'issue_lat';
+    }
+    //Longitude
+    if(strlen($form['long'])>0 && !preg_match('/^-?(180|1[1-7][0-9][.][0-9]{1,20}|[1-9][0-9][.][0-9]{1,20}|[0-9][.][0-9]{1,20})$/', $form['long'])) {
+      $msg['err'][] = 'issue_long';
+    }
+
 		if (count($msg['err']) == 0) { // nessun errore
 			if (!empty($_FILES['userfile']) && $_FILES['userfile']['size'] > 0) { //se c'e' una nuova immagine nel buffer
 					if ($largeimg==0){
@@ -230,7 +242,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 			$form['large_descri'] = htmlspecialchars_decode (addslashes($form['large_descri']));
 			// aggiorno il db
 			if ($toDo == 'insert') {
-				$array= array('vacation_rental'=>array('facility_type' => '', 'paypal_email' => $form['paypal_email'], 'stripe_pub_key' => $form['stripe_pub_key'], 'stripe_sec_key' => $form['stripe_sec_key'], 'check_in' => $form['check_in'], 'check_out' => $form['check_out'], 'minor' => $form['minor'], 'tour_tax_from' => $form['tour_tax_from'], 'tour_tax_to' => $form['tour_tax_to'], 'tour_tax_day' => $form['tour_tax_day'], 'max_booking_days' => $form['max_booking_days']));// creo l'array per il custom field
+				$array= array('vacation_rental'=>array('facility_type' => '', 'paypal_email' => $form['paypal_email'], 'stripe_pub_key' => $form['stripe_pub_key'], 'stripe_sec_key' => $form['stripe_sec_key'], 'check_in' => $form['check_in'], 'check_out' => $form['check_out'], 'minor' => $form['minor'], 'tour_tax_from' => $form['tour_tax_from'], 'tour_tax_to' => $form['tour_tax_to'], 'tour_tax_day' => $form['tour_tax_day'], 'max_booking_days' => $form['max_booking_days'], 'latitude' => $form['lat'], 'longitude' => $form['long']));// creo l'array per il custom field
 				$form['custom_field'] = json_encode($array);// codifico in json  e lo inserisco nel form
 				gaz_dbi_table_insert('artico_group', $form);
 			} elseif ($toDo == 'update') {
@@ -249,14 +261,17 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             $data['vacation_rental']['tour_tax_to']=$_POST['tour_tax_to'];
             $data['vacation_rental']['tour_tax_day']=$_POST['tour_tax_day'];
             $data['vacation_rental']['max_booking_days']=$_POST['max_booking_days'];
+            $data['vacation_rental']['latitude']=$_POST['lat'];
+            $data['vacation_rental']['longitude']=$_POST['long'];
             $form['custom_field'] = json_encode($data);
           } else { //se non c'è il modulo "vacation_rental" lo aggiungo
-            $data['vacation_rental']= array('facility_type' => '', 'paypal_email' => $_POST['paypal_email'], 'stripe_pub_key' => $_POST['stripe_pub_key'], 'stripe_sec_key' => $_POST['stripe_sec_key'], 'check_in' => $_POST['check_in'], 'check_out' => $_POST['check_out'], 'minor' => $_POST['minor'], 'tour_tax_from' => $_POST['tour_tax_from'], 'tour_tax_to' => $_POST['tour_tax_to'], 'tour_tax_day' => $_POST['tour_tax_day'], 'max_booking_days' => $_POST['max_booking_days']);
+            $data['vacation_rental']= array('facility_type' => '', 'paypal_email' => $_POST['paypal_email'], 'stripe_pub_key' => $_POST['stripe_pub_key'], 'stripe_sec_key' => $_POST['stripe_sec_key'], 'check_in' => $_POST['check_in'], 'check_out' => $_POST['check_out'], 'minor' => $_POST['minor'], 'tour_tax_from' => $_POST['tour_tax_from'], 'tour_tax_to' => $_POST['tour_tax_to'], 'tour_tax_day' => $_POST['tour_tax_day'], 'max_booking_days' => $_POST['max_booking_days'], 'latitude' => $_POST['lat'], 'longitude' => $_POST['long']);
             $form['custom_field'] = json_encode($data);
           }
         }
 				gaz_dbi_table_update('artico_group', array( 0 => "id_artico_group", 1 => $form['id_artico_group']), $form);
 			}
+
 			if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
 				// Aggiornamento parent su e-commerce
 				$gs=$admin_aziend['synccommerce_classname'];
@@ -302,6 +317,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         $form['tour_tax_to'] = (isset($data['vacation_rental']['tour_tax_to']))?$data['vacation_rental']['tour_tax_to']:'';
         $form['tour_tax_day'] = (isset($data['vacation_rental']['tour_tax_day']))?intval($data['vacation_rental']['tour_tax_day']):0;
         $form['max_booking_days'] = (isset($data['vacation_rental']['max_booking_days']))?intval($data['vacation_rental']['max_booking_days']):0;
+        $form['lat'] = (isset($data['vacation_rental']['latitude']))?$data['vacation_rental']['latitude']:'';
+        $form['long'] = (isset($data['vacation_rental']['longitude']))?$data['vacation_rental']['longitude']:'';
     } else {
 				$form['facility_type'] = '';
 				$form['paypal_email'] ='';
@@ -314,6 +331,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         $form['tour_tax_to'] = 0;
         $form['tour_tax_day'] = "";
         $form['max_booking_days'] = "";
+        $form['lat'] = "";
+        $form['long'] = "";
     }
 	} else {
     $form['facility_type'] = '';
@@ -373,7 +392,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['max_booking_days'] = 0;
     $form['ref_ecommerce_id_main_product']="";
     $form['id_artico_group'] = "";
-
+    $form['lat'] = "";
+    $form['long'] = "";
     $cl_home="active";
     $cl_home_tab="in active";
     $cl_variant="";
@@ -685,6 +705,22 @@ $("#datepicker_to").datepicker("setDate", "<?php echo $form['tour_tax_to']; ?>")
 				?>
 									</div>
 								</div>
+							</div><!-- chiude row  -->
+              <div id="lat" class="row IERincludeExcludeRow">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <label for="lat" class="col-sm-4 control-label">Ubicazione, latitudine (numero decimale)</label>
+                    <input class="col-sm-8" type="text" value="<?php echo $form['lat']; ?>" name="lat" maxlength="9" min="0" max="15" oninput="this.value = this.value.replace(/[^0-9.-]/g, '').replace(/(\..*)\./g, '$1');" />
+                  </div>
+                </div>
+							</div><!-- chiude row  -->
+              <div id="long" class="row IERincludeExcludeRow">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <label for="long" class="col-sm-4 control-label">Ubicazione, longitudine (numero decimale)</label>
+                    <input class="col-sm-8" type="text" value="<?php echo $form['long']; ?>" name="long" maxlength="9" min="0" max="15" oninput="this.value = this.value.replace(/[^0-9.-]/g, '').replace(/(\..*)\./g, '$1');" />
+                  </div>
+                </div>
 							</div><!-- chiude row  -->
 							</div><!-- chiude tab-pane  -->
 

@@ -81,6 +81,8 @@ $admin_aziend=checkAdmin(9);
         <li>Gestione di alloggi con proprietario diverso dall'azienda di GAzie (contratto di locazione specifico)</li>
         <li>Gestione di un eventuale tour operator che ha venduto la prenotazione</li>
         <li>Gestione dell'accettazione (check-in/check-out) con data e ora e, al check-out, possibilità di inviare e-mail di richiesta recensione</li>
+        <li>Invio automatico di promemoria/benvenuto x giorni prima del check-in (richiede un cron job)</li>
+        <li>Controllo automatico delle prenotazioni con caparra non pagata, invio di sollecito e successivo annullamento automatico (richiede un cron job)</li>
 
         <p><br>Utilizzabile in un qualsiasi sito web tramite apposito Iframe:</p>
         <li>Front-end per il cliente tramite iframe su qualsiasi sito internet</li>
