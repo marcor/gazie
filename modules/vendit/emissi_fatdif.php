@@ -52,7 +52,6 @@ function getDateLimits($sez = 1) {
                 $rs_last = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "tipdoc = '$v' AND seziva = $sez", "numdoc DESC", 0, 1);
                 // in questo caso modifico la data di emissione e di fine periodo con l'ultimo del mese del primo ddt fatturabile
                 $ddtfirst = gaz_dbi_fetch_array($rs_first);
-                    var_dump($ddtfirst);
                 if ($ddtfirst) {
                     $nd = new DateTime($ddtfirst['datemi']);
                     $acc['date_ini'] = $ddtfirst['datemi'];
