@@ -289,7 +289,7 @@ function gaz_format_quantity($number, $comma = false, $decimal = false) {
     if (!$decimal) { // decimal is not defined (deprecated in recursive call)
         global $gTables;
         $config = gaz_dbi_get_row($gTables['aziend'], 'codice', 1);
-        $decimal = $config['decimal_quantity'];
+        $decimal = $config?$config['decimal_quantity']:9;
     }
     if ($decimal == 9) { //float
         if ($comma == true) {

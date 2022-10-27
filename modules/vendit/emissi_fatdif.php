@@ -35,7 +35,7 @@ if ( isset($_GET['tipodocumento'])) {
 }
 
 function getDateLimits($sez = 1) {
-    $acc = array();
+    $acc = [];
     $now = new DateTime;
     $acc['date_exe'] = $now->format("Y-m-d");
     $acc['date_fin'] = $acc['date_exe'];
@@ -52,6 +52,7 @@ function getDateLimits($sez = 1) {
                 $rs_last = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "tipdoc = '$v' AND seziva = $sez", "numdoc DESC", 0, 1);
                 // in questo caso modifico la data di emissione e di fine periodo con l'ultimo del mese del primo ddt fatturabile
                 $ddtfirst = gaz_dbi_fetch_array($rs_first);
+                    var_dump($ddtfirst);
                 if ($ddtfirst) {
                     $nd = new DateTime($ddtfirst['datemi']);
                     $acc['date_ini'] = $ddtfirst['datemi'];
@@ -81,6 +82,7 @@ function getDateLimits($sez = 1) {
     $acc['date_fin_Y'] = date("Y", strtotime($acc['date_fin']));
     $acc['date_fin_M'] = date("m", strtotime($acc['date_fin']));
     $acc['date_fin_D'] = date("d", strtotime($acc['date_fin']));
+
     return $acc;
 }
 
@@ -153,7 +155,7 @@ function getInvoiceableBills($date, $sez = 1, $cliente = 0) {
         $de->modify('-1 year');
         while ($row = gaz_dbi_fetch_array($result)) {
             $dm = new DateTime($row['datemi']);
-            if ($row['clfoco'] != $ctrlc || $row['pagame'] != $ctrlp || $row['ragbol'] != $ctrlr || ( $row['id_tes'] != $ctrld && $row['ragdoc'] == 'N') || $row['tipdoc'] == 'DDV') {
+            if ($row['clfoco'] != $ctrlc || $row['pagame'] != $ctrlp || $row['ragbol'] != $ctrlr || ( $row['id_tes'] != $ctrld && $row['ragdoc'] == 'N')) {
                 //se Ã¨ un'altro cliente o il cliente ha un pagamento diverso dal precedente o  non c'Ã¨ il raggruppamento bolle o Ã¨ in conto visione
                 $i++;
             }
