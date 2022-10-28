@@ -659,10 +659,12 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
 		$azTables=$GLOBALS['azTables'];
 		global $link;
 		$link=$GLOBALS['link'];
-    if (!isset($lang_template) || $lang_template=='' || $lang_template==false){
+    if (!isset($lang_template) || $lang_template=='' || $lang_template==false){// se non è impostata alcuna lingua metto italiano
       require("./lang.italian.php");
-    }else{
+    }elseif (file_exists("./lang." . $lang_template . ".php")){// se esiste la lingua impostata ne carico il file lingua
       require("./lang." . $lang_template . ".php");
+    }else{// altrimenti carico di default inglese
+      require("./lang.english.php");
     }
 
     $script_transl = $strScript["admin_booking.php"];
@@ -710,11 +712,19 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
 
     //$config = new Config;
     $configTemplate = new configTemplate;
-    if ($lang_template) {
-      $ts=$configTemplate->template;
-      $configTemplate->setTemplateLang($lang_template);
-      if (empty($ts)){
-        $configTemplate->template=substr($configTemplate->template, 1);
+    if ($lang_template) {// se c'è una lingua per il template
+      if (file_exists("template".$lang_template)){// se la lingua esiste la prendo
+        $ts=$configTemplate->template;
+        $configTemplate->setTemplateLang($lang_template);
+        if (empty($ts)){
+          $configTemplate->template=substr($configTemplate->template, 1);
+        }
+      }else{// altrimenti carico di default inglese
+        $ts=$configTemplate->template;
+        $configTemplate->setTemplateLang('english');
+        if (empty($ts)){
+          $configTemplate->template=substr($configTemplate->template, 1);
+        }
       }
     }
     $lh=(($dest && $dest == 'H')?'_lh':''); // eventuale scelta di stampare su carta intestata, aggiungo il suffisso "lh";
