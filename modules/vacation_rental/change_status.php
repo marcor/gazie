@@ -58,7 +58,12 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
       $script_transl=$strScript['booking_form.php'];
 
       if ($data = json_decode($tesbro['custom_field'],true)){// se c'è un json
+
         if (is_array($data['vacation_rental'])){ // se c'è il modulo "vacation rental" lo aggiorno
+          if (substr($_POST['new_status'],0,9)=="CANCELLED"){// se la prenotazione va cancellata azzero anche i reminder
+            $data['vacation_rental']['rem_pag']="";
+            $data['vacation_rental']['rem_checkin']="";
+          }
           $data['vacation_rental']['status']=substr($_POST['new_status'],0,10);
           $custom_json = json_encode($data);
         } else { //se non c'è il modulo "vacation_rental" lo aggiungo
