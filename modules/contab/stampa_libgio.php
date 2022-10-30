@@ -172,69 +172,76 @@ $pdf->SetFillColor(hexdec(substr($pdf->ad_az['colore'], 0, 2)), hexdec(substr($p
 $pdf->SetTitle($admin_aziend['title']);
 $pdf->SetAuthor($pdf->intesta1.' usando GAzie versione '.GAZIE_VERSION);
 $ci=0;
-foreach($a[1] as $k1=>$v1) {
-	$pdf->AddPage();
-	$pdf->SetXY(85,18);
-	if (isset($_GET['pdfamese'])) {
-		$pdf->Cell(75,4,'Pagina '.$k1,0,1,'R');
-	} else {
-		$pdf->Cell(75,4,'Pagina '.$k1.' di '.$a[0],0,1,'R');
-	}
-	$pdf->Cell(10,4,'Rigo',1,0,'R',1);
-	$pdf->Cell(78,4,'Descrizione movimento',1,0,'L',1);
-	$pdf->Cell(16,4,'Cod. conto',1,0,'C',1);
-	$pdf->Cell(46,4,'Descrizione conto',1,0,'L',1);
-	$pdf->Cell(20,4,'Dare',1,0,'R',1);
-	$pdf->Cell(20,4,'Avere',1,1,'R',1);
-	if ($k1>1){
-		$pdf->Cell(104,4,'','B');
-		$pdf->Cell(46,4,'--> da riporto ','B',0,'R');
-		$pdf->Cell(20,4,number_format($rip[$k1-1]['dare'],2,',',''),1,0,'R',1);
-		$pdf->Cell(20,4,number_format($rip[$k1-1]['avere'],2,',',''),1,1,'R',1);
-	}
+if ( count($a)>=2 ){
+  foreach($a[1] as $k1=>$v1) {
+    $pdf->AddPage();
+    $pdf->SetXY(85,18);
+    if (isset($_GET['pdfamese'])) {
+      $pdf->Cell(75,4,'Pagina '.$k1,0,1,'R');
+    } else {
+      $pdf->Cell(75,4,'Pagina '.$k1.' di '.$a[0],0,1,'R');
+    }
+    $pdf->Cell(10,4,'Rigo',1,0,'R',1);
+    $pdf->Cell(78,4,'Descrizione movimento',1,0,'L',1);
+    $pdf->Cell(16,4,'Cod. conto',1,0,'C',1);
+    $pdf->Cell(46,4,'Descrizione conto',1,0,'L',1);
+    $pdf->Cell(20,4,'Dare',1,0,'R',1);
+    $pdf->Cell(20,4,'Avere',1,1,'R',1);
+    if ($k1>1){
+      $pdf->Cell(104,4,'','B');
+      $pdf->Cell(46,4,'--> da riporto ','B',0,'R');
+      $pdf->Cell(20,4,number_format($rip[$k1-1]['dare'],2,',',''),1,0,'R',1);
+      $pdf->Cell(20,4,number_format($rip[$k1-1]['avere'],2,',',''),1,1,'R',1);
+    }
 
-	foreach($v1 as $k2=>$v2){
-		$v2['dare']=($v2['dare']>0)?number_format($v2['dare'],2,',',''):'';
-		$v2['avere']=($v2['avere']>0)?number_format($v2['avere'],2,',',''):'';
-		if ($ci!=$v2['id_tes']){
-			$ds=wordwrap($v2['descri'],50,"XZX");
-			$dx=explode("XZX",$ds);
-			$dsx=$v2['dr'].' '.$dx[0];
-			$b='T';
-		} else {
-			if(isset($dx[1])){$dsx=$dx[1];}else{$dsx='';}
-			if(!empty($v2["numdoc"])&&$b=='T'){$dsx.= " n.".$v2['numdoc']."/".$v2['seziva']." del ".$v2['dd'];}
-			$b='';
-		}
+    foreach($v1 as $k2=>$v2){
+      $v2['dare']=($v2['dare']>0)?number_format($v2['dare'],2,',',''):'';
+      $v2['avere']=($v2['avere']>0)?number_format($v2['avere'],2,',',''):'';
+      if ($ci!=$v2['id_tes']){
+        $ds=wordwrap($v2['descri'],50,"XZX");
+        $dx=explode("XZX",$ds);
+        $dsx=$v2['dr'].' '.$dx[0];
+        $b='T';
+      } else {
+        if(isset($dx[1])){$dsx=$dx[1];}else{$dsx='';}
+        if(!empty($v2["numdoc"])&&$b=='T'){$dsx.= " n.".$v2['numdoc']."/".$v2['seziva']." del ".$v2['dd'];}
+        $b='';
+      }
 
-        $pdf->Cell(10,4,$k2,1,0,'R');
-        $pdf->Cell(78,4,$dsx,$b,0,'L',0,'',1);
-        $pdf->Cell(16,4,$v2['codcon'],'LT',0,'C');
-        $pdf->Cell(46,4,$v2['cfdes'],'LT',0,'L',0,'',1);
-        $pdf->Cell(20,4,$v2['dare'],'LT',0,'R');
-        $pdf->Cell(20,4,$v2['avere'],'LRT',1,'R');
-	    $ci=$v2['id_tes'];
-	}
+          $pdf->Cell(10,4,$k2,1,0,'R');
+          $pdf->Cell(78,4,$dsx,$b,0,'L',0,'',1);
+          $pdf->Cell(16,4,$v2['codcon'],'LT',0,'C');
+          $pdf->Cell(46,4,$v2['cfdes'],'LT',0,'L',0,'',1);
+          $pdf->Cell(20,4,$v2['dare'],'LT',0,'R');
+          $pdf->Cell(20,4,$v2['avere'],'LRT',1,'R');
+        $ci=$v2['id_tes'];
+    }
 
-	if (isset($_GET['pdfamese'])) {
-		if ($pdf->GetY()>5 && $pdf->GetY()<265) {
-			$pdf->Cell(190,4,'//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////','LRT',1);
-			while ($pdf->GetY() < 265) {
-				$pdf->Cell(190,4,'//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////','LR',1);
-			}
-		}
-	}
+    if (isset($_GET['pdfamese'])) {
+      if ($pdf->GetY()>5 && $pdf->GetY()<265) {
+        $pdf->Cell(190,4,'//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////','LRT',1);
+        while ($pdf->GetY() < 265) {
+          $pdf->Cell(190,4,'//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////','LR',1);
+        }
+      }
+    }
 
-	if (isset($_GET['pdfamese'])) {
-		$pdf->Cell(50,4,'Pagina '.$k1,'T');
-	} else {
-		$pdf->Cell(50,4,'Pagina '.$k1.' di '.$a[0],'T');
-	}
+    if (isset($_GET['pdfamese'])) {
+      $pdf->Cell(50,4,'Pagina '.$k1,'T');
+    } else {
+      $pdf->Cell(50,4,'Pagina '.$k1.' di '.$a[0],'T');
+    }
 
-	$desrip=($k1==$pagetot)?'':'a riporto --> ';
-	$pdf->Cell(100,4,$desrip,'T',0,'R');
-	$pdf->Cell(20,4,number_format($rip[$k1]['dare'],2,',',''),1,0,'R',1);
-	$pdf->Cell(20,4,number_format($rip[$k1]['avere'],2,',',''),1,1,'R',1);
+    $desrip=($k1==$pagetot)?'':'a riporto --> ';
+    $pdf->Cell(100,4,$desrip,'T',0,'R');
+    $pdf->Cell(20,4,number_format($rip[$k1]['dare'],2,',',''),1,0,'R',1);
+    $pdf->Cell(20,4,number_format($rip[$k1]['avere'],2,',',''),1,1,'R',1);
+  }
+} else {
+  $pdf->AddPage();
+  $pdf->SetFont('helvetica','',16);
+  $pdf->SetXY(50,60);
+  $pdf->Cell(100,4,'NESSUN MOVIMENTO CONTABILE NEI LIMITI SCELTI',0,0,'C');
 }
 $pdf->Output();
 ?>
