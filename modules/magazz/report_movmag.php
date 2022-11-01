@@ -271,7 +271,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 	//if($tot_movimenti!=0) {	//	Inizialmente avevo pensato di stampare il totale solo se diverso da zero, ma la cosa risulta fuorviante in alcuni casi
 								//	meglio stamparlo sempre
 		echo "<tr>
-				<td colspan=\"7\" class=\"FacetFieldCaptionTD\" align=\"right\"><strong>TOTALE</strong></td>
+				<td colspan=\"8\" class=\"FacetFieldCaptionTD\" align=\"right\"><strong>TOTALE</strong></td>
 				<td class=\"FacetFieldCaptionTD\" align=\"right\"><strong>".gaz_format_number($tot_movimenti)."</strong></td>
 				<td class=\"FacetFieldCaptionTD\">&nbsp;</td>
 			  </tr>";
