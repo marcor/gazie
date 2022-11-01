@@ -54,7 +54,11 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
       $language=gaz_dbi_get_row($gTables['languages'], "lang_id", $anagra['id_language']); // carico la lingua
       $langarr = explode(" ",$language['title_native']);
       $lang = strtolower($langarr[0]);
-      include "lang.".$lang.".php";
+	  if (file_exists("lang.".$lang.".php")){// se esist
+		include "lang.".$lang.".php";// carico il file traduzione lingua
+	  }else{// altrimenti carico di default la lingua inglese
+        include "lang.english.php"; 
+      }
       $script_transl=$strScript['booking_form.php'];
 
       if ($data = json_decode($tesbro['custom_field'],true)){// se c'è un json
@@ -97,7 +101,7 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
         $mail->setFrom($admin_aziend['e_mail']); // sender (e-mail dell'account che sta inviando)
         $mail->addReplyTo($admin_aziend['e_mail']); // reply to sender (e-mail dell'account che sta inviando)
         $mail->addAddress($_POST['cust_mail']);                  // email destinatario
-        $mail->addAddress($admin_aziend['e_mail']);             //invio copia a mittente
+        $mail->addCC($admin_aziend['e_mail']);             //invio copia a mittente
         $mail->isHTML(true);
         $mail->Subject = $script_transl['booking']." ".$tesbro['numdoc'].' '.$script_transl['of'].' '.gaz_format_date($tesbro['datemi']);
         $mail->Body    = "<p>".$script_transl['change_status'].": ".$script_transl[$_POST['new_status']]."</p><p><b>".$admin_aziend['ragso1']." ".$admin_aziend['ragso2']."</b></p>";
@@ -117,7 +121,11 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
       $language=gaz_dbi_get_row($gTables['languages'], "lang_id", $anagra['id_language']); // carico la lingua specifica del cliente
       $langarr = explode(" ",$language['title_native']);
       $lang = strtolower($langarr[0]);
-      include "lang.".$lang.".php";
+      if (file_exists("lang.".$lang.".php")){// se esist
+		include "lang.".$lang.".php";// carico il file traduzione lingua
+	  }else{// altrimenti carico di default la lingua inglese
+        include "lang.english.php"; 
+      }
       $script_transl=$strScript['booking_form.php'];
       $res=gaz_dbi_get_row($gTables['company_config'], "var", 'vacation_url_user');
       $vacation_url_user=$res['val'];// carico l'url per la pagina front-end utente
@@ -157,7 +165,7 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
         $mail->setFrom($admin_aziend['e_mail']); // sender (e-mail dell'account che sta inviando)
         $mail->addReplyTo($admin_aziend['e_mail']); // reply to sender (e-mail dell'account che sta inviando)
         $mail->addAddress($_POST['cust_mail']);                  // email destinatario
-        $mail->addAddress($admin_aziend['e_mail']);             //invio copia a mittente
+        $mail->addCC($admin_aziend['e_mail']);             //invio copia a mittente
         $mail->isHTML(true);
         $mail->Subject = $script_transl['booking']." ".$tesbro['numdoc'].' '.$script_transl['of'].' '.gaz_format_date($tesbro['datemi']);
         $mail->Body    = "<p>".$script_transl['ask_feedback']."</p><p><a href=".$vacation_url_user.">".$vacation_url_user."</a></p>".$script_transl['use_access']."<br>Password: <b>".$event['access_code']."</b><br>ID: <b>".$event['id_tesbro']."</b><br>".$script_transl['booking_number'].": <b>".$tesbro['numdoc']."</b><p>".$script_transl['ask_feedback2']."</p><p><b>".$admin_aziend['ragso1']." ".$admin_aziend['ragso2']."</b></p>";
