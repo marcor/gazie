@@ -73,9 +73,12 @@ function validatecard($cardnumber) {// L' algoritmo di Luhn , noto anche come al
 }
 
 // Ricerca gli sconti applicabili -> vengono esclusi i buoni sconto
-function searchdiscount($house="",$facility="",$start="",$end="",$stay=0,$anagra=0){
+function searchdiscount($house="",$facility="",$start="",$end="",$stay=0,$anagra=0,$table=""){
   global $link, $azTables;
-  $where="";
+  if ($table == ""){
+	  $table = $azTables."rental_discounts";
+  }
+  $where=" ";
   $and=" WHERE (";
   if (strlen($house)>0){
     $where .= $and." accommodation_code = '".$house."' OR accommodation_code='')";
@@ -102,7 +105,7 @@ function searchdiscount($house="",$facility="",$start="",$end="",$stay=0,$anagra
     $and=" AND (";
   }
   $where .= $and." status = 'CREATED' AND (discount_voucher_code = '' OR discount_voucher_code = NULL ))";
-  $sql = "SELECT * FROM ".$azTables."rental_discounts".$where." ORDER BY priority DESC, id ASC";
+  $sql = "SELECT * FROM ".$table.$where." ORDER BY priority DESC, id ASC";
   //echo "<br>query: ",$sql,"<br>";
   if ($result = mysqli_query($link, $sql)) {
     return ($result);
