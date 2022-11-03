@@ -38,9 +38,9 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     if (isset($_POST['Submit'])) { // conferma tutto
 		if ($_FILES['userfile']['error']==0) { // se è stato selezionato un nuovo file
 			preg_match("/\.([^\.]+)$/", $_FILES['userfile']['name'], $matches);
-			
+
 			$form['title']=$_FILES["userfile"]["name"]; // modifico pure il titolo
-			
+
 			$form['extension']=$matches[1];
 			//print $_FILES['userfile']['type'];
 			if ( $_FILES['userfile']['type'] == "image/png" ||
@@ -84,7 +84,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             gaz_dbi_table_insert('files',$form);
             //recupero l'id assegnato dall'inserimento
             $form['id_doc']= gaz_dbi_last_id();
-          } elseif ($toDo == 'update') { 
+          } elseif ($toDo == 'update') {
             gaz_dbi_table_update('files',array('id_doc',$form['id_doc']),$form);
           }
           // aggiorno il filesystem solo se è stato selezionato un nuovo file
@@ -112,9 +112,9 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 } else { //se e' il primo accesso per INSERT
     $form=gaz_dbi_fields('files');
     $form['ritorno']=$_SERVER['HTTP_REFERER'];
-    $artico = gaz_dbi_get_row($gTables['artico'], 'codice',substr($_GET['item_ref'],0,15));
+    $artico = gaz_dbi_get_row($gTables['artico'], 'codice',substr($_GET['item_ref'],0,32));
     if (!empty($artico)) { //l'articolo è stato trovato
-       $form['item_ref']= $artico['codice'];    
+       $form['item_ref']= $artico['codice'];
     } else { // scappo!
        header("Location: ".$form['ritorno']);
        exit;
