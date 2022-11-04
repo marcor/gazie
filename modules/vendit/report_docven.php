@@ -27,6 +27,8 @@ $admin_aziend = checkAdmin();
 $pdf_to_modal = gaz_dbi_get_row($gTables['company_config'], 'var', 'pdf_reports_send_to_modal')['val'];
 $partner_select = !gaz_dbi_get_row($gTables['company_config'], 'var', 'partner_select_mode')['val'];
 $tesdoc_e_partners = $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id LEFT JOIN ' . $gTables['fae_flux'] . " ON " . $gTables['tesdoc'] . ".id_tes = " . $gTables['fae_flux'] . '.id_tes_ref';
+$sez_RevC_arr=array_keys($admin_aziend, "AUTOFATTURE - REVERSE CHARGE");
+$sez_RevC=substr($sez_RevC_arr[1],-1);// questo è il sezionale dove l'azienda carica le autofatture reverse charge
 
 //function print_querytime($prev) {
 //    list($usec, $sec) = explode(" ", microtime());
@@ -85,7 +87,13 @@ if (!isset($_GET['sezione'])) {
 		$default_where=['sezione' => 1, 'tipo' => 'F%', 'anno'=> date('Y')];
 	}
 } else {
-	$default_where=['sezione' => intval($_GET['sezione']), 'tipo' => 'F%'];
+	if (intval($sez_RevC)<>intval($_GET['sezione'])){
+		$default_where=['sezione' => intval($_GET['sezione']), 'tipo' => 'F%'];
+		$title_doc="Documenti di vendita della sezione";
+	}else{
+		$default_where=['sezione' => intval($_GET['sezione']), 'tipo' => 'X%'];
+		$title_doc="Autofatture Reverse charge della sezione";
+	}
 }
 $ts = new TableSorter(
     !$partner_select && isset($_GET["cliente"]) ? $tesdoc_e_partners : $gTables['tesdoc'],
@@ -344,7 +352,7 @@ function printPdf(urlPrintDoc){
         <p class="ui-state-highlight" id="mailpecsdi"></p>
     </div>
 
-    <div align="center" class="FacetFormHeaderFont">Documenti di vendita della sezione
+    <div align="center" class="FacetFormHeaderFont"><?php echo $title_doc; ?>
         <select name="sezione" class="FacetSelect" onchange="this.form.submit()">
 	    <?php
             for ($i = 1; $i <= 9; $i++) {
@@ -704,7 +712,7 @@ function printPdf(urlPrintDoc){
                   $con_result = gaz_dbi_dyn_query('*', $gTables['contract'], "id_contract = " . $r["id_contract"], 'conclusion_date DESC');
                   echo "<td align=\"center\">";
                   while ($r_d = gaz_dbi_fetch_array($con_result)) {
-                    echo " <a class=\"btn btn-xs btn-default btn-contr\" title=\"Visualizza il contratto\" href=\"admin_contract.php?id_contract=" . $r_d['id_contract'] . "&Update\" style=\"font-size:10px;\"><i class=\"glyphicon glyphicon-list-alt\"></i>&nbsp;Contr." . $r_d['doc_number'].'/'.substr($r_d['conclusion_date'],0,4) . "</a>\n";
+                    echo " <a class=\"btn btn-xs btn-default btn-contr\" title=\"Visualizza il contratto\" href=\"print_contract.php?id_contract=" . $r_d['id_contract'] . "\" style=\"font-size:10px;\"><i class=\"glyphicon glyphicon-list-alt\"></i>&nbsp;Contr." . $r_d['doc_number'] . "</a>\n";
                   }
                   echo "</td>";
                 } else {
