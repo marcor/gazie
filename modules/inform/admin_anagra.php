@@ -132,7 +132,7 @@ $gForm = new venditForm();
 ?>
 <script>
     $(function () {
-        $("#datnas").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
+      $("#datnas").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
     });
 </script>
 
@@ -296,6 +296,16 @@ if (count($msg['err']) > 0) { // ho un errore
         <div class="row">
             <div class="col-md-12">
                 <div class="form-group">
+                    <label for="fiscal_reg" class="col-sm-4 control-label"><?php echo $script_transl['fiscal_reg']; ?></label>
+                    <?php
+                      $gForm->selectFromXML('../../library/include/fae_regime_fiscale.xml', 'fiscal_reg', 'fiscal_reg', $form['fiscal_reg'], true,'','col-xs-8');
+                    ?>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
                     <label for="latitude" class="col-sm-4 control-label"><?php echo $script_transl['latitude'] . " - " . $script_transl['longitude']; ?></label>
                     <div class="col-sm-8">
                         <input class="col-sm-3" type="text" name="latitude" value="<?php echo $form['latitude'] ?>" maxlength="10" /><input class="col-sm-3" type="text" name="longitude" value="<?php echo $form['longitude']; ?>" maxlength="10" /><a class="btn btn-xs btn-default btn-default col-sm-2" href="http://maps.google.com/maps?q=<?php echo $form['latitude'] . "," . $form['longitude']; ?>"> maps -> <i class="glyphicon glyphicon-map-marker"></i></a>
@@ -349,7 +359,6 @@ if (count($msg['err']) > 0) { // ho un errore
                     <label for="fatt_email" class="col-sm-4 control-label"><?php echo $script_transl['fatt_email']; ?> </label>
                     <?php
                     $gForm->variousSelect('fatt_email', $script_transl['fatt_email_value'], $form['fatt_email']);
-                    // $gForm->selectNumber('fatt_email', $form['fatt_email'], TRUE, 0, 1);
                     ?>
                 </div>
             </div>

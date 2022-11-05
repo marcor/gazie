@@ -199,6 +199,7 @@ $strScript = array(
         'cell' => 'Cellulare',
         'codfis' => 'Codice Fiscale',
         'pariva' => 'Partita IVA',
+        'fiscal_reg' => 'Regime Fiscale',
         'fe_cod_univoco' => 'Cod.Univoco Destinatario (fatt.elettronica)',
         'pec_email' => 'Posta Elettronica Certificata',
         'e_mail' => 'e mail',

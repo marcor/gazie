@@ -76,6 +76,7 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
 					CONCAT(anagraf.ragso1,\' \',anagraf.ragso2) AS ragsoc,CONCAT(anagraf.citspe,\' (\',anagraf.prospe,\')\') AS citta, anagraf.country,
 					country.istat_area', $from, $where, $orderby);
   $doc = [];
+	$docrows=[];
   $ctrlp = 0;
   $carry = 0;
   $ivasplitpay = 0;
@@ -234,6 +235,7 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
         $roundcastle[$r['codvat']] = $r['prelis'];
         $totroundcastle += $r['prelis'];
       }
+   		$docrows[]=$r; // i righi mi serviranno per creare una autofattura "clone" ma con IVA valorizzata
     }
     // la presenza di scadenze provenienti dall'XML mi crea l'array che valorizzerà paymov
     $rspm = gaz_dbi_dyn_query('*', $gTables['expdoc'], " id_tes = " . $tes['id_tes']);
@@ -246,6 +248,7 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
         $tes['incaut']=($contanti)?$contanti['incaut']:0;
       }
     }
+    $doc[$tes['protoc']]['docrows'] = $docrows;
     $doc[$tes['protoc']]['accpaymov'] = $accpaymov;
     $doc[$tes['protoc']]['title'] = $title;
     $doc[$tes['protoc']]['classv'] = $classv;
@@ -376,6 +379,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
   $form['hidden_req'] = '';
   $uts = new DateTime('@'.mktime(12,0,0,$form['this_date_M'],$form['this_date_D'],$form['this_date_Y']));
 	$rs = getDocumentsAccounts($form['type'], $form['vat_section'], $uts->format('Ymd'), $form['profin']);
+
   if (isset($_POST['gosubmit']) && count($msg['err'])==0) {   //confermo la contabilizzazione
     if (!empty($rs) && count($rs)>0) {
         require("lang." . $admin_aziend['lang'] . ".php");
@@ -713,30 +717,36 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 			}
 			$last_id_tes_tesdoc=tesdocInsert($tesdocVal);
 
-			$rigdocVal = ['id_tes'=> $last_id_tes_tesdoc,
-				'tiprig' => 1,
-				'descri' => ($v['tes']['tipdoc']=='AFC')?'NOTA CREDITO PER ':'FATTURA DI '
-			];
+			$rigdocVal = ['id_tes'=> $last_id_tes_tesdoc];
 			$rigdocVal['descri'] .= 'ACQUISTO n.'.$v['tes']['numfat'].' del '.gaz_format_date($v['tes']['datfat']);
-                // inserisco i righi IVA
-                $acc_iva=0.00;
-                $acc_imp=0.00;
-
-                foreach( $acc_reverse_charge as $krc=>$vrc ) {
-                    $acc_iva+=$vrc['impost'];
-                    $acc_imp+=$vrc['impcast'];
-                    // vado ad indicare l'id del movimento padre sul rigo iva
-                    $vrc['reverse_charge_idtes'] = $vrc['tesmov_id'];
-                    $vrc['id_tes'] = $rctes_id;
-                    rigmoiInsert($vrc);
-
-				// sul documento inserisco un rigo per ogni aliquota riportante il totale imponibile del Reverse Charge
-				$rigdocVal['descri'] .= ' '.$vrc['descri_vat'];
-				$rigdocVal['codvat'] = $vrc['codiva'];
-				$rigdocVal['prelis'] = $v['tes']['tipdoc']=='AFC'?-abs($vrc['impcast']):$vrc['impcast'];
-				$rigdocVal['pervat'] = $vrc['periva'];
-				rigdocInsert($rigdocVal);
-                }
+      // inserisco i righi IVA
+      $acc_iva=0.00;
+      $acc_imp=0.00;
+      foreach( $acc_reverse_charge as $krc=>$vrc ) {
+        $acc_iva+=$vrc['impost'];
+        $acc_imp+=$vrc['impcast'];
+        // vado ad indicare l'id del movimento padre sul rigo iva
+        $vrc['reverse_charge_idtes'] = $vrc['tesmov_id'];
+        $vrc['id_tes'] = $rctes_id;
+        rigmoiInsert($vrc);
+        /*
+        // sul documento inserisco un rigo per ogni aliquota riportante il totale imponibile del Reverse Charge
+        $rigdocVal['descri'] .= ' '.$vrc['descri_vat'];
+        $rigdocVal['codvat'] = $vrc['codiva'];
+        $rigdocVal['prelis'] = $v['tes']['tipdoc']=='AFC'?-abs($vrc['impcast']):$vrc['impcast'];
+        $rigdocVal['pervat'] = $vrc['periva'];*/
+      }
+      foreach ($v['docrows'] as $kdr => $vdr) {
+        $rigdocVal['tiprig'] = $vdr['tiprig'];
+        $rigdocVal['descri'] = $vdr['descri'];
+        $rigdocVal['quanti'] = $vdr['quanti'];
+        $rigdocVal['unimis'] = $vdr['unimis'];
+        $rigdocVal['codvat'] = $vdr['codvat'];
+        $rigdocVal['prelis'] = $v['tes']['tipdoc']=='AFC'?-abs($vdr['prelis']):$vdr['prelis'];
+        $rigdocVal['sconto'] = $vdr['sconto'];
+        $rigdocVal['pervat'] = $vdr['pervat'];
+        rigdocInsert($rigdocVal);
+      }
 
 			if ($v['tes']['tipdoc'] == 'AFC') {
 				// inserisco i tre righi contabili della fattura che vanno sul registro IVA vendite

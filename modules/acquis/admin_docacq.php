@@ -1613,6 +1613,8 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
 				$form['rows'][$i]['sconto'] = $row['sconto'];
 				$form['rows'][$i]['quanti'] = gaz_format_quantity($row['quanti'], 0, $admin_aziend['decimal_quantity']);
 				$form['rows'][$i]['codvat'] = $row['codvat'];
+        // ripropongo l'ultima aliquota usata sul rigo di input
+        $form['in_codvat'] = $row['codvat'];
 				$form['rows'][$i]['codric'] = $row['codric'];
 				$form['rows'][$i]['id_mag'] = $row['id_mag'];
 				$form['rows'][$i]['id_warehouse'] = 0;
@@ -1643,6 +1645,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
 				$form['rows'][$i]['identifier'] = '';
 				$form['rows'][$i]['expiry'] = '';
 				$form['rows'][$i]['status'] = "UPDATE";
+
 				if ($form['rows'][$i]['SIAN']>0){
 					$camp_mov_sian = gaz_dbi_get_row($gTables['camp_mov_sian'], "id_movmag", $form['rows'][$i]['id_mag']);
 					$form['rows'][$i]['cod_operazione'] = $camp_mov_sian['cod_operazione'];
@@ -1703,6 +1706,8 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$i]['sconto'] = $row['sconto'];
         $form['rows'][$i]['quanti'] = gaz_format_quantity($row['quanti'], 0, $admin_aziend['decimal_quantity']);
         $form['rows'][$i]['codvat'] = $row['codvat'];
+        // ripropongo l'ultima aliquota usata sul rigo di input
+        $form['in_codvat'] = $row['codvat'];
         $form['rows'][$i]['codric'] = $row['codric'];
         $form['rows'][$i]['id_mag'] = $row['id_mag'];
         $form['rows'][$i]['id_warehouse'] = 0;

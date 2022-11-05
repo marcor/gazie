@@ -5,8 +5,12 @@
         <field name="name">Ordinario</field>
     </record>
     <record id="RegimeFiscale_RF03" model="">
+        <field name="code">RF02</field>
+        <field name="name">Contribuenti minimi (art.1, c.96-117, L. 244/07)</field>
+    </record>
+    <record id="RegimeFiscale_RF03" model="">
         <field name="code">RF03</field>
-        <field name="name">Agricoltura e attività connesse e pesca (artt.34 e 34-bis, DPR 633/72)</field>
+        <field name="name">Nuove iniziative produttive (art.13, L. 388/00)</field>
     </record>
     <record id="RegimeFiscale_RF04" model="">
         <field name="code">RF04</field>
@@ -71,5 +75,9 @@
     <record id="RegimeFiscale_RF19" model="">
         <field name="code">RF19</field>
         <field name="name">Regime forfettario (art.1, c.54-89, L. 190/2014)</field>
+    </record>
+    <record id="RegimeFiscale_RF19" model="">
+        <field name="code">RF34</field>
+        <field name="name">Agricoltori esonerati (art.34, c.6, DPR 633/72)</field>
     </record>
 </data>

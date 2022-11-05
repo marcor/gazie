@@ -530,6 +530,16 @@ $gForm->selectFromDB('country', 'counas', 'iso', $form['counas'], 'iso', 1, ' - 
         <div class="row">
             <div class="col-md-12">
                 <div class="form-group">
+                    <label for="fiscal_reg" class="col-sm-4 control-label"><?php echo $script_transl['fiscal_reg']; ?></label>
+                    <?php
+                      $gForm->selectFromXML('../../library/include/fae_regime_fiscale.xml', 'fiscal_reg', 'fiscal_reg', $form['fiscal_reg'], true,'','col-xs-8');
+                    ?>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
                     <label for="pec_email" class="col-sm-4 control-label"><a href="https://www.inipec.gov.it/cerca-pec" target="blank"><?php echo $script_transl['pec_email']; ?></a></label>
                     <input class="col-sm-4" type="text" value="<?php echo $form['pec_email']; ?>" name="pec_email" id="pec_email" maxlength="60"/>
                 </div>

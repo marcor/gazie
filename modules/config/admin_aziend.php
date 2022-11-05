@@ -290,7 +290,6 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
         $('#amm_min').selectmenu();
         $('#fae_tipo_cassa').selectmenu();
         $('#causale_pagam_770').selectmenu();
-        $('#fiscal_reg').selectmenu();
         $("#datnas, #virtual_stamp_auth_date").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
         $("#config_aziend").click(function () {
             $.ajax({
@@ -721,7 +720,7 @@ if (count($msg['err']) > 0) { // ho un errore
                     <div class="form-group">
                         <label for="fiscal_reg" class="col-sm-4 control-label"><?php echo $script_transl['fiscal_reg']; ?></label>
                         <?php
-                        $gForm->variousSelect('fiscal_reg', $script_transl['fiscal_reg_value'], $form['fiscal_reg'], "col-sm-8", true, '', false, 'style="width: 350px;"');
+                        $gForm->selectFromXML('../../library/include/fae_regime_fiscale.xml', 'fiscal_reg', 'fiscal_reg', $form['fiscal_reg'], true,'','col-xs-8');
                         ?>
                     </div>
                 </div>
