@@ -37,11 +37,13 @@ $menu_data = array('m1' => array('link' => "docume_shop-synchronize.php"),
 
 $module_class='fas fas fa-exchange-alt';
 
+$admin_aziend=checkAdmin();
+
 // Li commento, ma possono servire di esempio a chi clona e personalizza questo modulo per altri ecommerce
 //$update_db[]="INSERT INTO ".$gTables['company_data']." (`description`, `var`) VALUES ('URL per API login dell\'ecommerce', 'oc_api_url')";
 //$update_db[]="INSERT INTO ".$gTables['company_data']." (`description`, `var`) VALUES ('Nome utente per accesso ad API ecommerce', 'oc_api_username')";
 //$update_db[]="INSERT INTO ".$gTables['company_data']." (`description`, `var`) VALUES ('Chiave per accesso ad API ecommerce', 'oc_api_key')";
 
 // valorizzo automaticamente in configurazione azienda con il nome del modulo
-$update_db[]="UPDATE ".$table_prefix."_XXXaziend SET `gazSynchro`='shop-synchronize' WHERE `codice`=".$user_data['company_id'];
+$update_db[]="UPDATE ".$table_prefix."_aziend SET `gazSynchro`='shop-synchronize' WHERE `codice`=".$admin_aziend['company_id'];
 ?>
