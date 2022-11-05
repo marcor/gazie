@@ -73,7 +73,7 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
   $result = gaz_dbi_dyn_query('tesdoc.*,
                       pay.tippag,pay.numrat,pay.incaut,pay.tipdec,pay.giodec,pay.tiprat,pay.mesesc,pay.giosuc,pay.id_bank,
                       supplier.codice, supplier.speban AS addebitospese, supplier.operation_type,
-					CONCAT(anagraf.ragso1,\' \',anagraf.ragso2) AS ragsoc,CONCAT(anagraf.citspe,\' (\',anagraf.prospe,\')\') AS citta, anagraf.country,
+					CONCAT(anagraf.ragso1,\' \',anagraf.ragso2) AS ragsoc,CONCAT(anagraf.citspe,\' (\',anagraf.prospe,\')\') AS citta, anagraf.country, anagraf.fiscal_reg,
 					country.istat_area', $from, $where, $orderby);
   $doc = [];
 	$docrows=[];
@@ -480,7 +480,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
             $vv['id_tes'] = $tes_id;
             $vv['impost'] = round($vv['ivacast'],2);
             $iva_id = rigmoiInsert($vv);
-            if (substr($vv['fae_natura'],0,2)=='N6') { // accumulo su matrice le aliquote che produrranno reverse charge usando come chiave l'id_rig del rigmoi appena inserito
+            if (substr($vv['fae_natura'],0,2)=='N6' || $v['tes']['fiscal_reg'] == 'RF34' ) { // accumulo su matrice le aliquote che produrranno reverse charge usando come chiave l'id_rig del rigmoi appena inserito
               $vv['tesmov_id'] = $tes_id;
               $acc_reverse_charge[$iva_id] = $vv;
               $tot_reverse_charge += $vv['impost'] + $vv['impcast'];
@@ -489,7 +489,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
               $vv['impost'] = round($vv['impneg'] * $vv['periva']) / 100;
               $vv['imponi'] = $vv['impneg'];
               $iva_id = rigmoiInsert($vv);
-              if (substr($vv['fae_natura'],0,3)=='N6.') {
+              if (substr($vv['fae_natura'],0,3)=='N6.' || $v['tes']['fiscal_reg'] == 'RF34') {
                   $vv['tesmov_id'] = $tes_id;
                   $acc_reverse_charge[$iva_id] = $vv;
                   $tot_reverse_charge -= $vv['impost'] + $vv['imponi'];
@@ -692,7 +692,9 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
         if ($vv['operation_type']<>'SERVIZ') { // non è un servizio distinguo se intra o extra
           $status=($v['tes']['istat_area']==11)?'TD18':'TD19';
         }
-			}
+			} else if ($v['tes']['fiscal_reg'] == 'RF34') {
+        $status='TD01';
+      }
 			$tesdocVal = ['tipdoc' => 'XFA',
 				'template' => 'FatturaAcquisto',
 				'id_con' => $rctes_id,
