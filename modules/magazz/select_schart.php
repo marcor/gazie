@@ -265,7 +265,6 @@ echo "</table>\n";
 
 $date_ini =  sprintf("%04d%02d%02d",$form['date_ini_Y'],$form['date_ini_M'],$form['date_ini_D']);
 $date_fin =  sprintf("%04d%02d%02d",$form['date_fin_Y'],$form['date_fin_M'],$form['date_fin_D']);
-
 if (isset($_POST['preview']) and $msg=='') {
 	$hrefdoc = json_decode(gaz_dbi_get_row($gTables['config'], 'variable', 'report_movmag_ref_doc')['cvalue']);
 	$rshref=get_object_vars($hrefdoc);
@@ -276,6 +275,7 @@ if (isset($_POST['preview']) and $msg=='') {
     $ctrl_id=0;
     $trsl=array_keys($script_transl['header']);
     $th='<tr><th>'.$trsl[0].'</th><th>'.$trsl[1].'</th><th>'.$trsl[2].'</th><th>'.$trsl[3].'</th><th class="text-right">'.$trsl[4].'</th><th class="text-right">'.$trsl[5].'</th><th>'.$trsl[6].'</th><th>'.$trsl[7].'</th><th class="text-right">'.$trsl[8].'</th><th class="text-right">'.$trsl[9].'</th><th class="text-right">'.$trsl[10].'</th></tr>';
+    $ctr_di = '2000-01-01';
 		foreach ($m AS $key => $mv) {
 			// richiamo il file del modulo che ha generato il movimento di magazzino per avere le informazioni sul documento genitore
 			require_once("../".$rshref[$mv['tipdoc']]."/prepare_ref_doc_movmag.php");
@@ -294,6 +294,10 @@ if (isset($_POST['preview']) and $msg=='') {
       }
       $magval= $gForm->getStockValue($mv['id_mov'],$mv['artico'],$mv['datreg'],$admin_aziend['stock_eval_method'],$admin_aziend['decimal_price']);
       $mval=end($magval);
+      // se è un inventario allerto che esso deve essere registrato dopo qualsiasi altro movimento dello stesso giorno
+      if ($mv['datreg']==$ctr_di) {
+        echo '<tr><td colspan=11 class="text-center bg-danger text-danger">L\'INVENTARIO DI SOPRA È STATO ESEGUITO PRIMA DI ALTRI MOVIMENTI DELLO STESSO GIORNO, <b>MODIFICALO</b> ED EVENTUALMENTE CORREGGI IL VALORE</td></tr>';
+      }
       echo '<tr>
             <td class="text-center">'.gaz_format_date($mv['datreg'])."</td>";
       echo "<td align=\"center\">".$mv['caumag'].'-'.substr($mv['descau'],0,20)."</td>";
@@ -303,9 +307,10 @@ if (isset($_POST['preview']) and $msg=='') {
 			}
       echo '<td>';
 			if (isset($hrefdoc->{$mv['tipdoc']}) && $mv['id_rif'] > 0){ // vedi sopra quando si vuole riferire ad un documento genitore di un modulo specifo
-				echo '<a href="'.$docdata['link'].'">'.substr($mv['desdoc'].' del '.gaz_format_date($mv['datdoc']).' - '.$mv['ragso1'].' '.$mv['ragso2'],0,85);
+          echo '<a href="'.$docdata['link'].'">'.substr($mv['desdoc'].' del '.gaz_format_date($mv['datdoc']).' - '.$mv['ragso1'].' '.$mv['ragso2'],0,85);
 			} else {
-				echo '<a href="admin_movmag.php?id_mov="'.$mv["id_mov"].'&Update">'.substr($mv['desdoc'].' del '.gaz_format_date($mv['datdoc']).' - '.$mv['ragso1'].' '.$mv['ragso2'],0,85);
+        //var_dump($mv);
+				echo '<a href="admin_movmag.php?id_mov='.$mv["id_mov"].'&Update">'.substr($mv['desdoc'].' del '.gaz_format_date($mv['datdoc']).' - '.$mv['ragso1'].' '.$mv['ragso2'],0,85);
 			}
 			if (intval($mv['id_lotmag'])>0){
 				echo " lotto: ",$mv['id_lotmag'],"-",$mv['identifier'];
@@ -323,6 +328,7 @@ if (isset($_POST['preview']) and $msg=='') {
       echo "<td align=\"right\">".number_format($mval['v_g'],$admin_aziend['decimal_price'],',','.')."</td>";
       echo "</tr>";
       $ctr_mv = $mv['artico'];
+      $ctr_di = ($mv['caumag']== 99)?$mv['datreg']:'2000-01-01';
     }
     echo '<tr><td colspan=11 class="FacetFooterTD text-center"><input class="btn btn-warning" type="submit" name="print" value="'.$script_transl['print'].'"></td></tr>';
 	}

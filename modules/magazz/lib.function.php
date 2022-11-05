@@ -557,20 +557,23 @@ class magazzForm extends GAzieForm {
 			$rs_last_inventory = gaz_dbi_dyn_query("*", $gTables['movmag'], "artico = '$item_code' AND caumag = 99 AND (datreg < '" . $date . "' OR (datreg = '" . $date . "' AND id_mov <= $id_mov ))", "datreg DESC, id_mov DESC", 0, 1);
 			 $last_inventory = gaz_dbi_fetch_array($rs_last_inventory);
 			if ($last_inventory) {
-				$last_invDate = $last_inventory['datreg'];
+        $utsdatePrev = mktime(0, 0, 0, intval(substr($last_inventory['datreg'], 5, 2)), intval(substr($last_inventory['datreg'], 8, 2)) + 1, intval(substr($last_inventory['datreg'], 0, 4)));
+        $datePrev = date("Y-m-d", $utsdatePrev);
 				$last_invPrice = $last_inventory['prezzo'];
 				$last_invQuanti = $last_inventory['quanti'];
+        // quando ho un inventario nello stesso giorno considero solo quello, e non i movimenti in pari data successivi, di conseguenza gli inventari andrebbero registrati a fine giorno lavorativo
+        $where_condition = " ( id_mov = ".$last_inventory['id_mov']." OR (datreg  BETWEEN '$datePrev' AND '$date' AND id_mov <= $id_mov) )";
 			} else {
-				$last_invDate = '2000-01-01';
 				$last_invPrice = 0;
 				$last_invQuanti = 0;
+        $utsdatePrev = mktime(0, 0, 0, intval(substr($date, 5, 2)), intval(substr($date, 8, 2)) - 1, intval(substr($date, 0, 4)));
+        $datePrev = date("Y-m-d", $utsdatePrev);
+        $where_condition = "( datreg <= '$datePrev' OR (datreg = '$date' AND id_mov <= $id_mov) )";
 			}
 
 		// fine ricerca inventario
-
-        $utsdatePrev = mktime(0, 0, 0, intval(substr($date, 5, 2)), intval(substr($date, 8, 2)) - 1, intval(substr($date, 0, 4)));
-        $datePrev = date("Y-m-d", $utsdatePrev);
-        $where = "artico = '$item_code' AND (datreg BETWEEN '$last_invDate' AND '$datePrev' OR (datreg = '$date' AND id_mov <= $id_mov))";
+        $where = "artico = '$item_code' AND ".$where_condition;
+        // echo $where.'<br>';
         $orderby = "datreg ASC, id_mov ASC"; //ordino in base alle date
         $return_val = array();
         $accumulatore = array();

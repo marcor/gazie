@@ -408,6 +408,7 @@ if (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo acces
       }
     }
     if (empty($msg)) { // nessun errore
+      $upd_mm = new magazzForm;
       // Antonio Germani - inizio salvataggio lotto
       if ($form['lot_or_serial']==1){ // se l'articolo prevede un lotto
         if (strlen($form['identifier']) == 0) { // se non è stato digitato un lotto lo inserisco d'ufficio come data e ora
@@ -453,26 +454,32 @@ if (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo acces
         $form['id_lotmag']=0;
       }
       // fine salvataggio lotti
-      $upd_mm = new magazzForm;
       $new_caumag = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
       if (!empty($form['artico'])) {
-        $id_movmag=$upd_mm->uploadMag($form['id_rif'], $form['tipdoc'],0,0,$form['datdoc'], $form['clfoco'], $form['scochi'], $form['caumag'], $form['artico'], $form['quanti'], $form['prezzo'], $form['scorig'], $form['id_mov'], $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => $form['operat'], 'desdoc' => $form['desdoc']));
-        if ($form['SIAN']>0 AND $toDo=="insert"){
-          $form['id_movmag']=$id_movmag;// imposto l'id mov mag e salvo il movimento del SIAN
-          $form['varieta']=$item_artico['quality'];
-          gaz_dbi_table_insert('camp_mov_sian', $form);
+        if ($form['caumag']==99){ // nel caso in cui voglio aggiornare un movimento di inventario questo lo porto sempre a fine giornata ovvero con id_mov il più alto possibile, quindi cancello e reinserisco
+          gaz_dbi_del_row($gTables['movmag'], 'id_mov', intval($_GET['id_mov']));
+          $id_movmag=$upd_mm->uploadMag($form['id_rif'], $form['tipdoc'],0,0,$form['datdoc'], $form['clfoco'], $form['scochi'], $form['caumag'], $form['artico'], $form['quanti'], $form['prezzo'], $form['scorig'], 0, $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => $form['operat'], 'desdoc' => $form['desdoc']));
+          header("Location: " . $_POST['ritorno']);
+          exit;
+        } else {
+          $id_movmag=$upd_mm->uploadMag($form['id_rif'], $form['tipdoc'],0,0,$form['datdoc'], $form['clfoco'], $form['scochi'], $form['caumag'], $form['artico'], $form['quanti'], $form['prezzo'], $form['scorig'], $form['id_mov'], $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => $form['operat'], 'desdoc' => $form['desdoc']));
+          if ($form['SIAN']>0 AND $toDo=="insert"){
+            $form['id_movmag']=$id_movmag;// imposto l'id mov mag e salvo il movimento del SIAN
+            $form['varieta']=$item_artico['quality'];
+            gaz_dbi_table_insert('camp_mov_sian', $form);
+          }
+          if ($form['SIAN']>0 AND $toDo=="update") {
+            // aggiorno il movimento del SIAN
+            $update = array();
+            $update[]="id_movmag";
+            $update[]=$form['id_mov'];
+            $form['varieta']=$item_artico['quality'];
+            gaz_dbi_table_update('camp_mov_sian',$update,$form);
+          }
+          // aggiorno id_lotmag nel rigo di movmag
+          $query = "UPDATE " . $gTables['movmag'] . " SET id_lotmag = " . $form['id_lotmag'] . ", id_orderman=".$form['id_orderman'].", id_warehouse=".$form['id_warehouse']." WHERE id_mov ='" . $id_movmag . "'";
+          gaz_dbi_query($query);
         }
-        if ($form['SIAN']>0 AND $toDo=="update") {
-          // aggiorno il movimento del SIAN
-          $update = array();
-          $update[]="id_movmag";
-          $update[]=$form['id_mov'];
-          $form['varieta']=$item_artico['quality'];
-          gaz_dbi_table_update('camp_mov_sian',$update,$form);
-        }
-        // aggiorno id_lotmag nel rigo di movmag
-        $query = "UPDATE " . $gTables['movmag'] . " SET id_lotmag = " . $form['id_lotmag'] . ", id_orderman=".$form['id_orderman'].", id_warehouse=".$form['id_warehouse']." WHERE id_mov ='" . $id_movmag . "'";
-        gaz_dbi_query($query);
       }
       header("Location:report_movmag.php");
       exit;

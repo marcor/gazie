@@ -236,7 +236,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     if (isset($hrefdoc->{$r['tipdoc']}) && $r['id_rif'] > 0){ // vedi sopra quando si vuole riferire ad un documento genitore di un modulo specifo
         echo '<td title="'.$title.'"><a href="'.$docdata['link'].'">'.$r['desdoc']." ".$script_transl[9]." ".gaz_format_date($r["datdoc"])."</a></td>\n";
     } else {
-        echo '<td title="'.$title.'"><a href="admin_movmag.php?id_mov="'.$r["id_mov"].'&Update">'.$r['desdoc']." ".$script_transl[9]." ".gaz_format_date($r["datdoc"])."</a></td>\n";
+        echo '<td title="'.$title.'"><a href="admin_movmag.php?id_mov='.$r["id_mov"].'&Update">'.$r['desdoc']." ".$script_transl[9]." ".gaz_format_date($r["datdoc"])."</a></td>\n";
     }
 
    	echo "<td align=\"center\"><p data-toggle=\"tooltip\" data-placement=\"auto\" title=\"$descri\">".$r["artico"]."</p></td>\n";
