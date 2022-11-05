@@ -75,6 +75,7 @@ $sortable_headers = array(
 
 require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('custom/modal_form'));
+$title_doc="Documenti di vendita della sezione";
 
 if (!isset($_GET['sezione'])) {
 	// ultima fattura emessa
@@ -89,7 +90,6 @@ if (!isset($_GET['sezione'])) {
 } else {
 	if (intval($sez_RevC)<>intval($_GET['sezione'])){
 		$default_where=['sezione' => intval($_GET['sezione']), 'tipo' => 'F%'];
-		$title_doc="Documenti di vendita della sezione";
 	}else{
 		$default_where=['sezione' => intval($_GET['sezione']), 'tipo' => 'X%'];
 		$title_doc="Autofatture Reverse charge della sezione";
@@ -729,7 +729,7 @@ function printPdf(urlPrintDoc){
                 }
                 // Colonna "Cancella"
                 echo "<td align=\"center\">";
-                if ($ultimo_documento['id_tes'] == $r["id_tes"] || ($ultimo_documento['tipdoc'] == 'FAD' && $ultimo_documento['protoc'] == $r['protoc'])) {
+                if (!$ultimo_documento || $ultimo_documento['id_tes'] == $r["id_tes"] || ($ultimo_documento['tipdoc'] == 'FAD' && $ultimo_documento['protoc'] == $r['protoc'])) {
                   // Permette di cancellare il documento.
                   if ($r["id_con"] > 0) {
                   ?>
