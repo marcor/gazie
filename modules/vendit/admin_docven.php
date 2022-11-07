@@ -3475,7 +3475,7 @@ echo '	<tr>
 			<td class="FacetFieldCaptionTD text-right">' . $script_transl[32] . '</td>
 			<td class="FacetFieldCaptionTD text-right">' . $script_transl[19] . '</td>
 			<td class="FacetFieldCaptionTD text-right">' . $script_transl['stamp'] . '</td>
-			<td class="FacetFieldCaptionTD text-right">' . $script_transl[36] . ' ' . $admin_aziend['html_symbol'] . '</td>
+			<td class="FacetFieldCaptionTD text-center">' . $script_transl[36] . ' ' . $admin_aziend['html_symbol'] . '</td>
 		</tr>';
 $i = 0;
 foreach ($calc->castle as $k => $v) {
