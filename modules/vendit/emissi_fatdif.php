@@ -533,7 +533,7 @@ if (isset($invoices['data'])) {
     }
     echo "<tr class=\"text-center\"><td align=\"center\" colspan=\"8\"><input class=\"btn btn-warning\" type=\"submit\" name=\"genera\" value=\"CONFERMA LA GENERAZIONE DELLE FATTURE COME DA ANTEPRIMA\"></td></tr>";
 } else {
-    echo "<tr><td class=\"FacetDataTDred\" colspan=\"7\" align=\"right\">Non ci sono DdT  da fatturare</td></tr>";
+    echo "<tr><td class=\"FacetDataTDred\" colspan=\"7\" align=\"center\">Non ci sono DdT  da fatturare</td></tr>";
 }
 if (is_array($invoices) && isset($invoices['excluded']) && count($invoices['excluded'])) {
     echo "<tr><td class=\"FacetDataTDred\" colspan=\"7\">I seguenti ddt non verranno mai fatturati a meno di richiesta esplicita</td></tr>";
