@@ -2700,7 +2700,7 @@ echo '<td>
 					</td>
 					<td title="' . $script_transl['update'] . $script_transl['thisrow'] . '!\">
 						<input class="btn btn-xs btn-success btn-block" type="submit" name="upd_row[' . $k . ']" value="' . $script_transl['typerow'][$v['tiprig']] . '" />
-					</td>
+					</td><td></td>
 					  <td>
 						<input type="text"   name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="100" />
 					</td>
