@@ -27,9 +27,6 @@ $admin_aziend = checkAdmin();
 $pdf_to_modal = gaz_dbi_get_row($gTables['company_config'], 'var', 'pdf_reports_send_to_modal')['val'];
 $partner_select = !gaz_dbi_get_row($gTables['company_config'], 'var', 'partner_select_mode')['val'];
 $tesdoc_e_partners = $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id LEFT JOIN ' . $gTables['fae_flux'] . " ON " . $gTables['tesdoc'] . ".id_tes = " . $gTables['fae_flux'] . '.id_tes_ref';
-$sez_RevC_arr=array_keys($admin_aziend, "AUTOFATTURE - REVERSE CHARGE");
-$sez_RevC=substr($sez_RevC_arr[1],-1);// questo è il sezionale dove l'azienda carica le autofatture reverse charge
-
 
 // funzione di utilità generale, adatta a mysqli.inc.php
 function cols_from($table_name, ...$col_names) {
@@ -82,7 +79,7 @@ if (!isset($_GET['sezione'])) {
 		$default_where=['sezione' => 1, 'tipo' => 'F%', 'anno'=> date('Y')];
 	}
 } else {
-	if (intval($sez_RevC)<>intval($_GET['sezione'])){
+	if (intval($admin_aziend['reverse_charge_sez'])<>intval($_GET['sezione'])){
 		$default_where=['sezione' => intval($_GET['sezione']), 'tipo' => 'F%'];
 	}else{
 		$default_where=['sezione' => intval($_GET['sezione']), 'tipo' => 'X%'];
@@ -527,7 +524,7 @@ function printPdf(urlPrintDoc){
               $visualizza_effetto_ft = "";
               $genera_effetti_previsti = "";
               if ($r["id_con"] > 0) {
-               	if (intval($sez_RevC)== $r["seziva"]){
+               	if (intval($admin_aziend['reverse_charge_sez'])== $r["seziva"]){
                   $idcon_maggiore_0 = '';
                   // non usando le transazioni devo aggiunger un controllo di effettiva esistenza della testata di movimento contabile, se qualcosa non è andato per il verso giusto elimini il riferimento
                   $existtesmov = gaz_dbi_get_row($gTables['tesmov'], 'id_tes', $r['id_con']);
