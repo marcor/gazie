@@ -90,12 +90,12 @@ if (isset($_POST['icalsub'])) {
 	$ical_sync_id = gaz_dbi_table_insert('rental_ical', $ical); // inserisco l'Ical nel DB
 	// sincronizzo tutti gli eventi in esso contenuti
 	$events = iCalDecoder($ical['url']);
-	$columns = array('ical_sync_id','id','title', 'start','end','house_code');
+	$columns = array('type','ical_sync_id','id','title', 'start','end','house_code');
 	if (isset($events)){
-	foreach ($events as $event){
-		$newValue = array('ical_sync_id' => $ical_sync_id, 'title'=>substr($ical['ical_descri'].$event['uid'],0,128), 'start'=>substr($event['start'],0,10), 'end'=>substr($event['end'],0,10),'house_code'=>substr($ical['codice_alloggio'],0,32));
-		tableInsert('rental_events', $columns, $newValue);
-	}
+    foreach ($events as $event){
+      $newValue = array('type' => 'ICal', 'ical_sync_id' => $ical_sync_id, 'title'=>substr($ical['ical_descri'].$event['uid'],0,128), 'start'=>substr($event['start'],0,10), 'end'=>substr($event['end'],0,10),'house_code'=>substr($ical['codice_alloggio'],0,32));
+      tableInsert('rental_events', $columns, $newValue);
+    }
 	}
 }
 
@@ -139,6 +139,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
   $form["web_price"] = number_format($form['web_price'], $admin_aziend['decimal_price'], '.', '');
   $form['rows'] = array();
   $form['accommodation_type'] = $_POST['accommodation_type'];
+  $form['room_type'] = $_POST['room_type'];
   $form['adult'] = $_POST['adult'];
   $form['child'] = $_POST['child'];
   $form['pause'] = $_POST['pause'];
@@ -319,7 +320,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     }
 	$form['preve1']=$form['web_price'];// al momento imposto il prezzo 1 uguale al webprice
     if ($toDo == 'insert') {
-		$array= array('vacation_rental'=>array('accommodation_type' => $_POST['accommodation_type'],'total_guests' => $_POST['total_guests'],'adult' => $_POST['adult'],'child' => $_POST['child'],'pause' => $_POST['pause'],'deposit' => $_POST['deposit'],'security_deposit' => $_POST['security_deposit'],'deposit_type' => $_POST['deposit_type'],'tur_tax_mode' => $_POST['tur_tax_mode'],'tur_tax' => $_POST['tur_tax'],'agent' => $_POST['agent']));// creo l'array per il custom field
+		$array= array('vacation_rental'=>array('accommodation_type' => $_POST['accommodation_type'],'room_type' => $_POST['room_type'],'total_guests' => $_POST['total_guests'],'adult' => $_POST['adult'],'child' => $_POST['child'],'pause' => $_POST['pause'],'deposit' => $_POST['deposit'],'security_deposit' => $_POST['security_deposit'],'deposit_type' => $_POST['deposit_type'],'tur_tax_mode' => $_POST['tur_tax_mode'],'tur_tax' => $_POST['tur_tax'],'agent' => $_POST['agent']));// creo l'array per il custom field
 		$form['custom_field'] = json_encode($array);// codifico in json  e lo inserisco nel form
 		gaz_dbi_table_insert('artico', $form);
 		if (!empty($tbt)) {
@@ -330,6 +331,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 		if ($data = json_decode($custom_field,true)){// se c'è un json
 			if (is_array($data['vacation_rental'])){ // se c'è il modulo "vacation rental" lo aggiorno
 				$data['vacation_rental']['accommodation_type']=$_POST['accommodation_type'];
+        $data['vacation_rental']['room_type']=$_POST['room_type'];
 				$data['vacation_rental']['total_guests']=$_POST['total_guests'];
 				$data['vacation_rental']['adult']=$_POST['adult'];
 				$data['vacation_rental']['child']=$_POST['child'];
@@ -342,7 +344,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         $data['vacation_rental']['agent']= $_POST['agent'];
 				$form['custom_field'] = json_encode($data);
 			} else { //se non c'è il modulo "vacation_rental" lo aggiungo
-				$data['vacation_rental']= array('accommodation_type' => $_POST['accommodation_type'],'total_guests' => $_POST['total_guests'],'adult' => $_POST['adult'],'child' => $_POST['child'],'deposit' => $_POST['deposit'],'security_deposit' => $_POST['security_deposit'],'deposit_type' => $_POST['deposit_type'],'tur_tax_mode' => $_POST['tur_tax_mode'],'tur_tax' => $_POST['tur_tax'],'agent' => $_POST['agent']);
+				$data['vacation_rental']= array('accommodation_type' => $_POST['accommodation_type'],'room_type' => $_POST['room_type'],'total_guests' => $_POST['total_guests'],'adult' => $_POST['adult'],'child' => $_POST['child'],'deposit' => $_POST['deposit'],'security_deposit' => $_POST['security_deposit'],'deposit_type' => $_POST['deposit_type'],'tur_tax_mode' => $_POST['tur_tax_mode'],'tur_tax' => $_POST['tur_tax'],'agent' => $_POST['agent']);
 				$form['custom_field'] = json_encode($data);
 			}
 		}
@@ -425,6 +427,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 
 		if (is_array($data['vacation_rental'])){
 				$form['accommodation_type'] = $data['vacation_rental']['accommodation_type'];
+        $form['room_type'] = $data['vacation_rental']['room_type'];
 				$form['adult'] = $data['vacation_rental']['adult'];
 				$form['child'] = $data['vacation_rental']['child'];
         $form['pause'] = (isset($data['vacation_rental']['pause']))?$data['vacation_rental']['pause']:'';
@@ -438,6 +441,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 
 			} else {
 				$form['accommodation_type'] = "";
+        $form['room_type'] = 0;
 				$form['adult'] = 0;
 				$form['child'] = 0;
         $form['pause'] = 0;
@@ -451,6 +455,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 			}
 	} else {
 		$form['accommodation_type'] = "";
+    $form['room_type'] = 0;
 		$form['adult'] = 0;
 		$form['child'] = 0;
     $form['pause'] = 0;
@@ -518,6 +523,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     }
     $form['hidden_req'] = '';
     $form['accommodation_type'] = '';
+    $form['room_type'] = 0;
     $form['adult'] = 1;
     $form['child'] = 0;
     $form['pause'] = 0;
@@ -991,9 +997,6 @@ if ($modal_ok_insert === true) {
                 </div><!-- chiude row  -->
               </div><!-- chiude tab-pane  -->
               <div id="magazz" class="tab-pane fade">
-
-
-
                 <!--+ DC - 06/02/2019 div class="row" --->
                 <div id="refEcommercIdProduct" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
@@ -1271,6 +1274,17 @@ if ($modal_ok_insert === true) {
                   <input  type="hidden" name="classif_amb" value="<?php echo $form['classif_amb']; ?>"  />
                   <input type="hidden" min="0" max="999" step="1" class="col-sm-4"  value="" name="maintenance_period" maxlength="3" />
 
+                </div><!-- chiude row  -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="room_type" class="col-sm-4 control-label"><?php echo $script_transl['room_type']; ?></label>
+    <?php
+    $gForm->variousSelect('room_type', $script_transl['room_type_value'], $form['room_type'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
+    ?>
+							<input type="hidden" name="good_or_service" value="1" /><!-- un alloggio è sempre servizio, quindi '1'  -->
+                        </div>
+                    </div>
                 </div><!-- chiude row  -->
 
                 <!--+ DC - 06/02/2019 div class="row" --->
