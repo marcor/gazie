@@ -52,18 +52,29 @@
 <?php
     }
   }
-  $rs_fatven=gaz_dbi_dyn_query( "COUNT(DISTINCT CONCAT(YEAR(datreg), protoc)) AS cnt", $gTables['tesdoc'], "id_con = 0 AND tipdoc LIKE 'F%'", 'datreg');
-	$fatven = gaz_dbi_fetch_array($rs_fatven);
-	if ($fatven['cnt']>0){
+  $rs_fatven=gaz_dbi_dyn_query( "COUNT(*) AS cnt, seziva, YEAR(datfat) AS year", $gTables['tesdoc'], "id_con = 0 AND tipdoc LIKE 'F%' GROUP BY seziva, YEAR(datfat)", 'datfat');
+  $first=true;
+	while ($fatven = gaz_dbi_fetch_array($rs_fatven)){
 ?>
     <tr>
-        <td style="text-align: left;"><b class="text-success">Fatture di vendita da contabilizzare</b></td>
-        <td><b><?php echo $fatven['cnt']; ?></b></td>
-        <td><a  class="btn btn-success btn-xs" href="../vendit/accounting_documents.php?type=F">Contabilizza fatture di vendita<i class="glyphicon glyphicon-export"></i></a></td>
-    </tr>
+<?php
+    if ($first){
+?>
+      <td style="text-align: left;"><b class="text-success">Fatture di vendita da contabilizzare</b></td>
+<?php
+    } else {
+?>
+      <td></td>
 <?php
     }
-    $rs_ddtven=gaz_dbi_dyn_query( "COUNT(*) AS cnt", $gTables['tesdoc'], "protoc = 0 AND ( tipdoc = 'DDT' OR tipdoc ='CMR' OR (tipdoc = 'DDV' AND datemi <  DATE_SUB(NOW(),INTERVAL 1 YEAR) ) )", 'id_tes');
+?>
+    <td><b><?php echo $fatven['cnt'].' <small>(del '.$fatven['year'].' sez.'.$fatven['seziva'].')</small>'; ?></b></td>
+    <td><a  class="btn btn-success btn-xs" href="../vendit/accounting_documents.php?type=F&vat_section=<?php echo $fatven['seziva'];?>">Contabilizza fatture di vendita <br/><?php echo $fatven['year'].'/'.$fatven['seziva']; ?><i class="glyphicon glyphicon-export"></i></a></td>
+    </tr>
+<?php
+    $first=false;
+  }
+  $rs_ddtven=gaz_dbi_dyn_query( "COUNT(*) AS cnt", $gTables['tesdoc'], "protoc = 0 AND ( tipdoc = 'DDT' OR tipdoc ='CMR' OR (tipdoc = 'DDV' AND datemi <  DATE_SUB(NOW(),INTERVAL 1 YEAR) ) )", 'id_tes');
 	$ddtven = gaz_dbi_fetch_array($rs_ddtven);
 	if ($ddtven['cnt']>0){
 ?>
