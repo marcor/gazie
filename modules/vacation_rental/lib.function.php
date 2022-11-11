@@ -177,7 +177,7 @@ function get_string_lang($string, $lang){
 
 // calcolo dei giorni da pagare per la tassa turistica
 function tour_tax_daytopay($night,$start,$end,$tour_tax_from,$tour_tax_to,$tour_tax_day){
-
+echo "<br>function:",$night,'=',$start,'=',$end,'=',$tour_tax_from,'=',$tour_tax_to,'=',$tour_tax_day;
   $tour_tax_from=$tour_tax_from."-".date("Y", strtotime($start)); // aggiungo l'anno all'inizio pagamento tassa turistica
   $tour_tax_to=$tour_tax_to."-".date("Y", strtotime($start)); // aggiungo l'anno alla fine pagamento tassa turistica
 
@@ -200,8 +200,8 @@ function tour_tax_daytopay($night,$start,$end,$tour_tax_from,$tour_tax_to,$tour_
         $diff=date_diff(date_create($end),date_create($tour_tax_from));
         $daytopay= $diff->format("%a");
 
-      }else{// se nemmeno la fine è dentro al periodo tassa turistica
-        if (strtotime($start) < strtotime($tour_tax_from)){// vedo se il periodo tassa turistica è totalmente dentro la locazione
+      }else{// se la fine è fuori al periodo tassa turistica
+        if (strtotime($start) < strtotime($tour_tax_from) && strtotime($end) > strtotime($tour_tax_to)){// se la prenotazione è a cavallo, cioè ingloba il periodo
           $diff=date_diff(date_create($tour_tax_to),date_create($tour_tax_from));// paga per il periodo della tassa turistica
           $daytopay= $diff->format("%a");
         }else{// se è fuori non paga nulla
