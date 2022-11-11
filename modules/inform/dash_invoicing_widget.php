@@ -52,9 +52,25 @@
 <?php
     }
   }
-  $rs_fatven=gaz_dbi_dyn_query( "COUNT(*) AS cnt, seziva, YEAR(datfat) AS year", $gTables['tesdoc'], "id_con = 0 AND tipdoc LIKE 'F%' GROUP BY seziva, YEAR(datfat)", 'datfat');
-  $first=true;
+  $rs_fatven=gaz_dbi_dyn_query( "seziva, YEAR(datfat) AS year, CONCAT(YEAR(datfat),seziva,protoc) AS ctrl", $gTables['tesdoc'], "id_con = 0 AND tipdoc LIKE 'F%' GROUP BY seziva, YEAR(datfat), protoc", 'datfat,seziva,protoc');
+  $ctrl_ys=0;
+  $ctrl=0;
+  $cnt=0;
+  $acc=[];
 	while ($fatven = gaz_dbi_fetch_array($rs_fatven)){
+    if ($ctrl_ys != $fatven['year'].$fatven['seziva']) {
+      $cnt=0;
+    }
+    if ($ctrl != $fatven['ctrl']) {
+      $cnt++;
+      $ctrl = $fatven['ctrl'];
+    }
+    // mi serve per raggruppare i DdT (tipdoc=FAD)
+    $acc[$fatven['year'].$fatven['seziva']]=$cnt;
+    $ctrl_ys=$fatven['year'].$fatven['seziva'];
+  }
+  $first=true;
+  foreach($acc as $k => $v) {
 ?>
     <tr>
 <?php
@@ -68,8 +84,8 @@
 <?php
     }
 ?>
-    <td><b><?php echo $fatven['cnt'].' <small>(del '.$fatven['year'].' sez.'.$fatven['seziva'].')</small>'; ?></b></td>
-    <td><a  class="btn btn-success btn-xs" href="../vendit/accounting_documents.php?type=F&vat_section=<?php echo $fatven['seziva'];?>">Contabilizza fatture di vendita <br/><?php echo $fatven['year'].'/'.$fatven['seziva']; ?><i class="glyphicon glyphicon-export"></i></a></td>
+    <td><b><?php echo $v.' <small>(del '.substr($k,0,4).' sez.'.substr($k,4,1).')</small>'; ?></b></td>
+    <td><a  class="btn btn-success btn-xs" href="../vendit/accounting_documents.php?type=F&vat_section=<?php echo substr($k,4,1);?>">Contabilizza fatture di vendita <br/><?php echo substr($k,0,4).'/'.substr($k,4,1); ?><i class="glyphicon glyphicon-export"></i></a></td>
     </tr>
 <?php
     $first=false;
