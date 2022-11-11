@@ -177,7 +177,6 @@ function get_string_lang($string, $lang){
 
 // calcolo dei giorni da pagare per la tassa turistica
 function tour_tax_daytopay($night,$start,$end,$tour_tax_from,$tour_tax_to,$tour_tax_day){
-echo "<br>function:",$night,'=',$start,'=',$end,'=',$tour_tax_from,'=',$tour_tax_to,'=',$tour_tax_day;
   $tour_tax_from=$tour_tax_from."-".date("Y", strtotime($start)); // aggiungo l'anno all'inizio pagamento tassa turistica
   $tour_tax_to=$tour_tax_to."-".date("Y", strtotime($start)); // aggiungo l'anno alla fine pagamento tassa turistica
 
