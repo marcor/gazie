@@ -90,6 +90,7 @@ if ((isset($_POST['Update'])) or ( isset($_GET['Update']))) {
 }
 if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il primo accesso
     //qui si dovrebbe fare un parsing di quanto arriva dal browser...
+
     if ($_POST['in_codart']!==$_POST['cosear']){// è appena stato selezionato un inserimento articolo alloggio
       $artico = gaz_dbi_get_row($gTables['artico'], "codice", $_POST['cosear']);
       if ($artico['id_artico_group']>0 && ($data = json_decode($artico['custom_field'], TRUE))) { // se l'alloggio fa parte di una struttura e se esiste un json nel custom field dell'articolo
@@ -132,6 +133,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     foreach ($_POST['search'] as $k => $v) {
         $form['search'][$k] = $v;
     }
+    $form['codice_fornitore'] = $_POST['codice_fornitore'];
     $form['tur_tax'] = $_POST['tur_tax'];
     $form['tur_tax_mode'] = $_POST['tur_tax_mode'];
     $form['start'] = $_POST['start'];
@@ -285,6 +287,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['tiprig'] = intval($v['tiprig']);
             $form['rows'][$next_row]['id_doc'] = intval($v['id_doc']);
             $form['rows'][$next_row]['codart'] = substr($v['codart'], 0, 32);
+            $form['rows'][$next_row]['codice_fornitore'] = substr($v['codice_fornitore'], 0, 32);
             $form['rows'][$next_row]['good_or_service'] = intval($v['good_or_service']);
             $form['rows'][$next_row]['accommodation_type'] = intval($v['accommodation_type']);
             $form['rows'][$next_row]['adult'] = intval($v['adult']);
@@ -302,6 +305,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['codric'] = intval($v['codric']);
             if (isset($v['provvigione'])) {
                 $form['rows'][$next_row]['provvigione'] = intval($v['provvigione']);
+            }
+            if (substr($v['codart'], 0, 15)=="TASSA-TURISTICA" && strlen($v['codice_fornitore'])<2){
+              $msg .= '67+';
             }
             $form['rows'][$next_row]['id_mag'] = intval($v['id_mag']);
             $form['rows'][$next_row]['annota'] = substr($v['annota'], 0, 50);
@@ -340,6 +346,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['in_descri'] = $form['rows'][$k_row]['descri'];
                     $form['in_tiprig'] = $form['rows'][$k_row]['tiprig'];
                     $form['in_codart'] = $form['rows'][$k_row]['codart'];
+                    $form['in_codice_fornitore'] = $form['rows'][$k_row]['codice_fornitore'];
                     $form['in_good_or_service'] = $form['rows'][$k_row]['good_or_service'];
                     $form['in_accommodation_type'] = $form['rows'][$k_row]['accommodation_type'];
                     $form['in_adult'] = $form['rows'][$k_row]['adult'];
@@ -419,9 +426,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         if ($toDo == 'update') {  // controlli in caso di modifica
             $rs_query = gaz_dbi_dyn_query("numdoc", $gTables['tesbro'], "YEAR(datemi) = " . $form['annemi'] . " and datemi < '$datemi' and tipdoc = '" . $form['tipdoc'] . "' and seziva = $sezione", "datemi DESC, numdoc DESC", 0, 1);
             $result = gaz_dbi_fetch_array($rs_query); //giorni precedenti
-            echo "la prenotazione successiva a questa (",$result['numdoc'],") ha una data precedente";
             if ($result and ( $form['numdoc'] < $result['numdoc'])) {
                 $msg .= "42+";
+                echo "la prenotazione successiva a questa (",$result['numdoc'],") ha una data precedente";
             }
         } else {    //controlli in caso di inserimento
             $rs_ultimo_tipo = gaz_dbi_dyn_query("*", $gTables['tesbro'], "YEAR(datemi) = " . $form['annemi'] . " and tipdoc = '" . $form['tipdoc'] . "' and seziva = $sezione", "numdoc desc, datemi desc", 0, 1);
@@ -468,14 +475,20 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
           }
           //fine controllo capienza ospiti
 
-            if ($v['descri'] == '' && ($v['quanti'] > 0 || $v['quanti'] < 0)) {
-                $msgrigo = $i + 1;
-                $msg .= "49+";
+          if ($v['codart']=="TASSA-TURISTICA"){
+            if (strlen($v['codice_fornitore'])<2){ // manca il riferimento alloggio alla tassa turistica
+              $msg .= "67+";
             }
-            if ($v['unimis'] == '' && ($v['quanti'] > 0 || $v['quanti'] < 0)) {
-                $msgrigo = $i + 1;
-                $msg .= "50+";
-            }
+          }
+
+          if ($v['descri'] == '' && ($v['quanti'] > 0 || $v['quanti'] < 0)) {
+              $msgrigo = $i + 1;
+              $msg .= "49+";
+          }
+          if ($v['unimis'] == '' && ($v['quanti'] > 0 || $v['quanti'] < 0)) {
+              $msgrigo = $i + 1;
+              $msg .= "50+";
+          }
         }
         if ($msg == "") {// nessun errore
 			//echo "<pre>",print_r($form);die;
@@ -891,7 +904,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$next_row]['quamag'] = 0;
         $form['rows'][$next_row]['tiprig'] = 6;
         $next_row++;
-    } else if ((isset($_POST['in_submit']) && strlen($form['in_codart'])>0 && $form['start']!="" && $form['end']!="") || (isset($_POST['extra_submit']) && strlen($form['extra'][$_POST['extra_submit']])>0 && isset($_POST['rows']))) {// conferma inserimento alloggio o extra
+    } else if ((isset($_POST['in_submit']) && strlen($form['in_codart'])>0 && $form['start']!="" && $form['end']!="") || (isset($_POST['extra_submit']) && strlen($form['extra'][$_POST['extra_submit']])>0 && isset($_POST['rows']))) { // conferma inserimento alloggio o extra
 
       if (isset($_POST['extra_submit']) && strlen($form['extra'][$_POST['extra_submit']])>0){// se è un extra (ci deve per forza essere l'alloggio e quindi per forza anche le date)
         // faccio tutto più sotto
@@ -944,19 +957,20 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
       $form['discount']=0;
       $form['descri_discount']="";
       if (isset($discounts) && $discounts->num_rows >0){// se c'è almeno uno sconto
-      foreach ($discounts as $discount){// li ciclo e applico lo sconto
-        if ($discount['is_percent']==1){
-        $form['discount']+= (floatval($total_price)*floatval($discount['value']))/100;// aggiungo al totale sconti, lo sconto calcolato in percentuale
-        $form['descri_discount'].=" ".$discount['title']." ".$discount['value']."%";// incremento la descrizione con lo sconto applicato
-        }else{
-        $form['discount']+= floatval($discount['value'])/floatval("1.".$gen_iva_perc);// aggiungo al totale sconti, lo sconto a valore scorporando IVA
-        $form['descri_discount'].= " ".$discount['title']." ".$admin_aziend['symbol']." ".$discount['value'];/// incremento la descrizione con lo sconto applicato
-        }
-        if ($discount['stop_further_processing']==1){// se questo devo bloccare i successivi eventuali, interrompo il conteggio
-        break;
+        foreach ($discounts as $discount){ // li ciclo e applico lo sconto
+          if ($discount['is_percent']==1){
+          $form['discount']+= (floatval($total_price)*floatval($discount['value']))/100;// aggiungo al totale sconti, lo sconto calcolato in percentuale
+          $form['descri_discount'].=" ".$discount['title']." ".$discount['value']."%";// incremento la descrizione con lo sconto applicato
+          }else{
+          $form['discount']+= floatval($discount['value'])/floatval("1.".$gen_iva_perc);// aggiungo al totale sconti, lo sconto a valore scorporando IVA
+          $form['descri_discount'].= " ".$discount['title']." ".$admin_aziend['symbol']." ".$discount['value'];/// incremento la descrizione con lo sconto applicato
+          }
+          if ($discount['stop_further_processing']==1){// se questo devo bloccare i successivi eventuali, interrompo il conteggio
+          break;
+          }
         }
       }
-      }
+
       $form['in_prelis'] -= $form['discount'];
       gaz_dbi_query ("UPDATE ".$gTables['artico']." SET `last_used`='".date("Y-m-d")."' WHERE codice='".$form['in_codart']."';");
       // addizione ai totali peso,pezzi,volume
@@ -971,6 +985,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
       // carico i dati del json articolo
       if ($data = json_decode($artico['custom_field'], TRUE)) { // se esiste un json nel custom field
         if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['accommodation_type'])){// se è un alloggio
+            $form['codice_fornitore']=$artico['codice'];
             $form['in_accommodation_type'] = $data['vacation_rental']['accommodation_type'];
             $form['in_adult'] = $data['vacation_rental']['adult'];
             $form['in_child'] = $data['vacation_rental']['child'];
@@ -1043,17 +1058,17 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $daytopay=0;
             break;
           case "2":
-            if (strlen($form['tour_tax_from'])>2){
+            if (strlen($form['tour_tax_from'])>2){//se ci sono impostazioni nella struttura
               $daytopay=tour_tax_daytopay($night,$form['start'],$form['end'],$form['tour_tax_from'],$form['tour_tax_to'],$form['tour_tax_day']);
-            }else{
+            }else{// se non ci sono utilizzo tutte le notti
               $daytopay = $night;
             }
             $tot_turtax=(floatval($form['tur_tax'])*(intval($daytopay)))*(intval($form['adult'])+intval($form['child']));
             break;
           case "3":
-            if (strlen($form['tour_tax_from'])>2){
+            if (strlen($form['tour_tax_from'])>2){//se ci sono impostazioni nella struttura
               $daytopay=tour_tax_daytopay($night,$form['start'],$form['end'],$form['tour_tax_from'],$form['tour_tax_to'],$form['tour_tax_day']);
-            }else{
+            }else{// se non ci sono utilizzo tutte le notti
               $daytopay = $night;
             }
             $tot_turtax=(floatval($form['tur_tax'])*(intval($daytopay)))*(intval($form['adult']));
@@ -1070,15 +1085,15 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['in_facility_id'] = 0;
         $form['in_prelis'] = $tot_turtax;
 
-    } else {
-			$form['in_accommodation_type'] = 0;
-			$form['in_adult'] = 0;
-			$form['in_child'] = 0;
-			$form['in_total_guests'] = 0;
-      $form['in_facility_id'] = 0;
-			$form['rows'][$next_row]['in_total_guests'] = 0;
-      $form['rows'][$next_row]['in_facility_id'] = 0;
-		}
+      } else {
+        $form['in_accommodation_type'] = 0;
+        $form['in_adult'] = 0;
+        $form['in_child'] = 0;
+        $form['in_total_guests'] = 0;
+        $form['in_facility_id'] = 0;
+        $form['rows'][$next_row]['in_total_guests'] = 0;
+        $form['rows'][$next_row]['in_facility_id'] = 0;
+      }
 
         if (substr($form['in_status'], 0, 6) == "UPDROW") { //se e' un rigo da modificare
             $old_key = intval(substr($form['in_status'], 6));
@@ -1230,6 +1245,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 
                 if ($form['in_codart']=="TASSA-TURISTICA"){// se è il rigo della tassa turistica modifico la descrizione
                   $form['rows'][$next_row]['descri'] = (($daytopay>0)?"Tassa per ".$daytopay." notti - ":"")."check-in ".$form['start']." check-out ".$form['end']." - ".$artico['descri'];
+                  $form['rows'][$next_row]['codice_fornitore']=$form['codice_fornitore'];
+                }else{
+                  $form['rows'][$next_row]['codice_fornitore']="";
                 }
                 $form['rows'][$next_row]['unimis'] = $artico['unimis'];
                 $form['rows'][$next_row]['prelis'] = number_format($form['in_prelis'], $admin_aziend['decimal_price'], '.', '');
@@ -1566,14 +1584,15 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $delri = key($_POST['del']);
         // sottrazione ai totali peso,pezzi,volume
         $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['rows'][$delri]['codart']);
-		if (isset($artico)){
-			$form['net_weight'] -= $form['rows'][$delri]['quanti'] * $artico['peso_specifico'];
-			$form['gross_weight'] -= $form['rows'][$delri]['quanti'] * $artico['peso_specifico'];
-			if ($artico['pack_units'] > 0) {
-				$form['units'] -= intval(round($form['rows'][$delri]['quanti'] / $artico['pack_units']));
-			}
-			$form['volume'] -= $form['rows'][$delri]['quanti'] * $artico['volume_specifico'];
-		}
+      if (isset($artico)){
+        $form['net_weight'] -= $form['rows'][$delri]['quanti'] * $artico['peso_specifico'];
+        $form['gross_weight'] -= $form['rows'][$delri]['quanti'] * $artico['peso_specifico'];
+        if ($artico['pack_units'] > 0) {
+          $form['units'] -= intval(round($form['rows'][$delri]['quanti'] / $artico['pack_units']));
+        }
+        $form['volume'] -= $form['rows'][$delri]['quanti'] * $artico['volume_specifico'];
+        $form['codice_fornitore']="";
+      }
         // fine sottrazione peso,pezzi,volume
         // diminuisco o lascio inalterati gli index dei testi
         foreach ($form['rows'] as $k => $val) {
@@ -1728,6 +1747,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
               $form['rows'][$next_row]['adult'] = $data['vacation_rental']['adult'];
               $form['rows'][$next_row]['child'] = $data['vacation_rental']['child'];
               $form['rows'][$next_row]['total_guests'] = $data['vacation_rental']['total_guests'];
+              $form['codice_fornitore'] = $articolo['codice'];
               $form['tur_tax'] = $data['vacation_rental']['tur_tax'];
               $form['tur_tax_mode'] = $data['vacation_rental']['tur_tax_mode'];
               $form['id_agente'] = $data['vacation_rental']['agent'];// questo è il proprietario
@@ -1786,6 +1806,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$next_row]['tiprig'] = $rigo['tiprig'];
         $form['rows'][$next_row]['id_doc'] = $rigo['id_doc'];
         $form['rows'][$next_row]['codart'] = $rigo['codart'];
+        $form['rows'][$next_row]['codice_fornitore'] = $rigo['codice_fornitore'];
         $form['rows'][$next_row]['pervat'] = $rigo['pervat'];
         $form['rows'][$next_row]['ritenuta'] = $rigo['ritenuta'];
         $form['rows'][$next_row]['unimis'] = $rigo['unimis'];
@@ -2091,6 +2112,7 @@ echo '	<input type="hidden" name="' . ucfirst($toDo) . '" value="" />
 		<input type="hidden" value="' . $form['numdoc'] . '" name="numdoc" />
 		<input type="hidden" value="' . $form['numfat'] . '" name="numfat" />
 		<input type="hidden" value="' . $form['datfat'] . '" name="datfat" />
+    <input type="hidden" value="' . ((isset($form['codice_fornitore']))?$form['codice_fornitore']:"") . '" name="codice_fornitore" />
     <input type="hidden" value="' . ((isset($form['tur_tax']))?$form['tur_tax']:"") . '" name="tur_tax" />
     <input type="hidden" value="' . ((isset($form['tur_tax_mode']))?$form['tur_tax_mode']:"") . '" name="tur_tax_mode" />
 		<input type="hidden" value="' . (isset($_POST['last_focus']) ? $_POST['last_focus'] : "") . '" name="last_focus" />
@@ -2307,6 +2329,7 @@ foreach ($form['rows'] as $k => $v) {
     echo "<input type=\"hidden\" value=\"" . ((isset($v['adult'])) ? $v['adult'] : '') . "\" name=\"rows[$k][adult]\">\n";
     echo "<input type=\"hidden\" value=\"" . ((isset($v['child'])) ? $v['child'] : '') . "\" name=\"rows[$k][child]\">\n";
     echo "<input type=\"hidden\" value=\"" . ((isset($v['total_guests'])) ? $v['total_guests'] : '') . "\" name=\"rows[$k][total_guests]\">\n";
+    echo "<input type=\"hidden\" value=\"" . ((isset($v['codice_fornitore'])) ? $v['codice_fornitore'] : '') . "\" name=\"rows[$k][codice_fornitore]\">\n";
     echo "<input type=\"hidden\" value=\"" . ((isset($v['facility_id'])) ? $v['facility_id'] : '') . "\" name=\"rows[$k][facility_id]\">\n";
     echo "<input type=\"hidden\" value=\"" . ((isset($v['good_or_service'])) ? $v['good_or_service'] : '') . "\" name=\"rows[$k][good_or_service]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['status'] . "\" name=\"rows[$k][status]\">\n";

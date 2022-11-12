@@ -224,6 +224,7 @@ $strScript = array(
         "ATTENZIONE OVERBOOKING! Non c'è sufficiente disponibilità di questo extra",
         "ATTENZIONE Il numero di notti sono inferiori al soggiorno minimo delle impostazioni generali",
         "ATTENZIONE il numero di notti supera il massimo consentito",
+        "La tassa turistica non ha il riferimento all'alloggio. Inserire prima l'alloggio e poi la tassa turistica.",
         'speban' => "Spese incasso",
         'speban_title' => 'Spese incasso non documentate/rate',
         'traspo_title' => 'Spese trasporto non documentate',
