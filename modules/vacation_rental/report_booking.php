@@ -738,34 +738,34 @@ $ts->output_navbar();
             <td class="FacetFieldCaptionTD">
 
                 <?php
-		if ($partner_select) {
-		    gaz_flt_disp_select("cliente", "clfoco AS cliente, ragso1 AS nome",
-					$tesbro_e_partners,
-					$where_select,
-				        "nome ASC",
-					"nome");
-		} else {
+                if ($partner_select) {
+                    gaz_flt_disp_select("cliente", "clfoco AS cliente, ragso1 AS nome",
+                      $tesbro_e_partners,
+                      $where_select,
+                            "nome ASC",
+                      "nome");
+                } else {
                     gaz_flt_disp_int("cliente", "Cliente");
                 }?>
             </td>
             <td class=FacetFieldCaptionTD>
                 <?php
-				//gaz_flt_disp_select("destinaz","unita_locale1 AS destinaz",$tesbro_e_destina, $where_select . " AND unita_locale1 IS NOT NULL", "destinaz DESC",  "destinaz");
-				?>
+                //gaz_flt_disp_select("destinaz","unita_locale1 AS destinaz",$tesbro_e_destina, $where_select . " AND unita_locale1 IS NOT NULL", "destinaz DESC",  "destinaz");
+                ?>
             </td>
             <td class=FacetFieldCaptionTD style="text-align: center;">
-				<?php
-				if ($form['swStatus']=="" OR $form['swStatus']=="Tutti"){
-					?>
-					<input type="submit" class="btn btn-sm btn-default" name="inevasi" onClick="chkSubmit();" value="Inevasi">
-					<?php
-				} else {
-					?>
-					<input type="submit" class="btn btn-sm btn-default" name="tutti" onClick="chkSubmit();" value="Tutti" style="text-align: center;">
-					<?php
-				}
-				?>
-				<input type="hidden" name="swStatus" id="preventDuplicate" value="<?php echo $form['swStatus']; ?>">
+              <?php
+              if ($form['swStatus']=="" OR $form['swStatus']=="Tutti"){
+                ?>
+                <input type="submit" class="btn btn-sm btn-default" name="inevasi" onClick="chkSubmit();" value="Inevasi">
+                <?php
+              } else {
+                ?>
+                <input type="submit" class="btn btn-sm btn-default" name="tutti" onClick="chkSubmit();" value="Tutti" style="text-align: center;">
+                <?php
+              }
+              ?>
+              <input type="hidden" name="swStatus" id="preventDuplicate" value="<?php echo $form['swStatus']; ?>">
             </td>
             <td class=FacetFieldCaptionTD>
                 &nbsp;
@@ -779,6 +779,11 @@ $ts->output_navbar();
             </td>
             <td class="FacetFieldCaptionTD">
                 &nbsp;
+            </td>
+            <td class="FacetFieldCaptionTD">
+              <button type = "button">
+                <a class="class1" href="stat.php">Statistiche</a>
+              </button>
             </td>
         </tr>
         <tr>

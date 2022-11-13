@@ -47,7 +47,7 @@ $admin_aziend=checkAdmin(9);
 			<p>Copyright (C) - Antonio Germani Massignano (AP) https://www.programmisitiweb.lacasettabio.it - telefono +39 340 50 11 912</p>
 		</h5>
     <h5><b>
-    -------->    Versione 2.0    <---------
+    -------->    Versione 2.2    <---------
     </b></h5>
     <div class="panel panel-info text-left" style="max-width:80%; margin-left:10%; padding:10px;">
 
@@ -63,6 +63,7 @@ $admin_aziend=checkAdmin(9);
           <li>Gestione di alloggi con proprietario diverso dall'azienda di GAzie (contratto di locazione specifico)</li>
           <li>Gestione di un eventuale tour operator che ha venduto la prenotazione</li>
           <li>Gestione dell'accettazione (check-in/check-out) con data e ora e, al check-out, possibilità di inviare e-mail di richiesta recensione</li>
+          <li>Creazione di statistiche generali, suddivise per strutture, anche ai fini della compilazione del mod ISA (indici sintetici affidabilità fiscale) e del pagamento della tassa di soggiorno turistica</li>
         </ul>
 
     </div>
@@ -81,6 +82,7 @@ $admin_aziend=checkAdmin(9);
         <li>Gestione di alloggi con proprietario diverso dall'azienda di GAzie (contratto di locazione specifico)</li>
         <li>Gestione di un eventuale tour operator che ha venduto la prenotazione</li>
         <li>Gestione dell'accettazione (check-in/check-out) con data e ora e, al check-out, possibilità di inviare e-mail di richiesta recensione</li>
+        <li>Creazione di statistiche generali, suddivise per strutture, anche ai fini della compilazione del mod ISA (indici sintetici affidabilità fiscale) e del pagamento della tassa di soggiorno turistica</li>
         <li>Invio automatico di promemoria/benvenuto x giorni prima del check-in (richiede un cron job)</li>
         <li>Controllo automatico delle prenotazioni con caparra non pagata, invio di sollecito e successivo annullamento automatico (richiede un cron job)</li>
 

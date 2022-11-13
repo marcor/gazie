@@ -412,7 +412,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
       exit;
   }
 } elseif (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo accesso per UPDATE
-    $form = gaz_dbi_get_row($gTables['artico'], 'codice', substr($_GET['codice'],0,32));
+  $form = gaz_dbi_get_row($gTables['artico'], 'codice', substr($_GET['codice'],0,32));
 	$query = "SELECT * FROM " . $gTables['rental_ical'] . " WHERE codice_alloggio = '".substr($_GET['codice'],0,32)."' ORDER BY id ASC";
 	$resical = gaz_dbi_query($query);
     /** ENRICO FEDELE */
@@ -1249,7 +1249,7 @@ if ($modal_ok_insert === true) {
                 <div id="child" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label for="child" class="col-sm-4 control-label">Numero massimo di minori di anni 12</label>
+                            <label for="child" class="col-sm-4 control-label">Numero massimo di minori</label>
                             <input class="col-sm-2" type="number" value="<?php echo $form['child']; ?>" name="child" maxlength="50"/>
                         </div>
                     </div>
