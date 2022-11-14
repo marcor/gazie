@@ -175,8 +175,10 @@ function confirFae(link){
     var zipref = $("#doc1_"+tes_id).attr("zip_ref");
     sdiflux = (sdiflux)?"&sdiflux="+sdiflux:"";
     switch (flux_status) {
+        case "##":
         case "PA":
             $("#dialog_fae_content_PA").addClass("bg-default");
+            $("#dialog_fae_content_PA span").html("<p class=\'text-center\'><input type=\'file\' class=\'btn btn-warning\' id=\'btn-upload\' name=\'Upload\' title=\' Carica il  file firmato digitalmente\' > </p>");
             $("#dialog_fae_content_PA").show();
             console.log(flux_status);
         break;
@@ -327,7 +329,7 @@ function printPdf(urlPrintDoc){
         <div style="display:none;" id="dialog_fae_title" title="<?php echo $script_transl['dialog_fae_title']; ?>"></div>
         <p class="ui-state-highlight" id="dialog_fae_filename"><?php echo $script_transl['dialog_fae_filename']; ?><span></span></p>
         <?php
-        $statuskeys=array('PA','DI','RE','IN','RC','MC','NS','ZI');
+        $statuskeys=array('PA','DI','RE','PI','IN','RC','MC','NS','ZI');
         foreach ( $statuskeys as $v ) {
             echo '<p style="display:none;" class="dialog_fae_content" id="dialog_fae_content_'.$v.'">'.$script_transl['dialog_fae_content_'.$v]."<span></span></p>";
         }
