@@ -211,21 +211,27 @@ if (isset($_GET['anteprima']) and $msg == "") {
               $open_from=(isset($data['vacation_rental']['open_from']))?$data['vacation_rental']['open_from']:'';
               $open_to=(isset($data['vacation_rental']['open_to']))?$data['vacation_rental']['open_to']:'';
               $year=date("Y",$currentDate);
-              if (intval(substr($open_to,-2))<intval(substr($open_from,-2))){
-                $open_from = $open_from."-".$year;
-                $open_to = $open_to."-".$year+1;
-              }else{
-                $open_from = $open_from."-".$year;
-                $open_to = $open_to."-".$year;
-              }
-              if(strtotime($datainizio)>strtotime($open_from)){// se il periodo analizzato è inferiore al periodo di apertura
-                $open_from=$datainizio;
-              }
-              if(strtotime($datafine)<strtotime($open_to)){
-                $open_to=$datafine;
-              }
-              $diff = date_diff(date_create($open_to),date_create($open_from));
-              $open_nights = $diff->format("%a");
+			  if ($open_from!==''){
+				  if (intval(substr($open_to,-2))<intval(substr($open_from,-2))){
+					$open_from = $open_from."-".$year;
+					$open_to = $open_to."-".($year+1);
+				  }else{
+					$open_from = $open_from."-".$year;
+					$open_to = $open_to."-".$year;
+				  }
+				  if(strtotime($datainizio)>strtotime($open_from)){// se il periodo analizzato è inferiore al periodo di apertura
+					$open_from=$datainizio;
+				  }
+				  if(strtotime($datafine)<strtotime($open_to)){
+					$open_to=$datafine;
+				  }
+				  $diff = date_diff(date_create($open_to),date_create($open_from));
+				  $open_nights = $diff->format("%a");
+			  }else{
+				$open_from='';
+				$open_to='';
+				$open_nights='';
+			  }
             } else {
               $tour_tax_from='';
               $tour_tax_to='';
