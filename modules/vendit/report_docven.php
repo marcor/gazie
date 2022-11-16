@@ -182,6 +182,7 @@ function confirFae(link){
             $("#dialog_fae_content_PA").show();
             console.log(flux_status);
         break;
+        case "PI":
         case "DI":
             $("#dialog_fae_content_DI").addClass("bg-default");
             $("#dialog_fae_content_DI span").html("<p class=\'text-center\'><a href=\'"+link.href+"&invia"+sdiflux+"\' class=\'btn btn-default\'><b><i class=\'glyphicon glyphicon-send\'></i> Invia solo " + $("#doc1_"+tes_id).attr("dialog_fae_filename")+ "</i> </b></a></p><p><a href=\'"+zipref+"\' class=\'btn btn-warning\'><b><i class=\'glyphicon glyphicon-compressed\'> </i> Impacchetta con eventuali altri precedenti</b></a></p>");
@@ -584,6 +585,7 @@ function printPdf(urlPrintDoc){
                     }
                     switch ($last_flux_status) {
                       case "DI":
+                      case "PI":
                         $sdititle = 'Invia il file '.$revch['fae_attuale'].' o pacchetto';
                         break;
                       case "PC":
@@ -709,7 +711,7 @@ function printPdf(urlPrintDoc){
                           $last_flux_status = 'DI';
                         }
                       }
-                      if ( !empty($r['fattura_elettronica_zip_package']) && strlen($r['fattura_elettronica_zip_package'])>10 && ($last_flux_status=='DI' || $last_flux_status=='##' || $last_flux_status=='PA')) { // il documento è impacchettato e da inviare
+                      if ( !empty($r['fattura_elettronica_zip_package']) && strlen($r['fattura_elettronica_zip_package'])>10 && ($last_flux_status=='DI' || $last_flux_status=='PI')) { // il documento è impacchettato e da inviare
                         $r['fae_attuale']=$r['fattura_elettronica_zip_package'];
                         $sdihilight = ( !empty($r['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][1] : 'default';
                         $sdilabel = ( !empty($r['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][0] : (($r['fattura_elettronica_zip_package']!='FAE_ZIP_NOGENERATED') ? 'ZIP da inviare' : '');
@@ -727,6 +729,7 @@ function printPdf(urlPrintDoc){
                       $sdititle = 'Scarica il file '.$r['fae_attuale'].' per firmarlo';
                       break;
                       case "DI":
+                      case "PI":
                       $sdititle = 'Invia il file '.$r['fae_attuale'].' o pacchetto';
                       break;
                       case "PC":

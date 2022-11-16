@@ -240,7 +240,7 @@ class venditForm extends GAzieForm {
 				 LEFT JOIN ' . $gTables['country'] . ' AS country ON anagraf.country=country.iso
 				 LEFT JOIN ' . $gTables['fae_flux'] . ' AS flux ON tesdoc.id_tes = flux.id_tes_ref ';
 		$where = "(fattura_elettronica_zip_package IS NULL OR fattura_elettronica_zip_package = '')
-				  AND (flux_status = '' OR flux_status = 'DI' OR flux_status IS NULL)
+				  AND (flux_status = '' OR flux_status = 'DI' OR flux_status = 'PI' OR flux_status IS NULL)
 				  AND (tipdoc LIKE 'F__'  ".$packVCO." OR (tipdoc LIKE 'X__') )";
 		if (!$include_fe_PA) {
 			$where.= " AND LENGTH(fe_cod_univoco)<>6";
