@@ -81,6 +81,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
   $form['check_in'] = $_POST['check_in'];
   $form['check_out'] = $_POST['check_out'];
   $form['minor'] = $_POST['minor'];
+  $form['open_from'] = $_POST['open_from'];
+  $form['open_to'] = $_POST['open_to'];
   $form['tour_tax_from'] = $_POST['tour_tax_from'];
   $form['tour_tax_to'] = $_POST['tour_tax_to'];
   $form['tour_tax_day'] = intval($_POST['tour_tax_day']);
@@ -242,7 +244,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 			$form['large_descri'] = htmlspecialchars_decode (addslashes($form['large_descri']));
 			// aggiorno il db
 			if ($toDo == 'insert') {
-				$array= array('vacation_rental'=>array('facility_type' => '', 'paypal_email' => $form['paypal_email'], 'stripe_pub_key' => $form['stripe_pub_key'], 'stripe_sec_key' => $form['stripe_sec_key'], 'check_in' => $form['check_in'], 'check_out' => $form['check_out'], 'minor' => $form['minor'], 'tour_tax_from' => $form['tour_tax_from'], 'tour_tax_to' => $form['tour_tax_to'], 'tour_tax_day' => $form['tour_tax_day'], 'max_booking_days' => $form['max_booking_days'], 'latitude' => $form['lat'], 'longitude' => $form['long']));// creo l'array per il custom field
+				$array= array('vacation_rental'=>array('facility_type' => '', 'paypal_email' => $form['paypal_email'], 'stripe_pub_key' => $form['stripe_pub_key'], 'stripe_sec_key' => $form['stripe_sec_key'], 'check_in' => $form['check_in'], 'check_out' => $form['check_out'], 'minor' => $form['minor'], 'tour_tax_from' => $form['tour_tax_from'], 'tour_tax_to' => $form['tour_tax_to'], 'open_from' => $form['open_from'], 'open_to' => $form['open_to'], 'tour_tax_day' => $form['tour_tax_day'], 'max_booking_days' => $form['max_booking_days'], 'latitude' => $form['lat'], 'longitude' => $form['long']));// creo l'array per il custom field
 				$form['custom_field'] = json_encode($array);// codifico in json  e lo inserisco nel form
 				gaz_dbi_table_insert('artico_group', $form);
 			} elseif ($toDo == 'update') {
@@ -259,13 +261,15 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             $data['vacation_rental']['minor']=$_POST['minor'];
             $data['vacation_rental']['tour_tax_from']=$_POST['tour_tax_from'];
             $data['vacation_rental']['tour_tax_to']=$_POST['tour_tax_to'];
+            $data['vacation_rental']['open_from']=$_POST['open_from'];
+            $data['vacation_rental']['open_to']=$_POST['open_to'];
             $data['vacation_rental']['tour_tax_day']=$_POST['tour_tax_day'];
             $data['vacation_rental']['max_booking_days']=$_POST['max_booking_days'];
             $data['vacation_rental']['latitude']=$_POST['lat'];
             $data['vacation_rental']['longitude']=$_POST['long'];
             $form['custom_field'] = json_encode($data);
           } else { //se non c'è il modulo "vacation_rental" lo aggiungo
-            $data['vacation_rental']= array('facility_type' => '', 'paypal_email' => $_POST['paypal_email'], 'stripe_pub_key' => $_POST['stripe_pub_key'], 'stripe_sec_key' => $_POST['stripe_sec_key'], 'check_in' => $_POST['check_in'], 'check_out' => $_POST['check_out'], 'minor' => $_POST['minor'], 'tour_tax_from' => $_POST['tour_tax_from'], 'tour_tax_to' => $_POST['tour_tax_to'], 'tour_tax_day' => $_POST['tour_tax_day'], 'max_booking_days' => $_POST['max_booking_days'], 'latitude' => $_POST['lat'], 'longitude' => $_POST['long']);
+            $data['vacation_rental']= array('facility_type' => '', 'paypal_email' => $_POST['paypal_email'], 'stripe_pub_key' => $_POST['stripe_pub_key'], 'stripe_sec_key' => $_POST['stripe_sec_key'], 'check_in' => $_POST['check_in'], 'check_out' => $_POST['check_out'], 'minor' => $_POST['minor'], 'tour_tax_from' => $_POST['tour_tax_from'], 'tour_tax_to' => $_POST['tour_tax_to'], 'open_from' => $_POST['open_from'], 'open_to' => $_POST['open_to'], 'tour_tax_day' => $_POST['tour_tax_day'], 'max_booking_days' => $_POST['max_booking_days'], 'latitude' => $_POST['lat'], 'longitude' => $_POST['long']);
             $form['custom_field'] = json_encode($data);
           }
         }
@@ -315,6 +319,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         $form['minor'] = (isset($data['vacation_rental']['minor']))?$data['vacation_rental']['minor']:'';
         $form['tour_tax_from'] = (isset($data['vacation_rental']['tour_tax_from']))?$data['vacation_rental']['tour_tax_from']:'';
         $form['tour_tax_to'] = (isset($data['vacation_rental']['tour_tax_to']))?$data['vacation_rental']['tour_tax_to']:'';
+        $form['open_from'] = (isset($data['vacation_rental']['open_from']))?$data['vacation_rental']['open_from']:'';
+        $form['open_to'] = (isset($data['vacation_rental']['open_to']))?$data['vacation_rental']['open_to']:'';
         $form['tour_tax_day'] = (isset($data['vacation_rental']['tour_tax_day']))?intval($data['vacation_rental']['tour_tax_day']):0;
         $form['max_booking_days'] = (isset($data['vacation_rental']['max_booking_days']))?intval($data['vacation_rental']['max_booking_days']):0;
         $form['lat'] = (isset($data['vacation_rental']['latitude']))?$data['vacation_rental']['latitude']:'';
@@ -329,6 +335,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         $form['minor'] = "";
         $form['tour_tax_from'] = "";
         $form['tour_tax_to'] = 0;
+        $form['open_from'] = "";
+        $form['open_to'] = "";
         $form['tour_tax_day'] = "";
         $form['max_booking_days'] = "";
         $form['lat'] = "";
@@ -344,6 +352,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['minor'] = "";
     $form['tour_tax_from'] = "";
     $form['tour_tax_to'] = "";
+    $form['open_from'] = "";
+    $form['open_to'] = "";
     $form['tour_tax_day'] = 0;
     $form['max_booking_days'] = 0;
 	}
@@ -388,6 +398,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['minor'] = "";
     $form['tour_tax_from'] = "";
     $form['tour_tax_to'] = "";
+    $form['open_from'] = "";
+    $form['open_to'] = "";
     $form['tour_tax_day'] = 0;
     $form['max_booking_days'] = 0;
     $form['ref_ecommerce_id_main_product']="";
@@ -471,6 +483,8 @@ $(".DateTextBox.NoYear").datepicker();
 $(".DateTextBox.NoYear").datepicker("option", "dateFormat", "dd-mm");
 $("#datepicker_from").datepicker("setDate", "<?php echo $form['tour_tax_from']; ?>");
 $("#datepicker_to").datepicker("setDate", "<?php echo $form['tour_tax_to']; ?>");
+$("#datepicker_open_from").datepicker("setDate", "<?php echo $form['open_from']; ?>");
+$("#datepicker_open_to").datepicker("setDate", "<?php echo $form['open_to']; ?>");
 });
 </script>
 <style type="text/css">
@@ -639,6 +653,24 @@ $("#datepicker_to").datepicker("setDate", "<?php echo $form['tour_tax_to']; ?>")
                   <div class="form-group">
                     <label for="check-out" class="col-sm-4 control-label">Orario check-out&nbsp;<i class="glyphicon glyphicon-flag" title="accetta tag lingue (<it></it>)"></i></label>
                     <input class="col-sm-8" type="text" value="<?php echo $form['check_out']; ?>" name="check_out" maxlength="90" />
+                  </div>
+                </div>
+							</div><!-- chiude row  -->
+              <div id="limit-open-from" class="row IERincludeExcludeRow">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <label for="limit-open-from" class="col-sm-4 control-label">Apertura dal (vuoto = sempre aperto)</label>
+
+                    <input type="text" id="datepicker_open_from" class="col-sm-8 DateTextBox NoYear" name="open_from" />
+                  </div>
+                </div>
+							</div><!-- chiude row  -->
+              <div id="limit-open-to" class="row IERincludeExcludeRow">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <label for="limit-open-to" class="col-sm-4 control-label">Apertura fino al</label>
+
+                    <input type="text" id="datepicker_open_to" class="col-sm-8 DateTextBox NoYear" name="open_to" />
                   </div>
                 </div>
 							</div><!-- chiude row  -->

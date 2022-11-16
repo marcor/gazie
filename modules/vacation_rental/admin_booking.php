@@ -927,8 +927,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
           $result = gaz_dbi_dyn_query($what, $table, $where);
           $available = gaz_dbi_fetch_array($result);
           if (isset($available)){
-             $msg .= "63+";// Overbooking
-            break;
+             $overbooking=1;
           }
           //Calcolo del prezzo locazione
           $what = "title";
@@ -949,6 +948,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
           $start = date ("Y-m-d", strtotime("+1 days", strtotime($start)));// aumento di un giorno il ciclo
           $night++;
         }
+        if (isset($overbooking)){
+           $msg .= "63+";// Overbooking
+        }
+
         $start="";
         $form['in_prelis']=$total_price;
       }
