@@ -36,9 +36,9 @@ class FatturaSemplice extends Template {
       $this->mese = substr($this->tesdoc['datfat'], 5, 2);
       $this->anno = substr($this->tesdoc['datfat'], 0, 4);
 		if ($this->tesdoc['datfat']){
-      $datemi =  new DateTime($this->tesdoc['datemi']);
+      $datfat =  new DateTime($this->tesdoc['datfat']);
       $this->docVars->gazTimeFormatter->setPattern('MMMM');
-      $nomemese = ucwords($this->docVars->gazTimeFormatter->format($datemi));
+      $nomemese = ucwords($this->docVars->gazTimeFormatter->format($datfat));
 		} else {
 			$nomemese = '';
 		}
