@@ -3,7 +3,7 @@ var IERisModified = 0;
 var IERresultRIERS = "";
 
 
-$(window).load(function(){
+$(window).on('load', function () {
 	//read all rows from file
 	//read like array
 	//$("head").append('<link rel="stylesheet" href="../IERincludeExcludeRows.css">');
