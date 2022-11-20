@@ -67,7 +67,7 @@ require("../../library/include/header.php");
             loadmore();
         }
     });
-    $(window).load(function () {
+    $(window).on('load', function () {
         loadmore();
     });
     function loadmore()

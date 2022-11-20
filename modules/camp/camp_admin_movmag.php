@@ -1402,13 +1402,13 @@ if (count($instantwarning)>0) {
 	}
 }
 if ($avv_conf==1) { // segnalo autorizzazione fitofarmaco scaduta con scelta
-	echo "<script type='text/javascript'> $(window).load(function(){ $('#scadaut').modal('show'); }); </script>";
+	echo "<script type='text/javascript'> $(window).on('load',(function(){ $('#scadaut').modal('show'); }); </script>";
 }
 if ($avv_conf==2 AND $form['confermapat'][$form['adminid']]!=="Confermo deroga" ) { // segnalo autorizzazione patentinoscaduta con scelta
-	echo "<script type='text/javascript'> $(window).load(function(){ $('#patexp').modal('show'); }); </script>";
+	echo "<script type='text/javascript'> $(window).on('load',(function(){ $('#patexp').modal('show'); }); </script>";
 }
 if ($avv_conf==3 AND $form['confermapat'][$form['adminid']]!=="Confermo deroga" ) { // segnalo mancanza autorizzazione patentino con scelta
-	echo "<script type='text/javascript'> $(window).load(function(){ $('#patempty').modal('show'); }); </script>";
+	echo "<script type='text/javascript'> $(window).on('load',(function(){ $('#patempty').modal('show'); }); </script>";
 }
 ?>
 
