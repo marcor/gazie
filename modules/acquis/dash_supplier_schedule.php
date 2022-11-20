@@ -208,7 +208,7 @@ if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
 		$("head").append('<link rel="stylesheet" href="./admin.css">');
 	//});
 
-	$(window).load(function(){
+	$(window).on('load',(function(){
 		// Scadenziario Fornitori
 		keyRowfor = "<?php echo $keyRowFoundfor ?>";
 
@@ -226,7 +226,7 @@ if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
 				$("#fornitori").css("opacity","1");
 				$(".wheel_load").css("display","none");
 			}
-		});
+		}));
     //*- DC - 07/02/2018 - nuove funzioni per gestione posizionmento su scadenzari
     </script>
     <?php
