@@ -48,9 +48,6 @@ $(window).resize(function () {
     resizeNavbarText();
 });
 
-$(window).load(function () {
-    resizeNavbarText();
-});
 
 /* Restringe automaticamente il testo del menu sui dispay piccoli e toglie l'header */
 function resizeNavbarText() {
@@ -76,7 +73,7 @@ function toggle(boxID, toggleID) {
     toggle.focus();
 }
 
-this.gzTooltip = function () {
+function gzTooltip() {
     $('.gazie-tooltip').tooltip(
             {html: true,
                 placement: 'auto bottom',
