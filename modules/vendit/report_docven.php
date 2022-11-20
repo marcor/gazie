@@ -167,76 +167,69 @@ function confirFae(link){
 	tes_id = link.id.replace("doc1_", "");
 	$.fx.speeds._default = 500;
 	var dialog_fae_title = $("#dialog_fae_title").attr("title") + $("#doc1_"+tes_id).attr("dialog_fae_numfat");
-    $("#dialog_fae_filename span").html("<a href=\'"+link.href+"\' >"+$("#doc1_"+tes_id).attr("dialog_fae_filename")+"</a>");
-	var numrei = parseInt($("#doc1_"+tes_id).attr("dialog_fae_numrei"))+1;
-    var flux_status = $("#doc1_"+tes_id).attr("dialog_flux_status");
-    var flux_descri = $("#doc1_"+tes_id).attr("dialog_flux_descri");
-    var sdiflux = $("#doc1_"+tes_id).attr("dialog_fae_sdiflux");
-    var zipref = $("#doc1_"+tes_id).attr("zip_ref");
-    sdiflux = (sdiflux)?"&sdiflux="+sdiflux:"";
-    switch (flux_status) {
-        case "##":
-        case "PA":
-            $("#dialog_fae_content_PA").addClass("bg-default");
-            $("#dialog_fae_content_PA span").html("<p class=\'text-center\'><input type=\'file\' class=\'btn btn-warning\' id=\'btn-upload\' name=\'Upload\' title=\' Carica il  file firmato digitalmente\' > </p>");
-            $("#dialog_fae_content_PA").show();
-            console.log(flux_status);
-        break;
-        case "PI":
-        case "DI":
-            $("#dialog_fae_content_DI").addClass("bg-default");
-            $("#dialog_fae_content_DI span").html("<p class=\'text-center\'><a href=\'"+link.href+"&invia"+sdiflux+"\' class=\'btn btn-default\'><b><i class=\'glyphicon glyphicon-send\'></i> Invia solo " + $("#doc1_"+tes_id).attr("dialog_fae_filename")+ "</i> </b></a></p><p><a href=\'"+zipref+"\' class=\'btn btn-warning\'><b><i class=\'glyphicon glyphicon-compressed\'> </i> Impacchetta con eventuali altri precedenti</b></a></p>");
-            $("#dialog_fae_content_DI").show();
-            console.log(flux_status);
-        break;
-        case "ZI":
-            $("#dialog_fae_content_ZI").addClass("bg-default");
-            $("#dialog_fae_content_ZI span").html("<p class=\'text-center\'><a href=\'"+link.href+"&invia"+sdiflux+"\' class=\'btn btn-warning\'><b><i class=\'glyphicon glyphicon-send\'></i> Invia il pacchetto " + $("#doc1_"+tes_id).attr("dialog_fae_filename")+ "</i> </b></a></p><p></p>");
-            $("#dialog_fae_content_ZI").show();
-            console.log(flux_status);
-        break;
-        case "RC":
-            $("#dialog_fae_content_RC").addClass("bg-success text-center");
-            $("#dialog_fae_content_RC").show();
-            console.log(flux_status);
-        break;
-        case "MC":
-            $("#dialog_fae_content_MC").addClass("bg-warning text-center");
-            $("#dialog_fae_content_MC").show();
-            console.log(flux_status);
-        break;
-        case "NS":
-        case "NEEC02":
-            $("#dialog_fae_content_NS span").html("<p class=\'text-center bg-danger\'>" + flux_descri.replace(/<[^>]*>?/gm, "") + "</p><p class=\'text-center\'> re: <a href=\'"+link.href+"&id_tes="+tes_id+"&reinvia=reinvia"+sdiflux+"\' class=\'btn btn-danger\'><b> " + $("#doc1_"+tes_id).attr("dialog_fae_reinvio")+ "</b> <br/>" + numrei.toString() + "° reinvio </a></p>");
-            $("#dialog_fae_content_NS").show();
-            console.log(flux_status);
-        break;
-        case "RE":
-            $("#dialog_fae_content_RE").addClass("bg-info text-center");
-            $("#dialog_fae_content_RE span").html("<p><a href=\'"+link.href+"&reinvia\' class=\'btn btn-danger\'>" + $("#doc1_"+tes_id).attr("dialog_fae_reinvio")+ " <br/>" + numrei.toString() + "° reinvio </a></p><p>Oppure <a href=\'"+zipref+"&packet\' class=\'btn btn-warning\'><b><i class=\'glyphicon glyphicon-compressed\'> </i></b> Impacchetta con eventuali altri precedenti</a></p>");
-            $("#dialog_fae_content_RE").show();
-            console.log(flux_status);
-        break;
-        case "RZ":
-            $("#dialog_fae_content_RE").addClass("bg-info text-center");
-            $("#dialog_fae_content_RE span").html("<p><a href=\'"+link.href+"&reinvia\' class=\'btn btn-danger\'>" + $("#doc1_"+tes_id).attr("dialog_fae_reinvio")+ " <br/>" + numrei.toString() + "° reinvio </a></p>");
-            $("#dialog_fae_content_RE").show();
-            console.log(flux_status);
-        break;
-        default:
-            console.log("errore: stato "+flux_status+" non identificato");
-    }
+  $("#dialog_fae_filename span").html("<a href=\'"+link.href+"\' >"+$("#doc1_"+tes_id).attr("dialog_fae_filename")+"</a>");
+  var numrei = parseInt($("#doc1_"+tes_id).attr("dialog_fae_numrei"))+1;
+  var flux_status = $("#doc1_"+tes_id).attr("dialog_flux_status");
+  var flux_descri = $("#doc1_"+tes_id).attr("dialog_flux_descri");
+  var sdiflux = $("#doc1_"+tes_id).attr("dialog_fae_sdiflux");
+  var zipref = $("#doc1_"+tes_id).attr("zip_ref");
+  sdiflux = (sdiflux)?"&sdiflux="+sdiflux:"";
+  switch (flux_status) {
+    case "##":
+    case "PA":
+      $("#dialog_fae_content_PA").addClass("bg-default");
+      $("#dialog_fae_content_PA span").html("<p class=\'text-center\'><input type=\'file\'  accept=\'.xml\' id=\'file\' name=\'file\' title=\' Carica il  file firmato digitalmente\' ><div class=\'btn btn-warning\' value=\'Upload\' ref=\'"+tes_id+"\' onclick=\'but_upload_signed("+tes_id+");return false;\'>Carica file firmato</div> </p>");
+      $("#dialog_fae_content_PA").show();
+    break;
+    case "PI":
+    case "DI":
+      $("#dialog_fae_content_DI").addClass("bg-default");
+      $("#dialog_fae_content_DI span").html("<p class=\'text-center\'><a href=\'"+link.href+"&invia"+sdiflux+"\' class=\'btn btn-default\'><b><i class=\'glyphicon glyphicon-send\'></i> Invia solo " + $("#doc1_"+tes_id).attr("dialog_fae_filename")+ "</i> </b></a></p><p><a href=\'"+zipref+"\' class=\'btn btn-warning\'><b><i class=\'glyphicon glyphicon-compressed\'> </i> Impacchetta con eventuali altri precedenti</b></a></p>");
+      $("#dialog_fae_content_DI").show();
+    break;
+    case "ZI":
+      $("#dialog_fae_content_ZI").addClass("bg-default");
+      $("#dialog_fae_content_ZI span").html("<p class=\'text-center\'><a href=\'"+link.href+"&invia"+sdiflux+"\' class=\'btn btn-warning\'><b><i class=\'glyphicon glyphicon-send\'></i> Invia il pacchetto " + $("#doc1_"+tes_id).attr("dialog_fae_filename")+ "</i> </b></a></p><p></p>");
+      $("#dialog_fae_content_ZI").show();
+    break;
+    case "RC":
+      $("#dialog_fae_content_RC").addClass("bg-success text-center");
+      $("#dialog_fae_content_RC").show();
+    break;
+    case "MC":
+      $("#dialog_fae_content_MC").addClass("bg-warning text-center");
+      $("#dialog_fae_content_MC").show();
+    break;
+    case "NS":
+    case "NEEC02":
+      $("#dialog_fae_content_NS span").html("<p class=\'text-center bg-danger\'>" + flux_descri.replace(/<[^>]*>?/gm, "") + "</p><p class=\'text-center\'> re: <a href=\'"+link.href+"&id_tes="+tes_id+"&reinvia=reinvia"+sdiflux+"\' class=\'btn btn-danger\'><b> " + $("#doc1_"+tes_id).attr("dialog_fae_reinvio")+ "</b> <br/>" + numrei.toString() + "° reinvio </a></p>");
+      $("#dialog_fae_content_NS").show();
+    break;
+    case "RE":
+      $("#dialog_fae_content_RE").addClass("bg-info text-center");
+      $("#dialog_fae_content_RE span").html("<p><a href=\'"+link.href+"&reinvia\' class=\'btn btn-danger\'>" + $("#doc1_"+tes_id).attr("dialog_fae_reinvio")+ " <br/>" + numrei.toString() + "° reinvio </a></p><p>Oppure <a href=\'"+zipref+"&packet\' class=\'btn btn-warning\'><b><i class=\'glyphicon glyphicon-compressed\'> </i></b> Impacchetta con eventuali altri precedenti</a></p>");
+      $("#dialog_fae_content_RE").show();
+    break;
+    case "RZ":
+      $("#dialog_fae_content_RE").addClass("bg-info text-center");
+      $("#dialog_fae_content_RE span").html("<p><a href=\'"+link.href+"&reinvia\' class=\'btn btn-danger\'>" + $("#doc1_"+tes_id).attr("dialog_fae_reinvio")+ " <br/>" + numrei.toString() + "° reinvio </a></p>");
+      $("#dialog_fae_content_RE").show();
+    break;
+    default:
+      console.log("errore: stato "+flux_status+" non identificato");
+  }
 	$("#dialog_fae").dialog({
 	  title: dialog_fae_title,
-      modal: "true",
-      show: "blind",
-      hide: "explode",
-      buttons: {" X ": function() {
-                        $(".dialog_fae_content").hide();
-                        $(this).dialog("close");
-                 }
-               }
-         });
+    modal: "true",
+    show: "blind",
+    width: "600px",
+    hide: "explode",
+    buttons: {" X ": function() {
+      $(".dialog_fae_content").hide();
+      $(this).dialog("close");
+      }
+    }
+  });
 	$("#dialog_fae").dialog( "open" );
 }
 
@@ -274,7 +267,7 @@ $(function() {
 						type: 'POST',
 						url: '../vendit/delete.php',
 						success: function(output){
-		                    //alert(output);
+		          //alert(output);
 							window.location.replace("./report_docven.php");
 						}
 					});
@@ -284,6 +277,32 @@ $(function() {
 		$("#dialog_delete" ).dialog( "open" );
 	});
 });
+function but_upload_signed(id_tes){
+  var fd = new FormData();
+  var files = $('#file')[0].files[0];
+  var fn = $("#doc1_"+id_tes).attr("dialog_fae_filename");
+  fd.append('file', files);
+  fd.append('opt', 'upload_signed');
+  fd.append('term', id_tes.toString());
+  fd.append('fn', fn);
+  $.ajax({
+    url: 'ajax_request.php',
+    type: 'post',
+    data: fd,
+    cache: false,
+    contentType: false,
+    processData: false,
+    success: function(response){
+    console.log(response);
+      if(response != 0){
+        alert('Success: file ' + response + ' uploaded ');
+        window.location.replace("./report_docven.php");
+      } else {
+        alert('Error: File not uploaded');
+      }
+    },
+  });
+}
 function printPdf(urlPrintDoc){
 	$(function(){
 		$('#framePdf').attr('src',urlPrintDoc);
@@ -706,6 +725,7 @@ function printPdf(urlPrintDoc){
                       $sdilabel = ( !empty($r['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][0] : 'da inviare';
                       if ( $last_flux_status == '' ) {
                         if ( strlen(trim($r['fe_cod_univoco']))==6 ) {
+                          $sdilabel = 'da firmare';
                           $last_flux_status = 'PA';
                         } else {
                           $last_flux_status = 'DI';
@@ -727,6 +747,7 @@ function printPdf(urlPrintDoc){
                       case "##":
                       case "PA":
                       $sdititle = 'Scarica il file '.$r['fae_attuale'].' per firmarlo';
+                      $sdihilight = 'warning';
                       break;
                       case "DI":
                       case "PI":
