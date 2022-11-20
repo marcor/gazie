@@ -44,8 +44,8 @@ $sortable_headers = array  (
 $tablejoin = $gTables['tesmov']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['tesmov'].".clfoco = ".$gTables['clfoco'].".codice LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id";
 
 $ts = new TableSorter(
-    $tablejoin, 
-    $passo, 
+    $tablejoin,
+    $passo,
     ['datreg'=>'desc'],
     ['codmin' => 1, 'codmax' => 999999, 'caucon' => 'BBH']
 	);
@@ -127,11 +127,11 @@ print_r($r);
 </table></div>
 <?php
 if (isset($_GET['xml'])){
-  echo '<script>
-	$( window ).load(function() {
-		window.location.href = "CBIPaymentRequest.php?id_tes='.intval($_GET['id_tes']).'"
-	});
-	</script>';
+  echo "<script>
+	$(window).on('load',(function() {
+		window.location.href = 'CBIPaymentRequest.php?id_tes=".intval($_GET['id_tes'])."';
+	}));
+	</script>";
 }
 require("../../library/include/footer.php");
 ?>

@@ -25,37 +25,35 @@ $admin_aziend = checkAdmin();
 require("../../library/include/header.php");
 ?>
 <script type="text/javascript">
-    $(window).scroll(function ()
-    {
-        if ($(document).height() <= $(window).scrollTop() + $(window).height()) {
-            loadmore();
-        }
-    });
-    $(window).load(function () {
-        loadmore();
-    });
-    function loadmore()
-    {
-        var val = document.getElementById("row_no").value;
-        $.ajax({
-            type: 'post',
-            url: 'report_assets_scroll.php',
-            data: {
-                getresult: val
-            },
-            beforeSend: function () {
-                $('#loader-icon').show();
-            },
-            complete: function () {
-                $('#loader-icon').hide();
-            },
-            success: function (response) {
-                var content = document.getElementById("all_rows");
-                content.innerHTML = content.innerHTML + response;
-                document.getElementById("row_no").value = Number(val) + <?php echo PER_PAGE; ?>;
-            }
-        });
+$(window).scroll(function () {
+  if ($(document).height() <= $(window).scrollTop() + $(window).height()) {
+    loadmore();
+  }
+});
+$(window).on('load',(function () {
+  loadmore();
+}));
+function loadmore() {
+  var val = document.getElementById("row_no").value;
+  $.ajax({
+    type: 'post',
+    url: 'report_assets_scroll.php',
+    data: {
+        getresult: val
+    },
+    beforeSend: function () {
+        $('#loader-icon').show();
+    },
+    complete: function () {
+        $('#loader-icon').hide();
+    },
+    success: function (response) {
+      var content = document.getElementById("all_rows");
+      content.innerHTML = content.innerHTML + response;
+      document.getElementById("row_no").value = Number(val) + <?php echo PER_PAGE; ?>;
     }
+  });
+}
 </script>
 <?php
 $script_transl = HeadMain();
