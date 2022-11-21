@@ -363,6 +363,10 @@ class Registration {
                 $query_update_admin_module = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . str_pad($student_id, 4, '0', STR_PAD_LEFT) . "_admin_config SET adminid = :student_name WHERE adminid = 'amministratore'");
                 $query_update_admin_module->bindValue(':student_name', $student_name, PDO::PARAM_STR);
                 $query_update_admin_module->execute();
+                // update breadcrumb with new username
+                $query_update_admin_module = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . str_pad($student_id, 4, '0', STR_PAD_LEFT) . "_breadcrumb SET adminid = :student_name WHERE adminid = 'amministratore'");
+                $query_update_admin_module->bindValue(':student_name', $student_name, PDO::PARAM_STR);
+                $query_update_admin_module->execute();
                 /* GAZIE FINE                 */
 
                 $this->verification_successful = true;
