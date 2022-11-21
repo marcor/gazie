@@ -251,7 +251,7 @@ class Registration {
         } else {
             $mail->IsMail();
         }
-        $mail->IsHTML(true);          
+        $mail->IsHTML(true);
         // Impropriamente uso order_mail in quanto nelle installazioni didattiche non si ricevono ordini
         $mail->From = $this->email_conf['admin_mail'];
 
@@ -328,7 +328,7 @@ class Registration {
             $query_update_user->execute();
             if ($query_update_user->rowCount() > 0) {
 
-                /* GAZIE 
+                /* GAZIE
                  * qui faccio tutto quanto occorre per creare una nuova serie di tabelle con prefisso
                  * per avere una nuova gestione separata dello studente che si è registrato */
                 $query_get_student_password = $this->db_connection->prepare('SELECT student_password_hash, student_name, student_firstname, student_lastname, student_email FROM ' . DB_TABLE_PREFIX . '_students WHERE student_id = :student_id');
@@ -357,6 +357,10 @@ class Registration {
                 $query_add_student_to_admin->execute();
                 // update admin_module with new username
                 $query_update_admin_module = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . str_pad($student_id, 4, '0', STR_PAD_LEFT) . "_admin_module SET adminid = :student_name WHERE adminid = 'amministratore'");
+                $query_update_admin_module->bindValue(':student_name', $student_name, PDO::PARAM_STR);
+                $query_update_admin_module->execute();
+                // update admin_config with new username
+                $query_update_admin_module = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . str_pad($student_id, 4, '0', STR_PAD_LEFT) . "_admin_config SET adminid = :student_name WHERE adminid = 'amministratore'");
                 $query_update_admin_module->bindValue(':student_name', $student_name, PDO::PARAM_STR);
                 $query_update_admin_module->execute();
                 /* GAZIE FINE                 */
