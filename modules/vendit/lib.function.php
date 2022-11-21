@@ -250,7 +250,7 @@ class venditForm extends GAzieForm {
 							pay.tippag,pay.numrat,pay.incaut,pay.tipdec,pay.giodec,pay.tiprat,pay.mesesc,pay.giosuc,pay.id_bank,
 							customer.codice, customer.speban AS addebitospese,
 							CONCAT(anagraf.ragso1,\' \',anagraf.ragso2) AS ragsoc, anagraf.citspe, anagraf.prospe, anagraf.capspe, anagraf.country, anagraf.fe_cod_univoco, anagraf.pec_email, anagraf.e_mail, anagraf.country,
-							country.istat_area, flux.flux_status, flux.id_tes_ref', $from, $where, $orderby);
+							country.istat_area, flux.flux_status, flux.id_tes_ref, flux.filename_ret, flux.filename_ori, flux.filename_son', $from, $where, $orderby);
 		$docs['data'] = [];
 		$ctrlp = '';
 		$carry = 0;

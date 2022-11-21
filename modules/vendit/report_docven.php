@@ -295,10 +295,10 @@ function but_upload_signed(id_tes){
     success: function(response){
     console.log(response);
       if(response != 0){
-        alert('Success: file ' + response + ' uploaded ');
+        alert('File ' + response + ' caricato con successo ');
         window.location.replace("./report_docven.php");
       } else {
-        alert('Error: File not uploaded');
+        alert('Errore: File non caricato');
       }
     },
   });

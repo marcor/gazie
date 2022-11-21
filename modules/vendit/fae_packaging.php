@@ -105,12 +105,15 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 							$enc_data['protocollo']= intval($v['tes']['fattura_elettronica_reinvii']*10000+$v['tes']['protoc']);
 						}
 					}
-					// aggiorno anche il flusso SdI
-					$fn_ori = 'IT'.$admin_aziend['codfis'].'_'.encodeSendingNumber($enc_data,36).'.xml';
-					gaz_dbi_query("UPDATE " . $gTables['fae_flux'] . " SET filename_zip_package = '".$form['filename']."' WHERE filename_ori = '".$fn_ori."'");
-					$file_content=create_XML_invoice($testate,$gTables,'rigdoc',false,$form['filename']);
-					$zip->addFromString($fn_ori, $file_content);
-
+          // aggiorno il flusso SdI
+          $fn_ori = 'IT'.$admin_aziend['codfis'].'_'.encodeSendingNumber($enc_data,36).'.xml';
+          gaz_dbi_query("UPDATE " . $gTables['fae_flux'] . " SET filename_zip_package = '".$form['filename']."' WHERE filename_ori = '".$fn_ori."'");
+          if ($v['tes']['flux_status']=='PI'){ // se è un file verso PA firmato lo riprendo dalla dir come tale
+            $file_content=file_get_contents(DATA_DIR . 'files/' . $admin_aziend['codice'] . '/' . $v['tes']['filename_ret'], true);
+          } else { // ... per gli altri prendo quelli che ho ricreati al volo da DB
+            $file_content=create_XML_invoice($testate,$gTables,'rigdoc',false,$form['filename']);
+          }
+          $zip->addFromString($fn_ori, $file_content);
 				}
 				$zip->close();
         header("Location: " . $form['ritorno']);
@@ -173,7 +176,6 @@ foreach ($invoices['data'] as $k => $v) {
 	// se ho cambiato la sezione e/o il registro propongo il limite di protocollo
 	if ($ctrlimit<>$v['tes']['seziva'].$v['tes']['ctrlreg']){
 		echo '<tr><td colspan=8 class="text-center bg-info"><h4>Anteprima di impacchettamento della sezione IVA '.$v['tes']['seziva'].'</h4</td></tr><tr><td colspan=8 class="text-center bg-success"><h4> saranno impacchettate '.$numpacket. ' '.$label.'</h4></td></tr>';
-
 	}
 	$nopackclass='';
 	if ($v['tes']['protoc']>$form['packable'][$v['tes']['seziva']][$v['tes']['ctrlreg']]['max']) { // non impacchetto i protocolli che superano i limiti scelti dall'utente
@@ -198,8 +200,8 @@ foreach ($invoices['data'] as $k => $v) {
 			$v['tes']['pec_email']=$script_transl['pec'].$v['tes']['pec_email'];
 		}
 	}
-    $tot = $gForm->computeTotFromVatCastle($v['vat']);
-    //fine calcolo totali
+  $tot = $gForm->computeTotFromVatCastle($v['vat']);
+  //fine calcolo totali
 	$enc_data['sezione']=$v['tes']['seziva'];
 	$enc_data['anno']=substr($v['tes']['datfat'],0,4);
 	if ($v['tes']['ctrlreg']=='V'){
@@ -231,18 +233,25 @@ foreach ($invoices['data'] as $k => $v) {
 		$enc_data['protocollo']= intval($v['tes']['fattura_elettronica_reinvii']*10000+$v['tes']['protoc']);
 	}
 
-
 // INIZIO VIEW RIGHI
-    echo '<tr class="'.$nopackclass.'">
-           <td>' . $v['tes']['protoc'] .'</td>
-           <td>' . $script_transl['doc_type_value'][$v['tes']['tipdoc']] .' '.$v['tes']['flux_status']. '</td>
-           <td>' . $v['tes']['numfat'] .'/'. $v['tes']['seziva'] .'</td>
-           <td align="center">' . gaz_format_date($v['tes']['datfat']) . '</td>
-           <td><a href="'.(($v['tes']['ctrlreg']=='X')?'../acquis/report_fornit':'report_client').'.php?nome=' . $v['tes']['ragsoc'] . '" target="_blank">' . $v['tes']['ragsoc'] . '</a></td>
-           <td align="right">' . gaz_format_number($tot['taxable']) . '</td>
-           <td align="right">' . gaz_format_number($tot['vat']) . '</td>
-           <td align="right">' . gaz_format_number($tot['tot']) . "</td>
-           </tr>\n";
+  // distingo se sto impacchettando un file firmato destinato alla PA (flux_status=PI)
+  if ($v['tes']['flux_status']=='PI'){
+    $statusclass = 'bg-danger';
+    $descridoc = ' Fattura verso la PA: file firmato <b>'.$v['tes']['filename_ret'].'</b>';
+  } else {
+    $statusclass = '';
+    $descridoc = $script_transl['doc_type_value'][$v['tes']['tipdoc']] .' status:'.$v['tes']['flux_status'];
+  }
+  echo '<tr class="'.$nopackclass.'">
+    <td>' . $v['tes']['protoc'] .'</td>
+    <td class="'.$statusclass.'">' . $descridoc . '</td>
+    <td>' . $v['tes']['numfat'] .'/'. $v['tes']['seziva'] .'</td>
+    <td align="center">' . gaz_format_date($v['tes']['datfat']) . '</td>
+    <td><a href="'.(($v['tes']['ctrlreg']=='X')?'../acquis/report_fornit':'report_client').'.php?nome=' . $v['tes']['ragsoc'] . '" target="_blank">' . $v['tes']['ragsoc'] . '</a></td>
+    <td align="right">' . gaz_format_number($tot['taxable']) . '</td>
+    <td align="right">' . gaz_format_number($tot['vat']) . '</td>
+    <td align="right">' . gaz_format_number($tot['tot']) . "</td>
+  </tr>\n";
 	if ($v['tes']['country'] == 'IT') {
 		$check_failed_message = '';
 		if (strlen($v['tes']['citspe']) < 2) {

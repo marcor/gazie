@@ -32,8 +32,8 @@ if (!$isAjax) {
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 if (isset($_POST['term']) && isset($_POST['opt'])) {
-  $opt = substr($_POST['opt'],0,45);
-  $fn = substr($_POST['fn'],0,30);
+  $opt = substr($_POST['opt'],0,30);
+  $fn = substr($_POST['fn'],0,60);
   switch ($opt) {
     case 'upload_signed':
       if(move_uploaded_file($_FILES['file']['tmp_name'], DATA_DIR . 'files/' . $admin_aziend['codice'] . '/' . $_FILES['file']['name'])){
