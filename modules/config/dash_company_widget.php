@@ -63,11 +63,16 @@ function selectCompany($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg=
         </div>
     </div>
     <div>
-        <?php
-		if ($company_choice==1 || $admin_aziend['Abilit'] >= 8){
+    <?php
+		$student = false;
+		if (preg_match("/([a-z0-9]{1,9})[0-9]{4}$/", $table_prefix, $tp)) {
+			$rs_student = gaz_dbi_dyn_query("*", $tp[1] . '_students', "student_name = '" . trim($admin_aziend["user_name"]) . "'");
+			$student = gaz_dbi_fetch_array($rs_student);
+		}
+		if ($company_choice==1 || $admin_aziend['Abilit'] >= 8 || $student ){
 			echo $script_transl['mesg_co'][2] . '<input class="btn btn-xs" type="submit" value="&rArr;" />  ';
 			selectCompany('company_id', $form['company_id'], $form['search']['company_id'], $form['hidden_req'], $script_transl['mesg_co']);
-        }else{
+    }else{
 			echo '<input type="hidden" name="company_id" value="'.$form['company_id'].'" >	';
 		}
 		?>

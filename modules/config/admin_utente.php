@@ -184,7 +184,7 @@ if (isset($_POST['Submit'])) {
 		}
 		if (!$risultato && !$student) {
 			$msg['err'][] = 'Abilit';
-		} elseif ($form["Abilit"] < 7 && $student) {
+		} elseif ($form["Abilit"] < 8 && $student) {
 			$msg['err'][] = 'Abilit_stud';
 		}
 	}
@@ -630,7 +630,13 @@ echo "</td></tr>\n";
 <td class="FacetFieldCaptionTD"><?php echo $script_transl['mesg_co'][2]; ?></td>
 <td class="FacetDataTD" colspan="2">
 <?php
-if ($user_data['Abilit'] == 9) {
+$student = false;
+if (preg_match("/([a-z0-9]{1,9})[0-9]{4}$/", $table_prefix, $tp)) {
+	$rs_student = gaz_dbi_dyn_query("*", $tp[1] . '_students', "student_name = '" . $user_data['user_name'] . "'");
+	$student = gaz_dbi_fetch_array($rs_student);
+}
+
+if ($user_data['Abilit'] == 9 || $student) {
 	$gForm->selectCompany('company_id', $form['company_id'], $form['search']['company_id'], $form['hidden_req'], $script_transl['mesg_co']);
 } else {
 	$company = gaz_dbi_get_row($gTables['aziend'], 'codice', $form['company_id']);
