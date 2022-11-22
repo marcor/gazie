@@ -24,7 +24,7 @@
  */
 require("../../library/include/datlib.inc.php");
 require("../vendit/lib.function.php");
-$lm = new lotmag;
+$lm = new venditForm;
 $admin_aziend = checkAdmin();
 $gForm = new magazzForm;
 $msg = '';
@@ -533,12 +533,13 @@ echo '<td align="left"><span ' . $tooltip . '>' . $v['i_d'] . '</span></td>
       <td align="right">';
 		if ($v['i_l']>=1 && $v['g_r']>0){ // se articolo con lotti ...
 			echo '<div id="lotContent'.$k.'" class="col-xs-6">';
-        if (count($v['lotRestPost'])>=1){
-            $totReal=0.00;
-            $classTot='bg-danger';
+        if (isset($v['lotRestPost']) && count($v['lotRestPost'])>=1){
+          $totReal=0.00;
+          $classTot='bg-danger';
         } else {
-            $totReal=$v['g_r'] ;
-            $classTot='bg-default';
+          $v['lotRestPost']=[];
+          $totReal=$v['g_r'];
+          $classTot='bg-default';
         };
         foreach( $v['lotRestPost'] as $kl => $vl ) {
             $totReal += $vl['g_r'];
