@@ -24,17 +24,17 @@
  */
 // prevent direct access
 $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND
-        strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
 if (!$isAjax) {
-    $user_error = 'Access denied - not an AJAX request...';
-    trigger_error($user_error, E_USER_ERROR);
+  $user_error = 'Access denied - not an AJAX request...';
+  trigger_error($user_error, E_USER_ERROR);
 }
-if ( isset($_POST['codart']) && isset($_POST['datref']) ) { 
+if ( isset($_POST['codart']) && isset($_POST['datref']) ) {
 	require_once("../../library/include/datlib.inc.php");
 	$admin_aziend = checkAdmin();
-    require_once("../vendit/lib.function.php");
-    $lm = new lotmag;
-    $lotrests = $lm->getAllPrevLots(substr($_POST['codart'],0,15),substr($_POST['datref'],0,10)); 
-    echo json_encode($lotrests);
+  require_once("../vendit/lib.function.php");
+  $lm = new venditForm;
+  $lotrests = $lm->getAllPrevLots(substr($_POST['codart'],0,15),substr($_POST['datref'],0,10));
+  echo json_encode($lotrests);
 }
 ?>
