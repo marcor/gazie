@@ -128,7 +128,7 @@ $strScript = array("admin_client.php" =>
         'mail_alert2' => 'con allegato il seguente documento di vendita:',
         'dialog_fae_title' => 'File XML della fattura: ',
         'dialog_fae_filename' => 'Scarica il file: ',
-        'dialog_fae_content_PA' => '<b>Le fatture destinate alla PA devono essere firmate. Scaricala, firmala digitalmente <i class=\'glyphicon glyphicon-pencil\'></i> poi fai l\'upload del file firmato QUI <br/> *** SENZA CAMBIARE IL NOME ***</b>',
+        'dialog_fae_content_PA' => '<b>Le fatture destinate alla PA devono essere firmate. Scaricala, firmala digitalmente <i class=\'glyphicon glyphicon-pencil\'></i> poi fai l\'upload del file firmato QUI</b>',
         'dialog_fae_content_PI' => 'Fattura destinata alla PA firmata. Puoi scegliere di farlo singolarmente oppure impacchettandolo assieme ad eventuali altri precedenti non ancora inviati',
         'dialog_fae_content_DI' => 'Il file è da inviare. Puoi scegliere di farlo singolarmente oppure impacchettandolo assieme ad eventuali altri precedenti non ancora inviati ',
         'dialog_fae_content_ZI' => 'Il file è da inviare ma fa parte di un pacchetto ZIP, invialo assieme agli altri',
