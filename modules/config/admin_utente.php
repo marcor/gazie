@@ -60,6 +60,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
 	$form["user_lastname"] = substr($_POST['user_lastname'], 0, 30);
 	$form["user_firstname"] = substr($_POST['user_firstname'], 0, 30);
 	$form['user_email'] = trim($_POST['user_email']);
+  $form['az_email'] = trim($_POST['az_email']);
 	$form["lang"] = substr($_POST['lang'], 0, 15);
 	$form["id_warehouse"] = intval($_POST['id_warehouse']);
 	$form["theme"] = filter_input(INPUT_POST,'theme');
@@ -83,7 +84,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
 			$msg['err'][] = 'exlogin';
 		}
 	}
-} elseif ((!isset($_POST['Update'])) && (isset($_GET['Update']))) {
+} elseif ((!isset($_POST['Update'])) && (isset($_GET['Update']))) { // primo accesso
 	$form = gaz_dbi_get_row($gTables['admin'], "user_name", preg_replace("/[^A-Za-z0-9]/", '',substr($_GET["user_name"], 0, 15)));
 	if (!$form){
 		header("Location: " . $_POST['ritorno']);
@@ -102,6 +103,9 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
 	$form['user_password_new'] = '';
 	$form['user_password_ver'] = '';
 	$form['theme'] = $admin_config['var_value'];
+  // attingo il testo delle email dalla tabella configurazione utente
+	$az_mail = gaz_dbi_get_row($gTables['admin_config'], 'var_name', 'az_email', "AND adminid = '{$form['user_name']}' AND company_id = '".$admin_aziend['company_id']."'");
+	$form['az_email'] = ($az_mail)?$az_mail['var_value']:'';
 	// attingo il testo delle email dalla tabella configurazione utente
 	$bodytext = gaz_dbi_get_row($gTables['admin_config'], 'var_name', 'body_send_doc_email', "AND adminid = '{$form['user_name']}'");
 	$form['body_text'] = ($bodytext)?$bodytext['var_value']:'';
@@ -111,6 +115,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
 	$form["user_lastname"] = "";
 	$form["user_firstname"] = "";
 	$form['user_email'] = '';
+  $form['az_email'] = '';
 	$form["image"] = "";
 	$form["theme"] = "/library/theme/g7";
 	$form["style"] = $admin_aziend['style'];
@@ -145,6 +150,9 @@ if (isset($_POST['Submit'])) {
 	$msg['err'][] = "user_name";
 	if (!filter_var($form['user_email'], FILTER_VALIDATE_EMAIL) && !empty($form['user_email'])) {
 		$msg['err'][] = 'email'; // non coincide, segnalo l'errore
+	}
+  if (!filter_var($form['az_email'], FILTER_VALIDATE_EMAIL) && !empty($form['az_email'])) {
+		$msg['err'][] = 'email'; // errore email
 	}
 	if ($toDo == 'update' && $form["user_password_old"] != 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855') {
 		if (password_verify( $form["user_password_old"]  , $old_data["user_password_hash"] )) {
@@ -348,6 +356,18 @@ if (isset($_POST['Submit'])) {
 				$form['var_value'] = $form['theme'];
 				gaz_dbi_table_insert('admin_config', $form);
 			}
+      // aggiorno o inserisco la email aziendale riferita all'utente
+			$az_email = gaz_dbi_get_row($gTables['admin_config'], 'var_name', 'az_email', "AND adminid = '{$form['user_name']}' AND company_id = '".$admin_aziend['company_id']."'");
+			if ($az_email) {
+				gaz_dbi_put_query($gTables['admin_config'], "adminid = '" . $form["user_name"] . "' AND var_name ='az_email' AND company_id = '".$admin_aziend['company_id']."'", 'var_value', $form['az_email']);
+			} else {  // non c'era lo inserisco
+				$form['adminid'] = $form["user_name"];
+				$form['var_descri'] = 'Mail aziendale dell\'utente';
+				$form['var_name'] = 'az_email';
+				$form['var_value'] = $form['az_email'];
+        $form['company_id'] = $admin_aziend['company_id'];
+				gaz_dbi_table_insert('admin_config', $form);
+			}
 			// aggiorno o inserisco il testo da inserire nelle email trasmesse dall'utente
 			$bodytext = gaz_dbi_get_row($gTables['admin_config'], 'var_name', 'body_send_doc_email', "AND adminid = '{$form['user_name']}'");
 			if ($bodytext) {
@@ -540,6 +560,10 @@ echo '<input type="hidden" name="' . ucfirst($toDo) . '" value="">';
 <tr>
 <td class="FacetFieldCaptionTD"><?php echo $script_transl['user_email']; ?></td>
 <td colspan="2" class="FacetDataTD"><input title="Mail" type="email" name="user_email" value="<?php print $form["user_email"] ?>" class="FacetInput" maxlength="50">&nbsp;</td>
+</tr>
+<tr>
+<td class="FacetFieldCaptionTD"><?php echo $script_transl['az_email']; ?></td>
+<td colspan="2" class="FacetDataTD"><input title="Mail" type="email" name="az_email" value="<?php print $form["az_email"] ?>" class="FacetInput" maxlength="50">&nbsp;</td>
 </tr>
 <tr>
 <?php
