@@ -1410,13 +1410,14 @@ class GAzieMail {
 			$config_host = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_server');
 			$mailto = $receiver['e_mail']; //recipient-DESTINATARIO
 		}
-
         // definisco il server SMTP e il mittente
         $config_mailer = gaz_dbi_get_row($gTables['company_config'], 'var', 'mailer');
         $config_notif = gaz_dbi_get_row($gTables['company_config'], 'var', 'return_notification');
         $config_replyTo = gaz_dbi_get_row($gTables['company_config'], 'var', 'reply_to');
         // attingo il contenuto del corpo della email dall'apposito campo della tabella configurazione utente
         $user_text = gaz_dbi_get_row($gTables['admin_config'], 'var_name', 'body_send_doc_email', "AND adminid = '{$user['user_name']}'");
+        // attingo indirizzo email specifico dalla tabella configurazione utente
+        $az_email = gaz_dbi_get_row($gTables['admin_config'], 'var_name', 'az_email', "AND adminid = '". $user['user_name'] ."' AND company_id = ".$admin_data['codice']);
         $company_text = gaz_dbi_get_row($gTables['company_config'], 'var', 'company_email_text');
         $admin_data['web_url'] = trim($admin_data['web_url']);
         if (!empty($admin_data['other_email']) && strlen($admin_data['other_email'])>=10){
@@ -1492,11 +1493,12 @@ class GAzieMail {
         // Imposto email del destinatario
         $mail->Hostname = $config_host;
         $mail->AddAddress($mailto);//Destinatario
-        if (strlen($user['user_email'])>=10) { // quando l'utente che ha inviato la mail ha un suo indirizzo il reply avviene su di lui
+        if (isset($az_email) && strlen($az_email['var_value'])>6){ // Antonio Germani: se c'è un indirizzo specifico utente/azienda, invio per cc a questo $az_email['var_value']
+          $mail->AddCC($az_email['var_value'], $admin_data['ragso1'] . " " . $admin_data['ragso2']); // Aggiungo mittente come destinatario per conoscenza, per avere una copia
+        }elseif (strlen($user['user_email'])>=10) { // altrimenti, quando l'utente che ha inviato la mail ha un suo indirizzo il cc avviene su di lui
           $usermail = $user['user_email'];
           $mail->AddCC($usermail, $admin_data['ragso1'] . " " . $admin_data['ragso2']); // Aggiungo mittente come destinatario per conoscenza, per avere una copia
         }
-
 
         // Imposto l'oggetto dell'email
         $mail->Subject = $subject;
