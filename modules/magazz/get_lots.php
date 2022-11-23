@@ -33,8 +33,9 @@ if ( isset($_POST['codart']) && isset($_POST['datref']) ) {
 	require_once("../../library/include/datlib.inc.php");
 	$admin_aziend = checkAdmin();
   require_once("../vendit/lib.function.php");
-  $lm = new venditForm;
-  $lotrests = $lm->getAllPrevLots(substr($_POST['codart'],0,15),substr($_POST['datref'],0,10));
+  $lm = new lotmag;
+  $lm->getAvailableLots(substr($_POST['codart'],0,15),0,substr($_POST['datref'],0,10),0);
+  $lotrests = $lm->available;
   echo json_encode($lotrests);
 }
 ?>

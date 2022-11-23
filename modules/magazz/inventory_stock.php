@@ -24,7 +24,7 @@
  */
 require("../../library/include/datlib.inc.php");
 require("../vendit/lib.function.php");
-$lm = new venditForm;
+$lm = new lotmag;
 $admin_aziend = checkAdmin();
 $gForm = new magazzForm;
 $msg = '';
@@ -198,7 +198,8 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
             $form['a'][$ka]['v_g'] = gaz_format_quantity($va['v_g'], 0, $admin_aziend['decimal_price']);
             $form['a'][$ka]['class'] = $va['class'];
             if ($va['i_l']>=1){  // se è un articolo con lotti o numero seriale riprendo gli eventuali post delle rimanenze dei singoli lotti
-                $lotrests = $lm->getAllPrevLots($ka,$form['date_Y'] . '-' . $form['date_M'] . '-' . $form['date_D']);
+                $lm->getAvailableLots($ka,0,$form['date_Y'] . '-' . $form['date_M'] . '-' . $form['date_D']);
+                $lotrests = $lm->available;
                 foreach($lotrests as $k=>$v){
                     if (isset($_POST['lotRestPost' .$v['id_lotmag']])){
                       $lotquanti=floatval($_POST['lotRestPost' .$v['id_lotmag']]);
@@ -219,10 +220,10 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
           if ($form['chk_on' . $k] == ' checked ') {   // e' un rigo da movimentare
             if (isset($v['lotRestPost'])&&count($v['lotRestPost'])>=1) { // ci sono lotti stornati
               foreach( $v['lotRestPost'] as $kl => $vl ) {
-                if ($vl['g_a'] > $vl['g_r']) { // senza lotti giacenza reale minore -scarico
+                if ($vl['g_a'] > $vl['g_r']) { // giacenza reale minore -scarico
                   // devo fare prima uno storno per scaricare
                   $mq = $vl['g_a'] - $vl['g_r'];
-                  movmagInsert(array('caumag' => 98,
+                  movmagInsert(array('caumag' => 97,
                     'operat' => -1,
                     'datreg' => $form['date_Y'] . '-' . $form['date_M'] . '-' . $form['date_D'],
                     'tipdoc' => 'INV',
@@ -232,10 +233,10 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
                     'quanti' => $mq,
                     'prezzo' => $v['v_r'],
                     'id_lotmag'=>$kl));
-                } elseif ($vl['g_a'] < $vl['g_r']) { // senza lotti giacenza reale maggiore carico
+                } elseif ($vl['g_a'] < $vl['g_r']) { // giacenza reale maggiore carico
                   // devo fare prima uno storno per caricare
                   $mq = $vl['g_r'] - $vl['g_a'];
-                  movmagInsert(array('caumag' => 98,
+                  movmagInsert(array('caumag' => 97,
                     'operat' => 1,
                     'datreg' => $form['date_Y'] . '-' . $form['date_M'] . '-' . $form['date_D'],
                     'tipdoc' => 'INV',
