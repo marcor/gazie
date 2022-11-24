@@ -1329,8 +1329,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
                 if ($movmag_row['artico'] == $form['rows'][$i]['codart'] && floatval($movmag_row['quanti']) == floatval($form['rows'][$i]['quanti'])){
                   $idlotmag=intval($movmag_row['id_lotmag']);//se era presente ne prendo l' id_lot
                   unset ($movmag_row[$n]);// tolgo questo rigo per evitare di riaverlo qualora ce ne fosse più di uno con stesso codart e quanti
-                  $n++;
                 }
+                $n++;
               }
 							$rowmag=array("caumag"=>$form['caumag'],"type_mov"=>"0","operat"=>"1","datreg"=>$movmag_datreg,"tipdoc"=>"ADT",
 							"desdoc"=>"D.d.t. di acquisto n.".$v['NumeroDDT']."/".$form['seziva']." prot. ".$form['protoc']."/".$form['seziva'],
