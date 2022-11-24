@@ -288,7 +288,7 @@ class DDT extends Template_con_scheda
             $this->Cell(187,5,$this->pagame['descri'].' '.$this->banapp['descri'],'LBR',1,'C',0,'',1);
         }
         $this->Cell(51,5,'Spedizione','LTR',0,'C',1);
-		if (empty($this->docVars->vettor['ragione_sociale'])) {
+		if (!empty($this->docVars->vettor['ragione_sociale'])) {
 			$this->Cell(114,5,'Vettore','LTR',0,'C',1);
 		} else {
 			$this->Cell(57,5,'Imballo','LTR',0,'C',1);
@@ -296,7 +296,7 @@ class DDT extends Template_con_scheda
 		}
         $this->Cell(22,5,'Trasporto','LTR',1,'C',1);
         $this->Cell(51,5,$this->tesdoc['spediz'],'LBR',0,'C');
-		if (empty($this->docVars->vettor['ragione_sociale'])) {
+		if (!empty($this->docVars->vettor['ragione_sociale'])) {
 			$this->Cell(114,5,$this->docVars->vettor['ragione_sociale'].' '.
 							  $this->docVars->vettor['indirizzo'].' '.
 							  $this->docVars->vettor['citta'].' '.
