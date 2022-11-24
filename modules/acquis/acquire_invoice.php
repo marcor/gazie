@@ -1200,7 +1200,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					}
 				}
 				// Inizio scrittura DB
-				if ($doc->getElementsByTagName('DatiDDT')->length<1 || $form['tipdoc']=="AFC"){ // se non ci sono ddt vuol dire che è una fattura immediata AFA
+				if ($doc->getElementsByTagName('DatiDDT')->length<1 || $form['tipdoc']=="AFC"){
+					// se non ci sono ddt vuol dire che è una fattura immediata AFA
 					//oppure se è una nota credito AFC non devo considerare eventuali DDT a riferimento
 					$ultimo_id=tesdocInsert($form); // Antonio Germani - creo fattura immediata senza ddt
                     $fn = DATA_DIR . 'files/' . $admin_aziend["codice"] . '/'.$ultimo_id.'.inv';
@@ -1222,9 +1223,9 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
             return $a['NumeroDDT'] <=> $b['NumeroDDT'];
           });
         }
-
+				$movmag_prev=array();
 				foreach ($form['rows'] as $i => $v) { // inserisco i righi
-          $form['rows'][$i]['status']="INSERT";
+					$form['rows'][$i]['status']="INSERT";
 					if (abs($v['prelis'])<0.00000001) { // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo
 						$form['rows'][$i]['tiprig']=2;
 					}
@@ -1237,22 +1238,24 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					} else { // ho il codice articolo del fornitore sul tracciato ma potrei averlo cambiato
 						$new_codart=$prefisso_codici_articoli_fornitore.'_'.substr($v['codice_fornitore'],-11);
 					}
-          $movmag_datreg=$form['datreg'];
+					$movmag_datreg=$form['datreg'];
 					if (isset($v['exist_ddt']) && $form['tipdoc']!=="AFC") { // se ci sono DDT collegabili alla FAE e non è una nota credito AFC
 						if ($ctrl_ddt!=$v['NumeroDDT']) {
 							// Antonio Germani - controllo se esiste tesdoc di questo ddt usando la funzione existDdT
 							$exist_tesdoc=existDdT($v['NumeroDDT'],$v['DataDDT'],$form['clfoco']);
-              // registro il DdT in data di emissione, se già presente conservo quella dei movimenti di magazzino che andrò ad eliminare (vedi sotto)
-              $movmag_datreg=$v['DataDDT'];
+							// registro il DdT in data di emissione, se già presente conservo quella dei movimenti di magazzino che andrò ad eliminare (vedi sotto)
+							$movmag_datreg=$v['DataDDT'];
 							if ($exist_tesdoc){// se esiste cancello tesdoc e ne cancello tutti i rigdoc e i relativi movmag, ma mi mantengo le date di registrazione
 								$rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = '{$exist_tesdoc['id_tes']}'","id_tes desc");
 								gaz_dbi_del_row($gTables['tesdoc'], "id_tes", $exist_tesdoc['id_tes']);
 								while ($a_row = gaz_dbi_fetch_array($rs_righidel)) {
-                  if ($a_row['id_mag']!=null && $a_row['id_mag']>=1) {
-                    $movmag_datreg = gaz_dbi_get_row($gTables['movmag'], "id_mov", $a_row['id_mag'])['datreg'];
-                    gaz_dbi_del_row($gTables['rigdoc'], "id_rig", $a_row['id_rig']);
-                    gaz_dbi_del_row($gTables['movmag'], "id_mov", $a_row['id_mag']);
-                  }
+								  if ($a_row['id_mag']!=null && $a_row['id_mag']>=1) {
+									$movmag_rowprev = gaz_dbi_get_row($gTables['movmag'], "id_mov", $a_row['id_mag']);
+									$movmag_prev[] = $movmag_rowprev;// creo un array con tutti i vecchi righi di movmag servirà poi per riconnettere l' id del lotto qualora fosse già stato inserito nel precedente ddt
+									$movmag_datreg = $movmag_rowprev['datreg'];
+									gaz_dbi_del_row($gTables['rigdoc'], "id_rig", $a_row['id_rig']);
+									gaz_dbi_del_row($gTables['movmag'], "id_mov", $a_row['id_mag']);
+								  }
 								}
 							}
 							// creo un nuovo tesdoc AFT
@@ -1268,6 +1271,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 						}
 						$ctrl_ddt=$v['NumeroDDT'];
 					}
+         // echo"<pre>",print_r($movmag_prev);die;
 					$form['rows'][$i]['id_tes'] = $ultimo_id;
 					$aliiva=$form['rows'][$i]['codvat'];
 					$exist_new_codart=gaz_dbi_get_row($gTables['artico'], "codice", $new_codart);
@@ -1320,10 +1324,18 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					if ($form['rows'][$i]['good_or_service']==0 && strlen($form['rows'][$i]['codart'])>0 && $form['tipdoc']!=="AFC"){ // se l'articolo prevede di movimentare il magazzino e non è una nota credito
 						// Antonio Germani - creo movimento di magazzino sempre perché, se c'erano, sono stati cancellati
 						if (isset($v['NumeroDDT']) && $v['NumeroDDT']>0){ // se c'è un ddt
+              $idlotmag='';$n=0;
+              foreach($movmag_prev as $movmag_row){// controllo se un rigo con stesso codice articolo e la stessa relativa quantità erano nei movmag cancellati
+                if ($movmag_row['artico'] == $form['rows'][$i]['codart'] && floatval($movmag_row['quanti']) == floatval($form['rows'][$i]['quanti'])){
+                  $idlotmag=intval($movmag_row['id_lotmag']);//se era presente ne prendo l' id_lot
+                  unset ($movmag_row[$n]);// tolgo questo rigo per evitare di riaverlo qualora ce ne fosse più di uno con stesso codart e quanti
+                  $n++;
+                }
+              }
 							$rowmag=array("caumag"=>$form['caumag'],"type_mov"=>"0","operat"=>"1","datreg"=>$movmag_datreg,"tipdoc"=>"ADT",
 							"desdoc"=>"D.d.t. di acquisto n.".$v['NumeroDDT']."/".$form['seziva']." prot. ".$form['protoc']."/".$form['seziva'],
 							"datdoc"=>$form['datemi'],"clfoco"=>$form['clfoco'],"id_rif"=>$id_rif,"artico"=>$form['rows'][$i]['codart'],"id_warehouse"=>$form['rows'][$i]['warehouse'],"quanti"=>$form['rows'][$i]['quanti'],
-							"prezzo"=>$form['rows'][$i]['prelis'],"scorig"=>$form['rows'][$i]['sconto'],'synccommerce_classname'=>$admin_aziend['synccommerce_classname']);
+							"prezzo"=>$form['rows'][$i]['prelis'],"scorig"=>$form['rows'][$i]['sconto'],'synccommerce_classname'=>$admin_aziend['synccommerce_classname'],'id_lotmag'=>$idlotmag);
 						} else { // se non c'è DDT
 							$rowmag=array("caumag"=>$form['caumag'],"type_mov"=>"0","operat"=>"1","datreg"=>$movmag_datreg,"tipdoc"=>"ADT",
 							"desdoc"=>"Fattura di acquisto n.".$form['numfat']."/".$form['seziva']." prot. ".$form['protoc']."/".$form['seziva'],
