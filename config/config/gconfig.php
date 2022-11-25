@@ -168,8 +168,8 @@ define('K_PATH_CACHE', (defined('MY_K_PATH_CACHE')) ? MY_K_PATH_CACHE : '../../l
 ////////////////////////////////////////////////////////////////////////
 // definisce il nome della sessione ma solo in caso di uso dei domini di livello superiore al secondo, in
 // caso di installazione su domini di secondo livello viene attribuito automaticamente
-// il nome del direttorio di installazione che normalmente e', appunto:  gazie
-define('_SESSION_NAME', (defined('MY_SESSION_NAME')) ? MY_SESSION_NAME : 'gazie');
+// il nome del direttorio di installazione
+define('_SESSION_NAME', (defined('MY_SESSION_NAME')) ? MY_SESSION_NAME : 'technical');
 
 //url di default per l'aggiornamento di GAzie
 $update_URI_files = (defined('update_URI_files')) ? update_URI_files : 'https://sourceforge.net/projects/gazie';

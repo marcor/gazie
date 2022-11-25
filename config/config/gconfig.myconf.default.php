@@ -36,16 +36,16 @@ define('maintenance', FALSE);
 
 /*
 --------=======oooooooooooo!!!!!  ATTENZIONE !!!!!ooooooooooo========-------------
-QUESTO FILE DI CONFIGURAZIONE IN ORIGINE DI NOME "gconfig.myconf.default.php" 
-LO SI DEVE RINOMINARE in "gconfig.myconf.php" SULLE INSTALLAZIONI PRODUTTIVE E 
-SUCCESSIVAMENTE MODIFICARE IN ACCORDO CON LE IMPOSTAZIONI DEL VOSTRO SERVER MARIADB , 
+QUESTO FILE DI CONFIGURAZIONE IN ORIGINE DI NOME "gconfig.myconf.default.php"
+LO SI DEVE RINOMINARE in "gconfig.myconf.php" SULLE INSTALLAZIONI PRODUTTIVE E
+SUCCESSIVAMENTE MODIFICARE IN ACCORDO CON LE IMPOSTAZIONI DEL VOSTRO SERVER MARIADB ,
 DEL SERVER WEB APACHE, E COMUNQUE IN BASE ALLE SCELTE CHE VEDETE SOTTO.
 COSI' EVITERETE DI USARE I SETTAGGI CONTENUTI IN "gconfig.php" ADATTI AD UN AMBIENTE
-DI SVILUPPO (root senza password) E CONTEMPORANEAMENTE NON VERRA' SOVRASCRITTO 
+DI SVILUPPO (root senza password) E CONTEMPORANEAMENTE NON VERRA' SOVRASCRITTO
 AD OGNI AGGIORNAMENTO DI GAZIE CHE CONSISTE, APPUNTO, NELLA SOVRASCRITTURA DI TUTTI I
 FILES, COMPRESO IL CITATO "gconfig.php"
 */
- 
+
 if (isset($_SERVER['SCRIPT_FILENAME']) && (str_replace('\\', '/', __FILE__) == $_SERVER['SCRIPT_FILENAME'])) {
     exit('Accesso diretto non consentito');
 }
@@ -155,14 +155,14 @@ define('MY_K_PATH_CACHE', '../../library/tcpdf/cache/');
 ////////////////////////////////////////////////////////////////////////
 // definisce il nome della sessione ma solo in caso di uso dei domini di livello superiore al secondo, in
 // caso di installazione su domini di secondo livello viene attribuito automaticamente
-// il nome del direttorio di installazione che normalmente e', appunto:  gazie
-define('MY_SESSION_NAME', 'gazie');
+// il nome del direttorio di installazione
+define('MY_SESSION_NAME', 'technical');
 
 //url di default per l'aggiornamento di GAzie
 define('update_URI_files', 'https://sourceforge.net/projects/gazie');
 
 // url per comunicare (ping) il mio nuovo IP DINAMICO  all'hosting di appoggio
-define('MY_SET_DYNAMIC_IP',''); 
+define('MY_SET_DYNAMIC_IP','');
 
 // permetti la modifica dei ddt fatturati, utile se bisogna modificare i prezzi degli articoli
 define('modifica_fatture_ddt', FALSE);
