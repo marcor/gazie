@@ -64,7 +64,6 @@ $id=substr($_GET['house_code'],0,32);
 <script>
 
   document.addEventListener('DOMContentLoaded', function() {
-
     var calendarEl = document.getElementById('calendar');
     var calendar = new FullCalendar.Calendar(calendarEl, {
 		height: 600,
@@ -122,15 +121,17 @@ $id=substr($_GET['house_code'],0,32);
 			var start = info.startStr;
 			var end = info.endStr;
 			var xhttp = new XMLHttpRequest();
-
-			xhttp.open("GET", "save_to_db_events.php?title="+ title +"&start="+ start +"&end="+ end +"&house_code=<?php echo $id; ?>& token=<?php echo md5($token.date('Y-m-d')); ?>", false);
-
+			xhttp.open("GET", "save_to_db_events.php?title="+ title +"&start="+ start +"&end="+ end +"&house_code=<?php echo $id; ?>&token=<?php echo md5($token.date('Y-m-d')); ?>", false);
+			/*
 			xhttp.onreadystatechange = function() {
 				console.log(this);
 			};
+			*/
 			xhttp.send();
-			calendar.refetchEvents();
-			window.location.reload(true);
+			xhttp.onload = function(){ 
+				calendar.refetchEvents();
+				//window.location.reload(true);
+			};
 		},
 
 		eventDrop:function(info){
@@ -144,10 +145,17 @@ $id=substr($_GET['house_code'],0,32);
 				 var end = start;
 			 }
 			 var xhttp = new XMLHttpRequest();
-			 xhttp.open("GET", "update_db_events.php?title="+ title +"&start="+ start.toISOString() +"&end="+ end.toISOString() +"&id="+ id +"&house_code=<?php echo $id; ?>& token=<?php echo md5($token.date('Y-m-d')); ?>", true);
+			 xhttp.open("GET", "update_db_events.php?title="+title+"&start="+ start.toISOString()+"&end="+end.toISOString() +"&id="+id+"&house_code=<?php echo $id; ?>&token=<?php echo md5($token.date('Y-m-d')); ?>", true);
 			xhttp.send();
-			calendar.refetchEvents();
-			window.location.reload(true);
+			/*
+			xhttp.onreadystatechange = function() {
+				console.log(this);
+			};
+			*/
+			xhttp.onload = function(){ 
+				calendar.refetchEvents();
+				window.location.reload(true);
+			};
 		},
 
 		eventResize:function(info){
@@ -158,10 +166,17 @@ $id=substr($_GET['house_code'],0,32);
 			//alert ("update_isostring=start="+ start.toISOString() +"&end="+ end.toISOString() +"&id="+ id);
 			//alert ("update_normal=start="+ start +"&end="+ end +"&id="+ id);
 			 var xhttp = new XMLHttpRequest();
-			 xhttp.open("GET", "update_db_events.php?title="+ title +"&start="+ start.toISOString() +"&end="+ end.toISOString() +"&id="+ id +"&house_code=<?php echo $id; ?>& token=<?php echo md5($token.date('Y-m-d')); ?>", true);
+			 xhttp.open("GET", "update_db_events.php?title="+title+"&start="+start.toISOString()+"&end="+end.toISOString()+"&id="+id+"&house_code=<?php echo $id; ?>&token=<?php echo md5($token.date('Y-m-d')); ?>", true);
 			xhttp.send();
-			calendar.refetchEvents();
-			window.location.reload(true);
+			/*
+			xhttp.onreadystatechange = function() {
+				console.log(this);
+			};
+			*/
+			xhttp.onload = function(){ 
+				calendar.refetchEvents();
+				window.location.reload(true);
+			};
 		},
 
 		eventMouseEnter: function (info) {
@@ -175,12 +190,19 @@ $id=substr($_GET['house_code'],0,32);
 			//alert('View: ' + info.view.type);
 			if(confirm("Se sicuro di voler cancellare? Le prenotazioni dirette non verranno comunque cancellate.")){
 				var id = info.event.id;
-				//alert('Test get id: ' + id);
-				var xhttp = new XMLHttpRequest();
-				xhttp.open("GET", "delete_db_events.php?id="+ id +" & token=<?php echo md5($token.date('Y-m-d')); ?>", true);
-				xhttp.send();
-				calendar.refetchEvents();
-				window.location.reload(true);
+				//alert('Test get id: ' + id);				
+				var xhttp = new XMLHttpRequest();				 				
+				xhttp.open("GET", "delete_db_events.php?id="+id+"&token=<?php echo md5($token.date('Y-m-d')); ?>", true);				
+				xhttp.send();				
+				/*
+				xhttp.onreadystatechange = function() {
+					console.log(this);
+				};
+				*/
+				xhttp.onload = function(){ 
+					calendar.refetchEvents();
+					window.location.reload(true);
+				};
 			}
 			/* per fare una modifica bisogna usare un pop up ma c'è il problema che bisogna aggiornare il calendario dopo aver chiuso il popup
 			let newWindow = open('/', 'example', 'width=300,height=300');

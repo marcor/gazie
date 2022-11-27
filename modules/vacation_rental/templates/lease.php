@@ -110,7 +110,7 @@ class Lease extends Template
                 $checkout='8 - 10';
               }
 
-              $html .= "<li>".$accomodation_type." denominato ".get_string_lang($rigo['desart'], $lang).", ".$rigo['annota'];
+              $html .= "<li>".$accomodation_type." ".$rigo['codart'].', '.get_string_lang($rigo['desart'], $lang).", ".$rigo['annota'];
               if (strlen($rigo['web_url'])>5){
                 $html .= "<br>".$script_transl['body3'].": ".$rigo['web_url'].". ".$script_transl['body4'];
               }
