@@ -999,9 +999,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['in_facility_id'] = $artico['id_artico_group'];
         } elseif (isset($data['vacation_rental']['extra'])){// se è un extra
           $extra = gaz_dbi_get_row($gTables['rental_extra'], "id", $data['vacation_rental']['extra']);
-
           if ($extra['max_quantity']>0){ //e controllo se si supera il quantitativo massimo disponibile ammesso che ci sia
-            $result=gaz_dbi_query("SELECT SUM(quanti) AS booked FROM ". $gTables['rental_events'] ." LEFT JOIN " . $gTables['rigbro'] . " ON " . $gTables['rental_events'] . ".id_rigbro = " . $gTables['rigbro'] . ".id_rig WHERE (start >= '". $form['start'] ."' AND end <= '". $form['end']."') AND house_code = '".$form['extra'][$_POST['extra_submit']]."' ORDER BY id ASC LIMIT 0, 2000000");
+            $result=gaz_dbi_query("SELECT SUM(quanti) AS booked FROM ". $gTables['rental_events'] ." LEFT JOIN " . $gTables['rigbro'] . " ON " . $gTables['rental_events'] . ".id_rigbro = " . $gTables['rigbro'] . ".id_rig WHERE ((start >= '". $form['start'] ."' AND start <= '". $form['end']."') OR (start  <'". $form['start'] ."' AND (end <= '". $form['end']."' AND end > '". $form['start'] ."')) ) AND house_code = '".$form['extra'][$_POST['extra_submit']]."' ORDER BY id ASC LIMIT 0, 2000000");
             $res = $result->fetch_assoc();
             if (floatval($extra['max_quantity'])-floatval($res['booked'])-floatval($form['qtaextra'])<0){
                $msg .= "64+";// Overbooking
