@@ -1252,7 +1252,8 @@ $strScript = array("admin_client.php" =>
             "Y" => "triangolazione", //triangolazione"
             "S" => "notula di servizio", //Notula
             "DDR" => "reso a fornitore",
-            "DDL" => "c/lavorazione"
+            "DDL" => "c/lavorazione",
+            'R'=> "CMR"
         ),
         'header' => array(
             "ID" => 'id_tes',
@@ -1328,6 +1329,7 @@ $strScript = array("admin_client.php" =>
             "V" => "c/visione",
             "Y" => "triangolazione", //triangolazione"
             "S" => "notula di servizio", //Notula
+            'R' => 'Convenzione CMR'
         ),
         'mesg' => array('La ricerca non ha dato risultati!',
             'Inserire almeno 2 caratteri!',

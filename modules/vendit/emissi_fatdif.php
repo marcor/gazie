@@ -34,7 +34,7 @@ if ( isset($_GET['tipodocumento'])) {
     $tipodocumento = "DDT";
 }
 
-function getDateLimits($sez = 1) {
+function getDateLimits($sez=1, $tipodocumento) {
     $acc = [];
     $now = new DateTime;
     $acc['date_exe'] = $now->format("Y-m-d");
@@ -42,7 +42,7 @@ function getDateLimits($sez = 1) {
     $acc['date_ini'] = $acc['date_exe'];
     global $gTables;
     // ricavo i limiti di fatturabilitÃ  e le date dei vari tipi di DdT
-    $doctype = array('DDT', 'DDV', 'DDY', 'DDS', 'CMR');
+    $doctype = $tipodocumento=='CMR'?['CMR']:['DDT','DDV','DDY','DDS'];
     foreach ($doctype as $k => $v) {
         switch ($v) {
             default :
@@ -200,7 +200,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['clfoco'] = 0;
     $form['search']['clfoco'] = '';
     $form['changeStatus'] = array();
-    $ini_data = getDateLimits($form['seziva']);
+    $ini_data = getDateLimits($form['seziva'],$tipodocumento);
     $form += $ini_data;
 } else { // accessi successivi
     $form['hidden_req'] = filter_input(INPUT_POST, 'hidden_req');
