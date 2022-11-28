@@ -35,7 +35,7 @@ class OrdineCliente extends Template
         $this->nomemese = ucwords(strftime("%B", mktime (0,0,0,substr($this->tesdoc['datemi'],5,2),1,0)));
         $this->sconto = $this->tesdoc['sconto'];
         $this->trasporto = $this->tesdoc['traspo'];
-        $this->tipdoc = 'Order confirmation from customer n.'.$this->tesdoc['numdoc'].'/'.$this->tesdoc['seziva'].' del '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
+        $this->tipdoc = 'Order confirmation from customer n.'.$this->tesdoc['numdoc'].'/'.$this->tesdoc['seziva'].' of '.$this->giorno.'/'.$this->mese.'/'.$this->anno;
     }
     function newPage() {
         $this->AddPage();
