@@ -304,15 +304,24 @@ $('#closePdf').on( "click", function() {
 		$('.framePdf').css({'display': 'none'});
 	});
 function openframe(url,codice){
-	$(function(){
-		$("#titolo").append(codice);
-		$('#framePdf').attr('src',url);
-		$('#framePdf').css({'height': '100%'});
-		$('.framePdf').css({'display': 'block','width': '90%', 'height': '100%', 'z-index':'2000'});
-    $("html, body").delay(100).animate({scrollTop: $('#framePdf').offset().top},'slow', function() {
-        $("#framePdf").focus();
+  var response = jQuery.ajax({
+		url: url,
+		type: 'HEAD',
+		async: false
+	}).status;
+	if(response == "200") {
+    $(function(){
+      $("#titolo").append(codice);
+      $('#framePdf').attr('src',url);
+      $('#framePdf').css({'height': '100%'});
+      $('.framePdf').css({'display': 'block','width': '90%', 'height': '100%', 'z-index':'2000'});
+      $("html, body").delay(100).animate({scrollTop: $('#framePdf').offset().top},'slow', function() {
+          $("#framePdf").focus();
+      });
     });
-	});
+  }else{
+    alert('Il file richiesto fa parte della versione PRO di questo modulo: contattare lo sviluppatore');
+  };
 	$('#closePdf').on( "click", function() {
 		$("#titolo").empty();
 		$('.framePdf').css({'display': 'none'});
