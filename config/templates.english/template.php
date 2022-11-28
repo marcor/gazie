@@ -149,7 +149,7 @@ class Template extends TCPDI {
                     $this->Cell(80, 5, $this->destinazione[0], 'LTR', 2, 'L', 1);
                     $this->MultiCell(80, 4, $this->destinazione[1], 'LBR', 'L');
                 } else {
-                    $this->Cell(80, 5, "Destinazione :", 'LTR', 2, 'L', 1);
+                    $this->Cell(80, 5, "Destination :", 'LTR', 2, 'L', 1);
                     $this->MultiCell(80, 4, $this->destinazione, 'LBR', 'L');
                 }
             }
@@ -193,7 +193,7 @@ class Template extends TCPDI {
             }
             $this->SetFont('helvetica', '', 7);
             if (!empty($this->clientSedeLegale)) {
-                $this->Cell(115, 8, 'Sede legale: ', 0, 0, 'R');
+                $this->Cell(115, 8, 'Registered office: ', 0, 0, 'R');
                 $this->Cell(75, 8, $this->clientSedeLegale, 0, 1, 'L', 0, '', 1);
             } else {
                 $this->Ln(4);
