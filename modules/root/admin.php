@@ -186,8 +186,12 @@ $(function(){
 			echo 'Attenzione manca la cartella all\'interno di "data/files" per l\'azienda corrente';
 			echo '</div>';
 		}
-
-        if ( $lastBackup ) {
+		$student = false;
+		if (preg_match("/([a-z0-9]{1,9})[0-9]{4}$/", $table_prefix, $tp)) {
+			$rs_student = gaz_dbi_dyn_query("*", $tp[1] . '_students', "student_name = '" .  trim($admin_aziend["user_name"]) . "'");
+			$student = gaz_dbi_fetch_array($rs_student);
+		}
+    if ( $lastBackup && !is_array($student)) {
             ?>
             <div class="alert alert-danger text-center" role="alert">
                 <?php
