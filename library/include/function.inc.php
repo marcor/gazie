@@ -2463,7 +2463,7 @@ function checkAdmin($Livaut = 0) {
         redirect('../root/login_user.php?tp=' . $table_prefix);
     }
     $rschk = checkAccessRights($_SESSION["user_name"], $module, $_SESSION['company_id']);
-    if ($rschk === 0) {
+    if ($rschk == 0) {
       // Se utente non ha il diritto di accedere al modulo specifico lo invito a tornare alla home
       redirect("../root/access_error.php?module=" . $module);
       exit;
