@@ -667,14 +667,17 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
     $script_transl = $strScript["admin_booking.php"];
     $sql = "SELECT val FROM ".$azTables."company_config"." WHERE var = 'vacation_url_user' LIMIT 1";
     if ($result = mysqli_query($link, $sql)) {
-      $res = mysqli_fetch_assoc($result);
-      $vacation_url_user=$res['val'];
-      if (strlen($vacation_url_user)>3 && $templateName!=='Lease'){
-        $sql = "SELECT access_code FROM ".$azTables."rental_events"." WHERE id_tesbro = ".intval($testata['id_tes'])." AND type = 'ALLOGGIO' LIMIT 1";
-        $result = mysqli_query($link, $sql);
-        $res = mysqli_fetch_assoc($result);
-        $access=$res['access_code'];
-      }
+		$res = mysqli_fetch_assoc($result);
+		$vacation_url_user=$res['val'];
+		if ($lang!="it"){// se non è IT modifico la lingua nell'url
+		  $vacation_url_user=str_replace('/it/','/'.$lang.'/',$vacation_url_user);		  
+		}
+		if (strlen($vacation_url_user)>3 && $templateName!=='Lease'){
+		$sql = "SELECT access_code FROM ".$azTables."rental_events"." WHERE id_tesbro = ".intval($testata['id_tes'])." AND type = 'ALLOGGIO' LIMIT 1";
+		$result = mysqli_query($link, $sql);
+		$res = mysqli_fetch_assoc($result);
+		$access=$res['access_code'];
+		}
     }
 
     $templates = array('Received' => 'received',
