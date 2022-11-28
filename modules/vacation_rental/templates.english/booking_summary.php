@@ -108,6 +108,9 @@ class BookingSummary extends Template
                 case "6":
                     $this->writeHtmlCell(186,6,10,$this->GetY(),$rigo['descri'],1,1);
                     break;
+				case "7":
+                    $this->writeHtmlCell(186,6,10,$this->GetY(),$rigo['descri'],'LR',1);
+                    break;	
                 case "210": // se è un'articolo composto visualizzo la quantità
                     if ( $this->show_artico_composit=="1" ) {
 						$oldy = $this->GetY();
@@ -139,9 +142,8 @@ class BookingSummary extends Template
         $this->Cell(68,6, '',1,0,'C',1);
         $this->Cell(56,6, 'T O T A L',1,1,'C',1);
         $this->SetFont('helvetica', '', 8);
-        if (isset($this->pagame['descri'])){
-          $this->Cell(62,6, $this->pagame['descri'],1,0,'C');
-        }
+        $this->Cell(62,6, $this->pagame['descri'],1,0,'C');
+
         $this->docVars->setTotal($this->tesdoc['traspo']);
 
         $totimpmer = $this->docVars->totimpmer;

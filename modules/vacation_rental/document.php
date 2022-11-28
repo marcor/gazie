@@ -172,7 +172,6 @@ class DocContabVars {
            $this->iva_bollo = 0;
         }
 
-        //$this->client = $anagrafica->getPartner($tesdoc['clfoco']);
         $sql = "SELECT * FROM ". $azTables."clfoco" . " LEFT JOIN " . $genTables."anagra" . " ON " . $azTables."clfoco" . ".id_anagra = " . $genTables."anagra" . ".id WHERE codice = '".$tesdoc['clfoco']."' LIMIT 1";
         if ($result = mysqli_query($link, $sql)) {
           $this->client = mysqli_fetch_array($result);
@@ -252,7 +251,6 @@ class DocContabVars {
         }
         $this->id_agente = $resag;
 
-        //$this->rs_agente = ($this->id_agente)?$anagrafica->getPartner($this->id_agente['id_fornitore']):'';
         if ($this->id_agente){
           $sql = "SELECT * FROM ". $azTables."clfoco" . " LEFT JOIN " . $genTables."anagra" . " ON " . $azTables."clfoco" . ".id_anagra = " . $genTables."anagra" . ".id WHERE codice = '".$this->id_agente['id_fornitore']."' LIMIT 1";
           if ($result = mysqli_query($link, $sql)) {
@@ -292,7 +290,6 @@ class DocContabVars {
         } else {
             $this->c_Attenzione = '';
         }
-        //$this->client = $anagrafica->getPartner($tesdoc['clfoco']);
         $sql = "SELECT * FROM ". $azTables."clfoco" . " LEFT JOIN " . $genTables."anagra" . " ON " . $azTables."clfoco" . ".id_anagra = " . $genTables."anagra" . ".id WHERE codice = '".$tesdoc['clfoco']."' LIMIT 1";
         if ($result = mysqli_query($link, $sql)) {
           $this->client = mysqli_fetch_array($result);
@@ -308,7 +305,6 @@ class DocContabVars {
         $this->year = substr($tesdoc['initra'], 0, 4);
         $this->trasporto = $tesdoc['traspo'];
         $this->testat = $testat;
-
         $this->docRelNum = $this->tesdoc["numdoc"];    // Numero del documento relativo
         $this->docRelDate = $this->tesdoc["datemi"];    // Data del documento relativo
         $this->fae_reinvii = '';
@@ -409,9 +405,8 @@ class DocContabVars {
         if ($fr){
           $this->regime_fiscale=$fr;
         }
-
   }
-
+  
     function initializeTotals() {
         // definisco le variabili dei totali
         $this->totimp_body = 0;
@@ -420,8 +415,6 @@ class DocContabVars {
         $this->virtual_taxstamp = 0;
         $this->tottraspo = 0;
     }
-
-
 
     function getRigo($lang='') {
          // $from = $this->gTables[$this->tableName] . ' AS rs LEFT JOIN ' . $this->gTables['aliiva'] . ' AS vat ON rs.codvat=vat.codice';
@@ -546,13 +539,17 @@ class DocContabVars {
 
         }
         if (isset($anagra_prop) || floatval($security_deposit)>0){// se c'è un proprietario o un deposito cauzionale
-          $nuovi_righi=array();
-          if (floatval($security_deposit)>0){// aggiungo un rigo descrittivo per il deposito cauzionale
-            $nuovi_righi[]=array('tiprig'=>6,'codart'=>'','descri'=>"<b>".$script_transl[68].$security_deposit.". ".$script_transl[69]."</b>",'quanti'=>0, 'unimis'=>'','prelis'=>0,'sconto'=>0,'prelis'=>0,'pervat'=>0,'codric'=>0,'provvigione'=>0,'ritenuta'=>0,'id_order'=>0,'id_mag'=>0,'id_orderman'=>0);
-          }
+          $nuovi_righi=array();          
           if (isset($anagra_prop)){// aggiungo un rigo descrittivo per il proprietario
             $nuovi_righi[]=array('tiprig'=>6,'codart'=>'','descri'=>"<h2>".$script_transl['on_behalf'].$script_transl[70].":<br> ".$anagra_prop['ragso1']." ".$anagra_prop['ragso2']." - ".$anagra_prop['indspe']." - ".$anagra_prop['citspe']." - ".$anagra_prop['prospe']."</h2>",'quanti'=>0, 'unimis'=>'','prelis'=>0,'sconto'=>0,'prelis'=>0,'pervat'=>0,'codric'=>0,'provvigione'=>0,'ritenuta'=>0,'id_order'=>0,'id_mag'=>0,'id_orderman'=>0);
           }
+		  if (floatval($security_deposit)>0){// aggiungo un rigo descrittivo per il deposito cauzionale
+		    $nuovi_righi[]=array('tiprig'=>7,'codart'=>'','descri'=>"",'quanti'=>0, 'unimis'=>'','prelis'=>0,'sconto'=>0,'prelis'=>0,'pervat'=>0,'codric'=>0,'provvigione'=>0,'ritenuta'=>0,'id_order'=>0,'id_mag'=>0,'id_orderman'=>0);
+			$nuovi_righi[]=array('tiprig'=>7,'codart'=>'','descri'=>"",'quanti'=>0, 'unimis'=>'','prelis'=>0,'sconto'=>0,'prelis'=>0,'pervat'=>0,'codric'=>0,'provvigione'=>0,'ritenuta'=>0,'id_order'=>0,'id_mag'=>0,'id_orderman'=>0);
+			$nuovi_righi[]=array('tiprig'=>7,'codart'=>'','descri'=>"<b>".$script_transl[68].$security_deposit.". ".$script_transl[69]."</b>",'quanti'=>0, 'unimis'=>'','prelis'=>0,'sconto'=>0,'prelis'=>0,'pervat'=>0,'codric'=>0,'provvigione'=>0,'ritenuta'=>0,'id_order'=>0,'id_mag'=>0,'id_orderman'=>0);
+          	$nuovi_righi[]=array('tiprig'=>7,'codart'=>'','descri'=>"",'quanti'=>0, 'unimis'=>'','prelis'=>0,'sconto'=>0,'prelis'=>0,'pervat'=>0,'codric'=>0,'provvigione'=>0,'ritenuta'=>0,'id_order'=>0,'id_mag'=>0,'id_orderman'=>0);
+
+		  }
           foreach($nuovi_righi as $v_nr) { // riattraverso l'array dei nuovi righi e sull'ultimo
             $results[] = $v_nr;
           }
