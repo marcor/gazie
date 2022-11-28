@@ -663,7 +663,7 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
     }else{// altrimenti carico di default inglese
       require("./lang.english.php");
     }
-
+	$access="";
     $script_transl = $strScript["admin_booking.php"];
     $sql = "SELECT val FROM ".$azTables."company_config"." WHERE var = 'vacation_url_user' LIMIT 1";
     if ($result = mysqli_query($link, $sql)) {
@@ -774,7 +774,7 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
         $content->encoding = "base64";
         $content->mimeType = "application/pdf";
         $mail_message="";
-        if (strlen($vacation_url_user)>3 && $templateName!=='Lease'){ // se non ivio un contratto ed è impostata la user url, la comunico insieme ai codici di accesso
+        if (strlen($vacation_url_user)>3 && $templateName!=='Lease' && strlen($access)>5){ // se non ivio un contratto ed è impostata la user url ed c'è una password (prenotazione fatta online), comunico url e codici di accesso
           $mail_message = $script_transl['access1']." <a href = '".$vacation_url_user."'> ".$vacation_url_user."</a> ".$script_transl['access2'].":</p><p>Password: <b>".$access."</b></p>ID: <b>".$testata['id_tes']."</b></p><p>".$script_transl['booking_number'].": <b>".$testata['numdoc']."</b></p><p>- </p><p>".$script_transl['best_regards']."</p>";
         }
         $gMail = new GAzieMail();
