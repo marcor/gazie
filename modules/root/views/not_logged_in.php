@@ -1,4 +1,11 @@
-<?php include('_header.php');?>
+<?php
+if (is_numeric(substr($table_prefix,-4))) {
+	// se è stato uno studente ad aver fatto il logout lo riporto sulla giusta pagina
+	header("Location: ../school/student_login.php");
+	exit;
+}
+
+include('_header.php');?>
 <script src='../../js/sha256/forge-sha256.min.js'></script>
 <form method="post" onsubmit="document.getElementById('login-password').value=forge_sha256(document.getElementById('login-password').value);" action="login_user.php" name="loginform" id="logform">
   <div id="loginbox" style="margin-top:5%;" class="mainbox animated fadeInDown col-sm-offset-4 col-sm-4">
@@ -14,11 +21,6 @@
               </br>
               <div class="bg-info"><?php echo MESSAGE_PSW_ADMIN; ?></div>
               <?php
-		if (is_numeric(substr($table_prefix,-4))) {
-			// se è stato uno studente ad aver fatto il logout lo riporto sulla giusta pagina
-			header("Location: ../school/student_login.php");
-			exit;
-		}
               if (isset($login)) {
                   if ($login->errors) {
                       foreach ($login->errors as $error) {

@@ -104,7 +104,7 @@ if (!defined("MESSAGE_WELCOME")) {
     define("WORDING_REGISTRATION_FIRSTNAME", "Nome anagrafico (lettere o spazi, min.2 max.30)");
     define("WORDING_REGISTRATION_LASTNAME", "Cognome anagrafico (lettere o spazi, min.2 max.30)");
     define("WORDING_REGISTRATION_TELEPHONE", "Numero di telefono (facoltativo)");
-    define("WORDING_GO_TO_LOGIN", "Vai alla pagina per l'accesso");
+    define("WORDING_GO_TO_LOGIN", "Vai su accesso insegnanti");
     define("MESSAGE_EMAIL_LINK_FOR_VERIFYNG", "CLICCA QUI PER ATTIVARE");
     define("MESSAGE_EMAIL_LINK_FOR_RESET", "CLICCA QUI PER REIMPOSTARE LA TUA PASSWORD");
 
@@ -182,7 +182,7 @@ if (!defined("MESSAGE_WELCOME")) {
     define("WORDING_USERNAME", "Nome utente");
     define("WORDING_YOU_ARE_LOGGED_IN_AS", "You are logged in as ");
 
-// ex config 
+// ex config
 // for: password reset email data
     define("EMAIL_PASSWORDRESET_FROM_NAME", "GAzie a scuola");
     define("EMAIL_PASSWORDRESET_SUBJECT", "Reimpostazione password di GAzie a scuola");

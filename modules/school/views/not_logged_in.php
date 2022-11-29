@@ -1,8 +1,8 @@
 <?php include('_header.php'); ?>
 
 <form method="post" action="student_login.php" name="loginform">
-    <div class="container">    
-        <div id="loginbox" style="margin-top:50px;" class="mainbox mainbox col-sm-offset-2 col-sm-8">                    
+    <div class="container">
+        <div id="loginbox" style="margin-top:50px;" class="mainbox mainbox col-sm-offset-2 col-sm-8">
             <div class="panel panel-info" >
                 <div class="panel-heading panel-gazie">
                     <div class="panel-title">
@@ -44,25 +44,30 @@
                         <input type="password" autocomplete="off" required style="height: 34px;" id="login-password" class="form-control" name="student_password" placeholder="<?php echo WORDING_PASSWORD; ?>">
                     </div>
                     <div id="capsWarning" class="alert alert-warning col-sm-12" style="display:none;">Blocco maiuscole attivato! Caps lock on! Bloqueo de mayusculas!</div>
-                    <div style="padding-top:10px" class="form-group">
-                        <div class="col-sm-6">
-                            <input  style="float:left;"  type="checkbox" id="student_rememberme" name="student_rememberme" value="1" />
+                    <div class="row">
+                        <div class="col-xs-4 text-center">
+                            <input type="checkbox" id="student_rememberme" name="student_rememberme" value="1" />
                             <label for="student_rememberme"><?php echo WORDING_REMEMBER_ME; ?></label>
                         </div>
-                        <div class="col-sm-6">
-                            <input style="float:right;" class="btn btn-success"  name="login" type="submit" value="<?php echo WORDING_LOGIN; ?>" >
+                        <div class="col-xs-4 text-center">
+                            <input class="btn btn-success"  name="login" type="submit" value="<?php echo WORDING_LOGIN; ?>" >
+                        </div>
+                        <div class="col-xs-4 text-center">
                         </div>
                     </div>
-                    <div style="padding-top:10px" class="form-group">
-                        <div class="col-sm-6 controls">
-                            <a style="float:left;" href="student_register.php"><?php echo WORDING_REGISTER_NEW_ACCOUNT; ?></a>
+                    <div class="row">
+                        <div class="col-xs-4 text-center">
+                            <a href="student_register.php"><?php echo WORDING_REGISTER_NEW_ACCOUNT; ?></a>
                         </div>
-                        <div class="col-sm-6 controls">
-                            <a style="float:left;" href="student_password_reset.php"><?php echo WORDING_FORGOT_MY_PASSWORD; ?></a>
+                        <div class="col-xs-4 text-center">
+                            <a href="student_password_reset.php"><?php echo WORDING_FORGOT_MY_PASSWORD; ?></a>
+                        </div>
+                        <div class="col-xs-4 text-center">
+                            <a href="../root/admin.php"><?php echo WORDING_GO_TO_LOGIN; ?></a>
                         </div>
                     </div>
-                </div>  
-            </div>  
+                </div>
+            </div>
         </div>
     </div><!-- chiude div container -->
 </form>
