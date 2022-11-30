@@ -850,8 +850,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$form['rows'][$nl]['codice_fornitore'] = $item->getElementsByTagName('TipoCassa')->item(0)->nodeValue;
 				$form['rows'][$nl]['tiprig'] = 4;
 				// carico anche la descrizione corrispondente dal file xml
-				$xml = simplexml_load_file('../../library/include/fae_tipo_cassa.xml');
-				foreach ($xml->record as $v) {
+				$xml_cassa_prev = simplexml_load_file('../../library/include/fae_tipo_cassa.xml');
+				foreach ($xml_cassa_prev->record as $v) {
 					$selected = '';
 					if ($v->field[0] == $form['rows'][$nl]['codice_fornitore']) {
 						$form['rows'][$nl]['descri']= 'Contributo '.strtolower($v->field[1]);
