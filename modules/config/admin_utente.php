@@ -526,9 +526,21 @@ $(function(){
 });
 </script>
 <form method="POST" enctype="multipart/form-data"
+<?php
+$student = false;
+if (preg_match("/([a-z0-9]{1,9})[0-9]{4}$/", $table_prefix, $tp)) {
+	$rs_student = gaz_dbi_dyn_query("*", $tp[1] . '_students', "student_name = '" . $user_data['user_name'] . "'");
+	$student = gaz_dbi_fetch_array($rs_student);
+}
+if (!is_array($student)){
+?>
 onsubmit="document.getElementById('login-password').value=forge_sha256(document.getElementById('login-password').value);
 document.getElementById('user_password_new').value=forge_sha256(document.getElementById('user_password_new').value);
-document.getElementById('user_password_ver').value=forge_sha256(document.getElementById('user_password_ver').value);" id="logform" autocomplete="off">
+document.getElementById('user_password_ver').value=forge_sha256(document.getElementById('user_password_ver').value);"
+<?php
+}
+?>
+ id="logform" autocomplete="off">
 <input type="hidden" name="ritorno" value="<?php print $_POST['ritorno']; ?>">
 <input type="hidden" name="hidden_req" value="<?php if (isset($_POST['hidden_req'])){ print $_POST['hidden_req']; } ?>">
 <?php
@@ -654,13 +666,9 @@ echo "</td></tr>\n";
 <td class="FacetFieldCaptionTD"><?php echo $script_transl['mesg_co'][2]; ?></td>
 <td class="FacetDataTD" colspan="2">
 <?php
-$student = false;
-if (preg_match("/([a-z0-9]{1,9})[0-9]{4}$/", $table_prefix, $tp)) {
-	$rs_student = gaz_dbi_dyn_query("*", $tp[1] . '_students', "student_name = '" . $user_data['user_name'] . "'");
-	$student = gaz_dbi_fetch_array($rs_student);
-}
 
-if ($user_data['Abilit'] == 9 || $student) {
+
+if ($user_data['Abilit'] == 9 || is_array($student)) {
 	$gForm->selectCompany('company_id', $form['company_id'], $form['search']['company_id'], $form['hidden_req'], $script_transl['mesg_co']);
 } else {
 	$company = gaz_dbi_get_row($gTables['aziend'], 'codice', $form['company_id']);
