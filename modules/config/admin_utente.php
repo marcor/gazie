@@ -85,14 +85,14 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
 		}
 	}
 } elseif ((!isset($_POST['Update'])) && (isset($_GET['Update']))) { // primo accesso
-	$form = gaz_dbi_get_row($gTables['admin'], "user_name", preg_replace("/[^A-Za-z0-9]/", '',substr($_GET["user_name"], 0, 15)));
+	$form = gaz_dbi_get_row($gTables['admin'], "user_name", preg_replace("/[^A-Za-z0-9]/", '',substr($_GET["user_name"], 0, 64)));
 	if (!$form){
 		header("Location: " . $_POST['ritorno']);
 		exit;
 	}
 	// attingo il valore del motore di template dalla tabella configurazione utente
 	$admin_config = gaz_dbi_get_row($gTables['admin_config'], 'var_name', 'theme', "AND adminid = '{$form['user_name']}'");
-	$form = gaz_dbi_get_row($gTables['admin'], "user_name", preg_replace("/[^A-Za-z0-9]/", '',substr($_GET["user_name"], 0, 15)));
+	$form = gaz_dbi_get_row($gTables['admin'], "user_name", preg_replace("/[^A-Za-z0-9]/", '',substr($_GET["user_name"], 0, 64)));
 	// dal custom field di admin_module relativo al magazzino trovo il magazzino di default
 	$magmodule = gaz_dbi_get_row($gTables['module'], "name",'magazz');
 	$mod_customfield = gaz_dbi_get_row($gTables['admin_module'], "moduleid",$magmodule['id']," AND adminid='{$form['user_name']}' AND company_id=" . $admin_aziend['company_id']);
