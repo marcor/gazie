@@ -48,7 +48,7 @@ puoi clonare il repository direttamente da SVN:
 
 * Webserver Apache 2.4 o superiore, IIS su windows
 * Versione PHP >= 7.4 compilata DSO, non c'è ancora il supporto per PHP-FPM
-* Estensioni PHP richieste: MySQLi
+* Estensioni PHP richieste: MySQLi, php-intl, php-xml, php-gd, php-xsl
 * Database MariaDB o MySQL (consigliato MariaDB 10.x.x o sup.)
 
 
@@ -82,6 +82,7 @@ GAzie è la soluzione ideale per piccole aziende che operano nel commercio, nell
 * Gestione del SIAN per olivicoltori e confezionatori
 * Registratore di cassa
 * Sincronizzazione con i principali sistemi di E-commerce
+* Gestione Prenotazioni case vacanze, B&B, agriturismi, hotel
 
 ## Documentazione e Supporto
 ### Utente Finale / Webmaster
