@@ -63,7 +63,7 @@ $orderby = "datdoc,id_mov";
 if (count($lm->available) > 0) {
 	foreach ($lm->available as $v_lm) { // per ogni lotto disponibile
 		$totale = 0;
-		$where= $gTables['movmag'] . ".id_lotmag = '".$v_lm['id']."'"; 
+		$where= $gTables['movmag'] . ".id_lotmag = '".$v_lm['id']."'";
 		$rs = gaz_dbi_dyn_query($gTables['movmag'] . ".artico,".
 		$gTables['movmag'] . ".quanti,".
 		$gTables['movmag'] . ".tipdoc,".
@@ -80,7 +80,7 @@ if (count($lm->available) > 0) {
 		" LEFT JOIN " . $gTables['artico'] . " ON ". $gTables['movmag'] . ".artico = " . $gTables['artico'] . ".codice ".
 		" LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['movmag'].".clfoco = ".$gTables['clfoco'].".codice"
 		, $where, $orderby);
-		
+
 		foreach ($rs as $movlot){ // stampo tutti i movimenti del singolo lotto
 			if ( $i % 24 == 0 ) {
 				// cambio pagina e stampo intestazione colonne
@@ -90,18 +90,18 @@ if (count($lm->available) > 0) {
 				$pdf->Cell(85,5,"Descrizione movimento",$heavy,0,'L');
 				$pdf->Cell(25,5,"Data",$heavy,0,'C');
 				$pdf->Cell(15,5,"U.m.",$heavy,0,'C');
-		
+
 				$pdf->Cell(20,5,"Entrata",$heavy,0,'R');
 				$pdf->Cell(20,5,"Uscita",$heavy,0,'R');
-        
-				$pdf->Cell(30,5,"Totale",$heavy,1,'R');  
+
+				$pdf->Cell(30,5,"Totale",$heavy,1,'R');
 			}
 			$totale=$totale+($movlot['operat']*$movlot['quanti']);
 			$pdf->SetTextColor(0);
 			if ($totale<0){
 				$pdf->SetTextColor(255,0,0);
 			}
-			$pdf->Cell(50,5,$movlot['identifier'],$light,0,'L');
+			$pdf->Cell(50,5,$movlot['identifier']." - id:".$movlot['id'],$light,0,'L');
 			if ($movlot['expiry']>0){
 				$pdf->Cell(25,5,gaz_format_date($movlot['expiry']),$light,0,'C');
 			} else {
@@ -112,12 +112,12 @@ if (count($lm->available) > 0) {
 			$pdf->Cell(15,5,$movlot['unimis'],$light,0,'C');
 			if ($movlot['operat']>0) {
 				$pdf->Cell(20,5,gaz_format_number($movlot['quanti']),$light,0,'R', 0, '', 1);
-				$pdf->Cell(20,5,'',$light);				
+				$pdf->Cell(20,5,'',$light);
 			} else {
 				$pdf->Cell(20,5,'',$light);
 				$pdf->Cell(20,5,gaz_format_number($movlot['quanti']),$light,0,'R', 0, '', 1);
 			}
-			$pdf->Cell(30,5,gaz_format_number($totale),$light,1,'R');  
+			$pdf->Cell(30,5,gaz_format_number($totale),$light,1,'R');
 			$i++;
 		}
 		$pdf->Cell(270,5,'','',1);
