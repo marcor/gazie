@@ -81,17 +81,21 @@ $where = " catmer BETWEEN ".$_GET['ci']." AND ".$_GET['cf']." AND".
 $what = $gTables['movmag'].".*, ".
         $gTables['caumag'].".codice, ".$gTables['caumag'].".descri, ".
         $gTables['clfoco'].".codice, ".
+			  $gTables['camp_mov_sian'].".recip_stocc, ".
+			  $gTables['lotmag'].".identifier, ".
         $gTables['anagra'].".ragso1, ".$gTables['anagra'].".ragso2, ".
-        $gTables['artico'].".codice, ".$gTables['artico'].".descri AS desart, ".$gTables['artico'].".web_url, ".$gTables['artico'].".unimis, ".$gTables['artico'].".scorta, ".$gTables['artico'].".image, ".$gTables['artico'].".catmer ";
+        $gTables['artico'].".codice, ".$gTables['artico'].".descri AS desart, ".$gTables['artico'].".web_url, ".$gTables['artico'].".unimis, ".$gTables['artico'].".scorta, ".$gTables['artico'].".image, ".$gTables['artico'].".catmer, ".$gTables['artico'].".quality";
         $table=$gTables['movmag']." LEFT JOIN ".$gTables['caumag']." ON ".$gTables['movmag'].".caumag = ".$gTables['caumag'].".codice
                LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['movmag'].".clfoco = ".$gTables['clfoco'].".codice
                LEFT JOIN ".$gTables['anagra']." ON ".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra
+			   LEFT JOIN ".$gTables['lotmag']." ON ".$gTables['lotmag'].".id_movmag = ".$gTables['movmag'].".id_mov
+			   LEFT JOIN ".$gTables['camp_mov_sian']." ON ".$gTables['camp_mov_sian'].".id_movmag = ".$gTables['movmag'].".id_mov
                LEFT JOIN ".$gTables['artico']." ON ".$gTables['movmag'].".artico = ".$gTables['artico'].".codice";
 $result = gaz_dbi_dyn_query ($what, $table,$where,"catmer ASC, artico ASC, datreg ASC, id_mov ASC");
 
-$item_head = array('top'=>array(array('lun' => 21,'nam'=>$script_transl['item_head'][0]),
+$item_head = array('top'=>array(array('lun' => 32,'nam'=>$script_transl['item_head'][0]),
                                 array('lun' => 18,'nam'=>$script_transl['item_head'][1]),
-                                array('lun' => 60,'nam'=>$script_transl['item_head'][2]),
+                                array('lun' => 110,'nam'=>$script_transl['item_head'][2]),
                                 array('lun' => 10,'nam'=>$script_transl['item_head'][3]),
                                 array('lun' => 18,'nam'=>$script_transl['item_head'][4])
                                )
@@ -100,8 +104,8 @@ $gazTimeFormatter->setPattern('dd MMMM yyyy');
 $title = array('luogo_data'=>$luogo_data,
                'title'=>$script_transl[0].$gazTimeFormatter->format(new DateTime('@'.$utsri)).$script_transl[1].$gazTimeFormatter->format(new DateTime('@'.$utsrf)),
                'hile'=>array(array('lun' => 16,'nam'=>$script_transl['header'][0]),
-                             array('lun' => 30,'nam'=>$script_transl['header'][1]),
-                             array('lun' => 100,'nam'=>$script_transl['header'][2]),
+                             array('lun' => 50,'nam'=>$script_transl['header'][1]),
+                             array('lun' => 160,'nam'=>$script_transl['header'][2]),
                             // array('lun' => 17,'nam'=>$script_transl['header'][3]),
                              array('lun' => 8,'nam'=>$script_transl['header'][4]),
                              array('lun' => 17,'nam'=>$script_transl['header'][5]),
@@ -111,11 +115,11 @@ $title = array('luogo_data'=>$luogo_data,
                             // array('lun' => 20,'nam'=>$script_transl['header'][9])
                             )
               );
-$aRiportare = array('top'=>array(array('lun' => 171,'nam'=>$script_transl['top']),
+$aRiportare = array('top'=>array(array('lun' => 251,'nam'=>$script_transl['top']),
                            array('lun' => 20,'nam'=>''),
                           // array('lun' => 20,'nam'=>'')
                            ),
-                    'bot'=>array(array('lun' => 171,'nam'=>$script_transl['bot']),
+                    'bot'=>array(array('lun' => 251,'nam'=>$script_transl['bot']),
                            array('lun' => 20,'nam'=>''),
                          //  array('lun' => 20,'nam'=>'')
                            )
@@ -147,9 +151,9 @@ while ($mv = gaz_dbi_fetch_array($result)) {
          $aRiportare['bot'][1]['nam'] = 0;
          $aRiportare['top'][2]['nam'] = 0;
          $aRiportare['bot'][2]['nam'] = 0;
-         $item_head['bot']= array(array('lun' => 21,'nam'=>$mv['artico']),
+         $item_head['bot']= array(array('lun' => 32,'nam'=>$mv['artico']),
                                   array('lun' => 18,'nam'=>$mv['catmer']),
-                                  array('lun' => 60,'nam'=>$mv['desart']),
+                                  array('lun' => 110,'nam'=>$mv['desart']),
                                   array('lun' => 10,'nam'=>$mv['unimis']),
                                   array('lun' => 18,'nam'=>number_format($mv['scorta'],1,',',''))
                                   );
@@ -166,20 +170,29 @@ while ($mv = gaz_dbi_fetch_array($result)) {
       $magval= $gForm->getStockValue($mv['id_mov'],$mv['artico'],$mv['datreg'],$admin_aziend['stock_eval_method']);
       $r_span=count($magval);
       foreach ($magval as $mval) {
-         $aRiportare['top'][1]['nam'] = gaz_format_quantity($mval['q_g'],1,$admin_aziend['decimal_quantity']);
-         $aRiportare['bot'][1]['nam'] = gaz_format_quantity($mval['q_g'],1,$admin_aziend['decimal_quantity']);
-         //$aRiportare['top'][2]['nam'] = gaz_format_number($mval['v_g']);
+        $addes=$mv['desdoc'].' '.gaz_format_date($mv['datdoc']).' - '.$mv['ragso1'].' '.$mv['ragso2'];
+        $aRiportare['top'][1]['nam'] = gaz_format_quantity($mval['q_g'],1,$admin_aziend['decimal_quantity']);
+        $aRiportare['bot'][1]['nam'] = gaz_format_quantity($mval['q_g'],1,$admin_aziend['decimal_quantity']);
+        //$aRiportare['top'][2]['nam'] = gaz_format_number($mval['v_g']);
         // $aRiportare['bot'][2]['nam'] = gaz_format_number($mval['v_g']);
-         if ($ctrl_id <> $mv['id_mov']) {
-              $pdf->Cell(16,4,gaz_format_date($mv['datreg']),'LTR',0,'C');
-              $pdf->Cell(30,4,$mv['caumag'].'-'.substr($mv['descri'],0,17),'TR');
-              $pdf->Cell(100,4,substr($mv['desdoc'].' '.gaz_format_date($mv['datdoc']).' - '.$mv['ragso1'].' '.$mv['ragso2'],0,80),'TR');
-             /* $pdf->Cell(17,4,number_format($mv['prezzo'],$admin_aziend['decimal_price'],',',' '),'TR',0,'R');*/
-              $pdf->Cell(8,4,$mv['unimis'],'TR',0,'C');
+        if ($ctrl_id <> $mv['id_mov']) {
+          if (strlen($mv['recip_stocc'])>0){
+            $addes .=" Silos:".$mv['recip_stocc'];
+          }
+          if (strlen($mv['quality'])>0){
+            $addes .=" Var.:".$mv['quality'];
+          }if (strlen($mv['identifier'])>0){
+            $addes .=" Lotto:".$mv['identifier'];
+          }
+          $pdf->Cell(16,4,gaz_format_date($mv['datreg']),'LTR',0,'C');
+          $pdf->Cell(50,4,$mv['caumag'].'-'.substr($mv['descri'],0,17),'TR');
+          $pdf->Cell(160,4,$addes,'TR', 0, 'L', 0, '', 1);
+         /* $pdf->Cell(17,4,number_format($mv['prezzo'],$admin_aziend['decimal_price'],',',' '),'TR',0,'R');*/
+          $pdf->Cell(8,4,$mv['unimis'],'TR',0,'C');
          } else {
               $pdf->Cell(16,4,'','LR');
-              $pdf->Cell(30,4,'','R');
-              $pdf->Cell(100,4,'','R');
+              $pdf->Cell(50,4,'','R');
+              $pdf->Cell(160,4,'','R');
               $pdf->Cell(17,4,'','R');
               $pdf->Cell(8,4,'','R');
          }

@@ -113,12 +113,12 @@ class Report_template extends TCPDF {
                 $this->SetFont('helvetica', '', 9);
                 $this->Cell(50);
                 foreach ($this->intesta_item_group['top'] as $key => $value) {
-                    $this->Cell($value['lun'], 4, $value['nam'], 1, 0, 'C', 1);
+                    $this->Cell($value['lun'], 4, $value['nam'], 1, 0, 'C', 1, '', 1);
                 }
                 $this->Cell(1, 4, '', 0, 1);
                 $this->Cell(50);
                 foreach ($this->intesta_item_group['bot'] as $key => $value) {
-                    $this->Cell($value['lun'], 4, $value['nam'], 1, 0, 'C');
+                    $this->Cell($value['lun'], 4, $value['nam'], 1, 0, 'C', 0, '', 1);
                 }
                 $this->Cell(1, 4, '', 0, 1);
                 $this->SetFont('helvetica', '', 8);
