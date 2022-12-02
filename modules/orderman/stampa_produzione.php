@@ -24,7 +24,8 @@
 */
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
-$gForm = new fourzeroForm();
+require("../../modules/magazz/lib.function.php");
+$mag = new magazzForm;
 $resord = gaz_dbi_get_row($gTables['orderman'], "id", intval($_GET['id_orderman']));
 $what_print = gaz_dbi_get_row($gTables['company_config'], 'var', 'orderman_report_choice')['val']; // scelgo cosa stampare sul report: ordini d'acquisto (0) , fatture d'acquisto(2) o entrambi (1)
 $now = new DateTime();
@@ -356,7 +357,7 @@ WHERE tipdoc='PR4' AND ".$gTables['rigbro'].".id_orderman AND NOT EXISTS ( SELEC
 ORDER BY datemi ASC, ".$gTables['tesbro'].".id_tes ASC;";
 $res_orph = gaz_dbi_query ($sql);
 while ($orph = gaz_dbi_fetch_array($res_orph)) {
-  $id_mag=$gForm->uploadMag($orph['id_rig'], 'PR4', $orph['tbnd'], $orph['id_parent_doc'],  $orph['datemi'], $orph['status'], 0, 81, $orph['codart'], $orph['quanti'],$orph['prelis'], 0, 0, $admin_aziend['stock_eval_method'], false, $orph['rd_status'], 0,$orph['id_om'],0,'Lavor. nesting '.addslashes($orph['codice_fornitore']).' dim.utile '.$orph['lunghezza'].'x'.$orph['larghezza'].'x'.$orph['spessore']);
+  $id_mag=$mag->uploadMag($orph['id_rig'], 'PR4', $orph['tbnd'], $orph['id_parent_doc'],  $orph['datemi'], $orph['status'], 0, 81, $orph['codart'], $orph['quanti'],$orph['prelis'], 0, 0, $admin_aziend['stock_eval_method'], false, $orph['rd_status'], 0,$orph['id_om'],0,'Lavor. nesting '.addslashes($orph['codice_fornitore']).' dim.utile '.$orph['lunghezza'].'x'.$orph['larghezza'].'x'.$orph['spessore']);
   gaz_dbi_put_row($gTables['rigbro'], 'id_rig', $orph['id_rig'], 'id_mag', $id_mag); // inserisco il riferimento movmag nel rigo
 }
 // controllo se ho dei feedback di lavorazioni provenienti da macchine 4.0 che pur risultando aver movimentato il magazzino in reatà sono orfani dello stesso, se orfani li reinserisco
@@ -409,9 +410,6 @@ if ($numrow>=1){
 	$pdf->Cell(25, 4, 'Scadenza' ,1, 0, 'L', 0, '', 1);
   $pdf->Cell(17,4,'Prezzo unit.',1, 1, 'C', 0, '', 1);
   $totq=0;
-
-  require("../../modules/magazz/lib.function.php");
-  $mag = new magazzForm;
 
   while ($mv = gaz_dbi_fetch_array($result)) {
       $totq+=floatval($mv['quanti']*$mv['operat']);
