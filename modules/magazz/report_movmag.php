@@ -231,23 +231,25 @@ while ($r = gaz_dbi_fetch_array($result)) {
 		echo "<button class=\"btn btn-xs btn-default disabled\" title=\"Questo movimento puo essere modificato solo nel documento che lo ha creato\">&nbsp;".$r["id_mov"]."</button> &nbsp</td>";
 	}
 	echo "<td align=\"center\">".gaz_format_date($r["datreg"])." &nbsp;</td>\n";
-    echo "<td align=\"center\">".$r["caumag"]." - ".$r["descau"]."</td>\n";
-    echo '<td align="center">'.($r['desmag']==''?'Sede':substr($r['desmag'],0,25))."</td>";
-    if (isset($hrefdoc->{$r['tipdoc']}) && $r['id_rif'] > 0){ // vedi sopra quando si vuole riferire ad un documento genitore di un modulo specifo
-        echo '<td title="'.$title.'"><a href="'.$docdata['link'].'">'.$r['desdoc']." ".$script_transl[9]." ".gaz_format_date($r["datdoc"])."</a></td>\n";
-    } else {
-        echo '<td title="'.$title.'"><a href="admin_movmag.php?id_mov='.$r["id_mov"].'&Update">'.$r['desdoc']." ".$script_transl[9]." ".gaz_format_date($r["datdoc"])."</a></td>\n";
-    }
+  echo "<td align=\"center\">".$r["caumag"]." - ".$r["descau"]."</td>\n";
+  echo '<td align="center">'.($r['desmag']==''?'Sede':substr($r['desmag'],0,25))."</td>";
+  if (isset($hrefdoc->{$r['tipdoc']}) && $r['id_rif'] > 0 && intval($r['id_orderman'])==0){ // vedi sopra quando si vuole riferire ad un documento genitore di un modulo specifo
+    echo '<td title="'.$title.'"><a href="'.$docdata['link'].'">'.$r['desdoc']." ".$script_transl[9]." ".gaz_format_date($r["datdoc"])."</a></td>\n";
+  } elseif(intval($r['id_orderman'])==0) {
+    echo '<td title="'.$title.'"><a href="admin_movmag.php?id_mov='.$r["id_mov"].'&Update">'.$r['desdoc']." ".$script_transl[9]." ".gaz_format_date($r["datdoc"])."</a></td>\n";
+  } else{
+    echo '<td title="'.$title.'"><a href="../orderman/admin_orderman.php?Update&codice='.intval($r['id_orderman']).'">'.$r['desdoc'].' '.$script_transl[9].' '.gaz_format_date($r["datdoc"]).'</a></td>\n';
+  }
 
-   	echo "<td align=\"center\"><p data-toggle=\"tooltip\" data-placement=\"auto\" title=\"$descri\">".$r["artico"]."</p></td>\n";
-	if ($r['id']>0) {
-		echo "<td align=\"center\"><p data-toggle=\"tooltip\" data-placement=\"auto\" title=\"$expiry\">"."ID:".$r['id']." - ".$r['identifier']."</td>\n";
-	} else {
-		echo "<td></td>";
-	}
-    echo "<td align=\"center\">".gaz_format_quantity($r["quanti"],1,$admin_aziend['decimal_quantity'])."</td>\n";
-    echo "<td align=\"right\">".gaz_format_number($valore)." </td>\n";
-    echo "<td align=\"center\">\n";
+  echo "<td align=\"center\"><p data-toggle=\"tooltip\" data-placement=\"auto\" title=\"$descri\">".$r["artico"]."</p></td>\n";
+  if ($r['id']>0) {
+    echo "<td align=\"center\"><p data-toggle=\"tooltip\" data-placement=\"auto\" title=\"$expiry\">"."ID:".$r['id']." - ".$r['identifier']."</td>\n";
+  } else {
+    echo "<td></td>";
+  }
+  echo "<td align=\"center\">".gaz_format_quantity($r["quanti"],1,$admin_aziend['decimal_quantity'])."</td>\n";
+  echo "<td align=\"right\">".gaz_format_number($valore)." </td>\n";
+  echo "<td align=\"center\">\n";
 	if (($r['tipdoc'] == "MAG" OR $r['tipdoc'] == "INV") && intval($r['id_orderman'])==0){
 		?>
 		<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Elimina movimento" ref="<?php echo $r['id_mov'];?>" movdes="<?php echo $r['descau']; ?>">
