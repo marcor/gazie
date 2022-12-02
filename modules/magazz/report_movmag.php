@@ -224,7 +224,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     echo "<tr>\n";
 
     echo "<td>";
-	if ($r['id_rif']==0||$r['tipdoc']=="MAG"||$r['tipdoc']=="PRO"){
+	if (($r['id_rif']==0||$r['tipdoc']=="MAG"||$r['tipdoc']=="PRO") && intval($r['id_orderman'])==0){
         // in caso di movimento proveniente da produzione forzo l'id_rif con id_orderman
 		echo "<a class=\"btn btn-xs btn-default\" href=\"admin_movmag.php?id_mov=".$r["id_mov"]."&Update\" title=\"".ucfirst($script_transl['update'])."!\"><i class=\"glyphicon glyphicon-edit text-success\"></i>&nbsp;".$r["id_mov"]."</a> &nbsp</td>";
     } else {
@@ -248,7 +248,8 @@ while ($r = gaz_dbi_fetch_array($result)) {
     echo "<td align=\"center\">".gaz_format_quantity($r["quanti"],1,$admin_aziend['decimal_quantity'])."</td>\n";
     echo "<td align=\"right\">".gaz_format_number($valore)." </td>\n";
     echo "<td align=\"center\">\n";
-	if ($r['tipdoc'] == "MAG" OR $r['tipdoc'] == "INV"){
+    echo "pippo:",intval($r['id_orderman']);
+	if (($r['tipdoc'] == "MAG" OR $r['tipdoc'] == "INV") && intval($r['id_orderman'])==0){
 		?>
 		<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Elimina movimento" ref="<?php echo $r['id_mov'];?>" movdes="<?php echo $r['descau']; ?>">
 		<i class="glyphicon glyphicon-remove"></i>
