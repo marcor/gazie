@@ -90,7 +90,8 @@ class FatturaImmediata extends Template_con_scheda
             $this->SetFont('helvetica', '', 9);
         }
         $lines = $this->docVars->getRigo();
-		foreach ($lines AS $key => $rigo) {
+      $prevTiprig=false;
+      foreach ($lines AS $key => $rigo) {
             if (($this->GetY() >= 157 && $this->taxstamp >= 0.01) || $this->GetY() >= 186 ) { // mi serve per poter stampare la casella del bollo
                 $this->Cell(186,6,'','T',1);
                 $this->SetFont('helvetica', '', 20);
@@ -181,9 +182,9 @@ class FatturaImmediata extends Template_con_scheda
                     $this->Cell(81, 5, '', 'R', 1);
                     break;
                 case "21":
-                    $this->Cell(25, 5, '', 'L');
-                    $this->Cell(80, 5, "Causale: " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
-                    $this->Cell(81, 5, '', 'R', 1);
+                  $descri21=$prevTiprig=='21'?'':'Causale:';
+                  $this->Cell(20, 5, $descri21, 'L',0,'R');
+                  $this->Cell(166, 5, $rigo['descri'], 'R', 1, 'L', 0, '', 1);
                     break;
                 case "25":
                     $this->Cell(25, 5, '', 'L');
@@ -223,6 +224,7 @@ class FatturaImmediata extends Template_con_scheda
                     $this->Cell(20, 5,gaz_format_number(round($rigo['importo']*$rigo['ritenuta']/100,2)),'RB',0,'R');
                     $this->Cell(12, 5,'',1,1,'R');
                 }
+        $prevTiprig=$rigo['tiprig'];
         }
     }
 

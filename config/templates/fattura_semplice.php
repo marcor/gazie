@@ -109,150 +109,151 @@ class FatturaSemplice extends Template {
     }
 
     function body() {
-        if ($this->docVars->regime_fiscale=='RF02') {
-            $this->SetFont('helvetica', 'B', 10);
-            $this->MultiCell(186, 10, "Operazione effettuata ai sensi dell'art.1 comma 100 Legge 244/2007.\nCompenso non assoggettato a ritenuta d'acconto ai sensi dell'art.27 del DL 98 del 06.07.2011",1,'L', 0,1);
-            $this->SetFont('helvetica', '', 9);
-        } elseif ($this->docVars->regime_fiscale=='RF19') {
-            $this->SetFont('helvetica', 'B', 10);
-            $this->MultiCell(186, 10, "Operazione effettuata ai sensi dell'art.1 commi da 54 a 89 Legge 190/2014 e successive modifiche.\nCompenso non assoggettato a ritenuta d'acconto ai sensi dall'art.1 comma 67 Legge n.190/2014",1,'L', 0,1);
-            $this->SetFont('helvetica', '', 9);
+      if ($this->docVars->regime_fiscale=='RF02') {
+          $this->SetFont('helvetica', 'B', 10);
+          $this->MultiCell(186, 10, "Operazione effettuata ai sensi dell'art.1 comma 100 Legge 244/2007.\nCompenso non assoggettato a ritenuta d'acconto ai sensi dell'art.27 del DL 98 del 06.07.2011",1,'L', 0,1);
+          $this->SetFont('helvetica', '', 9);
+      } elseif ($this->docVars->regime_fiscale=='RF19') {
+          $this->SetFont('helvetica', 'B', 10);
+          $this->MultiCell(186, 10, "Operazione effettuata ai sensi dell'art.1 commi da 54 a 89 Legge 190/2014 e successive modifiche.\nCompenso non assoggettato a ritenuta d'acconto ai sensi dall'art.1 comma 67 Legge n.190/2014",1,'L', 0,1);
+          $this->SetFont('helvetica', '', 9);
+      }
+      $lines = $this->docVars->getRigo();
+      $prevTiprig=false;
+      foreach ($lines AS $key => $rigo) {
+        if (($this->GetY() >= 166 && $this->docVars->taxstamp >= 0.01 ) || $this->GetY() >= 195 || (strlen($this->descriptive_last_row)>300 && $this->GetY() >= 186)) { // mi serve per poter stampare la casella del bollo
+          $this->Cell(186, 6, '', 'T', 1);
+          $this->SetFont('helvetica', '', 20);
+          $this->SetY(225);
+          $this->Cell(186, 12, '>>> --- SEGUE SU PAGINA SUCCESSIVA --- >>> ', 1, 1, 'R');
+          $this->SetFont('helvetica', '', 9);
+          $this->newPage();
+          $this->Cell(186, 5, '<<< --- SEGUE DA PAGINA PRECEDENTE --- <<< ', 0, 1);
         }
-
-        $lines = $this->docVars->getRigo();
-		foreach ($lines AS $key => $rigo) {
-            if (($this->GetY() >= 166 && $this->docVars->taxstamp >= 0.01 ) || $this->GetY() >= 195 || (strlen($this->descriptive_last_row)>300 && $this->GetY() >= 186)) { // mi serve per poter stampare la casella del bollo
-                $this->Cell(186, 6, '', 'T', 1);
-                $this->SetFont('helvetica', '', 20);
-                $this->SetY(225);
-                $this->Cell(186, 12, '>>> --- SEGUE SU PAGINA SUCCESSIVA --- >>> ', 1, 1, 'R');
-                $this->SetFont('helvetica', '', 9);
-                $this->newPage();
-                $this->Cell(186, 5, '<<< --- SEGUE DA PAGINA PRECEDENTE --- <<< ', 0, 1);
+        switch ($rigo['tiprig']) {
+          case "0":
+            $this->Cell(25, 5, $rigo['codart'], 1, 0, 'L', 0, '', 1);
+            $this->Cell(80, 5, $rigo['descri'], 1, 0, 'L', 0, '', 1);
+            $this->Cell(7, 5, $rigo['unimis'], 1, 0, 'C');
+            $this->Cell(16, 5, gaz_format_quantity($rigo['quanti'], 1, $this->decimal_quantity), 1, 0, 'R');
+            $this->Cell(18, 5, number_format($rigo['prelis'], $this->decimal_price, ',', ''), 1, 0, 'R');
+            if ($rigo['sconto'] > 0) {
+                $this->Cell(8, 5, floatval($rigo['sconto']), 1, 0, 'C', 0, '', 1);
+            } else {
+                $this->Cell(8, 5, '', 1, 0, 'C');
             }
-            switch ($rigo['tiprig']) {
-                case "0":
-                    $this->Cell(25, 5, $rigo['codart'], 1, 0, 'L', 0, '', 1);
-                    $this->Cell(80, 5, $rigo['descri'], 1, 0, 'L', 0, '', 1);
-                    $this->Cell(7, 5, $rigo['unimis'], 1, 0, 'C');
-                    $this->Cell(16, 5, gaz_format_quantity($rigo['quanti'], 1, $this->decimal_quantity), 1, 0, 'R');
-                    $this->Cell(18, 5, number_format($rigo['prelis'], $this->decimal_price, ',', ''), 1, 0, 'R');
-                    if ($rigo['sconto'] > 0) {
-                        $this->Cell(8, 5, floatval($rigo['sconto']), 1, 0, 'C', 0, '', 1);
-                    } else {
-                        $this->Cell(8, 5, '', 1, 0, 'C');
-                    }
-                    $this->Cell(20, 5, gaz_format_number($rigo['importo']), 1, 0, 'R');
-                    $this->Cell(12, 5, gaz_format_number($rigo['pervat']), 1, 1, 'R');
-                    break;
-                case "1":
-                    $this->Cell(25, 5, $rigo['codart'], 1, 0, 'L', 0, '', 1);
-                    $this->Cell(80, 5, $rigo['descri'], 1, 0, 'L', 0, '', 1);
-                    $this->Cell(49, 5, '', 1);
-                    $this->Cell(20, 5, gaz_format_number($rigo['importo']), 1, 0, 'R');
-                    $this->Cell(12, 5, gaz_format_number($rigo['pervat']), 1, 1, 'R');
-                    break;
-                case "2":
-                    //$this->Cell(25, 5, '', 'L');
-                    $this->Cell(112, 5, $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
-                    $this->Cell(74, 5, '', 'R', 1);
-                    break;
-                case "3":
-                    $this->Cell(25, 5, '', 1, 0, 'L');
-                    $this->Cell(80, 5, $rigo['descri'], 'B', 0, 'L');
-                    $this->Cell(49, 5, '', 'B', 0, 'L');
-                    $this->Cell(20, 5, gaz_format_number($rigo['prelis']), 1, 0, 'R');
-                    $this->Cell(12, 5, '', 1, 1, 'R');
-                    break;
-                case "4":
-                    $this->Cell(25, 6, $rigo['codart'],1,0,'L', 0, '', 1);
-                    $this->Cell(129, 6, $rigo['descri'].'('.floatval($rigo['provvigione']).'% di '.gaz_format_number($rigo['prelis']).')',1,0,'L',0,'',1);
-                    $this->Cell(20, 6, gaz_format_number($rigo['importo']),1,0,'R');
-                    $this->Cell(12, 6, gaz_format_number($rigo['pervat']),1,1,'R');
-                    break;
-                case "6":
-                case "8":
-                    $this->writeHtmlCell(186, 6, 10, $this->GetY(), $rigo['descri'], 1, 1);
-                    break;
-                case "11":
-                    $this->Cell(25, 5, '', 'L');
-                    $this->Cell(80, 5, "Codice Identificativo Gara (CIG): " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
-                    $this->Cell(81, 5, '', 'R', 1);
-                    break;
-                case "12":
-                    $this->Cell(25, 5, '', 'L');
-                    $this->Cell(80, 5, "Codice Unitario Progetto (CUP): " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
-                    $this->Cell(81, 5, '', 'R', 1);
-                    break;
-                case "13":
-                    $this->Cell(25, 5, '', 'L');
-                    $this->Cell(80, 5, "Identificativo documento: " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
-                    $this->Cell(81, 5, '', 'R', 1);
-                    break;
-                case "14":
-                    $this->Cell(25, 5, '', 'L');
-                    $this->Cell(80, 5, "Data documento: " . gaz_format_date($rigo['descri']), 'LR', 0, 'L', 0, '', 1);
-                    $this->Cell(81, 5, '', 'R', 1);
-                    break;
-                case "15":
-                    $this->Cell(25, 5, '', 'L');
-                    $this->Cell(80, 5, "Num.Linea documento: " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
-                    $this->Cell(81, 5, '', 'R', 1);
-                    break;
-                case "16":
-                    $this->Cell(25, 5, '', 'L');
-                    $this->Cell(80, 5, "Codice Commessa/Convenzione: " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
-                    $this->Cell(81, 5, '', 'R', 1);
-                    break;
-                case "17":
-                    $this->Cell(25, 5, '', 'L');
-                    $this->Cell(80, 5, "Riferimento Amministrazione: " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
-                    $this->Cell(81, 5, '', 'R', 1);
-                    break;
-                case "21":
-                    $this->Cell(25, 5, '', 'L');
-                    $this->Cell(80, 5, "Causale: " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
-                    $this->Cell(81, 5, '', 'R', 1);
-                    break;
-                case "25":
-                    $this->Cell(25, 5, '', 'L');
-                    $this->Cell(80, 5, "Stato avanzamento lavori, fase: " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
-                    $this->Cell(81, 5, '', 'R', 1);
-                    break;
-                case "26":
-                    $this->Cell(25, 5, '', 'L');
-                    $this->Cell(80, 5, "Lettera intento: " . $rigo['descri']." del ".gaz_format_date($rigo['codart']), 'LR', 0, 'L', 0, '', 1);
-                    $this->Cell(81, 5, '', 'R', 1);
-                    break;
-                case "31":
-                    $this->Cell(25, 5, '', 'L');
-                    $this->Cell(80, 5, "Dati Veicoli ex art.38, immatricolato il " . gaz_format_date($rigo['descri']).', km o ore:'.intval($rigo['quanti']), 'LR', 0, 'L', 0, '', 1);
-                    $this->Cell(81, 5, '', 'R', 1);
-                    break;
-                case "210":
-                    $oldy = $this->GetY();
-                    $this->SetFont('helvetica', '', 8);
-                    $this->SetY($this->GetY()-6);
-                    $this->Cell(105, 8, '('.$rigo['unimis'].' '.gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity).')',0,0,'R');
-                    $this->SetY( $oldy );
-                    $this->SetFont('helvetica', '', 9);
-                    break;
-                case "90":
-                    $this->Cell(154, 5, 'VENDITA CESPITE: ' . $rigo['codart'], 1, 0, 'L');
-                    $this->Cell(20, 5, '', 1);
-                    $this->Cell(12, 5, '', 1, 1);
-                    $this->Cell(105, 5, $rigo['descri'], 1, 0, 'L');
-                    $this->Cell(49, 5, '', 1);
-                    $this->Cell(20, 5, gaz_format_number($rigo['importo']), 1, 0, 'R');
-                    $this->Cell(12, 5, gaz_format_number($rigo['pervat']), 1, 1, 'R');
-                    break;
-            }
-            if ($rigo['ritenuta'] > 0) {
-                $this->Cell(154, 5, 'Ritenuta d\'acconto al ' . gaz_format_number($rigo['ritenuta']) . '%', 'LB', 0, 'R');
-                $this->Cell(20, 5, gaz_format_number(round($rigo['importo'] * $rigo['ritenuta'] / 100, 2)), 'RB', 0, 'R');
-                $this->Cell(12, 5, '', 1, 1, 'R');
-            }
+            $this->Cell(20, 5, gaz_format_number($rigo['importo']), 1, 0, 'R');
+            $this->Cell(12, 5, gaz_format_number($rigo['pervat']), 1, 1, 'R');
+            break;
+          case "1":
+            $this->Cell(25, 5, $rigo['codart'], 1, 0, 'L', 0, '', 1);
+            $this->Cell(80, 5, $rigo['descri'], 1, 0, 'L', 0, '', 1);
+            $this->Cell(49, 5, '', 1);
+            $this->Cell(20, 5, gaz_format_number($rigo['importo']), 1, 0, 'R');
+            $this->Cell(12, 5, gaz_format_number($rigo['pervat']), 1, 1, 'R');
+            break;
+          case "2":
+            //$this->Cell(25, 5, '', 'L');
+            $this->Cell(112, 5, $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
+            $this->Cell(74, 5, '', 'R', 1);
+            break;
+          case "3":
+            $this->Cell(25, 5, '', 1, 0, 'L');
+            $this->Cell(80, 5, $rigo['descri'], 'B', 0, 'L');
+            $this->Cell(49, 5, '', 'B', 0, 'L');
+            $this->Cell(20, 5, gaz_format_number($rigo['prelis']), 1, 0, 'R');
+            $this->Cell(12, 5, '', 1, 1, 'R');
+            break;
+          case "4":
+            $this->Cell(25, 6, $rigo['codart'],1,0,'L', 0, '', 1);
+            $this->Cell(129, 6, $rigo['descri'].'('.floatval($rigo['provvigione']).'% di '.gaz_format_number($rigo['prelis']).')',1,0,'L',0,'',1);
+            $this->Cell(20, 6, gaz_format_number($rigo['importo']),1,0,'R');
+            $this->Cell(12, 6, gaz_format_number($rigo['pervat']),1,1,'R');
+            break;
+          case "6":
+          case "8":
+            $this->writeHtmlCell(186, 6, 10, $this->GetY(), $rigo['descri'], 1, 1);
+            break;
+          case "11":
+            $this->Cell(25, 5, '', 'L');
+            $this->Cell(80, 5, "Codice Identificativo Gara (CIG): " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
+            $this->Cell(81, 5, '', 'R', 1);
+            break;
+          case "12":
+            $this->Cell(25, 5, '', 'L');
+            $this->Cell(80, 5, "Codice Unitario Progetto (CUP): " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
+            $this->Cell(81, 5, '', 'R', 1);
+            break;
+          case "13":
+            $this->Cell(25, 5, '', 'L');
+            $this->Cell(80, 5, "Identificativo documento: " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
+            $this->Cell(81, 5, '', 'R', 1);
+            break;
+          case "14":
+            $this->Cell(25, 5, '', 'L');
+            $this->Cell(80, 5, "Data documento: " . gaz_format_date($rigo['descri']), 'LR', 0, 'L', 0, '', 1);
+            $this->Cell(81, 5, '', 'R', 1);
+            break;
+          case "15":
+            $this->Cell(25, 5, '', 'L');
+            $this->Cell(80, 5, "Num.Linea documento: " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
+            $this->Cell(81, 5, '', 'R', 1);
+            break;
+          case "16":
+            $this->Cell(25, 5, '', 'L');
+            $this->Cell(80, 5, "Codice Commessa/Convenzione: " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
+            $this->Cell(81, 5, '', 'R', 1);
+            break;
+          case "17":
+            $this->Cell(25, 5, '', 'L');
+            $this->Cell(80, 5, "Riferimento Amministrazione: " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
+            $this->Cell(81, 5, '', 'R', 1);
+            break;
+          case "21":
+            $descri21=$prevTiprig=='21'?'':'Causale:';
+            $this->Cell(20, 5, $descri21, 'L',0,'R');
+            $this->Cell(166, 5, $rigo['descri'], 'R', 1, 'L', 0, '', 1);
+            break;
+          case "25":
+            $this->Cell(25, 5, '', 'L');
+            $this->Cell(80, 5, "Stato avanzamento lavori, fase: " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
+            $this->Cell(81, 5, '', 'R', 1);
+            break;
+          case "26":
+            $this->Cell(25, 5, '', 'L');
+            $this->Cell(80, 5, "Lettera intento: " . $rigo['descri']." del ".gaz_format_date($rigo['codart']), 'LR', 0, 'L', 0, '', 1);
+            $this->Cell(81, 5, '', 'R', 1);
+            break;
+          case "31":
+            $this->Cell(25, 5, '', 'L');
+            $this->Cell(80, 5, "Dati Veicoli ex art.38, immatricolato il " . gaz_format_date($rigo['descri']).', km o ore:'.intval($rigo['quanti']), 'LR', 0, 'L', 0, '', 1);
+            $this->Cell(81, 5, '', 'R', 1);
+            break;
+          case "210":
+            $oldy = $this->GetY();
+            $this->SetFont('helvetica', '', 8);
+            $this->SetY($this->GetY()-6);
+            $this->Cell(105, 8, '('.$rigo['unimis'].' '.gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity).')',0,0,'R');
+            $this->SetY( $oldy );
+            $this->SetFont('helvetica', '', 9);
+            break;
+          case "90":
+            $this->Cell(154, 5, 'VENDITA CESPITE: ' . $rigo['codart'], 1, 0, 'L');
+            $this->Cell(20, 5, '', 1);
+            $this->Cell(12, 5, '', 1, 1);
+            $this->Cell(105, 5, $rigo['descri'], 1, 0, 'L');
+            $this->Cell(49, 5, '', 1);
+            $this->Cell(20, 5, gaz_format_number($rigo['importo']), 1, 0, 'R');
+            $this->Cell(12, 5, gaz_format_number($rigo['pervat']), 1, 1, 'R');
+            break;
         }
+        if ($rigo['ritenuta'] > 0) {
+            $this->Cell(154, 5, 'Ritenuta d\'acconto al ' . gaz_format_number($rigo['ritenuta']) . '%', 'LB', 0, 'R');
+            $this->Cell(20, 5, gaz_format_number(round($rigo['importo'] * $rigo['ritenuta'] / 100, 2)), 'RB', 0, 'R');
+            $this->Cell(12, 5, '', 1, 1, 'R');
+        }
+        $prevTiprig=$rigo['tiprig'];
+      }
     }
 
     function pageFooter() {
