@@ -104,8 +104,9 @@ class DDT extends Template_con_scheda
 		'fontsize' => 6,
 		'stretchtext' => 4
 		);
-        $lines = $this->docVars->getRigo();
-		foreach ($lines AS $key => $rigo) {
+    $lines = $this->docVars->getRigo();
+    $prevTiprig=false;
+    foreach ($lines AS $key => $rigo) {
             if ($rigo['sconto'] < 0.001) {
                 $rigo['sconto']='';
             }
@@ -181,9 +182,9 @@ class DDT extends Template_con_scheda
                     $this->Cell(117, 6, "Riferimento Amministrazione: " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
                     $this->Cell(35,6,'','R',1);
                 } elseif ($rigo['tiprig'] == 21) {
-                    $this->Cell(35,6,'','L');
-                    $this->Cell(117, 6, "Causale: " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
-                    $this->Cell(35,6,'','R',1);
+                  $descri21=$prevTiprig=='21'?'':'Causale:';
+                  $this->Cell(20, 5, $descri21, 'L',0,'R');
+                  $this->Cell(167, 5, $rigo['descri'], 'R', 1, 'L', 0, '', 1);
                 } elseif ( $rigo['tiprig'] == 25 ) {
                     $this->Cell(35,6,'','L');
                     $this->Cell(117, 6, "Stato avanzamento lavori, fase: " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
@@ -214,7 +215,8 @@ class DDT extends Template_con_scheda
                         $this->Cell(10,6,'','R',1);
                     }
                 }
-       }
+        $prevTiprig=$rigo['tiprig'];
+      }
     }
 
     function pageFooter() {

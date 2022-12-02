@@ -154,7 +154,7 @@ while ($r = gaz_dbi_fetch_array($rs)) {
     }
     if (substr($r["codice"], 3) == '000000') {
       $collapse = $r["codice"];
-      echo '<tr class="collapsible" data-toggle="collapse" data-target=".' . $collapse . '"><td class="'.$color_class.'"><a class="btn btn-xs btn-edit" href="admin_piacon.php?Update&amp;codice=' . $r["codice"] . '" title="' . $script_transl['edit_master'] . '" ><i class="glyphicon glyphicon-edit"></i>&nbsp;' . substr($r["codice"], 0, 3) . '</a></td>
+      echo '<tr class="collapsible" data-toggle="collapse" data-target=".' . $collapse . '" style="cursor: s-resize;"><td class="'.$color_class.'"><a class="btn btn-xs btn-edit" href="admin_piacon.php?Update&amp;codice=' . $r["codice"] . '" title="' . $script_transl['edit_master'] . '" ><i class="glyphicon glyphicon-edit"></i>&nbsp;' . substr($r["codice"], 0, 3) . '</a></td>
       <td class="'.$color_class.'"></td>
       <td class="'.$color_class.'" colspan="5"><strong><i class="glyphicon glyphicon-list"></i> ' . $r["descri"] . '</strong></td>
       <td class="'.$color_class.' text-center">';
