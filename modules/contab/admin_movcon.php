@@ -1545,14 +1545,14 @@ echo "</script>\n";
                 $urldoc = '../vendit/report_docven.php?sezione=' . $form['sezioneiva'] . '&protoc=' . $form['protocollo'] . '&anno=' . intval(substr($form['datdoc'], 6, 4)) . '&info=none';
               break;
               case "FAI":
-              $urldoc = '../vendit/admin_docven.php?Update&id_tes='.$form['id_doc'];
+              $urldoc = $form['id_doc']>0?'../vendit/admin_docven.php?Update&id_tes='.$form['id_doc']:'';
               break;
               case "AFA":
-              $urldoc = '../acquis/admin_docacq.php?Update&id_tes='.$form['id_doc'];
+              $urldoc = $form['id_doc']>0?'../acquis/admin_docacq.php?Update&id_tes='.$form['id_doc']:'';
               break;
             }
             ?>
-            <li><a href="<?php echo $urldoc; ?>" target="_blank">Documento di origine</a></li>
+            <li><?php if (strlen($urldoc)>10) {?><a href="<?php echo $urldoc; ?>" target="_blank">Documento di origine</a><?php } ?></li>
             <?php
           }
 					?>
