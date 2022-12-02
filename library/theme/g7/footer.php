@@ -52,10 +52,14 @@ $contact_link=(isset($contact_link))?$contact_link:'';
         <a  class="pull-right hidden-xs" target="_new" href="https://<?php echo $contact_link; ?>">https://<?php echo $contact_link; ?></a>
     </div>
 </div>
+<script src="../../js/jquery.ui/jquery-ui.min.js"></script>
+<script><!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+  $.widget.bridge('uibutton', $.ui.button);
+</script>
 <script src="../../library/bootstrap/js/bootstrap.min.js"></script>
 <script src="../../library/theme/g7/smartmenus-master/jquery.smartmenus.js" type="text/javascript"></script>
 <script src="../../library/theme/g7/smartmenus-master/bootstrap/jquery.smartmenus.bootstrap.js" type="text/javascript"></script>
-<script src="../../js/jquery.ui/jquery-ui.min.js"></script>
+
 <script src="../../js/jquery.ui/datepicker-<?php echo substr($admin_aziend['lang'], 0, 2); ?>.js"></script>
 <script src="../../js/custom/jquery.ui.autocomplete.html.js"></script>
 <script src="../../js/custom/gz-library.js"></script>
