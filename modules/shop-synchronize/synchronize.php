@@ -65,16 +65,16 @@ if (isset($_POST['Return'])) {
     }
 if (isset ($_POST['download'])) {
 	if (file_exists($file_download)) {
+		$period=0;
 		header("Location: " . $file_download );
-		include $file_download;
 	} else {
 		header("Location: " . $_POST['ritorno']);
         exit;
 	}
 } elseif (isset ($_POST['download2'])){
 	if (file_exists($file_download2)) {
+		$period=0;
 		header("Location: " . $file_download2 );
-		include $file_download2;
 	} else {
 		header("Location: " . $_POST['ritorno']);
         exit;
@@ -137,14 +137,14 @@ if (isset ($_POST['download'])) {
 		<div>
 			<div class="row bg-info">
 				<div class="col-sm-4  bg-warning" align="center">
-					<input type="submit" class="btn btn-primary" name="Return"  onClick="chkSubmit();" value="Indietro">
+					<input type="submit" id="preventDuplicate" class="btn btn-primary" name="Return"  onClick="chkSubmit();" value="Indietro">
 				</div>
 				<div class="col-sm-4  bg-success" align="center">
-					<input type="submit" class="btn btn-primary" name="download"  onClick="chkSubmit();" value="Scarica ordini">
-					<input type="submit" class="btn btn-primary" name="download2"  onClick="chkSubmit();" value="Scarica ordini2">
+					<input type="submit" id="preventDuplicate" class="btn btn-primary" name="download"  onClick="chkSubmit();" value="Scarica ordini">
+					<input type="submit" id="preventDuplicate" class="btn btn-primary" name="download2"  onClick="chkSubmit();" value="Scarica ordini2">
 				</div>
 				<div class="col-sm-4 bg-warning" align="center">
-					<input type="submit" class="btn btn-primary" name="upload"  onClick="chkSubmit();" value="Aggiorna q.t&agrave; prodotti">
+					<input type="submit" id="preventDuplicate" class="btn btn-primary" name="upload"  onClick="chkSubmit();" value="Aggiorna q.t&agrave; prodotti">
 				</div>
 			</div>
 			<div class="row bg-info">

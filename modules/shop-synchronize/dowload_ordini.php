@@ -30,6 +30,7 @@
 	  --------------------------------------------------------------------------
 */
 require("../../library/include/datlib.inc.php");
+
 $period="";
 $resserver = gaz_dbi_get_row($gTables['company_config'], "var", "server");
 $ftp_host= $resserver['val'];
@@ -249,11 +250,11 @@ if (isset($_POST['conferma'])) { // se confermato
 				} else {
 					$codvat=gaz_dbi_get_row($gTables['artico'], "codice", $codart)['aliiva'];
 					$aliiva=$_POST['aliiva'.$ord.$row];
-					if ($includevat=="true" AND $_POST['prelis_imp'.$ord.$row]==0){ // se l'e-commerce include l'iva e non ha mandato il prezzo imponibile, scorporo l'iva dal prezzo dell'articolo
+					if ($includevat=="true" AND floatval($_POST['prelis_imp'.$ord.$row])==0){ // se l'e-commerce include l'iva e non ha mandato il prezzo imponibile, scorporo l'iva dal prezzo dell'articolo
 						$div=0;
 						$div="1.".intval($aliiva);
 						$prelis=$_POST['prelis_vatinc'.$ord.$row] / $div;
-					} elseif ($includevat=="true" AND $_POST['prelis_imp'.$ord.$row]>0) {
+					} elseif ($includevat=="true" AND floatval($_POST['prelis_imp'.$ord.$row])>0) {
 						$prelis=$_POST['prelis_imp'.$ord.$row];
 					}
 					if ($includevat!=="true"){ // se l'ecommerce non iclude l'iva uso il prezzo imponibile
