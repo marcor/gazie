@@ -26,7 +26,6 @@ require("../../config/config/gconfig.php");
 require('../../library/include/'.$NomeDB.'.lib.php');
 if ( $debug_active ) {
 	error_reporting(E_ALL);
-	//require ( "../../library/kint/build/kint.phar");// solo quando verrà aggiornato KINT potremo utilizzarlo, tolto sulla 7.43
 } else {
 	error_reporting($error_reporting_level);
 }
@@ -57,20 +56,27 @@ if (isset($_SESSION['table_prefix'])) {
 	}
 }
 //
-// Alcune directory devono essere scrivibili dal servente HTTPs/PHP (www-data).
+// controllo directory scrivibili da apache (www-data) ed estensioni del php
+// estensioni richieste da GAzie
 if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-    $usrwww = ['name' => 'web server'];
+  $usrwww = ['name' => 'web server'];
 } else {
 	$usrid=posix_getuid();
 	$usrwww=posix_getpwuid($usrid);
 }
 if (!is_writable(DATA_DIR.'files/')) { //questa per archiviare i documenti
-    echo DATA_DIR.'files/ --> '.$usrwww['name'].' permission = '.substr(sprintf('%o', fileperms(DATA_DIR.'files/')),-3).'<br/>';
-    $err[] = 'no_data_files_writable';
+  echo DATA_DIR.'files/ --> '.$usrwww['name'].' permission = '.substr(sprintf('%o', fileperms(DATA_DIR.'files/')),-3).'<br/>';
+  $err[] = 'no_data_files_writable';
 }
 if (!is_writable(K_PATH_CACHE)) { //questa per permettere a TCPDF di inserire le immagini
-    echo K_PATH_CACHE.' --> '.$usrwww['name'].' permission = '.substr(sprintf('%o', fileperms(K_PATH_CACHE)),-3).'<br/>';
-    $err[] = 'no_tcpdf_cache_writable';
+  echo K_PATH_CACHE.' --> '.$usrwww['name'].' permission = '.substr(sprintf('%o', fileperms(K_PATH_CACHE)),-3).'<br/>';
+  $err[] = 'no_tcpdf_cache_writable';
+}
+$extreq=['MySQLi','intl','xml','gd','xsl','openssl'];
+foreach($extreq as $v){
+  if(!extension_loaded($v)){
+    $err[] = 'Extension <b>php-'.$v.'</b> is required';
+  }
 }
 //
 // fine controllo directory scrivibili
@@ -525,7 +531,7 @@ function executeModulesUpdate(){// Antonio Germani 12/07/2022 - funzione per ese
                echo '<input name="'.$form['install_upgrade'].'" type="submit" value="'.strtoupper($msg[$form['install_upgrade']]).'!">';
             } else {
                foreach ($err as $v){
-                  echo $errors[$v]." <br />";
+                  echo $v." <br />";
                   if ($v=='is_align'){
                      echo '<input  onClick="location.href=\'../../modules/root/admin.php\'" name="'.$form['install_upgrade'].'" type="button" value="'.$msg['gi_is_align'].'">';
                      echo "\n <br />".$msg['gi_usr_psw']." <br />";
