@@ -48,5 +48,5 @@ $upgrade_db[150][]="ALTER TABLE ".$table_prefix."_XXXrental_extra ADD `rif_facil
 $upgrade_db[150][]="ALTER TABLE `".$table_prefix."_XXXrental_extra` CHANGE `rif_alloggio` `rif_alloggio` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL; ";
 $upgrade_db[151][]="INSERT INTO ".$table_prefix."_XXXcompany_config (`id`, `description`, `var`, `val`) VALUES (NULL, 'Abilita promemoria x giorni prima del check-in (0=invio disabilitato)', 'reminvacation_day', '0'),(NULL, 'Stato della prenotazione (vuoto=tutti gli stati)', 'reminvacation_status', 'CONFIRMED'),(NULL, 'Abilita promemoria pagamento x giorni dalla creazione della prenotazione (0=invio disabilitato)', 'rempayvacation_day', '0'),(NULL, 'Abilita annullamento prenotazione x giorni dopo il promemoria pagamento (0=disabilitato)', 'rempayaftervacation_day', '0');";
 $upgrade_db[151][]="INSERT INTO ".$table_prefix."_XXXcompany_config (`id`, `description`, `var`, `val`) VALUES (NULL, 'e-mail di notifica generale (vuoto= disabilitato)', 'vacation_email_notification', NULL);";
-
+$upgrade_db[152][]="ALTER TABLE `".$table_prefix."_XXXrental_events` ADD INDEX(`Ical_sync_id`);"
 ?>
