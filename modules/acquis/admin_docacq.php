@@ -1061,6 +1061,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
           $artico['preacq']=0;
           $artico['aliiva']=0;
           $artico['id_cost']=0;
+          $artico['sconto']=0;
         }
 // addizione ai totali peso,pezzi,volume
         $form['net_weight'] += $form['in_quanti'] * $artico['peso_specifico'];
