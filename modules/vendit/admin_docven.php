@@ -454,7 +454,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
   if (isset($_POST['ins'])) {
     $sezione = $form['seziva'];
     $utsemi = gaz_format_date($form['datemi'],2); // mktime
-    if ($form['tipdoc'] != 'DDT' && $form['tipdoc'] != 'DDY' && $form['tipdoc'] != 'DDS' && $form['tipdoc'] != 'RDV' && $form['tipdoc'] != 'DDV' && $form['template'] != 'FatturaImmediata') {
+    if ($form['tipdoc'] != 'DDT' && $form['tipdoc'] != 'FAD' && $form['tipdoc'] != 'DDY' && $form['tipdoc'] != 'DDS' && $form['tipdoc'] != 'RDV' && $form['tipdoc'] != 'DDV' && $form['template'] != 'FatturaImmediata') {
         $initra = $datemi;
         $utstra = $utsemi;
     } else {
