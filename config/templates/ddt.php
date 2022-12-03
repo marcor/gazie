@@ -130,11 +130,11 @@ class DDT extends Template_con_scheda
 						$h=16;
 						$x = $this->GetX();
 						$y = $this->GetY();
-						$this->Cell(35,$h,$rigo['codart'],1,1,'L', 0, '', 0,false, '', 'T');
+						$this->Cell(35,$h,$rigo['codart'],1,1,'L', 0, '', 1,false, '', 'T');
 						$this->write1DBarcode($rigo['barcode'], 'EAN13', '', $y+4, '', 11, 0.33, $style, 'M');
 						$this->SetXY($x+35,$y);
 					} else {
-						$this->Cell(35,$h,$rigo['codart'],1,0,'L');
+						$this->Cell(35,$h,$rigo['codart'],1,0,'L', 0, '', 1);
 					}
                     $this->Cell(82,$h,$rigo['descri'],1,0,'L',0,'',1);
                     $tipodoc = substr($this->tesdoc["tipdoc"], 0, 1);
