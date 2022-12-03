@@ -48,7 +48,7 @@ puoi clonare il repository direttamente da SVN:
 
 * Webserver Apache 2.4 o superiore, IIS su windows
 * Versione PHP >= 7.4 compilata DSO, non c'è ancora il supporto per PHP-FPM
-* Estensioni PHP richieste: MySQLi, php-intl, php-xml, php-gd, php-xsl
+* Estensioni PHP richieste: MySQLi, php-intl, php-xml, php-gd, php-xsl, php-calendar
 * Database MariaDB o MySQL (consigliato MariaDB 10.x.x o sup.)
 
 
