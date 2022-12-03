@@ -195,7 +195,7 @@ if (trim($address_for_fae)==''){
 
 
           <div class="row text-success">
-              <b>Promemoria pagamento cauzione</b> (le prenotazioni con stato confermato si intendono con caparra pagata)
+              <b>Promemoria pagamento caparra confirmatoria</b> (le prenotazioni con stato confermato si intendono con caparra pagata)
           </div><!-- chiude row  -->
            <?php
             while ($r = gaz_dbi_fetch_array($reminders_pay)) {

@@ -816,18 +816,18 @@ $ts->output_navbar();
               }
             }
             $ccoff=0;
-            if ($data = json_decode($r['anagra_custom_field'], TRUE)) { // se esiste un json nel custom field anagra
+            if (isset ($r['anagra_custom_field']) && $data = json_decode($r['anagra_custom_field'], TRUE)) { // se esiste un json nel custom field anagra
               if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['first_ccn']) && strlen($data['vacation_rental']['first_ccn'])>8){
                 $ccoff=1;// ci sono dati per pagamento carta di credito off line
               }
             }
 
-            if (strtotime($r['checked_out_date'])){
+            if (isset($r['checked_out_date']) && strtotime($r['checked_out_date'])){
               $check_inout="OUT";
               $check_icon="log-out";
               $ckdate=date ('d-m-Y H:i', strtotime($r['checked_out_date']));
               $title = "Checked-in ".date ('d-m-Y H:i', strtotime($r['checked_in_date']))." - Checked-out ".date ('d-m-Y H:i', strtotime($r['checked_out_date']));
-            }elseif (strtotime($r['checked_in_date'])){
+            }elseif (isset($r['checked_in_date']) && strtotime($r['checked_in_date'])){
               $check_inout="IN";
               $check_icon="log-in";
               $ckdate=date ('d-m-Y H:i', strtotime($r['checked_in_date']));
