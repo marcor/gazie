@@ -231,7 +231,7 @@ if (isset($_POST['close'])){
 		</div>
 		<?php
 
-		if (isset($resorf)){
+		if ($resorf->num_rows>0){
 		?>
 		<div class="panel panel-default gaz-table-form">
 			<div class="container-fluid">
