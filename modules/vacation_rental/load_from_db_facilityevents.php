@@ -50,72 +50,41 @@ if ($_GET['token'] == md5($token.date('Y-m-d'))){
   }
   $link -> set_charset("utf8");
 
-  //load.php
   $data = [];
   $dataTot = [];
-  $count=0;
-  $what = "codice";
-  $where = "good_or_service=1 AND (custom_field REGEXP 'accommodation_type') AND id_artico_group=".substr(mysqli_escape_string($link,$_GET['id']), 0, 9);
-  $sql = "SELECT ".$what." FROM ".$azTables."artico WHERE ".$where;
-  $resulth = mysqli_query($link, $sql);
 
-  foreach ($resulth as $resh){ // per ogni alloggio
-    // prendo gli eventi a partire da oggi
-    $sql = "SELECT * FROM ".$azTables."rental_events WHERE house_code='".substr(mysqli_escape_string($link,$resh['codice']), 0, 32)."' AND (start >= '".date('Y-m-d')."' OR end >= '".date('Y-m-d')."') ORDER BY id ASC";
-    $result = mysqli_query($link, $sql);
-    foreach($result as $row){
-      $data[] = array(
-      'id'   => $row["id"],
-      'title'   => substr($resh['codice'], 0, 32),
-      'start'   => $row["start"],
-      'end'   => $row["end"]
-      );
-    }
-  }
+  // prendo gli eventi a partire da oggi connessi alla struttura
+  $sql = "SELECT ".$azTables."rental_events.* FROM ".$azTables."rental_events LEFT JOIN ".$azTables."artico ON ".$azTables."artico.id_artico_group = ". substr(mysqli_escape_string($link,$_GET['id']), 0, 9) ." WHERE ".$azTables."rental_events.house_code = ".$azTables."artico.codice AND (start >= '".date('Y-m-d')."' OR end >= '".date('Y-m-d')."') ORDER BY id ASC";
+  $result = mysqli_query($link, $sql);    
 
-  foreach($data as $dt){// per ogni evento
-    $start=$dt['start'];
-    $end=$dt['end'];
+	$n=-1;
+  foreach($result as $res){// per ogni evento
+    $start=$res['start'];
+    $end=$res['end'];	
+	
     while (strtotime($start) < strtotime($end)) {// per ogni giorno dell'evento
-      $house=[];//echo "<br>->-> analizzo il giorno:",$start;
-      if (!in_array($start, array_column($dataTot, 'start'))){// escludo i giorni già occupati così velocizzo
-        foreach($data as $dt2){// 2ciclo di nuovo tutti gli eventi
-          if (!in_array($dt2['title'],$house)){// se c'è gia questo alloggio salto e velocizzoil giro
-          //echo"<br>ciclo di nuovo questo evento:",print_r($dt2);
-            $start2=$dt2['start'];
-            $end2=$dt2['end'];
-            while (strtotime($start2) < strtotime($end2)) {// 2per ogni giorno dell'evento
-              if (!in_array($dt2['title'],$house) && $start2==$start){// cerco se c'è il giorno e se ancora non aggiunto aggiungo l'alloggio
-                //echo "<br>non cè:",$dt2['title']," in -",print_r($house);
-                array_push($house,$dt2['title']);//echo "<br>in questo giorno",$start2," ho aggiungo:",$dt2['title']," ecco l'array:",print_r($house);
-                break;
-              }
-              $start2 = date ("Y-m-d", strtotime("+1 days", strtotime($start2)));// 2aumento di un giorno il ciclo
-            }
-          }
-        }
-        if (intval(count($house)) == intval($resulth->num_rows)){// se il contatore alloggi è uguale al numero totale alloggi
-          $dataTot[] = array(// il giorno è totalmente occupato
-          'id'   => $dt["id"],
-          'title'   => 'TUTTO ESAURITO',
-          'start'   => $start,
-          'end'   => $start,
-          'display' => 'background'
-          );
-          //echo "<br>il giorno occupato",$start;
-        }elseif (null !==(count($house))&& intval(count($house))>0){
-          $dataTot[] = array(// il giorno è parzialmente occupato
-          'id'   => $dt["id"],
-          'title'   => 'Disponibili '.(intval($resulth->num_rows) - intval(count($house))).' alloggi su '.intval($resulth->num_rows),
-          'start'   => $start,
-          'end'   => $start
-          );
-          //echo "<br>il giorno parzialmente occupato",$start;
-        }
-      }
+	
+		if (!in_array($start,$data)){//se il giorno non è mai stato analizzato lo creo
+			$data[]=$start;$n++;
+			$house[$n][]= $res['house_code'];// con la stessa chiave $n, memorizzo il codice alloggio
+			$dataTot[$n] = array(// il giorno è parzialmente occupato
+			  'id'   => $res['id'],
+			  'title'   => 'Occupato: '.$res['house_code'],
+			  'start'   => $start,
+			  'end'   => $start,
+			  'display' => 'background'
+			  );
+		}else{
+			$id = array_search($start, array_column($dataTot, 'start'));// trovo in quale array ho già il giorno analizzato
+			if (!in_array($res['house_code'],$house[$id])){
+				$house[$id][]= $res['house_code'];// nella stessa chiave $n, aggiungo il codice alloggio
+				$dataTot[$id]['title']=$dataTot[$id]['title']." + ".$res['house_code'];				
+			}
+		}	  
       $start = date ("Y-m-d", strtotime("+1 days", strtotime($start)));// aumento di un giorno il ciclo
-    }
+    }	
   }
+   // echo "<br>DATA:",print_r($data);
   echo json_encode($dataTot);
 }
 ?>
