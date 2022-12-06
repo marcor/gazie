@@ -263,12 +263,17 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 if ($k_row == $next_row) {
                     // sottrazione ai totali peso,pezzi,volume
                     $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['rows'][$k_row]['codart']);
-                    $form['net_weight'] -= $form['rows'][$k_row]['quanti'] * $artico['peso_specifico'];
-                    $form['gross_weight'] -= $form['rows'][$k_row]['quanti'] * $artico['peso_specifico'];
-                    if ($artico['pack_units'] > 0) {
-                        $form['units'] -= intval(round($form['rows'][$k_row]['quanti'] / $artico['pack_units']));
+                    if (isset($artico)){
+                      $form['net_weight'] -= $form['rows'][$k_row]['quanti'] * $artico['peso_specifico'];
+                      $form['gross_weight'] -= $form['rows'][$k_row]['quanti'] * $artico['peso_specifico'];
+                      if ($artico['pack_units'] > 0) {
+                          $form['units'] -= intval(round($form['rows'][$k_row]['quanti'] / $artico['pack_units']));
+                      }
+                      $form['volume'] -= $form['rows'][$k_row]['quanti'] * $artico['volume_specifico'];
+                    }else{
+                      $form['net_weight']=0;
+                      $form['gross_weight']=0;
                     }
-                    $form['volume'] -= $form['rows'][$k_row]['quanti'] * $artico['volume_specifico'];
                     // fine sottrazione peso,pezzi,volume
                     $form['in_descri'] = $form['rows'][$k_row]['descri'];
                     $form['in_tiprig'] = $form['rows'][$k_row]['tiprig'];
@@ -303,12 +308,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['hidden_req'] = '';
                 }
                 $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['rows'][$next_row]['codart']);
-                $form['net_weight'] += $form['rows'][$next_row]['quanti'] * $artico['peso_specifico'];
-                $form['gross_weight'] += $form['rows'][$next_row]['quanti'] * $artico['peso_specifico'];
-                if ($artico['pack_units'] > 0) {
-                    $form['units'] += intval(round($form['rows'][$next_row]['quanti'] / $artico['pack_units']));
+                if(isset($artico)){
+                  $form['net_weight'] += $form['rows'][$next_row]['quanti'] * $artico['peso_specifico'];
+                  $form['gross_weight'] += $form['rows'][$next_row]['quanti'] * $artico['peso_specifico'];
+                  if ($artico['pack_units'] > 0) {
+                      $form['units'] += intval(round($form['rows'][$next_row]['quanti'] / $artico['pack_units']));
+                  }
                 }
-                $form['volume'] += $form['rows'][$next_row]['quanti'] * $artico['volume_specifico'];
+                $form['volume'] += (isset($artico))?$form['rows'][$next_row]['quanti'] * $artico['volume_specifico']:0;
             }
             $next_row++;
         }
@@ -777,13 +784,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$old_key]['unimis'] = $form['in_unimis'];
             $form['rows'][$old_key]['quanti'] = $form['in_quanti'];
             $form['rows'][$old_key]['codart'] = $form['in_codart'];
-			$form['rows'][$old_key]['good_or_service'] = $form['in_good_or_service'];
+            $form['rows'][$old_key]['good_or_service'] = $form['in_good_or_service'];
             $form['rows'][$old_key]['codric'] = $form['in_codric'];
             $form['rows'][$old_key]['ritenuta'] = $form['in_ritenuta'];
             $form['rows'][$old_key]['provvigione'] = $form['in_provvigione'];
             $form['rows'][$old_key]['prelis'] = number_format($form['in_prelis'], $admin_aziend['decimal_price'], '.', '');
             $form['rows'][$old_key]['sconto'] = $form['in_sconto'];
-            if ($artico['aliiva'] > 0) {
+            if (isset($artico) && $artico['aliiva'] > 0) {
                 $form['rows'][$old_key]['codvat'] = $artico['aliiva'];
                 $iva_row = gaz_dbi_get_row($gTables['aliiva'], "codice", $artico['aliiva']);
                 $form['rows'][$old_key]['pervat'] = $iva_row['aliquo'];
@@ -2202,7 +2209,7 @@ echo '<div class="FacetSeparatorTD text-center"><b>' . $script_transl[2] . '</b>
 			<input type="hidden" value="' . $form['caucon'] . '" name="caucon" />
 			<input type="hidden" value="' . $form['caumag'] . '" name="caumag" />';
 
-$somma_spese = $form['traspo'] + $form['speban'] * $form['numrat'] + $form['spevar'];
+$somma_spese = floatval($form['traspo']) + floatval($form['speban']) * floatval($form['numrat']) + floatval($form['spevar']);
 $calc = new Compute;
 $calc->add_value_to_VAT_castle($castle, $somma_spese, $form['expense_vat']);
 if ($calc->total_exc_with_duty > $admin_aziend['taxstamp_limit'] && $form['virtual_taxstamp'] > 0) {
