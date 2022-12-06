@@ -552,7 +552,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
 //controllo che i righi non abbiano descrizioni  e unita' di misura vuote in presenza di quantita diverse da 0
         foreach ($form['rows'] as $i => $value) {
             if ($value['descri'] == '' &&
-                    $value['quanti']) {
+                $value['tiprig'] <= 1) {
                 $msgrigo = $i + 1;
                 $msg['err'][] = "norwde";
             }
