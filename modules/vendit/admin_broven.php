@@ -751,6 +751,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     } else if (isset($_POST['in_submit'])) {
         $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['in_codart']);
         gaz_dbi_query ("UPDATE ".$gTables['artico']." SET `last_used`='".date("Y-m-d")."' WHERE codice='".$form['in_codart']."';");
+        if (isset($artici)){
         // addizione ai totali peso,pezzi,volume
         $form['net_weight'] += $form['in_quanti'] * $artico['peso_specifico'];
         $form['gross_weight'] += $form['in_quanti'] * $artico['peso_specifico'];
@@ -758,8 +759,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['units'] += intval(round($form['in_quanti'] / $artico['pack_units']));
         }
         $form['volume'] += $form['in_quanti'] * $artico['volume_specifico'];
-		$form['in_good_or_service']=$artico['good_or_service'];
+        $form['in_good_or_service']=$artico['good_or_service'];
         // fine addizione peso,pezzi,volume
+        }else{
+          $form['net_weight']=0;
+          $form['gross_weight']=0;
+          $form['volume']=0;
+          $form['in_good_or_service']=0;
+        }
         if (substr($form['in_status'], 0, 6) == "UPDROW") { //se e' un rigo da modificare
             $old_key = intval(substr($form['in_status'], 6));
             $form['rows'][$old_key]['tiprig'] = $form['in_tiprig'];
@@ -910,11 +917,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['quamag'] = 0;
             if ($form['in_tiprig'] == 0) {  //rigo normale
                 $form['rows'][$next_row]['codart'] = $form['in_codart'];
-				$form['rows'][$next_row]['good_or_service'] = $form['in_good_or_service'];
-                $form['rows'][$next_row]['annota'] = $artico['annota'];
-                $form['rows'][$next_row]['pesosp'] = $artico['peso_specifico'];
-                $form['rows'][$next_row]['descri'] = $artico['descri'];
-                $form['rows'][$next_row]['unimis'] = $artico['unimis'];
+                $form['rows'][$next_row]['good_or_service'] = $form['in_good_or_service'];
+                $form['rows'][$next_row]['annota'] = (isset($artico))?$artico['annota']:'';
+                $form['rows'][$next_row]['pesosp'] = (isset($artico))?$artico['peso_specifico']:0;
+                $form['rows'][$next_row]['descri'] = (isset($artico))?$artico['descri']:'';
+                $form['rows'][$next_row]['unimis'] = (isset($artico))?$artico['unimis']:'n';
                 $form['rows'][$next_row]['prelis'] = number_format($form['in_prelis'], $admin_aziend['decimal_price'], '.', '');
                 $form['rows'][$next_row]['codric'] = $form['in_codric'];
                 $form['rows'][$next_row]['quanti'] = $form['in_quanti'];
@@ -952,7 +959,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     } elseif ($form['listin'] == 4) {
                         $form['rows'][$next_row]['prelis'] = number_format($artico['preve4'], $admin_aziend['decimal_price'], '.', '');
                     } elseif ($form['listin'] == 5) {
-                        $form['rows'][$next_row]['prelis'] = number_format($artico['web_price'], $admin_aziend['decimal_price'], '.', '');
+                        $form['rows'][$next_row]['prelis'] = number_format((isset($artico))?$artico['web_price']:0, $admin_aziend['decimal_price'], '.', '');
                     } else {
                         $form['rows'][$next_row]['prelis'] = number_format($artico['preve1'], $admin_aziend['decimal_price'], '.', '');
                     }
@@ -961,7 +968,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $iva_azi = gaz_dbi_get_row($gTables['aliiva'], "codice", $admin_aziend['preeminent_vat']);
                 $form['rows'][$next_row]['pervat'] = $iva_azi['aliquo'];
                 $form['rows'][$next_row]['tipiva'] = $iva_azi['tipiva'];
-                if ($artico['aliiva'] > 0) {
+                if (isset($artico) && $artico['aliiva'] > 0) {
                     $form['rows'][$next_row]['codvat'] = $artico['aliiva'];
                     $iva_row = gaz_dbi_get_row($gTables['aliiva'], "codice", $artico['aliiva']);
                     $form['rows'][$next_row]['pervat'] = $iva_row['aliquo'];
@@ -973,16 +980,16 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['rows'][$next_row]['pervat'] = $iva_row['aliquo'];
                     $form['rows'][$next_row]['tipiva'] = $iva_row['tipiva'];
                 }
-                if ($artico['codcon'] > 0) {
+                if (isset($artico) && $artico['codcon'] > 0) {
                     $form['rows'][$next_row]['codric'] = $artico['codcon'];
                     $form['in_codric'] = $artico['codcon'];
                 }
                 $mv = $upd_mm->getStockValue(false, $form['in_codart'], $form['annemi'] . '-' . $form['mesemi'] . '-' . $form['gioemi'], $admin_aziend['stock_eval_method']);
                 $magval = array_pop($mv);
                 $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
-                $form['rows'][$next_row]['scorta'] = $artico['scorta'];
+                $form['rows'][$next_row]['scorta'] = (isset($artico))?$artico['scorta']:0;
                 $form['rows'][$next_row]['quamag'] = $magval['q_g'];
-                if ($artico['good_or_service']==2 and $tipo_composti['val']=="KIT") {
+                if (isset($artico) && $artico['good_or_service']==2 and $tipo_composti['val']=="KIT") {
                     $whe_dis = "codice_composizione = '".$form['in_codart']."'";
                     $res_dis = gaz_dbi_dyn_query('*', $gTables['distinta_base'], $whe_dis, 'id', 0, PER_PAGE);
                     while ($row_dis = gaz_dbi_fetch_array($res_dis)) {
