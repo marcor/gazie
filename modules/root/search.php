@@ -22,7 +22,7 @@
   scriva   alla   Free  Software Foundation, 51 Franklin Street,
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
-*/ 
+*/
 // prevent direct access
 
 $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND
@@ -66,7 +66,7 @@ if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato diret
     if ($opt=='suggest_new_codart'){
 		$tl++; // in caso di proposta codice articolo forzo la ricerca ad un carattere in meno
 	}
-	if($tl<2) { 
+	if($tl<2) {
         return;
     }
 
@@ -80,9 +80,9 @@ if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato diret
                 foreach ($parts as $id => $part) {   //	(inteso come stringa sulla quale fare il like) perchè è più flessibile con i caratteri jolly
                     $like[] = like_prepare($field, $part); //	Altrimenti se si cerca za%, il like viene fatto su tutto il concat, e se il codice prodotto
                 }           //	non inizia per za il risultato è nullo, così invece se cerco za%, viene fuori anche un prodotto il
-            }            //  cui nome (o descrizione) inizia per za ma il cui codice può anche essere TPQ 
+            }            //  cui nome (o descrizione) inizia per za ma il cui codice può anche essere TPQ
             $like = implode(" OR ", $like);    //	creo la porzione di query per il like, con OR perchè cerco in campi differenti
-            $result = gaz_dbi_dyn_query("codice AS id, CONCAT(codice,' - ',descri,' - ',barcode,' - ',codice_fornitore) AS label, codice AS value, movimentabile", $gTables['artico'], $like, "CASE movimentabile WHEN 'N' THEN 2 WHEN 'E' THEN 1 WHEN 'S' THEN 0 END ASC , catmer ASC, codice ASC");
+            $result = gaz_dbi_dyn_query("codice AS id, CONCAT(codice,' - ',descri,' - ',barcode,' - ',codice_fornitore) AS label, codice AS value, movimentabile", $gTables['artico'], $like, "CASE movimentabile WHEN 'N' THEN 2 WHEN 'E' THEN 1 WHEN 'S' THEN 0 END ASC , catmer ASC, codice ASC",0,500);
             break;
 		case 'order':
             $fields = array("numdoc", "descri"); //	Sono i campi sui quali effettuare la ricerca
@@ -90,24 +90,24 @@ if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato diret
                 foreach ($parts as $id => $part) {   //	(inteso come stringa sulla quale fare il like) perchè è più flessibile con i caratteri jolly
                     $like[] = like_prepare($field, $part); //	Altrimenti se si cerca za%, il like viene fatto su tutto il concat, e se il codice prodotto
                 }           //	non inizia per za il risultato è nullo, così invece se cerco za%, viene fuori anche un prodotto il
-            }            //  cui nome (o descrizione) inizia per za ma il cui codice può anche essere TPQ 
+            }            //  cui nome (o descrizione) inizia per za ma il cui codice può anche essere TPQ
             $like = implode(" OR ", $like);    //	creo la porzione di query per il like, con OR perchè cerco in campi differenti
-            $result = gaz_dbi_dyn_query("id_tes AS id, CONCAT('n.',numdoc,' del ',datemi,' - ',descri) AS label, id_tes AS value, 'S' AS movimentabile ", 
-										$gTables['tesbro']. " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesbro'] . ".clfoco = " . $gTables['clfoco'] . ".codice", 
+            $result = gaz_dbi_dyn_query("id_tes AS id, CONCAT('n.',numdoc,' del ',datemi,' - ',descri) AS label, id_tes AS value, 'S' AS movimentabile ",
+										$gTables['tesbro']. " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesbro'] . ".clfoco = " . $gTables['clfoco'] . ".codice",
 										"(".$like.") AND tipdoc='VOR'", // così prendo solo gli ordini da clienti
-										"datemi DESC, numdoc DESC");
-            break;	
+										"datemi DESC, numdoc DESC",0,500);
+            break;
 		case 'production':
             $fields = array("id", "description", "add_info"); //	Sono i campi sui quali effettuare la ricerca
             foreach ($fields as $id1 => $field) {   //	preparo i diversi campi per il like, questo funziona meglio del concat
                 foreach ($parts as $id => $part) {   //	(inteso come stringa sulla quale fare il like) perchè è più flessibile con i caratteri jolly
                     $like[] = like_prepare($field, $part); //	Altrimenti se si cerca za%, il like viene fatto su tutto il concat, e se il codice prodotto
                 }           //	non inizia per za il risultato è nullo, così invece se cerco za%, viene fuori anche un prodotto il
-            }            //  cui nome (o descrizione) inizia per za ma il cui codice può anche essere TPQ 
+            }            //  cui nome (o descrizione) inizia per za ma il cui codice può anche essere TPQ
             $like = implode(" OR ", $like);    //	creo la porzione di query per il like, con OR perchè cerco in campi differenti
-            $result = gaz_dbi_dyn_query("id, CONCAT(id,' - ',description,' - ',add_info) AS label, id AS value, 'S' AS movimentabile, description ", 
+            $result = gaz_dbi_dyn_query("id, CONCAT(id,' - ',description,' - ',add_info) AS label, id AS value, 'S' AS movimentabile, description ",
 										$gTables['orderman'], "(".$like.") AND stato_lavorazione < 9", // così prendo solo gli ordini da clienti
-										"id DESC");
+										"id DESC",0,500);
             break;
         case 'quality':
             $fields = array("quality"); //	Sono i campi sui quali effettuare la ricerca
@@ -115,9 +115,9 @@ if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato diret
                 foreach ($parts as $id => $part) {   //	(inteso come stringa sulla quale fare il like) perchè è più flessibile con i caratteri jolly
                     $like[] = like_prepare($field, $part); //	Altrimenti se si cerca za%, il like viene fatto su tutto il concat, e se il codice prodotto
                 }           //	non inizia per za il risultato è nullo, così invece se cerco za%, viene fuori anche un prodotto il
-            }            //  cui nome (o descrizione) inizia per za ma il cui codice può anche essere TPQ 
+            }            //  cui nome (o descrizione) inizia per za ma il cui codice può anche essere TPQ
             $like = implode(" OR ", $like).' GROUP BY quality';    //	creo la porzione di query per il like, con OR perchè cerco in campi differenti
-            $result = gaz_dbi_dyn_query("id_rig, quality AS label, quality AS value, 'S' AS movimentabile ", $gTables['rigbro'], $like, "id_rig");
+            $result = gaz_dbi_dyn_query("id_rig, quality AS label, quality AS value, 'S' AS movimentabile ", $gTables['rigbro'], $like, "id_rig",0,500);
             break;
         case 'municipalities':
             $fields = array("name"); //	Sono i campi sui quali effettuare la ricerca
@@ -125,9 +125,9 @@ if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato diret
                 foreach ($parts as $id => $part) {   //	(inteso come stringa sulla quale fare il like) perchè è più flessibile con i caratteri jolly
                     $like[] = like_prepare($field, $part); //	Altrimenti se si cerca za%, il like viene fatto su tutto il concat, e se il codice prodotto
                 }           //	non inizia per za il risultato è nullo, così invece se cerco za%, viene fuori anche un prodotto il
-            }            //  cui nome (o descrizione) inizia per za ma il cui codice può anche essere TPQ 
+            }            //  cui nome (o descrizione) inizia per za ma il cui codice può anche essere TPQ
             $like = implode(" OR ", $like);    //	creo la porzione di query per il like, con OR perchè cerco in campi differenti
-            $result = gaz_dbi_dyn_query("id, CONCAT(id,' - ',name) AS label, id AS value, 'S' AS movimentabile ", $gTables['municipalities'], $like, "name");
+            $result = gaz_dbi_dyn_query("id, CONCAT(id,' - ',name) AS label, id AS value, 'S' AS movimentabile ", $gTables['municipalities'], $like, "name",0,500);
             break;
         case 'location':
             foreach ($parts as $id => $part) {
@@ -136,17 +136,17 @@ if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato diret
             $like = implode(" AND ", $like); //	creo la porzione di query per il like
             $result = gaz_dbi_dyn_query("UPPER(" . $gTables['municipalities'] . ".name) AS value,
 							" . $gTables['municipalities'] . ".postal_code AS id,
-							" . $gTables['provinces'] . ".abbreviation AS prospe, 
-							" . $gTables['country'] . ".name AS nation, 
+							" . $gTables['provinces'] . ".abbreviation AS prospe,
+							" . $gTables['country'] . ".name AS nation,
 							" . $gTables['country'] . ".iso AS country, 'S' AS movimentabile,
-							CONCAT(" . $gTables['municipalities'] . ".postal_code, ' ', " . $gTables['municipalities'] . ".name, ' (', " . $gTables['provinces'] . ".abbreviation, ') ', " . $gTables['regions'] . ".name, ' ', " . $gTables['country'] . ".name) AS label ", 
-							$gTables['municipalities'] . " 
-							LEFT JOIN " . $gTables['provinces'] . " ON 
+							CONCAT(" . $gTables['municipalities'] . ".postal_code, ' ', " . $gTables['municipalities'] . ".name, ' (', " . $gTables['provinces'] . ".abbreviation, ') ', " . $gTables['regions'] . ".name, ' ', " . $gTables['country'] . ".name) AS label ",
+							$gTables['municipalities'] . "
+							LEFT JOIN " . $gTables['provinces'] . " ON
 							" . $gTables['municipalities'] . ".id_province = " . $gTables['provinces'] . ".id
-							LEFT JOIN " . $gTables['regions'] . " ON 
+							LEFT JOIN " . $gTables['regions'] . " ON
 							" . $gTables['provinces'] . ".id_region = " . $gTables['regions'] . ".id
-							LEFT JOIN " . $gTables['country'] . " ON 
-							" . $gTables['regions'] . ".iso_country = " . $gTables['country'] . ".iso", $like, $gTables['municipalities'] . ".name ASC");
+							LEFT JOIN " . $gTables['country'] . " ON
+							" . $gTables['regions'] . ".iso_country = " . $gTables['country'] . ".iso", $like, $gTables['municipalities'] . ".name ASC",0,500);
             break;
         case 'supplier':
             $fields = array("ragso1", "ragso2");    //	Sono i campi sui quali effettuare la ricerca
@@ -154,9 +154,9 @@ if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato diret
                 foreach ($parts as $id => $part) {   //	(inteso come stringa sulla quale fare il like) perchè è più flessibile con i caratteri jolly
                     $like[] = like_prepare($field, $part); //	Altrimenti se si cerca za%, il like viene fatto su tutto il concat, e se il codice prodotto
                 }           //	non inizia per za il risultato è nullo, così invece se cerco za%, viene fuori anche un prodotto il
-            }            //  cui nome (o descrizione) inizia per za ma il cui codice può anche essere TPQ 
+            }            //  cui nome (o descrizione) inizia per za ma il cui codice può anche essere TPQ
             $like = implode(" OR ", $like);    //	creo la porzione di query per il like, con OR perchè cerco in campi differenti
-            $result = gaz_dbi_dyn_query("codice, CONCAT(ragso1,' ',ragso2) AS label, ragso1 AS value, 'S' AS movimentabile ", $gTables['clfoco']. " LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id", '('.$like.') AND codice BETWEEN '.$admin_aziend['masfor'].'000001 AND '.$admin_aziend['masfor'].'999999', 'ragso1');
+            $result = gaz_dbi_dyn_query("codice, CONCAT(ragso1,' ',ragso2) AS label, ragso1 AS value, 'S' AS movimentabile ", $gTables['clfoco']. " LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id", '('.$like.') AND codice BETWEEN '.$admin_aziend['masfor'].'000001 AND '.$admin_aziend['masfor'].'999999', 'ragso1',0,500);
 			break;
         case 'employee':
             $fields = array("ragso1", "ragso2");    //	Sono i campi sui quali effettuare la ricerca
@@ -164,18 +164,18 @@ if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato diret
                 foreach ($parts as $id => $part) {   //	(inteso come stringa sulla quale fare il like) perchè è più flessibile con i caratteri jolly
                     $like[] = like_prepare($field, $part); //	Altrimenti se si cerca za%, il like viene fatto su tutto il concat, e se il codice prodotto
                 }           //	non inizia per za il risultato è nullo, così invece se cerco za%, viene fuori anche un prodotto il
-            }            //  cui nome (o descrizione) inizia per za ma il cui codice può anche essere TPQ 
+            }            //  cui nome (o descrizione) inizia per za ma il cui codice può anche essere TPQ
             $like = implode(" OR ", $like);    //	creo la porzione di query per il like, con OR perchè cerco in campi differenti
-            $result = gaz_dbi_dyn_query("id_staff AS id, CONCAT(ragso1,' ',ragso2) AS label, CONCAT(ragso1,' ',ragso2) AS value, 'S' AS movimentabile ", $gTables['staff'] . ' AS staff LEFT JOIN ' . $gTables['clfoco'] . ' AS worker ON staff.id_clfoco=worker.codice LEFT JOIN ' . $gTables['anagra'] . ' AS ana ON worker.id_anagra=ana.id ', $like, 'ragso1');
+            $result = gaz_dbi_dyn_query("id_staff AS id, CONCAT(ragso1,' ',ragso2) AS label, CONCAT(ragso1,' ',ragso2) AS value, 'S' AS movimentabile ", $gTables['staff'] . ' AS staff LEFT JOIN ' . $gTables['clfoco'] . ' AS worker ON staff.id_clfoco=worker.codice LEFT JOIN ' . $gTables['anagra'] . ' AS ana ON worker.id_anagra=ana.id ', $like, 'ragso1',0,500);
 			break;
         case 'suggest_new_codart':
             $result = gaz_dbi_dyn_query("codice AS id, CONCAT('Ultimo:',codice) AS label, codice AS value, movimentabile", $gTables['artico'], "codice LIKE '".$term."%'", "codice DESC", 0,1);
             break;
         case 'suggest_descri_artico':
-            $result = gaz_dbi_dyn_query("descri AS id, CONCAT(codice,' - ',descri) AS label, descri AS value, movimentabile", $gTables['artico'], "descri LIKE '%".$term."%'", "CASE movimentabile WHEN 'N' THEN 2 WHEN 'E' THEN 1 WHEN 'S' THEN 0 END ASC, codice ASC");
+            $result = gaz_dbi_dyn_query("descri AS id, CONCAT(codice,' - ',descri) AS label, descri AS value, movimentabile", $gTables['artico'], "descri LIKE '%".$term."%'", "CASE movimentabile WHEN 'N' THEN 2 WHEN 'E' THEN 1 WHEN 'S' THEN 0 END ASC, codice ASC",0,500);
             break;
         case 'suggest_codice_artico':
-            $result = gaz_dbi_dyn_query("codice AS id, CONCAT(codice,' - ',descri) AS label, codice AS value, movimentabile", $gTables['artico'], "codice LIKE '%".$term."%'", "CASE movimentabile WHEN 'N' THEN 2 WHEN 'E' THEN 1 WHEN 'S' THEN 0 END ASC, codice ASC");
+            $result = gaz_dbi_dyn_query("codice AS id, CONCAT(codice,' - ',descri) AS label, codice AS value, movimentabile", $gTables['artico'], "codice LIKE '%".$term."%'", "CASE movimentabile WHEN 'N' THEN 2 WHEN 'E' THEN 1 WHEN 'S' THEN 0 END ASC, codice ASC",0,500);
             break;
 		default:
             $fields = array("ragso1", "ragso2");    //	Sono i campi sui quali effettuare la ricerca
@@ -183,17 +183,17 @@ if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato diret
                 foreach ($parts as $id => $part) {   //	(inteso come stringa sulla quale fare il like) perchè è più flessibile con i caratteri jolly
                     $like[] = like_prepare($field, $part); //	Altrimenti se si cerca za%, il like viene fatto su tutto il concat, e se il codice prodotto
                 }           //	non inizia per za il risultato è nullo, così invece se cerco za%, viene fuori anche un prodotto il
-            }            //  cui nome (o descrizione) inizia per za ma il cui codice può anche essere TPQ 
+            }            //  cui nome (o descrizione) inizia per za ma il cui codice può anche essere TPQ
             $like = implode(" OR ", $like);    //	creo la porzione di query per il like, con OR perchè cerco in campi differenti
-            $result = gaz_dbi_dyn_query("id, CONCAT(ragso1,' ',ragso2) AS label, ragso1 AS value, 'S' AS movimentabile ", $gTables['anagra'], $like, 'ragso1');
+            $result = gaz_dbi_dyn_query("id, CONCAT(ragso1,' ',ragso2) AS label, ragso1 AS value, 'S' AS movimentabile ", $gTables['anagra'], $like, 'ragso1',0,500);
     }
-    while ($row = gaz_dbi_fetch_assoc($result)) { 
+    while ($row = gaz_dbi_fetch_assoc($result)) {
         $return_arr[] = $row;
     }
-    if ($opt=='suggest_new_codart'){ // in caso di suggerimento codice 
+    if ($opt=='suggest_new_codart'){ // in caso di suggerimento codice
 			$return_arr[0]['value']++;
 			$return_arr[0]['label'].=' successivo: '.$return_arr[0]['value'];
-	}	
+	}
     if ($term != '%%') { //	E' indispensabile, altrimenti si possono generare warning che non fanno funzionare l'autocompletamento
         $return_arr = apply_highlight($return_arr, str_replace("%", '', $parts));
     }
@@ -209,8 +209,8 @@ if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato diret
  * @param string $evidenza: array su cui mettere in evidenza gli articoli esauriti o non movimentabili
  *
  */
- 
-function apply_evidenze($evidenza) 
+
+function apply_evidenze($evidenza)
 {
 	$rows = count($evidenza);
 
@@ -326,7 +326,7 @@ function apply_highlight($a_json, $parts) {
                 if ($pos - $start > 0) {
                     $no_highlight = mb_substr($label, $start, $pos - $start);
                     $label_highlight .= $no_highlight;
-                }              
+                }
                 $highlight = '<mark>' . mb_substr($label, $pos, $len) . '</mark>';
                 $label_highlight .= $highlight;
                 $start = $pos + $len;
@@ -336,7 +336,7 @@ function apply_highlight($a_json, $parts) {
                 $label_highlight .= $no_highlight;
             }
             $a_json[$row]["label"] = $label_highlight;
-			
+
         }
     }
     return $a_json;
