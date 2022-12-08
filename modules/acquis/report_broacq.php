@@ -380,24 +380,23 @@ function printPdf(urlPrintDoc){
                 $rigbro_result = gaz_dbi_dyn_query('*', $gTables['rigbro']." LEFT JOIN ".$gTables['orderman']." ON ".$gTables['rigbro'].".id_orderman = ".$gTables['orderman'].".id", "id_tes = " . $r["id_tes"] , 'id_tes DESC');
 
 				// INIZIO crezione tabella per la visualizzazione sul tootip di tutto il documento
-				$tt = '<table><th colspan=4 >' . $tipodoc." n.".$r["numdoc"].' del '. gaz_format_date($r["datemi"]).'</th>';
+				$tt = '<p class=\'bg-info text-primary\'><b>' . $tipodoc." n.".$r["numdoc"].' del '. gaz_format_date($r["datemi"]).'</b></p>';
                 while ( $rigbro_r = gaz_dbi_fetch_array($rigbro_result) ) {
 					if ($rigbro_r['id_orderman']>0){
 						$orderman_descr=$rigbro_r['id_orderman'].'-'.$rigbro_r['description'];
 					}
-					$tt .= '<tr><td>' . $rigbro_r['codart'] . '</td><td>' . htmlspecialchars( $rigbro_r['descri'] ) . '</td><td>' . $rigbro_r['unimis'] . '</td><td align=right>' . $rigbro_r['quanti'] . '</td></tr>';
+					$tt .= '<p class=\'text-right\'>' . $rigbro_r['codart'] . '  ' . htmlspecialchars( $rigbro_r['descri'] ) . '  ' . $rigbro_r['unimis'] . '  ' . floatval($rigbro_r['quanti']) . '</p>';
 				}
-				$tt .= '</table>';
 				// FINE creazione tabella per il tooltip dei righi
 
-                echo '<td>'.$orderman_descr." &nbsp;</td>\n";
+        echo '<td>'.$orderman_descr." &nbsp;</td>\n";
 
 
 				// colonna data documento
 				echo "<td>".gaz_format_date($r["datemi"])." &nbsp;</td>\n";
 
 				// colonna fornitore
-				echo '<td><div class="gazie-tooltip" data-type="movcon-thumb" data-id="' . $r["id_tes"] . '" data-title="' . str_replace("\"", "'", $tt) . '" >'."<a title=\"Dettagli fornitore\" id=\"fornitore_".$r['id_tes']."\"  value=\"".$r["ragso1"]."\" href=\"report_fornit.php?nome=" . htmlspecialchars($r["ragso1"]) . "\">".$r["ragso1"]."&nbsp;</a></div></td>";
+				echo '<td><div class="gazie-tooltip" data-type="movcon-thumb" data-id="' . $r["id_tes"] . '" data-title="' . $tt . '" >'."<a id=\"fornitore_".$r['id_tes']."\"  value=\"".$r["ragso1"]."\" href=\"report_fornit.php?nome=" . htmlspecialchars($r["ragso1"]) . "\">".$r["ragso1"]."&nbsp;</a></div></td>";
 
 				// colonna bottone cambia stato
 				echo '<td><a class="btn btn-xs btn-'.$clastatus.'"';

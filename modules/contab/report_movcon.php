@@ -273,16 +273,15 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     }
     // INIZIO crezione tabella per la visualizzazione sul tootip di tutto il movimento e facccio la somma del totale movimento
     $res_rig = gaz_dbi_dyn_query("*", $gTables['rigmoc'], 'id_tes=' . $a_row["id_tes"], 'id_rig');
-    $tt = '<table><th colspan=3 >' . $a_row['descri'] . '</th>';
+    $tt = '<p class=\'bg-info text-primary\'><b>' . $a_row['descri'] . '</b></p>';
     $tot = 0.00;
     while ($rr = gaz_dbi_fetch_array($res_rig)) {
         $account = $anagrafica->getPartner($rr["codcon"], true);
-        $tt .= '<tr><td align="left">'.($account==null?'':htmlspecialchars($account['descri'])).'</td><td align=right>'.$rr['import'].'</td><td align=right>' . $rr['darave'] . '</td></tr>';
+        $tt .= '<p class=\'text-right\'>'.($account==null?'':htmlspecialchars($account['descri'])).'  '.$rr['import'].'  ' . $rr['darave'] . '</p>';
         if ($rr['darave'] == 'D') {
           $tot += $rr['import'];
         }
     }
-    $tt .= '</table>';
     // FINE creazione tabella per il tooltip
     echo "<tr class=\"FacetDataTD\">";
     echo "<td align=\"center\"><a class=\"btn btn-xs btn-edit\" href=\"admin_movcon.php?id_tes=" . $a_row["id_tes"] . "&Update\" title=\"Modifica\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $a_row["id_tes"] . "</a> &nbsp</td>";
