@@ -650,6 +650,7 @@ class magazzForm extends GAzieForm {
                 $return_val[0] = array('q' => $last_invQuanti, 'v' => $last_invPrice,
                     'q_g' => $giacenza['q_g'], 'v_g' => $giacenza['v_g']);
                 while ($r = gaz_dbi_fetch_array($rs_movmag)) {
+                    $row_val=0;
                     if ($r['operat'] == 1) { //carico
                         $row_val = CalcolaImportoRigo(1, $r['prezzo'], array($r['scorig'], $r['scochi']), $decimal_price);
                         $giacenza['q_g']+=$r['quanti'];
