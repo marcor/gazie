@@ -1380,7 +1380,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
                   echo "ERRORE ne mancano:", gaz_format_quantity($ld,","), "<br>"; // >>>>> quantità insufficiente - metto come valore ERRORE così potrò ritrovarlo facilmente e annullo quanti lotti sono interessati per questo componente
                   ?>
                   <input type="hidden" name="lot_quanti<?php echo $nc, $l; ?>" value="ERRORE">
-                  <input type="hidden" name="lot_idmov<?php echo $nc, $l; ?>" value="<?php echo $form['lot_idmov'][$nc][$l]; ?>">
+                  <input type="hidden" name="lot_idmov<?php echo $nc, $l; ?>" value="<?php echo (isset($form['lot_idmov'][$nc][$l]))?$form['lot_idmov'][$nc][$l]:0; ?>">
                   <input type="hidden" name="q_lot_comp<?php echo $nc; ?>" value="">
                   <?php
                 } else {
