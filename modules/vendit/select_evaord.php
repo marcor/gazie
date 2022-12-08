@@ -893,9 +893,8 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])){ //conferma dell'evasione di u
                 }
                 $articolo = gaz_dbi_get_row($gTables['artico'], "codice", trim($form['righi'][$k]['codart']));
 
-                if ($admin_aziend['conmag'] == 2 && $articolo['good_or_service'] != 1 && $tipo_composti['val']=="STD" && $form['righi'][$k]['tiprig'] == 0 && ! empty($form['righi'][$k]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
-                    $id_movmag = $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['quanti'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']
-                    );
+                if (isset($articolo) && $admin_aziend['conmag'] == 2 && $articolo['good_or_service'] != 1 && $tipo_composti['val']=="STD" && $form['righi'][$k]['tiprig'] == 0 && ! empty($form['righi'][$k]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
+                    $id_movmag = $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['quanti'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']);
                 } else if ($admin_aziend['conmag'] == 2 && $form['righi'][$k]['tiprig'] == 210 && ! empty($form['righi'][$k]['codart'])) {
                     $id_movmag = $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['quanti'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']);
                 }
@@ -1606,7 +1605,7 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
 
 				// Antonio Germani - controllo e warning disponibilità
 				$articolo = gaz_dbi_get_row($gTables['artico'], "codice", $v['codart']);
-				if ($checkin == " checked" && $articolo['good_or_service']<>1 ){ // solo se da evadere
+				if (isset($articolo) && $checkin == " checked" && $articolo['good_or_service']<>1 ){ // solo se da evadere
 					echo "<input type=\"hidden\" value=\"" . $v['giac'] . "\" name=\"righi[$k][giac]\">\n";
 					echo "<input type=\"hidden\" value=\"" . $v['ordin'] . "\" name=\"righi[$k][ordin]\">\n";
 					if ($v['giac']<$v['quanti']){ // se la disponibilità reale di magazzino non è sufficiente
