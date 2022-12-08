@@ -37,7 +37,7 @@ if ( isset($maintenance) && $maintenance!=FALSE && $maintenance!=$_SESSION['user
 		<link rel="apple-touch-icon" href="data:image/x-icon;base64,<?php echo $ico114; ?>"  type="image/x-icon">
 		<link rel="apple-touch-startup-image" href="data:image/x-icon;base64,<?php echo $ico114; ?>"  type="image/x-icon">
 		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="data:image/x-icon;base64,<?php echo $ico114; ?>"  type="image/x-icon" />
-    <link href="../../library/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="../../js/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet" />
     <link href="../../js/jquery.ui/jquery-ui.css" rel="stylesheet">
     <link href="../../library/theme/g7/smartmenus-master/bootstrap/jquery.smartmenus.bootstrap.css" rel="stylesheet" />
     <script src="../../js/jquery/jquery.js"></script>

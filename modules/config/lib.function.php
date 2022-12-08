@@ -50,13 +50,14 @@ class configForm extends GAzieForm {
     }
 
     function selThemeDir($name, $val) {
-        echo '<select name="' . $name . '" class="form-control input-sm">';
+        echo '<select name="' . $name . '" >';
         foreach (glob('../../library/theme/*', GLOB_ONLYDIR) as $dir) {
             $selected = "";
+            $expdir=explode('/',$dir);
             if (substr($dir,5) == $val) {
                 $selected = " selected ";
             }
-            echo "<option value=\"" . substr($dir,5) . "\"" . $selected . ">" . substr($dir,5) . "</option>\n";
+            echo "<option value=\"" . substr($dir,5) . "\"" . $selected . ">" . $expdir[4] . "</option>\n";
         }
         echo "</select>\n";
     }
@@ -103,8 +104,8 @@ class configForm extends GAzieForm {
             echo '<button type="submit" class="btn btn-default btn-sm" name="search_str"><i class="glyphicon glyphicon-search"></i></button>';
             /** ENRICO FEDELE */
         }
-	}       
-	
+	}
+
 
 }
 

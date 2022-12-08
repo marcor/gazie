@@ -153,7 +153,6 @@ function menu_check_from_modules() {
 	});
 }
 function opendoc(module) {
-	//twitter bootstrap script
 	$.ajax({
 		type: "POST",
 		url: module,

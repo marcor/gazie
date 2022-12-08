@@ -98,7 +98,7 @@ if (isset( $scriptname) && $scriptname != $prev_script && $scriptname != 'admin.
 		<link rel="apple-touch-icon" href="data:image/x-icon;base64,<?php echo $ico114; ?>"  type="image/x-icon">
 		<link rel="apple-touch-startup-image" href="data:image/x-icon;base64,<?php echo $ico114; ?>"  type="image/x-icon">
 		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="data:image/x-icon;base64,<?php echo $ico114; ?>"  type="image/x-icon" />
-    <link href="../../library/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="../../js/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="../../library/theme/lte/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="../../library/theme/lte/ionicons/css/ionicons.min.css">
     <link rel="stylesheet" href="../../library/theme/lte/adminlte/dist/css/AdminLTE.css">
@@ -253,7 +253,6 @@ function menu_check_from_modules() {
 setInterval(menu_check_from_modules,<?php echo intval((int)$period*60000);?>);
 
     $(function () {
-        //twitter bootstrap script
         $("#docmodal").click(function () {
 		var module = $(this).attr('module');
             $.ajax({

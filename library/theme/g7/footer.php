@@ -56,7 +56,7 @@ $contact_link=(isset($contact_link))?$contact_link:'';
 <script><!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
   $.widget.bridge('uibutton', $.ui.button);
 </script>
-<script src="../../library/bootstrap/js/bootstrap.min.js"></script>
+<script src="../../js/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 <script src="../../library/theme/g7/smartmenus-master/jquery.smartmenus.js" type="text/javascript"></script>
 <script src="../../library/theme/g7/smartmenus-master/bootstrap/jquery.smartmenus.bootstrap.js" type="text/javascript"></script>
 

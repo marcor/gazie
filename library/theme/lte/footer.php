@@ -49,7 +49,7 @@ if ( $url!='ruburl.php' ) {
         </div>
 Version <?php echo GAZIE_VERSION; ?>
     </footer>
-      
+
     <!-- Control Sidebar -->
       <aside class="control-sidebar control-sidebar-dark">
         <!-- Create the tabs -->
@@ -61,7 +61,7 @@ Version <?php echo GAZIE_VERSION; ?>
         <div class="tab-content">
           <!-- Home tab content -->
           <div class="tab-pane active" id="control-sidebar-home-tab">
-          
+
               <!--<form action="" method="post">
         <select class="changeStatus" name="changeStatus">
                 <option value="0">Starting</option>
@@ -76,7 +76,7 @@ Version <?php echo GAZIE_VERSION; ?>
             if (gaz_dbi_num_rows($result) > 0) {
                 while ($r = gaz_dbi_fetch_array($result)) {
                     $rref = explode('-', $r['transl_ref']);
-                    
+
                     switch ($rref[1]) {
                         case 'm1':
                             require '../' . $rref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
@@ -109,7 +109,7 @@ Version <?php echo GAZIE_VERSION; ?>
                           <i class="menu-icon fa <?php echo get_rref_type( $r["link"] ); ?>" style="color:#<?php echo $r["color"]; ?>"></i>
                           <div class="menu-info">
                             <h4 class="control-sidebar-subheading">
-                                <?php 
+                                <?php
                                     echo pulisci_rref_name( $rref_name );
                                 ?>
                             </h4>
@@ -122,7 +122,7 @@ Version <?php echo GAZIE_VERSION; ?>
             }
             ?>
                 </ul>
-              
+
           </div><!-- /.tab-pane -->
           <!-- Stats tab content -->
           <div class="tab-pane" id="control-sidebar-stats-tab">Stats Tab Content</div><!-- /.tab-pane -->
@@ -130,7 +130,7 @@ Version <?php echo GAZIE_VERSION; ?>
           <div class="tab-pane" id="control-sidebar-settings-tab">
             <form method="post">
               <!--<h3 class="control-sidebar-heading">Impostazioni </h3>-->
-              <?php              
+              <?php
                 printCheckbox( "Stile Fixed", "LTE_Fixed", "Attiva lo stile 'fisso'. Non puoi usare 'fisso' e 'boxed' insieme" );
                 printCheckbox("Stile Boxed", "LTE_Boxed", "Attiva lo stile 'boxed'" );
                 printCheckbox("Menu Ridotto", "LTE_Collapsed", "Collassa il menu principale" );
@@ -152,9 +152,9 @@ Version <?php echo GAZIE_VERSION; ?>
     <script src="../../js/jquery.ui/jquery-ui.min.js"></script>
     <script><!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
       $.widget.bridge('uibutton', $.ui.button);
-    </script>    
+    </script>
     <script type="text/javascript">
-        function processForm(el) { 
+        function processForm(el) {
             var checkbox = $(el);
             $.ajax( {
                 type: 'POST',
@@ -174,8 +174,8 @@ Version <?php echo GAZIE_VERSION; ?>
          // mostra le variabili $global e $server nella pagina
          //if ( $debug_active == true ) d($GLOBALS, $_SERVER);
     ?>
-    </script>  
-    <script src="../../library/bootstrap/js/bootstrap.min.js"></script>
+    </script>
+    <script src="../../js/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script src="../../library/theme/lte/plugins/slimScroll/jquery.slimscroll.min.js"></script>
     <script src="../../library/theme/lte/plugins/fastclick/fastclick.min.js"></script>
     <script>
@@ -185,7 +185,7 @@ Version <?php echo GAZIE_VERSION; ?>
             enableBSToppltip: true
         };
     </script>
-    
+
     <script src="../../library/theme/lte/adminlte/dist/js/app.js"></script>
     <script src="../../js/custom/jquery.ui.autocomplete.html.js"></script>
     <script src="../../js/custom/gz-library.js"></script>
