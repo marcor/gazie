@@ -25,7 +25,6 @@ if (gaz_dbi_num_rows($rs_az) > 1) { // ho più aziende gestite devo usare una ic
     <link rel="shortcut icon" href="../..<?php echo $u['var_value'];?>/images/favicon.ico">
 		<link rel="apple-touch-icon"  href="../..<?php echo $u['var_value'];?>/images/apple-icon-114x114-precomposed.png">
 		<link rel="apple-touch-startup-image"  href="../..<?php echo $u['var_value'];?>/images/apple-icon-114x114-precomposed.png">
-		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="../..<?php echo $u['var_value'];?>/images/apple-icon-114x114-precomposed.png" />
     <title>Login</title>
 <?php
 } elseif (file_exists(DATA_DIR.'files/'.$az['codice'].'/favicon.ico')){ // ho una icona creata per l'azienda
@@ -53,7 +52,7 @@ if (gaz_dbi_num_rows($rs_az) > 1) { // ho più aziende gestite devo usare una ic
 <?php
 }
 ?>
-    <link rel="stylesheet" href="../../library/bootstrap/css/bootstrap.min.css" >
+    <link rel="stylesheet" href="../../js/bootstrap/3.4.1/css/bootstrap.min.css" >
     <link rel="stylesheet" type="text/css" href="../..<?php echo $u['var_value'];?>/scheletons/default.css">
     <link rel="stylesheet" type="text/css" href="../..<?php echo $u['var_value'];?>/skins/default.css">
 
