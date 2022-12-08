@@ -34,7 +34,7 @@ if ( isset($_GET['tipodocumento'])) {
     $tipodocumento = "DDT";
 }
 
-function getDateLimits($sez=1, $tipodocumento) {
+function getDateLimits($sez=1, $tipodocumento='DDT') {
     $acc = [];
     $now = new DateTime;
     $acc['date_exe'] = $now->format("Y-m-d");
