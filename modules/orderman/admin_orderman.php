@@ -1105,7 +1105,6 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 					$excluded_movmag=0;
 				}
 
-
 		while ($row = $rescompo->fetch_assoc()) { // creo gli input dei componenti visualizzandone anche disponibilità di magazzino
 			$nmix=$nc;$mix="";$passrecstoc="";$ko="";
 			if ($form['quantip'] > 0) {
@@ -1140,7 +1139,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
               <div style="background-color:lightgreen;"> <!-- elenco articoli prelevati in percentuale -->
               <?php
               if ($artico['lot_or_serial'] == 1 && $ko==""){// se il componente prevede lotti gestisco gli articoli con i rispettivi lotti
-                $sil_idlots=$campsilos->getContentSil($form['recip_stocc_comp'][$nc]);
+                $sil_idlots=$campsilos->getContentSil($form['recip_stocc_comp'][$nc],"",0,$excluded_movmag);
                 unset($sil_idlots['id_lotti']['totale']);//tolgo il totale
                 $idlots=array_keys($sil_idlots['id_lotti']);// creo array idlotti presenti nel silos
 

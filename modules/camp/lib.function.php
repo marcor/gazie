@@ -96,17 +96,16 @@ class silos {
 		$orderby=2;
 		$limit=0;
 		$passo=2000000;
-
 		$where="recip_stocc = '".$codsil."'";
 
 		if (is_array($excluded_movmag)){
 		  $add_excl="";
 		  foreach($excluded_movmag as $each){
-
 			$add_excl.= " AND ".$gTables['movmag'].".id_mov <> ".intval($each);
-
 		  }
 		  $where=$where.$add_excl;
+		}elseif($excluded_movmag <> 0){
+			$where=$where." AND ".$gTables['movmag'].".id_mov <> ".$excluded_movmag;
 		}
 
 		if (strlen($codart)>0){
@@ -271,7 +270,7 @@ class silos {
 		return $zeroday;
 	}
 
-	function getContentSil($codsil,$date="",$id_mov=0){// funzione per trovare il contenuto in lotti e varietà dalla data dell'ultimo svuotamento totale di un silos (id_mov è l'ultimo id da escludere nella stessa data)
+	function getContentSil($codsil,$date="",$id_mov=0,$excluded_movmag = 0){// funzione per trovare il contenuto in lotti e varietà dalla data dell'ultimo svuotamento totale di un silos (id_mov è l'ultimo id da escludere nella stessa data)
 
 		if ($date==""){
 			$latestEmpty= $this -> getLatestEmptySil($codsil);
@@ -289,6 +288,16 @@ class silos {
 		LEFT JOIN ".$gTables['camp_artico']." ON ".$gTables['camp_artico'].".codice = ".$gTables['artico'].".codice
 		";
 		$where= $gTables['camp_mov_sian'].".recip_stocc = '".$codsil."' AND ".$gTables['camp_artico'].".confezione = 0";
+		if (is_array($excluded_movmag)){
+		  $add_excl="";
+		  foreach($excluded_movmag as $each){
+			$add_excl.= " AND ".$gTables['movmag'].".id_mov <> ".intval($each);
+		  }
+		  $where=$where.$add_excl;
+		}elseif($excluded_movmag <> 0){
+			$where=$where." AND ".$gTables['movmag'].".id_mov <> ".$excluded_movmag;
+		}
+		
 		if (strlen($date)>0){
 			$where = $where." AND (datdoc > '".$date."' OR(datdoc = '".$date."' AND id_mov > ".$id_mov."))";
 		}
