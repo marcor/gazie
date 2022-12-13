@@ -88,6 +88,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 } elseif ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo accesso per UPDATE
     $form = $anagrafica->getPartner($admin_aziend['masban']*1000000+intval($_GET['codice']));
     $form['codice'] = str_pad(intval($_GET['codice']),6,'0',STR_PAD_LEFT);
+    $form['cuc_code']=(isset($form['cuc_code']))?$form['cuc_code']:'';
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
     //ricerca del numero libero sul piano dei conti
     $result = gaz_dbi_dyn_query('codice', $gTables['clfoco'], "codice BETWEEN ".$admin_aziend['masban']."000001 AND ".$admin_aziend['masban']."999999",'codice ASC');
@@ -189,7 +190,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
        echo "<option value=\"".$a_row['iso']."\"".$selected.">".$a_row['iso']." - ".$a_row['name']."</option>";
 }
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[8]* </td><td class=\"FacetDataTD\">
-       <input type=\"text\" name=\"iban\" value=\"".$form['iban']."\" maxlength=\"27\"  />
+       <input type=\"text\" name=\"iban\" value=\"".$form['iban']."\" maxlength=\"32\"  />
        </td></tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['sia_code']."* </td><td class=\"FacetDataTD\">
        <input type=\"text\" name=\"sia_code\" value=\"".$form['sia_code']."\" maxlength=\"5\"  />
