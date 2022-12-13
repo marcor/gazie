@@ -945,7 +945,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         $form['rows'][$next_row]['sconto'] = 0;
 					} else {
 						$comp = new venditCalc();
-						$tmpPrezzoNetto_Sconto = $comp->trovaPrezzoNetto_Sconto($cliente['codice'], $form['rows'][$next_row]['codart'], $artico['sconto']);
+						$tmpPrezzoNetto_Sconto = $comp->trovaPrezzoNetto_Sconto($cliente['codice'], $form['rows'][$next_row]['codart'], (isset($artico['sconto']))?$artico['sconto']:0);
 						if ($tmpPrezzoNetto_Sconto < 0) { // è un prezzo netto
 							$form['rows'][$next_row]['prelis'] = -$tmpPrezzoNetto_Sconto;
 							$form['rows'][$next_row]['sconto'] = 0;
@@ -960,7 +960,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['provvigione'] = $provvigione->getPercent($form['id_agente'], $form['in_codart']);
                 if (!isset($tmpPrezzoNetto_Sconto) or ( $tmpPrezzoNetto_Sconto >= 0)) { // non ho trovato un prezzo netto per il cliente/articolo
                     if ($form['listin'] == 2) {
-                        $form['rows'][$next_row]['prelis'] = number_format($artico['preve2'], $admin_aziend['decimal_price'], '.', '');
+                        $form['rows'][$next_row]['prelis'] = number_format((isset($artico['preve2']))?$artico['preve2']:0, $admin_aziend['decimal_price'], '.', '');
                     } elseif ($form['listin'] == 3) {
                         $form['rows'][$next_row]['prelis'] = number_format($artico['preve3'], $admin_aziend['decimal_price'], '.', '');
                     } elseif ($form['listin'] == 4) {
@@ -1154,12 +1154,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $delri = key($_POST['del']);
         // sottrazione ai totali peso,pezzi,volume
         $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['rows'][$delri]['codart']);
-        $form['net_weight'] -= $form['rows'][$delri]['quanti'] * $artico['peso_specifico'];
-        $form['gross_weight'] -= $form['rows'][$delri]['quanti'] * $artico['peso_specifico'];
-        if ($artico['pack_units'] > 0) {
-            $form['units'] -= intval(round($form['rows'][$delri]['quanti'] / $artico['pack_units']));
+        if (isset($artico)){
+          $form['net_weight'] -= $form['rows'][$delri]['quanti'] * $artico['peso_specifico'];
+          $form['gross_weight'] -= $form['rows'][$delri]['quanti'] * $artico['peso_specifico'];
+          if ($artico['pack_units'] > 0) {
+              $form['units'] -= intval(round($form['rows'][$delri]['quanti'] / $artico['pack_units']));
+          }
+          $form['volume'] -= $form['rows'][$delri]['quanti'] * $artico['volume_specifico'];
         }
-        $form['volume'] -= $form['rows'][$delri]['quanti'] * $artico['volume_specifico'];
         // fine sottrazione peso,pezzi,volume
         // diminuisco o lascio inalterati gli index dei testi
         foreach ($form['rows'] as $k => $val) {

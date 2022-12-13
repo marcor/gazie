@@ -557,7 +557,7 @@ class venditCalc extends Compute {
       }
 //cerco sconto cliente/raggruppamento
       $artico = gaz_dbi_get_row($gTables['artico'], "codice", $codart);
-      if (strlen($artico['ragstat']) >= 1) { // questo articolo fa parte di un raggruppamento statico, controllo se è stato selezionato un sconto particolare per il cliente
+      if (isset($artico) && strlen($artico['ragstat']) >= 1) { // questo articolo fa parte di un raggruppamento statico, controllo se è stato selezionato un sconto particolare per il cliente
         $scontoTrovato = gaz_dbi_get_single_value($tabellaScontiRaggruppamenti, "sconto", "clfoco='$codcli' AND ragstat = '".$artico['ragstat']."'");
         if ($scontoTrovato > 0) { // sconto presente
           $msgtoast = $codart . ": sconto raggruppamento statistico riservato al cliente";
