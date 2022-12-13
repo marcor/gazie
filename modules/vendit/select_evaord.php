@@ -523,7 +523,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])){ //conferma dell'evasione di u
 					$value_sian['cod_operazione']= $form['righi'][$k]['cod_operazione'];
 					$value_sian['recip_stocc']= $form['righi'][$k]['recip_stocc'];
 					$value_sian['varieta']= $form['righi'][$k]['quality'];
-					$value_sian['recip_stocc_destin']= $form['righi'][$k]['recip_stocc_destin'];
+					$value_sian['recip_stocc_destin']= (isset($form['righi'][$k]['recip_stocc_destin']))?$form['righi'][$k]['recip_stocc_destin']:'';
 					$value_sian['id_movmag']=$id_movmag;
 					gaz_dbi_table_insert('camp_mov_sian', $value_sian);
 				}
