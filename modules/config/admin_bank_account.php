@@ -174,7 +174,7 @@ print "</td></tr>";
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[4]*</td><td class=\"FacetDataTD\">
        <input type=\"text\" name=\"indspe\" value=\"".$form['indspe']."\" maxlength=\"50\"  /></td></tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[5]*</td><td class=\"FacetDataTD\">
-       <input type=\"text\" name=\"capspe\" value=\"".$form['capspe']."\" maxlength=\"5\"  /></td></tr>\n";
+       <input type=\"text\" name=\"capspe\" value=\"".$form['capspe']."\" maxlength=\"6\"  /></td></tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[6]*</td><td class=\"FacetDataTD\">
        <input type=\"text\" name=\"citspe\" value=\"".$form['citspe']."\" maxlength=\"50\"  />
        <input type=\"text\" name=\"prospe\" value=\"".$form['prospe']."\" maxlength=\"2\"  />
@@ -193,7 +193,7 @@ print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[8]* </td><td class=\
        <input type=\"text\" name=\"iban\" value=\"".$form['iban']."\" maxlength=\"32\"  />
        </td></tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['sia_code']."* </td><td class=\"FacetDataTD\">
-       <input type=\"text\" name=\"sia_code\" value=\"".$form['sia_code']."\" maxlength=\"5\"  />
+       <input type=\"text\" name=\"sia_code\" value=\"".$form['sia_code']."\" maxlength=\"6\"  />
        </td></tr>\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">Codice CUC</td><td class=\"FacetDataTD\">
        <input type=\"text\" name=\"cuc_code\" value=\"".$form['cuc_code']."\" maxlength=\"8\"  />
