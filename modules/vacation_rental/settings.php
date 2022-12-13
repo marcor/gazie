@@ -101,13 +101,7 @@ $reminders_pay = gaz_dbi_dyn_query("*", $gTables['company_config'], " var LIKE '
 </div>
 <div class="panel panel-default gaz-table-form div-bordered">
   <div class="container-fluid">
-<?php
-$address_for_fae =gaz_dbi_get_row($gTables['company_config'], 'var', 'pecsdi_address_for_fae');
-if (trim($address_for_fae)==''){
-  $address_for_fae=$admin_aziend['pec'];
-}
 
-?>
 <ul class="nav nav-pills">
   <li class="<?php echo $genclass; ?>"><a data-toggle="pill" href="#generale">Configurazione</a></li>
   <li class="<?php echo $feedclass; ?>"><a data-toggle="pill" href="#feedback"><b>Recensioni</b></a></li>
