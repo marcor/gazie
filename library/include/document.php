@@ -503,7 +503,7 @@ class DocContabVars {
         if (!isset($this->ExternalDoc)) {
             $this->ExternalDoc = array();
         }
-		$r=false;
+		$r=[];
 		$r['file']= $this->azienda['codice'].'/';
         $r['ext'] = '';
         $dh = opendir( DATA_DIR . 'files/' . $this->azienda['codice'] );
