@@ -165,7 +165,7 @@ if (isset($_POST['conferma'])) { // se confermato
 	$xml_output .= "\n<Products>\n";
 	for ($ord=0 ; $ord<=$_POST['num_products']; $ord++){// ciclo gli articoli e creo il file xml
 		if (isset($_POST['download'.$ord])){ // se selezionato
-			if (intval($_POST['barcode'.$ord])==0 OR !isset ($_POST['barcode'.$ord])) {
+			if ((isset($_POST['barcode'.$ord]) && intval($_POST['barcode'.$ord])==0) OR !isset ($_POST['barcode'.$ord])) {
 				$_POST['barcode'.$ord]="NULL";
 			}
 
@@ -179,9 +179,10 @@ if (isset($_POST['conferma'])) { // se confermato
 				} else {
 					$xml_output .= "\t<Type>variant</Type>\n";
 					if (json_decode($_POST['ecomm_option_attribute'.$ord]) != null){ // se esiste un json per attributo della variante dell'e-commerce
-						$var = json_decode($_POST['ecomm_option_attribute'.$ord]);
-						$xml_output .= "\t<Characteristic>".$var->var_name."</Characteristic>\n";
-						$xml_output .= "\t<CharacteristicId>".$var->var_id."</CharacteristicId>\n";
+						$var = json_decode($_POST['ecomm_option_attribute'.$ord],true);
+            $var_name=(isset($var['var_name'][0]))?$var['var_name'][0]:'null';
+						$xml_output .= "\t<Characteristic>".$var_name."</Characteristic>\n";
+						$xml_output .= "\t<CharacteristicId>".$var['var_id']."</CharacteristicId>\n";
 					}
 				}
 			} else {
@@ -191,7 +192,8 @@ if (isset($_POST['conferma'])) { // se confermato
 				$ecomm_catmer = gaz_dbi_get_row($gTables['catmer'],"codice",intval($_POST['catmer'.$ord]))['ref_ecommerce_id_category'];
 				$xml_output .= "\t<ProductCategory>".$ecomm_catmer."</ProductCategory>\n";
 			}elseif (intval($_POST['ref_ecommerce_id_main_product'.$ord])>0 && $_POST['ref_ecommerce_id_product'.$ord]<1){// se non ce l'ha ed è un parent ci metto quella di una variante
-				$parent_catmer = gaz_dbi_get_row($gTables['artico'],"id_artico_group",intval($_POST['ref_ecommerce_id_main_product'.$ord]))['catmer'];
+				$parent_catmer_res = gaz_dbi_get_row($gTables['artico'],"id_artico_group",intval($_POST['ref_ecommerce_id_main_product'.$ord]));
+        $parent_catmer=(isset($parent_catmer_res))?$parent_catmer_res['catmer']:'';
 				$ecomm_catmer = gaz_dbi_get_row($gTables['catmer'],"codice",intval( $parent_catmer))['ref_ecommerce_id_category'];
 				$xml_output .= "\t<ProductCategory>".$ecomm_catmer."</ProductCategory>\n";
 			}
@@ -212,11 +214,11 @@ if (isset($_POST['conferma'])) { // se confermato
 			if (($_GET['name']=="updnam" || $_GET['todo']=="insert") AND strlen($_POST['descri'.$ord])>0){
 				$xml_output .= "\t<Name>".$_POST['descri'.$ord]."</Name>\n";
 			}
-			if (($_GET['descri']=="upddes" || $_GET['todo']=="insert") AND strlen($_POST['body_text'.$ord])>0){
+			if (($_GET['descri']=="upddes" || $_GET['todo']=="insert") AND (isset($_POST['body_text'.$ord]) && strlen($_POST['body_text'.$ord])>0)){
 				$xml_output .= "\t<Description>".preg_replace('/[\x00-\x1f]/','',htmlspecialchars($_POST['body_text'.$ord]))."</Description>\n";
 			}
 			$xml_output .= "\t<WebPublish>".$_POST['web_public'.$ord]."</WebPublish>\n";// 1=attivo su web; 2=attivo e prestabilito; 3=attivo e pubblicato in home; 4=attivo, in home e prestabilito; 5=disattivato su web"
-			if (($_GET['img']=="updimg" || $_GET['todo']=="insert") AND strlen($_POST['imgurl'.$ord])>0){ // se è da aggiornare e c'è un'immagine HQ
+			if (isset($_POST['imgurl'.$ord]) && ($_GET['img']=="updimg" || $_GET['todo']=="insert") && (strlen($_POST['imgurl'.$ord])>0)){ // se è da aggiornare e c'è un'immagine HQ
 				if (ftp_put($conn_id, $ftp_path_upload."images/".$_POST['imgname'.$ord], $_POST['imgurl'.$ord],  FTP_BINARY)){
 					// ho scritto l'immagine web HQ nella cartella e-commerce
 					ftp_chmod($conn_id, 0664, $ftp_path_upload."images/".$_POST['imgname'.$ord]);// fornisco i permessi necessari all'immagine
@@ -227,7 +229,7 @@ if (isset($_POST['conferma'])) { // se confermato
 					header("Location: " . "../../modules/shop-synchronize/export_articoli.php?success=5");
 					exit;
 				}
-			}elseif (($_GET['img']=="updimg" || $_GET['todo']=="insert") AND strlen($_POST['imgblob'.$ord])>0){// se è da aggiornare e c'è un'immagine blob
+			}elseif (isset($_POST['imgblob'.$ord]) && ($_GET['img']=="updimg" || $_GET['todo']=="insert") && (strlen($_POST['imgblob'.$ord])>0)){// se è da aggiornare e c'è un'immagine blob
 				file_put_contents("../../data/files/tmp/img.jpg", base64_decode($_POST['imgblob'.$ord])); // salvo immagine nella cartella temporanea
 				if (ftp_put($conn_id, $ftp_path_upload."images/".str_replace(' ', '_', $_POST['codice'.$ord]).".jpg", "../../data/files/tmp/img.jpg",  FTP_BINARY)){
 					// scrivo l'immagine web blob nella cartella images dell'e-commerce
@@ -415,7 +417,7 @@ if (!isset($_GET['success'])){
 				if ($_GET['todo']!=="insert"){
 					$where="web_public >= '1' and good_or_service <> '1'";
 				}else{
-					$where="good_or_service <> '1'";
+					$where="good_or_service <> '1' AND web_public BETWEEN 1 AND 4";
 				}
 				// carico in $artico gli articoli che sono presenti in GAzie
 				$artico = gaz_dbi_query ('SELECT ecomm_option_attribute, codice, catmer, barcode, web_price, descri, aliiva, ref_ecommerce_id_product, id_artico_group, web_public, image FROM '.$gTables['artico'].' WHERE '.$where.' ORDER BY codice');
