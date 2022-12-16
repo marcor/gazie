@@ -6,28 +6,28 @@
 	  (http://www.devincentiis.it)
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
-	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP 
+	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP
 	  Copyright (C) 2018-2021 - Antonio Germani, Massignano (AP)
-	  https://www.lacasettabio.it 
+	  https://www.lacasettabio.it
 	  https://www.programmisitiweb.lacasettabio.it
 	  --------------------------------------------------------------------------
 	  Questo programma e` free software;   e` lecito redistribuirlo  e/o
 	  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
 	  come e` pubblicata dalla Free Software Foundation; o la versione 2
 	  della licenza o (a propria scelta) una versione successiva.
-	
+
 	  Questo programma  e` distribuito nella speranza  che sia utile, ma
 	  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
 	  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
 	  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
-	
+
 	  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
 	  Generica GNU insieme a   questo programma; in caso  contrario,  si
 	  scriva   alla   Free  Software Foundation,  Inc.,   59
 	  Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
-	  --------------------------------------------------------------------------	 
+	  --------------------------------------------------------------------------
 	  # free to use, Author name and references must be left untouched  #
-	  --------------------------------------------------------------------------	  
+	  --------------------------------------------------------------------------
 */
 require("../../library/include/datlib.inc.php");
 
@@ -105,10 +105,10 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
   }
 } elseif ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo accesso per UPDATE
     $campi = gaz_dbi_get_row($gTables['campi'],"codice",$_GET['codice']);
-	if (strlen($campi['used_from_modules'])==0){
-		$form['used_from_modules']=$module;	
+	if (isset($campi['used_from_modules']) && strlen($campi['used_from_modules'])==0){
+		$form['used_from_modules']=$module;
 	}else{
-		$form['used_from_modules']=$campi['used_from_modules'];	
+		$form['used_from_modules']=$campi['used_from_modules'];
 	}
     $form['ritorno'] = $_POST['ritorno'];
 	$form['userfile'] = "";
@@ -238,13 +238,13 @@ if ($toDo == 'update') {
                 </div>
             </div>
         </div><!-- chiude row  -->
-		
+
 <?php
 
 
 /* Antonio Germani -  COLTURA */
 ?>
-<!-- Antonio Germani inizio script autocompletamento dalla tabella mysql camp_colture	-->	
+<!-- Antonio Germani inizio script autocompletamento dalla tabella mysql camp_colture	-->
   <script>
 	$(document).ready(function() {
 	$("input#autocomplete4").autocomplete({
@@ -253,7 +253,7 @@ if ($toDo == 'update') {
 	$query="SELECT * FROM ".$gTables['camp_colture'];
 	$result = gaz_dbi_query($query);
 	while($row = $result->fetch_assoc()){
-		$stringa.="\"".$row['id_colt']." - ".$row['nome_colt']."\", ";			
+		$stringa.="\"".$row['id_colt']." - ".$row['nome_colt']."\", ";
 	}
 	$stringa=substr($stringa,0,-2);
 	echo $stringa;
@@ -271,7 +271,7 @@ if ($toDo == 'update') {
 	});
   </script>
  <!-- fine autocompletamento -->
- 
+
 		<div class="row">
             <div class="col-md-12">
                 <div class="form-group">
@@ -291,7 +291,7 @@ if ($toDo == 'update') {
 				<label >Sì</label>
 				<input  type="radio" name="zona_vulnerabile" value="1" <?php if ($form['zona_vulnerabile']==1){echo "checked";}?> >
 				<label >No</label>
-				<input  type="radio" name="zona_vulnerabile" value="0" <?php if ($form['zona_vulnerabile']==0){echo "checked";}?> >	
+				<input  type="radio" name="zona_vulnerabile" value="0" <?php if ($form['zona_vulnerabile']==0){echo "checked";}?> >
 			</div>
         </div>
     </div><!-- chiude row  -->
