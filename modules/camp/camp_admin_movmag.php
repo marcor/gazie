@@ -463,7 +463,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 		$row_adminname = gaz_dbi_get_row($gTables['anagra'], "id", $form['adminid']);
 		$form['adminname'] = $row_adminname['ragso1']." ".$row_adminname['ragso2'];
 		$form['rif_abilitazione'] = $row_adminname['custom_field'];
-		if ($data = json_decode($row_adminname['custom_field'], TRUE)){
+		if (isset($row_adminname['custom_field']) && $data = json_decode($row_adminname['custom_field'], TRUE)){
 			if (is_array($data['camp'])){ // se c'è un patentino
 				$form['patent_number'] = $data['camp']['numero'];
 				$form['patent_expiry'] = $data['camp']['scadenza'];
@@ -1114,7 +1114,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 		$form['adminname']=$admin_aziend['user_firstname']." ".$admin_aziend['user_lastname'];
 		$rowanagra = gaz_dbi_get_row($gTables['anagra'], "id", $form['adminid']);
 		$form['rif_abilitazione'] = $rowanagra['custom_field'];
-		if ($data = json_decode($rowanagra['custom_field'], TRUE)){
+		if (isset($rowanagra['custom_field']) && $data = json_decode($rowanagra['custom_field'], TRUE)){
 			if (is_array($data['camp'])){
 				$form['patent_number'] = $data['camp']['numero'];
 				$form['patent_expiry'] = $data['camp']['scadenza'];
