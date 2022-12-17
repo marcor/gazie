@@ -890,6 +890,13 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
             !empty($form['rows'][$i]['codart'])) {
             $magazz->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag'],0,0,'',$form['rows'][$i]['id_warehouse']);
           }
+          //se è un'articolo di magazzino controllo se la sua anagrafica aveva l'unità di misura, altrimenti uso questa
+          if ($v['tiprig'] == 0 && !empty($v['codart'])) {
+            $ctrlart = gaz_dbi_get_row($gTables['artico'], "codice", $v['codart']);
+            if ($ctrlart && empty(trim($ctrlart['codart']))) {
+              gaz_dbi_put_row($gTables['artico'], 'codice', $v['codart'], 'unimis', $v['unimis']);
+            }
+          }
         }
         if ($form['id_doc_ritorno'] > 0) { // è un RDV pertanto non lo stampo e inserisco il riferimento sulla testata relativa
           gaz_dbi_put_row($gTables['tesdoc'], 'id_tes', $form['id_doc_ritorno'], 'id_doc_ritorno', $ultimo_id);
