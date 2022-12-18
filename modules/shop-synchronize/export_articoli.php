@@ -29,7 +29,7 @@
 	  # free to use, Author name and references must be left untouched  #
 	  --------------------------------------------------------------------------
 */
-/* Antonio Germani - ESPORTAZIONE MANUALE (update e insert) DEGLI ARTICOLI DA GAZIE ALL'E-COMMERCE -  GLI ARTICOLI DEVONO GIà ESISTERE NELL'E-COMMERCE ALTRIMENTI, se richiesto, verranno iseriti solo se articoli semplici. Varianti e gruppi/parent NON VERRANNO CONSIDERATI */
+/* Antonio Germani - ESPORTAZIONE MANUALE (update e insert) DEGLI ARTICOLI DA GAZIE ALL'E-COMMERCE -  GLI ARTICOLI già esistenti NELL'E-COMMERCE saranno aggiornati ALTRIMENTI, se richiesto con l'apposita spunta verranno iseriti solo se articoli semplici, se non richiesto saranno ignorati. Varianti e gruppi/parent NON VERRANNO CONSIDERATI */
 
 require("../../library/include/datlib.inc.php");
 require ("../../modules/magazz/lib.function.php");
@@ -161,7 +161,7 @@ if (isset($_POST['conferma'])) { // se confermato
 
 		// creo il file xml
 	$xml_output = '<?xml version="1.0" encoding="UTF-8"?>
-	<GAzieDocuments AppVersion="1" Creator="Antonio Germani Copyright" CreatorUrl="https://www.lacasettabio.it">';
+	<GAzieDocuments AppVersion="1" Creator="Antonio Germani Copyright" CreatorUrl="https://www.programmisitiweb.lacasettabio.it">';
 	$xml_output .= "\n<Products>\n";
 	for ($ord=0 ; $ord<=$_POST['num_products']; $ord++){// ciclo gli articoli e creo il file xml
 		if (isset($_POST['download'.$ord])){ // se selezionato
@@ -180,7 +180,7 @@ if (isset($_POST['conferma'])) { // se confermato
 					$xml_output .= "\t<Type>variant</Type>\n";
 					if (json_decode($_POST['ecomm_option_attribute'.$ord]) != null){ // se esiste un json per attributo della variante dell'e-commerce
 						$var = json_decode($_POST['ecomm_option_attribute'.$ord],true);
-            $var_name=(isset($var['var_name'][0]))?$var['var_name'][0]:'null';
+						$var_name=(isset($var['var_name'][0]))?$var['var_name'][0]:'null';
 						$xml_output .= "\t<Characteristic>".$var_name."</Characteristic>\n";
 						$xml_output .= "\t<CharacteristicId>".$var['var_id']."</CharacteristicId>\n";
 					}
@@ -193,7 +193,7 @@ if (isset($_POST['conferma'])) { // se confermato
 				$xml_output .= "\t<ProductCategory>".$ecomm_catmer."</ProductCategory>\n";
 			}elseif (intval($_POST['ref_ecommerce_id_main_product'.$ord])>0 && $_POST['ref_ecommerce_id_product'.$ord]<1){// se non ce l'ha ed è un parent ci metto quella di una variante
 				$parent_catmer_res = gaz_dbi_get_row($gTables['artico'],"id_artico_group",intval($_POST['ref_ecommerce_id_main_product'.$ord]));
-        $parent_catmer=(isset($parent_catmer_res))?$parent_catmer_res['catmer']:'';
+				$parent_catmer=(isset($parent_catmer_res))?$parent_catmer_res['catmer']:'';
 				$ecomm_catmer = gaz_dbi_get_row($gTables['catmer'],"codice",intval( $parent_catmer))['ref_ecommerce_id_category'];
 				$xml_output .= "\t<ProductCategory>".$ecomm_catmer."</ProductCategory>\n";
 			}
@@ -219,7 +219,7 @@ if (isset($_POST['conferma'])) { // se confermato
 			}
 			$xml_output .= "\t<WebPublish>".$_POST['web_public'.$ord]."</WebPublish>\n";// 1=attivo su web; 2=attivo e prestabilito; 3=attivo e pubblicato in home; 4=attivo, in home e prestabilito; 5=disattivato su web"
 			if (isset($_POST['imgurl'.$ord]) && ($_GET['img']=="updimg" || $_GET['todo']=="insert") && (strlen($_POST['imgurl'.$ord])>0)){ // se è da aggiornare e c'è un'immagine HQ
-				if (ftp_put($conn_id, $ftp_path_upload."images/".$_POST['imgname'.$ord], $_POST['imgurl'.$ord],  FTP_BINARY)){
+				if (@ftp_put($conn_id, $ftp_path_upload."images/".$_POST['imgname'.$ord], $_POST['imgurl'.$ord],  FTP_BINARY)){
 					// ho scritto l'immagine web HQ nella cartella e-commerce
 					ftp_chmod($conn_id, 0664, $ftp_path_upload."images/".$_POST['imgname'.$ord]);// fornisco i permessi necessari all'immagine
 					$xml_output .= "\t<ImgUrl>".$web_site_path."images/".$_POST['imgname'.$ord]."</ImgUrl>\n"; // ne scrivo l'url nel file xml
@@ -251,10 +251,34 @@ if (isset($_POST['conferma'])) { // se confermato
 	$xmlHandle = fopen($xmlFile, "w");
 	fwrite($xmlHandle, $xml_output);
 	fclose($xmlHandle);
+	
+	// *** creazione file xml delle categorie ***
+	// carico in $categories le categorie che sono presenti in GAzie
+	$categories = gaz_dbi_query ('SELECT * FROM '.$gTables['catmer'].' ORDER BY codice');
+	// creo il file xml
+	$xml_output = '<?xml version="1.0" encoding="UTF-8"?>
+	<GAzieDocuments AppVersion="1" Creator="Antonio Germani Copyright" CreatorUrl="https://www.programmisitiweb.lacasettabio.it">';
+	$xml_output .= "\n<Categories>\n";
+	while ($cat = gaz_dbi_fetch_array($categories)){ // le ciclo
+		$xml_output .= "\t<Category>\n";
+		$xml_output .= "\t<Codice>".$cat['codice']."</Codice>\n";
+		$xml_output .= "\t<Descri>".htmlspecialchars($cat['descri'])."</Descri>\n";
+		$xml_output .= "\t<LargeDescri>".htmlspecialchars($cat['large_descri'])."</LargeDescri>\n";
+		$xml_output .= "\t<WebUrl>".$cat['web_url']."</WebUrl>\n";
+		$xml_output .= "\t<RefIdCat>".$cat['ref_ecommerce_id_category']."</RefIdCat>\n";
+		$xml_output .= "\t<Top>".$cat['top']."</Top>\n";		
+		$xml_output .= "\t</Category>\n";
+	}
+	$xml_output .="</Categories>\n</GAzieDocuments>";
+	$xmlFile = "categorie.xml";
+	$xmlHandle = fopen($xmlFile, "w");
+	fwrite($xmlHandle, $xml_output);
+	fclose($xmlHandle);	
 
 	if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){
 
 		if ($sftp->put($ftp_path_upload."prodotti.xml", $xmlFile, SFTP::SOURCE_LOCAL_FILE)){
+			$sftp->put($ftp_path_upload."categorie.xml", $xmlFile, SFTP::SOURCE_LOCAL_FILE);
 			$sftp->disconnect();
 			?>
 			<!--
@@ -276,6 +300,7 @@ if (isset($_POST['conferma'])) { // se confermato
 	} else { // FTP semplice
 		// upload file xml
 		if (ftp_put($conn_id, $ftp_path_upload."prodotti.xml", $xmlFile, FTP_ASCII)){
+			ftp_put($conn_id, $ftp_path_upload."categorie.xml", $xmlFile, FTP_ASCII);
 			// è OK
 			//echo "xml trasferito";
 		} else{
@@ -295,7 +320,7 @@ if (isset($_POST['conferma'])) { // se confermato
 			$line = fgets($file);
 			$ln=explode("-",$line);
 			if (isset($ln) && strlen($ln[3])>0){ // Se l'e-commerce ha restituito l'ID riferito ad un articolo
-				// vado a modificare il riferimenot id e-commerce nell'articolo di GAzie
+				// vado a modificare il riferimento id e-commerce nell'articolo di GAzie
 				gaz_dbi_put_row($gTables['artico'], "codice", rtrim($ln[3],"<br>\n"), "ref_ecommerce_id_product", $ln[1]); // tolgo <br>\n perché viene aggiunto dall'ecommerce
 				gaz_dbi_put_row($gTables['artico'], "codice", rtrim($ln[3],"<br>\n"), "web_public", "5");// lo imposto come disattivato
 			}
