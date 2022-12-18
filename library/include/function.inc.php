@@ -499,8 +499,8 @@ class selectAgente extends SelectBox {
 
 }
 
+#[AllowDynamicProperties]
 class Config {
-
     function __construct() {
         global $gTables;
         $results = gaz_dbi_query("SELECT variable, cvalue FROM " . $gTables['config']);
