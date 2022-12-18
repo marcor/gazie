@@ -1106,6 +1106,8 @@ class selectPartner extends SelectBox {
 // Antonio Germani - classe per la generazione di select box ordini
 class selectorder extends SelectBox
 {
+  private $selected;
+  public $name;
     function output($cerca, $field = 'C', $class = 'FacetSelect', $sele = 1)
     {
         global $gTables, $script_transl, $script_transl;
@@ -1159,7 +1161,8 @@ class selectorder extends SelectBox
 }
 
 class selectproduction extends SelectBox {
-
+  private $selected;
+  public $name;
      function output($cerca, $without_closed = true, $class = 'FacetSelect',$sele=1) {
         global $gTables, $script_transl, $script_transl;
         $msg = "";
@@ -1375,7 +1378,7 @@ class SelectValue extends SelectBox {
 
 // classe per la generazione di select box vettori
 class selectvettor extends SelectBox {
-
+  private $selected;
     function output() {
         global $gTables;
         echo "\t <select name=\"$this->name\" class=\"FacetSelect\">\n";

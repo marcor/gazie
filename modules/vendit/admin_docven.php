@@ -1154,7 +1154,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
     $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['in_codart']);
     if (!$artico) $artico=array('codart'=>'','sconto'=>0,'annota'=>'','peso_specifico'=>0,'SIAN'=>0,'volume_specifico'=>0,'preve1'=>0,'pack_units'=>0,'retention_tax'=>0,'good_or_service'=>'','lot_or_serial'=>'','descri'=>'','unimis'=>'','codcon'=>'','aliiva'=>0,'scorta'=>0,'payroll_tax'=>0);
     // addizione ai totali peso,pezzi,volume, ma se l'unità di misura è uguale a KG forzo il peso specifico ad 1, ed in futuro qui dovrei utilizzare il nuovo metodo di calcolo utilizzato anche in acquis/admin_broven.php
-		if (isset($artico) && strtoupper(substr($artico['unimis'],0,2))=='KG'){
+		if (isset($artico) && $artico['unimis']!='' && strtoupper(substr($artico['unimis'],0,2))=='KG'){
 			$artico['peso_specifico']=1;
 		}
     $form['net_weight'] += $form['in_quanti'] * $artico['peso_specifico'];
