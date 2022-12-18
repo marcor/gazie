@@ -746,7 +746,7 @@ class Anagrafica {
 // classe generica per la generazione di select box
 //================================================================================
 class SelectBox {
-
+  private $selected;
     var $name;
 
     // assegno subito il nome della select box
@@ -2695,6 +2695,7 @@ class Schedule {
 	public $target = 0;
 	public $id_target = 0;
   public $ExpiryStatus =[];
+  public $Status;
     function __construct() {
         $this->target = 0;
         $this->id_target = 0;
