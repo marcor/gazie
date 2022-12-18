@@ -24,6 +24,19 @@
 */
 
 class Expiry {
+  public $year;
+  public $month;
+  public $day;
+  public $effect;
+  public $start_day;
+  public $expiry_number;
+  public $periodicity;
+  public $foll_month;
+  public $fix_day;
+  public $ctrl_day;
+  public $ctrl_month;
+  public $ctrl_year;
+  public $expiry;
 
   public function CalcExpiry($amount,$date,$effect='D',$start_day=0,$expiry_number=1,$periodicity='M',$foll_month=0,$fix_day=0)
   {

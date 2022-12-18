@@ -2557,6 +2557,13 @@ function decodeFromSendingNumber($num, $b = 62) {
 }
 
 class Compute {
+  public $total_imp;
+  public $total_vat;
+  public $total_exc_with_duty;
+  public $total_isp;
+  public $totroundcastle;
+  public $castle;
+
   function payment_taxstamp($value, $percent, $cents_ceil_round = 5) {
     if ($cents_ceil_round == 0) {
       $cents_ceil_round = 5;
