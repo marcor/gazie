@@ -2067,7 +2067,7 @@ if (!isset($_GET['where'])) {
 // calcola i valori da impostare sulla variabile limit per scorrere i record
 // visualizza il numero totale di record e i pulsanti
 class recordnav {
-
+  public $count;
     var $table;
     var $where;
     var $limit;
@@ -2121,6 +2121,8 @@ class recordnav {
 // classe per la creazione di headers cliccabili per l'ordinamento dei record
 // accetta come parametro un array associativo composto dalle label e relativi campi del db
 class linkHeaders {
+  public $align;
+  public $style;
 
     var $headers = array(); // label e campi degli headers
 

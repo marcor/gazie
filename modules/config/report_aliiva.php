@@ -98,10 +98,10 @@ $linkHeaders = new linkHeaders($headers);
 $linkHeaders -> output();
 $result = gaz_dbi_dyn_query ('*', $gTables['aliiva'], $where, $orderby, $limit, $passo);
 while ($a_row = gaz_dbi_fetch_array($result)) {
-	$rs_check_mov = gaz_dbi_dyn_query("id_rig", $gTables['rigmoi'], "codiva = '{$a_row['codice']}'", "id_tes asc", 0, 1);
-  $check_mov = gaz_dbi_num_rows($rs_check_mov);
-	$rs_check_doc = gaz_dbi_dyn_query("id_rig", $gTables['rigdoc'], "codvat = '{$a_row['codice']}'", "id_tes asc", 0, 1);
-  $check_doc = gaz_dbi_num_rows($rs_check_doc);
+	$rs_check_mov = gaz_dbi_dyn_query("COUNT(*) AS nr", $gTables['rigmoi'], "codiva = '{$a_row['codice']}'", "id_rig", 0, 1);
+  $check_mov = gaz_dbi_fetch_array($rs_check_mov);
+	$rs_check_doc = gaz_dbi_dyn_query("COUNT(*) AS nr", $gTables['rigdoc'], "codvat = '{$a_row['codice']}'", "id_rig", 0, 1);
+  $check_doc = gaz_dbi_fetch_array($rs_check_doc);
   echo "<tr class=\"FacetDataTD\">";
   echo "<td align=\"center\"><a class=\"btn btn-xs btn-edit\" href=\"admin_aliiva.php?Update&codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["codice"]."</a> &nbsp</td>";
   echo "<td>".$a_row["descri"]." &nbsp;</td>";
@@ -110,9 +110,9 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
   echo "<td align=\"center\">".$a_row["aliquo"]." &nbsp;</td>";
   echo "<td align=\"center\">".$script_transl['yn_value'][$a_row["taxstamp"]]." &nbsp;</td>";
   echo "<td align=\"center\">".$a_row["fae_natura"]." &nbsp;</td><td>";
-  if ($check_doc > 0 || $check_mov > 0){
+  if ($check_doc['nr'] > 0 || $check_mov['nr'] > 0){
 		?>
-		<button title="Impossibile cancellare perché ci sono movimenti associati" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-remove"></i></button>
+		<button title="Impossibile cancellare perché ci sono  <?php echo ($check_doc['nr']+$check_mov['nr']); ?>  movimenti associati" class="btn btn-xs btn-default btn-elimina disabled"> <i class="glyphicon glyphicon-remove"></i></button>
 		<?php
 	} else {
 		?>
