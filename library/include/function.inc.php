@@ -542,51 +542,59 @@ class Config {
 }
 
 class UserConfig {
+	public $body_send_doc_email = '';
+	public $theme = '';
+	public $LTE_Fixed = '';
+	public $LTE_Boxed = '';
+	public $LTE_Collapsed = '';
+	public $LTE_Onhover = '';
+	public $LTE_SidebarOpen = '';
+	public $az_email = '';
 
-    function __construct() {
-        global $gTables;
-        $results = gaz_dbi_query("SELECT var_name, var_value FROM " . $gTables['admin_config']);
-        while ($row = gaz_dbi_fetch_object($results)) {
-            $this->{$row->var_name} = $row->var_value;
-        }
-    }
+  function __construct() {
+      global $gTables;
+      $results = gaz_dbi_query("SELECT var_name, var_value FROM " . $gTables['admin_config']);
+      while ($row = gaz_dbi_fetch_object($results)) {
+          $this->{$row->var_name} = $row->var_value;
+      }
+  }
 
-    function getValue($variable) {
-        return $this->{$variable};
-    }
+  function getValue($variable) {
+      return $this->{$variable};
+  }
 
-    function setValue($variable, $value = array('var_descri' => '', 'var_value' => '')) {
-        /* in $variabile va sempre il nome della variabile,
-         * la tabella viene aggiornata ne caso in cui il nome variabile esiste mentre
-         * viene inserita qualora non esista.
-         * In caso di inserimento � necessario passare un array in $value mentre in caso di
-         * aggiornamento � sufficiente un valore */
-        global $gTables, $form;
-        $variable = filter_var(substr($variable, 0, 100), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $result = gaz_dbi_dyn_query("*", $gTables['admin_config'], "var_name='" . $variable . "'");
-        if (gaz_dbi_num_rows($result) >= 1) { // � un aggiornamento
-            if (is_array($value)) {
-                $row = gaz_dbi_fetch_array($result);
-                $value['var_value'] = filter_var(substr($value['var_value'], 0, 100), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-                $this->{$variable} = $value['var_value'];
-                $value['var_name'] = $variable;
-                gaz_dbi_table_update('admin_config', array('id', $row['id']), $value);
-            } else {
-                $this->{$variable} = filter_var(substr($value, 0, 100), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-                gaz_dbi_put_row($gTables['admin_config'], 'var_name', $variable, 'var_value', $value['var_value']);
-            }
-        } else { // � un inserimento
-            gaz_dbi_table_insert('admin_config', $value);
-        }
-    }
+  function setValue($variable, $value = array('var_descri' => '', 'var_value' => '')) {
+      /* in $variabile va sempre il nome della variabile,
+       * la tabella viene aggiornata ne caso in cui il nome variabile esiste mentre
+       * viene inserita qualora non esista.
+       * In caso di inserimento � necessario passare un array in $value mentre in caso di
+       * aggiornamento � sufficiente un valore */
+      global $gTables, $form;
+      $variable = filter_var(substr($variable, 0, 100), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+      $result = gaz_dbi_dyn_query("*", $gTables['admin_config'], "var_name='" . $variable . "'");
+      if (gaz_dbi_num_rows($result) >= 1) { // � un aggiornamento
+          if (is_array($value)) {
+              $row = gaz_dbi_fetch_array($result);
+              $value['var_value'] = filter_var(substr($value['var_value'], 0, 100), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+              $this->{$variable} = $value['var_value'];
+              $value['var_name'] = $variable;
+              gaz_dbi_table_update('admin_config', array('id', $row['id']), $value);
+          } else {
+              $this->{$variable} = filter_var(substr($value, 0, 100), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+              gaz_dbi_put_row($gTables['admin_config'], 'var_name', $variable, 'var_value', $value['var_value']);
+          }
+      } else { // � un inserimento
+          gaz_dbi_table_insert('admin_config', $value);
+      }
+  }
 
-    function setDefaultValue() {
-        $this->setValue('LTE_Fixed', array("var_name" => "LTE_Fixed", "var_descri" => "Attiva lo stile fisso. Non puoi usare fisso e boxed insieme", "var_value" => "false"));
-        $this->setValue('LTE_Boxed', array("var_name" => "LTE_Boxed", "var_descri" => "Attiva lo stile boxed", "var_value" => "false"));
-        $this->setValue('LTE_Collapsed', array("var_name" => "LTE_Collapsed", "var_descri" => "Collassa il menu principale", "var_value" => "true"));
-        $this->setValue('LTE_Onhover', array("var_name" => "LTE_Onhover", "var_descri" => "Espandi automaticamente il menu", "var_value" => "false"));
-        $this->setValue('LTE_SidebarOpen', array("var_name" => "LTE_SidebarOpen", "var_descri" => "Mantieni la barra aperta", "var_value" => "false"));
-    }
+  function setDefaultValue() {
+      $this->setValue('LTE_Fixed', array("var_name" => "LTE_Fixed", "var_descri" => "Attiva lo stile fisso. Non puoi usare fisso e boxed insieme", "var_value" => "false"));
+      $this->setValue('LTE_Boxed', array("var_name" => "LTE_Boxed", "var_descri" => "Attiva lo stile boxed", "var_value" => "false"));
+      $this->setValue('LTE_Collapsed', array("var_name" => "LTE_Collapsed", "var_descri" => "Collassa il menu principale", "var_value" => "true"));
+      $this->setValue('LTE_Onhover', array("var_name" => "LTE_Onhover", "var_descri" => "Espandi automaticamente il menu", "var_value" => "false"));
+      $this->setValue('LTE_SidebarOpen', array("var_name" => "LTE_SidebarOpen", "var_descri" => "Mantieni la barra aperta", "var_value" => "false"));
+  }
 
 }
 
@@ -606,12 +614,15 @@ class configTemplate {
 }
 
 class Anagrafica {
+	public $gTables = [];
+	public $partnerTables = '';
+	public $cache = [];
 
     function __construct() {
         global $gTables;
         $this->gTables = $gTables;
         $this->partnerTables = $gTables['clfoco'] . ' LEFT JOIN ' . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id';
-        $this->cache = array();
+        $this->cache = [];
     }
 
     function getPartner($idClfoco, $cache = false, $refresh = false) {
@@ -787,7 +798,10 @@ class SelectBox {
 
 // classe per la generazione di select box dei clienti e fornitori (partner commerciali)
 class selectPartner extends SelectBox {
-
+  public $gTables=[];
+  public $name ='';
+  public $what=[];
+  public $selected ='';
     function __construct($name) {
         global $gTables;
         $this->gTables = $gTables;
@@ -2160,6 +2174,7 @@ class TableSorter {
     protected $table;      # usata internamente per contare i record totali
     protected $count;      # n. totale record
     public $group_by;      # se non vuota avrà forma: "GROUP BY x, y, z"
+    public $where_fix;
     public $where = "";    # costruita a partire dall'url corrente
     public $orderby = "";  # idem
 
@@ -2677,7 +2692,9 @@ class Compute {
 }
 
 class Schedule {
-
+	public $target = 0;
+	public $id_target = 0;
+  public $ExpiryStatus =[];
     function __construct() {
         $this->target = 0;
         $this->id_target = 0;
