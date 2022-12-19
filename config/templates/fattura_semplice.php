@@ -28,6 +28,17 @@ require("../../library/include/calsca.inc.php");
 require('template.php');
 
 class FatturaSemplice extends Template {
+  public $tesdoc;
+  public $giorno;
+  public $mese;
+  public $anno;
+  public $sconto;
+  public $virtual_taxstamp;
+  public $trasporto;
+  public $tottraspo;
+  public $tipdoc;
+  public $descriptive_last_row;
+  public $show_artico_composit;
 
     function setTesDoc() {
       $this->tesdoc = $this->docVars->tesdoc;

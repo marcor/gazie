@@ -26,6 +26,16 @@ require('template_scheda.php');
 
 class DDT extends Template_con_scheda
 {
+  public $tesdoc;
+  public $giorno;
+  public $mese;
+  public $anno;
+  public $sconto;
+  public $trasporto;
+  public $tipdoc;
+  public $descriptive_last_ddt;
+  public $show_artico_composit;
+
     function setTesDoc()
     {
       $this->tesdoc = $this->docVars->tesdoc;

@@ -27,6 +27,22 @@
 require('../../library/tcpdf/tcpdf.php');
 
 class Report_template extends TCPDF {
+  public $colore;
+  public $logo;
+  public $link;
+  public $intesta1;
+  public $intesta2;
+  public $intesta3;
+  public $intesta4;
+  public $luogo;
+  public $altri_dati;
+  public $intesta_riporti;
+  public $free_footer;
+  public $free_header;
+  public $item_image;
+  public $item_link;
+  public $intesta_item_group;
+  public $descri_cover;
 
     function setVars($admin_aziend, $altri_dati = '') {
         global $gazTimeFormatter,$gazTime;

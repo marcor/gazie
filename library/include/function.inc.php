@@ -601,16 +601,15 @@ class UserConfig {
 // end Config
 
 class configTemplate {
-
-    function __construct() {
-        global $gTables;
-        $row = gaz_dbi_get_row($gTables['aziend'], 'codice', $_SESSION['company_id']);
-        $this->template = $row['template'];
-    }
-    function setTemplateLang($lang) {
-        $this->template .= ".".$lang;
-    }
-
+  public $template;
+  function __construct() {
+      global $gTables;
+      $row = gaz_dbi_get_row($gTables['aziend'], 'codice', $_SESSION['company_id']);
+      $this->template = $row['template'];
+  }
+  function setTemplateLang($lang) {
+      $this->template .= ".".$lang;
+  }
 }
 
 class Anagrafica {
@@ -1201,6 +1200,8 @@ class selectproduction extends SelectBox {
 
 // classe per la generazione di select box degli articoli
 class selectartico extends SelectBox {
+  private $selected;
+  public $name;
 
     function output($cerca, $field = 'C', $class = 'FacetSelect',$sele=1) {
         global $gTables, $script_transl, $script_transl;

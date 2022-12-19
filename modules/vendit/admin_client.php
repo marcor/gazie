@@ -258,27 +258,27 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     // fine mandati rid
 
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
-    $anagrafica = new Anagrafica();
-    $last = $anagrafica->queryPartners('*', "codice BETWEEN " . $admin_aziend['mascli'] . "000000 AND " . $admin_aziend['mascli'] . "999999", "codice DESC", 0, 1);
-    $form = array_merge(gaz_dbi_fields('clfoco'), gaz_dbi_fields('anagra'));
-    $form['codice'] = substr($last[0]['codice'], 3) + 1;
-    $toDo = 'insert';
-    $form['search']['id_des'] = '';
-    $form['search']['fiscal_rapresentative_id'] = '';
-    $form['country'] = $admin_aziend['country'];
-    $form['id_language'] = $admin_aziend['id_language'];
-    $form['id_currency'] = $admin_aziend['id_currency'];
-    $form['datnas_Y'] = 1900;
-    $form['datnas_M'] = 1;
-    $form['datnas_D'] = 1;
-    $form['counas'] = $admin_aziend['country'];
-    $form['codpag'] = 1;
-    $form['spefat'] = 'N';
-    $form['stapre'] = 'N';
-    $form['allegato'] = 1;
-    $form['ritorno'] = $_SERVER['HTTP_REFERER'];
-    $form['hidden_req'] = '';
-    $form['visannota'] = 'N';
+  $anagrafica = new Anagrafica();
+  $last = $anagrafica->queryPartners('*', "codice BETWEEN " . $admin_aziend['mascli'] . "000000 AND " . $admin_aziend['mascli'] . "999999", "codice DESC", 0, 1);
+  $form = array_merge(gaz_dbi_fields('clfoco'), gaz_dbi_fields('anagra'));
+  $form['codice'] = substr($last[0]['codice'], 3) + 1;
+  $toDo = 'insert';
+  $form['search']['id_des'] = '';
+  $form['search']['fiscal_rapresentative_id'] = '';
+  $form['country'] = $admin_aziend['country'];
+  $form['id_language'] = $admin_aziend['id_language'];
+  $form['id_currency'] = $admin_aziend['id_currency'];
+  $form['datnas_Y'] = 1900;
+  $form['datnas_M'] = 1;
+  $form['datnas_D'] = 1;
+  $form['counas'] = $admin_aziend['country'];
+  $form['codpag'] = 1;
+  $form['spefat'] = 'N';
+  $form['stapre'] = 'N';
+  $form['allegato'] = 1;
+  $form['ritorno'] = $_SERVER['HTTP_REFERER'];
+  $form['hidden_req'] = '';
+  $form['visannota'] = 'N';
 	$form['id_SIAN']="";
 	$nd=0;
 }
@@ -421,6 +421,7 @@ if (!empty($msg)) {
   <ul class="nav nav-pills">
     <li class="active"><a data-toggle="pill" href="#home">Anagrafica</a></li>
     <li><a data-toggle="pill" href="#commer">Impostazioni</a></li>
+    <li><a data-toggle="pill" href="#licenses">Documenti</a></li>
     <li style="float: right;"><input class="btn btn-warning" name="Submit" type="submit" value="<?php echo ucfirst($script_transl[$toDo]); ?>"></li>
   </ul>
 
@@ -956,6 +957,17 @@ $gForm->variousSelect('status', $script_transl['status_value'], $form['status'],
             </div>
         </div><!-- chiude row  -->
   </div>
+      <div id="licenses" class="tab-pane fade">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="codpag" class="col-sm-4 control-label">Autorizzazione/licenza/patente</label>
+    <?php
+    ?>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+    </div>
 </div>
 </div>
 <div class="text-center">

@@ -26,6 +26,22 @@ require('template.php');
 
 class OrdineFornitore extends Template
 {
+  public $tesdoc;
+  public $tipdoc;
+  public $giorno;
+  public $mese;
+  public $anno;
+  public $nomemese;
+  public $sconto;
+  public $trasporto;
+  public $consegna;
+  public $tot_rp;
+  public $id_rig;
+ // public $ExternalDoc;
+  public $extdoc_acc;
+  public $numPages;
+  public $_tplIdx;
+
     function setTesDoc()
     {
       $this->tesdoc = $this->docVars->tesdoc;
@@ -178,9 +194,8 @@ class OrdineFornitore extends Template
                     $this->writeHtmlCell(188,6,10,$this->GetY(),$rigo['descri'],1,1);
                     break;
                 case "50":
-					// accumulo il file da allegare e lo indico al posto del codice articolo
-					$this->docVars->id_rig=$rigo['id_rig'];
-					$file=$this->docVars->getExtDoc();
+                    // accumulo il file da allegare e lo indico al posto del codice articolo
+                    $file=$this->docVars->getExtDoc($rigo['id_rig']);
                     $this->Cell(27, 6, $file['file'],1,0,'L',0,'',1);
                     $this->Cell(100, 6, $rigo['descri'],1,0,'L',0,'',1);
                     $this->Cell(7,  6, $rigo['unimis'],1,0,'C');
@@ -200,19 +215,18 @@ class OrdineFornitore extends Template
                     } else {
                        $this->Cell(15, 6, '',1);
                     }
-					$this->Ln();
-					$this->tot_rp +=$rigo['quanti'];
+                    $this->Ln();
+                    $this->tot_rp +=$rigo['quanti'];
                     break;
                 case "51":
-					// accumulo il file da allegare e lo indico al posto del codice articolo
-					$this->docVars->id_rig=$rigo['id_rig'];
-					$file=$this->docVars->getExtDoc();
+                    // accumulo il file da allegare e lo indico al posto del codice articolo
+                    $file=$this->docVars->getExtDoc($rigo['id_rig']);
                     $this->Cell(27, 6, $file['file'],1,0,'L',0,'',1);
                     $this->Cell(100,6,$rigo['descri'],'LR',0,'L',0,'',1);
                     $this->Cell(61,6,'','R',1);
                     break;
                 }
-				$ctrl_orderman=$rigo['id_orderman'];
+                $ctrl_orderman=$rigo['id_orderman'];
         }
     }
 

@@ -29,6 +29,58 @@ require('../../library/tcpdf/tcpdi.php');
 
 class Template extends TCPDI {
 
+  public $docVars;
+  public $gaz_path;
+  public $rigbro;
+  public $aliiva;
+  public $tesdoc;
+  public $testat;
+  public $pagame;
+  public $banapp;
+  public $banacc;
+  public $logo;
+  public $link;
+  public $intesta1;
+  public $intesta1bis;
+  public $intesta2;
+  public $intesta3;
+  public $intesta4;
+  public $sedelegale;
+  public $colore;
+  public $decimal_quantity;
+  public $decimal_price;
+  public $perbollo;
+  public $codice_partner;
+  public $descri_partner;
+  public $cod_univoco;
+  public $pec_cliente;
+  public $cliente1;
+  public $cliente2;
+  public $cliente3;
+  public $cliente4;  // CAP, Città, Provincia
+  public $cliente4b; // Nazione
+  public $cliente5;  // P.IVA e C.F.
+  public $agente;
+  public $destinazione;
+  public $clientSedeLegale;
+  public $pers_title;
+  public $fiscal_rapresentative;
+  public $c_Attenzione;
+  public $min;
+  public $ora;
+  public $day;
+  public $month;
+  public $year;
+  public $withoutPageGroup;
+  public $efattura;
+  public $descriptive_last_row;
+  public $descriptive_last_ddt;
+  public $layout_pos_logo_on_doc;
+  public $iban;
+
+
+
+
     function setVars(&$docVars, $Template = '') {
         $this->docVars = & $docVars;
         $this->gaz_path = '../../';

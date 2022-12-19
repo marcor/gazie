@@ -25,6 +25,98 @@
  */
 
 class DocContabVars {
+  public $gazTimeFormatter;
+  public $ecr;
+  public $gTables;
+  public $layout_pos_logo_on_doc;
+  public $descriptive_last_row;
+  public $descriptive_last_ddt;
+  public $show_artico_composit;
+  public $user;
+  public $pagame;
+  public $caumag;
+  public $banapp;
+  public $banacc;
+  public $vettor;
+  public $tableName;
+  public $intesta1;
+  public $intesta1bis;
+  public $intesta2;
+  public $intesta3;
+  public $intesta4;
+  public $intesta5;
+  public $codici;
+  public $colore;
+  public $logo;
+  public $decimal_quantity;
+  public $decimal_price;
+  public $link;
+  public $sedelegale;
+  public $perbollo;
+  public $iva_bollo;
+  public $client;
+  public $descri_partner;
+  public $codice_partner;
+  public $cod_univoco;
+  public $pec_cliente;
+  public $cliente1;
+  public $cliente2;
+  public $cliente3;
+  public $cliente4;
+  public $cliente4b;
+  public $cliente5;
+  public $id_agente;
+  public $rs_agente;
+  public $name_agente;
+  public $partner_dest;
+  public $destinazione;
+  public $clientSedeLegale;
+  public $fiscal_rapresentative;
+  public $c_Attenzione;
+  public $tesdoc;
+  public $min;
+  public $ora;
+  public $day;
+  public $month;
+  public $year;
+  public $trasporto;
+  public $testat;
+  public $docRelNum;
+  public $docRelDate;
+  public $fae_reinvii;
+  public $efattura;
+  public $withoutPageGroup;
+  public $pers_title;
+  public $iban;
+  public $regime_fiscale;
+  public $totimp_body;
+  public $body_castle;
+  public $taxstamp;
+  public $virtual_taxstamp;
+  public $tottraspo;
+  public $totale;
+  public $riporto;
+  public $aziendTel;
+  public $aziendFax;
+  public $azienda;
+  public $artico_doc;
+  public $roundcastle;
+  public $ritenuta;
+  public $ritenute;
+  public $tot_ritenute;
+  public $castel;
+  public $impbol;
+  public $totroundcastle;
+  public $totriport;
+  public $speseincasso;
+  public $totivasplitpay;
+  public $ExternalDoc;
+  public $totimpmer;
+  public $totimpfat;
+  public $totivafat;
+  public $tipdoc;
+  public $cast;
+
     function setData($gTables, $tesdoc, $testat, $tableName, $ecr = false) {
       global $gazie_locale;
       $this->gazTimeFormatter = new IntlDateFormatter($gazie_locale,IntlDateFormatter::FULL,IntlDateFormatter::FULL);
@@ -495,7 +587,7 @@ class DocContabVars {
         $this->castel = [];
     }
 
-    function getExtDoc() {
+    function getExtDoc($id_rig=0) {
         /* con questa funzione faccio il push sull'accumulatore dei righi contenenti "documenti esterni" da allegare al pdf
 		  riprendo il nome del file relativo al documento e lo aggiungo alla matrice solo se il file esiste, prima di chiamare
 		  questo metodo dovrò settare $this->id_rig
@@ -509,7 +601,7 @@ class DocContabVars {
         $dh = opendir( DATA_DIR . 'files/' . $this->azienda['codice'] );
         while (false !== ($filename = readdir($dh))) {
             $fd = pathinfo($filename);
-            if ($fd['filename'] == 'rigbrodoc_' . $this->id_rig) {
+            if ($fd['filename'] == 'rigbrodoc_' . $id_rig) {
                 $r['file'] .= $filename;
                 $r['ext'] = $fd['extension'];
 				$this->ExternalDoc[] = $r;
