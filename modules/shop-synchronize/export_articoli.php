@@ -2,7 +2,7 @@
 /*
 	  --------------------------------------------------------------------------
 	  GAzie - Gestione Azienda
-	  Copyright (C) 2004-2022 - Antonio De Vincentiis Montesilvano (PE)
+	  Copyright (C) 2004-2023 - Antonio De Vincentiis Montesilvano (PE)
 	  (http://www.devincentiis.it)
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
@@ -148,14 +148,20 @@ if (isset($_POST['conferma'])) { // se confermato
 		if (!@ftp_mkdir($conn_id, $ftp_path_upload."images")){ // se non c'è la cartella images la creo
 			// get contents of the current directory
 			$files = ftp_nlist($conn_id, $ftp_path_upload."images");
-
-			foreach ($files as $file){ // se c'era, cancello i files del precedente aggiornamento
-				if (@ftp_delete($conn_id, $file)){
-				} else {
-					header("Location: " . "../../modules/shop-synchronize/export_articoli.php?success=6");
-					exit;
-				}
-			}
+      if (count($files)>0){
+        foreach ($files as $key => $item) {
+          if (in_array($item, array($ftp_path_upload.'images/.', $ftp_path_upload.'images/..'))) {
+             unset($files[$key]);
+          }
+        }
+        foreach ($files as $file){ // se c'era, cancello i files del precedente aggiornamento
+          if (@ftp_delete($conn_id, $file)){
+          } else {
+            header("Location: " . "../../modules/shop-synchronize/export_articoli.php?success=6");
+            exit;
+          }
+        }
+      }
 		}
 	}
 
@@ -165,9 +171,6 @@ if (isset($_POST['conferma'])) { // se confermato
 	$xml_output .= "\n<Products>\n";
 	for ($ord=0 ; $ord<=$_POST['num_products']; $ord++){// ciclo gli articoli e creo il file xml
 		if (isset($_POST['download'.$ord])){ // se selezionato
-			if ((isset($_POST['barcode'.$ord]) && intval($_POST['barcode'.$ord])==0) OR !isset ($_POST['barcode'.$ord])) {
-				$_POST['barcode'.$ord]="NULL";
-			}
 
 			$xml_output .= "\t<Product>\n";
 			$xml_output .= "\t<Id>".$_POST['ref_ecommerce_id_product'.$ord]."</Id>\n";
@@ -185,9 +188,14 @@ if (isset($_POST['conferma'])) { // se confermato
 						$xml_output .= "\t<CharacteristicId>".$var['var_id']."</CharacteristicId>\n";
 					}
 				}
-			} else {
+			} else {//se è un prodotto semplice
 				$xml_output .= "\t<Type>product</Type>\n";
+        $artic = gaz_dbi_get_row($gTables['artico'],"codice",intval($_POST['codice'.$ord]));// prendo gli ulteriori dati da passare nell xml
 			}
+      if ((isset($artic['barcode']) && intval($artic['barcode'])==0) OR !isset ($artic['barcode'])) {
+				$artic['barcode']="NULL";
+			}
+
 			if (isset($_POST['catmer'.$ord]) && intval($_POST['catmer'.$ord])>0){// se GAzie ha una categoria
 				$ecomm_catmer = gaz_dbi_get_row($gTables['catmer'],"codice",intval($_POST['catmer'.$ord]))['ref_ecommerce_id_category'];
 				$xml_output .= "\t<ProductCategory>".$ecomm_catmer."</ProductCategory>\n";
@@ -198,7 +206,12 @@ if (isset($_POST['conferma'])) { // se confermato
 				$xml_output .= "\t<ProductCategory>".$ecomm_catmer."</ProductCategory>\n";
 			}
 			$xml_output .= "\t<Code>".$_POST['codice'.$ord]."</Code>\n";
-			$xml_output .= "\t<BarCode>".$_POST['barcode'.$ord]."</BarCode>\n";
+			$xml_output .= "\t<BarCode>".$artic['barcode']."</BarCode>\n";
+      $pes_spec=(isset($artic['peso_specifico']))?$artic['peso_specifico']:'';
+      $xml_output .= "\t<Peso>".$pes_spec."</Peso>\n";
+      $vol=(isset($artic['volume_specifico']))?$artic['volume_specifico']:'';
+			$xml_output .= "\t<Volume>".$vol."</Volume>\n";
+
 			if ($_GET['qta']=="updqty" || $_GET['todo']!=="insert"){
 				$xml_output .= "\t<AvailableQty>".$_POST['quanti'.$ord]."</AvailableQty>\n";
 			}
@@ -251,7 +264,7 @@ if (isset($_POST['conferma'])) { // se confermato
 	$xmlHandle = fopen($xmlFile, "w");
 	fwrite($xmlHandle, $xml_output);
 	fclose($xmlHandle);
-	
+
 	// *** creazione file xml delle categorie ***
 	// carico in $categories le categorie che sono presenti in GAzie
 	$categories = gaz_dbi_query ('SELECT * FROM '.$gTables['catmer'].' ORDER BY codice');
@@ -266,14 +279,14 @@ if (isset($_POST['conferma'])) { // se confermato
 		$xml_output .= "\t<LargeDescri>".htmlspecialchars($cat['large_descri'])."</LargeDescri>\n";
 		$xml_output .= "\t<WebUrl>".$cat['web_url']."</WebUrl>\n";
 		$xml_output .= "\t<RefIdCat>".$cat['ref_ecommerce_id_category']."</RefIdCat>\n";
-		$xml_output .= "\t<Top>".$cat['top']."</Top>\n";		
+		$xml_output .= "\t<Top>".$cat['top']."</Top>\n";
 		$xml_output .= "\t</Category>\n";
 	}
 	$xml_output .="</Categories>\n</GAzieDocuments>";
 	$xmlFile = "categorie.xml";
 	$xmlHandle = fopen($xmlFile, "w");
 	fwrite($xmlHandle, $xml_output);
-	fclose($xmlHandle);	
+	fclose($xmlHandle);
 
 	if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){
 
@@ -445,7 +458,7 @@ if (!isset($_GET['success'])){
 					$where="good_or_service <> '1' AND web_public BETWEEN 1 AND 4";
 				}
 				// carico in $artico gli articoli che sono presenti in GAzie
-				$artico = gaz_dbi_query ('SELECT ecomm_option_attribute, codice, catmer, barcode, web_price, descri, aliiva, ref_ecommerce_id_product, id_artico_group, web_public, image FROM '.$gTables['artico'].' WHERE '.$where.' ORDER BY codice');
+				$artico = gaz_dbi_query ('SELECT ecomm_option_attribute, codice, catmer, web_price, descri, aliiva, ref_ecommerce_id_product, id_artico_group, web_public, image FROM '.$gTables['artico'].' WHERE '.$where.' ORDER BY codice');
 				$n=0;
 				while ($item = gaz_dbi_fetch_array($artico)){ // li ciclo
 					$ref_ecommerce_id_main_product="";
@@ -490,7 +503,6 @@ if (!isset($_GET['success'])){
 									}
 								}
 								echo '<input type="hidden" name="web_public'. $n .'" value="'. $item['web_public'] . '">';
-                echo '<input type="hidden" name="barcode'. $n .'" value="'. $item['barcode'] . '">';
 								echo '<input type="hidden" name="quanti'. $n .'" value="'. $avqty .'">';
 								echo '<input type="hidden" name="aliiva'. $n .'" value="'. $item['aliiva'] .'">';
 								echo '<input type="hidden" name="catmer'. $n .'" value="'. $item['catmer'] .'">';
@@ -531,10 +543,17 @@ if (!isset($_GET['success'])){
 				$n++;
 				}
 
-
 				// carico in $parent i gruppi che sono presenti in GAzie
 				$parent = gaz_dbi_query ('SELECT * FROM '.$gTables['artico_group'].' WHERE web_public = \'1\' ORDER BY id_artico_group');
-
+        if (isset($parent) && $parent->num_rows>0){
+          ?>
+          <div class="row bg-warning" style="border-bottom: 1px solid;">
+            <div class="col-sm-12">
+              Articoli genitori/gruppi:
+            </div>
+          </div>
+          <?php
+        }
 				while ($item = gaz_dbi_fetch_array($parent)){ // ciclo i PARENT / GRUPPI
 
 					?>
