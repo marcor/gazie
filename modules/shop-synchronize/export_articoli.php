@@ -209,9 +209,12 @@ if (isset($_POST['conferma'])) { // se confermato
 			$xml_output .= "\t<BarCode>".$artic['barcode']."</BarCode>\n";
       $pes_spec=(isset($artic['peso_specifico']))?$artic['peso_specifico']:'';
       $xml_output .= "\t<Peso>".$pes_spec."</Peso>\n";
-      $vol=(isset($artic['volume_specifico']))?$artic['volume_specifico']:'';
-			$xml_output .= "\t<Volume>".$vol."</Volume>\n";
-
+      $larg_mm=(isset($artic['larghezza']))?$artic['larghezza']:'';
+      $lung_mm=(isset($artic['lunghezza']))?$artic['lunghezza']:'';
+      $spess_mm=(isset($artic['spessore']))?$artic['spessore']:'';
+			$xml_output .= "\t<Largmm>".$larg_mm."</Largmm>\n";
+      $xml_output .= "\t<Lungmm>".$lung_mm."</Lungmm>\n";
+      $xml_output .= "\t<Spessmm>".$spess_mm."</Spessmm>\n";
 			if ($_GET['qta']=="updqty" || $_GET['todo']!=="insert"){
 				$xml_output .= "\t<AvailableQty>".$_POST['quanti'.$ord]."</AvailableQty>\n";
 			}
@@ -260,10 +263,11 @@ if (isset($_POST['conferma'])) { // se confermato
 		}
 	}
 	$xml_output .="</Products>\n</GAzieDocuments>";
-	$xmlFile = "prodotti.xml";
-	$xmlHandle = fopen($xmlFile, "w");
-	fwrite($xmlHandle, $xml_output);
-	fclose($xmlHandle);
+	$xmlFileP = "prodotti.xml";
+  // togliere i 3 commenti sotto per far scrivere il file anche nella cartella di GAzie
+	//$xmlHandle = fopen($xmlFileP, "w");
+	//fwrite($xmlHandle, $xml_output);
+	//fclose($xmlHandle);
 
 	// *** creazione file xml delle categorie ***
 	// carico in $categories le categorie che sono presenti in GAzie
@@ -283,15 +287,16 @@ if (isset($_POST['conferma'])) { // se confermato
 		$xml_output .= "\t</Category>\n";
 	}
 	$xml_output .="</Categories>\n</GAzieDocuments>";
-	$xmlFile = "categorie.xml";
-	$xmlHandle = fopen($xmlFile, "w");
-	fwrite($xmlHandle, $xml_output);
-	fclose($xmlHandle);
+	$xmlFileC = "categorie.xml";
+  // togliere i 3 commenti sotto per far scrivere il file anche nella cartella di GAzie
+	//$xmlHandle = fopen($xmlFileC, "w");
+	//fwrite($xmlHandle, $xml_output);
+	//fclose($xmlHandle);
 
 	if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){
 
-		if ($sftp->put($ftp_path_upload."prodotti.xml", $xmlFile, SFTP::SOURCE_LOCAL_FILE)){
-			$sftp->put($ftp_path_upload."categorie.xml", $xmlFile, SFTP::SOURCE_LOCAL_FILE);
+		if ($sftp->put($ftp_path_upload."prodotti.xml", $xmlFileP, SFTP::SOURCE_LOCAL_FILE)){
+			$sftp->put($ftp_path_upload."categorie.xml", $xmlFileC, SFTP::SOURCE_LOCAL_FILE);
 			$sftp->disconnect();
 			?>
 			<!--
@@ -312,8 +317,8 @@ if (isset($_POST['conferma'])) { // se confermato
 		}
 	} else { // FTP semplice
 		// upload file xml
-		if (ftp_put($conn_id, $ftp_path_upload."prodotti.xml", $xmlFile, FTP_ASCII)){
-			ftp_put($conn_id, $ftp_path_upload."categorie.xml", $xmlFile, FTP_ASCII);
+		if (ftp_put($conn_id, $ftp_path_upload."prodotti.xml", $xmlFileP, FTP_ASCII)){
+			ftp_put($conn_id, $ftp_path_upload."categorie.xml", $xmlFileC, FTP_ASCII);
 			// è OK
 			//echo "xml trasferito";
 		} else{
