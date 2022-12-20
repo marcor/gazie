@@ -205,9 +205,6 @@ if (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo acces
     }
 	}
 
-  if ($_POST['hidden_req'] == 'caumag') {
-		$_POST['operat'] = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag'])['operat'];
-  }
 
 	if (intval($_POST['caumag'])== 82){
 		$form['operat'] = 1;
@@ -309,6 +306,10 @@ if (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo acces
 			}
 		}
 	}
+
+  if ($_POST['hidden_req'] == 'caumag') {
+		$form['operat'] = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag'])['operat'];
+  }
 
   if (!empty($_POST['Insert'])) {        //          Se viene inviata la richiesta di conferma totale ...
     //formatto le date
@@ -595,7 +596,7 @@ if (!empty($warnmsg)) {
     echo '<tr><td colspan="5" class="FacetDataTDred">' . $message . "</td></tr>\n";
 }
 echo "<tr><td>" . $script_transl[1] . "</td><td>\n";
-echo "\t <select name=\"gioreg\" class=\"FacetSelect\" onchange=\"this.form.hidden_req.value='caumag'; this.form.submit()\">\n";
+echo "\t <select name=\"gioreg\" class=\"FacetSelect\" onchange=\"this.form.submit();\">\n";
 for ($counter = 1; $counter <= 31; $counter++) {
     $selected = "";
     if ($counter == $form['gioreg'])
@@ -603,7 +604,7 @@ for ($counter = 1; $counter <= 31; $counter++) {
     echo "\t <option value=\"$counter\"  $selected >$counter</option>\n";
 }
 echo "\t </select>\n";
-echo "\t <select name=\"mesreg\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
+echo "\t <select name=\"mesreg\" class=\"FacetSelect\" onchange=\"this.form.submit();\">\n";
 $gazTimeFormatter->setPattern('MMMM');
 for ($counter = 1; $counter <= 12; $counter++) {
   $selected = "";
@@ -612,7 +613,7 @@ for ($counter = 1; $counter <= 12; $counter++) {
   echo "\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
 }
 echo "\t </select>\n";
-echo "\t <select name=\"annreg\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
+echo "\t <select name=\"annreg\" class=\"FacetSelect\" onchange=\"this.form.submit();\">\n";
 for ($counter = date("Y") - 10; $counter <= date("Y") + 10; $counter++) {
     $selected = "";
     if ($counter == $form['annreg'])
@@ -621,7 +622,7 @@ for ($counter = date("Y") - 10; $counter <= date("Y") + 10; $counter++) {
 }
 echo "\t </select></td>\n";
 echo "<td>" . $script_transl[2] . "</td><td>\n";
-echo "<select name=\"caumag\" class=\"FacetSelect\" onchange=\"this.form.submit()\" >\n";
+echo "<select name=\"caumag\" class=\"FacetSelect\" onchange=\"this.form.hidden_req.value='caumag'; this.form.submit();\" >\n";
 echo "<option value=\"\">-------------</option>\n";
 $result = gaz_dbi_dyn_query("*", $gTables['caumag'], " type_cau <> 1 ", "codice desc, descri asc"); // Carico le causali escludendo quelle del modulo CAMP
 while ($row = gaz_dbi_fetch_array($result)) {
