@@ -204,6 +204,11 @@ if (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo acces
         $form['id_rif'] = 0;
     }
 	}
+
+  if ($_POST['hidden_req'] == 'caumag') {
+		$_POST['operat'] = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag'])['operat'];
+  }
+
 	if (intval($_POST['caumag'])== 82){
 		$form['operat'] = 1;
 	} elseif (intval($_POST['caumag'])== 81){
@@ -233,29 +238,6 @@ if (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo acces
   $form['status'] = substr($_POST['status'], 0, 10);
   $form['search_partner'] = $_POST['search_partner'];
 
-  // Se viene inviata la richiesta di conferma della causale la carico con le relative contropartite...
-  /** ENRICO FEDELE */
-  /* Con button non funziona _x */
-  //if (isset($_POST['inscau_x'])) {
-  /** ENRICO FEDELE
-  if (isset($_POST['inscau'])) {
-      $causa = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
-      $form['operat'] = $causa['operat'];
-      $form['clorfo'] = $causa['clifor']; //cliente, fornitore o entrambi
-      if (($causa['clifor'] < 0 && substr($form['clfoco'], 0, 3) == $admin_aziend['masfor']) or ( $causa['clifor'] > 0 && substr($form['clfoco'], 0, 3) == $admin_aziend['mascli'])) {
-          $form['clfoco'] = 0;
-          $form['search_partner'] = "";
-      }
-      if ($causa['insdoc'] == 0) {//se la nuova causale non prevede i dati del documento
-          $form['tipdoc'] = "";
-          $form['desdoc'] = "";
-          $form['giodoc'] = date("d");
-          $form['mesdoc'] = date("m");
-          $form['anndoc'] = date("Y");
-          $form['scochi'] = "";
-          $form['id_rif'] = 0;
-      }
-  }*/
   if (isset($_POST['newpartner'])) {
       $anagrafica = new Anagrafica();
       $partner = $anagrafica->getPartner($_POST['clfoco']);
@@ -613,7 +595,7 @@ if (!empty($warnmsg)) {
     echo '<tr><td colspan="5" class="FacetDataTDred">' . $message . "</td></tr>\n";
 }
 echo "<tr><td>" . $script_transl[1] . "</td><td>\n";
-echo "\t <select name=\"gioreg\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
+echo "\t <select name=\"gioreg\" class=\"FacetSelect\" onchange=\"this.form.hidden_req.value='caumag'; this.form.submit()\">\n";
 for ($counter = 1; $counter <= 31; $counter++) {
     $selected = "";
     if ($counter == $form['gioreg'])
@@ -649,14 +631,6 @@ while ($row = gaz_dbi_fetch_array($result)) {
     }
     echo "<option value=\"" . $row['codice'] . "\"" . $selected . ">" . $row['codice'] . " - " . $row['descri'] . "</option>\n";
 }
-/* echo "</select> &nbsp;<input type=\"image\" name=\"inscau\" src=\"../../library/images/vbut.gif\" title=\"".$script_transl['submit']." !\"></td></tr>\n"; */
-
-/** ENRICO FEDELE */
-/* glyph-icon
-echo '  </select>&nbsp;<button type="submit" class="btn btn-default btn-sm" name="inscau" title="' . $script_transl['submit'] . '"><i class="glyphicon glyphicon-ok"></i></button>
-		</td>
-	   </tr>';*/
-/** ENRICO FEDELE */
 echo "<tr><td>" . $script_transl[3] . "&hArr;" . $script_transl[4] . "</td><td>\n";
 $messaggio = "";
 $ric_mastro = substr($form['clfoco'], 0, 3);
@@ -1019,6 +993,7 @@ if ($toDo == 'update') {
 echo "</td></tr></table>\n";
 ?>
 </form>
+</div>
 <?php
 require("../../library/include/footer.php");
 ?>
