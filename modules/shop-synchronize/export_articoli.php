@@ -171,7 +171,6 @@ if (isset($_POST['conferma'])) { // se confermato
 	$xml_output .= "\n<Products>\n";
 	for ($ord=0 ; $ord<=$_POST['num_products']; $ord++){// ciclo gli articoli e creo il file xml
 		if (isset($_POST['download'.$ord])){ // se selezionato
-
 			$xml_output .= "\t<Product>\n";
 			$xml_output .= "\t<Id>".$_POST['ref_ecommerce_id_product'.$ord]."</Id>\n";
 			$xml_output .= "\t<IdMain>".$_POST['ref_ecommerce_id_main_product'.$ord]."</IdMain>\n";
@@ -181,6 +180,7 @@ if (isset($_POST['conferma'])) { // se confermato
 					$xml_output .= "\t<Type>parent</Type>\n";
 				} else {
 					$xml_output .= "\t<Type>variant</Type>\n";
+					$artic = gaz_dbi_get_row($gTables['artico'],"codice",$_POST['codice'.$ord]);// prendo gli ulteriori dati da passare nell xml
 					if (json_decode($_POST['ecomm_option_attribute'.$ord]) != null){ // se esiste un json per attributo della variante dell'e-commerce
 						$var = json_decode($_POST['ecomm_option_attribute'.$ord],true);
 						$var_name=(isset($var['var_name'][0]))?$var['var_name'][0]:'null';
@@ -190,9 +190,9 @@ if (isset($_POST['conferma'])) { // se confermato
 				}
 			} else {//se è un prodotto semplice
 				$xml_output .= "\t<Type>product</Type>\n";
-        $artic = gaz_dbi_get_row($gTables['artico'],"codice",intval($_POST['codice'.$ord]));// prendo gli ulteriori dati da passare nell xml
+				$artic = gaz_dbi_get_row($gTables['artico'],"codice",$_POST['codice'.$ord]);// prendo gli ulteriori dati da passare nell xml
 			}
-      if ((isset($artic['barcode']) && intval($artic['barcode'])==0) OR !isset ($artic['barcode'])) {
+			if ((isset($artic['barcode']) && intval($artic['barcode'])==0) OR !isset ($artic['barcode'])) {
 				$artic['barcode']="NULL";
 			}
 
@@ -264,10 +264,9 @@ if (isset($_POST['conferma'])) { // se confermato
 	}
 	$xml_output .="</Products>\n</GAzieDocuments>";
 	$xmlFileP = "prodotti.xml";
-  // togliere i 3 commenti sotto per far scrivere il file anche nella cartella di GAzie
-	//$xmlHandle = fopen($xmlFileP, "w");
-	//fwrite($xmlHandle, $xml_output);
-	//fclose($xmlHandle);
+	$xmlHandle = fopen($xmlFileP, "w");
+	fwrite($xmlHandle, $xml_output);
+	fclose($xmlHandle);
 
 	// *** creazione file xml delle categorie ***
 	// carico in $categories le categorie che sono presenti in GAzie
@@ -288,10 +287,9 @@ if (isset($_POST['conferma'])) { // se confermato
 	}
 	$xml_output .="</Categories>\n</GAzieDocuments>";
 	$xmlFileC = "categorie.xml";
-  // togliere i 3 commenti sotto per far scrivere il file anche nella cartella di GAzie
-	//$xmlHandle = fopen($xmlFileC, "w");
-	//fwrite($xmlHandle, $xml_output);
-	//fclose($xmlHandle);
+	$xmlHandle = fopen($xmlFileC, "w");
+	fwrite($xmlHandle, $xml_output);
+	fclose($xmlHandle);
 
 	if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){
 
