@@ -720,6 +720,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 			$last_id_tes_tesdoc=tesdocInsert($tesdocVal);
 
 			$rigdocVal = ['id_tes'=> $last_id_tes_tesdoc];
+      $rigdocVal['descri']=(isset($rigdocVal['descri']))?$rigdocVal['descri']:'';
 			$rigdocVal['descri'] .= 'ACQUISTO n.'.$v['tes']['numfat'].' del '.gaz_format_date($v['tes']['datfat']);
       // inserisco i righi IVA
       $acc_iva=0.00;
