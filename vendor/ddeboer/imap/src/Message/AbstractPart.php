@@ -268,6 +268,7 @@ abstract class AbstractPart implements PartInterface
      *
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     final public function current()
     {
         $this->lazyParseStructure();
@@ -275,11 +276,13 @@ abstract class AbstractPart implements PartInterface
         return $this->parts[$this->key];
     }
 
+    #[\ReturnTypeWillChange]
     final public function getChildren()
     {
         return $this->current();
     }
 
+    #[\ReturnTypeWillChange]
     final public function hasChildren()
     {
         $this->lazyParseStructure();
@@ -290,21 +293,25 @@ abstract class AbstractPart implements PartInterface
     /**
      * @return int
      */
+    #[\ReturnTypeWillChange]
     final public function key()
     {
         return $this->key;
     }
 
+    #[\ReturnTypeWillChange]
     final public function next()
     {
         ++$this->key;
     }
 
+    #[\ReturnTypeWillChange]
     final public function rewind()
     {
         $this->key = 0;
     }
 
+    #[\ReturnTypeWillChange]
     final public function valid()
     {
         $this->lazyParseStructure();
@@ -393,9 +400,9 @@ abstract class AbstractPart implements PartInterface
             }
 
             if (
-                    'inline' === \strtolower($part->disposition)
+                'inline' === \strtolower($part->disposition)
                 && self::SUBTYPE_PLAIN !== \strtoupper($part->subtype)
-                && self::SUBTYPE_HTML !== \strtoupper($part->subtype)
+                && self::SUBTYPE_HTML  !== \strtoupper($part->subtype)
             ) {
                 return true;
             }
