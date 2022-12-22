@@ -183,7 +183,7 @@ if (isset($_POST['conferma'])) { // se confermato
 					$artic = gaz_dbi_get_row($gTables['artico'],"codice",$_POST['codice'.$ord]);// prendo gli ulteriori dati da passare nell xml
 					if (json_decode($_POST['ecomm_option_attribute'.$ord]) != null){ // se esiste un json per attributo della variante dell'e-commerce
 						$var = json_decode($_POST['ecomm_option_attribute'.$ord],true);
-						$var_name=(isset($var['var_name'][0]))?$var['var_name'][0]:'null';
+						$var_name=(isset($var['var_name']))?$var['var_name']:'null';
 						$xml_output .= "\t<Characteristic>".$var_name."</Characteristic>\n";
 						$xml_output .= "\t<CharacteristicId>".$var['var_id']."</CharacteristicId>\n";
 					}
