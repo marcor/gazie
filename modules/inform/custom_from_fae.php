@@ -24,29 +24,18 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
+$gForm = new informForm();
 $msg = array('err' => array(), 'war' => array());
 $tipdoc_conv=array('TD01'=>'FAI','TD02'=>'FAA','TD03'=>'FAQ','TD04'=>'FNC','TD05'=>'FND','TD06'=>'FAP','TD24'=>'FAD','TD25'=>'FND','TD26'=>'FAF');
 $preview = false; // visualizza dopo upload
 $iszip = false;
 
-function removeSignature($string, $filename) {
-  $string = substr($string, strpos($string, '<?xml '));
-  preg_match_all('/<\/.+?>/', $string, $matches, PREG_OFFSET_CAPTURE);
-  $lastMatch = end($matches[0]);
-	// trovo l'ultimo carattere del tag di chiusura per eliminare la coda
-	$f_end = $lastMatch[1]+strlen($lastMatch[0]);
-  $string = substr($string, 0, $f_end);
-	// elimino le sequenze di caratteri aggiunti dalla firma (ancora da testare approfonditamente)
-	$string = preg_replace ('/[\x{0004}]{1}[\x{0082}]{1}[\x{0001}\x{0002}\x{0003}\x{0004}]{1}[\s\S]{1}/i', '', $string);
-	$string = preg_replace ('/[\x{0004}]{1}[\x{0081}]{1}[\s\S]{1}/i', '', $string);
-	$string = preg_replace ('/[\x{0004}]{1}[A-Za-z]{1}/i', '', $string); // per eliminare tag finale
-	return $string;
-}
-
 if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso nessun upload
 	$form['fattura_elettronica_original_name'] = '';
+	$form['dirextract'] = '';
 } else { // accessi successivi
 	$form['fattura_elettronica_original_name'] = filter_var($_POST['fattura_elettronica_original_name'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+	$form['dirextract'] = filter_var($_POST['dirextract'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 	if (isset($_POST['Submit_file'])) { // conferma invio upload file
     if (!empty($_FILES['userfile']['name'])) {
       if ( $_FILES['userfile']['type'] == "application/pkcs7-mime" || $_FILES['userfile']['type'] == "text/xml" || $_FILES['userfile']['type'] == "application/zip"|| $_FILES['userfile']['type'] == "application/x-zip-compressed" ) {
@@ -57,7 +46,18 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
           $msg['err'][] = 'no_upload';
         }
         if ($_FILES['userfile']['type'] == "application/zip"|| $_FILES['userfile']['type'] == "application/x-zip-compressed" ) {
+          $dirextract =  'unzipped'.date("YmdHis");
           $iszip = true;
+          $zip = new ZipArchive;
+          $res = $zip->open( DATA_DIR.'files/' . $admin_aziend['codice'] . '/' .$form['fattura_elettronica_original_name']);
+          if ($res === TRUE) {
+            $form['dirextract'] = $dirextract;
+            $zip->extractTo( DATA_DIR. 'files/' . $admin_aziend['codice'] . '/' .$dirextract.'/' );
+            $zip->close();
+            //echo 'extraction successful';
+          } else {
+            //echo 'extraction error';
+          }
         }
       } else { // mime del file non valido
         $msg['err'][] = 'filmim';
@@ -66,16 +66,75 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			$msg['err'][] = 'no_upload';
 		}
 	} else if (isset($_POST['Submit_form'])) { // ho  confermato l'inserimento
-	} else if (isset($_POST['Download'])) { // faccio il download dell'allegato
+    $preview = true;
 	}
-	if ($preview) { // non ho errori  vincolanti sul file posso proporre la visualizzazione in base al contenuto del file che ho caricato
-    // definisco l'array dei righi
-    $form['rows'] = [];
+	if ($preview) { // non ho errori vincolanti posso proporre la visualizzazione in base al contenuto del file che ho caricato
+    if (empty($form['dirextract'])) {  // file singolo
+      $invoices[]=$form['fattura_elettronica_original_name'];
+    } else { // era uno zip, leggo la directory e popolo l'array con i nomi dei files
+      $dh = opendir( DATA_DIR . 'files/' . $admin_aziend['codice'] . '/' .$form['dirextract'].'/' );
+      while (false !== ($filename = readdir($dh))) {
+        if($filename != "." && $filename != ".."){
+          $invoices[] = $form['dirextract'].'/'.$filename;
+        }
+      }
+      closedir($dh);
+    }
+
+    $i=0;
+    foreach($invoices as $v) {
+      // definisco l'array con tutti i dati che possono essere presi dalla fattura elettronica ( se li trovo )
+      $form['rows'][$i]=['codfis'=>'','pariva'=>'','ragso1'=>'','ragso2'=>'','legrap_pf_nome'=>'','legrap_pf_cognome'=>'','sexper'=>'G','indspe'=>'','capspe'=>'','citspe'=>'','prospe'=>'','country'=>'IT'];
+      $nf= DATA_DIR.'files/' . $admin_aziend['codice'] . '/' . $v;
+      $gForm->getInvoiceContent($nf);
+      $xpath = $gForm->xpath;
+      $doc = $gForm->doc;
+      $accragsoc='';
+ 			if ($xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/DatiAnagrafici/Anagrafica/Cognome")->length >= 1) {
+        $form['rows'][$i]['legrap_pf_cognome']=$xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/DatiAnagrafici/Anagrafica/Cognome")->item(0)->nodeValue;
+        $accragsoc .= $form['rows'][$i]['legrap_pf_cognome'];
+      }
+ 			if ($xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/DatiAnagrafici/Anagrafica/Nome")->length >= 1) {
+        $form['rows'][$i]['legrap_pf_nome']=$xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/DatiAnagrafici/Anagrafica/Nome")->item(0)->nodeValue;
+        $accragsoc .= ' '.$form['rows'][$i]['legrap_pf_nome'];
+      }
+ 			if ($xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/DatiAnagrafici/Anagrafica/Denominazione")->length >= 1) {
+        $form['rows'][$i]['ragso1']=$xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/DatiAnagrafici/Anagrafica/Denominazione")->item(0)->nodeValue;
+      } else {
+        $form['rows'][$i]['ragso1'] = $accragsoc;
+      }
+ 			if ($xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/DatiAnagrafici/CodiceFiscale")->length >= 1) {
+        $form['rows'][$i]['codfis']=$xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/DatiAnagrafici/CodiceFiscale")->item(0)->nodeValue;
+        if (!is_numeric($form['rows'][$i]['codfis'])) {
+          $form['rows'][$i]['sexper'] = substr($form['rows'][$i]['codfis'],9,2) > 40 ? 'F' : 'M';
+        }
+      }
+			if ($xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/DatiAnagrafici/IdFiscaleIVA/IdCodice")->length >= 1) {
+        $form['rows'][$i]['pariva']=$xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/DatiAnagrafici/IdFiscaleIVA/IdCodice")->item(0)->nodeValue;
+			}
+			if ($xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/Sede/Indirizzo")->length >= 1) {
+        $form['rows'][$i]['indspe']=$xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/Sede/Indirizzo")->item(0)->nodeValue;
+			}
+			if ($xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/Sede/CAP")->length >= 1) {
+        $form['rows'][$i]['capspe']=$xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/Sede/CAP")->item(0)->nodeValue;
+			}
+			if ($xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/Sede/Comune")->length >= 1) {
+        $form['rows'][$i]['citspe']=$xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/Sede/Comune")->item(0)->nodeValue;
+			}
+			if ($xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/Sede/Provincia")->length >= 1) {
+        $form['rows'][$i]['prospe']=$xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/Sede/Provincia")->item(0)->nodeValue;
+			}
+			if ($xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/Sede/Nazione")->length >= 1) {
+        $form['rows'][$i]['country']=$xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/Sede/Nazione")->item(0)->nodeValue;
+			}
+      $i++;
+    }
+
   }
 }
 require("../../library/include/header.php");
 $script_transl = HeadMain();
-$gForm = new informForm();
+
 ?>
 <script type="text/javascript">
     $(function () {
@@ -87,7 +146,8 @@ $gForm = new informForm();
 </script>
 <div align="center" ><h2><?php echo $script_transl['title'];?></h2></div>
 <form method="POST" name="form" enctype="multipart/form-data" id="add-invoice">
-    <input type="hidden" name="fattura_elettronica_original_name" value="<?php echo $form['fattura_elettronica_original_name']; ?>" />
+  <input type="hidden" name="fattura_elettronica_original_name" value="<?php echo $form['fattura_elettronica_original_name']; ?>" />
+  <input type="hidden" name="dirextract" value="<?php echo $form['dirextract']; ?>" />
 <?php
 	// INIZIO form che permetterà all'utente di interagire per (es.) imputare i vari costi al piano dei conti (contabilità) ed anche le eventuali merci al magazzino
     if (count($msg['err']) > 0) { // ho un errore
@@ -109,6 +169,7 @@ if ($preview){
 
 <?php
 		foreach ($form['rows'] as $k => $v) {
+      var_dump($v);
 			// creo l'array da passare alla funzione per la creazione della tabella responsive
       /*
             $resprow[$k] = array(
