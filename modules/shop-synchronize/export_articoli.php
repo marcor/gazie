@@ -475,7 +475,7 @@ if (!isset($_GET['success'])){
 					$mv = $gForm->getStockValue(false, $item['codice']);
 
 						$magval = array_pop($mv);
-						if ($magval){
+						if (isset($magval['q_g'])){
 							$avqty=$magval['q_g']-$ordinatic;
 						}
 						if ($avqty<0 or $avqty==""){
@@ -558,6 +558,22 @@ if (!isset($_GET['success'])){
           <?php
         }
 				while ($item = gaz_dbi_fetch_array($parent)){ // ciclo i PARENT / GRUPPI
+          // carico in $parent i gruppi che sono presenti in GAzie
+          $parent_variant = gaz_dbi_query ("SELECT * FROM ".$gTables['artico']." WHERE id_artico_group = '".$item['id_artico_group']."' ORDER BY codice ASC");
+          $quanti=0;
+          while ($itemvar = gaz_dbi_fetch_array($parent_variant)){ // ciclo le varianti di questo parent
+            $ordinatic = $gForm->get_magazz_ordinati($itemvar['codice'], "VOR");
+            $mv = $gForm->getStockValue(false, $itemvar['codice']);
+            $avqty= 0;
+						$magval = array_pop($mv);
+						if (isset($magval['q_g'])){
+							$avqty=$magval['q_g']-$ordinatic;
+						}
+						if ($avqty<0 or $avqty==""){
+							$avqty= 0;
+						}
+            $quanti += $avqty;
+          }
 
 					?>
 					<div class="row bg-warning" style="border-bottom: 1px solid;">
@@ -580,7 +596,7 @@ if (!isset($_GET['success'])){
 								echo '<input type="hidden" name="body_text'. $n .'" value="'. preg_replace('/[\x00-\x1f]/','',htmlspecialchars($item['large_descri'])) . '">';
 								echo '<input type="hidden" name="ToDo'. $n .'" value="update">Update';// per i parent solo update!!!
 								echo '<input type="hidden" name="web_public'. $n .'" value="'. $item['web_public'] . '">';
-								echo '<input type="hidden" name="quanti'. $n .'" value="">';
+								echo '<input type="hidden" name="quanti'. $n .'" value="'.$quanti.'">';
 								echo '<input type="hidden" name="aliiva'. $n .'" value="">';
 								echo '<input type="hidden" name="web_price'. $n .'" value="">';
 								echo '<input type="hidden" name="ref_ecommerce_id_main_product'. $n .'" value="'. $item['ref_ecommerce_id_main_product'] .'">';
