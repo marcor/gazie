@@ -326,6 +326,43 @@ $strScript = array(
         'insadd'        => 'Inserisci l\'indirizzo in formato URL',
         'back'          => 'Torna alla rubrica',
         'add'           => 'Aggiungi'
+    ),
+    "custom_from_fae.php" =>
+      array('title' => 'Popola l\'archivio clienti e contratti a partire dalle fatture elettroniche',
+      'btn_acquire'=>'Carica il file',
+      'war' => array(
+          'ok_suppl' => 'Il cliente è già in archivio',
+          'no_suppl' => 'Ho già questa anagrafica ma è un nuovo cliente',
+          'no_anagr' => "Di questo nuovo cliente non ho l'anagrafica, utilizzerò questi dati per crearla",
+          'no_db' => "Di questo file è stato fatto solo l'upload ma non è stata confermata la registrazione"
+      ),
+      'err' => array(
+          'filmim' => 'Il file deve essere nel formato XML o P7M',
+          'invalid_xml' => 'Il contenuto del file non è un XML valido',
+          'invalid_fae' => 'Il contenuto del file XML non sembra essere una fattura elettronica',
+          'file_exists' => 'Un file con questo nome è stato già stato acquisito',
+          'not_mine' => 'La fattura che stai tentando di importare non è stata emessa da questa azienda',
+          'no_upload' => 'File non inviato',
+          'no_pagame' => 'Non hai selezionato la modalità di pagamento',
+          'no_codric' => 'Non hai selezionato il codice conto di costo',
+          'no_codvat' => 'Non hai selezionato l\'aliquota IVA',
+          'same_content' => 'Una fattura di questo fornitore, contenente lo stesso numero e data fattura, è già stato acquisito'
+      ),
+      'head_text1' => "Sotto sono riportate le anagrafiche dei clienti contenuti nel file: ",
+      'head_text2' => "  che possono essere importate, fai le scelte in base alle esigenze",
+      'pagame'=>'Modalità di pagamento',
+      'nrow' => 'Rigo',
+      'codart' => 'Codice',
+      'descri' => 'Descrizione',
+      'unimis' => 'U.M.',
+      'quanti' => 'Quantità ',
+      'prezzo' => 'Prezzo',
+      'amount' => 'Importo',
+      'sconto' => 'Sconto',
+      'taxable' => 'Imponibile',
+      'tax' => 'I.V.A.',
+      'operation_type' => 'Tipo oper.',
+      'conto' => 'Conto',
     )
 );
 ?>

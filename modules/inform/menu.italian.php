@@ -46,7 +46,8 @@ $transl['inform'] = array('name' => "Tools & Info",
         10 => array("Anagrafiche clienti-fornitori", "Anagrafiche clienti-fornitori"),
         11 => array("Comuni","Municipalità"),
         12 => array("Province","Province"),
-        13 => array("Banche","Sportelli bancari")
+        13 => array("Banche","Sportelli bancari"),
+        14 => array("Anagrafiche da fatture elettroniche ","Importa anagrafiche")
     )
 );
 ?>

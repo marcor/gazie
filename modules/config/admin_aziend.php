@@ -195,7 +195,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
                 foreach($dim as $d){
                   $percent=$sqr/$d;
                   $new_img = imagecreatetruecolor($d,$d);
-                  imagecopyresampled($new_img,$bg,$offsetX/$percent/2,$offsetY/$percent/2,0,0,$d,$d,$sqr,$sqr);
+                  imagecopyresampled($new_img,$bg,intval($offsetX/$percent/2),intval($offsetY/$percent/2),0,0,$d,$d,$sqr,$sqr);
                   $transp = imagecolorallocatealpha($new_img,255,255,255,127);
                   imagefill($new_img,0,0,$transp);
                   imagepng( $new_img, $path."logo_".$d."x".$d.".png",9);

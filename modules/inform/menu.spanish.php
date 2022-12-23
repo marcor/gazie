@@ -35,7 +35,7 @@ $transl['inform'] = array('name' => "Herramientas & Info",
         3 => array("Lista dei salvataggi su server", "Backups"),
         4 => array("Control para nueva version", "Actualizacion"),
         5 => array("Actualizacion Website", "Actualizacion Website"),
-        6 => array("Rubrica URL", "Siti Aziendali"), 
+        6 => array("Rubrica URL", "Siti Aziendali"),
         7 => array("Anagrafiche comuni a tutte le aziende", "Anagrafiche comuni")
     ),
     'm3' => array(1 => array("Control desequilibro debe-haber de movimientos contables", "Control desequilibro debe-haber de movimientos contables"),
@@ -50,7 +50,8 @@ $transl['inform'] = array('name' => "Herramientas & Info",
         10 => array("Anagrafiche clienti-fornitori", "Anagrafiche clienti-fornitori"),
         11 => array("Comuni","Municipalità"),
         12 => array("Province","Province"),
-        13 => array("Bank branches","Bank branches")
+        13 => array("Bank branches","Bank branches"),
+        14 => array("Anagrafiche da fatture elettroniche ","Importa anagrafiche")
     )
 );
 ?>
