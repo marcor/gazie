@@ -171,7 +171,8 @@ if (isset($_POST['conferma'])) { // se confermato
 	$xml_output .= "\n<Products>\n";
 	for ($ord=0 ; $ord<=$_POST['num_products']; $ord++){// ciclo gli articoli e creo il file xml
 		if (isset($_POST['download'.$ord])){ // se selezionato
-			$xml_output .= "\t<Product>\n";
+			$barcode="";
+      $xml_output .= "\t<Product>\n";
 			$xml_output .= "\t<Id>".$_POST['ref_ecommerce_id_product'.$ord]."</Id>\n";
 			$xml_output .= "\t<IdMain>".$_POST['ref_ecommerce_id_main_product'.$ord]."</IdMain>\n";
 			$xml_output .= "\t<ToDo>".$_POST['ToDo'.$ord]."</ToDo>\n";
@@ -191,9 +192,7 @@ if (isset($_POST['conferma'])) { // se confermato
 			} else {//se è un prodotto semplice
 				$xml_output .= "\t<Type>product</Type>\n";
 				$artic = gaz_dbi_get_row($gTables['artico'],"codice",$_POST['codice'.$ord]);// prendo gli ulteriori dati da passare nell xml
-			}
-			if ((isset($artic['barcode']) && intval($artic['barcode'])==0) OR !isset ($artic['barcode'])) {
-				$artic['barcode']="NULL";
+        $barcode=$artic['barcode'];
 			}
 
 			if (isset($_POST['catmer'.$ord]) && intval($_POST['catmer'.$ord])>0){// se GAzie ha una categoria
@@ -206,7 +205,7 @@ if (isset($_POST['conferma'])) { // se confermato
 				$xml_output .= "\t<ProductCategory>".$ecomm_catmer."</ProductCategory>\n";
 			}
 			$xml_output .= "\t<Code>".$_POST['codice'.$ord]."</Code>\n";
-			$xml_output .= "\t<BarCode>".$artic['barcode']."</BarCode>\n";
+			$xml_output .= "\t<BarCode>".$barcode."</BarCode>\n";
       $pes_spec=(isset($artic['peso_specifico']))?$artic['peso_specifico']:'';
       $xml_output .= "\t<Peso>".$pes_spec."</Peso>\n";
       $larg_mm=(isset($artic['larghezza']))?$artic['larghezza']:'';
