@@ -97,7 +97,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
       }
   }
 } elseif ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo accesso per UPDATE
-    $catmer = gaz_dbi_get_row($gTables['catmer'],"codice",$_GET['codice']);
+    $catmer = gaz_dbi_get_row($gTables['catmer'],"codice",intval($_GET['codice']));
     $form['ritorno'] = $_POST['ritorno'];
     $form['codice'] = $catmer['codice'];
     $form['descri'] = $catmer['descri'];
