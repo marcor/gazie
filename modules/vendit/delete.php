@@ -30,20 +30,20 @@ if (!$isAjax) {
     trigger_error($user_error, E_USER_ERROR);
 }
 
-if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&isset($_POST['id_tes']))) { 
+if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&isset($_POST['id_tes']))) {
 	require("../../library/include/datlib.inc.php");
 	require("../../modules/magazz/lib.function.php");
 	$upd_mm = new magazzForm;
 	$admin_aziend = checkAdmin();
 	switch ($_POST['type']) {
-        case "docven": 
+        case "docven":
 				$i=intval($_POST['ref']);
 				if (isset($_POST['id_tes'])) { //sto eliminando un singolo documento
 					$result = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "id_tes = " . intval($_POST['id_tes']));
 					$row = gaz_dbi_fetch_array($result);
 					if (substr($row['tipdoc'], 0, 2) == 'DD') {
 						$rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = '" . substr($row['datemi'], 0, 4) . "' AND tipdoc LIKE '" . substr($row['tipdoc'], 0, 2) . "_' AND seziva = " . $row['seziva'] . " ", "numdoc DESC", 0, 1);
-					} elseif ($row['tipdoc'] == 'RDV') { 
+					} elseif ($row['tipdoc'] == 'RDV') {
 						$rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "id_tes = " . intval($_POST['id_tes']));
 					} elseif ($row['tipdoc'] == 'VCO') {
 						$rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "datemi = '" . $row['datemi'] . "' AND tipdoc = 'VCO' AND seziva = " . $row['seziva'], "datemi DESC, numdoc DESC", 0, 1);
@@ -60,8 +60,8 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 				//controllo se sono stati emessi documenti nel frattempo...
 				$ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
 				if ($ultimo_documento) {
-					if (($ultimo_documento['tipdoc'] == 'VRI' || $ultimo_documento['tipdoc'] == 'VCO' 
-						|| substr($ultimo_documento['tipdoc'], 0, 2) == 'DD' || $ultimo_documento['tipdoc'] == 'RDV' || $ultimo_documento['tipdoc'] == 'CMR' ) 
+					if (($ultimo_documento['tipdoc'] == 'VRI' || $ultimo_documento['tipdoc'] == 'VCO'
+						|| substr($ultimo_documento['tipdoc'], 0, 2) == 'DD' || $ultimo_documento['tipdoc'] == 'RDV' || $ultimo_documento['tipdoc'] == 'CMR' )
 						&& $ultimo_documento['numdoc'] == $row['numdoc']) {
 						gaz_dbi_del_row($gTables['tesdoc'], 'id_tes', $row['id_tes']);
 						gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $row['id_con']);
@@ -80,9 +80,9 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 							gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigdoc' AND id_ref", $val_old_row['id_rig']);
 							if (intval($val_old_row['id_mag']) > 0) {  //se c'è stato un movimento di magazzino lo azzero
 								$upd_mm->uploadMag('DEL', '', '', '', '', '', '', '', '', '', '', '', $val_old_row['id_mag']);
-								// se c'è stato, cancello pure il movimento sian 
+								// se c'è stato, cancello pure il movimento sian
 								gaz_dbi_del_row($gTables['camp_mov_sian'], "id_movmag", $val_old_row['id_mag']);
-							}							
+							}
 						}
 						// in caso di eliminazione di un reso da c/visione che quindi ha un link su un DDV
 						if ($ultimo_documento['id_doc_ritorno'] > 0 ) {
@@ -104,7 +104,7 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 						gaz_dbi_put_query($gTables['rigbro'], 'id_doc = ' . $row["id_tes"], "id_doc", "");
 						// cancello pure l'eventuale movimento di split payment
 						$r_split = gaz_dbi_get_row($gTables['tesmov'], 'id_doc', $row['id_tes']);
-                        if ($r_split) {	
+                        if ($r_split) {
                             gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $r_split['id_tes']);
                             // prima di eliminare i righi contabili devo eliminare le eventuali partite aperte ad essi collegati
                             $rs_rmocdel = gaz_dbi_dyn_query("*", $gTables['rigmoc'], "id_tes = ".$r_split['id_tes'],"id_tes");
@@ -115,13 +115,13 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
                         }
 						//cancello i righi
 						$rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = " . $row['id_tes'] );
-						while ($val_old_row = gaz_dbi_fetch_array($rs_righidel)) {							
+						while ($val_old_row = gaz_dbi_fetch_array($rs_righidel)) {
 							gaz_dbi_del_row($gTables['rigdoc'], "id_rig", $val_old_row['id_rig']);
 							gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigdoc' AND id_ref", $val_old_row['id_rig']);
 							if (intval($val_old_row['id_mag']) > 0) {  //se c'� stato un movimento di magazzino lo azzero
 								$upd_mm->uploadMag('DEL', '', '', '', '', '', '', '', '', '', '', '', $val_old_row['id_mag']);
 
-								// se c'è stato, cancello pure il movimento sian 
+								// se c'è stato, cancello pure il movimento sian
 								gaz_dbi_del_row($gTables['camp_mov_sian'], "id_movmag", $val_old_row['id_mag']);
 							}
 						}
@@ -163,7 +163,7 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 							gaz_dbi_del_row($gTables['rigmoi'], 'id_tes', $row['id_con']);
 							// cancello pure l'eventuale movimento di split payment
 							$r_split = gaz_dbi_get_row($gTables['tesmov'], 'id_doc', $a_row['id_tes']);
-              if ($r_split) {	
+              if ($r_split) {
                 gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $r_split['id_tes']);
                 // prima di eliminare i righi contabili devo eliminare le eventuali partite aperte ad essi collegati
                 $rs_rmocdel = gaz_dbi_dyn_query("*", $gTables['rigmoc'], "id_tes = ".$r_split['id_tes'],"id_tes");
@@ -179,9 +179,9 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 					}
 				} else {
 					$message = "Si sta tentando di eliminare un documento <br /> inesistente o contabilizzato!";
-				} 
-		break;		
-		case "broven":				
+				}
+		break;
+		case "broven":
 			//procedo all'eliminazione della testata e dei righi...
 			$tipdoc = gaz_dbi_get_row($gTables['tesbro'], "id_tes", intval($_POST['id_tes']))['tipdoc'];
 			//cancello la testata
@@ -194,8 +194,8 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
                     // aggiorno l'e-commerce ove presente se l'ordine non è web
                     $gs=$admin_aziend['synccommerce_classname'];
                     $gSync = new $gs();
-					if($gSync->api_token){ 
-						$gSync->SetProductQuantity($a_row['codart']);							
+					if($gSync->api_token){
+						$gSync->SetProductQuantity($a_row['codart']);
 					}
 				}
 				gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigbro' AND id_ref ",$a_row['id_rig']);
@@ -217,7 +217,7 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 			$result = gaz_dbi_del_row($gTables['effett'], "id_tes", intval($_POST['id_tes']));
 			// i dati univoci della fattura che ha originato l'effetto
 			$where = "protoc=$effetto[protoc] AND seziva=$effetto[seziva] AND datfat='$effetto[datfat]'";
-			// se la fattura non ha altri effetti associati resettiamo il flag geneff  
+			// se la fattura non ha altri effetti associati resettiamo il flag geneff
 			$altri_effetti = gaz_dbi_record_count($gTables['effett'], $where);
 			if (!$altri_effetti) {
 				gaz_dbi_query("UPDATE $gTables[tesdoc] SET geneff = '' WHERE $where AND tipdoc LIKE 'F%'");
@@ -254,15 +254,19 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 		case "mndtritdinf":
 			$i=intval($_POST['ref']);
 			$f=gaz_dbi_get_row($gTables['files'], "id_doc", $i);
-            unlink(DATA_DIR . "files/" .$admin_aziend['codice']."/doc/". $i. ".".$f['extension']);
+      unlink(DATA_DIR . "files/" .$admin_aziend['codice']."/doc/". $i. ".".$f['extension']);
 			gaz_dbi_del_row($gTables['files'], 'id_doc', $i);
 		break;
 		case "distinte":
 			$i=intval($_POST['ref']);
 			$f=gaz_dbi_get_row($gTables['files'], "id_doc", $i);
-            unlink(DATA_DIR . "files/" .$admin_aziend['codice']."/doc/". $i. ".".$f['extension']);
+      unlink(DATA_DIR . "files/" .$admin_aziend['codice']."/doc/". $i. ".".$f['extension']);
 			gaz_dbi_del_row($gTables['files'], 'id_doc', $i);
-            gaz_dbi_query("UPDATE $gTables[effett] SET id_distinta = 0, banacc = 0 WHERE id_distinta=$i");
+      gaz_dbi_query("UPDATE $gTables[effett] SET id_distinta = 0, banacc = 0 WHERE id_distinta=$i");
+		break;
+		case "customer_group":
+			$i=intval($_POST['ref']);
+			gaz_dbi_del_row($gTables['customer_group'], "id", $i);
 		break;
 	}
 }

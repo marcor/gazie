@@ -682,6 +682,16 @@ $gForm->selectFromDB('pagame', 'codpag', 'codice', $form['codpag'], 'tippag`, `g
         <div class="row">
             <div class="col-md-12">
                 <div class="form-group">
+                    <label for="id_customer_group" class="col-sm-4 control-label"><?php echo $script_transl['customer_group']; ?> </label>
+    <?php
+$gForm->selectFromDB('customer_group', 'id_customer_group', 'id', $form['id_customer_group'], 'id', true, ' ', 'descri');
+    ?>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
                     <label for="MndtRltdInf" class="col-sm-4 control-label"><?php echo $script_transl['MndtRltdInf']; ?></label>
 <?php if ($nd > 0) { // se ho dei documenti  ?>
                         <div>

@@ -90,6 +90,7 @@ $strScript = array("admin_client.php" =>
         'id_agente' => 'Agente',
         'cosric' => 'Conto di ricavo predefinito',
         'codpag' => 'Modalit&agrave; di pagamento *',
+        'customer_group' => 'Gruppo clienti',
         'MndtRltdInf' => 'Mandati RID',
         'sconto' => '% Sconto chiusura',
         'sconto_rigo' => 'Sconto sui righi documenti',
@@ -1969,6 +1970,19 @@ $strScript = array("admin_client.php" =>
         'iban' => "IBAN",
         'tipeff' => "Tipo effetti",
         'tipeff_value' => array('B' => 'Ricevute Bancarie', 'I' => 'RID', 'T' => 'Tratte', 'V' => 'MAV'),
-)
+    ),
+    "admin_customer_group.php" =>
+      array("Gruppo clienti ",
+        'id'=>"ID ",
+        'descri'=>"Descrizione ",
+        'image'=>"Immagine (jpg,png,gif) max 64Kb: ",
+        'annota'=>"Annotazioni ",
+        'err1'=>"codice gi&agrave; esistente!",
+        'err2'=>"la descrizione &egrave; vuota!",
+        'err3'=>"Il file immagine dev'essere nel formato PNG",
+        'err4'=>"L'immagine non dev'essere pi&ugrave; grande di 64Kb",
+        'large_descri'=>"Descrizione estesa",
+        'ref_ecommerce_customer_group' => 'Riferimento al gruppo su ecommerce'
+      )
 );
 ?>
