@@ -126,6 +126,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
           $v['id_customer_group']=intval($form['id_customer_group']);
           $v['impfattura']=floatval($v['impfattura']);
           $v['datfattura']=substr($v['datfattura'],0,10);
+          $v['descriprima']=filter_var(substr($v['descriprima'],0,100), FILTER_UNSAFE_RAW );
+          $v['amountprima']=floatval($v['amountprima']);
           $anagrafica->insertPartner($v);
           // inserimento contratto se richiesto
           if ($form['gencontract']>=1) {
@@ -136,7 +138,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
             switch ($form['gencontract']) {
               case "1": // mensile primo rigo
                 $vc['periodicity']=1;
-                $vc['current_fee']=0.00;
+                $vc['current_fee']=$v['amountprima'];
               break;
               case "2": // mensile totale
                 $vc['periodicity']=1;
@@ -144,7 +146,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
               break;
               case "3": // trimestrale primo rigo
                 $vc['periodicity']=3;
-                $vc['current_fee']=0.00;
+                $vc['current_fee']=$v['amountprima'];
               break;
               case "4": // trimestrale totale
                 $vc['periodicity']=3;
@@ -153,11 +155,12 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
             }
             $vc['initial_fee']=$vc['current_fee'];
             $vc['payment_method']=$v['codpag'];
-            $vc['body_text']='PRIMO RIGO DELLA FATTURA'; // valorizzo con il testo del primo rigo della fattura;
+            $vc['body_text']=$v['descriprima']; // valorizzo con il testo del primo rigo della fattura;
             $vc['status']='ASTEXT'; // uso il testo del contratto
             $ultimo_id=contractUpdate($vc);
             $ultimo_id_body=bodytextInsert(['table_name_ref'=>'contract','id_ref'=>$ultimo_id,'body_text'=>$vc['body_text'],'lang_id'=>$admin_aziend['id_language']]);
             gaz_dbi_put_row($gTables['contract'], 'id_contract', $ultimo_id, 'id_body_text', $ultimo_id_body);
+            $vc['doc_number']++;
           }
         }
         // non lo faccio per il momento, ma se sotto valorizzassi il form con un json dei righi (codice,descrizione, prezzo, unità di misura) in $_POST mi ritroverei i dati per poter popolare anche le anagrafiche degli articoli
@@ -213,7 +216,16 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
       $form['rows'][$i]['numfattura'] = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Numero")->item(0)->nodeValue;
       $form['rows'][$i]['impfattura'] = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/ImportoTotaleDocumento")->item(0)->nodeValue;
       $form['rows'][$i]['datfattura'] =$xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Data")->item(0)->nodeValue;;
-
+      // righi fattura
+      $linee =$xpath->query("//FatturaElettronicaBody/DatiBeniServizi/DettaglioLinee");
+      $li=0;
+      foreach ($linee as $lv) { // attraverso le linee
+        if ($li==0) { // per il momento prendo solo la prima linea
+          $form['rows'][$i]['descriprima']=$lv->getElementsByTagName('Descrizione')->item(0)->nodeValue;
+          $form['rows'][$i]['amountprima']=$lv->getElementsByTagName('PrezzoTotale')->item(0)->nodeValue;
+        }
+        $li++;
+      }
       // pagamento
       $pagamento = 'MP05';
       $scadenze = [0=>0];
@@ -353,8 +365,10 @@ foreach ($form['rows'] as $k => $v) { // attraverso le fatture
 ?>
 <div class="panel panel-info">
   <div class="text-bold text-info bg-info">
-    <input class="col-xs-12" type="hidden" value="<?php echo $v['impfattura']; ?>" name="rows[<?php echo $k; ?>][impfattura]"/>
-    <input class="col-xs-12" type="hidden" value="<?php echo $v['datfattura']; ?>" name="rows[<?php echo $k; ?>][datfattura]"/>
+    <input type="hidden" value="<?php echo $v['impfattura']; ?>" name="rows[<?php echo $k; ?>][impfattura]"/>
+    <input type="hidden" value="<?php echo $v['datfattura']; ?>" name="rows[<?php echo $k; ?>][datfattura]"/>
+    <input type="hidden" value="<?php echo $v['descriprima']; ?>" name="rows[<?php echo $k; ?>][descriprima]"/>
+    <input type="hidden" value="<?php echo $v['amountprima']; ?>" name="rows[<?php echo $k; ?>][amountprima]"/>
     <?php echo $v['mittente'].' tipo:'.$v['tipfattura'].' n.'.$v['numfattura'].' del '.gaz_format_date($v['datfattura']).' di € '.$v['impfattura']; ?>
     <!--<input class="col-xs-12" type="hidden" value="{'startDate':'example','headline':'example','text':'example','media':'example','caption':'example'}" name="rows[<?php echo $k; ?>][artico]"/> -->
   </div>
