@@ -182,6 +182,7 @@ if (isset($_POST['conferma'])) { // se confermato
 				} else {
 					$xml_output .= "\t<Type>variant</Type>\n";
 					$artic = gaz_dbi_get_row($gTables['artico'],"codice",$_POST['codice'.$ord]);// prendo gli ulteriori dati da passare nell xml
+          $barcode=$artic['barcode'];
 					if (json_decode($_POST['ecomm_option_attribute'.$ord]) != null){ // se esiste un json per attributo della variante dell'e-commerce
 						$var = json_decode($_POST['ecomm_option_attribute'.$ord],true);
 						$var_name=(isset($var['var_name']))?$var['var_name']:'null';
@@ -199,10 +200,16 @@ if (isset($_POST['conferma'])) { // se confermato
 				$ecomm_catmer = gaz_dbi_get_row($gTables['catmer'],"codice",intval($_POST['catmer'.$ord]))['ref_ecommerce_id_category'];
 				$xml_output .= "\t<ProductCategory>".$ecomm_catmer."</ProductCategory>\n";
 			}elseif (intval($_POST['ref_ecommerce_id_main_product'.$ord])>0 && $_POST['ref_ecommerce_id_product'.$ord]<1){// se non ce l'ha ed è un parent ci metto quella di una variante
-				$parent_catmer_res = gaz_dbi_get_row($gTables['artico'],"id_artico_group",intval($_POST['ref_ecommerce_id_main_product'.$ord]));
+				$parent_catmer_res = gaz_dbi_get_row($gTables['artico'],"id_artico_group",intval($_POST['codice'.$ord]));
 				$parent_catmer=(isset($parent_catmer_res))?$parent_catmer_res['catmer']:'';
 				$ecomm_catmer = gaz_dbi_get_row($gTables['catmer'],"codice",intval( $parent_catmer))['ref_ecommerce_id_category'];
 				$xml_output .= "\t<ProductCategory>".$ecomm_catmer."</ProductCategory>\n";
+				if (isset($parent_catmer_res['aliiva'])){
+					$aliquo=gaz_dbi_get_row($gTables['aliiva'], "codice", intval($parent_catmer_res['aliiva']));
+					if (isset($aliquo['aliquo'])){					
+						$xml_output .= "\t<VAT>".$aliquo['aliquo']."</VAT>\n";
+					}
+				}
 			}
 			$xml_output .= "\t<Code>".$_POST['codice'.$ord]."</Code>\n";
 			$xml_output .= "\t<BarCode>".$barcode."</BarCode>\n";
