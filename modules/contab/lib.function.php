@@ -92,7 +92,7 @@ class contabForm extends GAzieForm {
             if ($val > 100000000 && $ctrl_mas == substr($val, 0, 3)) { //vengo da una modifica della precedente select case quindi non serve la ricerca
                 $partner = $anagrafica->getPartner($val);
                 echo "\t<input type=\"hidden\" name=\"$name\" value=\"$val\">\n";
-                echo "\t<input type=\"hidden\" name=\"search[$name]\" value=\"" . substr($partner['ragso1'], 0, 8) . "\">\n";
+                echo "\t<input type=\"hidden\" name=\"search[$name]\" value=\"" . substr((string)$partner['ragso1'], 0, 8) . "\">\n";
                 echo "\t<input type=\"submit\" value=\"" . $partner['ragso1'] . "\" name=\"change\" onclick=\"this.form.$name.value='0'; this.form.hidden_req.value='change';\" title=\"$mesg[2]\">\n";
                 echo ' <button class="btn btn-warning btn-xs" title="Scadenzario" onclick="dialogSchedule(this);return false;" id="paymov' . $val . $name . '"><i class="glyphicon glyphicon-time"></i></button> ';
             } else {

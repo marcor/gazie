@@ -39,9 +39,10 @@ $script_transl = HeadMain();
         <li>Potranno essere generati i verbali di campionamento, le accettazioni dei campioni, i rapporti di prova, le metodiche, i reports e le verifiche strumentali messe in essere.</li>
         <li>Verranno ricordate le scadenze delle tarature/calibrature e degli accreditamenti.</li>
       </ul>
-      <p class="text-info"> Se vuoi creare un sistema informativo su misura per il tuo laboratorio o per qualsiasi altro chiarimento contatta l'autore:</p>
-      <p class="text-warning">Antonio De Vincentiis Montesilvano (PE)<a href="https://www.devincentiis.it"> https://www.devincentiis.it </a> - telefono +39 <a href="tel:+393383121161">3383121161</a>
-      </p>
+      <p class="text-danger"> Se vuoi creare un sistema informativo su misura per il tuo laboratorio o per qualsiasi altro chiarimento contatta l'autore:</p>
+      <p class="text-warning text-center">Antonio De Vincentiis Montesilvano (PE)</p>
+      <p class="text-center"><a href="https://www.devincentiis.it"> https://www.devincentiis.it </a></p>
+      <p class="text-center">Telefono +39 <a href="tel:+393383121161">3383121161</a></p>
     </h2>
   </div>
 </div>

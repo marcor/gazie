@@ -279,11 +279,6 @@ function gaz_html_call_tel($tel_n) {
     return $ret;
 }
 
-function gaz_html_ae_checkiva($paese, $pariva) {
-    $htmlpariva = "<a target=\"_blank\" href=\"http://www1.agenziaentrate.gov.it/servizi/vies/vies.htm?s=" . $paese . "&p=" . $pariva . "\">" . $paese . " " . $pariva . "</a>";
-    return $htmlpariva;
-}
-
 function gaz_format_quantity($number, $comma = false, $decimal = false) {
     $number = sprintf("%.5f", preg_replace("/\,/", '.', $number)); //max 5 decimal
     if (!$decimal) { // decimal is not defined (deprecated in recursive call)
@@ -2001,6 +1996,11 @@ class GAzieForm {
         </div>
       </div>
       <?php
+    }
+
+    function gaz_html_ae_checkiva($pariva) {
+        $htmlpariva = '<a href="#" onclick="clipandgo(\''.$pariva.'\',\'https://telematici.agenziaentrate.gov.it/VerificaPIVA/Scegli.do?parameter=verificaPiva\')" title="copia ed incolla sul sito dell\'AdE per controllarla">' . $pariva . '</button>';
+        return $htmlpariva;
     }
 
 }

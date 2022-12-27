@@ -110,7 +110,7 @@ $strScript = array("admin_client.php" =>
         'stapre' => 'Stampa prezzi su D.d.T.',
         'allegato' => 'Spesometro - Elenco Clienti',
         'yn_value' => array('S' => 'Si', 'N' => 'No'),
-		'stapre_value' => array('S' => 'Si', 'N' => 'No', 'T' => 'Si con totale'),
+        'stapre_value' => array('S' => 'Si', 'N' => 'No', 'T' => 'Si con totale'),
         'aliiva' => 'Aliquota I.V.A. preminente',
         'ritenuta' => '% Ritenuta',
         'status' => 'Visibilit&agrave; alla ricerca',

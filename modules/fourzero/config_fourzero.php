@@ -39,9 +39,10 @@ $script_transl = HeadMain();
         <li>Il flusso su ogni dispositivo, monitorato, produrrà tutti i reports delle lavorazioni eseguite, dei valori misurati e si interfaccerà con il modulo <b>Produzioni</b>
         <li>Verranno ricordate le scadenze delle manutenzioni, delle revisioni, delle sostituzioni e le verifiche programmate.</li>
       </ul>
-      <p class="text-info"> Se vuoi creare un sistema informativo su misura per la tua azienda o per qualsiasi altro chiarimento contatta l'autore:</p>
-      <p class="text-warning">Antonio De Vincentiis Montesilvano (PE)<a href="https://www.devincentiis.it"> https://www.devincentiis.it </a> - telefono +39 <a href="tel:+393383121161">3383121161</a>
-      </p>
+      <p class="text-danger"> Se vuoi creare un sistema informativo su misura per la tua azienda o per qualsiasi altro chiarimento contatta l'autore:</p>
+      <p class="text-warning text-center">Antonio De Vincentiis Montesilvano (PE)</p>
+      <p class="text-center"><a href="https://www.devincentiis.it"> https://www.devincentiis.it </a></p>
+      <p class="text-center">Telefono +39 <a href="tel:+393383121161">3383121161</a></p>
     </h2>
   </div>
 </div>

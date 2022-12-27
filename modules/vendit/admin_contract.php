@@ -180,11 +180,9 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
              header("Location: ".$form['ritorno']);
              exit;
           } else { // e' un'inserimento
-            contractUpdate($form);
-            //recupero l'id assegnato dall'inserimento
-            $ultimo_id = gaz_dbi_last_id();
-            bodytextInsert(array('table_name_ref'=>'contract','id_ref'=>$ultimo_id,'body_text'=>$form['body_text'],'lang_id'=>$admin_aziend['id_language']));
-            gaz_dbi_put_row($gTables['contract'], 'id_contract', $ultimo_id, 'id_body_text', gaz_dbi_last_id());
+            $ultimo_id=contractUpdate($form);
+            $ultimo_id_body=bodytextInsert(array('table_name_ref'=>'contract','id_ref'=>$ultimo_id,'body_text'=>$form['body_text'],'lang_id'=>$admin_aziend['id_language']));
+            gaz_dbi_put_row($gTables['contract'], 'id_contract', $ultimo_id, 'id_body_text', $ultimo_id_body);
             //inserisco i rows
             foreach ($form['rows'] as $i=>$value) {
                   $value['id_contract'] = $ultimo_id;

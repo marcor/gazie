@@ -24,6 +24,7 @@
 */
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
+$gForm = new informForm();
 require("../../library/include/header.php");
 $script_transl=HeadMain();
 
@@ -55,6 +56,13 @@ if (!isset($_GET['field'])) {
 }
 
 ?>
+<script>
+function clipandgo(pi,url) {
+  navigator.clipboard.writeText(pi);
+  alert("Partita IVA " + pi + " copiata negli appunti, puoi incollarla sul sito dell'AdE per il controllo");
+  window.open(url,'_blank');
+}
+</script>
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>"><div class="table-responsive">
 <table class="Tlarge table table-striped table-bordered table-condensed">
 <tr>
@@ -129,17 +137,17 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "<td title=\"$title\" align=\"center\"><a href='mailto:".$a_row["e_mail"]."'>".$a_row["e_mail"]."</a> &nbsp;</td>";
 
     // colonna dati fiscali
-    if ($a_row['pariva'] > 0 and empty($a_row['codfis'])) {
+    if ($a_row['pariva'] > 0 && empty($a_row['codfis'])) {
         echo "<td align=\"center\">" . $a_row['country'] . " " . $a_row['pariva'] . "</td>";
-    } elseif ($a_row['pariva'] == 0 and ! empty($a_row['codfis'])) {
+    } elseif ($a_row['pariva'] < 1 && !empty($a_row['codfis'])) {
         echo "<td align=\"center\">" . $a_row['codfis'] . "</td>";
-    } elseif ($a_row['pariva'] > 0 and ! empty($a_row['codfis'])) {
+    } elseif ($a_row['pariva'] >= 1 && !empty($a_row['codfis'])) {
         if ($a_row['pariva'] == $a_row['codfis']) {
             echo "<td align=\"center\">";
-            echo gaz_html_ae_checkiva($a_row['country'], $a_row['pariva']);
+            echo $gForm->gaz_html_ae_checkiva($a_row['pariva']);
             echo "</td>";
         } else {
-            echo "<td align=\"center\">" . gaz_html_ae_checkiva($a_row['country'], $a_row['pariva']) . "<br>" . $a_row['codfis'] . "</td>";
+            echo "<td align=\"center\">" . $gForm->gaz_html_ae_checkiva($a_row['pariva']) . "<br/>" . $a_row['codfis'] . "</td>";
         }
     } else {
         echo "<td class=\"FacetDataTDred\" align=\"center\"> * NO * </td>";

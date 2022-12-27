@@ -60,6 +60,9 @@ if ($contract['periodic_reassessment']==0) {
 
 class PDF extends TCPDF
     {
+    public $transl_page;
+    public $transl_of;
+
     function setLang($lang='italian')
       {
       require("../../language/$lang/menu.inc.php");
@@ -161,10 +164,10 @@ $pdf->Cell(11,4,':','TB',0,'R');
 $pdf->Cell(125,4,$script_transl['doc_type_value'][$contract['doc_type']],'RTB',1);
 $pdf->Cell(50,4,$script_transl['cod_revenue'],'LTB',0);
 $pdf->Cell(11,4,':','TB',0,'R');
-$pdf->Cell(125,4,$contract['cod_revenue'].' - '.$revenue['descri'],'RTB',1);
+$pdf->Cell(125,4,$contract['cod_revenue'].' - '.($revenue?$revenue['descri']:''),'RTB',1);
 $pdf->Cell(50,4,$script_transl['vat_code'],'LTB',0);
 $pdf->Cell(11,4,':','TB',0,'R');
-$pdf->Cell(125,4,$contract['vat_code'].' - '.$vat['descri'],'RTB',1);
+$pdf->Cell(125,4,$contract['vat_code'].' - '.($vat?$vat['descri']:''),'RTB',1);
 $pdf->Cell(50,4,$script_transl['initial_fee'],'LTB',0);
 $pdf->Cell(11,4,':','TB',0,'R');
 $pdf->Cell(125,4,$contract['initial_fee'],'RTB',1);

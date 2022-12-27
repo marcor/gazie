@@ -329,6 +329,8 @@ $strScript = array(
     ),
     "custom_from_fae.php" =>
       array('title' => 'Popola l\'archivio clienti e contratti a partire dalle fatture elettroniche',
+      'disclaimer'=>'  Da questa pagina potrai importare i clienti contenuti negli XML delle fatture elettroniche. La procedura è particolarmente comoda in fase di <b>migrazione da altri gestionali verso GAzie</b>. Basta ottenere un pacchetto con una esportazione massiva di fatture elettroniche di vendita dal portale "Fatture e Corrispettivi" oppure da uno dei tanti Terzi intermediari e poi importare il pacchetto ZIP ottenuto direttamente qui. Si ricorda che in ogni caso di può continuare ad usare il portale degli intermediari per le fatture di vendita: basta creare periodicamente il pacchetto ZIP ed importarlo sullo stesso.
+',
       'btn_acquire'=>'Carica il file',
       'war' => array(
           'ok_suppl' => 'Il cliente è già in archivio',
@@ -337,16 +339,11 @@ $strScript = array(
           'no_db' => "Di questo file è stato fatto solo l'upload ma non è stata confermata la registrazione"
       ),
       'err' => array(
-          'filmim' => 'Il file deve essere nel formato XML o P7M',
+          'filmim' => 'Il file deve essere nel formato XML o P7M o uno ZIP che li contiene',
           'invalid_xml' => 'Il contenuto del file non è un XML valido',
           'invalid_fae' => 'Il contenuto del file XML non sembra essere una fattura elettronica',
-          'file_exists' => 'Un file con questo nome è stato già stato acquisito',
-          'not_mine' => 'La fattura che stai tentando di importare non è stata emessa da questa azienda',
-          'no_upload' => 'File non inviato',
-          'no_pagame' => 'Non hai selezionato la modalità di pagamento',
-          'no_codric' => 'Non hai selezionato il codice conto di costo',
-          'no_codvat' => 'Non hai selezionato l\'aliquota IVA',
-          'same_content' => 'Una fattura di questo fornitore, contenente lo stesso numero e data fattura, è già stato acquisito'
+          'no_upload' => 'File non caricato',
+          'no_codpag' => 'Non hai selezionato la modalità di pagamento di default',
       ),
       'head_text1' => "Sotto sono riportate le anagrafiche dei clienti contenuti nel file: ",
       'head_text2' => "  che possono essere importate, fai le scelte in base alle esigenze",
@@ -363,6 +360,9 @@ $strScript = array(
       'tax' => 'I.V.A.',
       'operation_type' => 'Tipo oper.',
       'conto' => 'Conto',
+      'gencontract' => 'Genera un contratto',
+      'gencontract_value' => array(0 => 'No', 1 => 'Si, mensile con il valore del primo rigo', 2=>'Si, mensile con il valore del totale',3=>'Si, trimestrale con il valore del primo rigo', 4=>'Si, trimestrale con il valore del totale'),
+
     )
 );
 ?>

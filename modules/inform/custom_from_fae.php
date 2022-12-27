@@ -25,17 +25,34 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $gForm = new informForm();
-$msg = array('err' => array(), 'war' => array());
+$msg = ['err'=>[],'war'=>[]];
 $tipdoc_conv=array('TD01'=>'FAI','TD02'=>'FAA','TD03'=>'FAQ','TD04'=>'FNC','TD05'=>'FND','TD06'=>'FAP','TD24'=>'FAD','TD25'=>'FND','TD26'=>'FAF');
 $preview = false; // visualizza dopo upload
 $iszip = false;
 
+function searchPagame($modalitapagamento='',$deadlines=[]) {
+  global $gTables;
+  $codpag=false;
+  $numrat=count($deadlines);
+  // si potrebbe fare meglio, ad es controllare giodec e tiprat, per il momento mi limito a questo che fa match con più probabilità, altrimenti dovrei controllare i più "prossimi" a parità di rate/giorni
+  $rs_pagame = gaz_dbi_dyn_query('codice', $gTables['pagame'],"fae_mode ='".$modalitapagamento."' AND numrat = ".count($deadlines),"codice",0,1);
+  $rs = gaz_dbi_fetch_array($rs_pagame);
+  $r = $rs?$rs['codice']:0;
+  return $r;
+}
+
 if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso nessun upload
 	$form['fattura_elettronica_original_name'] = '';
 	$form['dirextract'] = '';
+	$form['id_customer_group'] = 0; //tutti
+	$form['codpag'] = 0;
+	$form['gencontract'] = 0;
 } else { // accessi successivi
 	$form['fattura_elettronica_original_name'] = filter_var($_POST['fattura_elettronica_original_name'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 	$form['dirextract'] = filter_var($_POST['dirextract'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+	$form['id_customer_group'] = intval($_POST['id_customer_group']);
+	$form['codpag'] = intval($_POST['codpag']);
+	$form['gencontract'] = intval($_POST['gencontract']);
 	if (isset($_POST['Submit_file'])) { // conferma invio upload file
     if (!empty($_FILES['userfile']['name'])) {
       if ( $_FILES['userfile']['type'] == "application/pkcs7-mime" || $_FILES['userfile']['type'] == "text/xml" || $_FILES['userfile']['type'] == "application/zip"|| $_FILES['userfile']['type'] == "application/x-zip-compressed" ) {
@@ -65,8 +82,96 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		} else {
 			$msg['err'][] = 'no_upload';
 		}
-	} else if (isset($_POST['Submit_form'])) { // ho  confermato l'inserimento
-    $preview = true;
+	} elseif (isset($_POST['Submit_form'])) { // ho  confermato l'inserimento
+    if ($form['codpag']<=0){
+ 			$msg['err'][] = 'no_codpag';
+    }
+
+    if(count($msg['err'])<=0){
+      $anagrafica = new Anagrafica();
+      $last = $anagrafica->queryPartners('*', "codice BETWEEN " . $admin_aziend['mascli'] . "000000 AND " . $admin_aziend['mascli'] . "999999", "codice DESC", 0, 1);
+      $codice = $last[0]['codice'];
+      if ($form['gencontract']>=1) { // la funzione contractUpdate mi serve dentro al ciclo for (vedi sotto)
+        require_once("../vendit/lib.data.php");
+        $vc=[];
+        $vc['vat_section']=1;
+        $vc['doc_type']='FAI';
+        $vc['months_duration']=60;
+        $vc['tacit_renewal']=1;
+        $rs_last_contract = gaz_dbi_dyn_query('doc_number', $gTables['contract'], 1,'doc_number DESC',0,1);
+        $last = gaz_dbi_fetch_array($rs_last_contract);
+        $vc['doc_number'] = $last ? ($last['doc_number']+1) : 1;
+      }
+      foreach ($_POST['rows'] as $v) {
+        $v['codfis']=substr($v['codfis'],0,16);
+        $v['pariva']=substr($v['pariva'],0,11);
+        $v['datnas']='2004-01-27';
+        $rs_anagra = gaz_dbi_dyn_query('id', $gTables['anagra'], "( pariva <> '' AND pariva > 0 AND pariva = '" . $v['pariva'] . "' ) OR ( codfis <> '' AND codfis = '" . $v['codfis'] . "' )", "id", 0, 1);
+        $partner_with_same_cfpi = gaz_dbi_fetch_array($rs_anagra);
+        if (!$partner_with_same_cfpi) { // per evitare che se sul pacchetto zip ci sono più fatture dello stesso cliente questo venga duplicato
+          $codice ++;
+          $v['codice']=$codice;
+          // security parsing
+          $v['codpag']=$v['codpag']>=1?$v['codpag']:$form['codpag'];
+          $v['ragso1']=filter_var(substr($v['ragso1'],0,100), FILTER_UNSAFE_RAW );
+          $v['legrap_pf_nome']=filter_var(substr($v['legrap_pf_nome'],0,50), FILTER_UNSAFE_RAW );
+          $v['legrap_pf_cognome']=filter_var(substr($v['legrap_pf_cognome'],0,50), FILTER_UNSAFE_RAW );
+          $v['sexper']=substr($v['sexper'],0,1);
+          $v['capspe']=substr($v['capspe'],0,5);
+          $v['indspe']=filter_var($v['indspe'], FILTER_UNSAFE_RAW );
+          $v['citspe']=strtoupper(filter_var(substr($v['citspe'],0,50), FILTER_UNSAFE_RAW ));
+          $v['prospe']=substr($v['prospe'],0,2);
+          $v['country']=substr($v['country'],0,2);
+          $v['codpag']=intval($v['codpag']);
+          $v['id_customer_group']=intval($form['id_customer_group']);
+          $v['impfattura']=floatval($v['impfattura']);
+          $v['datfattura']=substr($v['datfattura'],0,10);
+          $anagrafica->insertPartner($v);
+          // inserimento contratto se richiesto
+          if ($form['gencontract']>=1) {
+            $vc['id_customer']=$codice;
+            $vc['conclusion_date']=$v['datfattura'];
+            $vc['start_date']=$v['datfattura'];
+            $vc['last_reassessment']=$v['datfattura'];
+            switch ($form['gencontract']) {
+              case "1": // mensile primo rigo
+                $vc['periodicity']=1;
+                $vc['current_fee']=0.00;
+              break;
+              case "2": // mensile totale
+                $vc['periodicity']=1;
+                $vc['current_fee']=$v['impfattura'];
+              break;
+              case "3": // trimestrale primo rigo
+                $vc['periodicity']=3;
+                $vc['current_fee']=0.00;
+              break;
+              case "4": // trimestrale totale
+                $vc['periodicity']=3;
+                $vc['current_fee']=$v['impfattura'];
+              break;
+            }
+            $vc['initial_fee']=$vc['current_fee'];
+            $vc['payment_method']=$v['codpag'];
+            $vc['body_text']='PRIMO RIGO DELLA FATTURA'; // valorizzo con il testo del primo rigo della fattura;
+            $vc['status']='ASTEXT'; // uso il testo del contratto
+            $ultimo_id=contractUpdate($vc);
+            $ultimo_id_body=bodytextInsert(['table_name_ref'=>'contract','id_ref'=>$ultimo_id,'body_text'=>$vc['body_text'],'lang_id'=>$admin_aziend['id_language']]);
+            gaz_dbi_put_row($gTables['contract'], 'id_contract', $ultimo_id, 'id_body_text', $ultimo_id_body);
+          }
+        }
+        // non lo faccio per il momento, ma se sotto valorizzassi il form con un json dei righi (codice,descrizione, prezzo, unità di misura) in $_POST mi ritroverei i dati per poter popolare anche le anagrafiche degli articoli
+        // echo html_entity_decode($v['artico']).'<br/>';
+      }
+      header("Location: ../vendit/report_client.php");
+      exit;
+    } else { // ho degli errori ripropongo il form
+      $preview = true;
+    }
+	} elseif (isset($_POST['Cancel'])) { // ho  confermato l'inserimento
+    header("Location: ./custom_from_fae.php");
+    exit;
+
 	}
 	if ($preview) { // non ho errori vincolanti posso proporre la visualizzazione in base al contenuto del file che ho caricato
     if (empty($form['dirextract'])) {  // file singolo
@@ -84,24 +189,68 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
     $i=0;
     foreach($invoices as $v) {
       // definisco l'array con tutti i dati che possono essere presi dalla fattura elettronica ( se li trovo )
-      $form['rows'][$i]=['codfis'=>'','pariva'=>'','ragso1'=>'','ragso2'=>'','legrap_pf_nome'=>'','legrap_pf_cognome'=>'','sexper'=>'G','indspe'=>'','capspe'=>'','citspe'=>'','prospe'=>'','country'=>'IT'];
+      $form['rows'][$i]=['codfis'=>'','pariva'=>'','ragso1'=>'','ragso2'=>'','legrap_pf_nome'=>'','legrap_pf_cognome'=>'','sexper'=>'G','indspe'=>'','capspe'=>'','citspe'=>'','prospe'=>'','country'=>'IT','codpag'=>0];
       $nf= DATA_DIR.'files/' . $admin_aziend['codice'] . '/' . $v;
       $gForm->getInvoiceContent($nf);
       $xpath = $gForm->xpath;
       $doc = $gForm->doc;
-      $accragsoc='';
+
+      // mittente
+      $mittente='';
+ 			if ($xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/Anagrafica/Cognome")->length >= 1) {
+        $mittente .= $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/Anagrafica/Cognome")->item(0)->nodeValue;
+      }
+ 			if ($xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/Anagrafica/Nome")->length >= 1) {
+        $mittente .= ' '.$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/Anagrafica/Nome")->item(0)->nodeValue;
+      }
+ 			if ($xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/Anagrafica/Denominazione")->length >= 1) {
+        $mittente = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/Anagrafica/Denominazione")->item(0)->nodeValue;
+      }
+      $form['rows'][$i]['mittente'] = $mittente;
+
+      // testata fattura
+      $form['rows'][$i]['tipfattura'] = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/TipoDocumento")->item(0)->nodeValue;
+      $form['rows'][$i]['numfattura'] = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Numero")->item(0)->nodeValue;
+      $form['rows'][$i]['impfattura'] = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/ImportoTotaleDocumento")->item(0)->nodeValue;
+      $form['rows'][$i]['datfattura'] =$xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Data")->item(0)->nodeValue;;
+
+      // pagamento
+      $pagamento = 'MP05';
+      $scadenze = [0=>0];
+ 			if ($xpath->query("//FatturaElettronicaBody/DatiPagamento/CondizioniPagamento")->length >= 1) {
+        $pagamento = $xpath->query("//FatturaElettronicaBody/DatiPagamento/DettaglioPagamento/ModalitaPagamento")->item(0)->nodeValue;
+        $deadlines=['days'=>0];
+        if ($xpath->query("//FatturaElettronicaBody/DatiPagamento/DettaglioPagamento/DataScadenzaPagamento")->length >= 1) {
+          $si=0;
+          $objDataInizio = new DateTimeImmutable($form['rows'][$i]['datfattura']);
+          $datescadenzepagamenti = $xpath->query("FatturaElettronicaBody/DatiPagamento/DettaglioPagamento");
+          foreach ($datescadenzepagamenti as $datascadenza) { // potrei avere più elementi <DataScadenzaPagamento>
+            $datsca = $datascadenza->getElementsByTagName('DataScadenzaPagamento')->item(0)->nodeValue;
+            $objDataFine = new DateTimeImmutable($datsca);
+            $interval =  $objDataInizio->diff($objDataFine);
+            $objDataInizio = new DateTimeImmutable($datsca);
+            // calcolo la differenza dei giorni con la data fattura ed eventualmente tra le scadenze
+            $scadenze[$si]= (int)$interval->format("%a");
+            $si++;
+          }
+        }
+      }
+      $form['rows'][$i]['codpag']=searchPagame($pagamento,$scadenze);
+
+      // destinatario
+      $destinatario='';
  			if ($xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/DatiAnagrafici/Anagrafica/Cognome")->length >= 1) {
         $form['rows'][$i]['legrap_pf_cognome']=$xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/DatiAnagrafici/Anagrafica/Cognome")->item(0)->nodeValue;
-        $accragsoc .= $form['rows'][$i]['legrap_pf_cognome'];
+        $destinatario .= $form['rows'][$i]['legrap_pf_cognome'];
       }
  			if ($xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/DatiAnagrafici/Anagrafica/Nome")->length >= 1) {
         $form['rows'][$i]['legrap_pf_nome']=$xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/DatiAnagrafici/Anagrafica/Nome")->item(0)->nodeValue;
-        $accragsoc .= ' '.$form['rows'][$i]['legrap_pf_nome'];
+        $destinatario .= ' '.$form['rows'][$i]['legrap_pf_nome'];
       }
  			if ($xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/DatiAnagrafici/Anagrafica/Denominazione")->length >= 1) {
         $form['rows'][$i]['ragso1']=$xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/DatiAnagrafici/Anagrafica/Denominazione")->item(0)->nodeValue;
       } else {
-        $form['rows'][$i]['ragso1'] = $accragsoc;
+        $form['rows'][$i]['ragso1'] = $destinatario;
       }
  			if ($xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/DatiAnagrafici/CodiceFiscale")->length >= 1) {
         $form['rows'][$i]['codfis']=$xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/DatiAnagrafici/CodiceFiscale")->item(0)->nodeValue;
@@ -129,22 +278,20 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			}
       $i++;
     }
-
   }
 }
 require("../../library/include/header.php");
 $script_transl = HeadMain();
 
 ?>
-<script type="text/javascript">
-    $(function () {
-        $("#datreg").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
-        $("#datreg").change(function () {
-            this.form.submit();
-        });
-    });
+<script>
 </script>
-<div align="center" ><h2><?php echo $script_transl['title'];?></h2></div>
+<div class="text-center" ><h2><?php echo $script_transl['title'];?></h2></div>
+<div class="col-sm-1"></div>
+<div class="panel panel-warning col-sm-10">
+  <div class="text-warning"><?php echo $script_transl['disclaimer'];?></div>
+</div>
+<div class="col-sm-1"></div>
 <form method="POST" name="form" enctype="multipart/form-data" id="add-invoice">
   <input type="hidden" name="fattura_elettronica_original_name" value="<?php echo $form['fattura_elettronica_original_name']; ?>" />
   <input type="hidden" name="dirextract" value="<?php echo $form['dirextract']; ?>" />
@@ -158,7 +305,7 @@ $script_transl = HeadMain();
     }
 if ($preview){
  ?>
-<div class="panel panel-default">
+<div class="panel panel-default col-xs-12">
     <div class="panel-heading">
         <div class="row">
             <div class="col-sm-12 col-md-12 col-lg-12"><b><?php echo $script_transl['head_text1']. '</b><span class="label label-success">'.$form['fattura_elettronica_original_name'] .'</span><b>'.$script_transl['head_text2']; ?></b>
@@ -166,43 +313,164 @@ if ($preview){
         </div> <!-- chiude row  -->
     </div>
     <div class="panel-body">
+      <div class="row">
+          <div class="col-md-12">
+              <div class="form-group">
+                  <label for="id_customer_group" class="col-sm-4 control-label text-right">Gruppo clienti</label>
+  <?php
+$gForm->selectFromDB('customer_group', 'id_customer_group', 'id', $form['id_customer_group'], 'id', true, ' - ', 'descri','','col-xs-12 col-md-8 col-lg-6');
+  ?>
+              </div>
+          </div>
+      </div><!-- chiude row  -->
+      <div class="row">
+          <div class="col-md-12">
+              <div class="form-group">
+                  <label for="codpag" class="col-sm-4 control-label text-right">Pagamento di default *</label>
+  <?php
+$gForm->selectFromDB('pagame', 'codpag', 'codice', $form['codpag'], 'tippag`, `giodec`, `numrat', true, ' - ', 'descri', '', 'col-xs-12 col-md-8 col-lg-6' );
+  ?>
+              </div>
+          </div>
+      </div><!-- chiude row  -->
+      <div class="row">
+          <div class="col-md-12">
+              <div class="form-group">
+                  <label for="gencontract" class="col-sm-4 control-label text-right"><?php echo $script_transl['gencontract']; ?></label>
+  <?php
+$gForm->variousSelect('gencontract', $script_transl['gencontract_value'], $form['gencontract']);
+  ?>
+              </div>
+          </div>
+      </div><!-- chiude row  -->
 
 <?php
-		foreach ($form['rows'] as $k => $v) {
-      var_dump($v);
-			// creo l'array da passare alla funzione per la creazione della tabella responsive
-      /*
-            $resprow[$k] = array(
-                array('head' => $script_transl["nrow"], 'class' => '',
-                    'value' => $k+1),
-                array('head' => $script_transl["codart"], 'class' => '',
-                    'value' => $codart_dropdown),
-                array('head' => $script_transl["descri"], 'class' => 'col-sm-12 col-md-3 col-lg-3',
-                    'value' => $v['descri']),
-                array('head' => $script_transl["unimis"], 'class' => '',
-                    'value' => $v['unimis']),
-                array('head' => $script_transl["quanti"], 'class' => 'text-right numeric',
-                    'value' => $v['quanti']),
-                array('head' => $script_transl["prezzo"], 'class' => 'text-right numeric',
-                    'value' => $v['prelis']),
-                array('head' => $script_transl["sconto"], 'class' => 'text-right numeric',
-                    'value' => $v['sconto']),
-                array('head' => $script_transl["amount"], 'class' => 'text-right numeric',
-					'value' => $v['amount'], 'type' => ''),
-                array('head' => $script_transl["tax"], 'class' => 'text-center numeric',
-					'value' => $codvat_dropdown, 'type' => ''),
-                array('head' => 'Ritenuta', 'class' => 'text-center numeric',
-					'value' => $v['ritenuta'], 'type' => ''),
-                array('head' => '%', 'class' => 'text-center numeric',
-					'value' => $v['pervat'], 'type' => ''),
-                array('head' => $script_transl["conto"], 'class' => 'text-center numeric',
-					'value' => $codric_dropdown, 'type' => '')
-            );
-      */
-		}
-		//$gForm->gazResponsiveTable($resprow, 'gaz-responsive-table');
+foreach ($form['rows'] as $k => $v) { // attraverso le fatture
+  $rs_anagra = gaz_dbi_dyn_query('id', $gTables['anagra'], "( pariva <> '' AND pariva = '" . $v['pariva'] . "' ) OR ( codfis <> '' AND codfis = '" . $v['codfis'] . "' )", "id", 0, 1);
+  $partner_with_same_cfpi = gaz_dbi_fetch_array($rs_anagra);
+  if (!$partner_with_same_cfpi) { // visualizzo solo se il cliente non è già presente
+
 ?>
-	   <div class="col-sm-6 text-right"><input name="Submit_form" type="submit" class="btn btn-warning" value="<?php echo $script_transl['submit']; ?>" /> </div>
+<div class="panel panel-info">
+  <div class="text-bold text-info bg-info">
+    <input class="col-xs-12" type="hidden" value="<?php echo $v['impfattura']; ?>" name="rows[<?php echo $k; ?>][impfattura]"/>
+    <input class="col-xs-12" type="hidden" value="<?php echo $v['datfattura']; ?>" name="rows[<?php echo $k; ?>][datfattura]"/>
+    <?php echo $v['mittente'].' tipo:'.$v['tipfattura'].' n.'.$v['numfattura'].' del '.gaz_format_date($v['datfattura']).' di € '.$v['impfattura']; ?>
+    <!--<input class="col-xs-12" type="hidden" value="{'startDate':'example','headline':'example','text':'example','media':'example','caption':'example'}" name="rows[<?php echo $k; ?>][artico]"/> -->
+  </div>
+  <div class="row">
+      <div class="col-md-12">
+          <div class="form-group">
+              <label for="ragso1" class="col-sm-4 control-label text-right"> Ragione sociale </label>
+              <input class="col-sm-4" type="text" value="<?php echo $v['ragso1']; ?>" name="rows[<?php echo $k; ?>][ragso1]" maxlength="100"/>
+          </div>
+      </div>
+  </div><!-- chiude row  -->
+  <div class="row">
+      <div class="col-md-12">
+          <div class="form-group">
+              <label for="legrap_pf_cognome" class="col-sm-4 control-label text-right"> Cognome </label>
+              <input class="col-sm-4" type="text" value="<?php echo $v['legrap_pf_cognome']; ?>" name="rows[<?php echo $k; ?>][legrap_pf_cognome]" maxlength="60"/>
+          </div>
+      </div>
+  </div><!-- chiude row  -->
+  <div class="row">
+      <div class="col-md-12">
+          <div class="form-group">
+              <label for="legrap_pf_nome" class="col-sm-4 control-label text-right"> Nome </label>
+              <input class="col-sm-4" type="text" value="<?php echo $v['legrap_pf_nome']; ?>" name="rows[<?php echo $k; ?>][legrap_pf_nome]" maxlength="60"/>
+          </div>
+      </div>
+  </div><!-- chiude row  -->
+  <div class="row">
+      <div class="col-md-12">
+          <div class="form-group">
+              <label for="sexper" class="col-sm-4 control-label text-right"> Sesso/Persona Giuridica </label>
+              <input type="hidden" value="<?php echo $v['sexper']; ?>" name="rows[<?php echo $k; ?>][sexper]"/> <?php echo $v['sexper']; ?>
+          </div>
+      </div>
+  </div><!-- chiude row  -->
+  <div class="row">
+      <div class="col-md-12">
+          <div class="form-group">
+              <label for="codfis" class="col-sm-4 control-label text-right"> Codice Fiscale </label>
+              <input type="hidden" value="<?php echo $v['codfis']; ?>" name="rows[<?php echo $k; ?>][codfis]"/> <?php echo $v['codfis']; ?>
+          </div>
+      </div>
+  </div><!-- chiude row  -->
+  <div class="row">
+      <div class="col-md-12">
+          <div class="form-group">
+              <label for="pariva" class="col-sm-4 control-label text-right"> Partita IVA </label>
+              <input type="hidden" value="<?php echo $v['pariva']; ?>" name="rows[<?php echo $k; ?>][pariva]"/> <?php echo $v['pariva']; ?>
+          </div>
+      </div>
+  </div><!-- chiude row  -->
+  <div class="row">
+      <div class="col-md-12">
+          <div class="form-group">
+              <label for="indspe" class="col-sm-4 control-label text-right"> Indirizzo </label>
+              <input class="col-sm-4" type="text" value="<?php echo $v['indspe']; ?>" name="rows[<?php echo $k; ?>][indspe]" maxlength="100"/>
+          </div>
+      </div>
+  </div><!-- chiude row  -->
+  <div class="row">
+      <div class="col-md-12">
+          <div class="form-group">
+              <label for="capspe" class="col-sm-4 control-label text-right"> CAP </label>
+              <input class="col-sm-4" type="text" value="<?php echo $v['capspe']; ?>" name="rows[<?php echo $k; ?>][capspe]" maxlength="5"/>
+          </div>
+      </div>
+  </div><!-- chiude row  -->
+  <div class="row">
+      <div class="col-md-12">
+          <div class="form-group">
+              <label for="citspe" class="col-sm-4 control-label text-right"> Città </label>
+              <input class="col-sm-4" type="text" value="<?php echo $v['citspe']; ?>" name="rows[<?php echo $k; ?>][citspe]" maxlength="60"/>
+          </div>
+      </div>
+  </div><!-- chiude row  -->
+  <div class="row">
+      <div class="col-md-12">
+          <div class="form-group">
+              <label for="prospe" class="col-sm-4 control-label text-right"> Provincia </label>
+              <input class="col-sm-4" type="text" value="<?php echo $v['prospe']; ?>" name="rows[<?php echo $k; ?>][prospe]" maxlength="2"/>
+          </div>
+      </div>
+  </div><!-- chiude row  -->
+  <div class="row">
+      <div class="col-md-12">
+          <div class="form-group">
+              <label for="country" class="col-sm-4 control-label text-right"> Nazione </label>
+              <input type="hidden" value="<?php echo $v['country']; ?>" name="rows[<?php echo $k; ?>][country]"/> <?php echo $v['country']; ?>
+          </div>
+      </div>
+  </div><!-- chiude row  -->
+  <div class="row">
+      <div class="col-md-12">
+          <div class="form-group">
+              <label for="codpag" class="col-sm-4 control-label text-right">Pagamento</label>
+<?php
+$gForm->selectFromDB('pagame', 'rows['.$k.'][codpag]', 'codice', $v['codpag'], 'tippag`, `giodec`, `numrat', true, ' ', 'descri');
+?>
+          </div>
+      </div>
+  </div><!-- chiude row  -->
+
+</div>
+<?php
+  } else {
+?>
+<div class="panel panel-info">
+  <div class="text-bold text-info bg-info"><?php echo $v['mittente'].' tipo:'.$v['tipfattura'].' n.'.$v['numfattura'].' del '.gaz_format_date($v['datfattura']).' di € '.$v['impfattura']; ?></div>
+  <div class="text-bold text-warning bg-warning"><?php echo $v['ragso1']; ?> già presente </div>
+</div>
+<?php
+  }
+}
+?>
+	   <div class="col-sm-6 text-center"><input name="Cancel" type="submit" class="btn btn-default" value="<?php echo $script_transl['cancel']; ?>" /> </div>
+	   <div class="col-sm-6 text-center"><input name="Submit_form" type="submit" class="btn btn-warning" value="<?php echo $script_transl['submit']; ?>" /> </div>
     </div>
 </div>
 
@@ -215,7 +483,7 @@ if ($preview){
        <div class="row">
            <div class="col-md-12">
                <div class="form-group">
-                   <label for="image" class="col-sm-4 control-label">Seleziona il file ( xml, p7m o zip)</label>
+                   <label for="image" class="col-sm-4 control-label">Seleziona il file singolo o massivo<br/>(xml, p7m o zip)</label>
                    <div class="col-sm-8">File: <input type="file" accept=".xml,.p7m,.zip" name="userfile" />
 				   </div>
                </div>
@@ -225,6 +493,10 @@ if ($preview){
 	   </div>
 	</div> <!-- chiude container -->
 </div><!-- chiude panel -->
+<input type="hidden" name="id_customer_group" value="0" />
+<input type="hidden" name="codpag" value="0" />
+<input type="hidden" name="gencontract" value="0" />
+
 <?php
 }
 echo '</form>';

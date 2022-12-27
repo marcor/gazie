@@ -23,14 +23,11 @@
   --------------------------------------------------------------------------
  */
 require("../../library/include/datlib.inc.php");
-
 $admin_aziend = checkAdmin();
-
+$gForm = new venditForm;
 $titolo = 'Clienti';
-
 $clienti = $admin_aziend['mascli'];
 $mascli = $clienti . "000000";
-
 // campi ammissibili per la ricerca
 $search_fields = [
   'codice' => "codice = $mascli + %d",
@@ -111,6 +108,11 @@ $(function() {
 		$("#dialog_delete" ).dialog( "open" );
 	});
 });
+function clipandgo(pi,url) {
+  navigator.clipboard.writeText(pi);
+  alert("Partita IVA " + pi + " copiata negli appunti, puoi incollarla sul sito dell'AdE per il controllo");
+  window.open(url,'_blank');
+}
 </script>
 <div align="center" class="FacetFormHeaderFont">Clienti</div>
 <div align="center"><?php $ts->output_navbar(); ?></div>
@@ -164,7 +166,7 @@ $(function() {
             <?php $ts->output_headers(); ?>
         </tr>
         <?php
-        while ($a_row = gaz_dbi_fetch_array($result)) {
+    while ($a_row = gaz_dbi_fetch_array($result)) {
 			$rs_check_mov = gaz_dbi_dyn_query("clfoco", $gTables['tesmov'], "clfoco = '".$a_row['codice']."'","id_tes asc",0,1);
             $check_mov = gaz_dbi_num_rows($rs_check_mov);
 			$rs_check_doc = gaz_dbi_dyn_query("clfoco", $gTables['tesdoc'], "clfoco = '".$a_row['codice']."'","id_tes asc",0,1);
@@ -209,17 +211,17 @@ $(function() {
             // colonna telefono
             echo "<td title=\"$title\" align=\"center\">" . gaz_html_call_tel($telefono) . " &nbsp;</td>";
             // colonna fiscali
-            if ($a_row['pariva'] > 0 and empty($a_row['codfis'])) {
+            if ($a_row['pariva'] > 0 && empty($a_row['codfis'])) {
                 echo "<td align=\"center\">" . $a_row['country'] . " " . $a_row['pariva'] . "</td>";
-            } elseif ($a_row['pariva'] == 0 and ! empty($a_row['codfis'])) {
+            } elseif ($a_row['pariva'] < 1 && !empty($a_row['codfis'])) {
                 echo "<td align=\"center\">" . $a_row['codfis'] . "</td>";
-            } elseif ($a_row['pariva'] > 0 and ! empty($a_row['codfis'])) {
+            } elseif ($a_row['pariva'] >= 1 && !empty($a_row['codfis'])) {
                 if ($a_row['pariva'] == $a_row['codfis']) {
                     echo "<td align=\"center\">";
-                    echo gaz_html_ae_checkiva($a_row['country'], $a_row['pariva']);
+                    echo $gForm->gaz_html_ae_checkiva($a_row['pariva']);
                     echo "</td>";
                 } else {
-                    echo "<td align=\"center\">" . gaz_html_ae_checkiva($a_row['country'], $a_row['pariva']) . "<br>" . $a_row['codfis'] . "</td>";
+                    echo "<td align=\"center\">" . $gForm->gaz_html_ae_checkiva($a_row['pariva']) . "<br/>" . $a_row['codfis'] . "</td>";
                 }
             } else {
                 echo "<td class=\"FacetDataTDred\" align=\"center\"> * NO * </td>";
