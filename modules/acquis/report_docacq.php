@@ -466,7 +466,9 @@ while ($row = gaz_dbi_fetch_array($result)) {
 			}
 			$sdihilight = ( !empty($revch['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][1] : 'default';
 			$sdilabel = ( !empty($revch['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][0] : 'da inviare';
-			$last_flux_status = (empty($last_flux_status)) ? 'DI' : '';
+			if (empty($last_flux_status)) {
+				$last_flux_status = 'DI';
+			}
 			if (is_string($revch['fattura_elettronica_zip_package']) && strlen($revch['fattura_elettronica_zip_package'])>10 && $last_flux_status == 'DI') { // il documento è impacchettato e da inviare
 				$revch['fae_attuale'] = $revch['fattura_elettronica_zip_package'];
 				$sdihilight = ( !empty($revch['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][1] : 'default';
