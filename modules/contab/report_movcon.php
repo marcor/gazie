@@ -167,7 +167,7 @@ $(function() {
 						url: '../contab/delete.php',
 						success: function(output){
 		                    //alert(output);
-							window.location.replace("./report_movcon.php");
+							window.location.replace("<?php echo $_SERVER['REQUEST_URI']; ?>"); // Mantengo eventuali filtri preimpostati
 						}
 					});
 				}}
