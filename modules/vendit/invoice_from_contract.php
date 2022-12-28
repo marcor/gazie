@@ -205,7 +205,8 @@ if (!isset($_POST['vat_section'])) { // al primo accesso
                 // se ho chiesto l'inserimento del testo del contratto cambio la descrizione
                 if ($val['status']=='ASTEXT') {
                   $botxt = gaz_dbi_get_row($gTables['body_text'], 'id_body', $val['id_body_text']);
-                  $rows_data['descri'] = strip_tags($botxt['body_text']);
+                  $rows_data['descri'] = html_entity_decode($botxt['body_text']);
+                  $rows_data['descri'] = strip_tags($rows_data['descri']);
                 }
                 rigdocInsert($rows_data);
                 $cliente = gaz_dbi_get_row($gTables['clfoco'], "codice", $cntr['id_customer']);
