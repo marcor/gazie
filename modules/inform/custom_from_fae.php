@@ -47,12 +47,14 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 	$form['id_customer_group'] = 0; //tutti
 	$form['codpag'] = 0;
 	$form['gencontract'] = 0;
+	$form['genartico'] = 0;
 } else { // accessi successivi
 	$form['fattura_elettronica_original_name'] = filter_var($_POST['fattura_elettronica_original_name'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 	$form['dirextract'] = filter_var($_POST['dirextract'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 	$form['id_customer_group'] = intval($_POST['id_customer_group']);
 	$form['codpag'] = intval($_POST['codpag']);
 	$form['gencontract'] = intval($_POST['gencontract']);
+	$form['genartico'] = intval($_POST['genartico']);
 	if (isset($_POST['Submit_file'])) { // conferma invio upload file
     if (!empty($_FILES['userfile']['name'])) {
       if ( $_FILES['userfile']['type'] == "application/pkcs7-mime" || $_FILES['userfile']['type'] == "text/xml" || $_FILES['userfile']['type'] == "application/zip"|| $_FILES['userfile']['type'] == "application/x-zip-compressed" ) {
@@ -86,7 +88,6 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
     if ($form['codpag']<=0){
  			$msg['err'][] = 'no_codpag';
     }
-
     if(count($msg['err'])<=0){
       $anagrafica = new Anagrafica();
       $last = $anagrafica->queryPartners('*', "codice BETWEEN " . $admin_aziend['mascli'] . "000000 AND " . $admin_aziend['mascli'] . "999999", "codice DESC", 0, 1);
@@ -102,7 +103,9 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
         $last = gaz_dbi_fetch_array($rs_last_contract);
         $vc['doc_number'] = $last ? ($last['doc_number']+1) : 1;
       }
+
       foreach ($_POST['rows'] as $v) {
+        $jsonartico=json_decode(html_entity_decode($v['jsonartico']));
         $v['codfis']=substr($v['codfis'],0,16);
         $v['pariva']=substr($v['pariva'],0,11);
         $v['datnas']='2004-01-27';
@@ -164,7 +167,16 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
           }
         }
         // non lo faccio per il momento, ma se sotto valorizzassi il form con un json dei righi (codice,descrizione, prezzo, unità di misura) in $_POST mi ritroverei i dati per poter popolare anche le anagrafiche degli articoli
-        // echo html_entity_decode($v['artico']).'<br/>';
+        if ($form['genartico']>=1) {
+          foreach ($jsonartico as $jsona) {
+            foreach ($jsona as $jv) {
+              $catmer=0;
+              //var_dump($jv);
+              // inserisco l'artico sul database ma solo se non ne ho uno con lo stesso codice
+              gaz_dbi_query("INSERT IGNORE INTO ".$gTables['artico']." (codice,descri,unimis,catmer,preve1,sconto,aliiva) VALUES ('".$jv->codart."','".$jv->descri."','".$jv->unimis."','".$catmer."','".$jv->preve1."','".$jv->sconto."','".$jv->aliiva."')");
+            }
+          }
+        }
       }
       header("Location: ../vendit/report_client.php");
       exit;
@@ -219,13 +231,96 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
       // righi fattura
       $linee =$xpath->query("//FatturaElettronicaBody/DatiBeniServizi/DettaglioLinee");
       $li=0;
+      $accartico=[];
       foreach ($linee as $lv) { // attraverso le linee
+        $prto=$lv->getElementsByTagName('PrezzoTotale')->item(0)->nodeValue;
+        $desc=$lv->getElementsByTagName('Descrizione')->item(0)->nodeValue;
         if ($li==0) { // per il momento prendo solo la prima linea
-          $form['rows'][$i]['descriprima']=$lv->getElementsByTagName('Descrizione')->item(0)->nodeValue;
-          $form['rows'][$i]['amountprima']=$lv->getElementsByTagName('PrezzoTotale')->item(0)->nodeValue;
+          $form['rows'][$i]['descriprima']=$prto;
+          $form['rows'][$i]['amountprima']=$desc;
         }
         $li++;
+        $prezzounitario = $lv->getElementsByTagName('PrezzoUnitario')->item(0)->nodeValue;
+				$unimis = $lv->getElementsByTagName('UnitaMisura')->length >= 1 ? $lv->getElementsByTagName('UnitaMisura')->item(0)->nodeValue :	'';
+				$pervat = $lv->getElementsByTagName('AliquotaIVA')->item(0)->nodeValue;
+
+        // raccordo il codice IVA con la stessa natura ed aliquota IVA
+        $natura = $lv->getElementsByTagName('Natura')->length >=1 ? $lv->getElementsByTagName('Natura')->item(0)->nodeValue : false;
+				$aziendperiva = gaz_dbi_get_row($gTables['aliiva'], 'codice', $admin_aziend['preeminent_vat'])['aliquo'];
+        if ( !$natura && $aziendperiva == $pervat) { // coincide con l'aliquota aziendale e non è esente
+          $aliiva = $admin_aziend['preeminent_vat'];
+        } else { // non è quella che mi aspettavo allora provo a trovarne una tra quelle con la stessa aliquota
+          $filter_vat = "aliquo=" . $pervat;
+          $orderby = 'codice ASC';
+          if ($natura) {
+            $filter_vat.= " AND fae_natura='" . $natura . "'";
+            if (substr($natura,0,2)=='N6') { // con il reverse charge (N6.X) propongo quella più adatta ma considero una aliquota con IVA
+              $filter_vat = "fae_natura='" . $natura . "' AND aliquo >= 0.1";
+              $orderby = 'descri ASC'; // ci vorrebe un similar text con gli acquisti le aliquote
+            }
+          }
+          $rs_last_codvat = gaz_dbi_dyn_query("*", $gTables['aliiva'], $filter_vat . " AND tipiva<>'T'", $orderby, 0, 1);
+          $last_codvat = gaz_dbi_fetch_array($rs_last_codvat);
+          if ($last_codvat) {
+            $aliiva = $last_codvat['codice'];
+          } else {
+            $aliiva = $admin_aziend['preeminent_vat'];
+          }
+        }
+
+        if ($lv->getElementsByTagName("Quantita")->length >= 1) {
+          $form['rows'][$i]['quanti'] = $lv->getElementsByTagName('Quantita')->item(0)->nodeValue;
+          $form['rows'][$i]['tiprig'] = 0; // rigo con quantità
+        } else {
+          $form['rows'][$i]['quanti'] = '';
+          $form['rows'][$i]['tiprig'] = 1; // rigo senza quantità
+        }
+
+        // inizio applicazione sconto su rigo
+        $sconto = 0;
+        $acc_sconti=[];
+        if ($lv->getElementsByTagName("ScontoMaggiorazione")->length >= 1) { // ho uno sconto/maggiorazione
+          $acc_sconti=[];
+          $sconti_forfait=[];
+          $sconto_maggiorazione=$lv->getElementsByTagName("ScontoMaggiorazione");
+          foreach ($sconto_maggiorazione as $sconti) { // potrei avere più elementi 2.2.1.10 <ScontoMaggiorazione>
+            if ($prezzounitario < 0.00000001) { // se trovo l'elemento 2.2.1.9 <PrezzoUnitario> a zero calcolo lo sconto a forfait
+              $sconti_forfait[]=($sconti->getElementsByTagName('Tipo')->item(0)->nodeValue == 'SC' ? -$sconti->getElementsByTagName('Importo')->item(0)->nodeValue : $sconti->getElementsByTagName('Importo')->item(0)->nodeValue);
+            } elseif ($sconti->getElementsByTagName("Importo")->length >= 1 && $lv->getElementsByTagName('Importo')->item(0)->nodeValue >= 0.00001){
+              // calcolo la percentuale di sconto partendo dall'importo del rigo e da quello dello sconto, il funzionamento di GAzie prevede la percentuale e non l'importo dello sconto
+              $tot_rig= (!empty($form['rows'][$i]['quanti']) && $form['rows'][$i]['quanti']!=0) ? $form['rows'][$i]['quanti']*$prezzounitario : $prezzounitario;
+              $acc_sconti[]=(!empty($form['rows'][$i]['quanti']) && intval($form['rows'][$i]['quanti'])>1) ? $form['rows'][$i]['quanti']*$lv->getElementsByTagName('Importo')->item(0)->nodeValue*100/$tot_rig : $lv->getElementsByTagName('Importo')->item(0)->nodeValue*100/$tot_rig;
+              //$sconto=$lv->getElementsByTagName('Importo')->item(0)->nodeValue*100/$tot_rig;
+            } elseif($sconti->getElementsByTagName("Percentuale")->length >= 1 && $sconti->getElementsByTagName('Percentuale')->item(0)->nodeValue>=0.00001){ // ho una percentuale accodo quella
+              $acc_sconti[]=($sconti->getElementsByTagName('Tipo')->item(0)->nodeValue == 'SC' ? $sconti->getElementsByTagName('Percentuale')->item(0)->nodeValue : -$sconti->getElementsByTagName('Percentuale')->item(0)->nodeValue);
+            }
+          }
+          if (count($sconti_forfait) > 0) {
+            $sf=0;
+            foreach($sconti_forfait as $scf){ // attraverso l'accumulatore di sconti forfait per ottenerne il totale
+              $sf += $scf;
+            }
+            $prezzounitario = $sf;
+          } else {
+            $is=1;
+            foreach($acc_sconti as $vsc){ // attraverso l'accumulatore di sconti per ottenerne uno solo
+              $is *=(1-$vsc/100);
+            }
+            $sconto = round(100*(1-$is),3);
+          }
+        }
+
+        // popolo il JSON con i dati del rigo solo se ho l'elemento CodiceArticolo 2.2.1.3
+        if ($lv->getElementsByTagName('CodiceArticolo')->length >= 1) {
+          $accartico[$i][]= ['catmer'=>$lv->getElementsByTagName('CodiceArticolo')->item(0)->getElementsByTagName("CodiceTipo")->item(0)->nodeValue,
+                           'codart'=>$lv->getElementsByTagName('CodiceArticolo')->item(0)->getElementsByTagName("CodiceValore")->item(0)->nodeValue,
+                           'descri'=>$desc,'unimis'=>$unimis,'sconto'=>$sconto,'preve1'=>$prezzounitario,'aliiva'=>$aliiva];
+        }
+        $form['rows'][$i]['jsonartico']=json_encode($accartico);
       }
+
+
+
       // pagamento
       $pagamento = 'MP05';
       $scadenze = [0=>0];
@@ -294,7 +389,13 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 }
 require("../../library/include/header.php");
 $script_transl = HeadMain();
-
+	// INIZIO form che permetterà all'utente di interagire per (es.) imputare i vari costi al piano dei conti (contabilità) ed anche le eventuali merci al magazzino
+    if (count($msg['err']) > 0) { // ho un errore
+        $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
+    }
+    if (count($msg['war']) > 0) { // ho un alert
+        $gForm->gazHeadMessage($msg['war'], $script_transl['war'], 'war');
+    }
 ?>
 <script>
 </script>
@@ -308,13 +409,6 @@ $script_transl = HeadMain();
   <input type="hidden" name="fattura_elettronica_original_name" value="<?php echo $form['fattura_elettronica_original_name']; ?>" />
   <input type="hidden" name="dirextract" value="<?php echo $form['dirextract']; ?>" />
 <?php
-	// INIZIO form che permetterà all'utente di interagire per (es.) imputare i vari costi al piano dei conti (contabilità) ed anche le eventuali merci al magazzino
-    if (count($msg['err']) > 0) { // ho un errore
-        $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
-    }
-    if (count($msg['war']) > 0) { // ho un alert
-        $gForm->gazHeadMessage($msg['war'], $script_transl['war'], 'war');
-    }
 if ($preview){
  ?>
 <div class="panel panel-default col-xs-12">
@@ -355,6 +449,16 @@ $gForm->variousSelect('gencontract', $script_transl['gencontract_value'], $form[
               </div>
           </div>
       </div><!-- chiude row  -->
+      <div class="row">
+          <div class="col-md-12">
+              <div class="form-group">
+                  <label for="genartico" class="col-sm-4 control-label text-right"><?php echo $script_transl['genartico']; ?></label>
+  <?php
+$gForm->variousSelect('genartico', $script_transl['genartico_value'], $form['genartico']);
+  ?>
+              </div>
+          </div>
+      </div><!-- chiude row  -->
 
 <?php
 foreach ($form['rows'] as $k => $v) { // attraverso le fatture
@@ -369,8 +473,8 @@ foreach ($form['rows'] as $k => $v) { // attraverso le fatture
     <input type="hidden" value="<?php echo $v['datfattura']; ?>" name="rows[<?php echo $k; ?>][datfattura]"/>
     <input type="hidden" value="<?php echo $v['descriprima']; ?>" name="rows[<?php echo $k; ?>][descriprima]"/>
     <input type="hidden" value="<?php echo $v['amountprima']; ?>" name="rows[<?php echo $k; ?>][amountprima]"/>
+    <input type="hidden" value='<?php echo $v['jsonartico']; ?>' name="rows[<?php echo $k; ?>][jsonartico]"/> -->
     <?php echo $v['mittente'].' tipo:'.$v['tipfattura'].' n.'.$v['numfattura'].' del '.gaz_format_date($v['datfattura']).' di € '.$v['impfattura']; ?>
-    <!--<input class="col-xs-12" type="hidden" value="{'startDate':'example','headline':'example','text':'example','media':'example','caption':'example'}" name="rows[<?php echo $k; ?>][artico]"/> -->
   </div>
   <div class="row">
       <div class="col-md-12">
@@ -510,6 +614,7 @@ $gForm->selectFromDB('pagame', 'rows['.$k.'][codpag]', 'codice', $v['codpag'], '
 <input type="hidden" name="id_customer_group" value="0" />
 <input type="hidden" name="codpag" value="0" />
 <input type="hidden" name="gencontract" value="0" />
+<input type="hidden" name="genartico" value="0" />
 
 <?php
 }

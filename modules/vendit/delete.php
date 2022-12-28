@@ -240,6 +240,7 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 			$i=intval($_POST['ref']);
 			gaz_dbi_del_row($gTables['contract'], 'id_contract', $i);
 			gaz_dbi_del_row($gTables['contract_row'], 'id_contract', $i);
+      gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'contract' AND id_ref", $i);
 		break;
 		case "ecr":
 			$i=intval($_POST['ref']);

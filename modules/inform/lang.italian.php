@@ -359,9 +359,10 @@ $strScript = array(
       'tax' => 'I.V.A.',
       'operation_type' => 'Tipo oper.',
       'conto' => 'Conto',
-      'gencontract' => 'Genera un contratto',
-      'gencontract_value' => array(0 => 'No', 1 => 'Si, mensile con il valore del primo rigo', 2=>'Si, mensile con il valore del totale',3=>'Si, trimestrale con il valore del primo rigo', 4=>'Si, trimestrale con il valore del totale'),
-
+      'gencontract' => 'Genera contratti',
+      'gencontract_value' => array(0 => 'No', 1 => 'Si, mensile con il valore del primo rigo', 2=>'Si, mensile con il valore del totale',3=>'Si, trimestrale con il valore del primo rigo', 4=>'Si, trimestrale con il valore del totale', 5=>'Si, mensile con i righi della prima fattura incontrata per il cliente', 6=>'Si, trimestrale con i righi della prima fattura incontrata per il cliente'),
+      'genartico' => 'Genera articoli di magazzino',
+      'genartico_value' => array(0 => 'No', 1 => 'Si, se inesistente e basandomi sul primo incontrato'),
     )
 );
 ?>
