@@ -103,6 +103,9 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
         $last = gaz_dbi_fetch_array($rs_last_contract);
         $vc['doc_number'] = $last ? ($last['doc_number']+1) : 1;
       }
+      $rs_last_catmer = gaz_dbi_dyn_query('codice', $gTables['catmer'], 1,'codice DESC',0,1);
+      $lastcatmer = gaz_dbi_fetch_array($rs_last_catmer);
+      $newcatmer = $lastcatmer? $lastcatmer['codice']:0;
 
       foreach ($_POST['rows'] as $v) {
         $jsonartico=json_decode(html_entity_decode($v['jsonartico']));
@@ -170,10 +173,21 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
         if ($form['genartico']>=1) {
           foreach ($jsonartico as $jsona) {
             foreach ($jsona as $jv) {
-              $catmer=0;
               //var_dump($jv);
               // inserisco l'artico sul database ma solo se non ne ho uno con lo stesso codice
-              gaz_dbi_query("INSERT IGNORE INTO ".$gTables['artico']." (codice,descri,unimis,catmer,preve1,sconto,aliiva) VALUES ('".$jv->codart."','".$jv->descri."','".$jv->unimis."','".$catmer."','".$jv->preve1."','".$jv->sconto."','".$jv->aliiva."')");
+              $numinsert=gaz_dbi_query("INSERT IGNORE INTO ".$gTables['artico']." (codice,descri,unimis,preve1,sconto,aliiva) VALUES ('".$jv->codart."','".$jv->descri."','".$jv->unimis."','".$jv->preve1."','".$jv->sconto."','".$jv->aliiva."')",true);
+              if ($numinsert >=1) {
+                // controlle se ho già una categoria merceologica con la stessa descrizione;
+                $yescatmer = gaz_dbi_get_row($gTables['catmer'], 'descri', $jv->catmer);
+                if ($yescatmer) {  // ho già una categoria merceologica con la stessa descrizione, prendo il suo codice e lo uso per aggiornare l'articolo appena inserito
+                  $catmer=$yescatmer['codice'];
+                } else { // altrimenti la inserisco come nuova e aumento il contatore $newcatmer
+                  $newcatmer++;
+                  $catmer=$newcatmer;
+                  gaz_dbi_query("INSERT INTO ".$gTables['catmer']." (codice,descri) VALUES ('".$newcatmer."','".$jv->catmer."')");
+                }
+                gaz_dbi_put_row($gTables['artico'], 'codice', $jv->codart, 'catmer', $catmer);
+              }
             }
           }
         }
