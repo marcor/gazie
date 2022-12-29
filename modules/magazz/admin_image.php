@@ -34,7 +34,7 @@ if (isset($_POST['Update']) || isset($_GET['Update'])) {
 }
 
 if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo accesso
-    $form=gaz_dbi_parse_post('files');print_r($form);
+    $form=gaz_dbi_parse_post('files');
     $form['ritorno'] = $_POST['ritorno'];
     if (isset($_POST['Submit'])) { // conferma tutto
 		if ($_FILES['userfile']['error']==0) { // se è stato selezionato un nuovo file
@@ -82,7 +82,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             gaz_dbi_table_insert('files',$form);
             //recupero l'id assegnato dall'inserimento
             $form['id_doc']= gaz_dbi_last_id();
-          } elseif ($toDo == 'update') { 
+          } elseif ($toDo == 'update') {
             gaz_dbi_table_update('files',array('id_doc',$form['id_doc']),$form);
           }
           // aggiorno il filesystem solo se è stato selezionato un nuovo file
@@ -113,7 +113,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['ritorno']=$_SERVER['HTTP_REFERER'];
     $artico = gaz_dbi_get_row($gTables['artico'], 'codice',substr($_GET['item_ref'],0,15));
     if (!empty($artico)) { //l'articolo è stato trovato
-       $form['item_ref']= $artico['codice'];    
+       $form['item_ref']= $artico['codice'];
     } else { // scappo!
        header("Location: ".$form['ritorno']);
        exit;
@@ -155,7 +155,7 @@ echo "\t<td class=\"FacetDataTD\">
 				<i class=\"glyphicon glyphicon-eye-open\"></i>&nbsp;".DATA_DIR."files/".$form['id_doc'].".".$form['extension']."
 			</a>
 		</td>\n";
-if ($toDo == "insert"){		
+if ($toDo == "insert"){
 echo "\t<td class=\"FacetFieldCaptionTD\" align=\"right\">".$script_transl['update']." :  <input name=\"userfile\" type=\"file\"> </td>\n";
 }
 echo "</tr>\n";
@@ -178,7 +178,7 @@ if ($toDo == "update"){
 		<!-- Trigger the modal with a button -->
 		<button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#downloader">Cancella immagine</button>
 		<!-- Modal content-->
-		<div id="downloader" class="modal fade" role="dialog">    
+		<div id="downloader" class="modal fade" role="dialog">
 			<div class="modal-dialog modal-content">
 				<div class="modal-header" align="left">
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -194,7 +194,7 @@ if ($toDo == "update"){
 			</div>
 		</div>
 	</div>
-	<?php					
+	<?php
 }
 echo "\t </td>\n";
 if ($toDo == "insert"){
