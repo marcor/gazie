@@ -176,7 +176,7 @@ echo "</tr>\n";
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['top']; ?></td>
 	<td colspan="2" class="FacetDataTD">
 <?php
-	$gForm->selectNumber('top', $form['top'], true);
+  $gForm->variousSelect('top', $script_transl['top_value'], $form['top'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
 ?>
 	</td>
 </tr>

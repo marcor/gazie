@@ -145,7 +145,8 @@ $strScript = array(
         "Descrizione estesa",
         "ID riferimento e-commerce",
         'web_url' => 'Web url<br />(es: http://site.com/group.html)',
-        'top' => 'Bottone su home ecommerce'
+        'top' => 'Sincronizzazione e-commerce',
+        'top_value' => array(0 => 'NON sincronizzato', 1 => 'Attivo e pubblicato in home', 2 => 'Attivo', 3 => 'Disattivato')
       ),
     "admin_ragstat.php" =>
       array("raggruppamento statistico ",
