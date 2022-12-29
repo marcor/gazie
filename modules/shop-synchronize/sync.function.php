@@ -88,7 +88,7 @@ class shopsynchronizegazSynchro {
 	function UpsertCategory($d,$toDo="") {
 		// usando il token precedentemente avuto si dovranno eseguire tutte le operazioni necessarie ad aggiornare la categorie merceologica quindi:
 		// in base alle API messe a disposizione dallo specifico store (Opencart,Prestashop,Magento,ecc) si passeranno i dati in maniera opportuna...
-		if ($d['ref_ecommerce_id_category']>0 || $toDo=="insert"){ // se la categoria è connessa all'e-commerce
+
 			@session_start();
 			global $gTables,$admin_aziend;
 			$rawres=[];
@@ -155,17 +155,18 @@ class shopsynchronizegazSynchro {
 			$xml_output .= "\n<Categories>\n";
 				$xml_output .= "\t<Category>\n";
         $xml_output .= "\t<ToDo>".$toDo."</ToDo>\n";
-				$xml_output .= "\t<Id>".$d['ref_ecommerce_id_category']."</Id>\n";
-				$xml_output .= "\t<Code>".$d['codice']."</Code>\n";
-				$xml_output .= "\t<Name>".$d['descri']."</Name>\n";
-				$xml_output .= "\t<Description>".preg_replace('/[\x00-\x1f]/','',htmlspecialchars($d['large_descri'], ENT_QUOTES, 'UTF-8'))."</Description>\n";
-				$xml_output .= "\t<Top>".$d['top']."</Top>\n";// 1=attivo su web; 2=attivo e prestabilito; 3=attivo e pubblicato in home; 4=attivo, in home e prestabilito; 5=disattivato su web"
+				$xml_output .= "\t<Codice>".$d['codice']."</Codice>\n";
+				$xml_output .= "\t<Descri>".$d['descri']."</Descri>\n";
+    		$xml_output .= "\t<LargeDescri>".preg_replace('/[\x00-\x1f]/','',htmlspecialchars($d['large_descri'], ENT_QUOTES, 'UTF-8'))."</LargeDescri>\n";
+        $xml_output .= "\t<WebUrl>".$d['web_url']."</WebUrl>\n";
+        $xml_output .= "\t<RefIdCat>".$d['ref_ecommerce_id_category']."</RefIdCat>\n";
+				$xml_output .= "\t<Top>".$d['top']."</Top>\n";// 0 => 'NON sincronizzato', 1 => 'Attivo e pubblicato in home', 2 => 'Attivo', 3 => 'Disattivato'
 				$xml_output .= "\t</Category>\n";
 			$xml_output .="</Categories>\n</GAzieDocuments>";
 			$xmlFile = "category.xml";
-			$xmlHandle = fopen($xmlFile, "w");
-			fwrite($xmlHandle, $xml_output);
-			fclose($xmlHandle);
+			//$xmlHandle = fopen($xmlFile, "w");
+			//fwrite($xmlHandle, $xml_output);
+			//fclose($xmlHandle);
 
 			if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){
 				// invio file xml tramite Sftp
@@ -215,7 +216,7 @@ class shopsynchronizegazSynchro {
 				$rawres['link'] = '../shop-synchronize/synchronize.php';
 				$rawres['style'] = 'danger';
 			}
-		}
+
 		if (isset($rawres)){
       $_SESSION['menu_alerts']['shop-synchronize']=$rawres;
       $this->rawres=$rawres;
@@ -552,6 +553,10 @@ class shopsynchronizegazSynchro {
 				}
 				$xml_output .= "\t<Code>".$d['codice']."</Code>\n";
 				$xml_output .= "\t<BarCode>".$d['barcode']."</BarCode>\n";
+        $xml_output .= "\t<Peso>".$d['peso_specifico']."</Peso>\n";
+				$xml_output .= "\t<Largmm>".$d['larghezza']."</Largmm>\n";
+				$xml_output .= "\t<Lungmm>".$d['lunghezza']."</Lungmm>\n";
+        $xml_output .= "\t<Spessmm>".$d['spessore']."</Spessmm>\n";
 				$xml_output .= "\t<Name>".$d['descri']."</Name>\n";
 				$xml_output .= "\t<Description>".preg_replace('/[\x00-\x1f]/','',htmlspecialchars($d['body_text'], ENT_QUOTES, 'UTF-8'))."</Description>\n";
 				$xml_output .= "\t<Price>".$d['web_price']."</Price>\n";
