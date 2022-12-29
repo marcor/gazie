@@ -206,7 +206,7 @@ if (isset($_POST['conferma'])) { // se confermato
 				$xml_output .= "\t<ProductCategory>".$ecomm_catmer."</ProductCategory>\n";
 				if (isset($parent_catmer_res['aliiva'])){
 					$aliquo=gaz_dbi_get_row($gTables['aliiva'], "codice", intval($parent_catmer_res['aliiva']));
-					if (isset($aliquo['aliquo'])){					
+					if (isset($aliquo['aliquo'])){
 						$xml_output .= "\t<VAT>".$aliquo['aliquo']."</VAT>\n";
 					}
 				}
@@ -276,7 +276,7 @@ if (isset($_POST['conferma'])) { // se confermato
 
 	// *** creazione file xml delle categorie ***
 	// carico in $categories le categorie che sono presenti in GAzie
-	$categories = gaz_dbi_query ('SELECT * FROM '.$gTables['catmer'].' ORDER BY codice');
+	$categories = gaz_dbi_query ('SELECT * FROM '.$gTables['catmer'].' WHERE top > '0' ORDER BY codice');
 	// creo il file xml
 	$xml_output = '<?xml version="1.0" encoding="UTF-8"?>
 	<GAzieDocuments AppVersion="1" Creator="Antonio Germani Copyright" CreatorUrl="https://www.programmisitiweb.lacasettabio.it">';
