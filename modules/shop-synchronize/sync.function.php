@@ -164,9 +164,9 @@ class shopsynchronizegazSynchro {
 				$xml_output .= "\t</Category>\n";
 			$xml_output .="</Categories>\n</GAzieDocuments>";
 			$xmlFile = "category.xml";
-			//$xmlHandle = fopen($xmlFile, "w");
-			//fwrite($xmlHandle, $xml_output);
-			//fclose($xmlHandle);
+			$xmlHandle = fopen($xmlFile, "w");
+			fwrite($xmlHandle, $xml_output);
+			fclose($xmlHandle);
 
 			if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){
 				// invio file xml tramite Sftp
