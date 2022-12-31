@@ -105,7 +105,7 @@ $script_transl = HeadMain();
     cursor: move;
 }
 #sortable>div {
-	margin: auto;
+	margin: 0 auto auto auto;
 }
 #sortable {
 	display: flex;
