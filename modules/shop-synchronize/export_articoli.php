@@ -71,6 +71,7 @@ if (isset($_POST['Return'])) {
     }
 
 if (isset($_POST['conferma'])) { // se confermato
+
 	if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){
 
 		// SFTP login with private key and password
@@ -174,7 +175,7 @@ if (isset($_POST['conferma'])) { // se confermato
 			$barcode="";
       $xml_output .= "\t<Product>\n";
 			$xml_output .= "\t<Id>".$_POST['ref_ecommerce_id_product'.$ord]."</Id>\n";
-			$xml_output .= "\t<IdMain>".$_POST['ref_ecommerce_id_main_product'.$ord]."</IdMain>\n";
+			$xml_output .= "\t<ParentId>".$_POST['ref_ecommerce_id_main_product'.$ord]."</ParentId>\n";
 			$xml_output .= "\t<ToDo>".$_POST['ToDo'.$ord]."</ToDo>\n";
 			if (intval($_POST['ref_ecommerce_id_main_product'.$ord])>0){
 				if ($_POST['ref_ecommerce_id_product'.$ord]<1){
@@ -341,7 +342,7 @@ if (isset($_POST['conferma'])) { // se confermato
 		while (!feof($file)) { // scorro il file generato dall'interfaccia durante la sua eleborazione
 			$line = fgets($file);
 			$ln=explode("-",$line);
-			if (isset($ln) && strlen($ln[3])>0){ // Se l'e-commerce ha restituito l'ID riferito ad un articolo
+			if (isset($ln) && count($ln)>1 && strlen($ln[3])>0){ // Se l'e-commerce ha restituito l'ID riferito ad un articolo
 				// vado a modificare il riferimento id e-commerce nell'articolo di GAzie
 				gaz_dbi_put_row($gTables['artico'], "codice", rtrim($ln[3],"<br>\n"), "ref_ecommerce_id_product", $ln[1]); // tolgo <br>\n perché viene aggiunto dall'ecommerce
 				gaz_dbi_put_row($gTables['artico'], "codice", rtrim($ln[3],"<br>\n"), "web_public", "5");// lo imposto come disattivato

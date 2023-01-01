@@ -824,22 +824,27 @@ class shopsynchronizegazSynchro {
                     $rawres['link'] = '';
                     $rawres['style'] = 'danger';
     			}
-    			$countDocument=0;
-				// ricavo il progressivo numero d'ordine di GAzie in base al tipo di documento
-				$where = "numdoc desc";
-				$sql_documento = "YEAR(datemi) = " . date("Y") . " and tipdoc = 'VOW'";
-				$rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesbro'], $sql_documento, $where, 0, 1);
-				$ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
-				// se e' il primo documento dell'anno, resetto il contatore
-				if ($ultimo_documento) {
-					$numdoc = $ultimo_documento['numdoc'] + 1;
-				} else {
-					$numdoc = 1;
-				}
+    			$countDocument=0;$numdoc=""; $year="";
+				
     			foreach($xml->Documents->children() as $order) { // ciclo gli ordini
-
-					if((!gaz_dbi_get_row($gTables['tesbro'], "numdoc", $order->Number)) AND (!gaz_dbi_get_row($gTables['tesbro'], "ref_ecommerce_id_order", $order->Numbering))){ // se il numero d'ordine non esiste carico l'ordine in GAzie
-
+				
+					if(!gaz_dbi_get_row($gTables['tesbro'], "ref_ecommerce_id_order", $order->Numbering, " AND datemi  = '".$order->DateOrder."'")){// se l'ordine non esiste lo carico in GAzie
+						if ($numdoc=="" and $year==""){// se sono al primo ciclo degli ordini							
+							// ricavo il progressivo numero d'ordine di GAzie in base al tipo di documento
+							$orderdb = "numdoc desc";
+							$sql_documento = "YEAR(datemi) = " . substr($order->DateOrder,0,4) . " and tipdoc = 'VOW'";
+							$rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesbro'], $sql_documento, $orderdb, 0, 1);
+							$ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
+							// se e' il primo documento dell'anno, resetto il contatore
+							if ($ultimo_documento) {
+								$numdoc = $ultimo_documento['numdoc'] + 1;								
+							} else {
+								$numdoc = 1;
+							}	
+							$year=substr($order->DateOrder,0,4);						
+						}elseif(intval(substr($order->DateOrder,0,4))> intval($year)) {// se è cambiato l'anno durante il ciclo degli ordini e sono nel nuovo anno
+							$numdoc = 1;// ricomincio la numerazione							
+						}
 						$query = "SHOW TABLE STATUS LIKE '" . $gTables['anagra'] . "'";
 						$result = gaz_dbi_query($query);
 						$row = $result->fetch_assoc();
@@ -860,9 +865,9 @@ class shopsynchronizegazSynchro {
 						if ($esiste==0) { //registro cliente se non esiste
 							if ($order->CustomerCountry=="IT"){ // se la nazione è IT
 								$lang="1";
-                if (substr_compare($order->CustomerVatCode, "IT", 0, 2, true)==0){// se c'è IT davanti alla partita iva
-                  $order->CustomerVatCode=substr($order->CustomerVatCode,2);// tolgo IT
-                }
+								if (substr_compare($order->CustomerVatCode, "IT", 0, 2, true)==0){// se c'è IT davanti alla partita iva
+								  $order->CustomerVatCode=substr($order->CustomerVatCode,2);// tolgo IT
+								}
 							} else { // se non è italiano imposto il codice univoco con x e il codice fiscale con il codice cliente e-commerce
 								$lang="0";
 								$order->CustomerCodeFattEl = "xxxxxxx";
@@ -953,7 +958,7 @@ class shopsynchronizegazSynchro {
 										$id_artico_group=$parent['id_artico_group']; // imposto il riferimento al padre
 									} else {// se non esiste lo devo creare con i pochi dati che ho
 										$parent['descri']=$orderrow->Description;
-										gaz_dbi_query("INSERT INTO " . $gTables['artico_group'] . "(descri,large_descri,image,web_url,ref_ecommerce_id_main_product,web_public,depli_public,adminid) VALUES ('" . addslashes($parent['descri']) . "', '" . htmlspecialchars_decode (addslashes($parent['descri'])). "', '', '', '". $orderrow->ParentId . "', '1', '1', '". $admin_aziend['adminid'] ."')");
+										gaz_dbi_query("INSERT INTO " . $gTables['artico_group'] . "(descri,large_descri,image,web_url,ref_ecommerce_id_main_product,web_public,depli_public,adminid) VALUES ('" . addslashes($parent['descri']) . "', '" . htmlspecialchars_decode ($parent['descri']). "', '', '', '". $orderrow->ParentId . "', '1', '1', '". $admin_aziend['adminid'] ."')");
 										$id_artico_group=gaz_dbi_last_id(); // imposto il riferimento al padre
 									}
 

@@ -32,10 +32,10 @@ class OrdineWeb extends Template
         $this->giorno = substr($this->tesdoc['datemi'],8,2);
         $this->mese = substr($this->tesdoc['datemi'],5,2);
         $this->anno = substr($this->tesdoc['datemi'],0,4);
-        $this->nomemese = ucwords(strftime("%B", mktime (0,0,0,substr($this->tesdoc['datemi'],5,2),1,0)));
+        $this->nomemese = ucwords(date("F", mktime (0,0,0,substr($this->tesdoc['datemi'],5,2),1,0)));
         $this->sconto = $this->tesdoc['sconto'];
         $this->trasporto = $this->tesdoc['traspo'];
-        $this->tipdoc = 'WEB order n.'.$this->tesdoc['numdoc'].' del '.$this->giorno.'.'.$this->mese.'.'.$this->anno;
+        $this->tipdoc = 'WEB order n.'.$this->tesdoc['numdoc'].' del '.$this->giorno.'-'.$this->mese.'-'.$this->anno;
     }
     function newPage() {
         $this->AddPage();

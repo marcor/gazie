@@ -56,19 +56,27 @@ if ($exists) {
 $admin_aziend = gaz_dbi_get_row($gTables['admin'] . ' LEFT JOIN ' . $gTables['aziend'] . ' ON ' . $gTables['admin'] . '.' . $c_e . '= ' . $gTables['aziend'] . '.codice', "user_name", $_SESSION['user_name']);
 
 if (isset($_POST['conferma'])) { // se confermato
-	// ricavo il progressivo in base al tipo di documento
-	$where = "numdoc desc";
-	$sql_documento = "YEAR(datemi) = " . date("Y") . " and tipdoc = 'VOW'";
-	$rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesbro'], $sql_documento, $where, 0, 1);
-	$ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
-	// se e' il primo documento dell'anno, resetto il contatore
-	if ($ultimo_documento) {
-		$numdoc = $ultimo_documento['numdoc'] + 1;
-	} else {
-		$numdoc = 1;
-	}
+		
+	$numdoc=""; $year="";
     // scrittura ordini su database di GAzie
 	for ($ord=0 ; $ord<=$_POST['num_orders']; $ord++){// ciclo gli ordini e scrivo i database
+	
+		if ($numdoc=="" and $year==""){// se sono al primo ciclo degli ordini							
+			// ricavo il progressivo numero d'ordine di GAzie in base al tipo di documento
+			$orderdb = "numdoc desc";
+			$sql_documento = "YEAR(datemi) = " . substr($_POST['datemi'.$ord],0,4) . " and tipdoc = 'VOW'";
+			$rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesbro'], $sql_documento, $orderdb, 0, 1);
+			$ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
+			// se e' il primo documento dell'anno, resetto il contatore
+			if ($ultimo_documento) {
+				$numdoc = $ultimo_documento['numdoc'] + 1;								
+			} else {
+				$numdoc = 1;
+			}	
+			$year=substr($_POST['datemi'.$ord],0,4);						
+		}elseif(intval(substr($_POST['datemi'.$ord],0,4))> intval($year)) {// se è cambiato l'anno durante il ciclo degli ordini e sono nel nuovo anno
+			$numdoc = 1;// ricomincio la numerazione							
+		}	
 
 		$query = "SHOW TABLE STATUS LIKE '" . $gTables['anagra'] . "'";
 		$result = gaz_dbi_query($query);
@@ -384,7 +392,7 @@ if ( isset($headers[0]) AND intval(substr($headers[0], 9, 3))==200){ // controll
 							$nr++;
 						}
 
-						if(gaz_dbi_get_row($gTables['tesbro'], "numdoc", $order->Number, " OR  	ref_ecommerce_id_order  = '".$order->Numbering."'")){
+						if(gaz_dbi_get_row($gTables['tesbro'], "ref_ecommerce_id_order", $order->Numbering, " AND datemi  = '".$order->DateOrder."'")){
 						?>
 						<span class="glyphicon glyphicon-ban-circle text-danger" title="Già scaricato"></span>
 						<?php

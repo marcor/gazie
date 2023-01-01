@@ -6,28 +6,28 @@
 	  (http://www.devincentiis.it)
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
-	  SHOP SYNCHRONIZE è un modulo creato per GAzie da Antonio Germani, Massignano AP 
+	  SHOP SYNCHRONIZE è un modulo creato per GAzie da Antonio Germani, Massignano AP
 	  Copyright (C) 2018-2021 - Antonio Germani, Massignano (AP)
-	  https://www.lacasettabio.it 
+	  https://www.lacasettabio.it
 	  https://www.programmisitiweb.lacasettabio.it
 	  --------------------------------------------------------------------------
 	  Questo programma e` free software;   e` lecito redistribuirlo  e/o
 	  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
 	  come e` pubblicata dalla Free Software Foundation; o la versione 2
 	  della licenza o (a propria scelta) una versione successiva.
-	
+
 	  Questo programma  e` distribuito nella speranza  che sia utile, ma
 	  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
 	  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
 	  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
-	
+
 	  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
 	  Generica GNU insieme a   questo programma; in caso  contrario,  si
 	  scriva   alla   Free  Software Foundation,  Inc.,   59
 	  Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
-	  --------------------------------------------------------------------------	 
+	  --------------------------------------------------------------------------
 	  # free to use, Author name and references must be left untouched  #
-	  --------------------------------------------------------------------------	  
+	  --------------------------------------------------------------------------
  ------------------------------------------------------------------------
   INTERFACCIA sincronizzazione e-commerce <-> GAzie
   ------------------------------------------------------------------------
@@ -35,12 +35,12 @@
   @Website   http://www.programmisitiweb.lacasettabio.it
   @Copyright Copyright (C) 2018 - 2021 Antonio Germani All Rights Reserved.
   versione 3.0
-  ------------------------------------------------------------------------ 
+  ------------------------------------------------------------------------
 */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 
-// Prendo l'id_currency 
+// Prendo l'id_currency
 $test = gaz_dbi_query("SHOW COLUMNS FROM `" . $gTables['admin'] . "` LIKE 'enterprise_id'");
 $exists = (gaz_dbi_num_rows($test)) ? TRUE : FALSE;
 if ($exists) {
@@ -59,7 +59,7 @@ $file_INVdownloader = "import_inv_articoli.php";
 if (!isset($_POST['ritorno'])) {
     $_POST['ritorno'] = $_SERVER['HTTP_REFERER'];
 }
-if (isset($_POST['Return'])) { 
+if (isset($_POST['Return'])) {
         header("Location: " . $_POST['ritorno']);
         exit;
     }
@@ -80,16 +80,16 @@ if (isset ($_POST['download'])) {
         exit;
 	}
 } elseif (isset ($_POST['upload'])) {
-	
+
 	if (file_exists($file_upload)){
 		include $file_upload;
 	} else {
 		header("Location: " . $_POST['ritorno']);
         exit;
 		}
-} elseif (isset ($_POST['downloader'])) { 
-	
-	if (file_exists($file_downloader)){ // importazione 
+} elseif (isset ($_POST['downloader'])) {
+
+	if (file_exists($file_downloader)){ // importazione
 		if (!isset($_POST['scarprezzo'])){
 			$_POST['scarprezzo']="";
 		}
@@ -102,8 +102,8 @@ if (isset ($_POST['download'])) {
 		header("Location: " . $_POST['ritorno']);
         exit;
 		}
-} elseif (isset ($_POST['uploader'])) { 
-	
+} elseif (isset ($_POST['uploader'])) {
+
 	if (file_exists($file_uploader)){ // esportazione/aggiornamento-inserimento
 		header("Location: " . $file_uploader."?prezzo=".(isset($_POST['prezzo']) ? $_POST['prezzo'] : 0)."&qta=".(isset($_POST['quantita']) ? $_POST['quantita'] : 0)."&descri=".(isset($_POST['descri']) ? $_POST['descri'] : 0)."&img=".(isset($_POST['immagine']) ? $_POST['immagine'] : 0)."&name=".(isset($_POST['name']) ? $_POST['name'] : 0)."&todo=".(isset($_POST['insert']) ? $_POST['insert'] : 'update'));
 		exit;
@@ -111,10 +111,10 @@ if (isset ($_POST['download'])) {
 		header("Location: " . $_POST['ritorno']);
         exit;
 		}
-} elseif (isset ($_POST['INVdownloader'])) { 
-	
-	if (file_exists($file_INVdownloader)){ // importazione 
-		
+} elseif (isset ($_POST['INVdownloader'])) {
+
+	if (file_exists($file_INVdownloader)){ // importazione
+
 		header("Location: " . $file_INVdownloader);
 		exit;
 	} else {
@@ -162,26 +162,26 @@ if (isset ($_POST['download'])) {
 							<h3 class="text-primary">ESPORTAZIONE - aggiornamento/inserimento articoli nell'e-commerce</h3>
 					</div>
 					<div class="col-sm-12  bg-warning" align="left" style="font-size: 18;">
-						UPDATE: <input type="checkbox" name="quantita" value="updqty" checked> Quantit&agrave &nbsp 
+						UPDATE: <input type="checkbox" name="quantita" value="updqty" checked> Quantit&agrave &nbsp
 						<input type="checkbox" name="prezzo" value="updprice"> Prezzo &nbsp
 						<input type="checkbox" name="name" value="updnam" > Nome &nbsp
-						<input type="checkbox" name="descrizione" value="upddes" > Descrizione estesa &nbsp
+						<input type="checkbox" name="descri" value="upddes" > Descrizione estesa &nbsp
 						<input type="checkbox" name="immagine" value="updimg" > immagine &nbsp
 					</div>
 					<div class="col-sm-12  bg-warning" align="left" style="font-size: 18;">
 						INSERT: <input type="checkbox" name="insert" value="insert" > Se non presente inserisci l'articolo (NB: deve essere attivata la sincronizzazione nel sito web e deve essere un articolo semplice, NO varianti e NO gruppi/parent) &nbsp
 					</div>
-					
+
 						<div class="col-sm-12  bg-warning">
 							<input type="submit" class="btn btn-danger btn-sm pull-right" name="uploader"  value="Seleziona i prodotti da aggiornare/inserire">
 						</div>
-			
+
 				</div>
 				<div class="row bg-success" style="border-top: 1px solid;">
 						<div class="col-sm-12 bg-success" align="center" >
-							<h3 class="text-primary">IMPORTAZIONE - inserimento o aggiornamento articoli in GAzie</h3> 
+							<h3 class="text-primary">IMPORTAZIONE - inserimento o aggiornamento articoli in GAzie</h3>
 						</div>
-						
+
 						<div class="col-sm-6  bg-success" align="left" style="font-size: 18;">
 							<input type="checkbox" name="upd" value="updval" > Attiva modifica articolo<br><br>
 							<p> Nell'articolo variare anche:</p>
@@ -196,21 +196,21 @@ if (isset ($_POST['download'])) {
 							<p> Nell'articolo inserire anche:</p>
 							<!-- <input type="checkbox" name="scarquantita" value="dwldqty"> quantit&agrave &nbsp -->
 							<input type="checkbox" name="imppre" value="dwlprice"> Prezzo web &nbsp
-							<input type="checkbox" name="impdes" value="dwldes" > Descrizione estesa &nbsp 
+							<input type="checkbox" name="impdes" value="dwldes" > Descrizione estesa &nbsp
 							<input type="checkbox" name="impimm" value="dwlimg" > Immagine &nbsp
-						</div>				
+						</div>
 						<div class="col-sm-12  bg-success">
 							<input type="submit" class="btn btn-danger btn-sm pull-right" name="downloader"  value="Seleziona i prodotti da importare o aggiornare">
 						</div>
-						
+
 				</div>
 				<div class="row bg-success" style="border-top: 1px solid;">
 					<div class="col-sm-12  bg-success">
 						<input type="submit" class="btn btn-secondary btn-sm pull-left" name="INVdownloader" title="Importa inventario iniziale" value="Inventario iniziale">
 					</div>
 				</div>
-					
-				
+
+
 			</div>
 		</div>
 	</div>
@@ -218,9 +218,9 @@ if (isset ($_POST['download'])) {
     margin-left: 25%; border: none; z-index:2000; max-width: 170px;">
 <a target="_new" href="https://programmisitiweb.lacasettabio.it/">Modulo di Antonio Germani</a>
 </div>
-</form>		
-	
-	<style>#more { display:none; }</style>				
+</form>
+
+	<style>#more { display:none; }</style>
 	<script>
 		function buttonToggle(where, pval, nval) {
 			var table = document.getElementById(where.attributes.rel.value);
