@@ -55,7 +55,7 @@ if ($exists) {
 }
 $admin_aziend = gaz_dbi_get_row($gTables['admin'] . ' LEFT JOIN ' . $gTables['aziend'] . ' ON ' . $gTables['admin'] . '.' . $c_e . '= ' . $gTables['aziend'] . '.codice', "user_name", $_SESSION['user_name']);
 
-if (isset($_POST['conferma'])) { // se confermato
+if (isset($_POST['conferma']) && isset($_POST['num_orders'])) { // se confermato e ci sono ordini
 		
 	$numdoc=""; $year="";
     // scrittura ordini su database di GAzie
