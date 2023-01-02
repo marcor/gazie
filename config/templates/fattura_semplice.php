@@ -28,17 +28,6 @@ require("../../library/include/calsca.inc.php");
 require('template.php');
 
 class FatturaSemplice extends Template {
-  public $tesdoc;
-  public $giorno;
-  public $mese;
-  public $anno;
-  public $sconto;
-  public $virtual_taxstamp;
-  public $trasporto;
-  public $tottraspo;
-  public $tipdoc;
-  public $descriptive_last_row;
-  public $show_artico_composit;
 
     function setTesDoc() {
       $this->tesdoc = $this->docVars->tesdoc;
@@ -271,7 +260,7 @@ class FatturaSemplice extends Template {
         if (!empty($this->descriptive_last_row) ) { // aggiungo alla fine un eventuale rigo descrittivo dalla configurazione avanzata azienda
                 if (strlen($this->descriptive_last_row)>210 and strlen($this->descriptive_last_row)<400 ){ // Antonio Germani-creo più righe a seconda della lunghezza del testo descrittivo
 					$descri=explode (' ',$this->descriptive_last_row);// Antonio Germani - separo il testo in parole  dentro un array che poi divido in due
-					$paroleriga=count($descri)/2;
+					$paroleriga=intval(count($descri)/2);
 					$descri1=array_slice($descri,0,$paroleriga);
 					$descri2=array_slice($descri,$paroleriga,$paroleriga+1);
 					// Antonio Germani ricompongo le righe e stampo su pdf
@@ -281,7 +270,7 @@ class FatturaSemplice extends Template {
 					$this->Cell(186,6,$riga2,1,1,'L',0,'',1);
 				} else if (strlen($this->descriptive_last_row)>400) {
 					$descri=explode (' ',$this->descriptive_last_row);// Antonio Germani - separo il testo in parole  dentro un array che poi divido in tre
-					$paroleriga=count($descri)/3;
+					$paroleriga=intval(count($descri)/3);
 					$descri1=array_slice($descri,0,$paroleriga);
 					$descri2=array_slice($descri,$paroleriga,$paroleriga);
 					$descri3=array_slice($descri,$paroleriga*2,$paroleriga+1);
