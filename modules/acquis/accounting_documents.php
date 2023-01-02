@@ -85,46 +85,48 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
   $rit = 0;
 	$classv='default';
   while ($tes = gaz_dbi_fetch_array($result)) {
-      if ($tes['protoc'] <> $ctrlp) { // la prima testata della fattura
-		$title='Modifica';
-		$accpaymov=[];
-		$accpaymov['no']='Partita riferita a questa Nota Credito';
-    switch ($tes['tipdoc']) {
-			case "AFA":
-			$bol=$admin_aziend['taxstamp_account'];
-			$classv='success';
-			break;
-			case "AFT":
-			$bol=$admin_aziend['taxstamp_account'];
-			$classv='success disabled';
-			$title='Puoi editare solo i DdT relativi';
-			break;
-			case "AFC":
-			$bol=$admin_aziend['taxstamp_account'];
-			$classv='danger';
-			// per le note credito è necessario l'intervento dell'utente per scegliere quale partita(fattura) verrà chiusa da essa quindi riprendo tutte le eventuali partite ancora aperte/scadute del fornitore
-			$paymov = new Schedule();
-			$paymov->getPartnerStatus($tes['clfoco']);
-			foreach($paymov->PartnerStatus as $k0=>$v0){
-				$vpm=0;
-				$totf=0;
-				foreach($v0 as $k1=>$v1){
-					$totf+=$v1['op_val'];
-					// accumulo solo se è aperta 0 o scaduta 3
-					if($v1['status']==0||$v1['status']==3){$vpm+=($v1['op_val']-$v1['cl_val']);}
-				}
-				if($vpm>0){$accpaymov[$k0]=$v1['descri'].' € '.gaz_format_number($vpm).' residuo='.gaz_format_number($vpm);}
-			}
-			break;
-			case "AFD":
-			$bol=$admin_aziend['taxstamp_account'];
-			$classv='info';
-			break;
-              default:
-			$bol=$admin_aziend['boleff'];
-			$classv='default';
-			break;
-		}
+    if ($tes['protoc'] <> $ctrlp) { // la prima testata della fattura
+      // azzero l'accumulatore dei righi
+      $docrows=[];
+      $title='Modifica';
+      $accpaymov=[];
+      $accpaymov['no']='Partita riferita a questa Nota Credito';
+      switch ($tes['tipdoc']) {
+        case "AFA":
+        $bol=$admin_aziend['taxstamp_account'];
+        $classv='success';
+        break;
+        case "AFT":
+        $bol=$admin_aziend['taxstamp_account'];
+        $classv='success disabled';
+        $title='Puoi editare solo i DdT relativi';
+        break;
+        case "AFC":
+        $bol=$admin_aziend['taxstamp_account'];
+        $classv='danger';
+        // per le note credito è necessario l'intervento dell'utente per scegliere quale partita(fattura) verrà chiusa da essa quindi riprendo tutte le eventuali partite ancora aperte/scadute del fornitore
+        $paymov = new Schedule();
+        $paymov->getPartnerStatus($tes['clfoco']);
+        foreach($paymov->PartnerStatus as $k0=>$v0){
+          $vpm=0;
+          $totf=0;
+          foreach($v0 as $k1=>$v1){
+            $totf+=$v1['op_val'];
+            // accumulo solo se è aperta 0 o scaduta 3
+            if($v1['status']==0||$v1['status']==3){$vpm+=($v1['op_val']-$v1['cl_val']);}
+          }
+          if($vpm>0){$accpaymov[$k0]=$v1['descri'].' € '.gaz_format_number($vpm).' residuo='.gaz_format_number($vpm);}
+        }
+        break;
+        case "AFD":
+        $bol=$admin_aziend['taxstamp_account'];
+        $classv='info';
+        break;
+        default:
+        $bol=$admin_aziend['boleff'];
+        $classv='default';
+        break;
+      }
     if ($ctrlp > 0 && ($doc[$ctrlp]['tes']['stamp'] >= 0.01 || $doc[$ctrlp]['tes']['taxstamp'] >= 0.01 )) { // non è il primo ciclo faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
       $calc->payment_taxstamp($calc->total_imp + $calc->total_vat + $carry - $rit - $ivasplitpay + $taxstamp, $doc[$ctrlp]['tes']['stamp'], $doc[$ctrlp]['tes']['round_stamp'] * $doc[$ctrlp]['tes']['numrat']);
       $calc->add_value_to_VAT_castle($doc[$ctrlp]['vat'], $taxstamp + $calc->pay_taxstamp, $admin_aziend['taxstamp_vat']);
@@ -336,7 +338,9 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['year_ini'] = substr($extreme['ini']['date'], 0, 4);
     $form['year_fin'] = substr($extreme['fin']['date'], 0, 4);
     $form['hidden_req'] = '';
-    $rs = getDocumentsAccounts($form['type'], $form['vat_section'], date('Ymd'), $form['profin']);
+    $now = new DateTime();
+    $datref = $now->modify('next month');
+    $rs = getDocumentsAccounts($form['type'], $form['vat_section'], $datref->format('Ymd') , $form['profin']);
 } else {    // accessi successivi
   $form['type'] = substr($_POST['type'], 0, 2);
   $form['vat_section'] = intval($_POST['vat_section']);
@@ -787,7 +791,6 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
   }
 }
 
-
 require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup'));
 echo "<script>
@@ -864,6 +867,7 @@ echo "<th class=\"FacetFieldCaptionTD\">" . $script_transl['date_reg'] . "</th>
      <th class=\"FacetFieldCaptionTD\">" . $script_transl['vat'] . "</th>
      <th class=\"FacetFieldCaptionTD\">" . $script_transl['tot'] . "</th>\n";
 foreach ($rs as $k => $v) {
+    //var_dump($v['docrows']);
     $tot = computeTot($v['vat']);
     //fine calcolo totali
     echo "<tr class=\"text-center\">
