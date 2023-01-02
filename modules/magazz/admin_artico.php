@@ -1200,9 +1200,11 @@ if ($modal_ok_insert === true) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="classif_amb" class="col-sm-4 control-label"><?php echo $script_transl['SIAN']; ?></label>
+                            <div class="col-sm-8">
     <?php
     $gForm->radioSelect('SIAN', $script_transl['SIAN_value'], $form['SIAN'], 'col-md-3');
     ?>
+                            </div>
                         </div>
                     </div>
                 </div><!-- chiude row  -->
