@@ -3,7 +3,7 @@
 //  TCPDI - Version 1.1
 //  Based on FPDI - Version 1.4.4
 //
-//    Copyright 2004-2022 Setasign - Jan Slabon
+//    Copyright 2004-2023 Setasign - Jan Slabon
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
