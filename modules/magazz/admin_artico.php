@@ -1196,6 +1196,16 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
+                <div id="SIAN" class="row IERincludeExcludeRow">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="classif_amb" class="col-sm-4 control-label"><?php echo $script_transl['SIAN']; ?></label>
+    <?php
+    $gForm->radioSelect('SIAN', $script_transl['SIAN_value'], $form['SIAN'], 'col-md-3');
+    ?>
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
                 <div id="maintenance_period" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">

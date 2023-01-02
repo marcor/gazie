@@ -992,7 +992,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
           $el->appendChild($el1);
           $el1 = $domDoc->createElement("UnitaMisura", $rigo['unimis']);
           $el->appendChild($el1);
-          $el1 = $domDoc->createElement("PrezzoUnitario", number_format($rigo['prelis'], $XMLvars->decimal_price, '.', ''));
+          $el1 = $domDoc->createElement("PrezzoUnitario", floatval(number_format($rigo['prelis'],8, '.', '')));
           $el->appendChild($el1);
 					// qualora questo rigo preveda uno sconto
           if (isset($rigo['sconto_su_imponibile'][$rigo['id_rig']])) {

@@ -599,7 +599,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
         $rit_ctrl=true;
       }
       // Antonio Germani - controllo input su rigo SIAN
-      if ($v['SIAN']>0){
+      if ($v['SIAN']>0 && $v['SIAN']<6){
         if ($v['cod_operazione'] < 0 || $v['cod_operazione']==11){ // controllo se è stato inserito il codice operazione SIAN
           $msgrigo = $i + 1;
           $msg['err'][] = "nocod_operaz";
@@ -694,7 +694,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
             if ( ($tipo_composti['val']=="STD" || $form['rows'][($i+1)]['tiprig']!=210) && !empty($form['rows'][$i]['codart'])) {
               $id_mag=$magazz->uploadMag((int)$val_old_row['id_rig'], $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag'],0,0,'',$form['rows'][$i]['id_warehouse']);
               gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $val_old_row['id_rig'], 'id_mag', $id_mag); // inserisco il riferimento movmag nel rigo doc
-              if ($form['rows'][$i]['SIAN'] > 0) { // se l'articolo deve movimentare il SIAN creo anche il movimento
+              if ($form['rows'][$i]['SIAN'] > 0 && $form['rows'][$i]['SIAN']<6) { // se l'articolo deve movimentare il SIAN creo anche il movimento
                 $value_sian['cod_operazione']= $form['rows'][$i]['cod_operazione'];
                 $value_sian['recip_stocc']= $form['rows'][$i]['recip_stocc'];
                 $value_sian['recip_stocc_destin']= $form['rows'][$i]['recip_stocc_destin'];
@@ -722,7 +722,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
             if ( $tipo_composti['val']=="STD" || $form['rows'][($i+1)]['tiprig']!=210 ) {
               $id_mag=$magazz->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag'],0,0,'',$form['rows'][$i]['id_warehouse']);
               gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $last_rigdoc_id, 'id_mag', $id_mag); // inserisco il riferimento mov mag nel rigo doc
-              if ($form['rows'][$i]['SIAN'] > 0) { // se l'articolo deve movimentare il SIAN creo anche il movimento
+              if ($form['rows'][$i]['SIAN']>0 && $form['rows'][$i]['SIAN']<6) { // se l'articolo deve movimentare il SIAN creo anche il movimento
                 $value_sian['cod_operazione']= $form['rows'][$i]['cod_operazione'];
                 $value_sian['recip_stocc']= $form['rows'][$i]['recip_stocc'];
                 $value_sian['recip_stocc_destin']= $form['rows'][$i]['recip_stocc_destin'];
@@ -734,7 +734,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
           }
           if ($admin_aziend['conmag'] == 2 && $form['rows'][$i]['tiprig'] == 210 && !empty($form['rows'][$i]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
             $magazz->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag'],0,0,'',$form['rows'][$i]['id_warehouse']);
-            if ($form['rows'][$i]['SIAN'] > 0) { // se l'articolo deve movimentare il SIAN creo anche il movimento
+            if ($form['rows'][$i]['SIAN']>0 && $form['rows'][$i]['SIAN']<6) { // se l'articolo deve movimentare il SIAN creo anche il movimento
               $value_sian['cod_operazione']= $form['rows'][$i]['cod_operazione'];
               $value_sian['recip_stocc']= $form['rows'][$i]['recip_stocc'];
               $value_sian['recip_stocc_destin']= $form['rows'][$i]['recip_stocc_destin'];
@@ -874,7 +874,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
             if ( $tipo_composti['val']=="STD" || $form['rows'][($i+1)]['tiprig']!=210 ) {
               $id_mag=$magazz->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag'],0,0,'',$form['rows'][$i]['id_warehouse']);
               gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $last_rigdoc_id, 'id_mag', $id_mag); // inserisco il riferimento mov mag nel rigo doc
-              if ($form['rows'][$i]['SIAN']>0) {// se l'articolo movimenta il SIAN creo il movimento SIAN
+              if ($form['rows'][$i]['SIAN']>0 && $form['rows'][$i]['SIAN']<6) {// se l'articolo movimenta il SIAN creo il movimento SIAN
                 $value_sian['cod_operazione']= $form['rows'][$i]['cod_operazione'];
                 $value_sian['recip_stocc']= $form['rows'][$i]['recip_stocc'];
                 $value_sian['recip_stocc_destin']= $form['rows'][$i]['recip_stocc_destin'];
@@ -2635,8 +2635,8 @@ echo '<td><input class="gazie-tooltip" data-type="product-thumb" data-id="' . $v
 				echo '<div><button class="btn btn-xs btn-danger">ATTENZIONE articolo con lotti ma non ci sono lotti selezionabili.</button></div>';
 			}
 
-			// Antonio Germani - Se l'articolo movimenta il SIAN apro il div SIAN
-			if ($form['rows'][$k]['SIAN']>0) {
+			// Antonio Germani - Se l'articolo movimenta il SIAN come olio/olive lo apro
+			if ($form['rows'][$k]['SIAN']>0 && $form['rows'][$k]['SIAN']<6) {
 				$art = gaz_dbi_get_row($gTables['camp_artico'], "codice", $v['codart']);
 				?>
 				<div class="container-fluid">

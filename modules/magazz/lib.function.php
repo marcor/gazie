@@ -1006,6 +1006,19 @@ class magazzForm extends GAzieForm {
         echo $acc;
       }
     }
+
+  function radioSelect($name, $transl, $sel, $class = 'col-xs-6') {
+    $acc='';
+    foreach ($transl as $i => $val) {
+      $checked = '';
+      if ($sel == $i) {
+          $checked = ' checked ';
+      }
+      $acc .= '<div class="'.$class.'"><input type="radio" value="'.$i.'" '.$checked.' name="'.$name.'"> '.$val.'</div>';
+    }
+    echo $acc;
+  }
+
 }
 
 function getLastSianDay(){ // restituisce la data nel formato aaaa-mm-gg dell'ultimo movimento SIAN creato
