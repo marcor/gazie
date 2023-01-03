@@ -1307,7 +1307,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
     $n_linea++;
   }
   // ... e se voluto anche il rigo descrittivo derivante dalla configurazione avanzata azienda
-  if (!empty($XMLvars->descriptive_last_row) ) {
+  if (!empty($XMLvars->descriptive_last_row) && !$XMLvars->reverse ) {
     $results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
     $el = $domDoc->createElement("DettaglioLinee", "");
     $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
