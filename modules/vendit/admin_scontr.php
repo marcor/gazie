@@ -536,6 +536,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['address'] = $cliente['indspe'] . ' ' . $cliente['citspe'];
         $form['id_agente'] = $cliente['id_agente'];
         $form['in_codvat'] = $cliente['aliiva'];
+        $form['listin'] = $cliente['listin'];
         $form['hidden_req'] = '';
     }
 
@@ -1069,6 +1070,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
     });
 </script>
 <form role="form" method="post" name="docven" enctype="multipart/form-data" >
+
     <input type="hidden" name="<?php echo ucfirst($toDo); ?>" value="">
     <input type="hidden" value="<?php echo $form['id_tes']; ?>" name="id_tes">
     <input type="hidden" value="<?php echo $form['tipdoc']; ?>" name="tipdoc">
