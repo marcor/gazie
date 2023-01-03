@@ -212,7 +212,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
   $form['spevar'] = $_POST['spevar'];
   $form['cauven'] = $_POST['cauven'];
   $form['caucon'] = $_POST['caucon'];
-  $form['caumag'] = $_POST['caumag'];
+  $form['caumag'] = (isset($_POST['caumag']))?$_POST['caumag']:0;
   $form['ragbol'] = $_POST['ragbol'];
   $form['data_ordine'] = $_POST['data_ordine'];
   $form['gioord'] = $_POST['gioord'];
@@ -1155,7 +1155,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
     $next_row++;
   } else if (isset($_POST['in_submit'])) {
     $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['in_codart']);
-    if (!$artico) $artico=array('codart'=>'','sconto'=>0,'annota'=>'','peso_specifico'=>0,'SIAN'=>0,'volume_specifico'=>0,'preve1'=>0,'pack_units'=>0,'retention_tax'=>0,'good_or_service'=>'','lot_or_serial'=>'','descri'=>'','unimis'=>'','codcon'=>'','aliiva'=>0,'scorta'=>0,'payroll_tax'=>0);
+    if (!$artico) $artico=array('codart'=>'','sconto'=>0,'annota'=>'','peso_specifico'=>0,'SIAN'=>0,'volume_specifico'=>0,'preve1'=>0,'preve2'=>0,'preve3'=>0,'preve4'=>0,'pack_units'=>0,'retention_tax'=>0,'good_or_service'=>'','lot_or_serial'=>'','descri'=>'','unimis'=>'','codcon'=>'','aliiva'=>0,'scorta'=>0,'payroll_tax'=>0);
     // addizione ai totali peso,pezzi,volume, ma se l'unità di misura è uguale a KG forzo il peso specifico ad 1, ed in futuro qui dovrei utilizzare il nuovo metodo di calcolo utilizzato anche in acquis/admin_broven.php
 		if (isset($artico) && $artico['unimis']!='' && strtoupper(substr($artico['unimis'],0,2))=='KG'){
 			$artico['peso_specifico']=1;
