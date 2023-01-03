@@ -206,7 +206,8 @@ $strScript = array("admin_client.php" =>
             "RDV" => "Ricevuto DdT di Reso da C/Visione",
             "VRI" => "Ricevuta",
             "CMR" => "Contratto di trasporto internazionale",
-			"PRO" => "Produzione"
+            "XFA" => "Fattura Reverse Charge",
+            "PRO" => "Produzione"
         ),
         'title' => 'Documenti di vendita',
         'tipdoc' => ' documento di vendita tipo: ',
