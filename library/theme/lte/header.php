@@ -154,6 +154,12 @@ if (isset( $scriptname) && $scriptname != $prev_script && $scriptname != 'admin.
             .content-wrapper {
               background-image: url("data:image/x-icon;base64,<?php echo $sfondo; ?>");
             }
+            a.logo.company-color-logo span img {
+              height: auto;
+              width: auto;
+              max-width: 50px;
+              max-height: 50px;
+            }
 
         </style>
 <script>
@@ -318,11 +324,11 @@ setInterval(menu_check_from_modules,<?php echo intval((int)$period*60000);?>);
                 <a href="../../modules/root/admin.php" class="logo company-color-logo">
                     <!-- mini logo for sidebar mini 50x50 pixels -->
                     <span class="logo-mini">
-                        <img src="../../modules/root/view.php?table=aziend&amp;value=<?php echo $admin_aziend["company_id"]; ?>" height="30" alt="Logo" border="0" title="<?php echo $admin_aziend["ragso1"]; ?>" />
+                        <img src="../../modules/root/view.php?table=aziend&amp;value=<?php echo $admin_aziend["company_id"]; ?>" alt="Logo" border="0" title="<?php echo $admin_aziend["ragso1"]; ?>" />
                     </span>
                     <!-- logo for regular state and mobile devices -->
                     <span class="logo-lg">
-                        <img src="../../modules/root/view.php?table=aziend&amp;value=<?php echo $admin_aziend["company_id"]; ?>" height="30" alt="Logo" border="0" title="<?php echo $admin_aziend["ragso1"]; ?>" />
+                        <img src="../../modules/root/view.php?table=aziend&amp;value=<?php echo $admin_aziend["company_id"]; ?>" alt="Logo" border="0" title="<?php echo $admin_aziend["ragso1"]; ?>" />
                         &nbsp;
 <?php echo substr($admin_aziend["ragso1"], 0, 16); ?>
                     </span>
