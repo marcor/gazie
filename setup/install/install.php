@@ -489,7 +489,7 @@ function executeModulesUpdate(){// Antonio Germani 12/07/2022 - funzione per ese
     <table align="center">
     <tbody>
         <tr>
-            <td align="center"><img src="../../library/images/gazie.gif" width="77">
+            <td align="center"><img src="../../library/images/logo_180x180.png">
             </td>
             <td colspan="2" align="center"  style="vertical-align:middle">
         <?php
