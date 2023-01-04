@@ -463,9 +463,9 @@ if (!isset($_GET['success'])){
 				}
 
 				if ($_GET['todo']!=="insert"){
-					$where="web_public >= '1' and good_or_service <> '1'";
+					$where="web_public >= '1'";
 				}else{
-					$where="good_or_service <> '1' AND web_public BETWEEN 1 AND 4";
+					$where="web_public BETWEEN 1 AND 4";
 				}
 				// carico in $artico gli articoli che sono presenti in GAzie
 				$artico = gaz_dbi_query ('SELECT ecomm_option_attribute, codice, catmer, web_price, descri, aliiva, ref_ecommerce_id_product, id_artico_group, web_public, image FROM '.$gTables['artico'].' WHERE '.$where.' ORDER BY codice');
