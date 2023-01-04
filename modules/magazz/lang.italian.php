@@ -24,8 +24,6 @@
   --------------------------------------------------------------------------
  */
 
-//*+- Nuovo stringa per colonna Fornitore in array 'Lista delle merci e dei servizi' - DC - 02 feb 2018
-
 $strScript = array(
     "browse_document.php" =>
       array('title' => "Lista dei Documenti/Certificati",
@@ -441,7 +439,7 @@ $strScript = array(
         'classif_amb' => 'Classificazione ambientale',
         'classif_amb_value' => array(0=>'non classificato',1=>'irritante',2=>'nocivo',3=>'tossico',4=>'molto tossico'),
         'SIAN' => 'Movimenta il SIAN',
-        'SIAN_value' => array(0=>'non movimenta',1=>'come olio',2=>'come olive',6=>'come fitosanitario'),
+        'SIAN_value' => array(0=>'non movimenta',1=>'come olio',2=>'come olive',6=>'come fitosanitario',7=>'come vino'),
         'maintenance_period' => 'Periodicità manutenzione (gg)',
         'peso_specifico' => 'Peso specifico (kg/l) o Moltiplicatore',
         'volume_specifico' => 'Volume specifico',

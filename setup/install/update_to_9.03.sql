@@ -36,9 +36,10 @@ CREATE TABLE IF NOT EXISTS `gaz_licenses_anagra` (
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='report_anagra.php'), 'custom_from_fae.php', '', '', 14, '', 7  FROM `gaz_menu_script`;
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='report_client.php'), 'report_customer_group.php', '', '', 62, '', 40  FROM `gaz_menu_script`;
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='report_client.php'), 'admin_customer_group.php?Insert', '', '', 61, '', 45  FROM `gaz_menu_script`;
+ALTER TABLE `gaz_aziend` ADD COLUMN `descrifae_vat` INT(3) NOT NULL DEFAULT '0' COMMENT 'La percentuale serve per valorizzare i righi descrittivi sugli XML della fattura elettronica' AFTER `preeminent_vat`;
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 ALTER TABLE `gaz_XXXartico`	ADD COLUMN `license_class` VARCHAR(10) NOT NULL DEFAULT '0' COMMENT 'Tipo di autorizzazione necessaria: colonna class della tabella gaz_licenses' AFTER `classif_amb`,
-	CHANGE COLUMN `SIAN` `SIAN` INT(1) NOT NULL DEFAULT '0' COMMENT '0 non movimenta, 1 movimenta come olio, 2 movimenta come olive, 6 movimenta come fitosanitario' AFTER `tempo_sospensione`;
+	CHANGE COLUMN `SIAN` `SIAN` INT(2) NOT NULL DEFAULT '0' COMMENT '0 non movimenta, 1 movimenta come olio, 2 movimenta come olive, 6 movimenta come fitosanitario, 7 movimenta come vino' AFTER `tempo_sospensione`;
 CREATE TABLE `gaz_XXXcustomer_group` (
   `id` int(3) NOT NULL DEFAULT '0',
   `descri` varchar(50) NOT NULL DEFAULT '',

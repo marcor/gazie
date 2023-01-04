@@ -656,6 +656,16 @@ if (count($msg['err']) > 0) { // ho un errore
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
+                        <label for="descrifae_vat" class="col-sm-4 control-label"><?php echo $script_transl['descrifae_vat']; ?></label>
+                        <?php
+                        $gForm->selectFromDB('aliiva', 'descrifae_vat', 'codice', $form['descrifae_vat'], 'codice', 0, ' - ', 'descri', '', 'col-sm-8', null, 'style="max-width: 550px;"');
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
                         <label for="gazSynchro" class="col-sm-4 control-label"><?php echo $script_transl['gazSynchro']; ?></label>
                         <input class="col-sm-7" type="text" value="<?php echo $form['gazSynchro']; ?>" name="gazSynchro" maxlength="50" placeholder="es: shop-synchronize" />
 
