@@ -236,7 +236,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
       $msg['err'][] = 'codart_len';
   }
   if ($form['web_public']>0 && intval($form['ref_ecommerce_id_product'])==0 && $toDo=="update"){// in update, senza id riferimento all'e-commerce non si può attivare
-    $msg['err'][] = 'no_web';
+    $change_todo = "insert";// vuol dire che si deve inserire nell'e-commerce
   }
 
   if (count($msg['err']) == 0) { // ***  NESSUN ERRORE  ***
@@ -314,6 +314,9 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
           $magval = array_pop($mv);
           $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
           $form['quantity']=intval($magval['q_g']);
+        }
+        if (isset($change_todo)){
+          $toDo=$change_todo;
         }
         $gSync->UpsertProduct($form,$toDo);
         //print $gSync->rawres;
