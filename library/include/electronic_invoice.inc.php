@@ -129,7 +129,7 @@ class invoiceXMLvars {
   public $cast;
   public $vettore;
   public $ritenute;
-
+  public $descrifae_vat;
 
   function setXMLvars($gTables, $tesdoc, $testat, $tableName, $ecr = false) {
     $this->gTables = $gTables;
@@ -313,6 +313,8 @@ class invoiceXMLvars {
     // ATTRIBUISCO UN EVENTUALE REGIME FISCALE DIVERSO DALLA CONFIGURAZIONE AZIENDA SE LA SEZIONE IVA E' LEGATO AD ESSO TRAMITE IL RIGO var='sezione_regime_fiscale' IN gaz_XXXcompany_config
     $this->regime_fiscale=$this->azienda['fiscal_reg'];
     if ($fr=getRegimeFiscale($this->seziva)) $this->regime_fiscale=$fr;
+    // riprendo il valore percentuale da usare per i righi descrittivi
+    $this->descrifae_vat = gaz_dbi_get_row($gTables['aliiva'], "codice", $this->azienda['descrifae_vat'])['aliquo'];
   }
 
   function getXMLrows() {
@@ -329,7 +331,6 @@ class invoiceXMLvars {
     $this->riporto = 0.00;
     $this->ritenuta = 0.00;
     $this->cassa_prev = array();
-    $righiDescrittivi = array();
     $last_normal_row = 0;
     $nr = 1;
     $results = array();
@@ -339,8 +340,10 @@ class invoiceXMLvars {
     // questi mi servono per associare i numeri righi ad id_rig  per riferire i valori sull'accumulatore per 2.1.X
     $id_rig_ref=array();
     $ctrl_idtes=0;
-    $nr_idtes=1; //
+    $nr_idtes=1;
     while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
+      // filtro le descrizioni
+      $rigo['descri'] = html_entity_decode($rigo['descri'], ENT_XML1 | ENT_QUOTES, 'UTF-8');
       if ($ctrl_idtes<>$rigo['id_tes']){ // è cambiata la testata riparto da NumeroLinea 1 e azzero l'array ref
         $nr_idtes=1;
         $id_rig_ref=array();
@@ -354,14 +357,6 @@ class invoiceXMLvars {
         }
         $id_rig_ref[$nr_idtes]=$rigo['id_rig']; // associo l'id_rig al numero rigo mi servirà per valorizzare l'accumulatore per 2.1.X
         $nr_idtes++; // è un tipo rigo a cui possono essere riferiti i dati degli elementi 2.1.X, lo aumento
-        $last_normal_row = $nr; // mi potrebbe servire se alla fine dei righi mi ritrovo con dei descrittivi non ancora indicizzati perché seguono l'ultimo rigo normale
-        // se ho avuto dei righi descrittivi che hanno preceduto  questo allora li inputo a questo rigo
-        if (isset($righiDescrittivi[0])) {
-            foreach ($righiDescrittivi[0] as $v) {
-              $righiDescrittivi[$nr][] = $v.' '; // faccio il push su un array indicizzato con $nr (numero rigo)
-            }
-        }
-        unset($righiDescrittivi[0]); // svuoto l'array per prepararlo ad eventuali nuovi righi descrittivi
         $rigo['importo'] = CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'],0);
         $v_for_castle = CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], array($rigo['sconto'], $this->tesdoc['sconto']));
         if ($rigo['tiprig'] == 1) { // forfait
@@ -395,8 +390,7 @@ class invoiceXMLvars {
             $this->ivasplitpay += round(($v_for_castle * $rigo['pervat']) / 100, 2);
         }
       } elseif ($rigo['tiprig'] == 2) { // descrittivo
-        // faccio prima il parsing XML e poi il push su un array ancora da indicizzare (0)
-        $righiDescrittivi[0][] = htmlspecialchars($rigo['descri'], ENT_XML1 | ENT_QUOTES, 'UTF-8', true).' ';
+        $rigo['pervat']=$this->descrifae_vat;
       } elseif ($rigo['tiprig'] == 4) { // cassa previdenziale
         if (!isset($this->castel[$rigo['codvat']])) {
           $this->castel[$rigo['codvat']] = 0;
@@ -425,15 +419,9 @@ class invoiceXMLvars {
       } elseif ($rigo['tiprig'] == 6 || $rigo['tiprig'] == 8) { // testo
         $body_text = gaz_dbi_get_row($this->gTables['body_text'], "id_body", $rigo['id_body_text']);
         $dom->loadHTML($body_text['body_text']);
-        $rigo['descri'] = strip_tags($dom->saveXML());
-        $res = explode("\n", wordwrap($rigo['descri'], 60, "\n"));
-        // faccio il push ricorsivo su un array ancora da indicizzare (0)
-        foreach ($res as $v) {
-          $ctrl_v = trim($v);
-          if (!empty($ctrl_v)) {
-            $righiDescrittivi[0][] = $v.' ';
-          }
-        }
+        $rigo['descri'] = htmlentities(strip_tags($dom->saveXML()));
+        $rigo['pervat']=$this->descrifae_vat;
+        $rigo['tiprig'] = 'D';
       } elseif ($rigo['tiprig'] == 3) {  // var.totale fattura
         $this->riporto += $rigo['prelis'];
       } elseif ($rigo['tiprig']>10 && $rigo['tiprig']<17) {
@@ -480,27 +468,13 @@ class invoiceXMLvars {
       $results[$nr] = $rigo;
       $nr++;
     }
-    // se finiti i righi ho incontrato dei descrittivi che non sono stati imputati a dei righi normali perché successivi a questi allora li imputo all'ultimo normale incontrato
-    if (isset($righiDescrittivi[0])) {
-        foreach ($righiDescrittivi[0] as $v) {
-          $righiDescrittivi[$last_normal_row][] = $v.' '; // faccio il push su un array indicizzato con $nr (numero rigo)
-        }
-    }
-    unset($righiDescrittivi[0]);
     // se ho dei trasporti lo aggiungo ai righi del relativo DdT
     if ($this->trasporto >= 0.1) {
       $rigo_T = array('id_rig'=>0,'tiprig'=>'T','descri'=>'TRASPORTO','importo'=>$this->trasporto,'pervat'=>$this->expense_pervat['aliquo'],'ritenuta'=>0,'natura'=>$this->expense_pervat['fae_natura']);
       $results[$nr] = $rigo_T;
       $nr++;
     }
-    foreach ($results as $k => $v) { // associo l'array dei righi descrittivi con quello del righo corrispondente
-      $r[$k] = $v;
-      if (isset($righiDescrittivi[$k])) {
-        $r[$k]['descrittivi'] = $righiDescrittivi[$k];
-      }
-    }
-    // fine imputazione descrittivi
-    return $r;
+    return $results;
   }
 
   function setXMLtot() {
@@ -971,17 +945,6 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 						//$el1->appendChild($el2);
 						$el->appendChild($el1);
 					}
-          if (isset($rigo['descrittivi'])) {
-            // se ho dei righi descrittivi associati li posso aggiungere fino a che la lunghezza non superi 1000 caratteri quindi ne posso aggiungere al massimo 15*60
-						$acc_descr='';
-            foreach ($rigo['descrittivi'] as $k => $v) {
-              if ($k < 16) {
-                $acc_descr .= $v.' '; // ogni $v è lungo al massimo 60 caratteri
-                unset($rigo['descrittivi'][$k]); // lo tolgo in modo da mettere un eventuale accesso sotto
-              }
-            }
-						$rigo['descri'] = $acc_descr.' '.$rigo['descri'];
-          }
           if ($rigo['idlotto']!='') {
               // se ho un lotto di magazzino lo accodo alla ddescrizione
               $rigo['descri'] .= ' LOTTO: '.$rigo['idlotto'].' SCAD.'.$rigo['scadenzalotto']; // ogni $v è lungo al massimo 60 caratteri
@@ -1042,16 +1005,6 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 						$el2 = $domDoc->createElement("RiferimentoData",  $XMLvars->DatiIntento['RiferimentoData']);
 						$el1->appendChild($el2);
 					}
-          if (isset($rigo['descrittivi']) && count($rigo['descrittivi']) > 0) {
-              foreach ($rigo['descrittivi'] as $k => $v) {
-                  $el1 = $domDoc->createElement("AltriDatiGestionali", '');
-                  $el->appendChild($el1);
-                  $el2 = $domDoc->createElement("TipoDato", 'txt' . $k);
-                  $el1->appendChild($el2);
-                  $el2 = $domDoc->createElement("RiferimentoTesto", $v);
-                  $el1->appendChild($el2);
-              }
-          }
 					// se è una fattura allegata allo scontrino fiscale
           if ($XMLvars->tesdoc['tipdoc']=='VCO') {
        			$el1 = $domDoc->createElement("AltriDatiGestionali", '');
@@ -1075,15 +1028,6 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
           $el = $domDoc->createElement("DettaglioLinee", "");
           $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
           $el->appendChild($el1);
-          if (isset($rigo['descrittivi'])) {
-            // se ho dei righi descrittivi associati li posso aggiungere fino a che la lunghezza non superi 1000 caratteri quindi ne posso aggiungere al massimo 15*60
-            foreach ($rigo['descrittivi'] as $k => $v) {
-              if ($k < 16) {
-                $rigo['descri'] .= $v; // ogni $v è lungo al massimo 60 caratteri
-                unset($rigo['descrittivi'][$k]); // lo tolgo in modo da mettere un eventuale accesso sotto
-              }
-            }
-          }
           $el1 = $domDoc->createElement("Descrizione", substr($rigo['descri'], -1000));
           $el->appendChild($el1);
           $el1 = $domDoc->createElement("PrezzoUnitario", number_format($rigo['importo'], 2, '.', ''));
@@ -1132,16 +1076,6 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 						$el2 = $domDoc->createElement("RiferimentoData",  $XMLvars->DatiIntento['RiferimentoData']);
 						$el1->appendChild($el2);
 					}
-          if (isset($rigo['descrittivi']) && count($rigo['descrittivi']) > 0) {
-            foreach ($rigo['descrittivi'] as $k => $v) {
-              $el1 = $domDoc->createElement("AltriDatiGestionali", '');
-              $el->appendChild($el1);
-              $el2 = $domDoc->createElement("TipoDato", 'txt' . $k);
-              $el1->appendChild($el2);
-              $el2 = $domDoc->createElement("RiferimentoTesto", $v);
-              $el1->appendChild($el2);
-            }
-          }
           $benserv->appendChild($el);
           $nl = true;
           break;
@@ -1154,15 +1088,6 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
           // aggiungo la spesa accessoria al riepilogo
           $XMLvars->SpeseIncassoTrasporti += number_format(round($rigo['importo']+$sc_su_imp['importo_sconto'],2), 2, '.', '');
 					$el->appendChild($el1);
-          if (isset($rigo['descrittivi'])) {
-            // se ho dei righi descrittivi associati li posso aggiungere fino a che la lunghezza non superi 1000 caratteri quindi ne posso aggiungere al massimo 15*60
-            foreach ($rigo['descrittivi'] as $k => $v) {
-              if ($k < 16) {
-                $rigo['descri'] .= $v; // ogni $v è lungo al massimo 60 caratteri
-                unset($rigo['descrittivi'][$k]); // lo tolgo in modo da mettere un eventuale accesso sotto
-              }
-            }
-          }
           $el1 = $domDoc->createElement("Descrizione", substr($rigo['descri'], -1000));
           $el->appendChild($el1);
           $el1 = $domDoc->createElement("PrezzoUnitario", number_format($rigo['importo'], 2, '.', ''));
@@ -1189,18 +1114,49 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 						$el2 = $domDoc->createElement("RiferimentoData",  $XMLvars->DatiIntento['RiferimentoData']);
 						$el1->appendChild($el2);
 					}
-          if (isset($rigo['descrittivi']) && count($rigo['descrittivi']) > 0) {
-            foreach ($rigo['descrittivi'] as $k => $v) {
-              $el1 = $domDoc->createElement("AltriDatiGestionali", '');
-              $el->appendChild($el1);
-              $el2 = $domDoc->createElement("TipoDato", 'txt' . $k);
-              $el1->appendChild($el2);
-              $el2 = $domDoc->createElement("RiferimentoTesto", $v);
-              $el1->appendChild($el2);
-            }
-          }
           $benserv->appendChild($el);
           $nl = true;
+          break;
+        case "2": // descrittivo
+					$benserv = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
+          $el = $domDoc->createElement("DettaglioLinee", "");
+          $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
+          $el->appendChild($el1);
+          $el1 = $domDoc->createElement("Descrizione", substr($rigo['descri'], -1000));
+          $el->appendChild($el1);
+          $el1 = $domDoc->createElement("PrezzoUnitario", '0.00');
+          $el->appendChild($el1);
+          $el1 = $domDoc->createElement("PrezzoTotale", '0.00');
+          $el->appendChild($el1);
+          $el1 = $domDoc->createElement("AliquotaIVA", $rigo['pervat']);
+          $el->appendChild($el1);
+          $benserv->appendChild($el);
+          $nl = true;
+          break;
+        case "D": // testo
+          $rdescri = wordwrap(str_replace('&amp;#xD;','',trim($rigo['descri'])),1000,'<t@g>');
+          $arrdescri = explode('<t@g>',$rdescri);
+          foreach($arrdescri as $vd) {
+            $benserv = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
+            $el = $domDoc->createElement("DettaglioLinee", "");
+            $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
+            $el->appendChild($el1);
+            $el1 = $domDoc->createElement("Descrizione", $vd);
+            $el->appendChild($el1);
+            $el1 = $domDoc->createElement("PrezzoUnitario", '0.00');
+            $el->appendChild($el1);
+            $el1 = $domDoc->createElement("PrezzoTotale", '0.00');
+            $el->appendChild($el1);
+            $el1 = $domDoc->createElement("AliquotaIVA", $rigo['pervat']);
+            $el->appendChild($el1);
+            $benserv->appendChild($el);
+            if ($XMLvars->ddt_data){
+              // è un rigo di ddt devo aggiungere il riferimento alla linea nell'apposito array che ho creato in precedenza
+              $XMLvars->DatiDDT[$XMLvars->tesdoc['numdoc']]['RiferimentoNumeroLinea'][]=$n_linea;
+            }
+            $n_linea++;
+          }
+          $nl = false;
           break;
       } // fine switch tiprig
 			if ($XMLvars->ddt_data && $nl){
