@@ -187,11 +187,11 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 					$target_filename = $file_name;
 					$ratio = $width/$height;
 					if( $ratio > 1) {
-						$new_width = $maxDim;
-						$new_height = $maxDim/$ratio;
+						$new_width = intval($maxDim);
+						$new_height = intval($maxDim/$ratio);
 					} else {
-						$new_width = $maxDim*$ratio;
-						$new_height = $maxDim;
+						$new_width = intval($maxDim*$ratio);
+						$new_height = intval($maxDim);
 					}
 					$src = imagecreatefromstring( file_get_contents( $file_name ) );
 					$dst = imagecreatetruecolor( $new_width, $new_height );
