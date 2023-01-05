@@ -468,7 +468,7 @@ if (!isset($_GET['success'])){
 					$where="web_public BETWEEN 1 AND 4";
 				}
 				// carico in $artico gli articoli che sono presenti in GAzie
-				$artico = gaz_dbi_query ('SELECT ecomm_option_attribute, codice, catmer, web_price, descri, aliiva, ref_ecommerce_id_product, id_artico_group, web_public, image FROM '.$gTables['artico'].' WHERE '.$where.' ORDER BY codice');
+				$artico = gaz_dbi_query ('SELECT ecomm_option_attribute, codice, catmer, web_price, descri, aliiva, ref_ecommerce_id_product, id_artico_group, web_public, image, good_or_service FROM '.$gTables['artico'].' WHERE '.$where.' ORDER BY codice');
 				$n=0;
 				while ($item = gaz_dbi_fetch_array($artico)){ // li ciclo
 					$ref_ecommerce_id_main_product="";
@@ -477,17 +477,20 @@ if (!isset($_GET['success'])){
 						$item_group = gaz_dbi_fetch_array($artico_group);
 						$ref_ecommerce_id_main_product = $item_group['ref_ecommerce_id_main_product'];
 					}
-					$avqty = 0;
-					$ordinatic = $gForm->get_magazz_ordinati($item['codice'], "VOR");
-					$mv = $gForm->getStockValue(false, $item['codice']);
-
-						$magval = array_pop($mv);
-						if (isset($magval['q_g'])){
-							$avqty=$magval['q_g']-$ordinatic;
-						}
-						if ($avqty<0 or $avqty==""){
-							$avqty="0";
-						}
+          if ($item['good_or_service']==1){// se non movimenta il magazzino
+            $avqty=NULL;
+          }else{
+            $avqty = 0;
+            $ordinatic = $gForm->get_magazz_ordinati($item['codice'], "VOR");
+            $mv = $gForm->getStockValue(false, $item['codice']);
+            $magval = array_pop($mv);
+            if (isset($magval['q_g'])){
+              $avqty=$magval['q_g']-$ordinatic;
+            }
+            if ($avqty<0 or $avqty==""){
+              $avqty="0";
+            }
+          }
 
 					?>
 					<div class="row bg-success" style="border-bottom: 1px solid;">
@@ -569,17 +572,22 @@ if (!isset($_GET['success'])){
           $parent_variant = gaz_dbi_query ("SELECT * FROM ".$gTables['artico']." WHERE id_artico_group = '".$item['id_artico_group']."' ORDER BY codice ASC");
           $quanti=0;
           while ($itemvar = gaz_dbi_fetch_array($parent_variant)){ // ciclo le varianti di questo parent
-            $ordinatic = $gForm->get_magazz_ordinati($itemvar['codice'], "VOR");
-            $mv = $gForm->getStockValue(false, $itemvar['codice']);
-            $avqty= 0;
-						$magval = array_pop($mv);
-						if (isset($magval['q_g'])){
-							$avqty=$magval['q_g']-$ordinatic;
-						}
-						if ($avqty<0 or $avqty==""){
-							$avqty= 0;
-						}
-            $quanti += $avqty;
+
+            if ($itemvar['good_or_service']==1){// se non movimenta il magazzino
+              $quanti=NULL;
+            }else{
+              $ordinatic = $gForm->get_magazz_ordinati($itemvar['codice'], "VOR");
+              $mv = $gForm->getStockValue(false, $itemvar['codice']);
+              $avqty= 0;
+              $magval = array_pop($mv);
+              if (isset($magval['q_g'])){
+                $avqty=$magval['q_g']-$ordinatic;
+              }
+              if ($avqty<0 or $avqty==""){
+                $avqty= 0;
+              }
+              $quanti += $avqty;
+            }
           }
 
 					?>

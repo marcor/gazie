@@ -445,29 +445,36 @@ class shopsynchronizegazSynchro {
 			// "articoli-gazie.php" è il nome del file interfaccia presente nella root dell'e-commerce. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
 			// il percorso per raggiungere questo file va impostato in configurazione avanzata azienda alla voce "Website root directory"
 
-			// calcolo la disponibilità in magazzino
-			$gForm = new magazzForm();
-			$mv = $gForm->getStockValue(false, $d['codice']);
-			$magval = array_pop($mv);
-			// trovo l'ID di riferimento e calcolo la disponibilità
-			$id = gaz_dbi_get_row($gTables['artico'],"codice",$d['codice']);
-			if (!isset($id)){
-				$rawres['title'] = "Prodotto non correttamente sincronizzato. Controllare le sue impostazioni e ID di riferimento all e-commerce!";
-				$rawres['button'] = 'Avviso eCommerce';
-				$rawres['label'] = "Aggiornare i dati di: ". $d['codice'];
-				$rawres['link'] = '../shop-synchronize/synchronize.php';
-				$rawres['style'] = 'danger';
-				$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
-				$this->rawres=$rawres;
-				return;
-			}
-			$fields = array ('product_id' => $id['ref_ecommerce_id_product'],'quantity'=>intval((isset($magval['q_g']))?$magval['q_g']:0));
-			$ordinati = $gForm->get_magazz_ordinati($d['codice'], "VOR");
-			$ordinati = $ordinati + $gForm->get_magazz_ordinati($d['codice'], "VOW");
-			$avqty=$fields['quantity']-$ordinati;
-			if ($avqty<0 or $avqty==""){ // per l'e-commerce la disponibilità non può essere nulla o negativa
-				$avqty="0";
-			}
+      // carico tutti i dati dell'articolo
+      $id = gaz_dbi_get_row($gTables['artico'],"codice",$d['codice']);
+      if (!isset($id)){
+        $rawres['title'] = "Prodotto non correttamente sincronizzato. Controllare le sue impostazioni e ID di riferimento all e-commerce!";
+        $rawres['button'] = 'Avviso eCommerce';
+        $rawres['label'] = "Aggiornare i dati di: ". $d['codice'];
+        $rawres['link'] = '../shop-synchronize/synchronize.php';
+        $rawres['style'] = 'danger';
+        $_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+        $this->rawres=$rawres;
+        return;
+      }
+
+      if ($d['good_or_service']==1){// se non movimenta il magazzino
+        $avqty=NULL;
+      }else{
+        // calcolo la disponibilità in magazzino
+        $gForm = new magazzForm();
+        $mv = $gForm->getStockValue(false, $d['codice']);
+        $magval = array_pop($mv);
+
+        $fields = array ('product_id' => $id['ref_ecommerce_id_product'],'quantity'=>intval((isset($magval['q_g']))?$magval['q_g']:0));
+        $ordinati = $gForm->get_magazz_ordinati($d['codice'], "VOR");
+        $ordinati = $ordinati + $gForm->get_magazz_ordinati($d['codice'], "VOW");
+        $avqty=$fields['quantity']-$ordinati;
+        if ($avqty<0 or $avqty==""){ // per l'e-commerce la disponibilità non può essere nulla o negativa
+          $avqty="0";
+        }
+      }
+
 			$ecomm_catmer = gaz_dbi_get_row($gTables['catmer'],"codice",$d['catmer'])['ref_ecommerce_id_category'];
 			if (intval($d['barcode'])==0) {// se non c'è barcode allora è nullo
 				$d['barcode']="NULL";
@@ -825,11 +832,11 @@ class shopsynchronizegazSynchro {
                     $rawres['style'] = 'danger';
     			}
     			$countDocument=0;$numdoc=""; $year="";
-				
+
     			foreach($xml->Documents->children() as $order) { // ciclo gli ordini
-				
+
 					if(!gaz_dbi_get_row($gTables['tesbro'], "ref_ecommerce_id_order", $order->Numbering, " AND datemi  = '".$order->DateOrder."'")){// se l'ordine non esiste lo carico in GAzie
-						if ($numdoc=="" and $year==""){// se sono al primo ciclo degli ordini							
+						if ($numdoc=="" and $year==""){// se sono al primo ciclo degli ordini
 							// ricavo il progressivo numero d'ordine di GAzie in base al tipo di documento
 							$orderdb = "numdoc desc";
 							$sql_documento = "YEAR(datemi) = " . substr($order->DateOrder,0,4) . " and tipdoc = 'VOW'";
@@ -837,13 +844,13 @@ class shopsynchronizegazSynchro {
 							$ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
 							// se e' il primo documento dell'anno, resetto il contatore
 							if ($ultimo_documento) {
-								$numdoc = $ultimo_documento['numdoc'] + 1;								
+								$numdoc = $ultimo_documento['numdoc'] + 1;
 							} else {
 								$numdoc = 1;
-							}	
-							$year=substr($order->DateOrder,0,4);						
+							}
+							$year=substr($order->DateOrder,0,4);
 						}elseif(intval(substr($order->DateOrder,0,4))> intval($year)) {// se è cambiato l'anno durante il ciclo degli ordini e sono nel nuovo anno
-							$numdoc = 1;// ricomincio la numerazione							
+							$numdoc = 1;// ricomincio la numerazione
 						}
 						$query = "SHOW TABLE STATUS LIKE '" . $gTables['anagra'] . "'";
 						$result = gaz_dbi_query($query);
