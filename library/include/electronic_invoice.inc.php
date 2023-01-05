@@ -343,7 +343,7 @@ class invoiceXMLvars {
     $nr_idtes=1;
     while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
       // filtro le descrizioni
-      $rigo['descri'] = html_entity_decode($rigo['descri'], ENT_XML1 | ENT_QUOTES, 'UTF-8');
+      $rigo['descri'] = htmlspecialchars(htmlspecialchars_decode(trim(html_entity_decode($rigo['descri'], ENT_XML1 | ENT_QUOTES, 'UTF-8'))), ENT_XML1, 'UTF-8');
       if ($ctrl_idtes<>$rigo['id_tes']){ // è cambiata la testata riparto da NumeroLinea 1 e azzero l'array ref
         $nr_idtes=1;
         $id_rig_ref=array();
@@ -419,7 +419,7 @@ class invoiceXMLvars {
       } elseif ($rigo['tiprig'] == 6 || $rigo['tiprig'] == 8) { // testo
         $body_text = gaz_dbi_get_row($this->gTables['body_text'], "id_body", $rigo['id_body_text']);
         $dom->loadHTML($body_text['body_text']);
-        $rigo['descri'] = htmlentities(strip_tags($dom->saveXML()));
+        $rigo['descri'] = htmlspecialchars_decode(str_replace('&amp;#xD;','',trim(htmlentities(strip_tags($dom->saveXML())))));
         $rigo['pervat']=$this->descrifae_vat;
         $rigo['tiprig'] = 'D';
       } elseif ($rigo['tiprig'] == 3) {  // var.totale fattura
@@ -949,7 +949,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
               // se ho un lotto di magazzino lo accodo alla ddescrizione
               $rigo['descri'] .= ' LOTTO: '.$rigo['idlotto'].' SCAD.'.$rigo['scadenzalotto']; // ogni $v è lungo al massimo 60 caratteri
           }
-          $el1 = $domDoc->createElement("Descrizione", htmlspecialchars(str_replace(chr(0xE2).chr(0x82).chr(0xAC),"",substr($rigo['descri'], -1000)), ENT_XML1 | ENT_QUOTES, 'UTF-8', true)) ;
+          $el1 = $domDoc->createElement("Descrizione", substr($rigo['descri'], -1000) );
           $el->appendChild($el1);
           $el1 = $domDoc->createElement("Quantita", number_format($rigo['quanti'], 3, '.', ''));
           $el->appendChild($el1);
@@ -1134,7 +1134,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
           $nl = true;
           break;
         case "D": // testo
-          $rdescri = wordwrap(str_replace('&amp;#xD;','',trim($rigo['descri'])),1000,'<t@g>');
+          $rdescri = wordwrap($rigo['descri'],1000,'<t@g>');
           $arrdescri = explode('<t@g>',$rdescri);
           foreach($arrdescri as $vd) {
             $benserv = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
