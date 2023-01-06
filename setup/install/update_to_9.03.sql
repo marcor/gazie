@@ -51,6 +51,8 @@ CREATE TABLE `gaz_XXXcustomer_group` (
   PRIMARY KEY (`id`) USING BTREE,
   KEY `ref_ecommerce_customer_group` (`ref_ecommerce_customer_group`) USING BTREE
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
-INSERT INTO `gaz_XXXcustomer_group` (`id`, `descri`, `large_descri`, `image`, `ref_ecommerce_customer_group`, `annota`, `adminid`, `last_modified`) VALUES (1, 'GRUPPO 1', '', _binary '', 0, 'TEST', 'amministratore', '2022-12-24 07:26:12');
+INSERT INTO `gaz_XXXcustomer_group` (`id`, `descri`, `large_descri`, `image`, `ref_ecommerce_customer_group`, `annota`) VALUES (1, 'GRUPPO 1', '', _binary '', 0, 'TEST');
 ALTER TABLE `gaz_XXXclfoco` ADD COLUMN `id_customer_group` INT(9) NOT NULL AFTER `id_anagra`,	ADD INDEX `id_customer_group` (`id_customer_group`);
+ALTER TABLE `gaz_XXXmovmag`	ADD COLUMN `id_artico_position` INT(9) NULL DEFAULT NULL AFTER `id_warehouse`, ADD INDEX `id_artico_position` (`id_artico_position`);
+ALTER TABLE `gaz_XXXartico_position` CHANGE COLUMN `id_position` `id_position` INT(9) NOT NULL AUTO_INCREMENT FIRST;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )
