@@ -265,9 +265,12 @@ section.content {
 	opacity: 1;
 	filter: alpha(opacity=100);
 }
-.img-circle.dit-picture,.text-center>a>.img-circle{
+.img-circle.dit-picture, .text-center > a > .img-circle {
 	border-radius: 10px;
-	max-width: 100%;
+	max-width: 180px;
+	width: auto;
+	height: auto;
+	max-height: 180px;
 }
 .usr-picture {
   margin: 10px;
