@@ -38,8 +38,7 @@ INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MIN(id) FROM `gaz_menu_m
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='report_client.php'), 'admin_customer_group.php?Insert', '', '', 61, '', 45  FROM `gaz_menu_script`;
 ALTER TABLE `gaz_aziend` ADD COLUMN `descrifae_vat` INT(3) NOT NULL DEFAULT '0' COMMENT 'La percentuale serve per valorizzare i righi descrittivi sugli XML della fattura elettronica' AFTER `preeminent_vat`;
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
-ALTER TABLE `gaz_XXXartico`	ADD COLUMN `license_class` VARCHAR(10) NOT NULL DEFAULT '0' COMMENT 'Tipo di autorizzazione necessaria: colonna class della tabella gaz_licenses' AFTER `classif_amb`,
-	CHANGE COLUMN `SIAN` `SIAN` INT(2) NOT NULL DEFAULT '0' COMMENT '0 non movimenta, 1 movimenta come olio, 2 movimenta come olive, 6 movimenta come fitosanitario, 7 movimenta come vino' AFTER `tempo_sospensione`;
+ALTER TABLE `gaz_XXXartico`	ADD COLUMN `license_class` VARCHAR(10) NOT NULL DEFAULT '0' COMMENT 'Tipo di autorizzazione necessaria: colonna class della tabella gaz_licenses' AFTER `classif_amb`, CHANGE COLUMN `SIAN` `SIAN` INT(2) NOT NULL DEFAULT '0' COMMENT '0 non movimenta, 1 movimenta come olio, 2 movimenta come olive, 6 movimenta come fitosanitario, 7 movimenta come vino' AFTER `tempo_sospensione`;
 CREATE TABLE `gaz_XXXcustomer_group` (
   `id` int(3) NOT NULL DEFAULT '0',
   `descri` varchar(50) NOT NULL DEFAULT '',
@@ -52,6 +51,6 @@ CREATE TABLE `gaz_XXXcustomer_group` (
   PRIMARY KEY (`id`) USING BTREE,
   KEY `ref_ecommerce_customer_group` (`ref_ecommerce_customer_group`) USING BTREE
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
-INSERT INTO `gaz_XXXcustomer_group` (`id`, `descri`, `large_descri`, `image`, `ref_ecommerce_customer_group`, `annota`, `adminid`, `last_modified`) VALUES
-	(1, 'GRUPPO 1', '', _binary '', 0, 'TEST', 'amministratore', '2022-12-24 07:26:12');
+INSERT INTO `gaz_XXXcustomer_group` (`id`, `descri`, `large_descri`, `image`, `ref_ecommerce_customer_group`, `annota`, `adminid`, `last_modified`) VALUES (1, 'GRUPPO 1', '', _binary '', 0, 'TEST', 'amministratore', '2022-12-24 07:26:12');
+ALTER TABLE `gaz_XXXclfoco` ADD COLUMN `id_customer_group` INT(9) NOT NULL AFTER `id_anagra`,	ADD INDEX `id_customer_group` (`id_customer_group`);
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )
