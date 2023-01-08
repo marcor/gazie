@@ -2,12 +2,12 @@
 /*
 	  --------------------------------------------------------------------------
 	  GAzie - Gestione Azienda
-	  Copyright (C) 2004-2022 - Antonio De Vincentiis Montesilvano (PE)
+	  Copyright (C) 2004-2023 - Antonio De Vincentiis Montesilvano (PE)
 	  (http://www.devincentiis.it)
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
 	  SHOP SYNCHRONIZE è un modulo creato per GAzie da Antonio Germani, Massignano AP
-	  Copyright (C) 2018-2021 - Antonio Germani, Massignano (AP)
+	  Copyright (C) 2018-2023 - Antonio Germani, Massignano (AP)
 	  https://www.lacasettabio.it
 	  https://www.programmisitiweb.lacasettabio.it
 	  --------------------------------------------------------------------------
@@ -56,12 +56,12 @@ if ($exists) {
 $admin_aziend = gaz_dbi_get_row($gTables['admin'] . ' LEFT JOIN ' . $gTables['aziend'] . ' ON ' . $gTables['admin'] . '.' . $c_e . '= ' . $gTables['aziend'] . '.codice', "user_name", $_SESSION['user_name']);
 
 if (isset($_POST['conferma']) && isset($_POST['num_orders'])) { // se confermato e ci sono ordini
-		
+
 	$numdoc=""; $year="";
     // scrittura ordini su database di GAzie
 	for ($ord=0 ; $ord<=$_POST['num_orders']; $ord++){// ciclo gli ordini e li scrivo nel database
-	
-		if ($numdoc=="" and $year==""){// se sono al primo ciclo degli ordini							
+
+		if ($numdoc=="" and $year==""){// se sono al primo ciclo degli ordini
 			// ricavo il progressivo numero d'ordine di GAzie in base al tipo di documento
 			$orderdb = "numdoc desc";
 			$sql_documento = "YEAR(datemi) = " . substr($_POST['datemi'.$ord],0,4) . " and tipdoc = 'VOW'";
@@ -69,14 +69,14 @@ if (isset($_POST['conferma']) && isset($_POST['num_orders'])) { // se confermato
 			$ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
 			// se e' il primo documento dell'anno, resetto il contatore
 			if ($ultimo_documento) {
-				$numdoc = $ultimo_documento['numdoc'] + 1;								
+				$numdoc = $ultimo_documento['numdoc'] + 1;
 			} else {
 				$numdoc = 1;
-			}	
-			$year=substr($_POST['datemi'.$ord],0,4);						
+			}
+			$year=substr($_POST['datemi'.$ord],0,4);
 		}elseif(intval(substr($_POST['datemi'.$ord],0,4))> intval($year)) {// se è cambiato l'anno durante il ciclo degli ordini e sono nel nuovo anno
-			$numdoc = 1;// ricomincio la numerazione							
-		}	
+			$numdoc = 1;// ricomincio la numerazione
+		}
 
 		$query = "SHOW TABLE STATUS LIKE '" . $gTables['anagra'] . "'";
 		$result = gaz_dbi_query($query);
@@ -108,12 +108,12 @@ if (isset($_POST['conferma']) && isset($_POST['num_orders'])) { // se confermato
 			if(intval($_POST['idpagame'.$ord])>0){//se l'e-commerce ha inviato il suo id di riferimento lo inserisco nella testata
 				//lo ricongiungo con GAzie
 				$pag = gaz_dbi_get_row($gTables['pagame'], "web_payment_ref", intval($_POST['idpagame'.$ord]));
-				$idpagame=(isset($pag['codice']))?$pag['codice']:0;				
-			}elseif(intval($_POST['pagame'.$ord])>0){// se l'e-commerce mi ha inviato un codice al  posto del nome				
-				$idpagame=intval($_POST['pagame'.$ord]);			
+				$idpagame=(isset($pag['codice']))?$pag['codice']:0;
+			}elseif(intval($_POST['pagame'.$ord])>0){// se l'e-commerce mi ha inviato un codice al  posto del nome
+				$idpagame=intval($_POST['pagame'.$ord]);
 			}else{// altrimenti non iserisco alcun pagamento
 				$idpagame=0;
-			}			
+			}
 			if ($esiste==0) { //registro cliente se non esiste
 				if ($_POST['country'.$ord]=="IT"){ // se la nazione è IT
 					$lang="1";

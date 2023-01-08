@@ -7,7 +7,7 @@
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
 	  SHOP SYNCHRONIZE è un modulo creato per GAzie da Antonio Germani, Massignano AP
-	  Copyright (C) 2018-2021 - Antonio Germani, Massignano (AP)
+	  Copyright (C) 2018-2023 - Antonio Germani, Massignano (AP)
 	  https://www.lacasettabio.it
 	  https://www.programmisitiweb.lacasettabio.it
 	  --------------------------------------------------------------------------
@@ -873,12 +873,12 @@ class shopsynchronizegazSynchro {
 						if(intval($order->PaymentId)>0){//se l'e-commerce ha inviato il suo id di riferimento lo inserisco nella testata
 							//lo ricongiungo con GAzie
 							$pag = gaz_dbi_get_row($gTables['pagame'], "web_payment_ref", intval($order->PaymentId));
-							$idpagame=(isset($pag['codice']))?$pag['codice']:0;				
-						}elseif(intval($order->PaymentName)>0){// se l'e-commerce mi ha inviato un codice al  posto del nome				
-							$idpagame=intval($order->PaymentName);			
+							$idpagame=(isset($pag['codice']))?$pag['codice']:0;
+						}elseif(intval($order->PaymentName)>0){// se l'e-commerce mi ha inviato un codice al  posto del nome
+							$idpagame=intval($order->PaymentName);
 						}else{// altrimenti non iserisco alcun pagamento
 							$idpagame=0;
-						}	
+						}
 						if ($esiste==0) { //registro cliente se non esiste
 							if ($order->CustomerCountry=="IT"){ // se la nazione è IT
 								$lang="1";
