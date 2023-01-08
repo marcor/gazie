@@ -869,6 +869,16 @@ class shopsynchronizegazSynchro {
 								$esiste=1;
 							}
 						}
+						// provo a ricongiungere i pagamenti
+						if(intval($order->PaymentId)>0){//se l'e-commerce ha inviato il suo id di riferimento lo inserisco nella testata
+							//lo ricongiungo con GAzie
+							$pag = gaz_dbi_get_row($gTables['pagame'], "web_payment_ref", intval($order->PaymentId));
+							$idpagame=(isset($pag['codice']))?$pag['codice']:0;				
+						}elseif(intval($order->PaymentName)>0){// se l'e-commerce mi ha inviato un codice al  posto del nome				
+							$idpagame=intval($order->PaymentName);			
+						}else{// altrimenti non iserisco alcun pagamento
+							$idpagame=0;
+						}	
 						if ($esiste==0) { //registro cliente se non esiste
 							if ($order->CustomerCountry=="IT"){ // se la nazione è IT
 								$lang="1";
@@ -896,7 +906,7 @@ class shopsynchronizegazSynchro {
 							}
 							gaz_dbi_query("INSERT INTO " . $gTables['anagra'] . "(ragso1,ragso2,sexper,indspe,capspe,citspe,prospe,country,id_currency,id_language,telefo,codfis,pariva,fe_cod_univoco,e_mail,pec_email) VALUES ('" . addslashes($order->CustomerSurname)." ". addslashes($order->CustomerName) . "', '" . addslashes($order->BusinessName) . "', '". $sexper. "', '".addslashes($order->CustomerAddress) ."', '".$order->CustomerPostCode."', '". addslashes($order->CustomerCity) ."', '". $order->CustomerProvince ."', '" . addslashes($order->CustomerCountry). "', '1', '".$lang."', '". $order->CustomerTel ."', '". strtoupper($order->CustomerFiscalCode) ."', '" . $order->CustomerVatCode . "', '" . $order->CustomerCodeFattEl . "', '". $order->CustomerEmail . "', '". $order->CustomerPecEmail . "')");
 
-							gaz_dbi_query("INSERT INTO " . $gTables['clfoco'] . "(ref_ecommerce_id_customer,codice,id_anagra,listin,descri,destin,speban,stapre,codpag) VALUES ('". $order->CustomerCode ."', '". $clfoco . "', '" . $id_anagra . "', '". intval($order->PriceListNum) ."' ,'" .addslashes($order->CustomerName)." ".addslashes($order->CustomerSurname) . "', '". addslashes($order->CustomerShippingDestin) ."', 'S', 'T', '".$order->PaymentName."')");
+							gaz_dbi_query("INSERT INTO " . $gTables['clfoco'] . "(ref_ecommerce_id_customer,codice,id_anagra,listin,descri,destin,speban,stapre,codpag) VALUES ('". $order->CustomerCode ."', '". $clfoco . "', '" . $id_anagra . "', '". intval($order->PriceListNum) ."' ,'" .addslashes($order->CustomerName)." ".addslashes($order->CustomerSurname) . "', '". addslashes($order->CustomerShippingDestin) ."', 'S', 'T', '".$idpagame."')");
 						}
 
 						if ($order->TotalDiscount>0){ // se il sito ha mandato uno sconto totale a valore calcolo lo sconto in percentuale da dare ad ogni rigo
@@ -916,7 +926,7 @@ class shopsynchronizegazSynchro {
 						}
 
 						// registro testata ordine
-						$tesbro['destin']=chunk_split ($order->CustomerShippingDestin,44);$tesbro['ref_ecommerce_id_order']=$order->Numbering;$tesbro['tipdoc']='VOW';$tesbro['seziva']=$order->SezIva;$tesbro['print_total']='1';$tesbro['datemi']=$order->DateOrder;$tesbro['numdoc']=$numdoc;$tesbro['datfat']='0000-00-00';$tesbro['clfoco']=$clfoco;$tesbro['pagame']=$order->PaymentName;$tesbro['listin']=$order->PriceListNum;$tesbro['spediz']=$order->Carrier;$tesbro['traspo']=$CostShippingAmount;$tesbro['speban']=$CostPaymentAmount;$tesbro['caumag']='1';$tesbro['expense_vat']=$admin_aziend['preeminent_vat'];$tesbro['initra']=$order->DateOrder;$tesbro['status']='ONLINE-SHOP';$tesbro['adminid']=$admin_aziend['adminid'];
+						$tesbro['destin']=chunk_split ($order->CustomerShippingDestin,44);$tesbro['ref_ecommerce_id_order']=$order->Numbering;$tesbro['tipdoc']='VOW';$tesbro['seziva']=$order->SezIva;$tesbro['print_total']='1';$tesbro['datemi']=$order->DateOrder;$tesbro['numdoc']=$numdoc;$tesbro['datfat']='0000-00-00';$tesbro['clfoco']=$clfoco;$tesbro['pagame']=$idpagame;$tesbro['listin']=$order->PriceListNum;$tesbro['spediz']=$order->Carrier;$tesbro['traspo']=$CostShippingAmount;$tesbro['speban']=$CostPaymentAmount;$tesbro['caumag']='1';$tesbro['expense_vat']=$admin_aziend['preeminent_vat'];$tesbro['initra']=$order->DateOrder;$tesbro['status']='ONLINE-SHOP';$tesbro['adminid']=$admin_aziend['adminid'];
 						$id_tesbro=tesbroInsert($tesbro);
 
 						// Gestione righi ordine

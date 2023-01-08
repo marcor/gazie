@@ -2,7 +2,7 @@
 /*
 	  --------------------------------------------------------------------------
 	  GAzie - Gestione Azienda
-	  Copyright (C) 2004-2023 - Antonio De Vincentiis Montesilvano (PE)
+	  Copyright (C) 2004-2022 - Antonio De Vincentiis Montesilvano (PE)
 	  (http://www.devincentiis.it)
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
@@ -59,7 +59,7 @@ if (isset($_POST['conferma']) && isset($_POST['num_orders'])) { // se confermato
 		
 	$numdoc=""; $year="";
     // scrittura ordini su database di GAzie
-	for ($ord=0 ; $ord<=$_POST['num_orders']; $ord++){// ciclo gli ordini e scrivo i database
+	for ($ord=0 ; $ord<=$_POST['num_orders']; $ord++){// ciclo gli ordini e li scrivo nel database
 	
 		if ($numdoc=="" and $year==""){// se sono al primo ciclo degli ordini							
 			// ricavo il progressivo numero d'ordine di GAzie in base al tipo di documento
@@ -104,12 +104,22 @@ if (isset($_POST['conferma']) && isset($_POST['num_orders'])) { // se confermato
 					$esiste=1;
 				}
 			}
+			// provo a ricongiungere i pagamenti
+			if(intval($_POST['idpagame'.$ord])>0){//se l'e-commerce ha inviato il suo id di riferimento lo inserisco nella testata
+				//lo ricongiungo con GAzie
+				$pag = gaz_dbi_get_row($gTables['pagame'], "web_payment_ref", intval($_POST['idpagame'.$ord]));
+				$idpagame=(isset($pag['codice']))?$pag['codice']:0;				
+			}elseif(intval($_POST['pagame'.$ord])>0){// se l'e-commerce mi ha inviato un codice al  posto del nome				
+				$idpagame=intval($_POST['pagame'.$ord]);			
+			}else{// altrimenti non iserisco alcun pagamento
+				$idpagame=0;
+			}			
 			if ($esiste==0) { //registro cliente se non esiste
 				if ($_POST['country'.$ord]=="IT"){ // se la nazione è IT
 					$lang="1";
-            if (substr_compare($_POST['pariva'.$ord], "IT", 0, 2, true)==0){// se c'è IT davanti alla partita iva
-              $_POST['pariva'.$ord]=substr($_POST['pariva'.$ord],2);// tolgo IT
-            }
+				if (substr_compare($_POST['pariva'.$ord], "IT", 0, 2, true)==0){// se c'è IT davanti alla partita iva
+				  $_POST['pariva'.$ord]=substr($_POST['pariva'.$ord],2);// tolgo IT
+				}
 				} else {// se non è italiano imposto il codice univoco con x e se non c'è imposto il codice fiscale con il codice cliente
 					$lang="0";
 					$_POST['fe_cod_univoco'.$ord]="XXXXXXX";
@@ -131,7 +141,7 @@ if (isset($_POST['conferma']) && isset($_POST['num_orders'])) { // se confermato
 				}
 				gaz_dbi_query("INSERT INTO " . $gTables['anagra'] . "(ragso1,ragso2,sexper,indspe,capspe,citspe,prospe,country,id_currency,id_language,telefo,codfis,pariva,fe_cod_univoco,e_mail,pec_email) VALUES ('" . addslashes(substr($_POST['ragso1'.$ord], 0, 50)) . "', '" . addslashes(substr($_POST['ragso2'.$ord], 0, 50)) . "', '". $sexper. "', '". addslashes(substr($_POST['indspe'.$ord], 0, 60)) ."', '".substr($_POST['capspe'.$ord], 0, 10)."', '". addslashes(substr($_POST['citspe'.$ord], 0, 60)) ."', '". substr($_POST['prospe'.$ord], 0, 2) ."', '" . substr($_POST['country'.$ord], 0, 3). "', '1', '".$lang."', '". substr($_POST['telefo'.$ord], 0, 50) ."', '". substr(strtoupper($_POST['codfis'.$ord]), 0, 16) ."', '" . substr($_POST['pariva'.$ord], 0, 12) . "', '" . substr($_POST['fe_cod_univoco'.$ord], 0, 7) . "', '". substr($_POST['email'.$ord], 0, 60) . "', '". substr($_POST['pec_email'.$ord], 0, 60) . "')");
 
-				gaz_dbi_query("INSERT INTO " . $gTables['clfoco'] . "(ref_ecommerce_id_customer,codice,id_anagra,listin,descri,destin,speban,stapre,codpag) VALUES ('".$_POST['ref_ecommerce_id_customer'.$ord]."', '". $clfoco . "', '" . $id_anagra . "', '". $listin ."' , '" .addslashes(substr($_POST['ragso1'.$ord], 0, 50))." ".addslashes(substr($_POST['ragso2'.$ord], 0, 49)) . "', '". addslashes(substr($_POST['destin'.$ord], 0, 100)) ."', 'S', '". $stapre ."', '". intval($_POST['pagame'.$ord]) ."')");
+				gaz_dbi_query("INSERT INTO " . $gTables['clfoco'] . "(ref_ecommerce_id_customer,codice,id_anagra,listin,descri,destin,speban,stapre,codpag) VALUES ('".$_POST['ref_ecommerce_id_customer'.$ord]."', '". $clfoco . "', '" . $id_anagra . "', '". $listin ."' , '" .addslashes(substr($_POST['ragso1'.$ord], 0, 50))." ".addslashes(substr($_POST['ragso2'.$ord], 0, 49)) . "', '". addslashes(substr($_POST['destin'.$ord], 0, 100)) ."', 'S', '". $stapre ."', '". $idpagame ."')");
 			}
 
 			if ($_POST['order_discount_price'.$ord]>0){ // se il sito ha mandato uno sconto totale a valore calcolo lo sconto in percentuale da dare ad ogni rigo
@@ -155,7 +165,7 @@ if (isset($_POST['conferma']) && isset($_POST['num_orders'])) { // se confermato
 			}
 
 			// registro testata ordine
-			$tesbro['destin']=chunk_split (substr($_POST['destin'.$ord], 0, 100),44);$tesbro['ref_ecommerce_id_order']=$_POST['ref_ecommerce_id_order'.$ord];$tesbro['tipdoc']='VOW';$tesbro['seziva']=intval($_POST['seziva'.$ord]);$tesbro['print_total']='1';$tesbro['datemi']=$_POST['datemi'.$ord];$tesbro['numdoc']=$numdoc;$tesbro['datfat']='0000-00-00';$tesbro['clfoco']=$clfoco;$tesbro['pagame']=intval($_POST['pagame'.$ord]);$tesbro['listin']=$listin;$tesbro['spediz']=substr($_POST['spediz'.$ord], 0, 50);$tesbro['traspo']=$_POST['traspo'.$ord];$tesbro['speban']=$_POST['speban'.$ord];$tesbro['caumag']='1';$tesbro['expense_vat']=$expense_vat;$tesbro['initra']=substr($_POST['datemi'.$ord], 0, 19);$tesbro['status']='ONLINE-SHOP';$tesbro['adminid']=$admin_aziend['adminid'];
+			$tesbro['destin']=chunk_split (substr($_POST['destin'.$ord], 0, 100),44);$tesbro['ref_ecommerce_id_order']=$_POST['ref_ecommerce_id_order'.$ord];$tesbro['tipdoc']='VOW';$tesbro['seziva']=intval($_POST['seziva'.$ord]);$tesbro['print_total']='1';$tesbro['datemi']=$_POST['datemi'.$ord];$tesbro['numdoc']=$numdoc;$tesbro['datfat']='0000-00-00';$tesbro['clfoco']=$clfoco;$tesbro['pagame']=$idpagame;$tesbro['listin']=$listin;$tesbro['spediz']=substr($_POST['spediz'.$ord], 0, 50);$tesbro['traspo']=$_POST['traspo'.$ord];$tesbro['speban']=$_POST['speban'.$ord];$tesbro['caumag']='1';$tesbro['expense_vat']=$expense_vat;$tesbro['initra']=substr($_POST['datemi'.$ord], 0, 19);$tesbro['status']='ONLINE-SHOP';$tesbro['adminid']=$admin_aziend['adminid'];
 			$id_tesbro=tesbroInsert($tesbro);
 
 			// Gestione righi ordine
@@ -356,6 +366,7 @@ if ( isset($headers[0]) AND intval(substr($headers[0], 9, 3))==200){ // controll
 						echo '<input type="hidden" name="telefo'. $n .'" value="'. $order->CustomerTel .'">';
 						echo '<input type="hidden" name="datemi'. $n .'" value="'. $order->DateOrder .'">';
 						echo '<input type="hidden" name="pagame'. $n .'" value="'. $order->PaymentName .'">';
+						echo '<input type="hidden" name="idpagame'. $n .'" value="'. $order->PaymentId .'">';
 						echo '<input type="hidden" name="numlistnome'. $n .'" value="'. $order->PriceList .'">';
 						echo '<input type="hidden" name="numlist'. $n .'" value="'. $order->PriceListNum .'">';
 						echo '<input type="hidden" name="includevat'. $n .'" value="'. $order->PricesIncludeVat .'">';
