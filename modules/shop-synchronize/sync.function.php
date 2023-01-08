@@ -32,9 +32,6 @@
   FUNZIONI di sincronizzazione via FTP e-commerce <-> GAzie
   ------------------------------------------------------------------------
   @Author    Antonio Germani 340-5011912
-  @Website   http://www.programmisitiweb.lacasettabio.it
-  @Copyright Copyright (C) 2018 - 2021 Antonio Germani All Rights Reserved.
-  versione 3.0
   ------------------------------------------------------------------------
  */
 
