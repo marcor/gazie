@@ -2,7 +2,7 @@
 /*
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
-  Copyright (C) 2004-2023 - Antonio De Vincentiis Montesilvano (PE)
+  Copyright (C) 2004-2022 - Antonio De Vincentiis Montesilvano (PE)
   (http://www.devincentiis.it)
   <http://gazie.sourceforge.net>
   --------------------------------------------------------------------------
@@ -48,6 +48,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['messuc'] = intval($_POST['messuc']);
     $form['giosuc'] = intval($_POST['giosuc']);
     $form['numrat'] = intval($_POST['numrat']);
+	$form['web_payment_ref'] = $_POST['web_payment_ref'];
     $form['tiprat'] = substr($_POST['tiprat'], 0, 1);
     $form['fae_mode'] = substr($_POST['fae_mode'], 0, 4);
     $form['id_bank'] = intval($_POST['id_bank']);

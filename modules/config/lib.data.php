@@ -3,7 +3,7 @@
 /*
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
-  Copyright (C) 2004-2023 - Antonio De Vincentiis Montesilvano (PE)
+  Copyright (C) 2004-2022 - Antonio De Vincentiis Montesilvano (PE)
   (http://www.devincentiis.it)
   <http://gazie.sourceforge.net>
   --------------------------------------------------------------------------
@@ -40,14 +40,14 @@ function aliivaUpdate($codice, $newValue) {
 
 function pagameInsert($newValue) {
     $table = 'pagame';
-    $columns = array('codice', 'descri', 'tippag', 'incaut', 'pagaut', 'tipdec', 'giodec', 'mesesc', 'messuc', 'giosuc', 'numrat', 'tiprat', 'fae_mode', 'id_bank', 'annota');
+    $columns = array('codice', 'descri', 'tippag', 'incaut', 'pagaut', 'tipdec', 'giodec', 'mesesc', 'messuc', 'giosuc', 'numrat', 'tiprat', 'fae_mode', 'id_bank', 'annota', 'web_payment_ref');
     $newValue['adminid'] = $_SESSION["user_name"];
     tableInsert($table, $columns, $newValue);
 }
 
 function pagameUpdate($codice, $newValue) {
     $table = 'pagame';
-    $columns = array('codice', 'descri', 'tippag', 'incaut', 'pagaut', 'tipdec', 'giodec', 'mesesc', 'messuc', 'giosuc', 'numrat', 'tiprat', 'fae_mode', 'id_bank', 'annota');
+    $columns = array('codice', 'descri', 'tippag', 'incaut', 'pagaut', 'tipdec', 'giodec', 'mesesc', 'messuc', 'giosuc', 'numrat', 'tiprat', 'fae_mode', 'id_bank', 'annota', 'web_payment_ref');
     $newValue['adminid'] = $_SESSION["user_name"];
     tableUpdate($table, $columns, $codice, $newValue);
 }
