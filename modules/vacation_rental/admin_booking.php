@@ -8,7 +8,7 @@
   --------------------------------------------------------------------------
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
-  Copyright (C) 2004-2023 - Antonio De Vincentiis Montesilvano (PE)
+  Copyright (C) 2004-2022 - Antonio De Vincentiis Montesilvano (PE)
   (http://www.devincentiis.it)
   <http://gazie.sourceforge.net>
   --------------------------------------------------------------------------
@@ -932,7 +932,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
           //Calcolo del prezzo locazione
           $what = "title";
           $table = $gTables['rental_prices'];
-          $where = "start < '". $start ."' AND end >= '". $start."' AND house_code='".$form['in_codart']."'";
+          $where = "start <= '". $start ."' AND end >= '". $start."' AND house_code='".$form['in_codart']."'";
+
           $result = gaz_dbi_dyn_query($what, $table, $where);
           $prezzo = gaz_dbi_fetch_array($result);
           if (isset($prezzo) && $ivac=="si"){// se i prezzi nel calendario sono iva compresa
@@ -941,9 +942,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
           }
           if (isset($prezzo)){
             $total_price += floatval($prezzo['title']);// aggiungo il prezzo giornaliero trovato
-          } else{
+          } elseif(floatval($artico['web_price'])>0){
             $total_price += floatval($artico['web_price']);// in mancanza del prezzo giornaliero aggiungo il prezzo base
-          }
+          }else{
+			  echo "ERRORE MANCA IL PREZZO in uno o più giorni e non esiste un prezzo base";
+		  }
 
           $start = date ("Y-m-d", strtotime("+1 days", strtotime($start)));// aumento di un giorno il ciclo
           $night++;
