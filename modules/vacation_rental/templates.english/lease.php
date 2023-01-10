@@ -2,7 +2,7 @@
 /*
  --------------------------------------------------------------------------
                             GAzie - Gestione Azienda
-    Copyright (C) 2004-2023 - Antonio De Vincentiis Montesilvano (PE)
+    Copyright (C) 2004-2022 - Antonio De Vincentiis Montesilvano (PE)
          (http://www.devincentiis.it)
            <http://gazie.sourceforge.net>
  --------------------------------------------------------------------------
@@ -61,24 +61,16 @@ class Lease extends Template
     }
     function body()
     {
-      $admin_aziend = checkAdmin();
-      require("./lang." . $admin_aziend['lang'] . ".php");
+      require("./lang.english.php");
       $script_transl = $strScript["lease.php"];
-
-      if ($admin_aziend['id_language']==1){
-        $lang="it";
-      }else{
-        $lang="en";
-      }
-
+      $lang="en";
       $lines = $this->docVars->getRigo();
 
-      // create HTML content
+      // create some HTML content
       $html = "<p><b>".$script_transl['parti']."</b><br>-<b>".$script_transl['locatore']."</b> ".$this->intesta1." ".$this->intesta2." ".$this->intesta3."<br>-"
       .$script_transl['e']."<b>".$script_transl['conduttore']."</b>"." ".$this->cliente1." ".$this->cliente2." ".$this->cliente3." ".$this->cliente4." "."<br>".$script_transl['body1']."</p>
       <p>1- <b>".$script_transl['oggetto']."</b><br>".$script_transl['body2']."</p>";
       $html .= "<ul>";
-      $tour_tax="";
       foreach ($lines as $rigo){
         //echo "<br><pre>",print_r($rigo);
         if (isset ($rigo['custom_field']) && ($custom = json_decode($rigo['custom_field'],true)) && (json_last_error() == JSON_ERROR_NONE)){
@@ -110,12 +102,11 @@ class Lease extends Template
                 $checkout='8 - 10';
               }
 
-              $html .= "<li>".$accomodation_type." ".$rigo['codart'].', '.get_string_lang($rigo['desart'], $lang).", ".$rigo['annota'];
+              $html .= "<li>".$accomodation_type." called ".get_string_lang($rigo['desart'], $lang).", ".$rigo['annota'];
               if (strlen($rigo['web_url'])>5){
                 $html .= "<br>".$script_transl['body3'].": ".$rigo['web_url'].". ".$script_transl['body4'];
               }
               $html .= "</li>";
-
               $adult=$rigo['adult'];
               $child=$rigo['child'];
               $start=$rigo['start'];
@@ -123,14 +114,14 @@ class Lease extends Template
               $secdep = $custom['vacation_rental']['security_deposit'];
           }
           if (array_key_exists('extra', $custom['vacation_rental'])) { // è un extra
-              $html .= "<li>Q.tà. ".intval($rigo['quanti'])." Extra ".get_string_lang($rigo['desart'], $lang)." ".$rigo['annota'];
+              $html .= "<li>".intval($rigo['quanti'])."Extra ".get_string_lang($rigo['desart'], $lang)." ".$rigo['annota'];
               if (strlen($rigo['web_url'])>5){
                 $html .= "<br>   ".$script_transl['body3'].": ".$rigo['web_url'].".   ".$script_transl['body4'];
               }
               $html .= "</li>";
           }
         } elseif($rigo['codart']=="TASSA-TURISTICA"){ // è la tassa turistica
-          $tour_tax=$script_transl['tour_tax'];
+          $html .= "<li>".$rigo['descri']."</li>";
         }
       }
 
@@ -150,16 +141,16 @@ class Lease extends Template
       $html .= "</ul>";
       $html .= "<dl>";
       $html .= "<dt>2- <b>".$script_transl['durata']."</b></dt>" ;
-      $html .= "<dd>- ".$script_transl['durata1'].$nights."</dd><dd>- ".$script_transl['durata2']." ".date("d-m-Y", strtotime($start))." ".$script_transl['durata2bis']." ".get_string_lang($checkin, $lang)."</dd>
-                <dd>- ".$script_transl['durata3']." ".date("d-m-Y", strtotime($end))." ".$script_transl['durata2bis']." ".get_string_lang($checkout, $lang).". ".$script_transl['durata4']."</dd>
+      $html .= "<dd>- ".$script_transl['durata1'].$nights."</dd><dd>- ".$script_transl['durata2']." ".date("Y-m-d", strtotime($start))." ".$script_transl['durata2bis']." ".get_string_lang($checkin, $lang)."</dd>
+                <dd>- ".$script_transl['durata3']." ".date("Y-m-d", strtotime($end))." ".$script_transl['durata2bis']." ".get_string_lang($checkout, $lang).". ".$script_transl['durata4']."</dd>
                 <dd>- ".$script_transl['durata5']."</dd>";
 
       $html .= "<dt>3- <b>".$script_transl['canone']."</b></dt>" ;
       $html .= "<dd>- ".$script_transl['body5'].(intval($adult)+intval($child)).$script_transl['body6'].$adult.$script_transl['body7'].$child.$script_transl['body8'].$minor."</dd>";
 
-      $html .= "<dd>- ".$script_transl['canone1']." € ".number_format(($totamount),2,",",".")." (".$in_words.") ".$script_transl['canone2bis'].$tour_tax.$script_transl['canone2']."</dd>";
+      $html .= "<dd>- ".$script_transl['canone1']." € ".number_format(($totamount),2,".",",")." (".$in_words.") ".$script_transl['canone2bis'].$tour_tax.$script_transl['canone2']."</dd>";
       if ($secdep>1){// se è previsto un deposito cauzionale lo scrivo
-        $html .= "<dd>- ".$script_transl['canone3']." € ".number_format(($secdep),2,",",".")." (". numfmt_format($fmt, floatval(number_format(($secdep),2,".","")))."). ".$script_transl['canone4']."</dd>";
+        $html .= "<dd>- ".$script_transl['canone3']." € ".number_format(($secdep),2,".",",")." (". numfmt_format($fmt, floatval(number_format(($secdep),2,".","")))."). ".$script_transl['canone4']."</dd>";
       }
 
       $html .= "<dt>4- <b>".$script_transl['divieti']."</b></dt>";
@@ -172,16 +163,16 @@ class Lease extends Template
       $html .= "<dd>- ".$script_transl['rinvio1']."</dd>";
 
       $html .= "<dt>7- <b>".$script_transl['accettazione']."</b></dt>" ;
-      if (strlen($this->ip)>7){// se firmato on line lo preciso
+      if (strlen($this->ip)>6){// se firmato on line lo preciso
         $html .= "<dd>- ".$script_transl['accettazione1']."</dd>";
       }
       $html .= "<dd>- ".$script_transl['accettazione2']."</dd>";
 
       $html .= "<dl>";
-      if (strlen($this->ip)>7){// firme digitali
-        $html .= "<br><p><b>Firmato digitalmente on-line</b></p><span>Il locatore ".$this->intesta1."</span><span style=\" letter-spacing: 30px;\">&nbsp; &nbsp;</span><span> Il conduttore ".$this->cliente1." firmato on-line da IP:".$this->ip."</span>";
+      if (strlen($this->ip)>6){// firme digitali
+        $html .= "<br><p><b>".$script_transl['sign-online']." </b></p><span>".$script_transl['locatore']." ".$this->intesta1."</span><span style=\" letter-spacing: 30px;\">&nbsp; &nbsp;</span><span> ".$script_transl['conduttore']." ".$this->cliente1."  IP:".$this->ip."</span>";
       }else{// firme fisiche
-        $html .= "<br><p><b>Firmato </b></p><span>Il locatore ".$this->intesta1."</span><span style=\" letter-spacing: 30px;\">&nbsp; &nbsp;</span><span> Il conduttore ".$this->cliente1."</span>";
+        $html .= "<br><p><b>".$script_transl['sign']." </b></p><span>".$script_transl['locatore']." ".$this->intesta1."</span><span style=\" letter-spacing: 30px;\">&nbsp; &nbsp;</span><span> ".$script_transl['conduttore']." ".$this->cliente1."</span>";
       }
       // output the HTML content
       $this->writeHTML($html, true, false, true, false, '');
