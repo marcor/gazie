@@ -123,6 +123,7 @@ class BookingSummary extends Template
                     break;
                 }
        }
+
     }
 
     function compose()
@@ -175,16 +176,38 @@ class BookingSummary extends Template
 		} else {
 			$this->Cell(186, 6, '',1);
 		}
+		
+		$this->SetY(224);
+		$this->Cell(100, 6, 'Pagamenti effettuati', 'LTR', 0, 'C', 1);
+		$this->Cell(30, 6, 'Importo', 'LTR', 1, 'C', 1);
+		$payments = $this->docVars->getPag();
+		$payed=0;
+		foreach ($payments AS $key => $pay) {
+			$this->Cell(100, 6, $pay['created'].' '.$pay['type'] . '-' . $pay['txn_id'] , 'LR', 0, 'C', 0, '', 1);
+			$this->Cell(30, 6, number_format($pay['payment_gross'],2,",","."), 'LR', 1, 'C');
+			$payed += $pay['payment_gross'];
+		}
+		$this->Cell(130, 6, '', 'T', 0, 'C');
 
         $this->SetY(218);
         $this->Cell(130);
         $this->SetFont('helvetica','B',18);
 		if ( $this->tesdoc['print_total']>0){
-			$this->Cell(56, 24, '€ '.number_format(($totimpfat + $totivafat + $impbol+$taxstamp),2,",","."), 1, 1, 'C');
+			$this->Cell(56, 6, '€ '.number_format(($totimpfat + $totivafat + $impbol+$taxstamp),2,",","."), 1, 0, 'C');
+			if ($payed>0){
+				 $this->SetY(227);
+				$this->Cell(130);
+				$this->SetFont('helvetica','B',12);
+				$this->Cell(56, 6, 'SALDO', 1, 0, 'C', 1);
+				 $this->SetY(233);
+				$this->Cell(130);
+				$this->SetFont('helvetica','B',18);
+				$this->Cell(56, 6, '€ '.number_format(($totimpfat + $totivafat + $impbol+$taxstamp-$payed),2,",","."), 1, 0, 'C');
+			}
         } else {
 			$this->Cell(56, 24, '',1);
 		}
-      $this->SetY(224);
+		$this->SetY(224);
        /*
       $this->SetFont('helvetica','',9);
       $this->Cell(62, 6,'Spedizione',1,1,'C',1);

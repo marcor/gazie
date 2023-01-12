@@ -406,7 +406,7 @@ class DocContabVars {
           $this->regime_fiscale=$fr;
         }
   }
-  
+
     function initializeTotals() {
         // definisco le variabili dei totali
         $this->totimp_body = 0;
@@ -539,7 +539,7 @@ class DocContabVars {
 
         }
         if (isset($anagra_prop) || floatval($security_deposit)>0){// se c'è un proprietario o un deposito cauzionale
-          $nuovi_righi=array();          
+          $nuovi_righi=array();
           if (isset($anagra_prop)){// aggiungo un rigo descrittivo per il proprietario
             $nuovi_righi[]=array('tiprig'=>6,'codart'=>'','descri'=>"<h2>".$script_transl['on_behalf'].$script_transl[70].":<br> ".$anagra_prop['ragso1']." ".$anagra_prop['ragso2']." - ".$anagra_prop['indspe']." - ".$anagra_prop['citspe']." - ".$anagra_prop['prospe']."</h2>",'quanti'=>0, 'unimis'=>'','prelis'=>0,'sconto'=>0,'prelis'=>0,'pervat'=>0,'codric'=>0,'provvigione'=>0,'ritenuta'=>0,'id_order'=>0,'id_mag'=>0,'id_orderman'=>0);
           }
@@ -557,6 +557,27 @@ class DocContabVars {
           unset($anagra_prop);
         }
         return $results;
+    }
+
+    function getPag() {
+      global $azTables;
+      global $genTables;
+      $azTables=$GLOBALS['azTables'];
+      global $link;
+      $link=$GLOBALS['link'];
+      if (!isset($lang) || $lang==''){
+        $lang="italian";
+      }
+      $sql = "SELECT * FROM ".$azTables."rental_payments WHERE id_tesbro = " . $this->testat ." ORDER BY payment_id ASC";
+      if ($rs_rig = mysqli_query($link, $sql)){
+      }else{
+        echo "Error: " . $sql . "<br>" . mysqli_error($link);
+      }
+      $results = array();
+      while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
+        $results[] = $rigo;
+      }
+      return $results;
     }
 
     function setTotal() {
@@ -670,7 +691,7 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
 		$res = mysqli_fetch_assoc($result);
 		$vacation_url_user=$res['val'];
 		if ($lang!="it"){// se non è IT modifico la lingua nell'url
-		  $vacation_url_user=str_replace('/it/','/'.$lang.'/',$vacation_url_user);		  
+		  $vacation_url_user=str_replace('/it/','/'.$lang.'/',$vacation_url_user);
 		}
 		if (strlen($vacation_url_user)>3 && $templateName!=='Lease'){
 		$sql = "SELECT access_code FROM ".$azTables."rental_events"." WHERE id_tesbro = ".intval($testata['id_tes'])." AND type = 'ALLOGGIO' LIMIT 1";
