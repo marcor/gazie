@@ -42,7 +42,10 @@ if(isset($_POST["fn"])&& isset($_POST["filename"])){ // ho i dati di base
         }
 	// lettura db
     } else {
-        echo gaz_dbi_get_row($gTables['company_data'], 'var', filter_var($_POST['filename'], FILTER_SANITIZE_FULL_SPECIAL_CHARS))['data'];
+        $dt= gaz_dbi_get_row($gTables['company_data'], 'var', filter_var($_POST['filename'], FILTER_SANITIZE_FULL_SPECIAL_CHARS));
+		if (isset($dt)){
+			echo $dt['data'];
+		}
     }
 }
 ?>

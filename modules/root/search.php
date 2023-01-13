@@ -191,8 +191,8 @@ if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato diret
         $return_arr[] = $row;
     }
     if ($opt=='suggest_new_codart'){ // in caso di suggerimento codice
-			$return_arr[0]['value']++;
-			$return_arr[0]['label'].=' successivo: '.$return_arr[0]['value'];
+			(isset($return_arr[0]['value']))?$return_arr[0]['value']++:$return_arr[0]['value']=1;
+			(isset($return_arr[0]['label']))?$return_arr[0]['label'].=' successivo: '.$return_arr[0]['value']:$return_arr[0]['label'] =' successivo: '.$return_arr[0]['value'];
 	}
     if ($term != '%%') { //	E' indispensabile, altrimenti si possono generare warning che non fanno funzionare l'autocompletamento
         $return_arr = apply_highlight($return_arr, str_replace("%", '', $parts));
@@ -215,13 +215,15 @@ function apply_evidenze($evidenza)
 	$rows = count($evidenza);
 
     for ($row = 0; $row < $rows; $row++) {
-		switch ($evidenza[$row]["movimentabile"]) {
-        case 'E':
-			$evidenza[$row]["label"] = '<mark style="background-color:#FFA500;">' . $evidenza[$row]["label"] . '</mark>';
-		break;
-        case 'N':
-			$evidenza[$row]["label"] = '<mark style="background-color:#FD3030;">' . $evidenza[$row]["label"] . '</mark>';
-		break;
+		if (isset($evidenza[$row]["movimentabile"])){
+			switch ($evidenza[$row]["movimentabile"]) {
+			case 'E':
+				$evidenza[$row]["label"] = '<mark style="background-color:#FFA500;">' . $evidenza[$row]["label"] . '</mark>';
+			break;
+			case 'N':
+				$evidenza[$row]["label"] = '<mark style="background-color:#FD3030;">' . $evidenza[$row]["label"] . '</mark>';
+			break;
+			}
 		}
 	}
 

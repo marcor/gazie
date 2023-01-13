@@ -111,7 +111,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 } else { //se e' il primo accesso per INSERT
     $form=gaz_dbi_fields('files');
     $form['ritorno']=$_SERVER['HTTP_REFERER'];
-    $artico = gaz_dbi_get_row($gTables['artico'], 'codice',substr($_GET['item_ref'],0,15));
+    $artico = gaz_dbi_get_row($gTables['artico'], 'codice',substr($_GET['item_ref'],0,32));
     if (!empty($artico)) { //l'articolo è stato trovato
        $form['item_ref']= $artico['codice'];
     } else { // scappo!
