@@ -398,7 +398,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                           $oldid=$key;break;
                         }
                       }
-                      // cancello il rigo per poi riscriverlo: in questa maniera preservo la sequenza dei righi operati nel form
+                      // cancello il rigo per poi riscriverlo: in questa maniera preservo la sequenza dei righi operata nel form
                       gaz_dbi_del_row($gTables['rigbro'], "id_rig", $old_rows[$oldid]['id_rig']);
                       $row['id_tes'] = $form['id_tes'];
                       $last_rigbro_id = rigbroInsert($row);
@@ -409,10 +409,17 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         rename(DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $old_rows[$oldid]['id_rig'] . '.' . $fn['extension'] , DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $last_rigbro_id . '.' . $fn['extension']);
 
                       }elseif(!empty($row['extdoc'])){// c'è un nuovo file da inserire
+                        // elimino il vecchio file sostituito
+                        $urlarr=(glob(DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $old_rows[$oldid]['id_rig'].".*"));
+                        if (isset($urlarr)){
+                          $fn = pathinfo($urlarr[0]);
+                          unlink(DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $old_rows[$oldid]['id_rig'] . '.' . $fn['extension']);
+                        }
                         $tmp_file = DATA_DIR . 'files/tmp/' . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $row['extdoc'];
                         // sposto il file temporaneo nella cartella definitiva assegnandogli nome e riferimento rigo
                         $fn = pathinfo($row['extdoc']);
                         rename($tmp_file, DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $last_rigbro_id . '.' . $fn['extension']);
+
                       }
 
                       if (intval($old_rows[$oldid]['id_body_text'])>0){// se il vecchio rigo aveva un bodytext
@@ -480,7 +487,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $codice = array('id_tes', $form['id_tes']);
                 tesbroUpdate($codice, $form);
 
-                // aggiorno l'e-commerce ove presente cob i dati raccolti in precedenza nell'apposito array
+                // aggiorno l'e-commerce ove presente con i dati raccolti in precedenza nell'apposito array
                 if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
                     $gs=$admin_aziend['synccommerce_classname'];
                     $gSync = new $gs();
@@ -1776,6 +1783,7 @@ $carry = 0;
 $last_row = array();
 $vp = gaz_dbi_get_row($gTables['company_config'], 'var', 'vat_price')['val'];
 foreach ($form['rows'] as $k => $v) {
+    $v['provvigione']=(isset($v['provvigione']))?$v['provvigione']:0;
     //creo il castelletto IVA
     $imprig = 0;
     if ($v['tiprig'] <= 1) {
