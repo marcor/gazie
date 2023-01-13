@@ -1182,6 +1182,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $swap=$form["row_$upp_key"];
             $form["row_$upp_key"] = $form["row_$new_key"];
             $form["row_$new_key"] = $swap;
+        }elseif(isset($form["row_$new_key"]))  { //se lo sto spostando dove prima c'era un rigo normale
+            $form["row_$upp_key"] = $form["row_$new_key"];
+            unset($form["row_$new_key"]);
         }
         $updated_row = $form['rows'][$new_key];
         $form['rows'][$new_key] = $form['rows'][$upp_key];
