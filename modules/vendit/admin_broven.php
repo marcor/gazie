@@ -180,9 +180,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_sconto'] = $_POST['in_sconto'];
     $form['in_quanti'] = gaz_format_quantity($_POST['in_quanti'], 0, $admin_aziend['decimal_quantity']);
     $form['in_codvat'] = $_POST['in_codvat'];
-    $form['in_codric'] = $_POST['in_codric'];
+    $form['in_codric'] = (isset($_POST['in_codric']))?$_POST['in_codric']:0;
     $form['in_provvigione'] = $_POST['in_provvigione'];
     $form['in_id_mag'] = $_POST['in_id_mag'];
+    $form['in_id_rig'] = $_POST['in_id_rig'];
     $form['in_annota'] = $_POST['in_annota'];
     $form['in_scorta'] = $_POST['in_scorta'];
     $form['in_quamag'] = $_POST['in_quamag'];
@@ -223,7 +224,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['tiprig'] = intval($v['tiprig']);
             $form['rows'][$next_row]['id_doc'] = intval($v['id_doc']);
             $form['rows'][$next_row]['codart'] = substr($v['codart'], 0, 32);
-			$form['rows'][$next_row]['good_or_service'] = intval($v['good_or_service']);
+            $form['rows'][$next_row]['good_or_service'] = intval($v['good_or_service']);
             $form['rows'][$next_row]['pervat'] = preg_replace("/\,/", '.', $v['pervat']);
             $form['rows'][$next_row]['tipiva'] = strtoupper(substr($v['tipiva'], 0, 1));
             $form['rows'][$next_row]['ritenuta'] = preg_replace("/\,/", '.', $v['ritenuta']);
@@ -237,6 +238,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['provvigione'] = intval($v['provvigione']);
             }
             $form['rows'][$next_row]['id_mag'] = intval($v['id_mag']);
+            $form['rows'][$next_row]['id_rig'] = intval($v['id_rig']);
             $form['rows'][$next_row]['annota'] = substr($v['annota'], 0, 50);
             $form['rows'][$next_row]['scorta'] = floatval($v['scorta']);
             $form['rows'][$next_row]['quamag'] = floatval($v['quamag']);
@@ -287,8 +289,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['in_sconto'] = $form['rows'][$k_row]['sconto'];
                     $form['in_quanti'] = $form['rows'][$k_row]['quanti'];
                     $form['in_codric'] = $form['rows'][$k_row]['codric'];
-                    $form['in_provvigione'] = $form['rows'][$k_row]['provvigione'];
+                    $form['in_provvigione'] = (isset($form['rows'][$k_row]['provvigione']))?$form['rows'][$k_row]['provvigione']:0;
                     $form['in_id_mag'] = $form['rows'][$k_row]['id_mag'];
+                    $form['in_id_rig'] = $form['rows'][$k_row]['id_rig'];
                     $form['in_annota'] = $form['rows'][$k_row]['annota'];
                     $form['in_scorta'] = $form['rows'][$k_row]['scorta'];
                     $form['in_quamag'] = $form['rows'][$k_row]['quamag'];
@@ -380,66 +383,85 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['clfoco'] = $anagrafica->anagra_to_clfoco($new_clfoco, $admin_aziend['mascli'],$form['pagame']);
             }
             if ($toDo == 'update') { // e' una modifica
-                $old_rows = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes = " . $form['id_tes'], "id_rig asc");
+                // carico i vecchi righi presenti nel DB
+                $oldresult = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes = " . $form['id_tes'], "id_rig asc");
+                while($old_rows[] = mysqli_fetch_assoc($oldresult));
+                array_pop($old_rows);  // pop the last row off, which is an empty row
                 $i = 0;$syncarticols=array();
-                $count = count($form['rows']) - 1;
-                while ($val_old_row = gaz_dbi_fetch_array($old_rows)) {
-                  array_push($syncarticols,$val_old_row['codart']);// Antonio Germani - aggiungo il codice articolo all'array per la sincronizzazione e-commerce
-                    if ($i <= $count) { //se il vecchio rigo e' ancora presente nel nuovo lo modifico
-                        $form['rows'][$i]['id_tes'] = $form['id_tes'];
-                        $codice = array('id_rig', $val_old_row['id_rig']);
-                        rigbroUpdate($codice, $form['rows'][$i]);
-                        if (isset($form["row_$i"]) && $val_old_row['id_body_text'] > 0) { //se è un rigo testo già presente lo modifico
-                            bodytextUpdate(array('id_body', $val_old_row['id_body_text']), array('table_name_ref' => 'rigbro', 'id_ref' => $val_old_row['id_rig'], 'body_text' => $form["row_$i"], 'lang_id' => $admin_aziend['id_language']));
-                            gaz_dbi_put_row($gTables['rigbro'], 'id_rig', $val_old_row['id_rig'], 'id_body_text', $val_old_row['id_body_text']);
-                        } elseif (isset($form["row_$i"]) && $val_old_row['id_body_text'] == 0) { //prima era un rigo diverso da testo
-                            bodytextInsert(array('table_name_ref' => 'rigbro', 'id_ref' => $val_old_row['id_rig'], 'body_text' => $form["row_$i"], 'lang_id' => $admin_aziend['id_language']));
-                            gaz_dbi_put_row($gTables['rigbro'], 'id_rig', $val_old_row['id_rig'], 'id_body_text', gaz_dbi_last_id());
-                        } elseif (!isset($form["row_$i"]) && $val_old_row['id_body_text'] > 0) { //un rigo che prima era testo adesso non lo � pi�
-                            gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigbro' AND id_ref", $val_old_row['id_rig']);
+
+                foreach ($form['rows'] as $row) {// ciclo i righi del form
+                  array_push($syncarticols,$row['codart']);// Antonio Germani - aggiungo il codice articolo all'array per la sincronizzazione e-commerce
+                  if (intval($row['id_rig'])>0) { //se è un rigo vecchio
+                      // trovo quale old id ha questo rigo
+                      foreach ($old_rows as $key => $val) {
+                        if ($val['id_rig']==$row['id_rig']){
+                          $oldid=$key;break;
                         }
-                        if ($form['rows'][$i]['tiprig']==50 && !empty($form['rows'][$i]['extdoc']) && substr($form['rows'][$i]['extdoc'],0,10)!='rigbrodoc_') {
-                            // se a questo rigo corrispondeva un certificato controllo che non sia stato aggiornato, altrimenti lo cambio
-                            $dh = opendir( DATA_DIR . 'files/' . $admin_aziend['company_id'] );
-                            while (false !== ($filename = readdir($dh))) {
-                                $fd = pathinfo($filename);
-                                if ($fd['filename'] == 'rigbrodoc_' . $val_old_row['id_rig']) {
-                                    // cancello il file precedente indipendentemente dall'estensione
-                                    $frep = glob( DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $val_old_row['id_rig'] . '.*');
-                                    foreach ($frep as $fdel) {// prima cancello eventuali precedenti file temporanei
-                                        unlink($fdel);
-                                    }
-                                }
-                            }
-                            $tmp_file = DATA_DIR . 'files/tmp/' . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['extdoc'];
-							// sposto e rinomino il relativo file temporaneo
-                            $fn = pathinfo($form['rows'][$i]['extdoc']);
-                            rename($tmp_file, DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $val_old_row['id_rig'] . '.' . $fn['extension']);
-                        }
-                    } else { //altrimenti lo elimino
-                        if (intval($val_old_row['id_body_text']) > 0) {  //se c'� un testo allegato al rigo elimino anch'esso
-                            gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigbro' AND id_ref", $val_old_row['id_rig']);
-                        }
-                        gaz_dbi_del_row($gTables['rigbro'], "id_rig", $val_old_row['id_rig']);
-                    }
-                    $i++;
-                }
-                //qualora i nuovi rows fossero di pi� dei vecchi inserisco l'eccedenza
-                for ($i = $i; $i <= $count; $i++) {
-                    array_push($syncarticols,$form['rows'][$i]['codart']);// Antonio Germani - aggiungo il codice articolo all'array per la sincronizzazione e-commerce
-                    $form['rows'][$i]['id_tes'] = $form['id_tes'];
-                    $last_rigbro_id = rigbroInsert($form['rows'][$i]);
-                    if (!empty($form['rows'][$i]['extdoc'])) {
-                        $tmp_file = DATA_DIR . 'files/tmp/' . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['extdoc'];
-// sposto e rinomino il relativo file temporaneo
-                        $fd = pathinfo($form['rows'][$i]['extdoc']);
+                      }
+                      // cancello il rigo per poi riscriverlo: in questa maniera preservo la sequenza dei righi operati nel form
+                      gaz_dbi_del_row($gTables['rigbro'], "id_rig", $old_rows[$oldid]['id_rig']);
+                      $row['id_tes'] = $form['id_tes'];
+                      $last_rigbro_id = rigbroInsert($row);
+
+                      if (substr($row['extdoc'],0,10) == "rigbrodoc_"){// c'è un file allegato che non è stato cambiato
+                        $fn = pathinfo($row['extdoc']);
+                        // gli modifico il riferimento rigo al suo nome
+                        rename(DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $old_rows[$oldid]['id_rig'] . '.' . $fn['extension'] , DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $last_rigbro_id . '.' . $fn['extension']);
+
+                      }elseif(!empty($row['extdoc'])){// c'è un nuovo file da inserire
+                        $tmp_file = DATA_DIR . 'files/tmp/' . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $row['extdoc'];
+                        // sposto il file temporaneo nella cartella definitiva assegnandogli nome e riferimento rigo
+                        $fn = pathinfo($row['extdoc']);
+                        rename($tmp_file, DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $last_rigbro_id . '.' . $fn['extension']);
+                      }
+
+                      if (intval($old_rows[$oldid]['id_body_text'])>0){// se il vecchio rigo aveva un bodytext
+                        gaz_dbi_del_row($gTables['body_text'], "id_body", $old_rows[$oldid]['id_body_text']); // cancello il vecchio body text
+                      }
+                      if (isset($form["row_$i"])){// se questo rigo del form ha un bodytext lo inserisco
+                        bodytextInsert(array('table_name_ref' => 'rigbro', 'id_ref' => $last_rigbro_id, 'body_text' => $form["row_$i"], 'lang_id' => $admin_aziend['id_language']));
+                        gaz_dbi_put_row($gTables['rigbro'], 'id_rig', $last_rigbro_id, 'id_body_text', gaz_dbi_last_id());
+                      }
+
+                      unset($old_rows[$oldid]);// tolgo questo rigo vecchio dal relativo array in quanto già elaborato
+
+                  } else { //altrimenti lo inserisco nuovo
+                    array_push($syncarticols,$row['codart']);// Antonio Germani - aggiungo il codice articolo all'array per la sincronizzazione e-commerce
+                    $row['id_tes'] = $form['id_tes'];
+                    $last_rigbro_id = rigbroInsert($row);
+                    if (!empty($row['extdoc'])) {
+                        $tmp_file = DATA_DIR . 'files/tmp/' . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $row['extdoc'];
+                        // sposto e rinomino il relativo file temporaneo
+                        $fd = pathinfo($row['extdoc']);
                         rename($tmp_file, DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $last_rigbro_id . '.' . $fd['extension']);
                     }
-                    if (isset($form["row_$i"])) { //se � un rigo testo lo inserisco il contenuto in body_text
+                    if (isset($form["row_$i"])) { //se è un rigo testo, inserisco il contenuto body_text
                         bodytextInsert(array('table_name_ref' => 'rigbro', 'id_ref' => $last_rigbro_id, 'body_text' => $form["row_$i"], 'lang_id' => $admin_aziend['id_language']));
                         gaz_dbi_put_row($gTables['rigbro'], 'id_rig', $last_rigbro_id, 'id_body_text', gaz_dbi_last_id());
                     }
+
+                  }
+                  $i++;
                 }
+
+                // finita l'elaborazione del form, se mi sono rimasti dei vecchi righi non più utilizzati li cancello
+                if (count($old_rows)>0){
+                  foreach($old_rows as $old_row){
+                    array_push($syncarticols,$old_row['codart']);// Antonio Germani - aggiungo il codice articolo all'array per la sincronizzazione e-commerce
+                    if (intval($old_row['id_body_text']) > 0) {  //se c'è un testo allegato al rigo elimino anch'esso
+                      gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigbro' AND id_ref", $old_row['id_rig']);
+                    }
+                    gaz_dbi_del_row($gTables['rigbro'], "id_rig", $old_row['id_rig']);
+                    if ($old_row['tiprig']==50 || $old_row['tiprig']==51){// se il rigo aveva un file allegato Cancello anche il file
+                      $urlarr=(glob(DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $old_row['id_rig'].".*"));
+                      if (isset($urlarr)){
+                        $fn = pathinfo($urlarr[0]);
+                        unlink(DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $old_row['id_rig'] . '.' . $fn['extension']);
+                      }
+                    }
+                  }
+                }
+
                 //modifico la testata con i nuovi dati...
                 $old_head = gaz_dbi_get_row($gTables['tesbro'], 'id_tes', $form['id_tes']);
                 if (substr($form['tipdoc'], 0, 2) == 'DD') { //se � un DDT non fatturato
@@ -457,8 +479,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['datemi'] = $datemi;
                 $codice = array('id_tes', $form['id_tes']);
                 tesbroUpdate($codice, $form);
+
+                // aggiorno l'e-commerce ove presente cob i dati raccolti in precedenza nell'apposito array
                 if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
-                    // aggiorno l'e-commerce ove presente
                     $gs=$admin_aziend['synccommerce_classname'];
                     $gSync = new $gs();
                     if($gSync->api_token){
@@ -467,6 +490,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                       }
                     }
                 }
+
                 header("Location: " . $form['ritorno']);
                 exit;
             } else { // e' un'inserimento
@@ -727,6 +751,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$next_row]['id_doc'] = '';
         $form['rows'][$next_row]['descri'] = '';
         $form['rows'][$next_row]['id_mag'] = 0;
+        $form['rows'][$next_row]['id_rig'] = 0;
         $form['rows'][$next_row]['status'] = 'INSERT';
         $form['rows'][$next_row]['scorta'] = 0;
         $form['rows'][$next_row]['quamag'] = 0;
@@ -750,6 +775,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$next_row]['id_doc'] = '';
         $form['rows'][$next_row]['descri'] = '';
         $form['rows'][$next_row]['id_mag'] = 0;
+        $form['rows'][$next_row]['id_rig'] = 0;
         $form['rows'][$next_row]['status'] = 'INSERT';
         $form['rows'][$next_row]['scorta'] = 0;
         $form['rows'][$next_row]['quamag'] = 0;
@@ -780,6 +806,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$old_key]['id_doc'] = $form['in_id_doc'];
             $form['rows'][$old_key]['descri'] = $form['in_descri'];
             $form['rows'][$old_key]['id_mag'] = $form['in_id_mag'];
+            $form['rows'][$old_key]['id_rig'] = $form['in_id_rig'];
             $form['rows'][$old_key]['status'] = "UPDATE";
             $form['rows'][$old_key]['unimis'] = $form['in_unimis'];
             $form['rows'][$old_key]['quanti'] = $form['in_quanti'];
@@ -888,6 +915,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['rows'][$next_row]['tiprig'] = 6;
                     $form['rows'][$next_row]['descri'] = '';
                     $form['rows'][$next_row]['id_mag'] = 0;
+                    $form['rows'][$next_row]['id_rig'] = 0;
                     $form['rows'][$next_row]['id_lotmag'] = 0;
 					$form['rows'][$next_row]['identifier'] = '';
 					$form['rows'][$next_row]['cod_operazione'] = 11;
@@ -918,6 +946,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['id_doc'] = $form['in_id_doc'];
             $form['rows'][$next_row]['descri'] = $form['in_descri'];
             $form['rows'][$next_row]['id_mag'] = $form['in_id_mag'];
+            $form['rows'][$next_row]['id_rig'] = $form['in_id_rig'];
             $form['rows'][$next_row]['extdoc'] = 0;
             $form['rows'][$next_row]['status'] = "INSERT";
             $form['rows'][$next_row]['scorta'] = 0;
@@ -945,7 +974,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         $form['rows'][$next_row]['sconto'] = 0;
 					} else {
 						$comp = new venditCalc();
-						$tmpPrezzoNetto_Sconto = $comp->trovaPrezzoNetto_Sconto($cliente['codice'], $form['rows'][$next_row]['codart'], (isset($artico['sconto']))?$artico['sconto']:0);
+						$tmpPrezzoNetto_Sconto = $comp->trovaPrezzoNetto_Sconto((isset($cliente['codice']))?$cliente['codice']:0, $form['rows'][$next_row]['codart'], (isset($artico['sconto']))?$artico['sconto']:0);
 						if ($tmpPrezzoNetto_Sconto < 0) { // è un prezzo netto
 							$form['rows'][$next_row]['prelis'] = -$tmpPrezzoNetto_Sconto;
 							$form['rows'][$next_row]['sconto'] = 0;
@@ -968,7 +997,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     } elseif ($form['listin'] == 5) {
                         $form['rows'][$next_row]['prelis'] = number_format((isset($artico))?$artico['web_price']:0, $admin_aziend['decimal_price'], '.', '');
                     } else {
-                        $form['rows'][$next_row]['prelis'] = number_format($artico['preve1'], $admin_aziend['decimal_price'], '.', '');
+                        $form['rows'][$next_row]['prelis'] = number_format((isset($artico['preve1']))?$artico['preve1']:0, $admin_aziend['decimal_price'], '.', '');
                     }
                 }
                 $form['rows'][$next_row]['codvat'] = $admin_aziend['preeminent_vat'];
@@ -1007,10 +1036,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         $form['rows'][$next_row]['id_lotmag'] = 0;
                         $form['rows'][$next_row]['tiprig'] = 210;
                         $form['rows'][$next_row]['id_mag'] = "";
+                        $form['rows'][$next_row]['id_rig'] = "";
                         $form['rows'][$next_row]['status'] = "INSERT";
                         $form['rows'][$next_row]['scorta'] = 0;
                         $form['rows'][$next_row]['codart'] = $row2['codice'];
-						$form['rows'][$next_row]['good_or_service'] = $row2['good_or_service'];
+                        $form['rows'][$next_row]['good_or_service'] = $row2['good_or_service'];
                         $form['rows'][$next_row]['descri'] = $row2['descri'];
                         $form['rows'][$next_row]['unimis'] = $row2['unimis'];
                         $form['rows'][$next_row]['prelis'] = 0;
@@ -1112,13 +1142,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         // reinizializzo rigo di input tranne che per il tipo rigo e aliquota iva
         $form['in_descri'] = "";
         $form['in_codart'] = "";
-		$form['in_good_or_service'] = "";
+        $form['in_good_or_service'] = "";
         $form['in_unimis'] = "";
         $form['in_prelis'] = 0;
 //      $form['in_sconto'] = '#';  non azzero il campo in_sconto (sconto rigo)
         $form['in_quanti'] = 0;
         $form['in_codric'] = substr($admin_aziend['impven'], 0, 3);
         $form['in_id_mag'] = 0;
+        $form['in_id_rig'] = 0;
         $form['in_annota'] = "";
         $form['in_scorta'] = 0;
         $form['in_quamag'] = 0;
@@ -1191,7 +1222,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_id_doc'] = 0;
     /*   $form['in_artsea'] = $admin_aziend['artsea']; */
     $form['in_codart'] = "";
-	$form['in_good_or_service'] = "";
+    $form['in_good_or_service'] = "";
     $form['in_pervat'] = 0;
     $form['in_tipiva'] = 0;
     $form['in_ritenuta'] = 0;
@@ -1207,6 +1238,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_codvat'] = $cliente['aliiva'];
     $form['in_codric'] = substr($admin_aziend['impven'], 0, 3);
     $form['in_id_mag'] = 0;
+    $form['in_id_rig'] = 0;
     $form['in_annota'] = "";
     $form['in_pesosp'] = 0;
     $form['in_scorta'] = 0;
@@ -1303,11 +1335,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$next_row]['codric'] = $rigo['codric'];
         $form['rows'][$next_row]['provvigione'] = $rigo['provvigione'];
         $form['rows'][$next_row]['id_mag'] = $rigo['id_mag'];
+        $form['rows'][$next_row]['id_rig'] = $rigo['id_rig'];
         $form['rows'][$next_row]['annota'] = (isset($articolo['annota']))?$articolo['annota']:'';
         $mv = $upd_mm->getStockValue(false, $rigo['codart'], "", $admin_aziend['stock_eval_method']);
         $magval = array_pop($mv);
         $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
-
+        $form['rows'][$next_row]['id_rig'] = $rigo['id_rig'];
         $form['rows'][$next_row]['scorta'] = (isset($articolo['scorta']))?$articolo['scorta']:'';
         $form['rows'][$next_row]['quamag'] = $magval['q_g'];
         $form['rows'][$next_row]['pesosp'] = (isset($articolo['peso_specifico']))?$articolo['peso_specifico']:'';
@@ -1369,6 +1402,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_codric'] = substr($admin_aziend['impven'], 0, 3);
     $form['in_provvigione'] = 0;
     $form['in_id_mag'] = 0;
+    $form['in_id_rig'] = 0;
     $form['in_annota'] = "";
     $form['in_scorta'] = 0;
     $form['in_quamag'] = 0;
@@ -1774,6 +1808,7 @@ foreach ($form['rows'] as $k => $v) {
     echo "<input type=\"hidden\" value=\"" . $v['ritenuta'] . "\" name=\"rows[$k][ritenuta]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['codric'] . "\" name=\"rows[$k][codric]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['id_mag'] . "\" name=\"rows[$k][id_mag]\">\n";
+    echo "<input type=\"hidden\" value=\"" . $v['id_rig'] . "\" name=\"rows[$k][id_rig]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['annota'] . "\" name=\"rows[$k][annota]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['scorta'] . "\" name=\"rows[$k][scorta]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['quamag'] . "\" name=\"rows[$k][quamag]\">\n";
@@ -2142,6 +2177,7 @@ echo '
     <input type="hidden" value="' . $form['in_unimis'] . '" name="in_unimis" />
 	  <input type="hidden" value="' . $form['in_prelis'] . '" name="in_prelis" />
 	  <input type="hidden" value="' . $form['in_id_mag'] . '" name="in_id_mag" />
+    <input type="hidden" value="' . $form['in_id_rig'] . '" name="in_id_rig" />
 	  <input type="hidden" value="' . $form['in_id_doc'] . '" name="in_id_doc" />
 	  <input type="hidden" value="' . $form['in_annota'] . '" name="in_annota" />
 	  <input type="hidden" value="' . $form['in_scorta'] . '" name="in_scorta" />

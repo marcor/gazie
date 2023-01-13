@@ -190,15 +190,24 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 			$rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes =". intval($_POST['id_tes']),"id_tes DESC");
 			while ($a_row = gaz_dbi_fetch_array($rs_righidel)) {
 				gaz_dbi_del_row($gTables['rigbro'], "id_rig", $a_row['id_rig']);
-                if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname']) AND $tipdoc!=="VOW"){
-                    // aggiorno l'e-commerce ove presente se l'ordine non è web
-                    $gs=$admin_aziend['synccommerce_classname'];
-                    $gSync = new $gs();
-					if($gSync->api_token){
-						$gSync->SetProductQuantity($a_row['codart']);
-					}
+        if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname']) AND $tipdoc!=="VOW"){
+          // aggiorno l'e-commerce ove presente se l'ordine non è web
+          $gs=$admin_aziend['synccommerce_classname'];
+          $gSync = new $gs();
+          if($gSync->api_token){
+            $gSync->SetProductQuantity($a_row['codart']);
+          }
 				}
-				gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigbro' AND id_ref ",$a_row['id_rig']);
+        if (intval($a_row['id_body_text']>0)){// se c'era un body text lo cancello
+          gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigbro' AND id_ref ",$a_row['id_rig']);
+        }
+        if (intval($a_row['tiprig'])==50 || intval($a_row['tiprig'])==51){
+          $urlarr=(glob(DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $a_row['id_rig'].".*"));
+          if (isset($urlarr)){
+            $fn = pathinfo($urlarr[0]);
+            unlink(DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $a_row['id_rig'] . '.' . $fn['extension']);
+          }
+        }
 			}
 		break;
 		case "effett":
