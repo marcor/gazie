@@ -1174,12 +1174,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         } else {
             $new_key = $next_row - 1;
         }
-        if (isset($form["row_$upp_key"])) { //se sto spostando un rigo testo
+      //   echo "upkey:",$upp_key," - new:",$new_key,"<pre>matrice:",print_r($form);die;
+        if (isset($form["row_$upp_key"]) && !isset($form["row_$new_key"])) { //se sto spostando un rigo testo dove non c'era un altro rigo testo
             $form["row_$new_key"] = $form["row_$upp_key"];
             unset($form["row_$upp_key"]);
-        } elseif(isset($form["row_$new_key"]))  { //se lo sto spostando dove prima c'era un rigo testo
+        } elseif(isset($form["row_$upp_key"]) && isset($form["row_$new_key"]))  { //se lo sto spostando dove prima c'era un rigo testo li scambio
+            $swap=$form["row_$upp_key"];
             $form["row_$upp_key"] = $form["row_$new_key"];
-            unset($form["row_$new_key"]);
+            $form["row_$new_key"] = $swap;
         }
         $updated_row = $form['rows'][$new_key];
         $form['rows'][$new_key] = $form['rows'][$upp_key];
