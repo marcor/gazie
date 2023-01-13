@@ -68,12 +68,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         } else {
             $partner = $anagrafica->getPartner($form['clfoco']);
         }
-        /*      $anagrafica = new Anagrafica();
-          $partner = $anagrafica->getPartner($form['clfoco']);
-          $form['cerca_partner'] = substr($partner['ragso1'],0,4);
-          $form['clfoco'] = 0; */
         $form['hidden_req'] = '';
+        //var_dump($_POST);
+        //exit;
     }
+
     if (isset($_POST['ins'])) {   // Se viene inviata la richiesta di conferma totale ...
         $datemi = date("Ymd", mktime(0, 0, 0, $form['mesemi'], $form['gioemi'], $form['annemi']));
         if (!checkdate($form['mesemi'], $form['gioemi'], $form['annemi'])) {
@@ -153,8 +152,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 }
 
 require("../../library/include/header.php");
-$script_transl = HeadMain(0, array(/* 'tiny_mce/tiny_mce' */));
+$script_transl = HeadMain(0, ['custom/autocomplete']);
 ?>
+<script>
+
+</script>
 <style>
   #corpo_ifr{
 	min-height: 400px;
@@ -250,11 +252,11 @@ echo "</table></div>";
 <?php
 if ($form["tipo"] == 'SMS') {
 ?>
-<script type="text/javascript">
-var messaggio;var MSG_STRING="";
-messaggio=$("form input[name=corpo]");MSG_STRING=$("#corpo").val();MSG_STRING=reparse_special_chars(MSG_STRING);$("#metro_messaggio").text("("+(<?php echo $lunghezza_sms ?>-parseInt(MSG_STRING.length))+")");
-function reparse_special_chars(b){reps={"\n":"   ","\t":"   ","\u20a4":"   ","\u20ac":"   ","^":"^^^","{":"{{{","}":"}}}","\\":"\\\\\\","[":"[[[","~":"~~~","]":"]]]","|":"|||"};for(var a in reps){temp_string=b.split(a);b=temp_string.join(reps[a])}return b}
-$("#corpo").keyup(function(){MSG_STRING=$(this).val();MSG_STRING=reparse_special_chars(MSG_STRING);$("#metro_messaggio").text("("+(<?php echo $lunghezza_sms ?>-parseInt(MSG_STRING.length))+")")});$(".dyn_c_fields").click(function(){MSG_STRING=$(messaggio).val();MSG_STRING=reparse_special_chars(MSG_STRING);if(MSG_STRING.length>=<?php echo $lunghezza_sms ?>-$(this).attr("rel").length){return}moved_caret=$(messaggio).caret()+$(this).attr("rel").length;$(messaggio).val($(messaggio).val().substr(0,$(messaggio).caret())+$(this).attr("rel")+$(messaggio).val().substr($(messaggio).caret()));$(messaggio).caret(moved_caret);MSG_STRING=$("#corpo").val();MSG_STRING=reparse_special_chars(MSG_STRING);$("#metro_messaggio").text("("+(<?php echo $lunghezza_sms ?>-parseInt(MSG_STRING.length))+")")});
+<script>
+  var messaggio;var MSG_STRING="";
+  messaggio=$("form input[name=corpo]");MSG_STRING=$("#corpo").val();MSG_STRING=reparse_special_chars(MSG_STRING);$("#metro_messaggio").text("("+(<?php echo $lunghezza_sms ?>-parseInt(MSG_STRING.length))+")");
+  function reparse_special_chars(b){reps={"\n":"   ","\t":"   ","\u20a4":"   ","\u20ac":"   ","^":"^^^","{":"{{{","}":"}}}","\\":"\\\\\\","[":"[[[","~":"~~~","]":"]]]","|":"|||"};for(var a in reps){temp_string=b.split(a);b=temp_string.join(reps[a])}return b}
+  $("#corpo").keyup(function(){MSG_STRING=$(this).val();MSG_STRING=reparse_special_chars(MSG_STRING);$("#metro_messaggio").text("("+(<?php echo $lunghezza_sms ?>-parseInt(MSG_STRING.length))+")")});$(".dyn_c_fields").click(function(){MSG_STRING=$(messaggio).val();MSG_STRING=reparse_special_chars(MSG_STRING);if(MSG_STRING.length>=<?php echo $lunghezza_sms ?>-$(this).attr("rel").length){return}moved_caret=$(messaggio).caret()+$(this).attr("rel").length;$(messaggio).val($(messaggio).val().substr(0,$(messaggio).caret())+$(this).attr("rel")+$(messaggio).val().substr($(messaggio).caret()));$(messaggio).caret(moved_caret);MSG_STRING=$("#corpo").val();MSG_STRING=reparse_special_chars(MSG_STRING);$("#metro_messaggio").text("("+(<?php echo $lunghezza_sms ?>-parseInt(MSG_STRING.length))+")")});
 </script>
 <?php
 }
