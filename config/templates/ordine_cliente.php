@@ -61,7 +61,8 @@ class OrdineCliente extends Template
     }
     function body()
     {
-        $lines = $this->docVars->getRigo();
+
+      $lines = $this->docVars->getRigo();
 		foreach ($lines AS $key => $rigo) {
             if ($this->GetY() >= 185) {
                 $this->Cell(186,6,'','T',1);
@@ -110,13 +111,45 @@ class OrdineCliente extends Template
                     break;
                 case "210": // se è un'articolo composto visualizzo la quantità
                     if ( $this->show_artico_composit=="1" ) {
-						$oldy = $this->GetY();
-						$this->SetFont('helvetica', '', 8);
-						$this->SetY($this->GetY()-6);
-						$this->Cell(104, 8, '('.$rigo['unimis'].' '.gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity).')',0,0,'R');
-						$this->SetY( $oldy );
-						$this->SetFont('helvetica', '', 9);
-					}
+                      $oldy = $this->GetY();
+                      $this->SetFont('helvetica', '', 8);
+                      $this->SetY($this->GetY()-6);
+                      $this->Cell(104, 8, '('.$rigo['unimis'].' '.gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity).')',0,0,'R');
+                      $this->SetY( $oldy );
+                      $this->SetFont('helvetica', '', 9);
+                    }
+                    break;
+                case "50":
+                    // accumulo il file da allegare e lo indico al posto del codice articolo
+                    $file=$this->docVars->getExtDoc($rigo['id_rig']);
+                    $this->Cell(25, 6, $file['file'],1,0,'L',0,'',1);
+                    $this->Cell(80, 6, $rigo['descri'],1,0,'L',0,'',1);
+                    $this->Cell(7,  6, $rigo['unimis'],1,0,'C');
+                    $this->Cell(16, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R',0,'',1);
+                    if ($rigo['prelis'] > 0) {
+                       $this->Cell(18, 6, number_format($rigo['prelis'],$this->decimal_price,',',''),1,0,'R');
+                    } else {
+                       $this->Cell(18, 6, '',1);
+                    }
+                    if ($rigo['sconto']> 0) {
+                       $this->Cell(8, 6,  number_format($rigo['sconto'],1,',',''),1,0,'C');
+                    } else {
+                       $this->Cell(8, 6, '',1);
+                    }
+                    if ($rigo['importo'] > 0) {
+                       $this->Cell(20, 6, gaz_format_number($rigo['importo']),1,0,'R',0,'',1);
+                    } else {
+                       $this->Cell(20, 6, '',1);
+                    }
+                    $this->Cell(12, 6, gaz_format_number($rigo['pervat']),1,1,'R');
+
+                    break;
+                case "51":
+                    // accumulo il file da allegare e lo indico al posto del codice articolo
+                    $file=$this->docVars->getExtDoc($rigo['id_rig']);
+                    $this->Cell(25, 6, $file['file'],1,0,'L',0,'',1);
+                    $this->Cell(80,6,$rigo['descri'],'LR',0,'L',0,'',1);
+                    $this->Cell(81,6,'','R',1);
                     break;
                 }
        }
@@ -144,21 +177,21 @@ class OrdineCliente extends Template
         $this->Cell(18,4, 'Aliquota',1,0,'C',1);
         $this->Cell(25,4, 'Imposta',1,1,'C',1);
         $this->docVars->setTotal($this->tesdoc['traspo']);
-		if ( $this->tesdoc['print_total']>0){
-			foreach ($this->docVars->cast as $key => $value) {
-				$this->Cell(62);
-				$this->Cell(18, 4, gaz_format_number($value['impcast']).' ', 0, 0, 'R');
-				$this->Cell(32, 4, $value['descriz'],0,0,'C');
-				$this->Cell(18, 4, gaz_format_number($value['ivacast']).' ',0,1,'R');
-			}
-		}
+        if ( $this->tesdoc['print_total']>0){
+          foreach ($this->docVars->cast as $key => $value) {
+            $this->Cell(62);
+            $this->Cell(18, 4, gaz_format_number($value['impcast']).' ', 0, 0, 'R');
+            $this->Cell(32, 4, $value['descriz'],0,0,'C');
+            $this->Cell(18, 4, gaz_format_number($value['ivacast']).' ',0,1,'R');
+          }
+        }
         $totimpmer = $this->docVars->totimpmer;
         $speseincasso = $this->docVars->speseincasso;
         $totimpfat = $this->docVars->totimpfat;
         $totivafat = $this->docVars->totivafat;
         $vettor = $this->docVars->vettor;
         $impbol = $this->docVars->impbol;
-		$taxstamp=$this->docVars->taxstamp;
+        $taxstamp=$this->docVars->taxstamp;
         //stampo i totali
         $this->SetY(200);
         $this->SetFont('helvetica','',9);
@@ -169,27 +202,27 @@ class OrdineCliente extends Template
         $this->Cell(36, 6,'Tot.Imponibile',1,0,'C',1);
         $this->Cell(26, 6,'Tot. I.V.A.',1,0,'C',1);
         $this->Cell(22, 6,'Peso in kg',1,1,'C',1);
-		if ( $this->tesdoc['print_total']>0){
-			$this->Cell(36, 6, gaz_format_number($totimpmer),1,0,'C');
-			$this->Cell(16, 6, gaz_format_number($this->tesdoc['sconto']),1,0,'C');
-			$this->Cell(24, 6, gaz_format_number($speseincasso),1,0,'C');
-			$this->Cell(26, 6, gaz_format_number($this->tesdoc['traspo']),1,0,'C');
-			$this->Cell(36, 6, gaz_format_number($totimpfat),1,0,'C');
-			$this->Cell(26, 6, gaz_format_number($totivafat),1,0,'C');
-			$this->Cell(22, 6, '',1,0,'C');
-		} else {
-			$this->Cell(186, 6, '',1);
-		}
+        if ( $this->tesdoc['print_total']>0){
+          $this->Cell(36, 6, gaz_format_number($totimpmer),1,0,'C');
+          $this->Cell(16, 6, gaz_format_number($this->tesdoc['sconto']),1,0,'C');
+          $this->Cell(24, 6, gaz_format_number($speseincasso),1,0,'C');
+          $this->Cell(26, 6, gaz_format_number($this->tesdoc['traspo']),1,0,'C');
+          $this->Cell(36, 6, gaz_format_number($totimpfat),1,0,'C');
+          $this->Cell(26, 6, gaz_format_number($totivafat),1,0,'C');
+          $this->Cell(22, 6, '',1,0,'C');
+        } else {
+          $this->Cell(186, 6, '',1);
+        }
 
         $this->SetY(218);
         $this->Cell(130);
         $this->SetFont('helvetica','B',18);
-		if ( $this->tesdoc['print_total']>0){
-			$this->Cell(56, 24, '€ '.gaz_format_number($totimpfat + $totivafat + $impbol+$taxstamp), 1, 1, 'C');
-        } else {
-			$this->Cell(56, 24, '',1);
-		}
-		$this->SetY(224);
+        if ( $this->tesdoc['print_total']>0){
+          $this->Cell(56, 24, '€ '.gaz_format_number($totimpfat + $totivafat + $impbol+$taxstamp), 1, 1, 'C');
+            } else {
+          $this->Cell(56, 24, '',1);
+        }
+        $this->SetY(224);
         $this->SetFont('helvetica','',9);
         $this->Cell(62, 6,'Spedizione',1,1,'C',1);
         $this->Cell(62, 6,$this->tesdoc['spediz'],1,1,'C');
@@ -199,6 +232,56 @@ class OrdineCliente extends Template
         $this->Cell(150,6,'Firma del cliente per approvazione:',0,1,'L');
         $this->Cell(86, 6);
         $this->Cell(100,6,'','B',1,'L');
+        if (isset($this->docVars->ExternalDoc)){ // se ho dei documenti esterni allegati
+          $this->print_header = false;
+          $this->extdoc_acc=$this->docVars->ExternalDoc;
+          reset($this->extdoc_acc);
+          foreach ($this->extdoc_acc AS $key => $rigo) {
+              $this->SetTextColor(255, 50, 50);
+              $this->SetFont('helvetica', '', 6);
+              if ($rigo['ext'] == 'pdf') {
+                  $this->numPages = $this->setSourceFile( DATA_DIR . 'files/' . $rigo['file'] );
+                  if ($this->numPages >= 1) {
+                      for ($i = 1; $i <= $this->numPages; $i++) {
+                          $this->_tplIdx = $this->importPage($i);
+                          $specs = $this->getTemplateSize($this->_tplIdx);
+                          // stabilisco se portrait-landscape
+                          if ($specs['h'] > $specs['w']){ //portrait
+                            $pl='P';
+                            $w=210;
+                            $h=297;
+                          }else{ //landscape
+                            $pl='L';
+                            $w=297;
+                            $h=210;
+                          }
+                                        $this->AddPage($pl);
+                          $this->print_footer = false;
+                          $this->useTemplate($this->_tplIdx,NULL,NULL,$w,$h, FALSE);
+                          $this->SetXY(10, 0);
+                          $this->Cell(190, 3,$this->intesta1 . ' ' . $this->intesta1bis." - documento allegato a: " . $this->tipdoc , 1, 0, 'C', 0, '', 1);
+                      }
+                  }
+                  $this->print_footer = false;
+              } elseif (!empty($rigo['ext'])) {
+                  list($w, $h) = getimagesize( DATA_DIR . 'files/' . $rigo['file'] );
+                  $this->SetAutoPageBreak(false, 0);
+                  if ($w > $h) { //landscape
+                      $this->AddPage('L');
+                      $this->print_footer = false;
+                      $this->SetXY(10, 0);
+                      $this->Cell(280, 3, $this->intesta1 . ' ' . $this->intesta1bis." - documento allegato a: " . $this->tipdoc, 1, 0, 'C', 0, '', 1);
+                      $this->image( DATA_DIR . 'files/' . $rigo['file'], 5, 3, 290 );
+                  } else { // portrait
+                      $this->AddPage('P');
+                      $this->print_footer = false;
+                      $this->SetXY(10, 0);
+                      $this->Cell(190, 3, $this->intesta1 . ' ' . $this->intesta1bis." - documento allegato a: " . $this->tipdoc, 1, 0, 'C', 0, '', 1);
+                      $this->image( DATA_DIR . 'files/' . $rigo['file'], 5, 3, 190 );
+                  }
+              }
+          }
+        }
     }
 
     function Footer()
