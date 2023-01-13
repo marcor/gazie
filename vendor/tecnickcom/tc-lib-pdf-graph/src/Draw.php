@@ -6,7 +6,7 @@
  * @category    Library
  * @package     PdfGraph
  * @author      Nicola Asuni <info@tecnick.com>
- * @copyright   2011-2015 Nicola Asuni - Tecnick.com LTD
+ * @copyright   2011-2022 Nicola Asuni - Tecnick.com LTD
  * @license     http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link        https://github.com/tecnickcom/tc-lib-pdf-graph
  *
@@ -24,9 +24,11 @@ use \Com\Tecnick\Pdf\Graph\Exception as GraphException;
  * @category    Library
  * @package     PdfGraph
  * @author      Nicola Asuni <info@tecnick.com>
- * @copyright   2011-2015 Nicola Asuni - Tecnick.com LTD
+ * @copyright   2011-2022 Nicola Asuni - Tecnick.com LTD
  * @license     http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link        https://github.com/tecnickcom/tc-lib-pdf-graph
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
 {
@@ -280,6 +282,9 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
      * @param array  $styles  Array of styles - one style entry for each polygon segment and/or one global "all" entry.
      *
      * @return string PDF command
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function getPolygon($points, $mode = 'S', array $styles = array())
     {
@@ -291,11 +296,6 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
 
         $out = $this->getDefaultSegStyle($styles);
 
-        // paint the filling
-        if ($this->isFillingMode($mode)) {
-            $out .= $this->getBasicPolygon($points, $this->getModeWithoutStroke($mode));
-        }
-
         if ($this->isClosingMode($mode)
             && (($points[($nco - 2)] != $points[0]) || ($points[($nco - 1)] != $points[1]))
         ) {
@@ -306,7 +306,17 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
             $styles[($nseg - 1)] = $styles[0];
         }
 
+        // paint the filling
+        if ($this->isFillingMode($mode)) {
+            $out .= $this->getBasicPolygon($points, $this->getModeWithoutStroke($mode));
+            if ($this->isClippingMode($mode)) {
+                return $out;
+            }
+        }
+
         $nco -= 3;
+
+        // paint the outline
         for ($idx = 0; $idx < $nco; $idx += 2) {
             $segid = (int) ($idx / 2);
             if (!isset($styles[$segid])) {

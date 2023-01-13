@@ -6,7 +6,7 @@
  * @category    Library
  * @package     Pdf
  * @author      Nicola Asuni <info@tecnick.com>
- * @copyright   2002-2017 Nicola Asuni - Tecnick.com LTD
+ * @copyright   2002-2022 Nicola Asuni - Tecnick.com LTD
  * @license     http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link        https://github.com/tecnickcom/tc-lib-pdf
  *
@@ -34,21 +34,21 @@ use \Com\Tecnick\Pdf\Encrypt\Encrypt as ObjEncrypt;
 class Tcpdf extends \Com\Tecnick\Pdf\ClassObjects
 {
     /**
-     * Document ID
+     * Document ID.
      *
      * @var string
      */
     protected $fileid;
 
     /**
-     * Unit of measure
+     * Unit of measure.
      *
      * @var string
      */
     protected $unit = 'mm';
 
     /**
-     * Unit of measure conversion ratio
+     * Unit of measure conversion ratio.
      *
      * @var float
      */
@@ -60,6 +60,13 @@ class Tcpdf extends \Com\Tecnick\Pdf\ClassObjects
      * @var int
      */
     protected $pdfa = 0;
+
+    /**
+     * Enable stream compression.
+     *
+     * @var int
+     */
+    protected $compress = true;
 
     /**
      * True if we are in PDF/X mode.
@@ -83,35 +90,35 @@ class Tcpdf extends \Com\Tecnick\Pdf\ClassObjects
     protected $sigapp = false;
 
     /**
-     * True to subset the fonts
+     * True to subset the fonts.
      *
      * @var boolean
      */
     protected $subsetfont = false;
 
     /**
-     * True for Unicode font mode
+     * True for Unicode font mode.
      *
      * @var boolean
      */
     protected $isunicode = true;
 
     /**
-     * Document encoding
+     * Document encoding.
      *
      * @var string
      */
     protected $encoding = 'UTF-8';
 
     /**
-     * Current PDF object number
+     * Current PDF object number.
      *
      * @var int
      */
-    protected $pon = 0;
+    public $pon = 0;
 
     /**
-     * PDF version
+     * PDF version.
      *
      * @var string
      */
@@ -125,45 +132,136 @@ class Tcpdf extends \Com\Tecnick\Pdf\ClassObjects
     protected $display = array('zoom' => 'default', 'layout' => 'SinglePage', 'mode' => 'UseNone');
 
     /**
-     * Embedded files data
+     * Embedded files data.
      *
      * @var array
      */
     protected $embeddedfiles = array();
 
     /**
-     * Initialize a new PDF object
+     * Array containing the regular expression used to identify withespaces or word separators.
      *
-     * @param string     $unit        Unit of measure ('pt', 'mm', 'cm', 'in')
-     * @param bool       $isunicode   True if the document is in Unicode mode
-     * @param bool       $subsetfont  If true subset the embedded fonts to remove the unused characters
-     * @param string     $mode        PDF mode: "pdfa1", "pdfa2", "pdfa3", "pdfx" or empty
-     * @param ObjEncrypt $encobj      Encryption object
+     * @var array
+     */
+    protected $spaceregexp = array('r' => '/[^\S\xa0]/', 'p' => '[^\S\xa0]', 'm' => '');
+
+    /**
+     * Initialize a new PDF object.
+     *
+     * @param string     $unit        Unit of measure ('pt', 'mm', 'cm', 'in').
+     * @param bool       $isunicode   True if the document is in Unicode mode.
+     * @param bool       $subsetfont  If true subset the embedded fonts to remove the unused characters.
+     * @param bool       $compress    Set to false to disable stream compression.
+     * @param string     $mode        PDF mode: "pdfa1", "pdfa2", "pdfa3", "pdfx" or empty.
+     * @param ObjEncrypt $encobj      Encryption object.
      */
     public function __construct(
         $unit = 'mm',
         $isunicode = true,
         $subsetfont = false,
+        $compress = true,
         $mode = '',
         ObjEncrypt $encobj = null
     ) {
-        setlocale(LC_NUMERIC, 'C');
+        $this->setDecimalSeparator();
         $this->doctime = time();
         $this->docmodtime = $this->doctime;
         $seedobj = new \Com\Tecnick\Pdf\Encrypt\Type\Seed();
         $this->fileid = md5($seedobj->encrypt('TCPDF'));
         $this->unit = $unit;
-        $this->isunicode = $isunicode;
-        $this->subsetfont = $subsetfont;
-        $this->pdfx = ($mode == 'pdfx');
-        $matches = array('', '0');
-        $this->pdfa = 0;
-        if (preg_match('/^pdfa([1-3])$/', $mode, $matches) === 1) {
-            $this->pdfa = (int) $matches[1];
-        }
+        $this->setUnicodeMode($isunicode);
+        $this->subsetfont = (bool) $subsetfont;
+        $this->setPDFMode($mode);
+        $this->setCompressMode($compress);
         $this->setPDFVersion();
         $this->encrypt = $encobj;
         $this->initClassObjects();
+    }
+
+    /**
+     * Set the pdf mode.
+     *
+     * @param string $mode Input PDFA mode.
+     */
+    protected function setPDFMode($mode)
+    {
+        $this->pdfx = ($mode == 'pdfx');
+        $this->pdfa = 0;
+        $matches = array('', '0');
+        if (preg_match('/^pdfa([1-3])$/', $mode, $matches) === 1) {
+            $this->pdfa = (int) $matches[1];
+        }
+    }
+
+    /**
+     * Set the compression mode.
+     *
+     * @param bool $compress Set to false to disable stream compression.
+     */
+    protected function setCompressMode($compress)
+    {
+        $this->compress = (((bool) $compress) && ($this->pdfa != 3));
+    }
+
+    /**
+     * Set the decimal separator.
+     *
+     * @throw PdfException in case of error.
+     */
+    protected function setDecimalSeparator()
+    {
+        // check for locale-related bug
+        if (1.1 == 1) {
+            throw new PdfException('Don\'t alter the locale before including class file');
+        }
+        // check for decimal separator
+        if (sprintf('%.1F', 1.0) != '1.0') {
+            setlocale(LC_NUMERIC, 'C');
+        }
+    }
+
+    /**
+     * Set the decimal separator.
+     *
+     * @param bool $unicode True when using Unicode mode.
+     */
+    protected function setUnicodeMode($isunicode)
+    {
+        $this->isunicode = (bool) $isunicode;
+        // check if PCRE Unicode support is enabled
+        if ($this->isunicode && (@preg_match('/\pL/u', 'a') == 1)) {
+            $this->setSpaceRegexp('/(?!\xa0)[\s\p{Z}]/u');
+            return;
+        }
+        // PCRE unicode support is turned OFF
+        $this->setSpaceRegexp('/[^\S\xa0]/');
+    }
+
+    /**
+     * Set regular expression to detect withespaces or word separators.
+     * The pattern delimiter must be the forward-slash character "/".
+     * Some example patterns are:
+     * <pre>
+     * Non-Unicode or missing PCRE unicode support: "/[^\S\xa0]/"
+     * Unicode and PCRE unicode support: "/(?!\xa0)[\s\p{Z}]/u"
+     * Unicode and PCRE unicode support in Chinese mode: "/(?!\xa0)[\s\p{Z}\p{Lo}]/u"
+     * if PCRE unicode support is turned ON ("\P" is the negate class of "\p"):
+     *      \s     : any whitespace character
+     *      \p{Z}  : any separator
+     *      \p{Lo} : Unicode letter or ideograph that does not have lowercase and uppercase variants.
+     *      \xa0   : Unicode Character 'NO-BREAK SPACE' (U+00A0)
+     * </pre>
+     *
+     * @param string $regexp regular expression (leave empty for default).
+     */
+    public function setSpaceRegexp($regexp = '/[^\S\xa0]/')
+    {
+        $parts = explode('/', $regexp);
+        $this->spaceregexp = array(
+            'r' => $regexp,
+            'p' => (empty($parts[1]) ? '[\s]' : $parts[1]),
+            'm' => (empty($parts[2]) ? '' : $parts[2]),
+        );
     }
 
     /**
@@ -200,5 +298,45 @@ class Tcpdf extends \Com\Tecnick\Pdf\ClassObjects
         $this->display['layout'] = $this->page->getLayout($layout);
         $this->display['page'] = $this->page->getDisplay($mode);
         return $this;
+    }
+
+    /**
+     * Get a barcode PDF code.
+     *
+     * @param string $type    Barcode type.
+     * @param string $code    Barcode content.
+     * @param float  $posx   Abscissa of upper-left corner.
+     * @param float  $posy   Ordinate of upper-left corner.
+     * @param int    $width   Barcode width in user units (excluding padding).
+     *                        A negative value indicates the multiplication factor for each column.
+     * @param int    $height  Barcode height in user units (excluding padding).
+     *                        A negative value indicates the multiplication factor for each row.
+     * @param array  $padding Additional padding to add around the barcode (top, right, bottom, left) in user units.
+     *                        A negative value indicates the multiplication factor for each row or column.
+     *
+     * @return string
+     *
+     * @throws BarcodeException in case of error
+     */
+    public function getBarcode(
+        $type,
+        $code,
+        $posx = 0,
+        $posy = 0,
+        $width = -1,
+        $height = -1,
+        $padding = array(0, 0, 0, 0),
+        array $style = array()
+    ) {
+        $bobj = $this->barcode->getBarcodeObj($type, $code, $width, $height, 'black', $padding);
+        $bars = $bobj->getBarsArray('XYWH');
+        $out = '';
+        $out .= $this->graph->getStartTransform();
+        $out .= $this->graph->getStyleCmd($style);
+        foreach ($bars as $rect) {
+            $out .= $this->graph->getBasicRect(($posx + $rect[0]), ($posy + $rect[1]), $rect[2], $rect[3], 'f');
+        }
+        $out .= $this->graph->getStopTransform();
+        return $out;
     }
 }

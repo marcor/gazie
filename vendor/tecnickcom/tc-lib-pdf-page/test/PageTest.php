@@ -34,7 +34,7 @@ class PageTest extends TestUtil
     {
         $col = new \Com\Tecnick\Color\Pdf;
         $enc = new \Com\Tecnick\Pdf\Encrypt\Encrypt(false);
-        return new \Com\Tecnick\Pdf\Page\Page('mm', $col, $enc, false, false);
+        return new \Com\Tecnick\Pdf\Page\Page('mm', $col, $enc, false, true, false);
     }
 
     public function testGetKUnit()
@@ -123,22 +123,26 @@ class PageTest extends TestUtil
         );
         
         unset($res['time']);
+        $exp['pid'] = 0;
         $this->bcAssertEqualsWithDelta($exp, $res);
 
         // 2
         $res = $testObj->add();
         unset($res['time']);
+        $exp['pid'] = 1;
         $this->bcAssertEqualsWithDelta($exp, $res);
 
         // 3
         $res = $testObj->add(array('group' => 1));
         unset($res['time']);
+        $exp['pid'] = 2;
         $exp['group'] = 1;
         $this->bcAssertEqualsWithDelta($exp, $res);
 
         // 3
         $res = $testObj->add(array('columns' => 2));
         unset($res['time']);
+        $exp['pid'] = 3;
         $exp['group'] = 0;
         $exp['columns'] = 2;
         $exp['region'] = array (
@@ -228,7 +232,7 @@ class PageTest extends TestUtil
         $testObj->add(array('group' => 2));
         $testObj->add(array('group' => 3));
 
-        $this->assertEquals($testObj->getPage(3), $testObj->getCurrentPage());
+        $this->assertEquals($testObj->getPage(3), $testObj->getPage());
         
         $testObj->move(3, 0);
         $this->assertCount(4, $testObj->getPages());
@@ -264,12 +268,12 @@ class PageTest extends TestUtil
 
         $this->assertEquals('amet', $testObj->popContent());
 
-        $page = $testObj->getCurrentPage();
+        $page = $testObj->getPage();
         $this->assertEquals(array(0, 3), $page['content_mark']);
         $this->assertEquals(array('', 'Lorem', 'ipsum', 'dolor', 'sit'), $page['content']);
 
         $testObj->popContentToLastMark();
-        $page = $testObj->getCurrentPage();
+        $page = $testObj->getPage();
         $this->assertEquals(array(0), $page['content_mark']);
         $this->assertEquals(array('', 'Lorem', 'ipsum'), $page['content']);
     }
@@ -300,7 +304,8 @@ class PageTest extends TestUtil
         $testObj->addContent('TEST2');
         $pon = 0;
         $out = $testObj->getPdfPages($pon);
-        $this->assertEquals(2, $testObj->getResourceDictObjID());
+        $this->assertEquals(1, $testObj->getResourceDictObjID());
+        $this->assertEquals(2, $testObj->getRootObjID());
         $this->bcAssertStringContainsString('<< /Type /Pages /Kids [ 3 0 R 4 0 R 5 0 R ] /Count 3 >>', $out);
     }
 }

@@ -35,7 +35,7 @@ abstract class MetaInfo extends \Com\Tecnick\Pdf\Output
      *
      * @var string
      */
-    protected $version = '8.0.11';
+    protected $version = '8.0.17';
 
     /**
      * Time is seconds since EPOCH when the document was created.
@@ -152,7 +152,7 @@ abstract class MetaInfo extends \Com\Tecnick\Pdf\Output
     /**
      * Set a field value only if it is not empty.
      *
-     * @param strign $field Field name
+     * @param string $field Field name
      * @param srting $value Value to set
      */
     private function setNonEmptyFieldValue($field, $value)
@@ -219,7 +219,7 @@ abstract class MetaInfo extends \Com\Tecnick\Pdf\Output
      *
      * @param string $version PDF document version.
      *
-     * @throw PdfException in case of error
+     * @throw PdfException in case of error.
      */
     public function setPDFVersion($version = '1.7')
     {
@@ -251,13 +251,17 @@ abstract class MetaInfo extends \Com\Tecnick\Pdf\Output
      *
      * @param string $str String to escape.
      * @param int    $oid Current PDF object number.
+     * @param bool   $bom If true set the Byte Order Mark (BOM).
      *
      * @return string escaped string.
      */
-    protected function getOutTextString($str, $oid)
+    protected function getOutTextString($str, $oid, $bom = false)
     {
         if ($this->isunicode) {
             $str = $this->uniconv->toUTF16BE($str);
+            if ($bom) {
+                $str = "\xFE\xFF".$str; // Byte Order Mark (BOM)
+            }
         }
         return $this->encrypt->escapeDataString($str, $oid);
     }
@@ -311,7 +315,7 @@ abstract class MetaInfo extends \Com\Tecnick\Pdf\Output
         if (empty($time)) {
             $time = $this->doctime;
         }
-        return $this->getOutTextString('D:'.$this->getFormattedDate($time), $oid);
+        return $this->encrypt->escapeDataString('D:'.$this->getFormattedDate($time), $oid);
     }
 
     /**
@@ -326,12 +330,12 @@ abstract class MetaInfo extends \Com\Tecnick\Pdf\Output
         $this->objid['info'] = $oid;
         $out = $oid.' 0 obj'."\n"
         .'<<'
-        .' /Creator '.$this->getOutTextString($this->creator, $oid)
-        .' /Author '.$this->getOutTextString($this->author, $oid)
-        .' /Subject '.$this->getOutTextString($this->subject, $oid)
-        .' /Title '.$this->getOutTextString($this->title, $oid)
-        .' /Keywords '.$this->getOutTextString($this->keywords, $oid)
-        .' /Producer '.$this->getOutTextString($this->getProducer(), $oid)
+        .' /Creator '.$this->getOutTextString($this->creator, $oid, true)
+        .' /Author '.$this->getOutTextString($this->author, $oid, true)
+        .' /Subject '.$this->getOutTextString($this->subject, $oid, true)
+        .' /Title '.$this->getOutTextString($this->title, $oid, true)
+        .' /Keywords '.$this->getOutTextString($this->keywords, $oid, true)
+        .' /Producer '.$this->getOutTextString($this->getProducer(), $oid, true)
         .' /CreationDate '.$this->getOutDateTimeString($this->doctime, $oid)
         .' /ModDate '.$this->getOutDateTimeString($this->docmodtime, $oid)
         .' /Trapped /False'

@@ -33,14 +33,14 @@ use \Com\Tecnick\Pdf\Page\Exception as PageException;
 class Page extends \Com\Tecnick\Pdf\Page\Region
 {
     /**
-     * Alias for total number of pages in a group
+     * Alias for total number of pages in a group.
      *
      * @var string
      */
     const PAGE_TOT = '~#PT';
     
     /**
-     * Alias for page number
+     * Alias for page number.
      *
      * @var string
      */
@@ -58,7 +58,7 @@ class Page extends \Com\Tecnick\Pdf\Page\Region
      *
      * @var int
      */
-    protected $pageid = -1;
+    protected $pid = -1;
 
     /**
      * Maximum page ID.
@@ -68,28 +68,28 @@ class Page extends \Com\Tecnick\Pdf\Page\Region
     protected $pmaxid = -1;
     
     /**
-     * Count pages in each group
+     * Count pages in each group.
      *
      * @var array
      */
     protected $group = array(0 => 0);
     
     /**
-     * Unit of measure conversion ratio
+     * Unit of measure conversion ratio.
      *
      * @var float
      */
     protected $kunit = 1.0;
 
     /**
-     * Color object
+     * Color object.
      *
      * @var Color
      */
     protected $col;
 
     /**
-     * Encrypt object
+     * Encrypt object.
      *
      * @var Encrypt
      */
@@ -101,6 +101,13 @@ class Page extends \Com\Tecnick\Pdf\Page\Region
      * @var bool
      */
     protected $pdfa = false;
+
+    /**
+     * Enable stream compression.
+     *
+     * @var int
+     */
+    protected $compress = true;
 
     /**
      * True if the signature approval is enabled (for incremental updates).
@@ -117,27 +124,35 @@ class Page extends \Com\Tecnick\Pdf\Page\Region
     protected $rdoid = 1;
 
     /**
-     * Initialize page data
+     * Initialize page data.
      *
-     * @param string  $unit   Unit of measure ('pt', 'mm', 'cm', 'in')
-     * @param Color   $col    Color object
-     * @param Encrypt $enc    Encrypt object
-     * @param bool    $pdfa   True if we are in PDF/A mode.
-     * @param bool    $sigapp True if the signature approval is enabled (for incremental updates).
+     * @param string  $unit     Unit of measure ('pt', 'mm', 'cm', 'in').
+     * @param Color   $col      Color object.
+     * @param Encrypt $enc      Encrypt object.
+     * @param bool    $pdfa     True if we are in PDF/A mode.
+     * @param bool    $compress Set to false to disable stream compression.
+     * @param bool    $sigapp   True if the signature approval is enabled (for incremental updates).
      */
-    public function __construct($unit, Color $col, Encrypt $enc, $pdfa = false, $sigapp = false)
-    {
+    public function __construct(
+        $unit,
+        Color $col,
+        Encrypt $enc,
+        $pdfa = false,
+        $compress = true,
+        $sigapp = false
+    ) {
         $this->kunit = $this->getUnitRatio($unit);
         $this->col = $col;
         $this->enc = $enc;
         $this->pdfa = (bool) $pdfa;
+        $this->compress = (bool) $compress;
         $this->sigapp = (bool) $sigapp;
     }
 
     /**
-     * Get the unit ratio
+     * Get the unit ratio.
      *
-     * @return float
+     * @return float Unit Ratio.
      */
     public function getKUnit()
     {
@@ -145,7 +160,7 @@ class Page extends \Com\Tecnick\Pdf\Page\Region
     }
 
     /**
-     * Enable Signature Approval
+     * Enable Signature Approval.
      *
      * @param bool $sigapp True if the signature approval is enabled (for incremental updates).
      */
@@ -156,7 +171,7 @@ class Page extends \Com\Tecnick\Pdf\Page\Region
     }
 
     /**
-     * Add a new page
+     * Add a new page.
      *
      * @param array $data Page data:
      *     time        : UTC page modification time in seconds;
@@ -192,7 +207,7 @@ class Page extends \Com\Tecnick\Pdf\Page\Region
      *
      * NOTE: if $data is empty, then the last page format will be cloned.
      *
-     * @return array Page data
+     * @return array Page data with additional Page ID property 'pid'.
      */
     public function add(array $data = array())
     {
@@ -210,49 +225,45 @@ class Page extends \Com\Tecnick\Pdf\Page\Region
             $this->sanitizeMargins($data);
             $this->sanitizeRegions($data);
         }
-
         $this->sanitizeTime($data);
         $this->sanitizeContent($data);
         $this->sanitizeAnnotRefs($data);
         $this->sanitizePageNumber($data);
         $data['content_mark'] = array(0);
         $data['currentRegion'] = 0;
-
-        $this->pageid = ++$this->pmaxid;
-        $this->page[$this->pageid] = $data;
+        $data['pid'] = ++$this->pmaxid;
+        $this->pid = $data['pid'];
+        $this->page[$this->pid] = $data;
         if (isset($this->group[$data['group']])) {
             $this->group[$data['group']] += 1;
         } else {
             $this->group[$data['group']] = 1;
         }
-
-        return $this->page[$this->pageid];
+        return $this->page[$this->pid];
     }
 
     /**
-     * Remove the specified page
+     * Remove the specified page.
      *
-     * @param int $idx page index
+     * @param int $pid page index. Omit or set it to -1 for the current page ID.
      *
-     * @return array Removed page
+     * @return array Removed page.
      */
-    public function delete($idx)
+    public function delete($pid = -1)
     {
-        if (empty($this->page[$idx])) {
-            throw new PageException('The specified page do not exist');
-        }
-        $page = $this->page[$idx];
-        $this->group[$this->page[$idx]['group']] -= 1;
-        unset($this->page[$idx]);
+        $pid = $this->sanitizePageID($pid);
+        $page = $this->page[$pid];
+        $this->group[$this->page[$pid]['group']] -= 1;
+        unset($this->page[$pid]);
         $this->page = array_values($this->page); // reindex array
         --$this->pmaxid;
         return $page;
     }
 
     /**
-     * Remove and return last page
+     * Remove and return last page.
      *
-     * @return array Removed page
+     * @return array Removed page.
      */
     public function pop()
     {
@@ -260,10 +271,10 @@ class Page extends \Com\Tecnick\Pdf\Page\Region
     }
 
     /**
-     * Move a page to a previous position
+     * Move a page to a previous position.
      *
-     * @param int $from Index of the page to move
-     * @param int $new  Destination index
+     * @param int $from Index of the page to move.
+     * @param int $new  Destination index.
      */
     public function move($from, $new)
     {
@@ -283,7 +294,7 @@ class Page extends \Com\Tecnick\Pdf\Page\Region
     /**
      * Returns the array (stack) containing all pages data.
      *
-     * return array
+     * return array Pages.
      */
     public function getPages()
     {
@@ -291,92 +302,89 @@ class Page extends \Com\Tecnick\Pdf\Page\Region
     }
 
     /**
+     * Set the current page number (move to the specified page).
+     *
+     * @param int $pid page index. Omit or set it to -1 for the current page ID.
+     */
+    public function setCurrentPage($pid = -1)
+    {
+        $pid = $this->sanitizePageID($pid);
+        $this->pid = $pid;
+        return $this->page[$this->pid];
+    }
+
+    /**
      * Returns the specified page data.
      *
-     * @param int $idx Page ID
+     * @param int $pid page index. Omit or set it to -1 for the current page ID.
      *
      * return array
      */
-    public function getPage($idx)
+    public function getPage($pid = -1)
     {
-        if (!isset($this->page[$idx])) {
-            throw new PageException('The page '.$idx.' do not exist.');
-        }
-        return $this->page[$idx];
+        $pid = $this->sanitizePageID($pid);
+        return $this->page[$pid];
     }
 
     /**
-     * Set the current page number (move to the specified page)
+     * Add page content.
      *
-     * @param int $pid Page ID number
+     * @param array $data Page data.
+     * @param int $pid page index. Omit or set it to -1 for the current page ID.
      */
-    public function setCurrentPage($pid)
+    public function addContent($content, $pid = -1)
     {
-        $this->pageid = min(max(0, intval($pid)), $this->pmaxid);
-        return $this->page[$this->pageid];
+        $pid = $this->sanitizePageID($pid);
+        $this->page[$pid]['content'][] = (string) $content;
     }
 
     /**
-     * Returns the last page array
+     * Remove and return last page content.
      *
-     * @return array
+     * @param array $data Page data.
+     * @param int $pid page index. Omit or set it to -1 for the current page ID.
+     *
+     * @param string content.
      */
-    public function getCurrentPage()
+    public function popContent($pid = -1)
     {
-        return $this->page[$this->pageid];
+        $pid = $this->sanitizePageID($pid);
+        return array_pop($this->page[$pid]['content']);
     }
 
     /**
-     * Add page content
+     * Add page content mark.
      *
-     * @param array $data Page data
+     * @param int $pid page index. Omit or set it to -1 for the current page ID.
      */
-    public function addContent($content)
+    public function addContentMark($pid = -1)
     {
-        $this->page[$this->pageid]['content'][] = (string) $content;
+        $pid = $this->sanitizePageID($pid);
+        $this->page[$pid]['content_mark'][] = count($this->page[$pid]['content']);
     }
 
     /**
-     * Remove and return last page content
+     * Remove the last marked page content.
      *
-     * @param array $data Page data
-     *
-     * @param string content
+     * @param int $pid page index. Omit or set it to -1 for the current page ID.
      */
-    public function popContent()
+    public function popContentToLastMark($pid = -1)
     {
-        return array_pop($this->page[$this->pageid]['content']);
+        $pid = $this->sanitizePageID($pid);
+        $mark = array_pop($this->page[$pid]['content_mark']);
+        $this->page[$pid]['content'] = array_slice($this->page[$pid]['content'], 0, $mark, true);
     }
 
     /**
-     * Add page content mark
-     */
-    public function addContentMark()
-    {
-        $this->page[$this->pageid]['content_mark'][] = count($this->page[$this->pageid]['content']);
-    }
-
-    /**
-     * Remove the last marked page content
-     */
-    public function popContentToLastMark()
-    {
-        $mark = array_pop($this->page[$this->pageid]['content_mark']);
-        $this->page[$this->pageid]['content'] = array_slice($this->page[$this->pageid]['content'], 0, $mark, true);
-    }
-
-    /**
-     * Returns the PDF command to output all page sections
+     * Returns the PDF command to output all page sections.
      *
-     * @param int $pon Current PDF object number
+     * @param int $pon Current PDF object number.
      *
-     * @return string PDF command
+     * @return string PDF command.
      */
     public function getPdfPages(&$pon)
     {
         $out = $this->getPageRootObj($pon);
-        $rootobjid = ($this->rdoid - 1);
-
         foreach ($this->page as $num => $page) {
             if (!isset($page['num'])) {
                 if ($num > 0) {
@@ -399,7 +407,7 @@ class Page extends \Com\Tecnick\Pdf\Page\Region
             $out .= $page['n'].' 0 obj'."\n"
                 .'<<'."\n"
                 .'/Type /Page'."\n"
-                .'/Parent '.$rootobjid.' 0 R'."\n";
+                .'/Parent '.$this->rootoid.' 0 R'."\n";
             if (!$this->pdfa) {
                 $out .= '/Group << /Type /Group /S /Transparency /CS /DeviceRGB >>'."\n";
             }
@@ -417,18 +425,27 @@ class Page extends \Com\Tecnick\Pdf\Page\Region
                 .'>>'."\n"
                 .'endobj'."\n";
         }
-
         return $out;
     }
 
     /**
      * Returns the reserved Object ID for the Resource dictionary.
      *
-     * return int
+     * return int Resource dictionary Object ID.
      */
     public function getResourceDictObjID()
     {
         return $this->rdoid;
+    }
+
+    /**
+     * Returns the root object ID.
+     *
+     * return int Root Object ID.
+     */
+    public function getRootObjID()
+    {
+        return $this->rootoid;
     }
 
     /**
@@ -437,7 +454,7 @@ class Page extends \Com\Tecnick\Pdf\Page\Region
      * @param int    $pon     Current PDF object number.
      * @param string $content Page content.
      *
-     * @return string PDF command
+     * @return string PDF command.
      */
     protected function getPageTransition($page)
     {
@@ -466,9 +483,9 @@ class Page extends \Com\Tecnick\Pdf\Page\Region
     /**
      * Get references to page annotations.
      *
-     * @param array $page Page data
+     * @param array $page Page data.
      *
-     * @return string PDF command
+     * @return string PDF command.
      */
     protected function getAnnotationRef($page)
     {
@@ -489,13 +506,19 @@ class Page extends \Com\Tecnick\Pdf\Page\Region
      * @param int    $pon     Current PDF object number.
      * @param string $content Page content.
      *
-     * @return string PDF command
+     * @return string PDF command.
      */
     protected function getPageContentObj(&$pon, $content = '')
     {
-        $stream = $this->enc->encryptString(gzcompress($content), ++$pon);
-        $out = $pon.' 0 obj'."\n"
-            .'<</Filter /FlateDecode /Length '.strlen($stream).'>>'."\n"
+        $out = ++$pon.' 0 obj'."\n"
+            .'<<';
+        if ($this->compress) {
+            $out .= ' /Filter /FlateDecode';
+            $content = gzcompress($content);
+        }
+        $stream = $this->enc->encryptString($content, $pon);
+        $out .= ' /Length '.strlen($stream)
+            .' >>'."\n"
             .'stream'."\n"
             .$stream."\n"
             .'endstream'."\n"
@@ -506,19 +529,20 @@ class Page extends \Com\Tecnick\Pdf\Page\Region
     /**
      * Returns the PDF command to output the page root object.
      *
-     * @param int $pon Current PDF object number
+     * @param int $pon Current PDF object number.
      *
-     * @return string PDF command
+     * @return string PDF command.
      */
     protected function getPageRootObj(&$pon)
     {
-        $out = (++$pon).' 0 obj'."\n";
         $this->rdoid = ++$pon; // reserve object ID for the resource dictionary
+        $this->rootoid = ++$pon;
+        $out = $this->rootoid.' 0 obj'."\n";
         $out .= '<< /Type /Pages /Kids [ ';
         $numpages = count($this->page);
-        for ($idx = 0; $idx < $numpages; ++$idx) {
-            $this->page[$idx]['n'] = ++$pon;
-            $out .= $this->page[$idx]['n'].' 0 R ';
+        for ($pid = 0; $pid < $numpages; ++$pid) {
+            $this->page[$pid]['n'] = ++$pon;
+            $out .= $this->page[$pid]['n'].' 0 R ';
         }
         $out .= '] /Count '.$numpages.' >>'."\n"
             .'endobj'."\n";
@@ -526,14 +550,14 @@ class Page extends \Com\Tecnick\Pdf\Page\Region
     }
 
     /**
-     * Replace page templates and numbers
+     * Replace page templates and numbers.
      *
-     * @param array $data Page data
+     * @param array $data Page data.
      */
     protected function replacePageTemplates(array $data)
     {
         return implode(
-            '',
+            "\n",
             str_replace(
                 array(self::PAGE_TOT, self::PAGE_NUM),
                 array($this->group[$data['group']], $data['num']),

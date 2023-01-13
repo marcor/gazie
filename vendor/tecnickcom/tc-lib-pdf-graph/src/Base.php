@@ -6,7 +6,7 @@
  * @category    Library
  * @package     PdfGraph
  * @author      Nicola Asuni <info@tecnick.com>
- * @copyright   2011-2016 Nicola Asuni - Tecnick.com LTD
+ * @copyright   2011-2022 Nicola Asuni - Tecnick.com LTD
  * @license     http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link        https://github.com/tecnickcom/tc-lib-pdf-graph
  *
@@ -26,7 +26,7 @@ use \Com\Tecnick\Pdf\Graph\Exception as GraphException;
  * @category    Library
  * @package     PdfGraph
  * @author      Nicola Asuni <info@tecnick.com>
- * @copyright   2011-2016 Nicola Asuni - Tecnick.com LTD
+ * @copyright   2011-2022 Nicola Asuni - Tecnick.com LTD
  * @license     http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link        https://github.com/tecnickcom/tc-lib-pdf-graph
  */
@@ -90,22 +90,38 @@ abstract class Base
     protected $pdfa = false;
 
     /**
+     * Enable stream compression.
+     *
+     * @var int
+     */
+    protected $compress = true;
+
+    /**
      * Initialize
      *
-     * @param float    $kunit  Unit of measure conversion ratio.
-     * @param float    $pagew  Page width.
-     * @param float    $pageh  Page height.
-     * @param PdfColor $color  Color object.
-     * @param bool     $pdfa   True if we are in PDF/A mode.
+     * @param float    $kunit    Unit of measure conversion ratio.
+     * @param float    $pagew    Page width.
+     * @param float    $pageh    Page height.
+     * @param PdfColor $color    Color object.
+     * @param bool     $pdfa     True if we are in PDF/A mode.
+     * @param bool     $compress Set to false to disable stream compression.
      */
-    public function __construct($kunit, $pagew, $pageh, PdfColor $color, Encrypt $enc, $pdfa = false)
-    {
+    public function __construct(
+        $kunit,
+        $pagew,
+        $pageh,
+        PdfColor $color,
+        Encrypt $enc,
+        $pdfa = false,
+        $compress = true
+    ) {
         $this->setKUnit($kunit);
         $this->setPageWidth($pagew);
         $this->setPageHeight($pageh);
         $this->col = $color;
         $this->enc = $enc;
         $this->pdfa = (bool) $pdfa;
+        $this->compress = (bool) $compress;
         $this->init();
     }
 
@@ -240,6 +256,8 @@ abstract class Base
      * @param string $type Type of output: 'color' or 'opacity'
      *
      * @return string PDF command
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     protected function getOutGradientCols($grad, $type)
     {
@@ -248,7 +266,6 @@ abstract class Base
         }
 
         $out = '';
-
         if (($grad['type'] == 2) || ($grad['type'] == 3)) {
             $num_cols = count($grad['colors']);
             $lastcols = ($num_cols - 1);
@@ -257,6 +274,17 @@ abstract class Base
             $encode = array();
 
             for ($idx = 1; $idx < $num_cols; ++$idx) {
+                $col0 = $grad['colors'][($idx - 1)][$type];
+                $col1 = $grad['colors'][$idx][$type];
+                if ($type == 'color') {
+                    $col0 = $this->col->getColorObject($grad['colors'][($idx - 1)][$type]);
+                    $col1 = $this->col->getColorObject($grad['colors'][$idx][$type]);
+                    if (($col0 === null) || ($col1 === null)) {
+                        continue;
+                    }
+                    $col0 = $col0->getComponentsString();
+                    $col1 = $col1->getComponentsString();
+                }
                 $encode[] = '0 1';
                 if ($idx < $lastcols) {
                     $bounds[] = sprintf('%F ', $grad['colors'][$idx]['offset']);
@@ -265,8 +293,8 @@ abstract class Base
                 .'<<'
                 .' /FunctionType 2'
                 .' /Domain [0 1]'
-                .' /C0 ['.$grad['colors'][($idx - 1)][$type].']'
-                .' /C1 ['.$grad['colors'][$idx][$type].']'
+                .' /C0 ['.$col0.']'
+                .' /C1 ['.$col1.']'
                 .' /N '.$grad['colors'][$idx]['exponent']
                 .' >>'."\n"
                 .'endobj'."\n";
@@ -303,8 +331,8 @@ abstract class Base
             $grad['colspace'] = 'DeviceGray';
         }
         
-        $objref = ++$this->pon;
-        $out = $objref.' 0 obj'."\n"
+        $oid = ++$this->pon;
+        $out = $oid.' 0 obj'."\n"
             .'<<'
             .' /ShadingType '.$grad['type']
             .' /ColorSpace /'.$grad['colspace'];
@@ -360,7 +388,7 @@ abstract class Base
             .'<<'
             .' /Type /Pattern'
             .' /PatternType 2'
-            .' /Shading '.$objref.' 0 R'
+            .' /Shading '.$oid.' 0 R'
             .' >>'."\n"
             .'endobj'
             ."\n";
@@ -387,31 +415,39 @@ abstract class Base
 
         $out = '';
         foreach ($this->gradients as $idx => $grad) {
-            $out .= $this->getOutGradientCols($grad, 'color');
-            $this->gradients[$idx]['id'] = ($this->pon - 1);
-            $this->gradients[$idx]['pattern'] = $this->pon;
+            $gcol = $this->getOutGradientCols($grad, 'color');
+            if (!empty($gcol)) {
+                $out .= $gcol;
+                $this->gradients[$idx]['id'] = ($this->pon - 1);
+                $this->gradients[$idx]['pattern'] = $this->pon;
+            }
 
-            $out .= $this->getOutGradientCols($grad, 'opacity');
-            $idgs = ($idx + $idt);
-            $this->gradients[$idgs]['id'] = ($this->pon - 1);
-            $this->gradients[$idgs]['pattern'] = $this->pon;
+            $gopa = $this->getOutGradientCols($grad, 'opacity');
+            if (!empty($gopa)) {
+                $out .= $gopa;
+                $idgs = ($idx + $idt);
+                $this->gradients[$idgs]['id'] = ($this->pon - 1);
+                $this->gradients[$idgs]['pattern'] = $this->pon;
+            }
 
             if ($grad['transparency']) {
                 $oid = ++$this->pon;
                 $pwidth = ($this->pagew * $this->kunit);
                 $pheight = ($this->pageh * $this->kunit);
-                $stream = 'q /a0 gs /Pattern cs /p'.$idgs.' scn 0 0 '.$pwidth.' '.$pheight.' re f Q';
-                $stream = gzcompress($stream);
-                $stream = $this->enc->encryptString($stream, $oid);
                 $rect = sprintf('%F %F', $pwidth, $pheight);
 
                 $out .= $oid.' 0 obj'."\n"
                     .'<<'
                     .' /Type /XObject'
                     .' /Subtype /Form'
-                    .' /FormType 1'
-                    .' /Filter /FlateDecode'
-                    .' /Length '.strlen($stream)
+                    .' /FormType 1';
+                $stream = 'q /a0 gs /Pattern cs /p'.$idgs.' scn 0 0 '.$pwidth.' '.$pheight.' re f Q';
+                if ($this->compress) {
+                    $stream = gzcompress($stream);
+                    $out .= ' /Filter /FlateDecode';
+                }
+                $stream = $this->enc->encryptString($stream, $oid);
+                $out .= ' /Length '.strlen($stream)
                     .' /BBox [0 0 '.$rect.']'
                     .' /Group << /Type /Group /S /Transparency /CS /DeviceGray >>'
                     .' /Resources <<'

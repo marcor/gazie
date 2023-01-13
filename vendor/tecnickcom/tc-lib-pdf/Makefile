@@ -96,6 +96,7 @@ help:
 	@echo "  make deb      : Build a DEB package for Debian-like Linux distributions"
 	@echo "  make deps     : Download all dependencies"
 	@echo "  make doc      : Generate source code documentation"
+	@echo "  make fonts    : Build default tc-font-mirror fonts via tc-lib-pdf-font"
 	@echo "  make lint     : Test source code for coding standard violations"
 	@echo "  make qa       : Run all tests and reports"
 	@echo "  make report   : Generate various reports"
@@ -176,6 +177,11 @@ ensuretarget:
 	mkdir -p $(TARGETDIR)/report
 	mkdir -p $(TARGETDIR)/doc
 
+# Build default tc-font-mirror fonts via tc-lib-pdf-font
+.PHONY: fonts
+fonts:
+	cd vendor/tecnickcom/tc-lib-pdf-font/ && make deps fonts
+
 # Install this application
 .PHONY: install
 install: uninstall
@@ -202,7 +208,7 @@ endif
 .PHONY: lint
 lint:
 	./vendor/bin/phpcs --ignore="./vendor/" --standard=psr2 src test
-	./vendor/bin/phpmd src text codesize,unusedcode,naming,design --exclude vendor
+	./vendor/bin/phpmd src text unusedcode,naming,design --exclude vendor
 	./vendor/bin/phpmd test text unusedcode,naming,design
 
 # Run all tests and reports

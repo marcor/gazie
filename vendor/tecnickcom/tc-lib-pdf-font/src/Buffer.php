@@ -169,7 +169,7 @@ abstract class Buffer
      *
      * @param string $key Font key
      *
-     * @return array|bool Returns the fonts array of palse in case of missing font.
+     * @return array|bool Returns the fonts array or false in case of missing font.
      *
      * @throws FontException in case of error
      */
@@ -259,7 +259,7 @@ abstract class Buffer
         $this->setFontFile($key);
         $this->setFontDiff($key);
 
-        $this->font[$key]['i'] = $this->numfonts++;
+        $this->font[$key]['i'] = ++$this->numfonts;
         $this->font[$key]['n'] = ++$objnum;
 
         return $key;
