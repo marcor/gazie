@@ -231,7 +231,7 @@ if (isset($_GET['id_tes'])){
 	// ricavo l'allegato, e se presente metterò un bottone per permettere il download
 	$nf = $doc->getElementsByTagName('NomeAttachment')->item(0);
 	if ($nf){
-		$name_file = $nf->textContent;
+		$name_file = preg_replace('/[^[:print:]]/', '',$nf->textContent);
 		$att = $doc->getElementsByTagName('Attachment')->item(0);
 		$base64 = $att->textContent;
 		$bin = base64_decode($base64);
