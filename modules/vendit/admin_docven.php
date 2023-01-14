@@ -344,12 +344,18 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
         if ($k_row == $next_row) {
           // inizio sottrazione ai totali peso,pezzi,volume
           $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['rows'][$k_row]['codart']);
+		  if (isset($artico)){
           $form['net_weight'] -= $form['rows'][$k_row]['quanti'] * $artico['peso_specifico'];
           $form['gross_weight'] -= $form['rows'][$k_row]['quanti'] * $artico['peso_specifico'];
           if ($artico['pack_units'] > 0) {
               $form['units'] -= intval(round($form['rows'][$k_row]['quanti'] / $artico['pack_units']));
           }
           $form['volume'] -= $form['rows'][$k_row]['quanti'] * $artico['volume_specifico'];
+		  }else{
+			  $form['net_weight']=0;
+			  $form['gross_weight']=0;
+			  $form['volume']=0;
+		  }
           // fine sottrazione peso,pezzi,volume
           $form['in_descri'] = $form['rows'][$k_row]['descri'];
           $form['in_tiprig'] = $form['rows'][$k_row]['tiprig'];
@@ -2539,8 +2545,8 @@ foreach ($form['rows'] as $k => $v) {
                 $imprig_class = 'default';
             }
             $peso = 0;
-            if ($v['pesosp'] <> 0) {
-                $peso = gaz_format_number($v['quanti'] / $v['pesosp']);
+            if (floatval($v['pesosp']) <> 0) {
+                $peso = gaz_format_number($v['quanti'] / floatval($v['pesosp']));
                 $peso2 = gaz_format_number($v['pesosp']);
             } else {
                 $peso2 = 0;
