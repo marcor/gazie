@@ -150,15 +150,15 @@ class shopsynchronizegazSynchro {
 			$xml_output = '<?xml version="1.0" encoding="UTF-8"?>
 			<GAzieDocuments AppVersion="1" Creator="Antonio Germani 2018-2021" CreatorUrl="https://www.programmisitiweb.lacasettabio.it">';
 			$xml_output .= "\n<Categories>\n";
-				$xml_output .= "\t<Category>\n";
-        $xml_output .= "\t<ToDo>".$toDo."</ToDo>\n";
-				$xml_output .= "\t<Codice>".$d['codice']."</Codice>\n";
-				$xml_output .= "\t<Descri>".$d['descri']."</Descri>\n";
-    		$xml_output .= "\t<LargeDescri>".preg_replace('/[\x00-\x1f]/','',htmlspecialchars($d['large_descri'], ENT_QUOTES, 'UTF-8'))."</LargeDescri>\n";
-        $xml_output .= "\t<WebUrl>".$d['web_url']."</WebUrl>\n";
-        $xml_output .= "\t<RefIdCat>".$d['ref_ecommerce_id_category']."</RefIdCat>\n";
-				$xml_output .= "\t<Top>".$d['top']."</Top>\n";// 0 => 'NON sincronizzato', 1 => 'Attivo e pubblicato in home', 2 => 'Attivo', 3 => 'Disattivato'
-				$xml_output .= "\t</Category>\n";
+			$xml_output .= "\t<Category>\n";
+			$xml_output .= "\t<ToDo>".$toDo."</ToDo>\n";
+			$xml_output .= "\t<Codice>".$d['codice']."</Codice>\n";
+			$xml_output .= "\t<Descri>".$d['descri']."</Descri>\n";
+    		$xml_output .= "\t<LargeDescri>".preg_replace('/[\x00-\x1f]/','',htmlspecialchars(addslashes ($d['large_descri']), ENT_QUOTES, 'UTF-8'))."</LargeDescri>\n";
+			$xml_output .= "\t<WebUrl>".$d['web_url']."</WebUrl>\n";
+			$xml_output .= "\t<RefIdCat>".$d['ref_ecommerce_id_category']."</RefIdCat>\n";
+			$xml_output .= "\t<Top>".$d['top']."</Top>\n";// 0 => 'NON sincronizzato', 1 => 'Attivo e pubblicato in home', 2 => 'Attivo', 3 => 'Disattivato'
+			$xml_output .= "\t</Category>\n";
 			$xml_output .="</Categories>\n</GAzieDocuments>";
 			$xmlFile = "category.xml";
 			$xmlHandle = fopen($xmlFile, "w");
