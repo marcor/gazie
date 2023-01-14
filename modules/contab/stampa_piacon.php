@@ -93,6 +93,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
                 $start_y=$max_y;
             }
             $note = str_split($row['annota'],$max_str);
+            $note = count($note)>0?$note:[0=>''];
             $pdf->SetFont('helvetica','B',7);
             $pdf->Cell(15,4,$mas,1,0,'C',1);
             $pdf->Cell(120,4,$row['descri'],'LTB',0,'L',1);

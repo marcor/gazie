@@ -45,5 +45,6 @@ if (isset($_POST['password'])) {
     echo "<p>consegue che nella colonna <b>aes_key</b> della tabella <b>gaz_admin</b> dovrai avere: <br/><b>".$ciphertext_b64. "</b></p>";
   }
 }
+print '<p> Versione PHP '.phpversion().'<p>';
 ?>
 </body>

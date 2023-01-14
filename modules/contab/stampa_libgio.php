@@ -113,43 +113,50 @@ $rip[$p]['dare']=$rid;
 $rip[$p]['avere']=$ria;
 if (isset($_GET['pdfa']) || isset($_GET['pdfamese'])) {
 	require('../../library/tcpdf/tcpdf.php');
-    class GL_template extends TCPDF {
-        function SetVars($admin_aziend) {
-            $this->ad_az = $admin_aziend;
-            $this->intesta1 = $admin_aziend['ragso1'] . ' ' . $admin_aziend['ragso2'];
-            $this->intesta2 = $admin_aziend['indspe'] . ' ' . sprintf("%05d", $admin_aziend['capspe']) . ' ' . $admin_aziend['citspe'] . ' (' . $admin_aziend['prospe'] . ')';
-	        $this->intesta3 = ' C.F.:' . $admin_aziend['codfis'] . ' P.I.:' . $admin_aziend['pariva'];
-			$this->setFooterMargin(18);
-			$this->setTopMargin(18);
-			$this->SetFont('helvetica','',7);
-		}
-		function Header() {
-            $this->Image('@'.$this->ad_az['image'],10,10,0,12);
-			$this->SetFont('helvetica','B',8);
-    		$this->SetXY(40,10);
-            $this->Cell(85,4,$this->intesta1,0,0,'C');
-	        $this->Cell(75,4,$this->ad_az['title'],0,1,'R');
-			$this->SetFont('helvetica','',7);
-    		$this->SetX(40);
-            $this->Cell(85,4,$this->intesta2,0,2,'C');
-	        $this->Cell(85,4,$this->intesta3,0,0,'C');
-    	}
-        function Footer() {
-			$this->SetFont('helvetica','',7);
-            $this->MultiCell(190,4,$this->intesta1.' '.$this->intesta2.' '.$this->intesta3,0,'C');
-	    }
-
+  class GL_template extends TCPDF {
+    public $ad_az;
+    public $intesta1;
+    public $intesta2;
+    public $intesta3;
+    function SetVars($admin_aziend) {
+      $this->ad_az = $admin_aziend;
+      $this->intesta1 = $admin_aziend['ragso1'] . ' ' . $admin_aziend['ragso2'];
+      $this->intesta2 = $admin_aziend['indspe'] . ' ' . sprintf("%05d", $admin_aziend['capspe']) . ' ' . $admin_aziend['citspe'] . ' (' . $admin_aziend['prospe'] . ')';
+      $this->intesta3 = ' C.F.:' . $admin_aziend['codfis'] . ' P.I.:' . $admin_aziend['pariva'];
+      $this->setFooterMargin(18);
+      $this->setTopMargin(18);
+      $this->SetFont('helvetica','',7);
+    }
+    function Header() {
+      $this->Image('@'.$this->ad_az['image'],10,10,0,12);
+      $this->SetFont('helvetica','B',8);
+      $this->SetXY(40,10);
+      $this->Cell(85,4,$this->intesta1,0,0,'C');
+      $this->Cell(75,4,$this->ad_az['title'],0,1,'R');
+      $this->SetFont('helvetica','',7);
+      $this->SetX(40);
+      $this->Cell(85,4,$this->intesta2,0,2,'C');
+      $this->Cell(85,4,$this->intesta3,0,0,'C');
+    }
+    function Footer() {
+      $this->SetFont('helvetica','',7);
+      $this->MultiCell(190,4,$this->intesta1.' '.$this->intesta2.' '.$this->intesta3,0,'C');
+    }
 	}
 	$pdf = new GL_template('P', 'mm', 'A4', true, 'UTF-8', false, true);
 } else {
 	require('../../library/tFPDF/mem_image.php');
     class GL_template extends PDF_MemImage {
-        function SetVars($admin_aziend) {
-            $this->ad_az = $admin_aziend;
-            $this->intesta1 = $admin_aziend['ragso1'] . ' ' . $admin_aziend['ragso2'];
-            $this->intesta2 = $admin_aziend['indspe'] . ' ' . sprintf("%05d", $admin_aziend['capspe']) . ' ' . $admin_aziend['citspe'] . ' (' . $admin_aziend['prospe'] . ')';
-	        $this->intesta3 = ' C.F.:' . $admin_aziend['codfis'] . ' P.I.:' . $admin_aziend['pariva'];
-		}
+      public $ad_az;
+      public $intesta1;
+      public $intesta2;
+      public $intesta3;
+      function SetVars($admin_aziend) {
+        $this->ad_az = $admin_aziend;
+        $this->intesta1 = $admin_aziend['ragso1'] . ' ' . $admin_aziend['ragso2'];
+        $this->intesta2 = $admin_aziend['indspe'] . ' ' . sprintf("%05d", $admin_aziend['capspe']) . ' ' . $admin_aziend['citspe'] . ' (' . $admin_aziend['prospe'] . ')';
+        $this->intesta3 = ' C.F.:' . $admin_aziend['codfis'] . ' P.I.:' . $admin_aziend['pariva'];
+      }
 		function Header() {
 			$this->MemImage($this->ad_az['image'],10,10,0,12);
 			$this->SetFont('helvetica','B',8);

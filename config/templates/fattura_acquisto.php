@@ -27,6 +27,18 @@ require('template.php');
 
 class FatturaAcquisto extends Template
 {
+  public $tesdoc;
+  public $giorno;
+  public $mese;
+  public $anno;
+  public $sconto;
+  public $virtual_taxstamp;
+  public $taxstamp;
+  public $trasporto;
+  public $tottraspo;
+  public $tipdoc;
+  public $descriptive_last_row;
+  public $show_artico_composit;
 
     function setTesDoc(){
         $this->tesdoc = $this->docVars->tesdoc;

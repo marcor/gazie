@@ -26,6 +26,15 @@ require('../../config/templates/template.php'); //attingo sempre dal set standar
 
 class InformativaPrivacy extends Template
 {
+  public $descriAzienda;
+  public $giorno;
+  public $mese;
+  public $anno;
+  public $pec;
+  public $luogo;
+  public $cliente6;
+  public $tipdoc;
+
     function setTesDoc()
     {
         $this->tesdoc = $this->docVars->tesdoc;

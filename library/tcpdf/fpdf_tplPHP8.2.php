@@ -143,11 +143,12 @@ class FPDF_TPL extends FPDF {
      * @return mixed If a template is opened, the ID is returned. If not a false is returned.
      */
     function endTemplate() {
+      /*
     	if (is_subclass_of($this, 'TCPDF')) {
         	$args = func_get_args();
         	return call_user_func_array(array($this, 'TCPDF::endTemplate'), $args);
         }
-
+      */
         if ($this->_intpl) {
             $this->_intpl = false;
             $tpl =& $this->tpls[$this->tpl];
@@ -350,22 +351,24 @@ class FPDF_TPL extends FPDF {
     }
 
     function AddLink() {
+      /* COMMENTO INCOMPATIBILE SU PHP8.2
     	if (is_subclass_of($this, 'TCPDF')) {
         	$args = func_get_args();
 			return call_user_func_array(array($this, 'TCPDF::AddLink'), $args);
         }
-
+      */
         if ($this->_intpl)
             $this->Error('Adding links in templates aren\'t possible!');
         return parent::AddLink();
     }
 
     function SetLink($link, $y = 0, $page = -1) {
+      /* COMMENTO INCOMPATIBILE SU PHP8.2
     	if (is_subclass_of($this, 'TCPDF')) {
         	$args = func_get_args();
 			return call_user_func_array(array($this, 'TCPDF::SetLink'), $args);
         }
-
+      */
         if ($this->_intpl)
             $this->Error('Setting links in templates aren\'t possible!');
         parent::SetLink($link, $y, $page);

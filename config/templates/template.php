@@ -24,10 +24,20 @@
   --------------------------------------------------------------------------
  */
 
+/*
+per usare fpdi di setasign fare così
+
+use setasign\Fpdi\Tcpdf\Fpdi;
+class Template extends Fpdi {
+
+ma purtroppo questo è compatibile con PHP>=8.2 però non importa i PDF compressi, pertanto al momento meglio non usarlo
+
+*/
 require('../../library/tcpdf/tcpdf.php');
 require('../../library/tcpdf/tcpdi.php');
 
 class Template extends TCPDI {
+
 
   public $docVars;
   public $gaz_path;

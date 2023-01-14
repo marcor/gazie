@@ -26,6 +26,13 @@ require('../../config/templates/template.php'); //attingo sempre dal set standar
 
 class RegolamentoPrivacy extends Template
 {
+  public $giorno;
+  public $mese;
+  public $anno;
+  public $user;
+  public $tipdoc;
+  public $luogo;
+
     function setTesDoc()
     {
 		$this->tesdoc = $this->docVars->tesdoc;

@@ -28,6 +28,12 @@ require('template.php');
 
 class FatturaAllegata extends Template
 {
+  public $tipdoc;
+  public $giorno;
+  public $mese;
+  public $anno;
+  public $sconto;
+  public $data;
 
     function setTesDoc()
     {

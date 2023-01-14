@@ -28,6 +28,21 @@ require('template.php');
 
 class PreventivoFornitore extends Template
 {
+  public $tesdoc;
+  public $tipdoc;
+  public $giorno;
+  public $mese;
+  public $anno;
+  public $sconto;
+  public $trasporto;
+  public $nomemese;
+  public $tot_rp;
+  public $id_rig;
+ // public $ExternalDoc;
+  public $extdoc_acc;
+  public $numPages;
+  public $_tplIdx;
+
   function setTesDoc()
   {
     $this->tesdoc = $this->docVars->tesdoc;
@@ -64,20 +79,19 @@ class PreventivoFornitore extends Template
   function body()
   {
 		$this->tot_rp=0;
-        $lines = $this->docVars->getRigo();
+    $lines = $this->docVars->getRigo();
 		$ctrl_orderman=0;
 		foreach ($lines AS $key => $rigo) {
-            if ($this->GetY() >= 185) {
-                $this->Cell(186,6,'','T',1);
-                $this->SetFont('helvetica', '', 20);
-                $this->SetY(225);
-                $this->Cell(186,12,'>>> --- SEGUE SU PAGINA SUCCESSIVA --- >>> ',1,1,'R');
-                $this->SetFont('helvetica', '', 9);
-                $this->newPage();
-                $this->Cell(186,5,'<<< --- SEGUE DA PAGINA PRECEDENTE --- <<< ',0,1);
-            }
+      if ($this->GetY() >= 185) {
+          $this->Cell(186,6,'','T',1);
+          $this->SetFont('helvetica', '', 20);
+          $this->SetY(225);
+          $this->Cell(186,12,'>>> --- SEGUE SU PAGINA SUCCESSIVA --- >>> ',1,1,'R');
+          $this->SetFont('helvetica', '', 9);
+          $this->newPage();
+          $this->Cell(186,5,'<<< --- SEGUE DA PAGINA PRECEDENTE --- <<< ',0,1);
+      }
 			if ($ctrl_orderman!=$rigo['id_orderman'] && $rigo['id_orderman']>0) {
-				/* stampo il rigo riferito ad una produzione   */
 				$this->SetFont('helvetica', 'B', 9);
 				$this->Ln(1);
 				$this->Cell(186, 6, 'Materiale per Produzione n. ' . $rigo['id_orderman'] . ' - ' .  substr($rigo['orderman_data']['datemi'],0,4), 1, 1, 'L');
@@ -132,24 +146,23 @@ class PreventivoFornitore extends Template
 						$this->Cell(105, 6, $rigo['descri'],'LTR',0,'L',0,'',1);
 					}
 					$this->Cell(20, 6, $pcs,'RTB',0,'L',0,'',1);
-					$this->Cell(46, 6, 'Consegna richiesta per il '.gaz_format_date($rigo['delivery_date']),'RTB',1,'L',0,'',1);
+					$this->Cell(61, 6, 'Consegna richiesta per il '.gaz_format_date($rigo['delivery_date']),'RTB',1,'L',0,'',1);
 					$this->Cell(125, 6, $rigo['codart'].$rigo['codice_fornitore'].$rigo['quality'].$res_ps ,'LRB',0,'L',0,'',1);
           $this->Cell(7,  6, $rigo['unimis'],1,0,'C');
           $this->Cell(14, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R',0,'',1);
+          /* commento perchè non funzionante da PHP8.2
 					$py=$this->GetY();
 					$px=$this->GetX();
 					$this->Rect($px,$py,17,6,'DF');
-					$this->TextField('prelis'.$key, 17, 6, array('multiline'=>true, 'lineWidth'=>0, 'borderStyle'=>'none','alignment' => 'right', 'fillColor'=>array(230, 230, 230)),array('v'=>number_format($rigo['prelis'],$this->decimal_price,',',''),'dv'=>number_format($rigo['prelis'],$this->decimal_price,',','')));
+					$this->TextField('prelis'.$key, 17, 6);
 					$py=$this->GetY();
 					$px=$this->GetX();
 					$this->Rect($px,$py,8,6,'DF');
-					$this->TextField('sconto'.$key, 8, 6, array('multiline'=>true, 'lineWidth'=>0, 'borderStyle'=>'none','alignment' => 'right', 'fillColor'=>array(230, 230, 230)),array('v'=> number_format($rigo['sconto'],1,',',''),'dv'=> number_format($rigo['sconto'],1,',','')));
-          if ($rigo['importo'] > 0) {
-            //$this->Cell(20, 6, gaz_format_number($rigo['importo']),1,0,'R');
-            $this->Cell(15,6,'',1,1); // non stampo mai il prezzo
-          } else {
-            $this->Cell(15, 6, '',1,1);
-          }
+					$this->TextField('sconto'.$key, 8, 6);
+          */
+          $this->Cell(17, 6,'',1);
+          $this->Cell(8, 6);
+          $this->Cell(15, 6, '',1,1);
         break;
         case "1":
           $this->Cell(125, 6, $rigo['descri'],'LBR',0,'L',0,'',1);
@@ -193,7 +206,6 @@ class PreventivoFornitore extends Template
 			$ctrl_orderman=$rigo['id_orderman'];
 		}
   }
-
 
   function compose()
   {

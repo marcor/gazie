@@ -26,6 +26,11 @@ require('template.php');
 
 class Lettera extends Template
 {
+  public $giorno;
+  public $mese;
+  public $anno;
+  public $nomemese;
+  public $tipdoc;
 
     function setTesDoc()
     {

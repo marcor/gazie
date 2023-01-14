@@ -9,7 +9,7 @@
         "phpoffice/phpspreadsheet": "^1.17.1",
         "ddeboer/imap":"^1.12.1",
         "phpmailer/phpmailer": "^6.5",
-        "tecnickcom/tcpdf": "6.3.*",
+        "tecnickcom/tcpdf": "^6.6",
         "setasign/fpdi": "^2.0"
     },
     "repositories": [

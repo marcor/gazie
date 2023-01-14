@@ -586,6 +586,7 @@ class venditCalc extends Compute {
 class lotmag {
 
   public $available;
+  public $lot;
 
   function __construct() {
     $this->available = [];
