@@ -36,32 +36,32 @@ $admin_aziend=checkAdmin();
 */
 
 if (isset($_SESSION['print_request'])){
-    $request = $_SESSION['print_request'];
-    unset ($_SESSION['print_request']);
-    if (isset($request['script_name'])) { // se � stata inviata una richiesta di stampa con il nome del template
-        //formattazione l'url
-        $url="setTimeout(\"window.location='".$request['script_name'].".php?";
-        unset($request['script_name']);
-        foreach($request as $k=>$v){
-           $url .=$k.'='.preg_replace("/\'/",'`',$v).'&';
-        }
-        $url .="'\",500)\n";
-        //fine formattazione url
-        echo "<HTML><HEAD><TITLE>Wait for PDF</TITLE>\n";
-        echo "<script type=\"text/javascript\">\n";
-        echo $url;
-        echo "</script></HEAD>\n<BODY><DIV align=\"center\">Wait for PDF</DIV><DIV align=\"center\">Aspetta il PDF</DIV></BODY></HTML>";
-    } else {  //altrimenti torno indietro
-        header("Location: ".$_SERVER['HTTP_REFERER']);
-        exit;
+  $request = $_SESSION['print_request'];
+  unset ($_SESSION['print_request']);
+  if (isset($request['script_name'])) { // se � stata inviata una richiesta di stampa con il nome del template
+    //formattazione l'url
+    $url="setTimeout(\"window.location='".$request['script_name'].".php?";
+    unset($request['script_name']);
+    foreach($request as $k=>$v){
+      $url .= $k.'='.preg_replace("/\'/",'`',$v!==null?$v:'').'&';
     }
-} else {
-    $ref=$_SERVER['HTTP_REFERER'];
-    if (isset($_SESSION['script_ref'])) {
-        $ref = $_SESSION['script_ref'];
-        unset ($_SESSION['script_ref']);
-    }
-    header("Location: ".$ref);
+    $url .="'\",500)\n";
+    //fine formattazione url
+    echo "<HTML><HEAD><TITLE>Wait for PDF</TITLE>\n";
+    echo "<script type=\"text/javascript\">\n";
+    echo $url;
+    echo "</script></HEAD>\n<BODY><DIV align=\"center\">Wait for PDF</DIV><DIV align=\"center\">Aspetta il PDF</DIV></BODY></HTML>";
+  } else {  //altrimenti torno indietro
+    header("Location: ".$_SERVER['HTTP_REFERER']);
     exit;
+  }
+} else {
+  $ref=$_SERVER['HTTP_REFERER'];
+  if (isset($_SESSION['script_ref'])) {
+    $ref = $_SESSION['script_ref'];
+    unset ($_SESSION['script_ref']);
+  }
+  header("Location: ".$ref);
+  exit;
 }
 ?>

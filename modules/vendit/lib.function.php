@@ -585,9 +585,11 @@ class venditCalc extends Compute {
 
 class lotmag {
 
-   function __construct() {
-      $this->available = array();
-   }
+  public $available;
+
+  function __construct() {
+    $this->available = [];
+  }
 
    function getLot($id) {
 // restituisce i dati relativi ad uno specifico lotto

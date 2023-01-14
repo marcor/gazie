@@ -24,9 +24,11 @@
   --------------------------------------------------------------------------
  */
 
-require('../../library/tcpdf/tcpdf.php');
+require_once('../../library/tcpdf/tcpdf.php');
+require_once('../../library/tcpdf/tcpdi.php');
+//require('../../library/tcpdf/tcpdf.php');
 
-class Report_template extends TCPDF {
+class Report_template extends TCPDI {
   public $colore;
   public $logo;
   public $link;
