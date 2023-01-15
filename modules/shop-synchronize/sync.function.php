@@ -154,7 +154,7 @@ class shopsynchronizegazSynchro {
 			$xml_output .= "\t<ToDo>".$toDo."</ToDo>\n";
 			$xml_output .= "\t<Codice>".$d['codice']."</Codice>\n";
 			$xml_output .= "\t<Descri>".$d['descri']."</Descri>\n";
-    		$xml_output .= "\t<LargeDescri>".preg_replace('/[\x00-\x1f]/','',htmlspecialchars(addslashes ($d['large_descri']), ENT_QUOTES, 'UTF-8'))."</LargeDescri>\n";
+    		$xml_output .= "\t<LargeDescri>".preg_replace('/[\x00-\x1f]/','',htmlspecialchars($d['large_descri'], ENT_QUOTES, 'UTF-8'))."</LargeDescri>\n";
 			$xml_output .= "\t<WebUrl>".$d['web_url']."</WebUrl>\n";
 			$xml_output .= "\t<RefIdCat>".$d['ref_ecommerce_id_category']."</RefIdCat>\n";
 			$xml_output .= "\t<Top>".$d['top']."</Top>\n";// 0 => 'NON sincronizzato', 1 => 'Attivo e pubblicato in home', 2 => 'Attivo', 3 => 'Disattivato'
