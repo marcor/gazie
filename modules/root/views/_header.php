@@ -19,12 +19,12 @@ if (gaz_dbi_num_rows($exist_ac) >= 1){
 // CONTROLLO QUANTE AZIENDE HA L'INSTALLAZIONE
 $rs_az = gaz_dbi_dyn_query('*', $gTables['aziend'], '1', 'codice DESC');
 $az = gaz_dbi_fetch_array($rs_az);
-if (gaz_dbi_num_rows($rs_az) > 1) { // ho più aziende gestite devo usare una icona generica derivante dal tema dell'ultimo utente amministratore che è entrato
+if (gaz_dbi_num_rows($rs_az) > 1 || !file_exists(DATA_DIR.'files/'.$az['codice'].'/favicon.ico')) { // ho più aziende gestite oppure non ne ho alcuna sulla prima: devo usare una icona generica derivante dal tema dell'ultimo utente amministratore che è entrato
 ?>
   <meta name="apple-mobile-web-app-title" content="GAzie - Gestione AZIEndale">
-  <link rel="shortcut icon" href="../..<?php echo $u['var_value'];?>/images/favicon.ico">
-  <link rel="apple-touch-icon"  href="../..<?php echo $u['var_value'];?>/images/apple-icon-114x114-precomposed.png">
-  <link rel="apple-touch-startup-image"  href="../..<?php echo $u['var_value'];?>/images/apple-icon-114x114-precomposed.png">
+  <link rel="shortcut icon" href="../../library/images/favicon.ico">
+  <link rel="apple-touch-icon"  href="../../library/images/apple-icon-114x114-precomposed.png">
+  <link rel="apple-touch-startup-image"  href="../../library/images/apple-icon-114x114-precomposed.png">
   <title>Login</title>
 <?php
   $sfondo=base64_encode(file_get_contents('../../library/images/sfondo.png'));
