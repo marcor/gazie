@@ -81,7 +81,7 @@ if (isset( $scriptname) && $scriptname != $prev_script && $scriptname != 'admin.
 if (file_exists(DATA_DIR.'files/'.$admin_aziend['codice'].'/favicon.ico')) { // usa l'icona aziendale
     $ico=base64_encode(@file_get_contents( DATA_DIR . 'files/' . $admin_aziend['codice'] . '/favicon.ico' ));
     $ico114=base64_encode(@file_get_contents( DATA_DIR . 'files/' . $admin_aziend['codice'] . '/logo_114x114.png' ));
-    $sfondo=base64_encode(@file_get_contents( DATA_DIR . 'files/' . $admin_aziend['codice'] . '/images/sfondo.png' ));
+    $sfondo=base64_encode(@file_get_contents( DATA_DIR . 'files/' . $admin_aziend['codice'] . '/sfondo.png' ));
 } else { // uso quella generica
     $ico=base64_encode(@file_get_contents('../../library/images/favicon.ico' ));
     $ico114=base64_encode(@file_get_contents('../../library/images/logo_114x114.png' ));

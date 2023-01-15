@@ -208,7 +208,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
                 imagefilter($bg, IMG_FILTER_GRAYSCALE);
                 imagefilter($bg, IMG_FILTER_CONTRAST, 80);
                 imagefilter($bg, IMG_FILTER_BRIGHTNESS, 110);
-                imagepng( $bg, $path."images/sfondo.png");
+                imagepng( $bg, $path."sfondo.png");
                 imagedestroy($bg);
                 imagedestroy($im);
               }
