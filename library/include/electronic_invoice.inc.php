@@ -314,7 +314,7 @@ class invoiceXMLvars {
     $this->regime_fiscale=$this->azienda['fiscal_reg'];
     if ($fr=getRegimeFiscale($this->seziva)) $this->regime_fiscale=$fr;
     // riprendo il valore percentuale da usare per i righi descrittivi
-    $this->descrifae_vat = gaz_dbi_get_row($gTables['aliiva'], "codice", $this->azienda['descrifae_vat'])['aliquo'];
+    $this->descrifae_vat = number_format(gaz_dbi_get_row($gTables['aliiva'], "codice", $this->azienda['descrifae_vat'])['aliquo'],2,'.','');
   }
 
   function getXMLrows() {
