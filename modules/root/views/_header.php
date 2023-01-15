@@ -28,7 +28,7 @@ if (gaz_dbi_num_rows($rs_az) > 1) { // ho più aziende gestite devo usare una ic
   <title>Login</title>
 <?php
   $sfondo=base64_encode(file_get_contents('../../library/images/sfondo.png'));
-} else { // ho una icona creata per l'azienda
+} else { // ho una sola azienda, prendo la sua
 ?>
   <meta name="apple-mobile-web-app-title" content="<?php echo $az['ragso1'];?>">
 <?php
