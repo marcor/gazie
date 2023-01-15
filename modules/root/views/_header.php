@@ -34,7 +34,7 @@ if (gaz_dbi_num_rows($rs_az) > 1 || !file_exists(DATA_DIR.'files/'.$az['codice']
 <?php
   $ico=base64_encode(file_get_contents(DATA_DIR.'files/'.$az['codice'].'/favicon.ico'));
   $ico114=base64_encode(file_get_contents(DATA_DIR.'files/'.$az['codice'].'/logo_114x114.png'));
-  $sfondo=base64_encode(file_get_contents(DATA_DIR.'files/'.$az['codice'].'/images/sfondo.png'));
+  $sfondo=base64_encode(file_get_contents(DATA_DIR.'files/'.$az['codice'].'/sfondo.png'));
 ?>
   <link rel="icon" href="data:image/x-icon;base64,<?php echo $ico?>"  type="image/x-icon" />
   <link rel="icon" sizes="114x114" href="data:image/x-icon;base64,<?php echo $ico114?>"  type="image/x-icon" />
