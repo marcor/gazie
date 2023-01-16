@@ -23,6 +23,9 @@
   --------------------------------------------------------------------------
  */
 require("../../library/include/datlib.inc.php");
+require("../../modules/magazz/lib.function.php");
+$magazz = new magazzForm;
+
 $admin_aziend = checkAdmin();
 $scorrimento = gaz_dbi_get_row($gTables['company_config'], 'var', 'autoscroll_to_last_row')['val'];
 $msg = "";
@@ -585,12 +588,19 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['quanti'] = $form['in_quanti'];
                 $form['rows'][$next_row]['sconto'] = $form['in_sconto'];
                 $form['rows'][$next_row]['prelis'] = ($artico && $artico['preacq']>=0.00001)?$artico['preacq']:'';
-				// tento di attribuire un prezzo del fornitore specifico guardando dentro all'eventuale ultimo ordine
-				$lo=getLastOrdPrice($form['in_codart'],$form['clfoco']);
-				if ($lo){
-                    $form['rows'][$next_row]['sconto'] = $lo['sconto'];
-                    $form['rows'][$next_row]['prelis'] = $lo['prelis'];
-				}elseif ($form['tipdoc'] == 'APR') {  // se è un preventivo non conosco prezzo e sconto
+
+                // tento di attribuire un prezzo del fornitore specifico guardando dentro all'eventuale ultimo acquisto
+                $lastbuys= $magazz->getLastBuys($form['in_codart'],false);
+                $klb=key($lastbuys);
+                $form['rows'][$next_row]['prelis'] = $klb?$lastbuys[$klb]['prezzo']:$form['rows'][$next_row]['prelis'];
+/*
+                $lo=getLastOrdPrice($form['in_codart'],$form['clfoco']);
+                if ($lo){
+                            $form['rows'][$next_row]['sconto'] = $lo['sconto'];
+                            $form['rows'][$next_row]['prelis'] = $lo['prelis'];
+                }else
+*/
+                if ($form['tipdoc'] == 'APR') {  // se è un preventivo non conosco prezzo e sconto
                     $form['rows'][$next_row]['sconto'] = 0;
                     $form['rows'][$next_row]['prelis'] = 0;
                 }
@@ -1406,16 +1416,12 @@ foreach ($form['rows'] as $k => $v) {
 }
 
 if (count($form['rows']) > 0) {
-
-    require("../../modules/magazz/lib.function.php");
-    $upd_mm = new magazzForm;
-
     if (isset($_POST['in_submit']) && count($form['rows']) > 5) {
         /* for($i=0;$i<3;$i++) {	//	Predisposizione per mostrare gli ultimi n articoli inseriti (in ordine inverso ovviamente)
           $msgtoast .= $last_row[$i].'<br />';
           } */
         //$msgtoast .= $last_row[0];
-        $msgtoast = $upd_mm->toast($script_transl['last_row'] . ': ' . $last_row[0], 'alert-last-row', 'alert-success');  //lo mostriamo
+        $msgtoast = $magazz->toast($script_transl['last_row'] . ': ' . $last_row[0], 'alert-last-row', 'alert-success');  //lo mostriamo
     }
 } else {
     echo '<tr id="alert-zerorows">
