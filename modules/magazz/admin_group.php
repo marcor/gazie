@@ -214,7 +214,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 			  $form['image'] = '';
 			}
 
-			$form['large_descri'] = htmlspecialchars_decode (addslashes($form['large_descri']));
+			$form['large_descri'] = htmlspecialchars_decode ($form['large_descri']);
 			// aggiorno il db
 			if ($toDo == 'insert') {
 			  gaz_dbi_table_insert('artico_group', $form);
