@@ -542,15 +542,15 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['descri'] = $form['in_descri'];
             $form['rows'][$next_row]['id_mag'] = $form['in_id_mag'];
             $form['rows'][$next_row]['extdoc'] = 0;
-			$form['rows'][$next_row]['codice_fornitore'] = 0;
+            $form['rows'][$next_row]['codice_fornitore'] = 0;
             $form['rows'][$next_row]['id_orderman'] = $form['in_id_orderman'];
-			if ($form['in_id_orderman']>0){ // controllo se la produzione ha un luogo da riportare in destinazione
-				$produzione = gaz_dbi_get_row($gTables['orderman'], "id", $form['in_id_orderman']);
-				if ($produzione['campo_impianto']>0){ // ho un luogo di produzione lo propongo come destinazione
-					$luogo = gaz_dbi_get_row($gTables['campi'], "codice", $produzione['campo_impianto']);
-					$form['destin']=$luogo['descri']."\n".$luogo['annota'];
-				}
-			}
+            if ($form['in_id_orderman']>0){ // controllo se la produzione ha un luogo da riportare in destinazione
+              $produzione = gaz_dbi_get_row($gTables['orderman'], "id", $form['in_id_orderman']);
+              if ($produzione['campo_impianto']>0){ // ho un luogo di produzione lo propongo come destinazione
+                $luogo = gaz_dbi_get_row($gTables['campi'], "codice", $produzione['campo_impianto']);
+                $form['destin']=$luogo['descri']."\n".$luogo['annota'];
+              }
+            }
             $form['rows'][$next_row]['larghezza'] = 0;
             $form['rows'][$next_row]['lunghezza'] = 0;
             $form['rows'][$next_row]['spessore'] = 0;
@@ -577,23 +577,23 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['peso_specifico'] = $artico['peso_specifico'];
                 $form['rows'][$next_row]['pezzi'] = 0;
                 $form['rows'][$next_row]['descri'] = $artico['descri'];
-				$form['rows'][$next_row]['codice_fornitore'] = $artico['codice_fornitore']; //M1 aggiunto a mano
+                $form['rows'][$next_row]['codice_fornitore'] = $artico['codice_fornitore']; //M1 aggiunto a mano
                 $form['rows'][$next_row]['unimis'] = $artico['uniacq'];
                 $form['rows'][$next_row]['codric'] = $form['in_codric'];
                 $form['rows'][$next_row]['delivery_date'] = $form['in_delivery_date'];
                 $form['rows'][$next_row]['quality'] = $artico['quality'];
-				if (empty($artico['quality'])) {
-					$form['rows'][$next_row]['quality'] = $form['in_quality'];
-				}
+                if (empty($artico['quality'])) {
+                  $form['rows'][$next_row]['quality'] = $form['in_quality'];
+                }
                 $form['rows'][$next_row]['quanti'] = $form['in_quanti'];
                 $form['rows'][$next_row]['sconto'] = $form['in_sconto'];
                 $form['rows'][$next_row]['prelis'] = ($artico && $artico['preacq']>=0.00001)?$artico['preacq']:'';
-
+/*
                 // tento di attribuire un prezzo del fornitore specifico guardando dentro all'eventuale ultimo acquisto
                 $lastbuys= $magazz->getLastBuys($form['in_codart'],false);
                 $klb=key($lastbuys);
                 $form['rows'][$next_row]['prelis'] = $klb?$lastbuys[$klb]['prezzo']:$form['rows'][$next_row]['prelis'];
-/*
+
                 $lo=getLastOrdPrice($form['in_codart'],$form['clfoco']);
                 if ($lo){
                             $form['rows'][$next_row]['sconto'] = $lo['sconto'];
@@ -668,7 +668,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['codart'] = '';
                 $form['rows'][$next_row]['annota'] = '';
                 $form['rows'][$next_row]['descri'] = '';
-				$form['rows'][$next_row]['codice_fornitore'] = ''; //M1 aggiunto a mano
+                $form['rows'][$next_row]['codice_fornitore'] = ''; //M1 aggiunto a mano
                 $form['rows'][$next_row]['unimis'] = '';
                 $form['rows'][$next_row]['codric'] = $form['in_codric'];
                 $form['rows'][$next_row]['delivery_date'] = $form['in_delivery_date'];
