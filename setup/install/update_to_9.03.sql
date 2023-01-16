@@ -55,4 +55,5 @@ INSERT INTO `gaz_XXXcustomer_group` (`id`, `descri`, `large_descri`, `image`, `r
 ALTER TABLE `gaz_XXXclfoco` ADD COLUMN `id_customer_group` INT(9) NOT NULL AFTER `id_anagra`,	ADD INDEX `id_customer_group` (`id_customer_group`);
 ALTER TABLE `gaz_XXXmovmag`	ADD COLUMN `id_artico_position` INT(9) NULL DEFAULT NULL AFTER `id_warehouse`, ADD INDEX `id_artico_position` (`id_artico_position`);
 ALTER TABLE `gaz_XXXartico_position` CHANGE COLUMN `id_position` `id_position` INT(9) NOT NULL AUTO_INCREMENT FIRST, ADD COLUMN `capacita` DECIMAL(13,3) NOT NULL DEFAULT 0.000 AFTER `position`;
+INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) VALUES ('Modalità proposta prezzo acquisto (0 = da anagrafica articolo, 1 = da ultimo acquisto, 2 = da ultimo ordine)', 'preacq_mode', '0');
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )

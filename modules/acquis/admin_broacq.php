@@ -588,21 +588,28 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['quanti'] = $form['in_quanti'];
                 $form['rows'][$next_row]['sconto'] = $form['in_sconto'];
                 $form['rows'][$next_row]['prelis'] = ($artico && $artico['preacq']>=0.00001)?$artico['preacq']:'';
-/*
-                // tento di attribuire un prezzo del fornitore specifico guardando dentro all'eventuale ultimo acquisto
-                $lastbuys= $magazz->getLastBuys($form['in_codart'],false);
-                $klb=key($lastbuys);
-                $form['rows'][$next_row]['prelis'] = $klb?$lastbuys[$klb]['prezzo']:$form['rows'][$next_row]['prelis'];
-
-                $lo=getLastOrdPrice($form['in_codart'],$form['clfoco']);
-                if ($lo){
-                            $form['rows'][$next_row]['sconto'] = $lo['sconto'];
-                            $form['rows'][$next_row]['prelis'] = $lo['prelis'];
-                }else
-*/
+                // attingo il prezzo in base alla scelta fatta in configurazione avanzata azienda
+                $preacq_mode = gaz_dbi_get_row($gTables['company_config'], 'var', 'preacq_mode')['val'];
+                if ( $preacq_mode == 1 ) { // modo prezzo ultimo acquisto (ddt-fatt)
+                  $lastbuys= $magazz->getLastBuys($form['in_codart'],false);
+                  $klb=key($lastbuys);
+                  $form['rows'][$next_row]['unimis'] = $klb?$lastbuys[$klb]['unimis']:$artico['uniacq'];
+                  $form['rows'][$next_row]['prelis'] = $klb?$lastbuys[$klb]['prezzo']:$artico['preacq'];
+                  if ( $form['in_sconto'] >= 0.01 ) {
+                      $form['rows'][$next_row]['sconto'] = $form['in_sconto'];
+                  } else {
+                    $form['rows'][$next_row]['sconto'] = $klb?$lastbuys[$klb]['scorig']:$artico['sconto'];
+                  }
+                } elseif ( $preacq_mode == 2 ) { // modo prezzo ultimo ordine di acquisto
+                  $lo=getLastOrdPrice($form['in_codart'],$form['clfoco']);
+                  if ($lo){
+                    $form['rows'][$next_row]['sconto'] = $lo['sconto'];
+                    $form['rows'][$next_row]['prelis'] = $lo['prelis'];
+                  }
+                }
                 if ($form['tipdoc'] == 'APR') {  // se è un preventivo non conosco prezzo e sconto
-                    $form['rows'][$next_row]['sconto'] = 0;
-                    $form['rows'][$next_row]['prelis'] = 0;
+                  $form['rows'][$next_row]['sconto'] = 0;
+                  $form['rows'][$next_row]['prelis'] = 0;
                 }
                 $form['rows'][$next_row]['codvat'] = $admin_aziend['preeminent_vat'];
                 $iva_azi = gaz_dbi_get_row($gTables['aliiva'], "codice", $admin_aziend['preeminent_vat']);
