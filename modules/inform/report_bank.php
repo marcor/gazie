@@ -129,7 +129,7 @@ $(function() {
 
 	$( "#suggest_search" ).autocomplete({
 		source: "./search.php?opt=suggest_search",
-		minLength: 5,
+		minLength: 4,
         html: true, // optional (jquery.ui.autocomplete.html.js required)
       	// optional (if other layers overlap autocomplete list)
         open: function(event, ui) {
