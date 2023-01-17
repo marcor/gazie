@@ -82,19 +82,18 @@ if (sizeof($paymov->Partners) > 0) {
 		  $pdf->SetFillColor(hexdec(substr($admin_aziend['colore'], 0, 2)), hexdec(substr($admin_aziend['colore'], 2, 2)), hexdec(substr($admin_aziend['colore'], 4, 2)));
           $pdf->Ln(2);
           $pdf->Cell(186,5,$prt['ragso1']." ".$prt['ragso2']." tel:".$prt['telefo']." fax:".$prt['fax']." mob:".$prt['cell']." ",1,1,'',1,'',1);
-          $pdf->SetFont('helvetica','',9);
+          $pdf->SetFont('helvetica','',8);
           $paymov->getPartnerStatus($p,substr($_GET['date'],0,10));
           foreach ($paymov->PartnerStatus as $k=>$v){
-             $pdf->SetTextColor(255,0,0);
-             $pdf->SetFillColor(230,255,230);
-             $pdf->Cell(56,5,"REF: ".$k,1,0,'',1,'',1);
-             $pdf->SetTextColor(0);
-             $pdf->Cell(130,5,
-                        $paymov->docData[$k]['descri'].' n.'.
-                        $paymov->docData[$k]['numdoc'].'/'.
-                        $paymov->docData[$k]['seziva'].' del '.
-                        gaz_format_date($paymov->docData[$k]['datdoc'])
-                        ,1,1);
+            $pdf->SetTextColor(255,0,0);
+            $pdf->SetFillColor(230,255,230);
+            $pdf->Cell(56,5,"REF: ".$k,1,0,'',1,'',1);
+            $pdf->SetTextColor(0);
+            $pdf->Cell(130,5,
+            $paymov->docData[$k]['descri'].' n.'.
+            $paymov->docData[$k]['numdoc'].'/'.
+            $paymov->docData[$k]['seziva'].' del '.
+            gaz_format_date($paymov->docData[$k]['datdoc']),1,1,'',1,'',1);
              foreach ($v as $ki=>$vi){
                 $pdf->SetFillColor(170,255,170);
                 $v_op='';

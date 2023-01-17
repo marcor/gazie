@@ -1478,7 +1478,13 @@ $strScript = array("admin_client.php" =>
             , 'Data chiusura' => '', 'Giorni esposizione' => '', 'Stato' => ''
         ),
         'status_value' => array(0 => 'APERTA', 1 => 'CHIUSA', 2 => 'ESPOSTA', 3 => 'SCADUTA', 9 => 'ANTICIPO'),
-        'remove' => 'Elimina tutte le partite chiuse di '
+        'remove' => 'Elimina tutte le partite chiuse di ',
+        'mesg' => array('La ricerca non ha dato risultati!',
+            'Inserire almeno 2 caratteri!',
+            'Cambia fornitore'
+        ),
+        'customer'=>'Tutti o cliente',
+
     ),
     "customer_payment.php" =>
     array('title' => 'Riscossione credito da cliente (chiusura partita/e)',

@@ -28,6 +28,8 @@ $msg = '';
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['hidden_req'] = '';
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
+    $form['clfoco'] = '';
+    $form['search']['clfoco'] = '';
     $form['date_ini_D'] = date("d");
     $form['date_ini_M'] = date("m");
     $form['date_ini_Y'] = date("Y");
@@ -41,12 +43,25 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 } else { // accessi successivi
     $form['hidden_req'] = htmlentities($_POST['hidden_req']);
     $form['ritorno'] = $_POST['ritorno'];
+    $form['clfoco'] = intval($_POST['clfoco']);
+    foreach ($_POST['search'] as $k => $v) {
+        $form['search'][$k] = $v;
+    }
     $form['date_ini_D'] = intval($_POST['date_ini_D']);
     $form['date_ini_M'] = intval($_POST['date_ini_M']);
     $form['date_ini_Y'] = intval($_POST['date_ini_Y']);
     if (isset($_POST['return'])) {
         header("Location: " . $form['ritorno']);
         exit;
+    }
+    if ($_POST['hidden_req'] == 'clfoco') {
+        $anagrafica = new Anagrafica();
+        if (preg_match("/^id_([0-9]+)$/", $form['clfoco'], $match)) {
+            $fornitore = $anagrafica->getPartnerData($match[1], 1);
+        } else {
+            $fornitore = $anagrafica->getPartner($form['clfoco']);
+        }
+        $form['hidden_req'] = '';
     }
 }
 
@@ -57,11 +72,9 @@ if (!checkdate($form['date_ini_M'], $form['date_ini_D'], $form['date_ini_Y'])) {
 // fine controlli
 
 if (isset($_POST['print']) && $msg == '') {
-    $_SESSION['print_request'] = array('script_name' => 'print_partner_status',
-        'date' => $form['date_ini_Y'] . '-' . $form['date_ini_M'] . '-' . $form['date_ini_D']
-    );
-    header("Location: sent_print.php");
-    exit;
+  $_SESSION['print_request'] = ['script_name' => 'print_partner_status', 'date' => $form['date_ini_Y'] . '-' . $form['date_ini_M'] . '-' . $form['date_ini_D'],'clfoco'=>$form['clfoco']];
+  header("Location: sent_print.php");
+  exit;
 }
 
 require("../../library/include/header.php");
@@ -97,6 +110,12 @@ if (!empty($msg)) {
     echo '<tr><td colspan="2" class="FacetDataTDred">' . $gForm->outputErrors($msg, $script_transl['errors']) . "</td></tr>\n";
 }
 echo "<tr>\n";
+echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['customer'] . "</td><td colspan=\"3\" class=\"FacetDataTD\">\n";
+$select_fornitore = new selectPartner("clfoco");
+$select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['clfoco'], 'clfoco', $script_transl['mesg'], $admin_aziend['mascli']);
+echo "</td>\n";
+echo "</tr>\n";
+echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['date_ini'] . "</td><td colspan=\"3\" class=\"FacetDataTD\">\n";
 $gForm->CalendarPopup('date_ini', $form['date_ini_D'], $form['date_ini_M'], $form['date_ini_Y'], 'FacetSelect', 1);
 echo "</td>\n";
@@ -112,6 +131,10 @@ echo "</table>\n";
 
 if (isset($_POST['preview'])) {
     $paymov = new Schedule;
+    if ($form['clfoco']>=100000001){
+      $admin_aziend['mascli']=$form['clfoco'];
+    }
+
     $paymov->setScheduledPartner($admin_aziend['mascli']);
     echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
     if (sizeof($paymov->Partners) > 0) {
@@ -145,7 +168,7 @@ if (isset($_POST['preview'])) {
                 }
                 echo "</a></td>\n<td colspan='2'></td>\n</tr>\n";
                 foreach ($v as $ki => $vi) {
-                    $ctrl_close_paymov = false; 
+                    $ctrl_close_paymov = false;
                     $lnk = '';
                     $class_paymov = 'btn btn-success';
                     $v_op = '';
@@ -162,7 +185,7 @@ if (isset($_POST['preview'])) {
                     if ($vi['expo_day'] >= 1) {
                         $expo = $vi['expo_day'];
                         if (round($vi['cl_val'],2) == round($vi['op_val'],2)) {
-                            $vi['status'] = 2; // la partita è chiusa ma è esposta a rischio insolvenza 
+                            $vi['status'] = 2; // la partita è chiusa ma è esposta a rischio insolvenza
                             $class_paymov = 'btn btn-warning';
                         }
                     } else {
@@ -193,7 +216,7 @@ if (isset($_POST['preview'])) {
                     echo "</tr>\n";
                 }
                 if ($ctrl_close_paymov) {
-                    $ctrl_close_partner = true; 
+                    $ctrl_close_partner = true;
                     echo "<tr>";
                     echo '<td class="text-right" colspan="7"> &nbsp;<a title="Cancella tutti i movimenti relativi a questa partita oramai chiusa (rimarranno comunque i movimenti contabili)" class="btn btn-xs btn-default btn-elimina" href="delete_schedule.php?id_tesdoc_ref=' . $k . '">' . $script_transl['delete'] . ' <i class="glyphicon glyphicon-remove"></i></a></td>';
                     echo "</tr>\n";

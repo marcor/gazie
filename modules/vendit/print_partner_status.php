@@ -73,18 +73,32 @@ $pdf->setTopMargin(43);
 $pdf->setRiporti('');
 $pdf->AddPage();
 $paymov = new Schedule;
+if (isset($_GET['clfoco'])){
+	$admin_aziend['mascli']=intval($_GET['clfoco']);
+}
+
 $paymov->setScheduledPartner($admin_aziend['mascli']);
 if (sizeof($paymov->Partners) > 0) {
     $anagrafica = new Anagrafica();
+    $partner_firstline = false;
     foreach ($paymov->Partners as $p) {
+        if ( $partner_firstline ) {
+            $pdf->SetFont('helvetica', 'B', 8);
+            $pdf->Cell(186, 5, 'SALDO PARTITE: '.$partner_firstline, 1, 1, 'R', 0, '', 1);
+            $partner_firstline = false;
+            $pdf->SetFont('helvetica', '', 8);
+        };
         $prt = $anagrafica->getPartner($p);
         $pdf->SetFont('helvetica', 'B', 10);
         $pdf->SetFillColor(hexdec(substr($admin_aziend['colore'], 0, 2)), hexdec(substr($admin_aziend['colore'], 2, 2)), hexdec(substr($admin_aziend['colore'], 4, 2)));
         $pdf->Ln(2);
         $pdf->Cell(186, 5, $prt['ragso1'] . " " . $prt['ragso2'] . " tel:" . $prt['telefo'] . " fax:" . $prt['fax'] . " mob:" . $prt['cell'] . " ", 1, 1, '', 1, '', 1);
-        $pdf->SetFont('helvetica', '', 9);
+        $pdf->SetFont('helvetica', '', 8);
         $paymov->getPartnerStatus($p, substr($_GET['date'], 0, 10));
         foreach ($paymov->PartnerStatus as $k => $v) {
+            if ( !$partner_firstline ) {
+                $partner_firstline=gaz_format_number($paymov->docData[$k]['saldo']);
+            };
             $pdf->SetTextColor(255, 0, 0);
             $pdf->SetFillColor(230, 255, 230);
             $pdf->Cell(56, 5, "REF: " . $k, 1, 0, '', 1, '', 1);
@@ -94,9 +108,9 @@ if (sizeof($paymov->Partners) > 0) {
                         $paymov->docData[$k]['numdoc'] . '/' .
                         $paymov->docData[$k]['seziva'] . ' del ' .
                         gaz_format_date($paymov->docData[$k]['datdoc'])
-                        , 1, 1);
+                        , 1, 1, '', 1, '', 1);
             } else {
-                $pdf->Cell(130, 5, $paymov->docData[$k]['descri'], 1, 1);
+                $pdf->Cell(130, 5, $paymov->docData[$k]['descri'], 1, 1, '', 1, '', 1);
             }
             foreach ($v as $ki => $vi) {
                 $pdf->SetFillColor(170, 255, 170);
@@ -140,6 +154,13 @@ if (sizeof($paymov->Partners) > 0) {
             }
         }
     }
+    if ( $partner_firstline ) {
+        $pdf->SetFont('helvetica', 'B', 8);
+        $pdf->Cell(186, 5, 'SALDO PARTITE: '.$partner_firstline, 1, 1, 'R', 0, '', 1);
+        $partner_firstline = false;
+        $pdf->SetFont('helvetica', '', 8);
+    };
+
 }
 $pdf->setRiporti('');
 $pdf->Output();

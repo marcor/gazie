@@ -53,7 +53,7 @@ if (isset($_POST['Delete'])) {
                 $ctrl_close_paymov = true;
             }
         }
-        if ($ctrl_close_paymov) { // ma solo le chiuse 
+        if ($ctrl_close_paymov) { // ma solo le chiuse
             gaz_dbi_del_row($gTables['paymov'], 'id_tesdoc_ref', $k);
         }
     }
@@ -75,7 +75,7 @@ $script_transl = HeadMain('delete_schedule');
         <p>
             <b>
                 <?php echo $script_transl['warning'] . '!!! ' . $script_transl['title']; ?>
-            </b> 
+            </b>
         </p>
     </div>
     <div class="panel panel-warning">
@@ -84,7 +84,7 @@ $script_transl = HeadMain('delete_schedule');
                 <div class="col-md-12 bg-info">
                     <div class="form-group">
                         <label class="col-sm-6 text-default"><?php echo $script_transl['ragsoc']; ?></label>
-                        <div class="col-sm-6"><?php echo $partner['descri']; ?></div>                
+                        <div class="col-sm-6"><?php echo $partner==NULL?'':$partner['descri']; ?></div>
                     </div>
                 </div>
             </div><!-- chiude row  -->
@@ -96,31 +96,31 @@ $script_transl = HeadMain('delete_schedule');
                         $ctrl_close_paymov = true;
                     }
                 }
-                if ($ctrl_close_paymov) { // ma solo le chiuse 
+                if ($ctrl_close_paymov) { // ma solo le chiuse
                     ?>
                     <div class="row">
                         <div class="col-sm-6 col-md-3 col-lg-3">
                             <div class="form-group">
                                 <label for="id_tesdoc_ref" class="col-sm-4 control-label"><?php echo $script_transl['id_tesdoc_ref']; ?></label>
-                                <div class="col-sm-8"><?php echo $k; ?></div>                
+                                <div class="col-sm-8"><?php echo $k; ?></div>
                             </div>
                         </div>
                         <div class="col-sm-6 col-md-3 col-lg-3">
                             <div class="form-group">
                                 <label for="descri" class="col-sm-4 control-label"><?php echo $script_transl['descri']; ?></label>
-                                <div class="col-sm-8"><?php echo $paymov->docData[$k]['descri'] . ' ' . $paymov->docData[$k]['numdoc'] . '/' . $paymov->docData[$k]['seziva']; ?></div>                
+                                <div class="col-sm-8"><?php echo $paymov->docData[$k]['descri'] . ' ' . $paymov->docData[$k]['numdoc'] . '/' . $paymov->docData[$k]['seziva']; ?></div>
                             </div>
-                        </div>                    
+                        </div>
                         <div class="col-sm-6 col-md-3 col-lg-3">
                             <div class="form-group">
                                 <label for="ragsoc" class="col-sm-4 control-label">del</label>
-                                <div class="col-sm-8"><?php echo ' del ' . gaz_format_date($paymov->docData[$k]['datdoc']); ?></div>                
+                                <div class="col-sm-8"><?php echo ' del ' . gaz_format_date($paymov->docData[$k]['datdoc']); ?></div>
                             </div>
                         </div>
                         <div class="col-sm-6 col-md-3 col-lg-3">
                             <div class="form-group">
                                 <label for="id_tesdoc_ref" class="col-sm-4 control-label"><?php echo $script_transl['amount']; ?></label>
-                                <div class="col-sm-8"><?php echo $paymov->docData[$k]['amount']; ?></div>                
+                                <div class="col-sm-8"><?php echo $paymov->docData[$k]['amount']; ?></div>
                             </div>
                         </div>
                     </div> <!-- chiude row  -->
@@ -133,7 +133,7 @@ $script_transl = HeadMain('delete_schedule');
                 <div class="col-md-12">
                     <div class="form-group">
                         <label class="col-sm-3 text-danger text-right"></label>
-                        <input type="submit" accesskey="d" name="Delete" class="col-sm-6 bg-danger" value="<?php echo $script_transl['delete']; ?>" >                
+                        <input type="submit" accesskey="d" name="Delete" class="col-sm-6 bg-danger" value="<?php echo $script_transl['delete']; ?>" >
                     </div>
                 </div>
             </div><!-- chiude row  -->

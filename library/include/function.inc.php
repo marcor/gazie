@@ -2714,6 +2714,8 @@ class Schedule {
 	public $id_target = 0;
   public $ExpiryStatus =[];
   public $Status;
+  public $docData = [];
+  public $PartnerStatus = [];
     function __construct() {
         $this->target = 0;
         $this->id_target = 0;
@@ -3174,7 +3176,7 @@ class Schedule {
                   }
 				}
             }
-            $invocecau=substr($r['caucon'],0,2);
+            $invocecau=substr($r['caucon'].'',0,2);
             if (!isset($this->docData[$k]) || $invocecau=='AF' || $invocecau=='FA' ) { // le note credito solo se non hanno già una fattura a riferimento
                 $this->docData[$k] = array('id_tes' => $r['id_tes'], 'descri' => $r['descri'], 'numdoc' => $r['numdoc'], 'seziva' => $r['seziva'], 'datdoc' => $r['datdoc'], 'amount' => $r['amount']);
             }
