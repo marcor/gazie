@@ -22,7 +22,7 @@
   scriva   alla   Free  Software Foundation, 51 Franklin Street,
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
-*/ 
+*/
 // prevent direct access
 
 $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND
@@ -63,7 +63,7 @@ if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato diret
         exit;
     }
 	$tl=strlen($term);
-	if($tl<2) { 
+	if($tl<2) {
         return;
     }
 
@@ -76,9 +76,9 @@ if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato diret
                 foreach ($parts as $id => $part) {   //	(inteso come stringa sulla quale fare il like) perchè è più flessibile con i caratteri jolly
                     $like[] = like_prepare($field, $part); //	Altrimenti se si cerca za%, il like viene fatto su tutto il concat, e se il codice prodotto
                 }           //	non inizia per za il risultato è nullo, così invece se cerco za%, viene fuori anche un prodotto il
-            }            //  cui nome (o descrizione) inizia per za ma il cui codice può anche essere TPQ 
+            }            //  cui nome (o descrizione) inizia per za ma il cui codice può anche essere TPQ
             $like = implode(" OR ", $like);    //	creo la porzione di query per il like, con OR perchè cerco in campi differenti
-            $result = gaz_dbi_dyn_query("id, CONCAT( descriabi,' - ',codcab,' - ',descricab,' - ',indiri) AS label, id AS value", $gTables['bank'], $like, "id");
+            $result = gaz_dbi_dyn_query("id, CONCAT( descriabi,' - ',codcab,' - ',descricab,' - ',indiri) AS label, id AS value, 'S' AS movimentabile", $gTables['bank'], $like, "id",0,500);
             break;
         case 'municipalities':
             $fields = array("id", "name"); //	Sono i campi sui quali effettuare la ricerca
@@ -86,9 +86,9 @@ if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato diret
                 foreach ($parts as $id => $part) {   //	(inteso come stringa sulla quale fare il like) perchè è più flessibile con i caratteri jolly
                     $like[] = like_prepare($field, $part); //	Altrimenti se si cerca za%, il like viene fatto su tutto il concat, e se il codice prodotto
                 }           //	non inizia per za il risultato è nullo, così invece se cerco za%, viene fuori anche un prodotto il
-            }            //  cui nome (o descrizione) inizia per za ma il cui codice può anche essere TPQ 
+            }            //  cui nome (o descrizione) inizia per za ma il cui codice può anche essere TPQ
             $like = implode(" OR ", $like);    //	creo la porzione di query per il like, con OR perchè cerco in campi differenti
-            $result = gaz_dbi_dyn_query("id, name AS label, id AS value", $gTables['municipalities'], $like, "id");
+            $result = gaz_dbi_dyn_query("id, name AS label, id AS value, 'S' AS movimentabile", $gTables['municipalities'], $like, "id",0,500);
             break;
         case 'partner':
             $fields = array("ragso1", "ragso2"); //	Sono i campi sui quali effettuare la ricerca
@@ -96,12 +96,12 @@ if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato diret
                 foreach ($parts as $id => $part) {   //	(inteso come stringa sulla quale fare il like) perchè è più flessibile con i caratteri jolly
                     $like[] = like_prepare($field, $part); //	Altrimenti se si cerca za%, il like viene fatto su tutto il concat, e se il codice prodotto
                 }           //	non inizia per za il risultato è nullo, così invece se cerco za%, viene fuori anche un prodotto il
-            }            //  cui nome (o descrizione) inizia per za ma il cui codice può anche essere TPQ 
+            }            //  cui nome (o descrizione) inizia per za ma il cui codice può anche essere TPQ
             $like = implode(" OR ", $like);    //	creo la porzione di query per il like, con OR perchè cerco in campi differenti
-            $result = gaz_dbi_dyn_query("codice, CONCAT(IF(SUBSTR(`codice`,1,3)='".$admin_aziend['mascli']."','Cliente: ', 'Fornitore:'),' ',ragso1 ) AS label, codice AS value, 'S' AS movimentabile", $gTables['clfoco']." LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id", $like, "codice");
+            $result = gaz_dbi_dyn_query("codice, CONCAT(IF(SUBSTR(`codice`,1,3)='".$admin_aziend['mascli']."','Cliente: ', 'Fornitore:'),' ',ragso1 ) AS label, codice AS value, 'S' AS movimentabile", $gTables['clfoco']." LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id", $like, "codice",0,500);
             break;
     }
-    while ($row = gaz_dbi_fetch_assoc($result)) { 
+    while ($row = gaz_dbi_fetch_assoc($result)) {
         $return_arr[] = $row;
     }
     if ($term != '%%') { //	E' indispensabile, altrimenti si possono generare warning che non fanno funzionare l'autocompletamento
@@ -119,8 +119,8 @@ if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato diret
  * @param string $evidenza: array su cui mettere in evidenza gli articoli esauriti o non movimentabili
  *
  */
- 
-function apply_evidenze($evidenza) 
+
+function apply_evidenze($evidenza)
 {
 	$rows = count($evidenza);
 
@@ -230,7 +230,7 @@ function apply_highlight($a_json, $parts) {
                 if ($pos - $start > 0) {
                     $no_highlight = mb_substr($label, $start, $pos - $start);
                     $label_highlight .= $no_highlight;
-                }              
+                }
                 $highlight = '<mark>' . mb_substr($label, $pos, $len) . '</mark>';
                 $label_highlight .= $highlight;
                 $start = $pos + $len;
@@ -240,7 +240,7 @@ function apply_highlight($a_json, $parts) {
                 $label_highlight .= $no_highlight;
             }
             $a_json[$row]["label"] = $label_highlight;
-			
+
         }
     }
     return $a_json;
