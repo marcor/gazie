@@ -769,7 +769,11 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
     $pdf->setVars($docVars, $templateName);
     $pdf->setTesDoc();
     $pdf->setCreator('GAzie - ' . $docVars->intesta1);
-    $pdf->setAuthor($docVars->user['user_lastname'] . ' ' . $docVars->user['user_firstname']);
+	if (isset($docVars->user['user_lastname']) && isset($docVars->user['user_firstname'])){
+		$pdf->setAuthor($docVars->user['user_lastname'] . ' ' . $docVars->user['user_firstname']);
+	}else{
+		$pdf->setAuthor('Antonio Germani');
+	}
     $pdf->setTitle($templateName);
     if ($templates[$templateName]=="lease"){// il contratto non ha intestazione, quindi il margine superiore deve essere minore
       $pdf->setTopMargin(25);
