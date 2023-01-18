@@ -1007,27 +1007,14 @@ class magazzForm extends GAzieForm {
       }
     }
 
-  function selectIdShelves($name,$val,$ret_type=false,$class='',$codart=false,$dat_ref=false,$quanti=false) {
+  function selectIdShelves($name,$val,$ret_type=false,$class='', $refresh=false) {
     $available['oth']=[];
-    if ($codart) { // se è riferito ad un articolo sulle option visualizzo anche la disponibilità
-      $available=$this->getStockAvailability($codart,false,$dat_ref);
-    }
-    $opt_style='';
-    if($quanti){
-      $opt_style=(!isset($available['oth'][$val])||$quanti>$available['oth'][$val])?'style="color:red;"':'style="color:green;"';
-    }
-        global $gTables;
-        $query = 'SELECT id_shelf,descri FROM ' . $gTables['shelves'] . ' WHERE 1 ORDER BY id_shelf';
-        $acc = '<select id="'.$name.'" name="'.$name.'" class="'.$class.'" onchange="this.form.submit();" '.$opt_style.' >';
-        $acc .= '<option value="0"';
-        $acc .= intval($val)==0?' selected ':' ';
-    if($quanti){
-      $opt_style=(!isset($available['oth'][0])||$quanti>$available['oth'][0])?'style="color:red;"':'style="color:green;"';
-    }
-    $acc .= ' '.$opt_style.'>non indicare';
-    if($quanti){
-      $acc .= isset($available['oth'][0])?' disp:'.number_format($available['oth'][0],5):' disp:0';
-    }
+    global $gTables;
+    $query = 'SELECT id_shelf,descri,id,name FROM ' . $gTables['shelves'].' LEFT JOIN '.$gTables['warehouse'].' ON '.$gTables['shelves'].'.id_warehouse = '.$gTables['warehouse'].'.id WHERE 1 ORDER BY id_warehouse,id_shelf';
+    $acc = '<select id="'.$name.'" name="'.$name.'" class="'.$class.'" '.($refresh?'onchange="this.form.submit();"':'').' >';
+    $acc .= '<option value="0"';
+    $acc .= intval($val)==0?' selected ':' ';
+    $acc .= '>non indicare';
     $acc .= '</option>';
     $rs = gaz_dbi_query($query);
     $othershelves=false;
@@ -1038,13 +1025,7 @@ class magazzForm extends GAzieForm {
         $selected = "selected";
       }
       $opt_style='';
-      if($quanti){
-        $opt_style=(!isset($available['oth'][$r['id_shelf']])||$quanti>$available['oth'][$r['id_shelf']])?'style="color:red;"':'style="color:green;"';
-      }
-            $acc .= '<option value="'.$r['id_shelf'] . '" '.$selected.' '.$opt_style.'>'.$r['descri'];
-      if($quanti){
-        $acc .= isset($available['oth'][$r['id_shelf']])?' disp:'.number_format($available['oth'][$r['id_shelf']],5):' disp:0';
-      }
+      $acc .= '<option value="'.$r['id_shelf'] . '" '.$selected.' '.$opt_style.'>'.($r['id']==0?'SEDE':$r['name']).' - '.$r['descri'];
       $acc .= '</option>';
     }
     $acc .='</select>';
