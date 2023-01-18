@@ -130,6 +130,7 @@ class invoiceXMLvars {
   public $vettore;
   public $ritenute;
   public $descrifae_vat;
+  public $descrifae_natura;
 
   function setXMLvars($gTables, $tesdoc, $testat, $tableName, $ecr = false) {
     $this->gTables = $gTables;
@@ -314,7 +315,9 @@ class invoiceXMLvars {
     $this->regime_fiscale=$this->azienda['fiscal_reg'];
     if ($fr=getRegimeFiscale($this->seziva)) $this->regime_fiscale=$fr;
     // riprendo il valore percentuale da usare per i righi descrittivi
-    $this->descrifae_vat = number_format(gaz_dbi_get_row($gTables['aliiva'], "codice", $this->azienda['descrifae_vat'])['aliquo'],2,'.','');
+    $descrifaealiiva=gaz_dbi_get_row($gTables['aliiva'], "codice", $this->azienda['descrifae_vat']);
+    $this->descrifae_vat = number_format($descrifaealiiva['aliquo'],2,'.','');
+    $this->descrifae_natura = $descrifaealiiva['fae_natura'];
   }
 
   function getXMLrows() {
@@ -391,6 +394,7 @@ class invoiceXMLvars {
         }
       } elseif ($rigo['tiprig'] == 2) { // descrittivo
         $rigo['pervat']=$this->descrifae_vat;
+        $rigo['natura']=$this->descrifae_natura;
       } elseif ($rigo['tiprig'] == 4) { // cassa previdenziale
         if (!isset($this->castel[$rigo['codvat']])) {
           $this->castel[$rigo['codvat']] = 0;
@@ -421,6 +425,7 @@ class invoiceXMLvars {
         $dom->loadHTML($body_text['body_text']);
         $rigo['descri'] = htmlspecialchars_decode(str_replace('&amp;#xD;','',trim(htmlentities(strip_tags($dom->saveXML())))));
         $rigo['pervat']=$this->descrifae_vat;
+        $rigo['natura']=$this->descrifae_natura;
         $rigo['tiprig'] = 'D';
       } elseif ($rigo['tiprig'] == 3) {  // var.totale fattura
         $this->riporto += $rigo['prelis'];
@@ -1130,6 +1135,10 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
           $el->appendChild($el1);
           $el1 = $domDoc->createElement("AliquotaIVA", $rigo['pervat']);
           $el->appendChild($el1);
+          if ($rigo['pervat'] <= 0) {
+            $el1 = $domDoc->createElement("Natura", $rigo['natura']);
+            $el->appendChild($el1);
+          }
           $benserv->appendChild($el);
           $nl = true;
           break;
@@ -1149,6 +1158,10 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
             $el->appendChild($el1);
             $el1 = $domDoc->createElement("AliquotaIVA", $rigo['pervat']);
             $el->appendChild($el1);
+            if ($rigo['pervat'] <= 0) {
+              $el1 = $domDoc->createElement("Natura", $rigo['natura']);
+              $el->appendChild($el1);
+            }
             $benserv->appendChild($el);
             if ($XMLvars->ddt_data){
               // è un rigo di ddt devo aggiungere il riferimento alla linea nell'apposito array che ho creato in precedenza
