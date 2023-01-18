@@ -998,8 +998,10 @@ $(document).ready(function(){
                         <div class="form-group">
                             <label for="aliiva" class="col-sm-4 control-label"><?php echo $script_transl['aliiva']; ?></label>
                             <?php
-                            $gForm->selectFromDB('aliiva', 'aliiva', 'codice', $form['aliiva'], 'codice', 0, ' - ', 'descri', '', 'col-sm-8', null, 'style="max-width: 350px;"');
+                            $gForm->selectFromDB('aliiva', 'aliiva', 'codice', $form['aliiva'], 'codice', 0, ' - ', 'descri', 'reload', 'col-sm-8', null, 'style="max-width: 350px;"');
+                            $aliquo = gaz_dbi_get_row($gTables['aliiva'], 'codice', $form['aliiva'])['aliquo'];
                             ?>
+                            <input id="aliquo" type="hidden" name="aliquo" value="<?php echo $aliquo; ?>" />
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -1074,10 +1076,18 @@ $(document).ready(function(){
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="web_price" class="col-sm-4 control-label"><?php echo $script_transl['web_price']; ?></label>
-                            <input class="col-sm-4" type="text"  value="<?php echo $form['web_price']; ?>" name="web_price" maxlength="15" />
+                            <input id="webprice" class="col-sm-4" type="text"  value="<?php echo $form['web_price']; ?>" name="web_price" maxlength="15" />
+                        </div>
+                        <div class="col-sm-4">
                         </div>
                     </div>
                 </div><!-- chiude row  -->
+                <div class="row">
+                <div class="col-sm-4"></div>
+                    <p class="col-sm-4" id="ivac"><p>
+                    <div class="col-sm-4">
+                    </div>
+                </div>
                   <div id="mod_prezzo" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
@@ -1395,7 +1405,23 @@ $(document).ready(function(){
             }
 
         });
-    });</script>
+    });
+
+ $(document).ready(function() {
+  var aliquo = Number(document.getElementById("aliquo").value)
+  var webprice = Number(document.getElementById("webprice").value)
+  var webpriceic = webprice + ((webprice * aliquo)/100);
+  $("#ivac").html("IVA comp."+webpriceic.toFixed(2).replace('.',','));
+
+});
+$("#aliiva, #webprice").on("keyup",function(){
+ var aliquo = Number(document.getElementById("aliquo").value)
+ var webprice = Number(document.getElementById("webprice").value)
+ var webpriceic = webprice + ((webprice * aliquo)/100);
+ $("#ivac").html("IVA comp."+webpriceic.toFixed(2).replace('.',','));
+ });
+
+    </script>
 <?php
 /** ENRICO FEDELE */
 /* SOlo se non sono in finestra modale */

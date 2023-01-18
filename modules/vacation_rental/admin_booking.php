@@ -912,10 +912,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $night=0;
         $start="";
       }
+	  
+	  $total_price=0;// inizializzo il prezzo totale della locazione per il successivo calcolo
       $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['in_codart']);
       if (isset($_POST['in_submit']) && strlen($form['in_codart'])>0 && $form['start']!="" && $form['end']!="" && $form['in_codart']<>"TASSA-TURISTICA"){// se è un alloggio e ci sono le date CALCOLO IL PREZZO
-
-        $total_price=0;// inizializzo calcolo del prezzo totale della locazione
+        
         $start=$form['start'];
         $gen_iva_perc = gaz_dbi_get_row($gTables['aliiva'], 'codice', $artico['aliiva'])['aliquo'];
         $night=0;
