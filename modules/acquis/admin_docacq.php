@@ -1422,24 +1422,6 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
         unset($updated_row);
     }
 
-//Antonio Germani - Se viene richiesto di aggiornare il prezzo delll'articolo sulla tabella artico
-	if (isset($_POST['updateprice'])){
-		$updri = key($_POST['updateprice']);
-		If ($form['rows'][$updri]['codart']==""){
-			$msg['err'][] = "noartupd";
-			} else {
-		$artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['rows'][$updri]['codart']);
-		If ($artico['preacq']==$form['rows'][$updri]['prelis']){
-			$msg['err'][] = "sampri";
-		} else {
-			$query="UPDATE " . $gTables['artico'] . " SET preacq = '" . $form['rows'][$updri]['prelis'] . "' WHERE codice ='". $form['rows'][$updri]['codart']."'";
-			gaz_dbi_query ($query) ;
-			}
-			}
-		unset ($_POST['updateprice']);
-	}
-// Fine modifica prezzo su artico
-
 // Se viene inviata la richiesta elimina il rigo corrispondente
     if (isset($_POST['del'])) {
         $delri = key($_POST['del']);
