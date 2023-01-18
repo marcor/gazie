@@ -315,7 +315,7 @@ class invoiceXMLvars {
     $this->regime_fiscale=$this->azienda['fiscal_reg'];
     if ($fr=getRegimeFiscale($this->seziva)) $this->regime_fiscale=$fr;
     // riprendo il valore percentuale da usare per i righi descrittivi
-    $descrifaealiiva=gaz_dbi_get_row($gTables['aliiva'], "codice", $this->azienda['descrifae_vat']);
+    $descrifaealiiva=gaz_dbi_get_row($gTables['aliiva'], "codice", $this->azienda['preeminent_vat']);
     $this->descrifae_vat = number_format($descrifaealiiva['aliquo'],2,'.','');
     $this->descrifae_natura = $descrifaealiiva['fae_natura'];
   }
@@ -392,9 +392,10 @@ class invoiceXMLvars {
         if ($rigo['tipiva'] == 'T') {
             $this->ivasplitpay += round(($v_for_castle * $rigo['pervat']) / 100, 2);
         }
+        $this->descrifae_vat = $rigo['pervat'];
+        $this->descrifae_natura = $rigo['natura'];
       } elseif ($rigo['tiprig'] == 2) { // descrittivo
-        $rigo['pervat']=$this->descrifae_vat;
-        $rigo['natura']=$this->descrifae_natura;
+
       } elseif ($rigo['tiprig'] == 4) { // cassa previdenziale
         if (!isset($this->castel[$rigo['codvat']])) {
           $this->castel[$rigo['codvat']] = 0;
@@ -424,8 +425,6 @@ class invoiceXMLvars {
         $body_text = gaz_dbi_get_row($this->gTables['body_text'], "id_body", $rigo['id_body_text']);
         $dom->loadHTML($body_text['body_text']);
         $rigo['descri'] = htmlspecialchars_decode(str_replace('&amp;#xD;','',trim(htmlentities(strip_tags($dom->saveXML())))));
-        $rigo['pervat']=$this->descrifae_vat;
-        $rigo['natura']=$this->descrifae_natura;
         $rigo['tiprig'] = 'D';
       } elseif ($rigo['tiprig'] == 3) {  // var.totale fattura
         $this->riporto += $rigo['prelis'];
@@ -1133,10 +1132,10 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
           $el->appendChild($el1);
           $el1 = $domDoc->createElement("PrezzoTotale", '0.00');
           $el->appendChild($el1);
-          $el1 = $domDoc->createElement("AliquotaIVA", $rigo['pervat']);
+          $el1 = $domDoc->createElement("AliquotaIVA", $XMLvars->descrifae_vat);
           $el->appendChild($el1);
-          if ($rigo['pervat'] <= 0) {
-            $el1 = $domDoc->createElement("Natura", $rigo['natura']);
+          if ($XMLvars->descrifae_vat <= 0) {
+            $el1 = $domDoc->createElement("Natura", $XMLvars->descrifae_natura);
             $el->appendChild($el1);
           }
           $benserv->appendChild($el);
@@ -1156,10 +1155,10 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
             $el->appendChild($el1);
             $el1 = $domDoc->createElement("PrezzoTotale", '0.00');
             $el->appendChild($el1);
-            $el1 = $domDoc->createElement("AliquotaIVA", $rigo['pervat']);
+            $el1 = $domDoc->createElement("AliquotaIVA", $XMLvars->descrifae_vat);
             $el->appendChild($el1);
-            if ($rigo['pervat'] <= 0) {
-              $el1 = $domDoc->createElement("Natura", $rigo['natura']);
+            if ($XMLvars->descrifae_vat <= 0) {
+              $el1 = $domDoc->createElement("Natura", $XMLvars->descrifae_natura);
               $el->appendChild($el1);
             }
             $benserv->appendChild($el);
