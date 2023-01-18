@@ -8,7 +8,7 @@
   --------------------------------------------------------------------------
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
-  Copyright (C) 2004-2023 - Antonio De Vincentiis Montesilvano (PE)
+  Copyright (C) 2004-2022 - Antonio De Vincentiis Montesilvano (PE)
   (http://www.devincentiis.it)
   <http://gazie.devincentiis.it>
   --------------------------------------------------------------------------
@@ -711,7 +711,7 @@ $strScript = array(
 		'bank_transfer' => 'Bank transfer',
 		'credit_card_offline' => 'Credit card offline',
 		'payment' => 'Payment',
-		'transfer_instruction' => 'Make the bank transfer to the following coordinates within 24 hours',
+		'transfer_instruction' => 'Make the bank transfer to the following coordinates within 12 hours',
 		'bank_beneficiary' => 'Beneficiary',
 		'amount' => 'Amount',
 		'bank_reason' => 'Payment Reason:',
@@ -741,7 +741,7 @@ $strScript = array(
 		'expiry' => 'Scadenza',
 		'email_confirm_body' => 'Hi, <br> thank you for choosing to spend a holiday in our facility, we are sending you a copy of your booking request as an attachment. The manager has already been notified about it and the reservation will be confirmed as soon as possible according to the rules of the structure. ',
 		'email_confirm_subject' => 'Booking request n.',
-		'email_confirm_addbody' => '<p>Within 24 hours, you have to make the payment of the deposit as follows:</p>',
+		'email_confirm_addbody' => '<p>Within 12 hours, you have to make the payment of the deposit as follows:</p>',
     'email_confirm_addbody_warning' => '<p>Take notice: The failing pay or the failure to send the receipt will delete the booking automatically.</p>',
     'email_confirm_addbody_receipt' => '<p>Once the payment has been made, you will have to send the receipt.</p>',
 		'regards' => 'Best regards',
@@ -875,7 +875,7 @@ $strScript = array(
     'canone3' => 'As a guarantee, at check-in the tenant agrees to have to pay in cash a non-interest-bearing security deposit of',
     'canone4' => 'Once there is no damage and the final cleaning has taken place, this deposit will be returned upon check-out. Otherwise, the amount will be retained by the landlord by way of reimbursement without prejudice to the right to request greater damage even for any non-use of the accommodation.',
     'recesso' => 'Withdrawal',
-    'recesso1' => 'The tenant can withdraw from this contract at least 60 days before the date of arrival; in this case the landlord will refund the confirmatory deposit withholding € 50.00 (fifty).',
+    'recesso1' => 'The tenant can withdraw from this contract at least 60 days before the date of arrival; in this case the landlord will refund the confirmatory deposit withholding € 50.00.',
     'recesso2' => 'The tenant can withdraw from this contract between 59 and 31 days before the arrival date; in this case the landlord will reimburse only half of the confirmatory deposit, keeping the remaining half.',
     'recesso3' => 'The tenant can withdraw from this contract in the 30 days preceding the arrival date; in this case the landlord will keep all the confirmatory deposit.',
     'recesso4' => 'The landlord can withdraw from this contract at least 30 days before the arrival date; in this case he will return the confirmation deposit to the landlord.',

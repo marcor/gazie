@@ -8,7 +8,7 @@
   --------------------------------------------------------------------------
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
-  Copyright (C) 2004-2023 - Antonio De Vincentiis Montesilvano (PE)
+  Copyright (C) 2004-2022 - Antonio De Vincentiis Montesilvano (PE)
   (http://www.devincentiis.it)
   <http://gazie.devincentiis.it>
   --------------------------------------------------------------------------
@@ -481,7 +481,7 @@ $strScript = array(
 		'bank_transfer' => 'Bonifico bancario',
 		'credit_card_offline' => 'Carta di credito offline',
 		'payment' => 'Pagamento',
-		'transfer_instruction' => 'Effettuare il bonifico bancario alle seguenti coordinate entro 24 ore',
+		'transfer_instruction' => 'Effettuare il bonifico bancario alle seguenti coordinate entro 12 ore',
 		'bank_beneficiary' => 'Beneficiario',
 		'amount' => 'Importo',
 		'bank_reason' => 'Causale: ',
@@ -511,7 +511,7 @@ $strScript = array(
 		'expiry' => 'Scadenza',
 		'email_confirm_body' => 'Salve,<br> Nel ringraziarla per aver scelto di trascorrere una vacanza nella nostra struttura, le inviamo, in allegato, una copia della sua richiesta di prenotazione. Il gestore è stato già avvisato e la prenotazione verrà confermata al più presto secondo quanto stabilito dalle norme della struttura. ',
 		'email_confirm_subject' => 'Richiesta di prenotazione n.',
-		'email_confirm_addbody' => '<p>Entro 24 ore, dovrà effettuare il pagamento della caparra confirmatoria così come segue:</p>',
+		'email_confirm_addbody' => '<p>Entro 12 ore, dovrà effettuare il pagamento della caparra confirmatoria così come segue:</p>',
 		'email_confirm_addbody_warning' => '<p>Nota bene: il mancato pagamento o il mancato invio della ricevuta comporterà automaticamente la cancellazione della prenotazione.</p>',
 		'email_confirm_addbody_receipt' => '<p>Effettuato il pagamento ne dovrà inviare la ricevuta rispondendo a questa e-mail.</p>',
 		'regards' => 'Cordiali saluti',
@@ -684,7 +684,7 @@ $strScript = array(
     'canone3' => 'A titolo di garanzia, al check-in il conduttore accetta di dover versare in contanti un deposito cauzionale infruttifero di',
     'canone4' => 'Accertata l\'assenza di danni e l\'avvenuta pulizia finale, tale deposito sarà restituito al check-out. In caso contrario la somma sarà trattenuta dal locatore a titolo di rimborso fermo il diritto di richiedere il maggior danno anche per un eventuale mancato utilizzo dell\'alloggio.',
     'recesso' => 'Recesso',
-    'recesso1' => 'Il conduttore può recedere dal presente contratto almeno con 60 giorni di anticipo dalla data di arrivo; in tale caso il locatore rimborserà la caparra confirmatoria trattenendo € 50,00 (cinquanta).',
+    'recesso1' => 'Il conduttore può recedere dal presente contratto almeno con 60 giorni di anticipo dalla data di arrivo; in tale caso il locatore rimborserà la caparra confirmatoria trattenendo € 50,00.',
     'recesso2' => 'Il conduttore può recedere dal presente contratto fra 59 e 31 giorni di anticipo dalla data di arrivo; in tale caso il locatore rimborserà solo la metà della caparra confirmatoria trattenendo la restante metà.',
     'recesso3' => 'Il conduttore può recedere dal presente contratto nei 30 giorni che precedono la data di arrivo; in tale caso il locatore tratterrà tutta la caparra confirmatoria.',
     'recesso4' => 'Il locatore può recedere dal presente contratto con almeno 30 giorni di anticipo dalla data di arrivo; in tale caso restituirà al locatore la caparra confirmatoria.',

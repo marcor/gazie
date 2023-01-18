@@ -75,7 +75,7 @@ class Lease extends Template
 
       // create HTML content
       $html = "<p><b>".$script_transl['parti']."</b><br>-<b>".$script_transl['locatore']."</b> ".$this->intesta1." ".$this->intesta2." ".$this->intesta3."<br>-"
-      .$script_transl['e']."<b>".$script_transl['conduttore']."</b>"." ".$this->cliente1." ".$this->cliente2." ".$this->cliente3." ".$this->cliente4." "."<br>".$script_transl['body1']."</p>
+      .$script_transl['e']."<b>".$script_transl['conduttore']."</b>"." ".$this->cliente1." ".$this->cliente2." ".$this->cliente3." ".$this->cliente4." ".$this->cliente4b." ".$this->cliente5." "."<br>".$script_transl['body1']."</p>
       <p>1- <b>".$script_transl['oggetto']."</b><br>".$script_transl['body2']."</p>";
       $html .= "<ul>";
       $tour_tax="";
@@ -148,7 +148,9 @@ class Lease extends Template
       $in_words = numfmt_format($fmt, $totamount);
 
       $html .= "</ul>";
+
       $html .= "<dl>";
+
       $html .= "<dt>2- <b>".$script_transl['durata']."</b></dt>" ;
       $html .= "<dd>- ".$script_transl['durata1'].$nights."</dd><dd>- ".$script_transl['durata2']." ".date("d-m-Y", strtotime($start))." ".$script_transl['durata2bis']." ".get_string_lang($checkin, $lang)."</dd>
                 <dd>- ".$script_transl['durata3']." ".date("d-m-Y", strtotime($end))." ".$script_transl['durata2bis']." ".get_string_lang($checkout, $lang).". ".$script_transl['durata4']."</dd>

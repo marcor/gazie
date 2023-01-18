@@ -904,7 +904,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$next_row]['quamag'] = 0;
         $form['rows'][$next_row]['tiprig'] = 6;
         $next_row++;
-    } else if ((isset($_POST['in_submit']) && strlen($form['in_codart'])>0 && $form['start']!="" && $form['end']!="") || (isset($_POST['extra_submit']) && strlen($form['extra'][$_POST['extra_submit']])>0 && isset($_POST['rows']))) { // conferma inserimento alloggio o extra
+    } else if ((isset($_POST['in_submit']) && strlen($form['in_codart'])>0 && $form['start']!="" && $form['end']!="") || (isset($_POST['extra_submit']) && strlen($form['extra'][$_POST['extra_submit']])>0 && isset($_POST['rows']))) { // conferma inserimento alloggio o extra o tassa turistica
 
       if (isset($_POST['extra_submit']) && strlen($form['extra'][$_POST['extra_submit']])>0){// se è un extra (ci deve per forza essere l'alloggio e quindi per forza anche le date)
         // faccio tutto più sotto
@@ -913,7 +913,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $start="";
       }
       $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['in_codart']);
-      if (isset($_POST['in_submit']) && strlen($form['in_codart'])>0 && $form['start']!="" && $form['end']!=""){// se è un alloggio e ci sono le date CALCOLO IL PREZZO
+      if (isset($_POST['in_submit']) && strlen($form['in_codart'])>0 && $form['start']!="" && $form['end']!="" && $form['in_codart']<>"TASSA-TURISTICA"){// se è un alloggio e ci sono le date CALCOLO IL PREZZO
 
         $total_price=0;// inizializzo calcolo del prezzo totale della locazione
         $start=$form['start'];
@@ -959,7 +959,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['in_prelis']=$total_price;
       }
       // calcolo gli sconti
-      $discounts=searchdiscount($form['in_codart'],$artico['id_artico_group'],$start,$form['end'],$night,$anagra=0,$gTables['rental_discounts']);
+      $discounts=searchdiscount($form['in_codart'],$artico['id_artico_group'],$form['start'],$form['end'],$night,$anagra=0,$gTables['rental_discounts']);
       $form['discount']=0;
       $form['descri_discount']="";
       if (isset($discounts) && $discounts->num_rows >0){// se c'è almeno uno sconto

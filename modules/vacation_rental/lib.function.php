@@ -114,6 +114,49 @@ function searchdiscount($house="",$facility="",$start="",$end="",$stay=0,$anagra
   }
 }
 
+// Ricerca gli sconti più vicini -> vengono esclusi i buoni sconto
+function search_near_discount($house="",$facility="",$start="",$end="",$stay=0,$anagra=0,$table=""){
+  global $link, $azTables;
+  if ($table == ""){
+	  $table = $azTables."rental_discounts";
+  }
+  $where=" ";
+  $and=" WHERE (";
+  if (strlen($house)>0){
+    $where .= $and." accommodation_code = '".$house."' OR accommodation_code='')";
+    $and=" AND (";
+  }
+  if (intval($facility)>0){
+    $where .= $and." facility_id = '".$facility."' OR facility_id = 0)";
+    $and=" AND (";
+  }
+  if (intval($start)>0){
+    $where .= $and." valid_from <= '".date("Y-m-d", strtotime($start))."' OR valid_from = '0000-00-00')";
+    $and=" AND (";
+  }
+  if (intval($end)>0){
+    $where .= $and." valid_to >= '".date("Y-m-d", strtotime($end))."' OR valid_to = '0000-00-00')";
+    $and=" AND (";
+  }
+  if (intval($stay)>0){
+    $near_stay = $stay+3;
+    $where .= $and." min_stay <= '".$near_stay."' AND min_stay > '".$stay."' )";
+    $and=" AND (";
+  }
+  if (intval($anagra)>0){
+    $where .= $and." id_anagra = '".$anagra."' OR id_anagra = 0)";
+    $and=" AND (";
+  }
+  $where .= $and." status = 'CREATED' AND (discount_voucher_code = '' OR discount_voucher_code = NULL ))";
+  $sql = "SELECT * FROM ".$table.$where." ORDER BY priority DESC, id ASC";
+  //echo "<br>query: ",$sql,"<br>";
+  if ($result = mysqli_query($link, $sql)) {
+    return ($result);
+  }else {
+     echo "Error: " . $sql . "<br>" . mysqli_error($link);
+  }
+}
+
 // come selectFromDB ma permette di fare join
 function selectFromDBJoin($table, $name, $key, $val, $order = false, $empty = false, $bridge = '', $key2 = '', $val_hiddenReq = '', $class = 'FacetSelect', $addOption = null, $style = '', $where = false, $echo=false) {
         global $gTables;

@@ -68,7 +68,7 @@ class Lease extends Template
 
       // create some HTML content
       $html = "<p><b>".$script_transl['parti']."</b><br>-<b>".$script_transl['locatore']."</b> ".$this->intesta1." ".$this->intesta2." ".$this->intesta3."<br>-"
-      .$script_transl['e']."<b>".$script_transl['conduttore']."</b>"." ".$this->cliente1." ".$this->cliente2." ".$this->cliente3." ".$this->cliente4." "."<br>".$script_transl['body1']."</p>
+      .$script_transl['e']."<b>".$script_transl['conduttore']."</b>"." ".$this->cliente1." ".$this->cliente2." ".$this->cliente3." ".$this->cliente4." ".$this->cliente4b." ".$this->cliente5." "."<br>".$script_transl['body1']."</p>
       <p>1- <b>".$script_transl['oggetto']."</b><br>".$script_transl['body2']."</p>";
       $html .= "<ul>";
       foreach ($lines as $rigo){
@@ -133,13 +133,15 @@ class Lease extends Template
       $totivafat = $this->docVars->totivafat;
       $impbol = $this->docVars->impbol;
       $taxstamp=$this->docVars->taxstamp;
-      $totamount = floatval(number_format(($totimpfat + $totivafat + $impbol + $taxstamp),2,".",""));
-      // creo l'importo in lettere nella lingua impostata per questo contratto
-      $fmt = numfmt_create($lang, NumberFormatter::SPELLOUT);
+      $totamount = $totimpfat + $totivafat + $impbol + $taxstamp;
+      $locale = 'it_IT';// creo l'importo in lettere
+      $fmt = numfmt_create($locale, NumberFormatter::SPELLOUT);
       $in_words = numfmt_format($fmt, $totamount);
 
       $html .= "</ul>";
+
       $html .= "<dl>";
+
       $html .= "<dt>2- <b>".$script_transl['durata']."</b></dt>" ;
       $html .= "<dd>- ".$script_transl['durata1'].$nights."</dd><dd>- ".$script_transl['durata2']." ".date("Y-m-d", strtotime($start))." ".$script_transl['durata2bis']." ".get_string_lang($checkin, $lang)."</dd>
                 <dd>- ".$script_transl['durata3']." ".date("Y-m-d", strtotime($end))." ".$script_transl['durata2bis']." ".get_string_lang($checkout, $lang).". ".$script_transl['durata4']."</dd>
@@ -148,9 +150,9 @@ class Lease extends Template
       $html .= "<dt>3- <b>".$script_transl['canone']."</b></dt>" ;
       $html .= "<dd>- ".$script_transl['body5'].(intval($adult)+intval($child)).$script_transl['body6'].$adult.$script_transl['body7'].$child.$script_transl['body8'].$minor."</dd>";
 
-      $html .= "<dd>- ".$script_transl['canone1']." € ".number_format(($totamount),2,".",",")." (".$in_words.") ".$script_transl['canone2bis'].$tour_tax.$script_transl['canone2']."</dd>";
+      $html .= "<dd>- ".$script_transl['canone1']." € ".number_format(($totamount),2,",",".")." (".$in_words.") ".$script_transl['canone2']."</dd>";
       if ($secdep>1){// se è previsto un deposito cauzionale lo scrivo
-        $html .= "<dd>- ".$script_transl['canone3']." € ".number_format(($secdep),2,".",",")." (". numfmt_format($fmt, floatval(number_format(($secdep),2,".","")))."). ".$script_transl['canone4']."</dd>";
+        $html .= "<dd>- ".$script_transl['canone3']." € ".number_format(($secdep),2,",",".")." ".$script_transl['canone4']."</dd>";
       }
 
       $html .= "<dt>4- <b>".$script_transl['divieti']."</b></dt>";
