@@ -136,6 +136,10 @@ echo '</tr>';
 while ($r = gaz_dbi_fetch_array($rs)) {
   $rs_numw=gaz_dbi_dyn_query ("COUNT(*) AS moved", $gTables['movmag'], 'id_warehouse='.$r['id'],'id_mov',0,1);
   $moved=gaz_dbi_fetch_array($rs_numw)['moved'];
+  $rs_nums=gaz_dbi_dyn_query ("COUNT(*) AS moved", $gTables['shelves'], 'id_warehouse='.$r['id'],'id_shelf',0,1);
+  $yshel=gaz_dbi_fetch_array($rs_nums)['moved'];
+  $rs_nump=gaz_dbi_dyn_query ("COUNT(*) AS moved", $gTables['artico_position'], 'id_warehouse='.$r['id'],'id_position',0,1);
+  $yposi=gaz_dbi_fetch_array($rs_nump)['moved'];
 ?>
 <tr>
  <td class="text-center"><a class="btn btn-xs btn-edit" href="admin_warehouse.php?Update&id=<?php echo $r["id"]; ?>"><i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $r["id"];?></a></td>
@@ -146,13 +150,21 @@ while ($r = gaz_dbi_fetch_array($rs)) {
  <td></td>
  <td class="text-center">
 <?php
-  if ($moved<=0){
-?>
- <a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $r['id'];?>" warehouse="<?php echo $r['name'];?>"><i class="glyphicon glyphicon-remove"></i></a>
-<?php
-  } else{
+  if ($moved>=1){
 ?>
  <a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Magazzino non eliminabile perché movimentato" disabled ><i class="glyphicon glyphicon-remove"></i></a>
+<?php
+  } elseif ($yshel>=1){
+?>
+ <a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Magazzino non eliminabile perché contenente uno scaffale" disabled ><i class="glyphicon glyphicon-remove"></i></a>
+<?php
+  } elseif ($yposi>=1){
+?>
+ <a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Magazzino non eliminabile perché contenente una posizione" disabled ><i class="glyphicon glyphicon-remove"></i></a>
+<?php
+  } else {
+?>
+ <a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $r['id'];?>" warehouse="<?php echo $r['name'];?>"><i class="glyphicon glyphicon-remove"></i></a>
 <?php
   }
 ?>

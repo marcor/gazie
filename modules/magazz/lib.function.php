@@ -1007,6 +1007,57 @@ class magazzForm extends GAzieForm {
       }
     }
 
+  function selectIdShelves($name,$val,$ret_type=false,$class='',$codart=false,$dat_ref=false,$quanti=false) {
+    $available['oth']=[];
+    if ($codart) { // se è riferito ad un articolo sulle option visualizzo anche la disponibilità
+      $available=$this->getStockAvailability($codart,false,$dat_ref);
+    }
+    $opt_style='';
+    if($quanti){
+      $opt_style=(!isset($available['oth'][$val])||$quanti>$available['oth'][$val])?'style="color:red;"':'style="color:green;"';
+    }
+        global $gTables;
+        $query = 'SELECT id_shelf,descri FROM ' . $gTables['shelves'] . ' WHERE 1 ORDER BY id_shelf';
+        $acc = '<select id="'.$name.'" name="'.$name.'" class="'.$class.'" onchange="this.form.submit();" '.$opt_style.' >';
+        $acc .= '<option value="0"';
+        $acc .= intval($val)==0?' selected ':' ';
+    if($quanti){
+      $opt_style=(!isset($available['oth'][0])||$quanti>$available['oth'][0])?'style="color:red;"':'style="color:green;"';
+    }
+    $acc .= ' '.$opt_style.'>non indicare';
+    if($quanti){
+      $acc .= isset($available['oth'][0])?' disp:'.number_format($available['oth'][0],5):' disp:0';
+    }
+    $acc .= '</option>';
+    $rs = gaz_dbi_query($query);
+    $othershelves=false;
+    while ($r = gaz_dbi_fetch_array($rs)) {
+      $othershelves=true;
+      $selected = '';
+      if ($r['id_shelf'] == intval($val)) {
+        $selected = "selected";
+      }
+      $opt_style='';
+      if($quanti){
+        $opt_style=(!isset($available['oth'][$r['id_shelf']])||$quanti>$available['oth'][$r['id_shelf']])?'style="color:red;"':'style="color:green;"';
+      }
+            $acc .= '<option value="'.$r['id_shelf'] . '" '.$selected.' '.$opt_style.'>'.$r['descri'];
+      if($quanti){
+        $acc .= isset($available['oth'][$r['id_shelf']])?' disp:'.number_format($available['oth'][$r['id_shelf']],5):' disp:0';
+      }
+      $acc .= '</option>';
+    }
+    $acc .='</select>';
+    if ($othershelves===false){
+      $acc ='Sede'.(isset($available['oth'][0])?' disp:'.number_format($available['oth'][0],5):' disp:0').'<input type="hidden" id_shelf="'.$name.'" name="'.$name.'" >';;
+    }
+    if ($ret_type){
+      return $acc;
+    } else {
+      echo $acc;
+    }
+  }
+
   function radioSelect($name, $transl, $sel, $class = 'col-xs-6') {
     $acc='';
     foreach ($transl as $i => $val) {

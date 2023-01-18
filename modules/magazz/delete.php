@@ -77,6 +77,14 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 			$i=intval($_POST['ref']);
 			gaz_dbi_del_row($gTables['warehouse'],"id",$i);
 		break;
+		case "shelf":
+			$i=intval($_POST['ref']);
+			gaz_dbi_del_row($gTables['shelves'],"id_shelf",$i);
+		break;
+    case "position":
+      $i=intval($_POST['ref']);
+      gaz_dbi_del_row($gTables['artico_position'], "id_position", $i);
+    break;
 	}
 }
 ?>
