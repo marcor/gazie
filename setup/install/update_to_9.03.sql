@@ -55,6 +55,6 @@ ALTER TABLE `gaz_XXXclfoco` ADD COLUMN `id_customer_group` INT(9) NOT NULL AFTER
 ALTER TABLE `gaz_XXXmovmag`	ADD COLUMN `id_artico_position` INT(9) NULL DEFAULT NULL AFTER `id_warehouse`, ADD INDEX `id_artico_position` (`id_artico_position`);
 ALTER TABLE `gaz_XXXartico_position` CHANGE COLUMN `id_position` `id_position` INT(9) NOT NULL AUTO_INCREMENT FIRST, ADD COLUMN `capacita` DECIMAL(13,3) NOT NULL DEFAULT 0.000 AFTER `position`;
 INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) VALUES ('Modo proposta prezzo acquisto (0=da anagrafica articolo, 1=da ultimo acquisto, 2=da ultimo ordine)', 'preacq_mode', '0');
-ALTER TABLE `gaz_XXXartico_position` DROP INDEX `id_warehouse_id_shelf_codart`, ADD UNIQUE INDEX `id_warehouse_id_shelf` (`id_warehouse`, `id_shelf`),	ADD INDEX `position` (`position`);
+ALTER TABLE `gaz_XXXartico_position` DROP INDEX `id_warehouse_id_shelf_codart`, ADD UNIQUE INDEX `id_position_id_warehouse_id_shelf` (`id_position`, `id_warehouse`, `id_shelf`),	ADD INDEX `position` (`position`);
 INSERT IGNORE INTO `gaz_XXXcaumag` (`codice`, `descri`, `type_cau`, `clifor`, `insdoc`, `operat`) VALUES (85, 'CARICO PER LAVORAZIONE C/TERZI', 9, 0, 0, 1);
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )

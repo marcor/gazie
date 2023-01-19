@@ -773,6 +773,8 @@ class magazzForm extends GAzieForm {
         $desdoc = 'Registro di campagna';
     } elseif ($tipdoc == 'WTR') {
         $desdoc = 'Trasferimento tra magazzini';
+    } elseif ($tipdoc == 'WAC') {
+        $desdoc = 'Accettazione in c\lavorazione';
     } else {//documento di vendita
         require("../../modules/vendit/lang." . $admin_aziend['lang'] . ".php");
         $desdoc = $strScript['admin_docven.php']['doc_name'][$tipdoc];
