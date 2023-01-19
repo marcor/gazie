@@ -1216,7 +1216,8 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                   $form['rows'][$i]['sconto'] = $artico['sconto'];
                 }
                 // attingo il prezzo in base alla scelta fatta in configurazione avanzata azienda
-                $preacq_mode = gaz_dbi_get_row($gTables['company_config'], 'var', 'preacq_mode')['val'];
+                $preacq_mode_res = gaz_dbi_get_row($gTables['company_config'], 'var', 'preacq_mode');
+                $preacq_mode=(isset($preacq_mode_res['val']))?$preacq_mode_res['val']:'';
                 if ( $preacq_mode == 1 ) { // modo prezzo ultimo acquisto
                   $lastbuys= $magazz->getLastBuys($form['in_codart'],false);
                   $klb=key($lastbuys);
