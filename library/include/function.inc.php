@@ -2003,12 +2003,6 @@ class GAzieForm {
       </div>
       <?php
     }
-
-    function gaz_html_ae_checkiva($pariva) {
-        $htmlpariva = '<a href="#" onclick="clipandgo(\''.$pariva.'\',\'https://telematici.agenziaentrate.gov.it/VerificaPIVA/Scegli.do?parameter=verificaPiva\')" title="copia ed incolla sul sito dell\'AdE per controllarla">' . $pariva . '</button>';
-        return $htmlpariva;
-    }
-
 }
 
 /* SEZIONE PER L'ORDINAMENTO DEI RECORD IN OUTPUT
