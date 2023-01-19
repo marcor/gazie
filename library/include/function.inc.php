@@ -996,18 +996,19 @@ class selectPartner extends SelectBox {
                         if ($partner[0]["codpart"] < 1) {  // disabilito le anagrafiche presenti solo in altre aziende
                         }
                         $partner[0]['codpart']=$partner[0]['codice'];
+                        echo "\t<input type=\"submit\" id=\"onlyone_submit\" value=\"→ \" onclick=\"if(typeof(this.form.hidden_req)!=='undefined'){this.form.hidden_req.value='$name';} this.form.submit();\">\n";
                     } elseif ($partner[0]["codpart"] < 1) {
                         $partner[0]['codpart'] = 'id_' . $partner[0]['id'];
                         $style = 'style="background:#FF6666";';
                     } elseif (substr($partner[0]["codpart"], 0, 3) != $m) {// non appartiene al mastro passato in $m
                         $partner[0]['codpart'] = 'id_' . $partner[0]['id'];
                         $style = 'style="background:#FF6666";';
+                        echo "\t<input type=\"submit\" id=\"onlyone_submit\" value=\"→ \" onclick=\"if(typeof(this.form.hidden_req)!=='undefined'){this.form.hidden_req.value='$name';} this.form.submit();\">\n";
                     }
-					$val=$partner[0]['codpart'];
+                    $val=$partner[0]['codpart'];
 				 //print_r($partner);print '<br>'.$m.'<br>'.$val.'<br>';
-         // exit;
+         //exit;
 
-					echo "\t<input type=\"submit\" id=\"onlyone_submit\" value=\"→ \" onclick=\"if(typeof(this.form.hidden_req)!=='undefined'){this.form.hidden_req.value='$name';} this.form.submit();\">\n";
 					echo "\t<input type=\"hidden\" id=\"$name\" name=\"$name\" value=\"$val\">\n";
 
 					echo "\t<input type=\"hidden\" name=\"search[$name]\" value=\"" . substr($partner[0]['ragsoc'], 0, 8) . "\">\n";

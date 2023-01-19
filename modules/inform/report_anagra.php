@@ -143,11 +143,9 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
         echo "<td align=\"center\">" . $a_row['codfis'] . "</td>";
     } elseif ($a_row['pariva'] >= 1 && !empty($a_row['codfis'])) {
         if ($a_row['pariva'] == $a_row['codfis']) {
-            echo "<td align=\"center\">";
-            echo $gForm->gaz_html_ae_checkiva($a_row['pariva']);
-            echo "</td>";
+            echo '<td align="center">'.$a_row['pariva'].'</td>';
         } else {
-            echo "<td align=\"center\">" . $gForm->gaz_html_ae_checkiva($a_row['pariva']) . "<br/>" . $a_row['codfis'] . "</td>";
+            echo "<td align=\"center\">" .$a_row['pariva']. "<br/>" . $a_row['codfis'] . "</td>";
         }
     } else {
         echo "<td class=\"FacetDataTDred\" align=\"center\"> * NO * </td>";
