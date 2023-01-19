@@ -241,7 +241,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     echo '<td title="'.$title.'"><a href="../orderman/admin_orderman.php?Update&codice='.intval($r['id_orderman']).'">'.$r['desdoc'].' '.$script_transl[9].' '.gaz_format_date($r["datdoc"]).'</a></td>';
   }
 
-  echo "<td align=\"center\"><p data-toggle=\"tooltip\" data-placement=\"auto\" title=\"$descri\">".$r["artico"]."</p></td>";
+  echo "<td align=\"center\"><p data-toggle=\"tooltip\" data-placement=\"auto\" title=\"$descri\"><a href=\"select_schart.php?id=".$r["artico"]."\" >".$r["artico"]."</a></p></td>";
   if ($r['id']>0) {
     echo "<td align=\"center\"><p data-toggle=\"tooltip\" data-placement=\"auto\" title=\"$expiry\">"."ID:".$r['id']." - ".$r['identifier']."</td>";
   } else {
