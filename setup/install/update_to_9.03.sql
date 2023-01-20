@@ -57,4 +57,6 @@ ALTER TABLE `gaz_XXXartico_position` CHANGE COLUMN `id_position` `id_position` I
 INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) VALUES ('Modo proposta prezzo acquisto (0=da anagrafica articolo, 1=da ultimo acquisto, 2=da ultimo ordine)', 'preacq_mode', '0');
 ALTER TABLE `gaz_XXXartico_position` DROP INDEX `id_warehouse_id_shelf_codart`, ADD UNIQUE INDEX `id_position_id_warehouse_id_shelf` (`id_position`, `id_warehouse`, `id_shelf`),	ADD INDEX `position` (`position`);
 INSERT IGNORE INTO `gaz_XXXcaumag` (`codice`, `descri`, `type_cau`, `clifor`, `insdoc`, `operat`) VALUES (85, 'CARICO PER LAVORAZIONE C/TERZI', 9, 0, 0, 1);
+ALTER TABLE `gaz_XXXshelves` ADD COLUMN `order` INT(3) NULL DEFAULT NULL AFTER `image`;
+ALTER TABLE `gaz_XXXartico_position` ADD COLUMN `order` INT(3) NOT NULL AFTER `image`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )
