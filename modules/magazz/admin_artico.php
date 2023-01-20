@@ -467,7 +467,9 @@ if ($modal === false) {
     $accpos='';
     if ($rs_pos->num_rows > 0){
       while ($r = gaz_dbi_fetch_array($rs_pos)) {
-        $accpos .= '<p>'.(empty($r['name'])?'Sede':$r['name']).' -> '.(empty($r['descri'])?'nessun scaffale':$r['descri']).' -> '.$r['position'].'</p>';
+        $poscodart = gaz_dbi_get_row($gTables['artico_position'], 'id_position', $r['artico_id_position']);
+        $accpos .= '<div class"bg-info">'.(empty($r['name'])?'SEDE':$r['name']).' Sca: '.(empty($r['descri'])?'nessun scaffale':$r['descri']).' Ubi: '.$poscodart['position'].
+        ' <a class="btn btn-xs btn-default btn-elimina dialog_posdelete" ref="'.$r['id_position'].'" codart="'.$form['codice'].'" descriposition="'.(empty($r['name'])?'SEDE':$r['name']).' - '.(empty($r['descri'])?'nessun scaffale':$r['descri']).' - '.$poscodart['position'].'" title="Elimina ubicazione"> <i class="glyphicon glyphicon-remove"></i></a></div>';
       }
     }
 } else {
@@ -486,6 +488,7 @@ if ($modal === false) {
  */
 ?>
 <script>
+
 function calcDiscount() {
     var p1 = ($("#preve1").val() * (1 - $("#sconto").val() / 100)).toFixed(<?php echo $admin_aziend['decimal_price']; ?>);
     $("#preve1_sc").val(p1);
@@ -505,121 +508,97 @@ $(function () {
       calcDiscount();
   });
 
-  $("[href='#"+$('#tabpill').val()+"']").click();
+  $("[href='#"+$('#tabpill').val()+"']").click()
 
-	var wpx = $(window).width()*0.97;
-	$("#dialog_artico_position").dialog({ autoOpen: false });
-	$('.dialog_artico_position').click(function() {
-		var codart = $(this).attr('codart');
-		var jsondatastr = null;
-		var deleted_rows = [];
-		$("p#iddescri").html(codart+' '+$(this).attr("artico_name"));
-		$.ajax({ // chiedo tutte le posizioni attribuite
-			'async': false,
-			url:"./get_artico_positions.php",
-			type: "POST",
-			dataType: 'text',
-			data: {codart: codart},
-			success:function(jsonstr) {
-				//alert(jsonstr);
-				jsondatastr = jsonstr;
-			}
-		});
-
-		var myAppendGrid = new AppendGrid({ // creo la tabella vuota
-		  element: "tblAppendGrid",
-		  uiFramework: "bootstrap4",
-		  iconFramework: "default",
-		  initRows: 1,
-		  columns: [
-			{
-			  name: "codart",
-			  display: "Codice Articolo",
-			  type: "hidden"
-			},
-			{
-			  name: "id_position",
-			  display: "ID Posizione",
-			  type: "hidden"
-			},
-			{
-			  name: "id_warehouse",
-			  display: "Magazzino",
-			  type: "select",
-				ctrlOptions: {
-				<?php echo $warehouses; ?>
-				},
-
-			},
-			{
-			  name: "id_shelf",
-			  display: "Scaffale",
-				type: "select",
-				ctrlOptions: {
-				<?php echo $shelf;?>
-				}
-			},
-			{
-			  name: "position",
-			  display: "Posizione",
-			  type: "text"
-			},
-		  ],
-		  beforeRowRemove: function(caller, rowIndex) {
-			 var rowValues = myAppendGrid.getRowValue(rowIndex);
-			 deleted_rows.push(rowValues.id_position);
-			//alert("row index:" + rowIndex + " values:" + JSON.stringify(deleted_rows));
-			return confirm("Sei sicuro di voler rimuovere la riga?");
-			}
-		});
-
-		if (jsondatastr){
-		// popolo la tabella
-		var jsondata = $.parseJSON(jsondatastr);
-		myAppendGrid.load( jsondata );
-		}
-
-		$( "#dialog_artico_position" ).dialog({
+	$("#dialog_posdelete").dialog({ autoOpen: false });
+	$('.dialog_posdelete').click(function() {
+		$("p#idcodice").html($(this).attr("ref"));
+		$("p#iddescri").html($(this).attr("descriposition"));
+		var id = $(this).attr('ref');
+		var ca = $(this).attr('codart');
+		$( "#dialog_posdelete" ).dialog({
 			minHeight: 1,
-			width: wpx,
+			width: "auto",
 			modal: "true",
 			show: "blind",
 			hide: "explode",
 			buttons: {
-				delete:{
-					text:'Annulla',
+   			close: {
+					text:'Non eliminare',
 					'class':'btn btn-default',
+          click:function() {
+            $(this).dialog("close");
+          }
+        },
+				delete:{
+					text:'Elimina',
+					'class':'btn btn-danger',
 					click:function (event, ui) {
-						$(this).dialog("close");
-					}
-				},
-				confirm :{
-				  text:'CONFERMA',
-				  'class':'btn btn-warning pull-right',
-				  click:function() {
-					var msg = null;
-					$.ajax({ // registro con i nuovi dati delle posizioni
-						'async': false,
-						data: {rec_artico_positions: myAppendGrid.getAllValue(), codart: codart, deleted_rows: deleted_rows},
+					$.ajax({
+						data: {'type':'position',ref:id},
 						type: 'POST',
-						url: './rec_artico_positions.php',
+						url: '../magazz/delete.php',
 						success: function(output){
-							msg = output;
-							console.log(msg);
+		          //alert(output);
+              //window.location.replace("./report_artico.php");
+              window.location.replace("./admin_artico.php?Update&codice="+ca+"&tab=magazz");
 						}
 					});
-					if (msg) {
-						alert(msg);
-					} else {
-						window.location.replace("./admin_artico.php?Update&codice="+codart+"&tab=magazz");
-					}
-				  }
-				}
+				}}
 			}
 		});
-		$("#dialog_artico_position" ).dialog( "open" );
+		$("#dialog_posdelete" ).dialog( "open" );
 	});
+
 });
+
+function choicePosition(idartico)
+{
+	$( "#search_position"+idartico ).autocomplete({
+		source: "../root/search.php?opt=position",
+		minLength: 2,
+    html: true, // optional (jquery.ui.autocomplete.html.js required)
+    // optional (if other layers overlap autocomplete list)
+    open: function(event, ui) {
+      $(".ui-autocomplete").css("z-index", 1000);
+    },
+		select: function(event, ui) {
+      var titleacc = '';
+      accidartico = '';
+      titleacc += "<br/>" + $(this).attr("label");
+      accidartico = idartico;
+      $("#workingrow").append(titleacc);
+			$(".position_name").replaceWith(ui.item.label);
+			$("#confirm_position").dialog({
+				modal: true,
+				show: "blind",
+				hide: "explode",
+				buttons: {
+					Annulla: function() {
+            $(this).dialog('destroy');
+					},
+					Conferma: function() {
+            //alert(accidartico);
+            $.ajax({
+              data: {'type':'setposition',ref:accidartico, 'val':ui.item.value},
+              type: 'GET',
+              url: './operat.php',
+              success: function(output){
+                window.location.replace("./report_artico.php");
+              }
+            });
+					}
+				},
+				close: function(){
+          $(this).dialog('destroy');
+        },
+        width: "40%",
+        minWidth: "500px"
+			});
+		}
+  });
+}
+
 </script>
 <style>
 .collapsible { cursor:pointer; }
@@ -630,6 +609,21 @@ $(function () {
 </style>
 
 <form method="POST" name="form" enctype="multipart/form-data" id="add-product">
+  <div class="modal" id="confirm_position" title="Aggiungi ubicazione:">
+    <fieldset>
+      <div>
+        <div class="position_name"></div>
+        <div class="ui-state-highlight" id="workingrow"><b>Ubicazioni:</b></div>
+      </div>
+    </fieldset>
+  </div>
+	<div style="display:none" id="dialog_posdelete" title="Conferma eliminazione">
+        <p><b>ID:</b></p>
+        <p class="ui-state-highlight" id="idcodice"></p>
+        <p>Magazzino - scaffale - ubicazione</p>
+        <p class="ui-state-highlight" id="iddescri"></p>
+	</div>
+
 <?php
 if (!empty($form['descri'])) $form['descri'] = htmlentities($form['descri'], ENT_QUOTES);
 if ($modal === true) {
@@ -902,16 +896,24 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-<?php if ($modal === false && $toDo=='update') { ?>
                 <div id="position" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label for="valore" class="col-sm-4 control-label">Magazzino, Scaffale</label>
-                						<div class="col-sm-8"><a class="btn btn-info dialog_artico_position" artico_name="<?php echo $form['descri']; ?>" codart="<?php echo $form['codice']; ?>" ><i class="glyphicon glyphicon-map-marker"></i> Posizione</a><?php echo $accpos; ?></div>
+
+                            <label for="valore" class="col-sm-4 control-label">Magazzino, Scaffale</label><div class="col-sm-8">
+           <?php echo '<input id="search_position'.$form['codice'].'" onClick="choicePosition(\''.$form['codice'].'\');" value="" label="'.$form["descri"].'" rigo="'. $form['codice'] .'" type="text"  placeholder="Aggiungi nuova"/>'; ?>
+
+ <i class="glyphicon glyphicon-map-marker"></i>
+ <?php
+if ($modal === false && $toDo=='update') {
+  echo $accpos;
+}
+?></div>
+                        </div>
+
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-<?php } ?>
                 <div id="packUnits" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
