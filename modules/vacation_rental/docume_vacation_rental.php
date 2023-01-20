@@ -47,7 +47,7 @@ $admin_aziend=checkAdmin(9);
 			<p>Copyright (C) - Antonio Germani Massignano (AP) https://www.programmisitiweb.lacasettabio.it - telefono +39 340 50 11 912</p>
 		</h5>
     <h5><b>
-    -------->    Versione 2.2    <---------
+    -------->    Versione 2.3    <---------
     </b></h5>
     <div class="panel panel-info text-left" style="max-width:80%; margin-left:10%; padding:10px;">
 
@@ -86,6 +86,7 @@ $admin_aziend=checkAdmin(9);
         <li>Invio automatico di promemoria/benvenuto x giorni prima del check-in (richiede un cron job)</li>
         <li>Controllo automatico delle prenotazioni con caparra non pagata, invio di sollecito e successivo annullamento automatico (richiede un cron job)</li>
 
+
         <p><br>Utilizzabile in un qualsiasi sito web tramite apposito Iframe:</p>
         <li>Front-end per il cliente tramite iframe su qualsiasi sito internet</li>
         <li>L'Iframe, impostando giorno di check-in e check-out, fornirà al cliente la disponibilità e i prezzi e permetterà la prenotazione immediata online</li>
@@ -97,10 +98,14 @@ $admin_aziend=checkAdmin(9);
         <li>Sincronizzazione bidirezionale delle disponibilità con altri portali di prenotazioni (Airbnb, Booking, Tripadvisor, etc) tramite ICal in entrata (necessita di cron-job) e in uscita</li>
         <li>Pagina front-end di accesso utente alla prenotazione con possibilità di effettuare pagamenti e lasciare la recensione</li>
         <li>Gestione dei feedback. Al check-out verrà inviata, al cliente, la richiesta di lasciare una recensione con voti su elementi personalizzabili e commento</li>
+        <li>Avviso automatico, tramite un pop-up nel front-end, quando un cliente ha impostato una ricerca disponibilità e prezzi con il numero notti di poco inferiore a quello necessario per ottenere uno sconto.</li>
+
       </ul>
       <p>Per la versione PRO contattare lo sviluppatore: Antonio Germani Massignano (AP) https://www.programmisitiweb.lacasettabio.it - telefono +39 340 50 11 912</p>
       <p><h3>Sito demo per testare il lato cliente su un sito Joomla di esempio: https://tony.netsons.org/index.php/it/</h3></p>
       <p><h3>Per il sito demo gestionale (GAzie) contattare lo sviluppatore per avere senza impegno le chiavi di accesso test</h3></p>
+      <p><h3>Questo è il primo sito di produzione (NON demo) che usa Vacation rental PRO: https://gmonamour.it/</h3></p>
+
     </div>
 	</div>
 </div>
