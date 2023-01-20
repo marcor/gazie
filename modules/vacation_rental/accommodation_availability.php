@@ -34,8 +34,8 @@
   <head>
   <meta name='robots' content='noindex,follow' />
     <meta charset='utf-8' />
-    <link href='fullcalendar-5.10.2/lib/main.css' rel='stylesheet' />
-    <script src='fullcalendar-5.10.2/lib/main.js'></script>
+    <link href='fullcalendar-5.11.3/lib/main.css' rel='stylesheet' />
+    <script src='fullcalendar-5.11.3/lib/main.js'></script>
 	<style>
 		.overlay{
 			position: fixed;
@@ -128,7 +128,7 @@ $id=substr($_GET['house_code'],0,32);
 			};
 			*/
 			xhttp.send();
-			xhttp.onload = function(){ 
+			xhttp.onload = function(){
 				calendar.refetchEvents();
 				//window.location.reload(true);
 			};
@@ -152,7 +152,7 @@ $id=substr($_GET['house_code'],0,32);
 				console.log(this);
 			};
 			*/
-			xhttp.onload = function(){ 
+			xhttp.onload = function(){
 				calendar.refetchEvents();
 				window.location.reload(true);
 			};
@@ -173,7 +173,7 @@ $id=substr($_GET['house_code'],0,32);
 				console.log(this);
 			};
 			*/
-			xhttp.onload = function(){ 
+			xhttp.onload = function(){
 				calendar.refetchEvents();
 				window.location.reload(true);
 			};
@@ -190,16 +190,16 @@ $id=substr($_GET['house_code'],0,32);
 			//alert('View: ' + info.view.type);
 			if(confirm("Se sicuro di voler cancellare? Le prenotazioni dirette non verranno comunque cancellate.")){
 				var id = info.event.id;
-				//alert('Test get id: ' + id);				
-				var xhttp = new XMLHttpRequest();				 				
-				xhttp.open("GET", "delete_db_events.php?id="+id+"&token=<?php echo md5($token.date('Y-m-d')); ?>", true);				
-				xhttp.send();				
+				//alert('Test get id: ' + id);
+				var xhttp = new XMLHttpRequest();
+				xhttp.open("GET", "delete_db_events.php?id="+id+"&token=<?php echo md5($token.date('Y-m-d')); ?>", true);
+				xhttp.send();
 				/*
 				xhttp.onreadystatechange = function() {
 					console.log(this);
 				};
 				*/
-				xhttp.onload = function(){ 
+				xhttp.onload = function(){
 					calendar.refetchEvents();
 					window.location.reload(true);
 				};

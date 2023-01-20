@@ -34,8 +34,8 @@ include_once("manual_settings.php");
 <html lang='en'>
   <head>
     <meta charset='utf-8' />
-    <link href='fullcalendar-5.10.2/lib/main.css' rel='stylesheet' />
-    <script src='fullcalendar-5.10.2/lib/main.js'></script>
+    <link href='fullcalendar-5.11.3/lib/main.css' rel='stylesheet' />
+    <script src='fullcalendar-5.11.3/lib/main.js'></script>
 	<style>
 		.overlay{
 			position: fixed;
@@ -90,7 +90,7 @@ $id=substr($_GET['extra_code'],0,32);
 				var xhttp = new XMLHttpRequest();
 				xhttp.open("GET", "save_to_db_events_extra.php?title="+ title +"&start="+ start +"&end="+ end +"&house_code=<?php echo $id; ?>& token=<?php echo md5($token.date('Y-m-d')); ?>", true);
 				xhttp.send();
-				xhttp.onload = function(){ 
+				xhttp.onload = function(){
 					calendar.refetchEvents();
 					window.location.reload(true);
 				};
@@ -112,7 +112,7 @@ $id=substr($_GET['extra_code'],0,32);
 				 var xhttp = new XMLHttpRequest();
 				 xhttp.open("GET", "update_db_events.php?title="+ title +"&start="+ start.toISOString() +"&end="+ end.toISOString() +"&id="+ id +"&house_code=<?php echo $id; ?>& token=<?php echo md5($token.date('Y-m-d')); ?>", true);
 				xhttp.send();
-				xhttp.onload = function(){ 
+				xhttp.onload = function(){
 					calendar.refetchEvents();
 					window.location.reload(true);
 				};
@@ -131,7 +131,7 @@ $id=substr($_GET['extra_code'],0,32);
 				 var xhttp = new XMLHttpRequest();
 				 xhttp.open("GET", "update_db_events.php?title="+ title +"&start="+ start.toISOString() +"&end="+ end.toISOString() +"&id="+ id +"&house_code=<?php echo $id; ?>& token=<?php echo md5($token.date('Y-m-d')); ?>", true);
 				xhttp.send();
-				xhttp.onload = function(){ 
+				xhttp.onload = function(){
 					calendar.refetchEvents();
 					window.location.reload(true);
 				};
@@ -155,7 +155,7 @@ $id=substr($_GET['extra_code'],0,32);
 					var xhttp = new XMLHttpRequest();
 					 xhttp.open("GET", "delete_db_events.php?id="+ id +"& token=<?php echo md5($token.date('Y-m-d')); ?>", true);
 					xhttp.send();
-					xhttp.onload = function(){ 
+					xhttp.onload = function(){
 						calendar.refetchEvents();
 						window.location.reload(true);
 					};
