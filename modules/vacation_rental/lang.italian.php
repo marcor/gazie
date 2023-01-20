@@ -710,7 +710,9 @@ $strScript = array(
     'opinion' => 'Valutazioni alloggio',
     'average' => 'Valutazione media generale',
     'guest_reviews' => 'Recensioni degli ospiti',
-    'no_review' => 'Non ci sono ancora recensioni'
+    'no_review' => 'Non ci sono ancora recensioni',
+    'prev' => ' Precedente ',
+    'next' => ' Successiva '
     )
 );
 ?>

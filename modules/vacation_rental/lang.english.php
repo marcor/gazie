@@ -901,7 +901,9 @@ $strScript = array(
     'opinion' => 'Accommodation ratings',
     'average' => 'Overall average rating',
     'guest_reviews' => 'Guest reviews',
-    'no_review' => 'There are no reviews yet'
+    'no_review' => 'There are no reviews yet',
+    'prev' => ' Previous ',
+    'next' => ' Next '
     )
 );
 ?>
