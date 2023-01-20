@@ -462,14 +462,14 @@ if ($modal === false) {
     // trovo la posizione nel magazzino (se presente)
     $query = 'SELECT * FROM `' . $gTables['artico_position'] . '` ap
           LEFT JOIN `' . $gTables['warehouse'] . '` wh ON ap.id_warehouse=wh.id
-          LEFT JOIN `' . $gTables['shelves'] . "` sh ON ap.id_shelf=sh.id_shelf WHERE `codart` = '".$form['codice']."' ORDER BY `ap`.`id_warehouse`,`ap`.`id_shelf`,`position`";
+          LEFT JOIN `' . $gTables['shelves'] . "` sh ON ap.id_shelf=sh.id_shelf WHERE `codart` = '".$form['codice']."' AND codart<>'' ORDER BY `ap`.`id_warehouse`,`ap`.`id_shelf`,`position`";
     $rs_pos = gaz_dbi_query($query);
     $accpos='';
     if ($rs_pos->num_rows > 0){
       while ($r = gaz_dbi_fetch_array($rs_pos)) {
         $poscodart = gaz_dbi_get_row($gTables['artico_position'], 'id_position', $r['artico_id_position']);
-        $accpos .= '<div class"bg-info">'.(empty($r['name'])?'SEDE':$r['name']).' Sca: '.(empty($r['descri'])?'nessun scaffale':$r['descri']).' Ubi: '.$poscodart['position'].
-        ' <a class="btn btn-xs btn-default btn-elimina dialog_posdelete" ref="'.$r['id_position'].'" codart="'.$form['codice'].'" descriposition="'.(empty($r['name'])?'SEDE':$r['name']).' - '.(empty($r['descri'])?'nessun scaffale':$r['descri']).' - '.$poscodart['position'].'" title="Elimina ubicazione"> <i class="glyphicon glyphicon-remove"></i></a></div>';
+        $accpos .= '<p class"bg-info">'.(empty($r['name'])?'SEDE':$r['name']).' Sca: '.(empty($r['descri'])?'nessun scaffale':$r['descri']).' Ubi: '.$poscodart['position'].
+        ' <a class="btn btn-xs btn-default btn-elimina dialog_posdelete" ref="'.$r['id_position'].'" codart="'.$form['codice'].'" descriposition="'.(empty($r['name'])?'SEDE':$r['name']).' - '.(empty($r['descri'])?'nessun scaffale':$r['descri']).' - '.$poscodart['position'].'" title="Elimina ubicazione"> <i class="glyphicon glyphicon-remove"></i></a></p>';
       }
     }
 } else {
@@ -899,20 +899,22 @@ if ($modal_ok_insert === true) {
                 <div id="position" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
-
-                            <label for="valore" class="col-sm-4 control-label">Magazzino, Scaffale</label><div class="col-sm-8">
-           <?php echo '<input id="search_position'.$form['codice'].'" onClick="choicePosition(\''.$form['codice'].'\');" value="" label="'.$form["descri"].'" rigo="'. $form['codice'] .'" type="text"  placeholder="Aggiungi nuova"/>'; ?>
-
+                            <label for="valore" class="col-sm-4 control-label">Ubicazione</label><div class="col-sm-8">
  <i class="glyphicon glyphicon-map-marker"></i>
+
  <?php
 if ($modal === false && $toDo=='update') {
+  echo '<input id="search_position'.$form['codice'].'" onClick="choicePosition(\''.$form['codice'].'\');" value="" label="'.$form["descri"].'" rigo="'. $form['codice'] .'" type="text"  placeholder="Aggiungi nuova"/>';
+?>
+<?php
   echo $accpos;
+} else {
+  echo 'inserire prima l\'articolo';
 }
 ?></div>
                         </div>
 
                         </div>
-                    </div>
                 </div><!-- chiude row  -->
                 <div id="packUnits" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
