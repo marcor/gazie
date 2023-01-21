@@ -319,7 +319,11 @@ if (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo acces
 	}
 
   if ($_POST['hidden_req'] == 'caumag') {
-		$form['operat'] = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag'])['operat'];
+    $cm = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
+		$form['operat'] = $cm['operat'];
+    if ($form['caumag']>80){ // non deriva da un documento cambio la descrizione
+      $form['desdoc'] = $cm['descri'];
+    }
   }
 
   if (!empty($_POST['Insert'])) {        //          Se viene inviata la richiesta di conferma totale ...
@@ -454,12 +458,12 @@ if (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo acces
       if (!empty($form['artico'])) {
      		$position_warehouse = gaz_dbi_get_row($gTables['artico_position'], "id_position", $form['id_position']);
         $form['id_warehouse'] = $position_warehouse?$position_warehouse['id_warehouse']:0;
-        var_dump($form);
         if ($form['caumag']==99){ // nel caso in cui voglio aggiornare un movimento di inventario questo lo porto sempre a fine giornata ovvero con id_mov il più alto possibile, quindi cancello e reinserisco
           gaz_dbi_del_row($gTables['movmag'], 'id_mov', intval($_GET['id_mov']));
           $id_movmag=$upd_mm->uploadMag($form['id_rif'], $form['tipdoc'],0,0,$form['datdoc'], $form['clfoco'], $form['scochi'], $form['caumag'], $form['artico'], $form['quanti'], $form['prezzo'], $form['scorig'], 0, $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => $form['operat'], 'desdoc' => $form['desdoc']));
-          $query = "UPDATE " . $gTables['movmag'] . " SET id_artico_position=".$form['id_position'].", id_warehouse=".$form['id_warehouse']."  WHERE id_mov ='" . $id_movmag . "'";
-         // header("Location: " . $_POST['ritorno']);
+          $query = "UPDATE " . $gTables['movmag'] . " SET id_artico_position=".$form['id_position'].", id_warehouse=".$form['id_warehouse']."  WHERE id_mov =" . $id_movmag ;
+          gaz_dbi_query($query);
+          header("Location: " . $_POST['ritorno']);
           exit;
         } else {
           $id_movmag=$upd_mm->uploadMag($form['id_rif'], $form['tipdoc'],0,0,$form['datdoc'], $form['clfoco'], $form['scochi'], $form['caumag'], $form['artico'], $form['quanti'], $form['prezzo'], $form['scorig'], $form['id_mov'], $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => $form['operat'], 'desdoc' => $form['desdoc'], 'id_artico_position' => $form['id_position']));
@@ -482,7 +486,7 @@ if (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo acces
         }
       }
 
-      //header("Location:report_movmag.php");
+      header("Location:report_movmag.php");
       exit;
     }
   }

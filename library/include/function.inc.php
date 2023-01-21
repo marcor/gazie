@@ -1172,7 +1172,7 @@ class selectPosition extends SelectBox
         if ( $field!='C' ) {
             $opera .= $field;
         }
-        $result = gaz_dbi_dyn_query("id_position,position,name,descri", $gTables['artico_position']. " LEFT JOIN " . $gTables['warehouse'] . " ON " . $gTables['artico_position'] . ".id_warehouse = " . $gTables['warehouse'] . ".id LEFT JOIN " . $gTables['shelves'] . " ON " . $gTables['artico_position'] . ".id_shelf = " . $gTables['shelves'] . ".id_shelf", $field_sql . " = " . $cerca, $gTables['artico_position'] . ".id_warehouse , ".$gTables['artico_position'] . ".id_shelf, id_position");
+        $result = gaz_dbi_dyn_query("id_position,position,name,descri," . $gTables['artico_position'] . ".id_warehouse", $gTables['artico_position']. " LEFT JOIN " . $gTables['warehouse'] . " ON " . $gTables['artico_position'] . ".id_warehouse = " . $gTables['warehouse'] . ".id LEFT JOIN " . $gTables['shelves'] . " ON " . $gTables['artico_position'] . ".id_shelf = " . $gTables['shelves'] . ".id_shelf", $field_sql . " = " . $cerca, $gTables['artico_position'] . ".id_warehouse , ".$gTables['artico_position'] . ".id_shelf, id_position");
         $numresult = gaz_dbi_num_rows($result);
         if ($numresult > 0) {
           if ($sele) {
@@ -1183,7 +1183,7 @@ class selectPosition extends SelectBox
               if ($posrow["id_position"] == $this->selected) {
                 $selected = ' selected=""';
               }
-              echo ' <option value="' . $posrow["id_position"] . '"' . $selected . ' class="bg-info">' . $posrow["position"] . ' scaf:' . $posrow["descri"].' mag:'.$posrow["name"] . '</option>';
+              echo ' <option value="' . $posrow["id_position"] . '"' . $selected . ' class="bg-info">' . $posrow["position"] . ' scaf:' .$posrow["descri"].' mag:'.($posrow["id_warehouse"]>0?$posrow["name"]:'SEDE') . '</option>';
             }
             echo ' </select>';
           }
