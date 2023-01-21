@@ -34,7 +34,7 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 	$upd_mm = new magazzForm;
 	$admin_aziend = checkAdmin();
 	switch ($_POST['type']) {
-        case "catmer":
+    case "catmer":
 			$i=intval($_POST['ref']);
 			gaz_dbi_del_row($gTables['catmer'],"codice",$i);
 		break;
@@ -68,10 +68,12 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 			}
 			// Cancello l'eventuale body_text
 			gaz_dbi_del_row($gTables['body_text'], "table_name_ref", "artico_".$i);
-			//Cancello se presenti gli articoli presenti in distinta base
+			//Cancello se presenti gli articoli in distinta base
 			$result = gaz_dbi_del_row($gTables['distinta_base'], "codice_composizione", $i );
 			//Cancello l'articolo
 			$result = gaz_dbi_del_row($gTables['artico'], "codice", $i);
+			//Cancello l'eventuale ubicazione
+			$result = gaz_dbi_del_row($gTables['artico_position'], "codart", $i);
 		break;
 		case "warehouse":
 			$i=intval($_POST['ref']);

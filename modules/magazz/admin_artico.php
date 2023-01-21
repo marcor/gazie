@@ -110,9 +110,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
   $form["preve4"] = number_format($form['preve4'], $admin_aziend['decimal_price'], '.', '');
   $form["web_price"] = number_format($form['web_price'], $admin_aziend['decimal_price'], '.', '');
   $form['rows'] = array();
-  /** inizio modifica FP 03/12/2015
-   * fornitore
-   */
+	$form['cosepos']= $_POST['cosepos'];
+	$form['id_position'] = intval($_POST['id_position']);
   $form['id_anagra'] = filter_input(INPUT_POST, 'id_anagra');
   if (isset ($_POST['search'])){
 	  foreach ($_POST['search'] as $k => $v) {
@@ -286,6 +285,10 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
       if (!empty($tbt)) {
         bodytextInsert(array('table_name_ref' => 'artico_' . $form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
       }
+      if ($form['id_position'] > 0) { // è stata indicata una ubicazione
+        $position = gaz_dbi_get_row($gTables['artico_position'], 'id_position', $form['id_position']); // prendo i valori magazzino e scaffale dal principale (senza codart)
+        gaz_dbi_query("INSERT INTO ".$gTables['artico_position']." (id_warehouse, id_shelf, artico_id_position, codart) VALUES (".$position['id_warehouse'].", ".$position['id_shelf'].", ".$form['id_position'].", '".$form['codice']."')");
+      }
     } elseif ($toDo == 'update') {
       gaz_dbi_table_update('artico', $form['ref_code'], $form);
       $bodytext = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", 'artico_' . $form['codice']);
@@ -382,9 +385,6 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form["preve4"] = number_format($form['preve4'], $admin_aziend['decimal_price'], '.', '');
     $form["web_price"] = number_format($form['web_price'], $admin_aziend['decimal_price'], '.', '');
     $form['rows'] = array();
-    /** inizio modifica FP 03/12/2015
-     * fornitore
-     */
     $form['id_anagra'] = $form['clfoco'];
     $form['search']['id_anagra'] = '';
     /** fine modifica FP */
@@ -429,9 +429,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form["web_price"] = number_format($form['web_price'], $admin_aziend['decimal_price'], '.', '');
     $form['web_public'] = 0;
     $form['depli_public'] = 1;
-    /** inizio modifica FP 03/12/2015
-     * filtro per fornitore ed ordinamento
-     */
+    $form['cosepos']= '';
+    $form['id_position'] = 0;
     $form['id_anagra'] = '';
     $form['search']['id_anagra'] = '';
     /** fine modifica FP */
@@ -830,7 +829,7 @@ if ($modal_ok_insert === true) {
                         <div class="form-group">
                             <label for="image" class="col-sm-4 control-label"><img src="../root/view.php?table=artico&value=<?php echo $form['codice']; ?>" width="100" ></label>
                             <?php
-                            if (strlen($form['image'])>10){
+                            if (isset($form['image']) && strlen($form['image'])>10){
                               $addlabel=" Sostituisci con altra ";
                               ?>
                               <div class="col-sm-8">
@@ -970,7 +969,9 @@ if ($modal === false && $toDo=='update') {
 <?php
   echo $accpos;
 } else {
-  echo 'inserire prima l\'articolo';
+  $select_position = new selectPosition("id_position");
+  $select_position->addSelected($form['id_position']);
+  $select_position->output($form['cosepos']);
 }
 ?></div>
                         </div>

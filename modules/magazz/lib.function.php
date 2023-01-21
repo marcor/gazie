@@ -1016,7 +1016,7 @@ class magazzForm extends GAzieForm {
     $acc = '<select id="'.$name.'" name="'.$name.'" class="'.$class.'" '.($refresh?'onchange="this.form.submit();"':'').' >';
     $acc .= '<option value="0"';
     $acc .= intval($val)==0?' selected ':' ';
-    $acc .= '>non indicare';
+    $acc .= '>- - - - - - - - -';
     $acc .= '</option>';
     $rs = gaz_dbi_query($query);
     $othershelves=false;

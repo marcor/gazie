@@ -175,7 +175,7 @@ while ($mv = gaz_dbi_fetch_array($result)) {
 		$accdescr.=' '.$mv['desorderman'];
 	  }
       $accdescr.= ' del '.gaz_format_date($mv['datdoc']);
-      if (strlen($mv['ragso1'])>3) {
+      if (isset($mv['ragso1']) && strlen($mv['ragso1'])>3) {
 			$accdescr.= $mv['ragso1'].' '.$mv['ragso2'];
 	  }
 	  if (intval($mv['id_lotmag'])>0){
