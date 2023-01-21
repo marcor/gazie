@@ -1132,7 +1132,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
           $el->appendChild($el1);
           $el1 = $domDoc->createElement("PrezzoTotale", '0.00');
           $el->appendChild($el1);
-          $el1 = $domDoc->createElement("AliquotaIVA", $XMLvars->descrifae_vat);
+          $el1 = $domDoc->createElement("AliquotaIVA", number_format($XMLvars->descrifae_vat, 2, '.', ''));
           $el->appendChild($el1);
           if ($XMLvars->descrifae_vat <= 0) {
             $el1 = $domDoc->createElement("Natura", $XMLvars->descrifae_natura);
@@ -1155,7 +1155,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
             $el->appendChild($el1);
             $el1 = $domDoc->createElement("PrezzoTotale", '0.00');
             $el->appendChild($el1);
-            $el1 = $domDoc->createElement("AliquotaIVA", $XMLvars->descrifae_vat);
+            $el1 = $domDoc->createElement("AliquotaIVA", number_format($XMLvars->descrifae_vat, 2, '.', ''));
             $el->appendChild($el1);
             if ($XMLvars->descrifae_vat <= 0) {
               $el1 = $domDoc->createElement("Natura", $XMLvars->descrifae_natura);

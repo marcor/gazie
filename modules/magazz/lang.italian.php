@@ -124,6 +124,7 @@ $strScript = array(
         'partner' => 'Cliente/Fornitore',
         'del_this' => 'Elimina il movimento di magazzino',
         'amount' => " Valore in ",
+        'Selezionare una causale'
         ),
     "report_caumag.php" =>
       array("causali di magazzino ",

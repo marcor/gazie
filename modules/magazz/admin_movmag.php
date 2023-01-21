@@ -345,6 +345,9 @@ if (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo acces
 		  }
 	  }
     }
+    if (intval($form['caumag']) < 1){ // senza causale
+      $msg .= "37+";
+    }
     if (intval($form['caumag'])==98 AND intval($form['operat'])==0){ // su storno inventario bisogna indicare se entrata o uscita
       $msg .= "29+";
     }
