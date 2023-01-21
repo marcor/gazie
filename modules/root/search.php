@@ -22,7 +22,7 @@
   scriva   alla   Free  Software Foundation, 51 Franklin Street,
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
-*/
+
 // prevent direct access
 $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND
         strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
@@ -30,7 +30,7 @@ if (!$isAjax) {
     $user_error = 'Access denied - not an AJAX request...';
     trigger_error($user_error, E_USER_ERROR);
 }
-
+*/
 
 // *****************************************************************************/
 if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato direttamente
@@ -177,14 +177,14 @@ if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato diret
             $result = gaz_dbi_dyn_query("codice AS id, CONCAT(codice,' - ',descri) AS label, codice AS value, movimentabile", $gTables['artico'], "codice LIKE '%".$term."%'", "CASE movimentabile WHEN 'N' THEN 2 WHEN 'E' THEN 1 WHEN 'S' THEN 0 END ASC, codice ASC",0,500);
             break;
         case 'position':
-            $fields = array("id_position", "position"); //	Sono i campi sui quali effettuare la ricerca
+            $fields = array("descri","position"); //	Sono i campi sui quali effettuare la ricerca
             foreach ($fields as $id1 => $field) {   //	preparo i diversi campi per il like, questo funziona meglio del concat
                 foreach ($parts as $id => $part) {   //	(inteso come stringa sulla quale fare il like) perchè è più flessibile con i caratteri jolly
                     $like[] = like_prepare($field, $part); //	Altrimenti se si cerca za%, il like viene fatto su tutto il concat, e se il codice prodotto
                 }           //	non inizia per za il risultato è nullo, così invece se cerco za%, viene fuori anche un prodotto il
             }            //  cui nome (o descrizione) inizia per za ma il cui codice può anche essere TPQ
             $like = implode(" OR ", $like);    //	creo la porzione di query per il like, con OR perchè cerco in campi differenti
-            $result = gaz_dbi_dyn_query("id_position AS id, CONCAT(id_position,' - ',position, ' scaf. ', descri ) AS label, id_position AS value, 'S' AS movimentabile",
+            $result = gaz_dbi_dyn_query("id_position AS id, CONCAT(position, ' scaf. ', descri ) AS label, id_position AS value, 'S' AS movimentabile",
             $gTables['artico_position']."
               LEFT JOIN " . $gTables['shelves'] . " ON
 							" . $gTables['artico_position'] . ".id_shelf = " . $gTables['shelves'] . ".id_shelf

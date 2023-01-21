@@ -740,7 +740,7 @@ class Anagrafica {
 // classe generica per la generazione di select box
 //================================================================================
 class SelectBox {
-  private $selected;
+  public $selected;
     var $name;
 
     // assegno subito il nome della select box
@@ -1101,7 +1101,7 @@ class selectPartner extends SelectBox {
 // Antonio Germani - classe per la generazione di select box ordini
 class selectorder extends SelectBox
 {
-  private $selected;
+  public $selected;
   public $name;
     function output($cerca, $field = 'C', $class = 'FacetSelect', $sele = 1)
     {
@@ -1141,13 +1141,11 @@ class selectorder extends SelectBox
                 echo '<input type="hidden" name="' . $this->name . '" value="" />';
             }
         } else {
-//            $msg = $script_transl['minins'] . ' 1 ' . $script_transl['charat'] . '!';
             $msg = $script_transl['minins'] . ' 2 ' . $script_transl['charat'] . '!';
             echo '<input type="hidden" name="' . $this->name . '" value="" />';
         }
 
         echo '&nbsp;<input type="text" class="' . $class . '" name="coseor" id="search_order" value="' . $cerca . '" ' . $tabula . ' maxlength="16" />';
-        //echo "<font style=\"color:#ff0000;\">$msg </font>";
         if ($msg != "") {
             echo '&nbsp;<span class="bg-danger text-danger"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>' . $msg . '</span>';
         }
@@ -1155,8 +1153,55 @@ class selectorder extends SelectBox
 
 }
 
+class selectPosition extends SelectBox
+{
+  public $selected;
+  public $name;
+  function output($cerca, $field = 'C', $class = 'FacetSelect', $sele = 1) {
+      global $gTables, $script_transl, $script_transl;
+      $msg = "";
+      $tabula = ' tabindex="4" ';
+      $opera = "%'";
+      if (strlen($cerca) >= 1) {
+        $opera = "'"; ////
+        $field_sql = 'id_position';
+        if (substr($cerca, 0, 1) == "@") {
+            $cerca = substr($cerca, 1);
+        }
+        // uso la variabile $field per aggiungere al $where un filtro sui articoli composti
+        if ( $field!='C' ) {
+            $opera .= $field;
+        }
+        $result = gaz_dbi_dyn_query("id_position,position,name,descri", $gTables['artico_position']. " LEFT JOIN " . $gTables['warehouse'] . " ON " . $gTables['artico_position'] . ".id_warehouse = " . $gTables['warehouse'] . ".id LEFT JOIN " . $gTables['shelves'] . " ON " . $gTables['artico_position'] . ".id_shelf = " . $gTables['shelves'] . ".id_shelf", $field_sql . " = " . $cerca, $gTables['artico_position'] . ".id_warehouse , ".$gTables['artico_position'] . ".id_shelf, id_position");
+        $numresult = gaz_dbi_num_rows($result);
+        if ($numresult > 0) {
+          if ($sele) {
+            $tabula = "";
+            echo ' <select tabindex="4" name="' . $this->name . '" class="' . $class . '">';
+            while ($posrow = gaz_dbi_fetch_array($result)) {
+              $selected = "";
+              if ($posrow["id_position"] == $this->selected) {
+                $selected = ' selected=""';
+              }
+              echo ' <option value="' . $posrow["id_position"] . '"' . $selected . ' class="bg-info">' . $posrow["position"] . ' scaf:' . $posrow["descri"].' mag:'.$posrow["name"] . '</option>';
+            }
+            echo ' </select>';
+          }
+        } else {
+          $msg = $script_transl['notfound'] . '!';
+          echo '<input type="hidden" name="' . $this->name . '" value="" />';
+        }
+      } else {
+        $msg = $script_transl['minins'] . ' 2 ' . $script_transl['charat'] . '!';
+        echo '<input type="hidden" name="' . $this->name . '" value="" />';
+      }
+      echo '&nbsp;<input type="text" class="' . $class . '" name="cosepos" id="search_position" value="' . $cerca . '" ' . $tabula . ' maxlength="32" placeholder="'.$msg.'" />';
+    }
+
+}
+
 class selectproduction extends SelectBox {
-  private $selected;
+  public $selected;
   public $name;
      function output($cerca, $without_closed = true, $class = 'FacetSelect',$sele=1) {
         global $gTables, $script_transl, $script_transl;
@@ -1196,7 +1241,7 @@ class selectproduction extends SelectBox {
 
 // classe per la generazione di select box degli articoli
 class selectartico extends SelectBox {
-  private $selected;
+  public $selected;
   public $name;
 
     function output($cerca, $field = 'C', $class = 'FacetSelect',$sele=1) {
@@ -1375,7 +1420,7 @@ class SelectValue extends SelectBox {
 
 // classe per la generazione di select box vettori
 class selectvettor extends SelectBox {
-  private $selected;
+  public $selected;
     function output() {
         global $gTables;
         echo "\t <select name=\"$this->name\" class=\"FacetSelect\">\n";

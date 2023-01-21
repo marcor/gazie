@@ -1,12 +1,12 @@
 $(function() {
 	// utilizzata dalla funzione selectDocPartner, quando incontra un solo risultato nella select lo conferma in automatico
 	$( "#onlyone_submit" ).trigger( "click" );
-	
+
 	$( "#search_clfoco" ).autocomplete({
 		source: "../../modules/root/search.php",
 		minLength: 2,
         html: true, // optional (jquery.ui.autocomplete.html.js required)
- 
+
       // optional (if other layers overlap autocomplete list)
         open: function(event, ui) {
             $(".ui-autocomplete").css("z-index", 1000);
@@ -20,7 +20,7 @@ $(function() {
 		source: "../../modules/root/search.php",
 		minLength: 2,
         html: true, // optional (jquery.ui.autocomplete.html.js required)
- 
+
       // optional (if other layers overlap autocomplete list)
         open: function(event, ui) {
             $(".ui-autocomplete").css("z-index", 1000);
@@ -34,7 +34,7 @@ $(function() {
 		source: "../../modules/root/search.php?opt=product",
 		minLength: 2,
         html: true, // optional (jquery.ui.autocomplete.html.js required)
- 
+
       	// optional (if other layers overlap autocomplete list)
         open: function(event, ui) {
             $(".ui-autocomplete").css("z-index", 1000);
@@ -48,7 +48,7 @@ $(function() {
 		source: "../../modules/root/search.php?opt=order",
 		minLength: 2,
         html: true, // optional (jquery.ui.autocomplete.html.js required)
- 
+
       	// optional (if other layers overlap autocomplete list)
         open: function(event, ui) {
             $(".ui-autocomplete").css("z-index", 1000);
@@ -62,7 +62,7 @@ $(function() {
 		source: "../../modules/root/search.php?opt=production",
 		minLength: 2,
         html: true, // optional (jquery.ui.autocomplete.html.js required)
- 
+
       	// optional (if other layers overlap autocomplete list)
         open: function(event, ui) {
             $(".ui-autocomplete").css("z-index", 1000);
@@ -99,7 +99,7 @@ $(function() {
 			$( "#country").val("IT");
 		}
 	});
-	
+
 	$( "#search_luonas" ).autocomplete({
 		source: "../../modules/root/search.php?opt=location",
 		minLength: 2,
@@ -139,7 +139,7 @@ $(function() {
 		source: "../../modules/root/search.php?opt=municipalities",
 		minLength: 2,
         html: true, // optional (jquery.ui.autocomplete.html.js required)
- 
+
       	// optional (if other layers overlap autocomplete list)
         open: function(event, ui) {
             $(".ui-autocomplete").css("z-index", 1000);
@@ -190,5 +190,20 @@ $(function() {
 			$(this).closest("form").submit();
 		}
 	});
+	$( "#search_position" ).autocomplete({
+		source: "../../modules/root/search.php?opt=position",
+		minLength: 2,
+        html: true, // optional (jquery.ui.autocomplete.html.js required)
+      	// optional (if other layers overlap autocomplete list)
+        open: function(event, ui) {
+            $(".ui-autocomplete").css("z-index", 1000);
+        },
+		select: function(event, ui) {
+			$("#search_position").val(ui.item.value);
+			$(this).closest("form").submit();
+		}
+	});
+
+
 });
 

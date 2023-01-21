@@ -604,27 +604,34 @@ function choicePosition(idartico)
       accidartico = '';
       titleacc += "<br/>" + $(this).attr("label");
       accidartico = idartico;
-      $("#workingrow").append(titleacc);
+      $("#workingrow").append('a: '+titleacc);
 			$(".position_name").replaceWith(ui.item.label);
 			$("#confirm_position").dialog({
 				modal: true,
 				show: "blind",
 				hide: "explode",
 				buttons: {
-					Annulla: function() {
+					Annulla:{
+          text:'Annulla',
+					'class':'btn btn-defautl',
+					click:function() {
             $(this).dialog('destroy');
-					},
-					Conferma: function() {
-            //alert(accidartico);
+            }
+          },
+					Conferma: {
+            text:'Aggiungi ubicazione',
+            'class':'btn btn-warning',
+            click:function() {
             $.ajax({
               data: {'type':'setposition',ref:accidartico, 'val':ui.item.value},
               type: 'GET',
               url: './operat.php',
               success: function(output){
-                window.location.replace("./report_artico.php");
+                window.location.replace("./admin_artico.php?Update&codice="+idartico+"&tab=magazz");
               }
             });
-					}
+            }
+          }
 				},
 				close: function(){
           $(this).dialog('destroy');
@@ -653,8 +660,7 @@ function choicePosition(idartico)
   <div class="modal" id="confirm_position" title="Aggiungi ubicazione:">
     <fieldset>
       <div>
-        <div class="position_name"></div>
-        <div class="ui-state-highlight" id="workingrow"><b>Ubicazioni:</b></div>
+        <div class="ui-state-highlight" id="workingrow"><b><div class="position_name" id="workingrow"></div> </b></div>
       </div>
     </fieldset>
   </div>
