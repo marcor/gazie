@@ -502,6 +502,43 @@ function calcDiscount() {
 
 $(function () {
 
+  $("#dialog_delete_blob").dialog({ autoOpen: false });
+	$('.dialog_delete_blob').click(function() {
+		$("p#idcodice").html($(this).attr("ref"));
+		var id = $(this).attr('ref');
+		$( "#dialog_delete_blob" ).dialog({
+			minHeight: 1,
+      minWidth: 200,
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+   			close: {
+					text:'Non eliminare',
+					'class':'btn btn-default',
+          click:function() {
+            $(this).dialog("close");
+          }
+        },
+				delete:{
+					text:'Elimina',
+					'class':'btn btn-danger',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'blob',ref:id},
+						type: 'POST',
+						url: '../magazz/delete.php',
+						success: function(output){
+		                    //alert(output);
+							location.reload();
+						}
+					});
+				}}
+			}
+		});
+		$("#dialog_delete_blob" ).dialog( "open" );
+	});
+
   $("#preve1,#preve2,#preve3,#preve4,#sconto").change(function () {
       var v = $(this).val().replace(/,/, '.');
       $(this).val(v);
@@ -609,6 +646,10 @@ function choicePosition(idartico)
 </style>
 
 <form method="POST" name="form" enctype="multipart/form-data" id="add-product">
+  <div style="display:none" id="dialog_delete_blob" title="Conferma eliminazione immagine">
+    <p><b>articolo:</b></p>
+    <p class="ui-state-highlight" id="idcodice"></p>
+  </div>
   <div class="modal" id="confirm_position" title="Aggiungi ubicazione:">
     <fieldset>
       <div>
@@ -781,9 +822,23 @@ if ($modal_ok_insert === true) {
                 <div id="image" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label for="image" class="col-sm-4 control-label"><img src="../root/view.php?table=artico&value=<?php echo $form['codice']; ?>" width="100" >*</label>
-                            <div class="col-sm-8"><?php echo $script_transl['image']; ?><input type="file" name="userfile" /></div>
-                        </div>
+                            <label for="image" class="col-sm-4 control-label"><img src="../root/view.php?table=artico&value=<?php echo $form['codice']; ?>" width="100" ></label>
+                            <?php
+                            if (strlen($form['image'])>10){
+                              $addlabel=" Sostituisci con altra ";
+                              ?>
+                              <div class="col-sm-8">
+                              <p ><a class="btn btn-xs btn-default btn-elimina dialog_delete_blob" ref="<?php echo $form['codice']; ?>"> <i class="glyphicon glyphicon-remove"></i>&nbsp Elimina imagine</a></p>
+                              </div>
+                              <div class="col-sm-4">
+                              </div>
+                              <?php
+                            }else{
+                              $addlabel="";
+                            }
+                            ?>
+                            <div class="col-sm-8"><?php echo $addlabel.$script_transl['image']; ?><input type="file" name="userfile" /></div>
+                      </div>
                     </div>
                 </div><!-- chiude row  -->
                 <div id="uniMis" class="row IERincludeExcludeRow">

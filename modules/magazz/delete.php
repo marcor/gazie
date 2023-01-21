@@ -85,6 +85,10 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
       $i=intval($_POST['ref']);
       gaz_dbi_del_row($gTables['artico_position'], "id_position", $i);
     break;
+    case "blob":
+			$i=$_POST['ref'];
+      $res=gaz_dbi_put_query($gTables['artico'], "codice = '".$i."'", 'image', '');
+    break;
 	}
 }
 ?>
