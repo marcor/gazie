@@ -1035,7 +1035,7 @@ class shopsynchronizegazSynchro {
 							}
 
 							// salvo rigo su database tabella rigbro
-							$rigbro['id_tes']=intval($id_tesbro);$rigbro['tiprig']=0,$rigbro['codart']=$codart;$rigbro['descri']=addslashes($descri);$rigbro['unimis']=$orderrow->MeasureUnit;$rigbro['quanti']=$orderrow->Qty;$rigbro['prelis']=$Price;$rigbro['sconto']=$percdisc;$rigbro['codvat']=$codvat;$rigbro['codric']='420000006';$rigbro['pervat']=$aliiva;$rigbro['status']='ONLINE-SHOP';
+							$rigbro['id_tes']=intval($id_tesbro);$rigbro['tiprig']=0;$rigbro['codart']=$codart;$rigbro['descri']=addslashes($descri);$rigbro['unimis']=$orderrow->MeasureUnit;$rigbro['quanti']=$orderrow->Qty;$rigbro['prelis']=$Price;$rigbro['sconto']=$percdisc;$rigbro['codvat']=$codvat;$rigbro['codric']='420000006';$rigbro['pervat']=$aliiva;$rigbro['status']='ONLINE-SHOP';
 							rigbroInsert($rigbro);
 						}
             if (strlen($order->CustomerNote)>3){// se l'ecommerce ha inviato delle note all'ordine, le accodo ai righi come rigo descrittivo
