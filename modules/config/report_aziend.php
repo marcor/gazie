@@ -49,24 +49,24 @@ $linkHeaders = new linkHeaders($headers_co);
 $linkHeaders -> output();
 $recordnav = new recordnav($table,$where, $limit, $passo);
 $recordnav -> output();
-$style='';
 echo '<form method="GET" name="myform"><input type="hidden" name="change_co" value="">';
+?>
+<?php
 while ($r = gaz_dbi_fetch_array($rs)) {
   if ($r['codice']==$_SESSION['company_id']) {
-    $style=' class="bg-success" ';
     echo '<tr>
-          <td class="bg-success"><a class="btn btn-xs btn-edit" href="admin_aziend.php" title="'.$script_transl['update'].'" ><i class="glyphicon glyphicon-edit"></i>&nbsp;'.$r["codice"].'</a></td>
-          <td class="bg-success" title="'.$r["indspe"].' '.$r["citspe"].' ('.$r["prospe"].')"><b class="bg-warning">AZIENDA SU CUI STAI LAVORANDO: </b> <a href="admin_aziend.php" title="'.$script_transl['update'].'" >'.$r["ragso1"].' '.$r["ragso2"].' </a> </td>';
+          <td class="bg-success text-center"><a class="btn btn-xs btn-edit" href="admin_aziend.php" title="'.$script_transl['update'].'" ><i class="glyphicon glyphicon-edit"></i>&nbsp;'.$r["codice"].'</a></td>
+          <td class="bg-success" title="'.$r["indspe"].' '.$r["citspe"].' ('.$r["prospe"].')"><b class="bg-warning "> <a href="admin_aziend.php" title="'.$script_transl['update'].'" >'.$r["ragso1"].' '.$r["ragso2"].' </a></b><span class="text-danger">  ( stai lavorando su questa) </span></td>';
   } else {
     $style='';
     echo '<tr>
-         <td align="center"><div style="cursor:pointer;" onclick="myform.change_co.value=\''.$r['codice'].'\'; myform.submit();" >'.$r["codice"].'</div></td>
+         <td class="text-center"><div style="cursor:pointer;" onclick="myform.change_co.value=\''.$r['codice'].'\'; myform.submit();" >'.$r["codice"].'</div></td>
          <td title="CAMBIA E LAVORA SU QUESTA"><div class="clickarea" style="cursor:pointer;" onclick="myform.change_co.value=\''.$r['codice'].'\'; myform.submit();" >'.$r["ragso1"].' '.$r["ragso2"].' </div></td>';
   }
-  echo '<td'. $style .'>'.$r['e_mail'].' </td>
-        <td'. $style .'>'.$r['telefo'].' </td>
-        <td'. $style .'>'.$script_transl['regime_value'][$r["regime"]].'</td>
-        <td'. $style .'>'.$script_transl['ivam_t_value'][$r["ivam_t"]].'</td>
+  echo '<td class="text-center">'.$r['e_mail'].' </td>
+        <td class="text-center">'.$r['telefo'].' </td>
+        <td class="text-center">'.$script_transl['regime_value'][$r["regime"]].'</td>
+        <td class="text-center">'.$script_transl['ivam_t_value'][$r["ivam_t"]].'</td>
         </tr>';
 }
 ?>
