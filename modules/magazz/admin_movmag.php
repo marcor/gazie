@@ -226,9 +226,9 @@ if (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo acces
 	$print_uniacq = "";
 	if (strlen($form['cosear'])>0) { // se c'è un articolo carico l'unità di misura e se ci sono anche gli identificativi del lotto
 		$item_artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['cosear']);
-		$print_unimis =  $item_artico['unimis'];
-		$print_uniacq =  $item_artico['uniacq'];
-		$form['SIAN']=$item_artico['SIAN'];
+		$print_unimis=($item_artico)?$item_artico['unimis']:'';
+		$print_uniacq=($item_artico)?$item_artico['uniacq']:'';
+		$form['SIAN']=($item_artico)?$item_artico['SIAN']:'';
 		if (intval($form['SIAN'])>0) { // se movimenta il SIAN carico anche il contenuto relativo al SIAN
 			$camp_artico = gaz_dbi_get_row($gTables['camp_artico'], "codice", $form['cosear']);
 		}
@@ -547,39 +547,42 @@ if ($form['id_mov'] > 0) {
     $title = ucfirst($script_transl[$toDo] . $script_transl[0]);
 }
 ?>
-<SCRIPT LANGUAGE="JavaScript">
-    function CalcolaImportoRigo()
-    {
-        var p = document.myform.prezzo.value.toString().replace(/\,/g, '.') * 1;
-        if (isNaN(p)) {
-            p = 0;
-        }
-        var q = document.myform.quanti.value.toString().replace(/\,/g, '.') * 1;
-        if (isNaN(q)) {
-            q = 0;
-        }
-        var s = document.myform.scorig.value.toString().replace(/\,/g, '.') * 1;
-        if (isNaN(s)) {
-            s = 0;
-        }
-        var c = document.myform.scochi.value.toString().replace(/\,/g, '.') * 1;
-        if (isNaN(c)) {
-            c = 0;
-        }
-        var sommarigo = p * q - p * q * s / 100;
-        var sommatotale = sommarigo - sommarigo * c / 100;
-        return((Math.round(sommatotale * 100) / 100).toFixed(2));
-    }
+<script>
+function CalcolaImportoRigo()
+{
+  var p = document.myform.prezzo.value.toString().replace(/\,/g, '.') * 1;
+  if (isNaN(p)) {
+    p = 0;
+  }
+  var q = document.myform.quanti.value.toString().replace(/\,/g, '.') * 1;
+  if (isNaN(q)) {
+    q = 0;
+  }
+  var s = document.myform.scorig.value.toString().replace(/\,/g, '.') * 1;
+  if (isNaN(s)) {
+    s = 0;
+  }
+  var c = document.myform.scochi.value.toString().replace(/\,/g, '.') * 1;
+  if (isNaN(c)) {
+    c = 0;
+  }
+  var sommarigo = p * q - p * q * s / 100;
+  var sommatotale = sommarigo - sommarigo * c / 100;
+  return((Math.round(sommatotale * 100) / 100).toFixed(2));
+}
 
-  $(function() {
-    $( ".datepicker" ).datepicker({ dateFormat: 'yy-mm-dd' });
-
+$(function() {
+  $( ".datepicker" ).datepicker({ dateFormat: 'yy-mm-dd' });
+  $( ".submit_position" ).on( "click", function() {
+ 		var id = $(this).attr('val');
+ 		$("#search_position").val(id);
+    $("#myform").submit();
+  });
 });
-
-</SCRIPT>
+</script>
 
 <?php
-echo "<form method=\"POST\" name=\"myform\" enctype=\"multipart/form-data\" >";
+echo '<form method="POST" name="myform" id="myform" enctype="multipart/form-data" >';
 echo "<input type=\"hidden\" name=\"" . ucfirst($toDo) . "\" value=\"\">\n";
 echo "<input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />\n";
 echo "<input type=\"hidden\" name=\"ritorno\" value=\"" . $_POST['ritorno'] . "\">\n";
@@ -748,9 +751,22 @@ $messaggio = "";
 $ric_mastro = substr($form['artico'], 0, 3);
 
 $select_artico = new selectartico("artico");
-				$select_artico->addSelected($form['artico']);
-				$select_artico->output(substr($form['cosear'], 0,32));
+$select_artico->addSelected($form['artico']);
+$select_artico->output(substr($form['cosear'], 0,32));
 
+if (($form['artico'] != "" || $form['cosear'] != "") && $form['id_position'] < 1 ) { // se l'articolo non è ancora ubicato ma ha ubicazioni propongo dei bottoni per ubicarli automaticamente
+  $result = gaz_dbi_query("SELECT * FROM ".$gTables['artico_position']." t1 LEFT JOIN ".$gTables['artico_position']." t2 ON t1.artico_id_position = t2.id_position WHERE t1.codart = '".($form['artico']!=''?$form['artico']:$form['cosear'])."'" );
+  $nump = gaz_dbi_num_rows($result);
+  if ($nump > 1) {
+    while ($rp = $result->fetch_assoc()) { // creo i bottoni
+      echo '<br/><div style="padding-top: 3px;"><a class="btn btn-xs btn-success submit_position" val="'.$rp['id_position'].'">Usa ubicazione <b>' .$rp['position'] . '</b>' . '</a></div>';
+    }
+  } elseif ($nump==1) { // ne ho solo una, la attribuisco in automatico
+    $rp = $result->fetch_assoc();
+    $form['cosepos']=$rp['id_position'];
+    $form['id_position']=$rp['id_position'];
+  }
+}
     // Antonio Germani > Inizio LOTTO in uscita o in entrata o creazione nuovo
 if ($form['artico'] != "" && intval( $item_artico['lot_or_serial'] && $form['caumag']<>99) == 1) { // se l'articolo prevede il lotto e non è un inventario, apro la gestione lotti nel form
 	$form['lot_or_serial']=$item_artico['lot_or_serial'];
