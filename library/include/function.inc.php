@@ -1000,6 +1000,8 @@ class selectPartner extends SelectBox {
             $partner[0]['codpart'] = 'id_' . $partner[0]['id'];
             $style = 'style="background:#FF6666";';
             echo "\t<input type=\"submit\" id=\"onlyone_submit\" value=\"→ \" onclick=\"if(typeof(this.form.hidden_req)!=='undefined'){this.form.hidden_req.value='$name';} this.form.submit();\">\n";
+          } else {
+            echo "\t<input type=\"submit\" id=\"onlyone_submit\" value=\"→ \" onclick=\"if(typeof(this.form.hidden_req)!=='undefined'){this.form.hidden_req.value='$name';} this.form.submit();\">\n";
           }
           $val=$partner[0]['codpart'];
           echo "\t<input type=\"hidden\" id=\"$name\" name=\"$name\" value=\"$val\">\n";
