@@ -42,11 +42,13 @@ function getDateLimits($sez=1, $tipodocumento='DDT') {
     $acc['date_ini'] = $acc['date_exe'];
     global $gTables;
     // ricavo i limiti di fatturabilitÃ  e le date dei vari tipi di DdT
-    $doctype = $tipodocumento=='CMR'?['CMR']:['DDT','DDV','DDY','DDS'];
+    $doctype = $tipodocumento=='CMR'?['CMR']:['DDT','DDV','DDY','DDS','DDM','DDO'];
     foreach ($doctype as $k => $v) {
         switch ($v) {
             default :
             case 'DDT':
+            case 'DDM':
+            case 'DDO':
             case 'CMR':
                 $rs_first = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "tipdoc = '$v' AND seziva = $sez", "numdoc ASC", 0, 1);
                 $rs_last = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "tipdoc = '$v' AND seziva = $sez", "numdoc DESC", 0, 1);
@@ -124,7 +126,7 @@ function getInvoiceableBills($date, $sez = 1, $cliente = 0) {
     $orderby = "ragso1 ASC, ragbol ASC, pagame ASC, numdoc ASC";
     // mi serve la data di un anno prima per fare la ricerca dei DDV
     $where = " seziva = '$sez'" . $clientesel . " AND ("
-            . "(tipdoc = 'DDT' AND datemi BETWEEN '" . $date['ini'] . "' AND '" . $date['fin'] . "')"
+            . "((tipdoc = 'DDT' OR tipdoc = 'DDM' OR tipdoc = 'DDO') AND datemi BETWEEN '" . $date['ini'] . "' AND '" . $date['fin'] . "')"
             . " OR "
             . "(tipdoc = 'DDV' AND datemi <= '" . $date['fin'] . "' AND id_doc_ritorno <= 0 )"
             . " OR "
@@ -168,7 +170,7 @@ function getInvoiceableBills($date, $sez = 1, $cliente = 0) {
                 $acc['data'][$i][$row['id_tes']] = 'maybe';
             } elseif ($row['tipdoc'] == 'DDY') { // TRIANGOLAZIONE
                 $acc['excluded'][$i][$row['id_tes']] = 'no';
-            } else {                            // DDT
+            } else {                            // DDT & OTHER
                 $acc['data'][$i][$row['id_tes']] = 'yes';
             }
             if ($row['clfoco'] == $ctrlc && $row['pagame'] != $ctrlp) {
@@ -184,9 +186,11 @@ function getInvoiceableBills($date, $sez = 1, $cliente = 0) {
             $ctrlc = $row['clfoco'];
             $ctrlp = $row['pagame'];
             $ctrlr = $row['ragbol'];
+
         }
     }
     return $acc;
+
 }
 
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
@@ -276,6 +280,7 @@ if (isset($_POST['genera']) && $msg == "") {
     $date_fin = new DateTime($form['date_fin_Y'] . '-' . $form['date_fin_M'] . '-' . $form['date_fin_D']);
     $date = array('exe' => $date_exe->format('Y-m-d'), 'ini' => $date_ini->format('Y-m-d'), 'fin' => $date_fin->format('Y-m-d'));
     $invoices = getInvoiceableBills($date, $form['seziva'], $form['clfoco'], $form['changeStatus']);
+    var_dump($invoices);
     if (isset($invoices['excluded'])) {
         foreach ($invoices['excluded'] as $i => $testate) {
 	    foreach ($testate as $id_tes => $v) {
@@ -296,8 +301,12 @@ if (isset($_POST['genera']) && $msg == "") {
             // attraverso l'array delle fatture proposte
             foreach ($vt as $kr => $vr) {
                 $tes = gaz_dbi_get_row($gTables['tesdoc'], "id_tes", $kr);
+                $checktipdoc=false;
+                if ($tipodocumento == 'DDT' && ($tes['tipdoc'] == 'DDM' || $tes['tipdoc'] == 'DDO' || $tes['tipdoc']=='DDT')){
+                  $checktipdoc=true;
+                }
                 $pag = gaz_dbi_get_row($gTables['pagame'], "codice", $tes['pagame']);
-                if (($vr == 'yes' && $tes['tipdoc'] == $tipodocumento && !in_array($kr, $form['changeStatus'])) || (in_array($kr, $form['changeStatus']) && $tes['tipdoc'] != $tipodocumento)) { //||
+                if (($vr == 'yes' && $checktipdoc && !in_array($kr, $form['changeStatus'])) || (in_array($kr, $form['changeStatus']) && $checktipdoc==false)) { //||
                     // se Ã¨ un s da fatturare non escluso o  Ã¨ un DDV-Y normalmente escluso ma richiesto alla fatturazione
                     if ($ctrl_first) {
                         $protoc++;
@@ -419,11 +428,15 @@ if (isset($invoices['data'])) {
             }
 
             $tes = gaz_dbi_get_row($gTables['tesdoc'], "id_tes", $kr);
+            $checktipdoc=false;
+            if ($tipodocumento == 'DDT' && ($tes['tipdoc'] == 'DDM' || $tes['tipdoc'] == 'DDO' || $tes['tipdoc']=='DDT')){
+              $checktipdoc=true;
+            }
             $anagrafica = new Anagrafica();
             $cliente = $anagrafica->getPartner($tes['clfoco']);
             $pag = gaz_dbi_get_row($gTables['pagame'], "codice", $tes['pagame']);
-            if (($vr == 'yes' && $tes['tipdoc']==$tipodocumento && !in_array($kr, $form['changeStatus'])) ||
-                (in_array($kr, $form['changeStatus']) && $tes['tipdoc'] != $tipodocumento)) {
+            if (($vr == 'yes' &&  $checktipdoc && !in_array($kr, $form['changeStatus'])) ||
+                (in_array($kr, $form['changeStatus']) && $checktipdoc==false)) {
                 // se c'è un DDT da fatturare non escluso o  un DDV-Y-S normalmente escluso ma richiesto alla fatturazione
                 if ($ctrl_first) {
                     $protoc++;

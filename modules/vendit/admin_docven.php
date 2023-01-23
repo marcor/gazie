@@ -460,7 +460,11 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
   if (isset($_POST['ins'])) {
     $sezione = $form['seziva'];
     $utsemi = gaz_format_date($form['datemi'],2); // mktime
-    if ($form['tipdoc'] != 'DDT' && $form['tipdoc'] != 'FAD' && $form['tipdoc'] != 'DDY' && $form['tipdoc'] != 'DDS' && $form['tipdoc'] != 'RDV' && $form['tipdoc'] != 'DDV' && $form['template'] != 'FatturaImmediata') {
+    if ($form['tipdoc'] != 'DDT' && $form['tipdoc'] != 'FAD' && $form['tipdoc'] != 'DDY' && $form['tipdoc'] != 'DDS'
+        && $form['tipdoc'] != 'DDX' && $form['tipdoc'] != 'DDZ'
+        && $form['tipdoc'] != 'DDW' && $form['tipdoc'] != 'DDJ'
+        && $form['tipdoc'] != 'DDC' && $form['tipdoc'] != 'DDM'
+        && $form['tipdoc'] != 'DDO' && $form['tipdoc'] != 'RDV' && $form['tipdoc'] != 'DDV' && $form['template'] != 'FatturaImmediata') {
         $initra = $datemi;
         $utstra = $utsemi;
     } else {
@@ -790,6 +794,14 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
           case "DDV": // conto visione
           case "DDY": // triangolazione
           case "DDS": // notula di servizio
+
+          case "DDX": // reso non lavorato
+          case "DDZ": // reso da rottamare
+          case "DDW": // reso non conforme
+          case "DDJ": // reso non utilizzabile
+          case "DDC": // completamento
+          case "DDM": // vendita per montaggio
+          case "DDO": // reso da conto lavoro
             $sql_documento = "YEAR(datemi) = " . substr($datemi,0,4) . " AND ( tipdoc like 'DD_' OR (tipdoc = 'FAD' && ddt_type != 'R')) AND seziva = $sezione";
             $where = "numdoc DESC";
             $sql_protocollo = " 0";
@@ -2261,7 +2273,7 @@ if ($form['id_tes'] > 0) { // è una modifica
     echo "<input type=\"hidden\" value=\"" . $form['tipdoc'] . "\" name=\"tipdoc\">\n";
     echo "<div align=\"center\" class=\"FacetFormHeaderFont\">$title ";
 } else { // è un inserimento
-    $tidoc_selectable = array_intersect_key($script_transl['doc_name'], array('DDT'=>'','FAI'=>'','FAP'=>'','FAQ'=>'','FAA'=>'','FAF'=>'','FNC'=>'','FND'=>'','DDV'=>'','RDV'=>'','DDY'=>'','DDS'=>'','VRI'=>'','CMR'=>'','XFA'));
+    $tidoc_selectable = array_intersect_key($script_transl['doc_name'], array('DDT'=>'','FAI'=>'','FAP'=>'','FAQ'=>'','FAA'=>'','FAF'=>'','FNC'=>'','FND'=>'','DDV'=>'','RDV'=>'','DDY'=>'','DDS'=>'','VRI'=>'','CMR'=>'','XFA'=>'','DDX' =>'','DDZ' =>'','DDW' =>'','DDJ' =>'','DDC' =>'','DDM' =>'','DDO' =>'' ));
     echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . ucfirst($script_transl[$toDo]) . $script_transl['tipdoc'];
     $gForm->variousSelect('tipdoc', $tidoc_selectable, $form['tipdoc'], 'FacetFormHeaderFont', true, 'tipdoc');
 }
@@ -3360,6 +3372,8 @@ if ($calc->total_exc_with_duty >= $admin_aziend['taxstamp_limit'] && $form['virt
 
 
 if ($form['tipdoc'] == 'DDT' || $form['tipdoc'] == 'DDV' || $form['tipdoc'] == 'DDY' || $form['tipdoc'] == 'DDS' ||
+    $form['tipdoc'] == 'DDX' || $form['tipdoc'] == 'DDZ' || $form['tipdoc'] == 'DDW' || $form['tipdoc'] == 'DDJ' ||
+    $form['tipdoc'] == 'DDC' || $form['tipdoc'] == 'DDM' || $form['tipdoc'] == 'DDO' ||
     $form['template'] == 'FatturaImmediata' || $form['tipdoc'] == 'FAD' || $form['tipdoc'] == 'FAI' || $form['tipdoc']=='CMR' ||
     $form['tipdoc']=='FAC') {
     echo "		<tr>

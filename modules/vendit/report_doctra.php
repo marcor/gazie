@@ -285,6 +285,13 @@ if (isset($_SESSION['print_request']) && intval($_SESSION['print_request'])>0){
                         case "DDV":
                         case "DDY":
                         case "DDS":
+                        case "DDX":
+                        case "DDZ":
+                        case "DDW":
+                        case "DDJ":
+                        case "DDC":
+                        case "DDM":
+                        case "DDO":
                             echo "<tr class=\"text-center\">";
                             // Colonna id
                             echo "<td><a class=\"btn btn-xs btn-edit\" href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $r['tipdoc'].' '. $r["id_tes"] . "</a></td>";
@@ -311,18 +318,19 @@ if (isset($_SESSION['print_request']) && intval($_SESSION['print_request'])>0){
                                 if ($r["id_con"] > 0) {
                                     echo "<a title=\"" . $script_transl['acc_entry'] . "\" href=\"../contab/admin_movcon.php?id_tes=" . $r["id_con"] . "&Update\">cont. n." . $r["id_con"] . "</a>";
                                 }
+                            } else if ($r['tipdoc'] == 'DDX' || $r['tipdoc'] == 'DDZ' ||$r['tipdoc'] == 'DDW' ||$r['tipdoc'] == 'DDJ' ||$r['tipdoc'] == 'DDC' ) {
+                               echo '<td><a class="btn btn-xs btn-default" style="cursor: none;">da non fatturare</a></td>';
                             } else {
                                 if ($r['tipdoc'] == 'DDV' && $r['id_doc_ritorno'] > 0) {
-                                    echo "<td>"
-                                    . "<a class=\"btn btn-xs btn-warning\" href=\"admin_docven.php?Update&id_tes=" . $r['id_doc_ritorno'] . "\">" . $script_transl['doc_returned'] . "</a>";
+                                  echo "<td><a class=\"btn btn-xs btn-warning\" href=\"admin_docven.php?Update&id_tes=" . $r['id_doc_ritorno'] . "\">" . $script_transl['doc_returned'] . "</a>";
                                     ?>
-									<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento" ref="<?php echo $r['id_tes'];?>" ragso1="<?php echo $r['ragso1'];?>">
-										<i class="glyphicon glyphicon-remove"></i>
-									</a>
-									<?php
-									echo "</td>";
+                                    <a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento" ref="<?php echo $r['id_tes'];?>" ragso1="<?php echo $r['ragso1'];?>">
+                                      <i class="glyphicon glyphicon-remove"></i>
+                                    </a>
+                                  <?php
+                                  echo "</td>";
                                 } else {
-                                    echo "<td><a class=\"btn btn-xs btn-success\" href=\"emissi_fatdif.php\">" . $script_transl['to_invoice'] . "</a></td>";
+                                  echo "<td><a class=\"btn btn-xs btn-success\" href=\"emissi_fatdif.php\">" . $script_transl['to_invoice'] . "</a></td>";
                                 }
                             }
                             // Colonna stampa

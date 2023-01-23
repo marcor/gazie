@@ -200,6 +200,13 @@ $strScript = array("admin_client.php" =>
             "FNC" => "Nota Credito a Cliente",
             "FND" => "Nota Debito a Cliente",
             "VCO" => "Vendita Corrispettivo",
+            "DDX" => "D.d.T. Reso non lavorato (no fat)",
+            "DDZ" => "D.d.T. Reso da rottamare (no fat)",
+            "DDW" => "D.d.T. Reso non conforme (no fat)",
+            "DDJ" => "D.d.T. Reso non utilizzabile (no fat)",
+            "DDC" => "D.d.T. per completamento (no fat)",
+            "DDM" => "D.d.T. per montaggio",
+            "DDO" => "D.d.T. reso da conto lavorazione",
             "DDV" => "D.d.T. per Cessione in Conto Visione",
             "DDY" => "D.d.T. da non fatturare automaticamente",
             "DDS" => "Notula Servizio (no fat.15 mese succ.)",
@@ -210,7 +217,7 @@ $strScript = array("admin_client.php" =>
             "PRO" => "Produzione"
         ),
         'title' => 'Documenti di vendita',
-        'tipdoc' => ' documento di vendita tipo: ',
+        'tipdoc' => ' documento di  tipo: ',
         'mesg' => array('La ricerca non ha dato risultati!',
             'Inserire almeno 2 caratteri!',
             'Cambia cliente/fornitore'),
@@ -1251,9 +1258,17 @@ $strScript = array("admin_client.php" =>
     array('title' => 'Documenti di trasporto della sezione: ',
         'ddt_type' => array("T" => "vendita",
             "V" => "c/visione",
-            "Y" => "triangolazione", //triangolazione"
-            "S" => "notula di servizio", //Notula
+            "Y" => "triangolazione",
+            "S" => "notula di servizio",
+            "X" => "reso non lavorato",
+            "Z" => "reso da rottamare",
+            "W" => "reso non conforme",
+            "J" => "reso non utilizzabile",
+            "C" => "completamento",
+            "M" => "montaggio",
+            "O" => "reso conto lavoro",
             "DDR" => "reso a fornitore",
+
             "DDL" => "c/lavorazione",
             'R'=> "CMR"
         ),
@@ -1331,6 +1346,13 @@ $strScript = array("admin_client.php" =>
             "V" => "c/visione",
             "Y" => "triangolazione", //triangolazione"
             "S" => "notula di servizio", //Notula
+            "X" => "reso non lavorato",
+            "Z" => "reso da rottamare",
+            "W" => "reso non conforme",
+            "J" => "reso non utilizzabile",
+            "C" => "completamento",
+            "M" => "montaggio",
+            "O" => "reso conto lavoro",
             'R' => 'Convenzione CMR'
         ),
         'mesg' => array('La ricerca non ha dato risultati!',

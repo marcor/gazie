@@ -61,6 +61,20 @@ class DDT extends Template_con_scheda
           $descri='D.d.T. cessione per triangolazione n.';
       } elseif ($this->tesdoc['ddt_type'] == 'S') {
           $descri='Notula di Servizio - DdT n.';
+      } elseif ($this->tesdoc['ddt_type'] == 'X') {
+          $descri='Reso non lavorato - DdT n.';
+      } elseif ($this->tesdoc['ddt_type'] == 'Z') {
+          $descri='Reso da rottamare - DdT n.';
+      } elseif ($this->tesdoc['ddt_type'] == 'W') {
+          $descri='Reso non conforme - DdT n.';
+      } elseif ($this->tesdoc['ddt_type'] == 'J') {
+          $descri='Reso non utilizzabile - DdT n.';
+      } elseif ($this->tesdoc['ddt_type'] == 'C') {
+          $descri='Completamento - DdT n.';
+      } elseif ($this->tesdoc['ddt_type'] == 'M') {
+          $descri='Montaggio - DdT n.';
+      } elseif ($this->tesdoc['ddt_type'] == 'O') {
+          $descri='Reso da conto lavoro - DdT n.';
       } elseif (substr($this->tesdoc['clfoco'],0,1) == '2') { // DdT ricevuto da fornitore
           $descri='Ricevuto DdT da fornitore n.';
       } else {
