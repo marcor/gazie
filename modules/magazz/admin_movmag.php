@@ -321,7 +321,7 @@ if (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo acces
   if ($_POST['hidden_req'] == 'caumag') {
     $cm = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
 		$form['operat'] = $cm['operat'];
-    if ($form['caumag']>80){ // non deriva da un documento cambio la descrizione
+    if ($form['caumag']>80 || $toDo=="insert"){ // non deriva da un documento cambio la descrizione
       $form['desdoc'] = $cm['descri'];
     }
   }
