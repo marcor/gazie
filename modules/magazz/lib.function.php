@@ -1053,6 +1053,60 @@ class magazzForm extends GAzieForm {
     echo $acc;
   }
 
+  function getArticoPositions($codart,$returntype=false, $unimis='n.') {
+    $table='';
+    $acc=[];
+    if (strlen(trim($codart)) >= 1 ) {
+      global $gTables;
+      $rs=gaz_dbi_query("SELECT pos.position, she.descri, war.name, COUNT(*) AS nummov, id_artico_position, caumag, SUM(quanti*(operat=1)) AS cari, SUM(quanti*(operat=-1)) AS scar FROM " . $gTables['movmag'] . " mm LEFT JOIN ".$gTables['artico'] ." art ON mm.artico = art.codice LEFT JOIN ".$gTables['artico_position'] ." pos ON mm.id_artico_position = pos.id_position LEFT JOIN ".$gTables['shelves'] ." she ON pos.id_shelf = she.id_shelf  LEFT JOIN ".$gTables['warehouse'] ." war ON she.id_warehouse = war.id WHERE mm.artico = '".$codart."' GROUP BY mm.id_artico_position");
+      while ($r = gaz_dbi_fetch_array($rs)) {
+        if($r['caumag']<=98) {
+          if ($returntype==1){ // tabella html
+            if ($r['descri'] == null){ // movimento non ubicato
+              $table .= ' <div class="col-xs-12 bg-danger"> '.floatval($r['cari']-$r['scar']).' '.$unimis.' non sono stati ubicati</div>';
+            } else {
+              $table .= '<div class="col-xs-12">'.$r['name'].'->'.$r['descri'].'-><a class="btn btn-default btn-xs" href="report_cms_positions.php?id_position='.$r['id_artico_position'].'">'.$r['position'].'</a> '.$unimis.' '.floatval($r['cari']-$r['scar']).' <a class="btn btn-xs btn-default" href="print_label.php?id='.$r['id_artico_position'].'&cod='.$codart.'" title="Stampa etichetta"><i class="glyphicon glyphicon-tags"></i> Etichetta <i class="glyphicon glyphicon-qrcode "></i></a> </div>';
+            }
+          } else {
+            $acc[]=$r;
+          }
+        }
+      }
+    }
+    if ($returntype==1) { // table
+      return $table;
+    } else if ($returntype) {
+      return json_encode($acc);
+    } else {
+      return $acc;
+    }
+  }
+
+  function getPositionContent($id_position,$returntype=false) {
+    $table='';
+    $acc=[];
+    if ($id_position >= 1 ) {
+      global $gTables;
+      $rs=gaz_dbi_query("SELECT art.codice, art.descri, art.unimis, COUNT(*) AS nummov, id_artico_position, caumag, SUM(quanti*(operat=1)) AS cari, SUM(quanti*(operat=-1)) AS scar FROM " . $gTables['movmag'] . " mm LEFT JOIN ".$gTables['artico'] ." art ON mm.artico = art.codice LEFT JOIN ".$gTables['artico_position'] ." pos ON mm.id_artico_position = pos.id_position LEFT JOIN ".$gTables['shelves'] ." she ON pos.id_shelf = she.id_shelf  LEFT JOIN ".$gTables['warehouse'] ." war ON she.id_warehouse = war.id WHERE mm.id_artico_position = ".$id_position." AND mm.id_artico_position >= 1 GROUP BY mm.artico");
+      while ($r = gaz_dbi_fetch_array($rs)) {
+        if($r['caumag']<=98) {
+          if ($returntype==1){ // tabella html
+            $table .= '<div class="col-xs-12"> <a class="btn btn-default btn-xs" href="report_logisticartico.php?sea_codice='.$r['codice'].'"> '.$r['codice'].' </a> '.$r['descri'].' '.$r['unimis'].' '.floatval($r['cari']-$r['scar']).'  <a class="btn btn-xs btn-default" href="print_label.php?id='.$r['id_artico_position'].'&cod='.$r['codice'].'" title="Stampa etichetta"><i class="glyphicon glyphicon-tags"></i> Etichetta <i class="glyphicon glyphicon-qrcode "></i></a></div>';
+          } else {
+            $acc[]=$r;
+          }
+        }
+      }
+    }
+    if ($returntype==1) { // table
+      return $table;
+    } else if ($returntype) {
+      return json_encode($acc);
+    } else {
+      return $acc;
+    }
+  }
+
 }
 
 function getLastSianDay(){ // restituisce la data nel formato aaaa-mm-gg dell'ultimo movimento SIAN creato

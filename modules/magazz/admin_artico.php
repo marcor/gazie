@@ -109,7 +109,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
   $form["preve3"] = number_format($form['preve3'], $admin_aziend['decimal_price'], '.', '');
   $form["preve4"] = number_format($form['preve4'], $admin_aziend['decimal_price'], '.', '');
   $form["web_price"] = number_format($form['web_price'], $admin_aziend['decimal_price'], '.', '');
-  $form['rows'] = array();
+  $form['rows'] = [];
 	$form['cosepos']= $_POST['cosepos'];
 	$form['id_position'] = intval($_POST['id_position']);
   $form['id_anagra'] = filter_input(INPUT_POST, 'id_anagra');
@@ -326,8 +326,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         //exit;
       }
     }
-    /** ENRICO FEDELE */
-    /* Niente redirect se sono in finestra modale */
+
     if ($modal === false) {
 			if ($toDo == 'insert') {
         // riprendo il codice e se non è stato realmente inserito sul db lo segnalo all'utente e non reindirizzo
@@ -339,8 +338,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         } else {
           $msg['err'][] = 'no_ins';
         }
-			}else{
-				header("Location: ../../modules/magazz/report_artico.php");
+			} else{
+				header("Location: " . $form['ritorno']);
         exit;
 			}
     } else {
