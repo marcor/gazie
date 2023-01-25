@@ -106,16 +106,20 @@ class FatturaSemplice extends Template {
         $dataddt = substr($this->tesdoc['datemi'], 8, 2) . '-' . substr($this->tesdoc['datemi'], 5, 2) . '-' . substr($this->tesdoc['datemi'], 0, 4);
         if ($this->tesdoc['tipdoc'] == 'FAD') {
             $this->SetFont('helvetica', 'B', 9);
-            $ddtdescri = 'D.d.T.';
             if ($this->tesdoc['ddt_type'] == 'Y') {
-                $ddtdescri .= ' in triangolazione';
+              $dataddt .= ' in triangolazione';
             } elseif ($this->tesdoc['ddt_type'] == 'V') {
-                $ddtdescri .= ' in c/visione';
+              $dataddt .= ' in c/visione';
+            } elseif ($this->tesdoc['ddt_type'] == 'C') {
+              $dataddt .= ' (Causale: completamento)';
+            } elseif ($this->tesdoc['ddt_type'] == 'M') {
+              $dataddt .= ' (Causale: montaggio)';
             } elseif ($this->tesdoc['ddt_type'] == 'R') {
-                $ddtdescri = 'C M R';
+              $dataddt .= ' tipo : C M R';
+            } else {
+              $dataddt .= ' (Causale: vendita)';
             }
-            $this->Cell(105, 6, ' Da ' . $ddtdescri . ' n. ' . $this->tesdoc['numdoc'] . ' del ' . $dataddt, 1, 0, 'L');
-            $this->Cell(81, 6, '', 'BR', 1);
+            $this->Cell(186, 6, ' da Documento di Trasporto n. ' . $this->tesdoc['numdoc'] . ' del ' . $dataddt, 1, 1, 'LBR');
             $this->SetFont('helvetica', '', 9);
         }
         $this->body();
