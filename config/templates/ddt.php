@@ -52,40 +52,40 @@ class DDT extends Template_con_scheda
       $this->sconto = $this->tesdoc['sconto'];
       $this->trasporto = $this->tesdoc['traspo'];
       if ($this->tesdoc['tipdoc'] == 'DDR') {
-          $descri='D.d.T. per Reso n.';
+          $descri='Reso';
       } elseif ($this->tesdoc['tipdoc'] == 'DDL') {
-          $descri='D.d.T. c/lavorazione n.';
+          $descri='Conto lavorazione';
       } elseif ($this->tesdoc['ddt_type'] == 'V') {
-          $descri='D.d.T. cessione in c/visione n.';
+          $descri='Cessione in c/visione';
       } elseif ($this->tesdoc['ddt_type'] == 'Y') {
-          $descri='D.d.T. cessione per triangolazione n.';
+          $descri='Cessione per triangolazione';
       } elseif ($this->tesdoc['ddt_type'] == 'S') {
-          $descri='Notula di Servizio - DdT n.';
+          $descri='Notula di Servizio';
       } elseif ($this->tesdoc['ddt_type'] == 'X') {
-          $descri='Reso non lavorato - DdT n.';
+          $descri='Reso non lavorato';
       } elseif ($this->tesdoc['ddt_type'] == 'Z') {
-          $descri='Reso da rottamare - DdT n.';
+          $descri='Reso da rottamare';
       } elseif ($this->tesdoc['ddt_type'] == 'W') {
-          $descri='Reso non conforme - DdT n.';
+          $descri='Reso non conforme';
       } elseif ($this->tesdoc['ddt_type'] == 'J') {
-          $descri='Reso non utilizzabile - DdT n.';
+          $descri='Reso non utilizzabile';
       } elseif ($this->tesdoc['ddt_type'] == 'C') {
-          $descri='Completamento - DdT n.';
+          $descri='Completamento';
       } elseif ($this->tesdoc['ddt_type'] == 'M') {
-          $descri='Montaggio - DdT n.';
+          $descri='Montaggio';
       } elseif ($this->tesdoc['ddt_type'] == 'O') {
-          $descri='Reso da conto lavoro - DdT n.';
+          $descri='Reso da conto lavoro';
       } elseif (substr($this->tesdoc['clfoco'],0,1) == '2') { // DdT ricevuto da fornitore
-          $descri='Ricevuto DdT da fornitore n.';
+          $descri='Ricevuto da fornitore';
       } else {
-          $descri='Documento di Trasporto n.';
+          $descri='Vendita';
       }
       if ($this->tesdoc['numdoc']>0){
         $numdoc = $this->tesdoc['numdoc'].'/'.$this->tesdoc['seziva'];
       } else {
         $numdoc = ' _ _ _ _ _ _ _';
       }
-      $this->tipdoc = $descri.$numdoc.' del '.$this->giorno.' '.$nomemese.' '.$this->anno;
+      $this->tipdoc = 'D.d.T. n.'.$numdoc.' del '.$this->giorno.' '.$nomemese.' '.$this->anno.' | Causale: '.$descri;
       $this->descriptive_last_ddt = $this->docVars->descriptive_last_ddt;
       $this->show_artico_composit = $this->docVars->show_artico_composit;
     }

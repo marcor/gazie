@@ -108,7 +108,7 @@ class Template extends TCPDI {
         $this->intesta2 = $docVars->intesta2;
         $this->intesta3 = $docVars->intesta3 . $docVars->intesta4;
         $this->intesta4 = $docVars->codici;
-		$this->sedelegale = $docVars->sedelegale;
+        $this->sedelegale = $docVars->sedelegale;
         $this->colore = $docVars->colore;
         $this->decimal_quantity = $docVars->decimal_quantity;
         $this->decimal_price = $docVars->decimal_price;
@@ -130,7 +130,7 @@ class Template extends TCPDI {
             $this->destinazione = $docVars->destinazione;
         }
         $this->clientSedeLegale = '';
-		$this->pers_title = $docVars->pers_title;
+        $this->pers_title = $docVars->pers_title;
         if (!empty($docVars->clientSedeLegale)) {
             foreach ($docVars->clientSedeLegale as $value) {
                 $this->clientSedeLegale .= $value . ' ';
@@ -144,17 +144,14 @@ class Template extends TCPDI {
         $this->month = $docVars->month;
         $this->year = $docVars->year;
         $this->withoutPageGroup = $docVars->withoutPageGroup;
-		$this->efattura = $docVars->efattura;
+        $this->efattura = $docVars->efattura;
         $this->descriptive_last_row = $this->docVars->descriptive_last_row;
         $this->descriptive_last_ddt = $this->docVars->descriptive_last_ddt;
-
-        //*+ DC - 16/01/2018
         $this->layout_pos_logo_on_doc = $this->docVars->layout_pos_logo_on_doc;
-        //*- DC - 16/01/2018
 
-		if ($this->tesdoc['tipdoc'] == 'AFA' || $this->tesdoc['tipdoc'] == 'AFT') {
-			$this->iban = $docVars->iban;
-		}
+        if ($this->tesdoc['tipdoc'] == 'AFA' || $this->tesdoc['tipdoc'] == 'AFT') {
+          $this->iban = $docVars->iban;
+        }
     }
 
     function Header() {
@@ -209,7 +206,7 @@ class Template extends TCPDI {
 				$this->Cell(110,0,'Copia cartacea del documento elettronico inviato al Sistema di Interscambio ('.$this->efattura.')',0,1,'L',0,'',1);
 				$this->SetTextColor(0,0,0);
 			}
-            $this->SetFont('helvetica', '', 11);
+            $this->SetFont('helvetica', '', 10);
             $this->Cell(110, 5, $this->tipdoc, 1, 1, 'L', 1, '', 1);
             if ($this->tesdoc['tipdoc'] == 'NOP' || $this->withoutPageGroup) {
                 $this->Cell(30, 5);
