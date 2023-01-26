@@ -598,10 +598,11 @@ function choicePosition(idartico)
       $(".ui-autocomplete").css("z-index", 1000);
     },
 		select: function(event, ui) {
+      var vcodice = $("#suggest_new_codart").val();
       var titleacc = '';
       accidartico = '';
       titleacc += "<br/>" + $(this).attr("label");
-      accidartico = idartico;
+      accidartico = vcodice;
       $("#workingrow").append('a: '+titleacc);
 			$(".position_name").replaceWith(ui.item.label);
 			$("#confirm_position").dialog({
@@ -625,7 +626,9 @@ function choicePosition(idartico)
               type: 'GET',
               url: './operat.php',
               success: function(output){
-                window.location.replace("./admin_artico.php?Update&codice="+idartico+"&tab=magazz");
+               	$("#submit_position" ).trigger( "click" );
+                // se uso quello sotto perdo le altre modifiche
+                // window.location.replace("./admin_artico.php?Update&codice="+idartico+"&tab=magazz");
               }
             });
             }
@@ -730,7 +733,7 @@ if ($modal_ok_insert === true) {
                 <li><a data-toggle="pill" href="#magazz">Magazzino</a></li>
                 <li><a data-toggle="pill" href="#contab">Contabilità</a></li>
                 <li><a data-toggle="pill" href="#chifis">Chimico-fisiche</a></li>
-                <li style="float: right;"><?php echo '<input name="Submit" type="submit" class="btn btn-warning" value="' . ucfirst($script_transl[$toDo]) . '" />'; ?></li>
+                <li style="float: right;"><?php echo '<input name="Submit" type="submit" id="submit_position" class="btn btn-warning" value="' . ucfirst($script_transl[$toDo]) . '" />'; ?></li>
             </ul>
             <div class="tab-content">
               <div id="home" class="tab-pane fade in active">
