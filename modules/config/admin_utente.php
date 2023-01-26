@@ -71,7 +71,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
 	$form['company_id'] = intval($_POST['company_id']);
 	$form['search']['company_id'] = $_POST['search']['company_id'];
 	$form["Access"] = intval($_POST['Access']);
-	$form["user_name"] = preg_replace("/[^A-Za-z0-9]i/", '',substr($_POST["user_name"], 0, 64));
+	$form["user_name"] = preg_replace("/[^A-Za-z0-9]/", '',substr($_POST["user_name"], 0, 64));
 	$form["user_password_old"] = substr($_POST['user_password_old'], 0, 65);
 	$form["user_password_new"] = substr($_POST['user_password_new'], 0, 65);
 	$form["user_password_ver"] = substr($_POST['user_password_ver'], 0, 65);
