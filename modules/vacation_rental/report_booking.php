@@ -674,7 +674,7 @@ $ts->output_navbar();
       </select>
       <span id="date_stato_check"></span>
       <p><br>Cambia stato il: <input type="text" id="datepicker" value= "<?php echo date('d-m-Y H:i'); ?>" ></p>
-      <?php if (strlen($vacation_url_user)>4){ ?>
+      <?php if (isset($vacation_url_user) && strlen($vacation_url_user)>4){ ?>
       <div style="display:none" id="feedback_email">
       invia email richiesta recensione <input id="checkbox_email_inout"  type="checkbox" name="checkbox_email_inout" value="0" >
       </div>

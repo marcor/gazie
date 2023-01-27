@@ -234,8 +234,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 						$new_height = $maxDim;
 					}
 					$src = imagecreatefromstring( file_get_contents( $file_name ) );
-					$dst = imagecreatetruecolor( $new_width, $new_height );
-					imagecopyresampled( $dst, $src, 0, 0, 0, 0, $new_width, $new_height, $width, $height );
+					$dst = imagecreatetruecolor( intval($new_width), intval($new_height));
+					imagecopyresampled( $dst, $src, 0, 0, 0, 0, intval($new_width), intval($new_height), $width, $height );
 					imagedestroy( $src );
 					imagepng( $dst, $target_filename); // adjust format as needed
 					imagedestroy( $dst );
@@ -291,7 +291,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     } else {
       $form['image'] = '';
     }
-
+    $form['web_public']=(isset($form['web_public']))?$form['web_public']:0;
     //aggiorno il campo con il codice fornitore
     $form['clfoco'] = $form['id_anagra'];
     $tbt = trim($form['body_text']);
@@ -935,8 +935,8 @@ if ($modal_ok_insert === true) {
                 <div id="barcode" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label for="barcode" class="col-sm-4 control-label"><?php echo $script_transl['barcode']; ?></label>
-                            <input class="col-sm-4" type="text" value="<?php echo (isset($_POST['EAN']))? serchEAN():$form["barcode"]; ?>" name="barcode" maxlength="13" />
+                            <label for="barcode" class="col-sm-4 control-label"><?php /* echo $script_transl['barcode']; */ ?></label>
+                            <input class="col-sm-4" type="text" value="<?php /*echo (isset($_POST['EAN']))? serchEAN():$form["barcode"]; */ ?>" name="barcode" maxlength="13" />
                         &nbsp;<input type="submit" name="EAN" value="Genera EAN13">
                       </div>
                     </div>
@@ -1059,7 +1059,9 @@ if ($modal_ok_insert === true) {
                         <div class="form-group">
                             <label for="depli_public" class="col-sm-4 control-label"><?php echo $script_transl['depli_public']; ?></label>
                             <?php
+                            /*
                             $gForm->variousSelect('depli_public', $script_transl['depli_public_value'], $form['depli_public'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
+                            */
                             ?>
                         </div>
                     </div>
@@ -1071,7 +1073,9 @@ if ($modal_ok_insert === true) {
                         <div class="form-group">
                             <label for="web_public" class="col-sm-4 control-label"><?php echo $script_transl['web_public']; ?></label>
                             <?php
+                            /*
                             $gForm->variousSelect('web_public', $script_transl['web_public_value'], $form['web_public'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
+                            */
                             ?>
                         </div>
                     </div>
@@ -1150,7 +1154,9 @@ if ($modal_ok_insert === true) {
                         <div class="form-group">
                             <label for="retention_tax" class="col-sm-4 control-label"><?php echo $script_transl['retention_tax'] . ' (' . $admin_aziend['ritenuta'] . '%)'; ?></label>
                             <?php
+                            /*
                             $gForm->variousSelect('retention_tax', $script_transl['retention_tax_value'], $form['retention_tax'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
+                            */
                             ?>
                         </div>
                     </div>
@@ -1161,7 +1167,9 @@ if ($modal_ok_insert === true) {
                         <div class="form-group">
                             <label for="payroll_tax" class="col-sm-4 control-label"><?php echo $script_transl['payroll_tax']; ?>*</label>
                             <?php
+                            /*
                             $gForm->variousSelect('payroll_tax', $script_transl['payroll_tax_value'], $form['payroll_tax'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
+                            */
                             ?>
                         </div>
                     </div>
@@ -1174,7 +1182,9 @@ if ($modal_ok_insert === true) {
                         <div class="form-group">
                             <label for="codcon" class="col-sm-4 control-label"><?php echo $script_transl['codcon']; ?></label>
                             <?php
+                            /*
                             $gForm->selectAccount('codcon', $form['codcon'], 4, '', false, "col-sm-8");
+                            */
                             ?>
                         </div>
                     </div>
@@ -1186,7 +1196,9 @@ if ($modal_ok_insert === true) {
                         <div class="form-group">
                             <label for="id_cost" class="col-sm-4 control-label"><?php echo $script_transl['id_cost']; ?></label>
                             <?php
+                            /*
                             $gForm->selectAccount('id_cost', $form['id_cost'], 3, '', false, "col-sm-8");
+                            */
                             ?>
                         </div>
                     </div>

@@ -194,8 +194,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
                 $new_height = $maxDim;
               }
               $src = imagecreatefromstring( file_get_contents( $file_name ) );
-              $dst = imagecreatetruecolor( $new_width, $new_height );
-              imagecopyresampled( $dst, $src, 0, 0, 0, 0, $new_width, $new_height, $width, $height );
+              $dst = imagecreatetruecolor( intval($new_width), intval($new_height) );
+              imagecopyresampled( $dst, $src, 0, 0, 0, 0, intval($new_width), intval($new_height), $width, $height );
               imagedestroy( $src );
               imagepng( $dst, $target_filename); // adjust format as needed
               imagedestroy( $dst );
@@ -722,8 +722,9 @@ $("#datepicker_open_to").datepicker("setDate", "<?php echo $form['open_to']; ?>"
 									<div class="form-group">
 										<label for="depli_public" class="col-sm-4 control-label"><?php echo $script_transl['depli_public']; ?></label>
                   <?php
+                  /*
                   $gForm->variousSelect('depli_public', $script_transl['depli_public_value'], $form['depli_public'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
-                  ?>
+                  */?>
 									</div>
 								</div>
 							</div><!-- chiude row  -->
