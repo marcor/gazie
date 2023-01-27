@@ -80,7 +80,7 @@ if (isset($_POST['Update']) || isset($_GET['Update'])) {
     $toDo = 'insert';
 }
 
-if (isset($_POST['icalsub'])) {
+if (isset($_POST['icalsub']) && strlen($_POST['ical'])>3) {
 	$ical['url']=$_POST['ical'];
 	$ical['ical_descri']=$_POST['ical_descri'];
 	$ical['codice_alloggio']=$_POST['codice'];
@@ -1117,6 +1117,7 @@ $(document).ready(function(){
                     </div>
                 </div><!-- chiude row  -->
                 <!--+ DC - 06/02/2019 div class="row" --->
+  <!--
                 <div id="retentionTax" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
@@ -1128,6 +1129,7 @@ $(document).ready(function(){
                     </div>
                 </div><!-- chiude row  -->
                 <!--+ DC - 06/02/2019 div class="row" --->
+   <!--
                 <div id="payrollTax" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
@@ -1139,6 +1141,7 @@ $(document).ready(function(){
                     </div>
                 </div><!-- chiude row  -->
                 <!--+ DC - 06/02/2019 div class="row" --->
+   <!--
                 <div id="codCon" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
@@ -1150,6 +1153,7 @@ $(document).ready(function(){
                     </div>
                 </div><!-- chiude row  -->
                 <!--+ DC - 06/02/2019 div class="row" --->
+    <!--
                 <div id="idCost" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">

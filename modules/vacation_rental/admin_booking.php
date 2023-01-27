@@ -912,11 +912,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $night=0;
         $start="";
       }
-	  
-	  $total_price=0;// inizializzo il prezzo totale della locazione per il successivo calcolo
+
+      $total_price=0;// inizializzo il prezzo totale della locazione per il successivo calcolo
       $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['in_codart']);
       if (isset($_POST['in_submit']) && strlen($form['in_codart'])>0 && $form['start']!="" && $form['end']!="" && $form['in_codart']<>"TASSA-TURISTICA"){// se è un alloggio e ci sono le date CALCOLO IL PREZZO
-        
+
         $start=$form['start'];
         $gen_iva_perc = gaz_dbi_get_row($gTables['aliiva'], 'codice', $artico['aliiva'])['aliquo'];
         $night=0;
@@ -946,8 +946,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
           } elseif(floatval($artico['web_price'])>0){
             $total_price += floatval($artico['web_price']);// in mancanza del prezzo giornaliero aggiungo il prezzo base
           }else{
-			  echo "ERRORE MANCA IL PREZZO in uno o più giorni e non esiste un prezzo base";
-		  }
+            echo "ERRORE MANCA IL PREZZO in uno o più giorni e non esiste un prezzo base";
+          }
 
           $start = date ("Y-m-d", strtotime("+1 days", strtotime($start)));// aumento di un giorno il ciclo
           $night++;
@@ -959,25 +959,28 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $start="";
         $form['in_prelis']=$total_price;
       }
-      // calcolo gli sconti
-      $discounts=searchdiscount($form['in_codart'],$artico['id_artico_group'],$form['start'],$form['end'],$night,$anagra=0,$gTables['rental_discounts']);
-      $form['discount']=0;
-      $form['descri_discount']="";
-      if (isset($discounts) && $discounts->num_rows >0){// se c'è almeno uno sconto
-        foreach ($discounts as $discount){ // li ciclo e applico lo sconto
-          if ($discount['is_percent']==1){
-          $form['discount']+= (floatval($total_price)*floatval($discount['value']))/100;// aggiungo al totale sconti, lo sconto calcolato in percentuale
-          $form['descri_discount'].=" ".$discount['title']." ".$discount['value']."%";// incremento la descrizione con lo sconto applicato
-          }else{
-          $form['discount']+= floatval($discount['value'])/floatval("1.".$gen_iva_perc);// aggiungo al totale sconti, lo sconto a valore scorporando IVA
-          $form['descri_discount'].= " ".$discount['title']." ".$admin_aziend['symbol']." ".$discount['value'];/// incremento la descrizione con lo sconto applicato
-          }
-          if ($discount['stop_further_processing']==1){// se questo devo bloccare i successivi eventuali, interrompo il conteggio
-          break;
+      if ($form['in_codart']<>"TASSA-TURISTICA"){
+        // calcolo gli sconti
+        $discounts=searchdiscount($form['in_codart'],$artico['id_artico_group'],$form['start'],$form['end'],$night,$anagra=0,$gTables['rental_discounts']);
+        $form['discount']=0;
+        $form['descri_discount']="";
+        if (isset($discounts) && $discounts->num_rows >0){// se c'è almeno uno sconto
+          foreach ($discounts as $discount){ // li ciclo e applico lo sconto
+            if ($discount['is_percent']==1){
+            $form['discount']+= (floatval($total_price)*floatval($discount['value']))/100;// aggiungo al totale sconti, lo sconto calcolato in percentuale
+            $form['descri_discount'].=" ".$discount['title']." ".$discount['value']."%";// incremento la descrizione con lo sconto applicato
+            }else{
+            $form['discount']+= floatval($discount['value'])/floatval("1.".$gen_iva_perc);// aggiungo al totale sconti, lo sconto a valore scorporando IVA
+            $form['descri_discount'].= " ".$discount['title']." ".$admin_aziend['symbol']." ".$discount['value'];/// incremento la descrizione con lo sconto applicato
+            }
+            if ($discount['stop_further_processing']==1){// se questo devo bloccare i successivi eventuali, interrompo il conteggio
+            break;
+            }
           }
         }
+      }else{
+        $form['discount']=0;
       }
-
       $form['in_prelis'] -= $form['discount'];
       gaz_dbi_query ("UPDATE ".$gTables['artico']." SET `last_used`='".date("Y-m-d")."' WHERE codice='".$form['in_codart']."';");
       // addizione ai totali peso,pezzi,volume
@@ -989,8 +992,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
       $form['volume'] += $form['in_quanti'] * $artico['volume_specifico'];
       $form['in_good_or_service']=$artico['good_or_service'];
 
+      // calcolo il numero di notti
+      $diff=date_diff(date_create($form['start']),date_create($form['end']));
+      $night= $diff->format("%a");
+
       // carico i dati del json articolo
-      if ($data = json_decode($artico['custom_field'], TRUE)) { // se esiste un json nel custom field
+      if ($form['in_codart']<>"TASSA-TURISTICA" && $data = json_decode($artico['custom_field'], TRUE)) { // se esiste un json nel custom field
         if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['accommodation_type'])){// se è un alloggio
             $form['codice_fornitore']=$artico['codice'];
             $form['in_accommodation_type'] = $data['vacation_rental']['accommodation_type'];
@@ -1013,11 +1020,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
           $form['in_quanti']=$form['qtaextra'];
           $form['in_unimis']=$artico['unimis'];
           $form['qtaextra']=0;
-
-          // calcolo il numero di notti
-          $diff=date_diff(date_create($form['start']),date_create($form['end']));
-          $night= $diff->format("%a");
-
           $form['in_accommodation_type'] = 1;// è un extra
           $form['in_adult'] = 0;
           $form['in_child'] = 0;
@@ -1467,7 +1469,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $next_row++;
                 $form["row_$next_row"] = "";
                 $form['rows'][$next_row]['tiprig'] = 2;
-                $form['rows'][$next_row]['descri'] = 'N.B.: applicato sconto di €'.$form['discount']." ".$form['descri_discount'];
+                $form['rows'][$next_row]['descri'] = 'N.B.: applicato sconto di €'.number_format($form['discount'], $admin_aziend['decimal_price'], '.', '')." ".$form['descri_discount'];
                 $form['rows'][$next_row]['id_mag'] = 0;
                 $form['rows'][$next_row]['id_lotmag'] = 0;
                 $form['rows'][$next_row]['identifier'] = '';

@@ -83,7 +83,7 @@ if (isset($_POST['Update']) || isset($_GET['Update'])) {
     $toDo = 'insert';
 }
 
-if (isset($_POST['icalsub'])) {
+if (isset($_POST['icalsub']) && strval($_POST['ical'])>3) {
 	$ical['url']=$_POST['ical'];
 	$ical['ical_descri']=$_POST['ical_descri'];
 	$ical['codice_alloggio']=$_POST['codice'];
@@ -275,7 +275,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
   if ($codart_len > 0 && strlen(trim($form['codice'])) <> $codart_len) {
       $msg['err'][] = 'codart_len';
   }
-  if ($form['web_public']>0 && intval($form['ref_ecommerce_id_product'])==0 && $toDo=="update"){// in update, senza id riferimento all'e-commerce non si può attivare
+  if (isset($form['web_public']) && $form['web_public']>0 && intval($form['ref_ecommerce_id_product'])==0 && $toDo=="update"){// in update, senza id riferimento all'e-commerce non si può attivare
     $msg['err'][] = 'no_web';
   }
   if (count($msg['err']) == 0) { // ***  NESSUN ERRORE  ***
@@ -862,9 +862,16 @@ if ($modal_ok_insert === true) {
                  <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
+
                             <label for="codice" class="col-sm-4 control-label"><?php echo $script_transl['codice']; ?></label>
                             <input class="col-sm-4" type="text" value="<?php echo ((isset($_POST['cod']))? serchCOD():$form["codice"]); ?>" name="codice" id="suggest_new_codart" maxlength="32" tabindex="1" /><input class="btn btn-xs" type="submit" value="" />
-							&nbsp;<input type="submit" name="cod" value="Genera codice" <?php  echo ($toDo == 'update')?'disabled':'';?>></td> <!-- M1 modificato a mano -->
+                            <?php
+                            if ($toDo == 'insert'){
+                              ?>
+                              &nbsp;<input type="submit" name="cod" title="Genera il codice aggiungendo un numero progressivo all'ultimo inserito" value="Genera codice"></td>
+                              <?php
+                            }
+                            ?>
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -924,13 +931,14 @@ if ($modal_ok_insert === true) {
                     </div>
                 </div><!-- chiude row  -->
                 <!--+ - 06/02/2019 div class="row" --->
+<!--
                 <div id="barcode" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="barcode" class="col-sm-4 control-label"><?php echo $script_transl['barcode']; ?></label>
                             <input class="col-sm-4" type="text" value="<?php echo (isset($_POST['EAN']))? serchEAN():$form["barcode"]; ?>" name="barcode" maxlength="13" />
                         &nbsp;<input type="submit" name="EAN" value="Genera EAN13">
-						</div>
+                      </div>
                     </div>
                 </div><!-- chiude row  -->
                 <!--+ DC - 06/02/2019 div class="row" --->
@@ -1022,6 +1030,7 @@ if ($modal_ok_insert === true) {
 				if (isset ($form['var_id']) OR isset ($form['var_name'])){
 					?>
 					<!--+ DC - 06/02/2019 div class="row" --->
+<!--
 					<div id="webUrl" class="row IERincludeExcludeRow">
 						<div class="col-md-12">
 							<div class="form-group">
@@ -1031,6 +1040,7 @@ if ($modal_ok_insert === true) {
 						</div>
 					</div><!-- chiude row  -->
 					<!--+ DC - 06/02/2019 div class="row" --->
+<!--
 					<div id="webUrl" class="row IERincludeExcludeRow">
 						<div class="col-md-12">
 							<div class="form-group">
@@ -1043,24 +1053,26 @@ if ($modal_ok_insert === true) {
 				}
 				?>
                 <!--+ DC - 06/02/2019 div class="row" --->
+<!--
                 <div id="depliPublic" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="depli_public" class="col-sm-4 control-label"><?php echo $script_transl['depli_public']; ?></label>
-    <?php
-    $gForm->variousSelect('depli_public', $script_transl['depli_public_value'], $form['depli_public'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
-    ?>
+                            <?php
+                            $gForm->variousSelect('depli_public', $script_transl['depli_public_value'], $form['depli_public'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
+                            ?>
                         </div>
                     </div>
                 </div><!-- chiude row  -->
                 <!--+ DC - 06/02/2019 div class="row" --->
+<!--
                 <div id="webPublic" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="web_public" class="col-sm-4 control-label"><?php echo $script_transl['web_public']; ?></label>
-    <?php
-    $gForm->variousSelect('web_public', $script_transl['web_public_value'], $form['web_public'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
-    ?>
+                            <?php
+                            $gForm->variousSelect('web_public', $script_transl['web_public_value'], $form['web_public'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
+                            ?>
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -1117,9 +1129,9 @@ if ($modal_ok_insert === true) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="deposit_type" class="col-sm-4 control-label">Modalità calcolo caparra</label>
-    <?php
-    $gForm->variousSelect('deposit_type', $script_transl['deposit_type_value'], $form['deposit_type'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
-    ?>
+                            <?php
+                            $gForm->variousSelect('deposit_type', $script_transl['deposit_type_value'], $form['deposit_type'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
+                            ?>
                         </div>
                     </div>
                 </div>
@@ -1137,9 +1149,9 @@ if ($modal_ok_insert === true) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="retention_tax" class="col-sm-4 control-label"><?php echo $script_transl['retention_tax'] . ' (' . $admin_aziend['ritenuta'] . '%)'; ?></label>
-    <?php
-    $gForm->variousSelect('retention_tax', $script_transl['retention_tax_value'], $form['retention_tax'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
-    ?>
+                            <?php
+                            $gForm->variousSelect('retention_tax', $script_transl['retention_tax_value'], $form['retention_tax'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
+                            ?>
                         </div>
                     </div>
                 </div>
@@ -1148,41 +1160,45 @@ if ($modal_ok_insert === true) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="payroll_tax" class="col-sm-4 control-label"><?php echo $script_transl['payroll_tax']; ?>*</label>
-    <?php
-    $gForm->variousSelect('payroll_tax', $script_transl['payroll_tax_value'], $form['payroll_tax'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
-    ?>
+                            <?php
+                            $gForm->variousSelect('payroll_tax', $script_transl['payroll_tax_value'], $form['payroll_tax'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
+                            ?>
                         </div>
                     </div>
                 </div><!-- chiude row  -->
+
                 <!--+ DC - 06/02/2019 div class="row" --->
+<!--
                 <div id="codCon" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="codcon" class="col-sm-4 control-label"><?php echo $script_transl['codcon']; ?></label>
-    <?php
-    $gForm->selectAccount('codcon', $form['codcon'], 4, '', false, "col-sm-8");
-    ?>
+                            <?php
+                            $gForm->selectAccount('codcon', $form['codcon'], 4, '', false, "col-sm-8");
+                            ?>
                         </div>
                     </div>
                 </div><!-- chiude row  -->
                 <!--+ DC - 06/02/2019 div class="row" --->
+<!--
                 <div id="idCost" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="id_cost" class="col-sm-4 control-label"><?php echo $script_transl['id_cost']; ?></label>
-    <?php
-    $gForm->selectAccount('id_cost', $form['id_cost'], 3, '', false, "col-sm-8");
-    ?>
+                            <?php
+                            $gForm->selectAccount('id_cost', $form['id_cost'], 3, '', false, "col-sm-8");
+                            ?>
                         </div>
                     </div>
                 </div><!-- chiude row  -->
+
                 <div id="idCost" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="id_cost" class="col-sm-4 control-label"><?php echo $script_transl['id_agent']; ?></label>
-    <?php
-		$g2Form->selectFrom2DB('agenti','clfoco','codice','descri', 'agent','id_agente', $form['agent'], 'id_agente', 1, ' - ','id_fornitore','TRUE','FacetSelect' , null);
-    ?>Se selezionato, i documenti avranno la sua intestazione; le e-mail saranno indirizzate anche a lui; i pagamenti del front-end saranno richiesti per lui.
+                            <?php
+                            $g2Form->selectFrom2DB('agenti','clfoco','codice','descri', 'agent','id_agente', $form['agent'], 'id_agente', 1, ' - ','id_fornitore','TRUE','FacetSelect' , null);
+                            ?>Se selezionato, i documenti avranno la sua intestazione; le e-mail saranno indirizzate anche a lui; i pagamenti del front-end saranno richiesti per lui.
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -1289,9 +1305,9 @@ if ($modal_ok_insert === true) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="room_type" class="col-sm-4 control-label"><?php echo $script_transl['room_type']; ?></label>
-    <?php
-    $gForm->variousSelect('room_type', $script_transl['room_type_value'], $form['room_type'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
-    ?>
+                            <?php
+                            $gForm->variousSelect('room_type', $script_transl['room_type_value'], $form['room_type'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
+                            ?>
 							<input type="hidden" name="good_or_service" value="1" /><!-- un alloggio è sempre servizio, quindi '1'  -->
                         </div>
                     </div>
@@ -1315,25 +1331,30 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-    <?php if ($toDo == 'update') { ?>
+                <?php
+                /*
+                if ($toDo == 'update') {
+                ?>
                     <!--+ DC - 06/02/2019 div class="row" --->
                     <div id="docCert" class="row IERincludeExcludeRow">
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="docCert" class="col-sm-4 control-label"><?php echo $script_transl['document']; ?></label>
-        <?php if ($ndoc > 0) { // se ho dei documenti  ?>
+                                  <?php if ($ndoc > 0) { // se ho dei documenti  ?>
                                     <div>
                                     <?php foreach ($form['rows'] as $k => $val) { ?>
                                             <input type="hidden" value="<?php echo $val['id_doc']; ?>" name="rows[<?php echo $k; ?>][id_doc]">
                                             <input type="hidden" value="<?php echo $val['extension']; ?>" name="rows[<?php echo $k; ?>][extension]">
                                             <input type="hidden" value="<?php echo $val['title']; ?>" name="rows[<?php echo $k; ?>][title]">
-                <?php echo DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/doc/' . $val['id_doc'] . '.' . $val['extension']; ?>
+                                            <?php echo DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/doc/' . $val['id_doc'] . '.' . $val['extension']; ?>
                                             <a href="../root/retrieve.php?id_doc=<?php echo $val["id_doc"]; ?>" title="<?php echo $script_transl['view']; ?>!" class="btn btn-default btn-sm">
                                                 <i class="glyphicon glyphicon-file"></i>
                                             </a><?php echo $val['title']; ?>
                                             <input type="button" value="<?php echo ucfirst($script_transl['update']); ?>" onclick="location.href = 'admin_document.php?id_doc=<?php echo $val['id_doc']; ?>&Update'" />
 
-            <?php } ?>
+                                          <?php
+                                          }
+                                          ?>
                                         <input type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_document.php?item_ref=<?php echo $form['codice']; ?>&Insert'" />
                                     </div>
                                     <?php } else { // non ho documenti  ?>
@@ -1342,24 +1363,24 @@ if ($modal_ok_insert === true) {
                             </div>
                         </div>
                     </div>
-					<!-- Antonio Germani inserimento/modifica immagini di qualità per e-commerce -->
-					<div id="qualityImgs" class="row IERincludeExcludeRow">
+                    <!-- Antonio Germani inserimento/modifica immagini di qualità per e-commerce -->
+                    <div id="qualityImgs" class="row IERincludeExcludeRow">
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="annotaUpdate" class="col-sm-4 control-label"><?php echo $script_transl['imageweb']; ?></label>
-        <?php if ($nimg > 0) { // se ho dei documenti  ?>
+                                <?php if ($nimg > 0) { // se ho dei documenti  ?>
                                     <div>
                                     <?php foreach ($form['imgrows'] as $k => $val) { ?>
                                             <input type="hidden" value="<?php echo $val['id_doc']; ?>" name="imgrows[<?php echo $k; ?>][id_doc]">
                                             <input type="hidden" value="<?php echo $val['extension']; ?>" name="imgrows[<?php echo $k; ?>][extension]">
                                             <input type="hidden" value="<?php echo $val['title']; ?>" name="imgrows[<?php echo $k; ?>][title]">
-                <?php echo DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/images/' . $val['id_doc'] . '.' . $val['extension']; ?>
+                                            <?php echo DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/images/' . $val['id_doc'] . '.' . $val['extension']; ?>
                                             <a href="../root/retrieve.php?id_doc=<?php echo $val["id_doc"]; ?>" title="<?php echo $script_transl['view']; ?>!" class="btn btn-default btn-sm">
                                                 <i class="glyphicon glyphicon-file"></i>
                                             </a><?php echo $val['title']; ?>
                                             <input type="button" value="<?php echo ucfirst($script_transl['update']); ?>" onclick="location.href = 'admin_image.php?id_doc=<?php echo $val['id_doc']; ?>&Update'" />
 
-            <?php } ?>
+                                      <?php } ?>
                                         <input type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_image.php?item_ref=<?php echo $form['codice']; ?>&Insert'" />
                                     </div>
                                     <?php } else { // non ho documenti  ?>
@@ -1368,7 +1389,10 @@ if ($modal_ok_insert === true) {
                             </div>
                         </div>
                     </div>
-    <?php } ?>
+                <?php
+                }
+                */
+                ?>
             </div><!-- chiude tab-pane  -->
           </div>
         <div class="col-sm-12">

@@ -717,13 +717,14 @@ $("#datepicker_open_to").datepicker("setDate", "<?php echo $form['open_to']; ?>"
                 </div>
 							</div><!-- chiude row  -->
 							<!--+ DC - 06/02/2019 div class="row" --->
+<!--
 							<div id="depliPublic" class="row IERincludeExcludeRow">
 								<div class="col-md-12">
 									<div class="form-group">
 										<label for="depli_public" class="col-sm-4 control-label"><?php echo $script_transl['depli_public']; ?></label>
-				<?php
-				$gForm->variousSelect('depli_public', $script_transl['depli_public_value'], $form['depli_public'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
-				?>
+                  <?php
+                  $gForm->variousSelect('depli_public', $script_transl['depli_public_value'], $form['depli_public'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
+                  ?>
 									</div>
 								</div>
 							</div><!-- chiude row  -->
@@ -732,9 +733,9 @@ $("#datepicker_open_to").datepicker("setDate", "<?php echo $form['open_to']; ?>"
 								<div class="col-md-12">
 									<div class="form-group">
 										<label for="web_public" class="col-sm-4 control-label"><?php echo $script_transl['web_public']; ?></label>
-				<?php
-				$gForm->variousSelect('web_public', $script_transl['web_public_value'], $form['web_public'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
-				?>
+                    <?php
+                    $gForm->variousSelect('web_public', $script_transl['web_public_value'], $form['web_public'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
+                    ?>
 									</div>
 								</div>
 							</div><!-- chiude row  -->
