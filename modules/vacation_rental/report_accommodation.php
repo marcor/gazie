@@ -494,7 +494,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 
 			echo "<i ".$ecomGlobe." ></i>";// globo per e-commerce
 			echo '</td>';
-			echo '<td><span class="gazie-tooltip_group" data-type="product-thumb" data-id="'. $r['codice'] .'" data-title="'. $r['annota'].'" >'.get_string_lang($r['descri'], $lang).'</span>';
+			echo '<td><span class="gazie-tooltip" data-type="product-thumb" data-id="'. $r['codice'] .'" data-title="'. $r['annota'].'" >'.get_string_lang($r['descri'], $lang).'</span>';
 			echo "</td>\n";
 			echo '<td class="text-center">';
 			switch($r['accommodation_type']){// 3 => 'Appartamento', 4 => 'Casa vacanze', 5=> 'Bed & breakfast'
