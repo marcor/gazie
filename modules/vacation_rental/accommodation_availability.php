@@ -63,23 +63,23 @@ $id=substr($_GET['house_code'],0,32);
 
 <script>
 
-  document.addEventListener('DOMContentLoaded', function() {
-    var calendarEl = document.getElementById('calendar');
-    var calendar = new FullCalendar.Calendar(calendarEl, {
-		height: 600,
-		initialView: 'dayGridMonth',
-		selectable: true, //abilita il controllo del passaggio mouse cliccato sopra i giorni
-		headerToolbar:{
-		left:'prev,next today,dayGridMonth',
-		center:'title',
-		right:'prevYear,nextYear'
-		},
-		editable: true,
-		eventColor: '#378006',
-		timeZone: 'local',
-		locale: 'it',
-		eventDisplay  : 'block',// tutti gli eventi vengono mostrati con un rettangolo pieno in visualizzazione giornaliera
-		events : 'load_from_db_events.php?id=<?php echo $id; ?>& token=<?php echo md5($token.date('Y-m-d')); ?>',
+document.addEventListener('DOMContentLoaded', function() {
+  var calendarEl = document.getElementById('calendar');
+  var calendar = new FullCalendar.Calendar(calendarEl, {
+  height: 600,
+  initialView: 'dayGridMonth',
+  selectable: true, //abilita il controllo del passaggio mouse cliccato sopra i giorni
+  headerToolbar:{
+  left:'prev,next today,dayGridMonth',
+  center:'title',
+  right:'prevYear,nextYear'
+  },
+  editable: true,
+  eventColor: '#378006',
+  timeZone: 'local',
+  locale: 'it',
+  eventDisplay  : 'block',// tutti gli eventi vengono mostrati con un rettangolo pieno in visualizzazione giornaliera
+  events : 'load_from_db_events.php?id=<?php echo $id; ?>& token=<?php echo md5($token.date('Y-m-d')); ?>',
 
 		loading: function( isLoading, view ) {
 			if(isLoading) {// isLoading gives boolean value
@@ -121,16 +121,16 @@ $id=substr($_GET['house_code'],0,32);
 			var start = info.startStr;
 			var end = info.endStr;
 			var xhttp = new XMLHttpRequest();
-			xhttp.open("GET", "save_to_db_events.php?title="+ title +"&start="+ start +"&end="+ end +"&house_code=<?php echo $id; ?>&token=<?php echo md5($token.date('Y-m-d')); ?>", false);
-			/*
+			xhttp.open("GET", "save_to_db_events.php?title="+ title +"&start="+ start +"&end="+ end +"&house_code=<?php echo $id; ?>&token=<?php echo md5($token.date('Y-m-d')); ?>", true);
+      /*
 			xhttp.onreadystatechange = function() {
 				console.log(this);
 			};
-			*/
+      */
 			xhttp.send();
 			xhttp.onload = function(){
 				calendar.refetchEvents();
-				//window.location.reload(true);
+				window.location.reload(true);
 			};
 		},
 
