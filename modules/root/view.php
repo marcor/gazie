@@ -54,13 +54,15 @@ $img1px= pack("c*",0xFF,0xD8,0xFF,0xE0,0x00,0x10,0x4A,0x46,0x49,0x46,0x00,0x01,0
               0xA6,0x00,0x1F,0xFF,0xD9);
 if (isset($_GET['table']) && isset($_GET['value'])){
     if (isset($_GET['field'])){
-		if ( defined('FILTER_SANITIZE_ADD_SLASHES') ) {
-			$f=filter_var(substr($_GET['field'],0,30),FILTER_SANITIZE_ADD_SLASHES);
-		} else {
-			$f=addslashes(substr($_GET['field'],0,30));
-		}
+      if ( defined('FILTER_SANITIZE_ADD_SLASHES') ) {
+        $f=filter_var(substr($_GET['field'],0,30),FILTER_SANITIZE_ADD_SLASHES);
+      } else {
+        $f=addslashes(substr($_GET['field'],0,30));
+      }
+    } else if (isset($_GET['group'])){
+      $f='id_artico_group';
     } else {
-        $f='codice';
+      $f='codice';
     }
 	if ( defined('FILTER_SANITIZE_ADD_SLASHES') ) {
 		$t=filter_var(substr($_GET['table'],0,30),FILTER_SANITIZE_ADD_SLASHES);

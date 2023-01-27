@@ -88,7 +88,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
   $form['tour_tax_day'] = intval($_POST['tour_tax_day']);
   $form['max_booking_days'] = intval($_POST['max_booking_days']);
 	$form['ref_ecommerce_id_main_product'] = substr($_POST['ref_ecommerce_id_main_product'], 0, 9);
-	$form['large_descri'] = filter_input(INPUT_POST, 'large_descri');
+	$form['large_descri'] = $_POST['large_descri'];
 	$form['cosear'] = filter_var($_POST['cosear'],FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 	$form['codart'] = filter_var($_POST['codart'],FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 	$form['lat'] = $_POST['lat'];
@@ -241,7 +241,6 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 			} else {
 			  $form['image'] = '';
 			}
-			$form['large_descri'] = htmlspecialchars_decode (addslashes($form['large_descri']));
 			// aggiorno il db
 			if ($toDo == 'insert') {
 				$array= array('vacation_rental'=>array('facility_type' => '', 'paypal_email' => $form['paypal_email'], 'stripe_pub_key' => $form['stripe_pub_key'], 'stripe_sec_key' => $form['stripe_sec_key'], 'check_in' => $form['check_in'], 'check_out' => $form['check_out'], 'minor' => $form['minor'], 'tour_tax_from' => $form['tour_tax_from'], 'tour_tax_to' => $form['tour_tax_to'], 'open_from' => $form['open_from'], 'open_to' => $form['open_to'], 'tour_tax_day' => $form['tour_tax_day'], 'max_booking_days' => $form['max_booking_days'], 'latitude' => $form['lat'], 'longitude' => $form['long']));// creo l'array per il custom field
