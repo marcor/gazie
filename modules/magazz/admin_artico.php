@@ -1034,7 +1034,7 @@ if ($modal === false && $toDo=='update') {
 				 // se esiste un json per l'attributo della variante dell'e-commerce
 				if (isset ($form['var_id']) OR isset ($form['var_name'])){
 					?>
-					<div id="webUrl" class="row IERincludeExcludeRow">
+					<div id="varID" class="row IERincludeExcludeRow">
 						<div class="col-md-12">
 							<div class="form-group">
 								<label for="var_id" class="col-sm-4 control-label">ID attributo variante</label>
@@ -1042,7 +1042,7 @@ if ($modal === false && $toDo=='update') {
 							</div>
 						</div>
 					</div><!-- chiude row  -->
-					<div id="webUrl" class="row IERincludeExcludeRow">
+					<div id="varName" class="row IERincludeExcludeRow">
 						<div class="col-md-12">
 							<div class="form-group">
 								<label for="var_name" class="col-sm-4 control-label">Nome attributo variante</label>
@@ -1094,7 +1094,7 @@ if ($modal === false && $toDo=='update') {
                          </div>
                     </div>
                 </div><!-- chiude row  -->
-				<div id="depliPublic" class="row IERincludeExcludeRow">
+                <div id="durability_mu" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="durability_mu" class="col-sm-4 control-label"><?php echo $script_transl['durability_mu']; ?></label>
@@ -1105,7 +1105,7 @@ if ($modal === false && $toDo=='update') {
                     </div>
                 </div><!-- chiude row  -->
 
-                <div id="webUrl" class="row IERincludeExcludeRow">
+                <div id="durability" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="durability" class="col-sm-4 control-label"><?php echo $script_transl['durability']; ?></label>
@@ -1114,7 +1114,7 @@ if ($modal === false && $toDo=='update') {
                     </div>
                 </div><!-- chiude row  -->
 
-                <div id="webUrl" class="row IERincludeExcludeRow">
+                <div id="warranty_days" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="warranty_days" class="col-sm-4 control-label"><?php echo $script_transl['warranty_days']; ?></label>
