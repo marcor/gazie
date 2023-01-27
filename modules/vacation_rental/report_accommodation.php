@@ -69,7 +69,7 @@ $sortable_headers = array  (
             'Elimina' => ''
 );
 
-$tablejoin = $gTables['artico']. " LEFT JOIN " . $gTables['catmer'] . " ON " . $gTables['artico'] . ".catmer = " . $gTables['catmer'] . ".codice";
+$tablejoin = $gTables['artico']. " LEFT JOIN " . $gTables['catmer'] . " ON " . $gTables['artico'] . ".catmer = " . $gTables['catmer'] . ".codice LEFT JOIN " . $gTables['artico_group'] ." ON " . $gTables['artico'] . ".id_artico_group = " . $gTables['artico_group'] . ".id_artico_group";
 
 $ts = new TableSorter(
     $tablejoin,
@@ -420,7 +420,7 @@ $ts->output_navbar();
 <?php
 $gForm = new magazzForm();
 
-$result = gaz_dbi_dyn_query ( $gTables['artico']. ".*, ".$gTables['catmer']. ".descri AS descat, ".$gTables['catmer']. ".codice AS codcat",$tablejoin, $ts->where." AND good_or_service=1 AND (custom_field REGEXP 'accommodation_type')", $ts->orderby, $ts->getOffset(), $ts->getLimit());
+$result = gaz_dbi_dyn_query ( $gTables['artico']. ".*, ".$gTables['artico_group']. ".descri AS desgroup, ".$gTables['catmer']. ".descri AS descat, ".$gTables['catmer']. ".codice AS codcat",$tablejoin, $ts->where." AND good_or_service=1 AND (".$gTables['artico'].".custom_field REGEXP 'accommodation_type')", $ts->orderby, $ts->getOffset(), $ts->getLimit());
 
 echo '<tr>';
 $ts->output_headers();
@@ -509,10 +509,9 @@ while ($r = gaz_dbi_fetch_array($result)) {
 				break;
 			}
 
-	if ($r['id_artico_group']>0){
-		echo '<a class="btn btn-xs btn-default" title="Struttura"  onclick="getgroup(\''.$r['id_artico_group'].'\');"> <i class="glyphicon glyphicon-level-up"></i> </a> ';
-    }
-
+      if ($r['id_artico_group']>0){
+        echo '<a class="btn btn-xs btn-default" title="Struttura: '.$r['desgroup'].'"  onclick="getgroup(\''.$r['id_artico_group'].'\');"> <i class="glyphicon glyphicon-level-up"></i> </a> ';
+      }
 
 			echo "</td>\n";
 			echo '<td class="text-center">'.$r['catmer'].'-'.$r['descat'];
