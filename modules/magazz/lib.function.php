@@ -1066,7 +1066,7 @@ class magazzForm extends GAzieForm {
             if ($r['descri'] == null){ // movimento non ubicato
               $table .= ($firstl?'':'<br/>').floatval($r['cari']-$r['scar']).' '.$unimis.' non sono stati ubicati';
             } else {
-              $table .= ($firstl?'':'<br/>').($r['name']==null?'SEDE':$r['name']).'->'.$r['descri'].'-><a class="btn btn-default btn-xs" href="report_cms_positions.php?id_position='.$r['id_artico_position'].'">'.$r['position'].'</a> '.$unimis.' '.floatval($r['cari']-$r['scar']).' <a class="btn btn-xs btn-default" href="print_label.php?id='.$r['id_artico_position'].'&cod='.$codart.'" title="Stampa etichetta"><i class="glyphicon glyphicon-tags"></i> Etichetta <i class="glyphicon glyphicon-qrcode "></i></a>';
+              $table .= ($firstl?'':'<br/>').($r['name']==null?'SEDE':$r['name']).'->'.$r['descri'].'-><a class="btn btn-default btn-xs" href="report_positions.php?id_position='.$r['id_artico_position'].'">'.$r['position'].'</a> '.$unimis.' '.floatval($r['cari']-$r['scar']).' <a class="btn btn-xs btn-default" href="print_label.php?id='.$r['id_artico_position'].'&cod='.$codart.'" title="Stampa etichetta"><i class="glyphicon glyphicon-tags"></i> Etichetta articolo <i class="glyphicon glyphicon-qrcode "></i></a>';
             }
             $firstl=false;
           } else {
