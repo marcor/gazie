@@ -1041,6 +1041,57 @@ class magazzForm extends GAzieForm {
     }
   }
 
+  function selectArticoPositions($name,$val,$codart,$ret_type=false,$class='',$refresh=false) {
+    // restituisce le possibili ubicazioni indicate in anagrafica articolo, oppure quelle risultati dai movimenti di magazzino, controllo anche la giacenza in ubicazione  ma non impedisco di sceglierla se a zero
+    $available=[];
+    global $gTables;
+    // prima query sui movimenti
+    $rs=gaz_dbi_query("SELECT pos.position, she.descri, war.name, pos.id_warehouse, COUNT(*) AS nummov, id_artico_position, caumag, SUM(quanti*(operat=1)) AS cari, SUM(quanti*(operat=-1)) AS scar FROM " . $gTables['movmag'] . " mm LEFT JOIN ".$gTables['artico'] ." art ON mm.artico = art.codice LEFT JOIN ".$gTables['artico_position'] ." pos ON mm.id_artico_position = pos.id_position LEFT JOIN ".$gTables['shelves'] ." she ON pos.id_shelf = she.id_shelf  LEFT JOIN ".$gTables['warehouse'] ." war ON she.id_warehouse = war.id WHERE mm.artico = '".$codart."' GROUP BY mm.id_artico_position");
+    while ($r = gaz_dbi_fetch_array($rs)) {
+      $r['id_position']=$r['id_artico_position'];
+      $available[$r['id_artico_position']]=$r;
+    }
+    // poi quelli eventualmente disponibili in anagrafica che però avranno giacenza nulla
+    $query = "SELECT pos.*, war.name, she.descri FROM " . $gTables['artico_position']." pos LEFT JOIN ".$gTables['shelves']." she ON pos.id_shelf = she.id_shelf  LEFT JOIN ".$gTables['warehouse'] ." war ON she.id_warehouse = war.id WHERE pos.codart = '".$codart."' ORDER BY pos.id_warehouse, pos.id_shelf";
+    $rs = gaz_dbi_query($query);
+    while ($r = gaz_dbi_fetch_array($rs)) {
+      if (!isset($available[$r['artico_id_position']])){
+      	$position = gaz_dbi_get_row($gTables['artico_position'], 'id_position', $r['artico_id_position'], 'AND artico_id_position < 1');
+        $r['position']=$position['position'];
+        $r['scar']='0';
+        $r['cari']='0';
+        $r['nummov']='0';
+        $available[$r['artico_id_position']]=$r;
+      }
+    }
+    $acc = '<select id="'.$name.'" name="'.$name.'" class="'.$class.'" '.($refresh?'onchange="this.form.submit();"':'').' >';
+    $acc .= '<option value="0"';
+    $acc .= intval($val)==0?' selected ':' ';
+    $acc .= '>- - - - - - - - -';
+    $acc .= '</option>';
+    $othershelves=false;
+    foreach ( $available as $k=>$v) {
+      $disp=floatval($v['cari']-$v['scar']);
+      $bgcol=$disp<0.00001?' style="background: #f98f8f;"':'';
+      $othershelves=true;
+      $selected = '';
+      if ($v['id_position'] == intval($val)) {
+        $selected = "selected ";
+      }
+      $acc .= '<option value="'.$v['id_position'] . '" '.$selected.' '.$bgcol.'>'.($v['id_warehouse']==0?'SEDE':$v['name']).' > '.$v['descri'].' >' .$v['position'].' disp:'.$disp;
+      $acc .= '</option>';
+    }
+    $acc .='</select>';
+    if ($othershelves===false){
+      $acc ='Sede'.(isset($available['oth'][0])?' disp:'.number_format($available['oth'][0],5):' disp:0').'<input type="hidden" id_shelf="'.$name.'" name="'.$name.'" >';;
+    }
+    if ($ret_type){
+      return $acc;
+    } else {
+      echo $acc;
+    }
+  }
+
   function radioSelect($name, $transl, $sel, $class = 'col-xs-6') {
     $acc='';
     foreach ($transl as $i => $val) {
@@ -1093,7 +1144,7 @@ class magazzForm extends GAzieForm {
       while ($r = gaz_dbi_fetch_array($rs)) {
         if($r['caumag']<=98) {
           if ($returntype==1){ // tabella html
-            $table .= '<div class="col-xs-12"> <a class="btn btn-default btn-xs" href="report_logisticartico.php?sea_codice='.$r['codice'].'"> '.$r['codice'].' </a> '.$r['descri'].' '.$r['unimis'].' '.floatval($r['cari']-$r['scar']).'  <a class="btn btn-xs btn-default" href="print_label.php?id='.$r['id_artico_position'].'&cod='.$r['codice'].'" title="Stampa etichetta"><i class="glyphicon glyphicon-tags"></i> Etichetta <i class="glyphicon glyphicon-qrcode "></i></a></div>';
+            $table .= '<div class="col-xs-12"> <a class="btn btn-default btn-xs" href="report_logisticartico.php?sea_codice='.$r['codice'].'"> '.$r['codice'].' </a> '.$r['descri'].' '.$r['unimis'].' '.floatval($r['cari']-$r['scar']).'  <a class="btn btn-xs btn-default" href="print_label.php?id='.$r['id_artico_position'].'&cod='.$r['codice'].'" title="Stampa etichetta"><i class="glyphicon glyphicon-tags"></i> Etichetta articolo <i class="glyphicon glyphicon-qrcode "></i></a></div>';
           } else {
             $acc[]=$r;
           }
