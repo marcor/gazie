@@ -1027,6 +1027,7 @@ $(document).ready(function(){
                 </div><!-- chiude row  -->
                 <?php
                  // se esiste un json per l'attributo della variante dell'e-commerce
+                 /*
                 if (isset ($form['var_id']) OR isset ($form['var_name'])){
                   ?>
                   <!--+ DC - 06/02/2019 div class="row" --->
@@ -1049,6 +1050,7 @@ $(document).ready(function(){
                   </div><!-- chiude row  -->
                   <?php
                 }
+                */
                 ?>
                 <!--+ DC - 06/02/2019 div class="row" --->
                 <div id="depliPublic" class="row IERincludeExcludeRow">
@@ -1123,7 +1125,9 @@ $(document).ready(function(){
                         <div class="form-group">
                             <label for="retention_tax" class="col-sm-4 control-label"><?php echo $script_transl['retention_tax'] . ' (' . $admin_aziend['ritenuta'] . '%)'; ?></label>
                             <?php
+                            /*
                             $gForm->variousSelect('retention_tax', $script_transl['retention_tax_value'], $form['retention_tax'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
+                            */
                             ?>
                         </div>
                     </div>
@@ -1135,7 +1139,9 @@ $(document).ready(function(){
                         <div class="form-group">
                             <label for="payroll_tax" class="col-sm-4 control-label"><?php echo $script_transl['payroll_tax']; ?>*</label>
                             <?php
+                            /*
                             $gForm->variousSelect('payroll_tax', $script_transl['payroll_tax_value'], $form['payroll_tax'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
+                            */
                             ?>
                         </div>
                     </div>
@@ -1147,7 +1153,9 @@ $(document).ready(function(){
                         <div class="form-group">
                             <label for="codcon" class="col-sm-4 control-label"><?php echo $script_transl['codcon']; ?></label>
                             <?php
+                            /*
                             $gForm->selectAccount('codcon', $form['codcon'], 4, '', false, "col-sm-8");
+                            */
                             ?>
                         </div>
                     </div>
@@ -1159,7 +1167,9 @@ $(document).ready(function(){
                         <div class="form-group">
                             <label for="id_cost" class="col-sm-4 control-label"><?php echo $script_transl['id_cost']; ?></label>
                             <?php
+                            /*
                             $gForm->selectAccount('id_cost', $form['id_cost'], 3, '', false, "col-sm-8");
+                            */
                             ?>
                         </div>
                     </div>
@@ -1312,7 +1322,9 @@ $(document).ready(function(){
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <?php if ($toDo == 'update') { ?>
+                <?php if ($toDo == 'update') {
+                    /*
+                  ?>
                     <!--+ DC - 06/02/2019 div class="row" --->
                     <div id="docCert" class="row IERincludeExcludeRow">
                         <div class="col-md-12">
@@ -1365,7 +1377,10 @@ $(document).ready(function(){
                             </div>
                         </div>
                     </div>
-          <?php } ?>
+                  <?php
+                  */
+                }
+                ?>
             </div><!-- chiude tab-pane  -->
           </div>
         <div class="col-sm-12">
