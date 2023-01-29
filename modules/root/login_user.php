@@ -44,7 +44,11 @@ $login = new Login();
 if ($login->isUserLoggedIn() == true) {
     // the user is logged in. you can do whatever you want here.
     // for demonstration purposes, we simply show the "you are logged in" view.
-    redirect("admin.php");
+    if ($_SESSION["from_uri"]){
+      redirect($_SESSION["from_uri"]);
+    } else {
+      redirect("admin.php");
+    }
     exit;
 } else {
     // the user is not logged in. you can do whatever you want here.

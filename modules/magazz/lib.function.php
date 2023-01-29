@@ -1047,17 +1047,21 @@ class magazzForm extends GAzieForm {
     global $gTables;
     // prima query sui movimenti
     $rs=gaz_dbi_query("SELECT pos.position, she.descri, war.name, pos.id_warehouse, COUNT(*) AS nummov, id_artico_position, caumag, SUM(quanti*(operat=1)) AS cari, SUM(quanti*(operat=-1)) AS scar FROM " . $gTables['movmag'] . " mm LEFT JOIN ".$gTables['artico'] ." art ON mm.artico = art.codice LEFT JOIN ".$gTables['artico_position'] ." pos ON mm.id_artico_position = pos.id_position LEFT JOIN ".$gTables['shelves'] ." she ON pos.id_shelf = she.id_shelf  LEFT JOIN ".$gTables['warehouse'] ." war ON she.id_warehouse = war.id WHERE mm.artico = '".$codart."' GROUP BY mm.id_artico_position");
+    $keyzero=false;
     while ($r = gaz_dbi_fetch_array($rs)) {
       $r['id_position']=$r['id_artico_position'];
       $available[$r['id_artico_position']]=$r;
+    }
+    if (count($available)==1){ // ho una sola ubicazione
+      $keyzero=true;
     }
     // poi quelli eventualmente disponibili in anagrafica che però avranno giacenza nulla
     $query = "SELECT pos.*, war.name, she.descri FROM " . $gTables['artico_position']." pos LEFT JOIN ".$gTables['shelves']." she ON pos.id_shelf = she.id_shelf  LEFT JOIN ".$gTables['warehouse'] ." war ON she.id_warehouse = war.id WHERE pos.codart = '".$codart."' ORDER BY pos.id_warehouse, pos.id_shelf";
     $rs = gaz_dbi_query($query);
     while ($r = gaz_dbi_fetch_array($rs)) {
-      if (!isset($available[$r['artico_id_position']])){
+      if (!isset($available[$r['artico_id_position']]) && $r['artico_id_position'] >= 1 ){
       	$position = gaz_dbi_get_row($gTables['artico_position'], 'id_position', $r['artico_id_position'], 'AND artico_id_position < 1');
-        $r['position']=$position['position'];
+        $r['position']=$position?$position['position']:'';
         $r['scar']='0';
         $r['cari']='0';
         $r['nummov']='0';
@@ -1069,22 +1073,23 @@ class magazzForm extends GAzieForm {
     $acc .= intval($val)==0?' selected ':' ';
     $acc .= '>- - - - - - - - -';
     $acc .= '</option>';
-    $othershelves=false;
-    foreach ( $available as $k=>$v) {
+    $first=true;
+    foreach ($available as $k=>$v) {
       $disp=floatval($v['cari']-$v['scar']);
       $bgcol=$disp<0.00001?' style="background: #f98f8f;"':'';
       $othershelves=true;
       $selected = '';
       if ($v['id_position'] == intval($val)) {
         $selected = "selected ";
+      } else if ($first && $keyzero){
+        $selected = "selected ";
       }
-      $acc .= '<option value="'.$v['id_position'] . '" '.$selected.' '.$bgcol.'>'.($v['id_warehouse']==0?'SEDE':$v['name']).' > '.$v['descri'].' >' .$v['position'].' disp:'.$disp;
+      $acc .= '<option value="'.$v['id_position'] . '" '.$selected.' '.$bgcol.'>'.($v['id_warehouse']==0?'SEDE':$v['name']).' -> '.$v['descri'].' -> ' .$v['position'].' disp:'.$disp;
       $acc .= '</option>';
+      $first=false;
     }
     $acc .='</select>';
-    if ($othershelves===false){
-      $acc ='Sede'.(isset($available['oth'][0])?' disp:'.number_format($available['oth'][0],5):' disp:0').'<input type="hidden" id_shelf="'.$name.'" name="'.$name.'" >';;
-    }
+    //var_dump( $acc);
     if ($ret_type){
       return $acc;
     } else {
@@ -1092,17 +1097,21 @@ class magazzForm extends GAzieForm {
     }
   }
 
-  function radioSelect($name, $transl, $sel, $class = 'col-xs-6') {
-    $acc='';
-    foreach ($transl as $i => $val) {
-      $checked = '';
-      if ($sel == $i) {
-          $checked = ' checked ';
+  function getArticoPositionRest($codart,$id_position) {
+    if (strlen(trim($codart)) >= 1 ) {
+      global $gTables;
+      $rs=gaz_dbi_query("SELECT SUM(quanti*(operat=1)) AS cari, SUM(quanti*(operat=-1)) AS scar FROM " . $gTables['movmag'] . " mm WHERE mm.artico = '".$codart."' AND mm.id_artico_position = ".$id_position." GROUP BY mm.id_artico_position");
+      $r = gaz_dbi_fetch_array($rs);
+      if ($r) {
+        return floatval($r['cari']-$r['scar']);
+      } else {
+        return false;
       }
-      $acc .= '<div class="'.$class.'"><input type="radio" value="'.$i.'" '.$checked.' name="'.$name.'"> '.$val.'</div>';
+    } else {
+      return false;
     }
-    echo $acc;
   }
+
 
   function getArticoPositions($codart,$returntype=false, $unimis='n.') {
     $table='';
@@ -1158,6 +1167,18 @@ class magazzForm extends GAzieForm {
     } else {
       return $acc;
     }
+  }
+
+  function radioSelect($name, $transl, $sel, $class = 'col-xs-6') {
+    $acc='';
+    foreach ($transl as $i => $val) {
+      $checked = '';
+      if ($sel == $i) {
+          $checked = ' checked ';
+      }
+      $acc .= '<div class="'.$class.'"><input type="radio" value="'.$i.'" '.$checked.' name="'.$name.'"> '.$val.'</div>';
+    }
+    echo $acc;
   }
 
 }

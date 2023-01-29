@@ -2518,6 +2518,12 @@ function redirect($filename) {
 
 
 function checkAdmin($Livaut = 0) {
+  if (!isset($_SESSION["from_uri"])){
+    $dn=explode('/',$_SERVER['REQUEST_URI']);
+    if (isset($dn[2]) && $dn[2]=='modules' && $dn[3]!='root'){
+      $_SESSION["from_uri"]='../'.$dn[3].'/'.basename($_SERVER['REQUEST_URI']);
+    }
+  }
     global $gTables, $module, $table_prefix, $link;
     $_SESSION["Abilit"] = false;
     if (!$link) exit;
