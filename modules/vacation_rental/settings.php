@@ -162,7 +162,7 @@ $reminders_pay = gaz_dbi_dyn_query("*", $gTables['company_config'], " var LIKE '
       </div><!-- chiude generale  -->
 
 
-      <div id="reminder" class="tab-pane fade in <?php echo $feedclass; ?>">
+      <div id="reminder" class="tab-pane fade in <?php echo $remclass; ?>">
 
           <div class="row text-info bg-info">
               IMPOSTAZIONI PER INVIO DI E-MAIL PROMEMORIA (richiede cron-job della versione PRO)
@@ -227,50 +227,55 @@ $reminders_pay = gaz_dbi_dyn_query("*", $gTables['company_config'], " var LIKE '
             </div><!-- chiude row  -->
             <?php
             if (gaz_dbi_num_rows($feedbacks) > 0) {
+              ?><div style="border: 1px solid black;"><?php
               foreach ($feedbacks as $feedback) {
                 ?>
-                <div class="row">
+                <div class="row border border-primary">
                   <div class="form-group" >
-                    <label for="existElement" class="col-sm-5 control-label"><?php echo $feedback["element"]; ?></label>
+                    <label for="existElement" class="col-sm-4 control-label"><?php echo $feedback["element"]; ?></label>
                     <?php if (intval($feedback["facility"])>0){
                       ?>
-                      <span> - riservato alla struttura: <?php echo $feedback["facility"]," ",$feedback["descri"]; ?></span>
+                      <span class="col-sm-4"> - riservato alla struttura: <?php echo $feedback["facility"]," ",$feedback["descri"]; ?></span>
                       <?php
                     }else{
                       ?>
-                      <span> - tutte le strutture</span>
+                      <span class="col-sm-4"> - tutte le strutture</span>
                       <?php
                     }
                     ?>
-                    <button type="submit" class="btn btn-success" name="delElement" value="<?php echo $feedback["id"]; ?>">
+                    <button type="submit" class="btn btn-success col-sm-2" name="delElement" value="<?php echo $feedback["id"]; ?>">
                       <i class="glyphicon glyphicon-minus"> Elimina elemento</i>
                     </button>
-                    <button type="submit" class="btn btn-success" name="updElement" value="<?php echo $feedback["id"]; ?>">
+                    <button type="submit" class="btn btn-success col-sm-2" name="updElement" value="<?php echo $feedback["id"]; ?>">
                       <i class="glyphicon glyphicon-edit"> modifica</i>
                     </button>
                   </div>
                 </div>
                 <?php
               }
+              ?></div><?php
+
             }
               if (isset($_POST['updElement']) && intval($_POST['updElement'])>0){
                 ?>
-                <div class="row">
-                  <div class="form-group" >
+                <div class="row ">
+                  <div class="form-group " >
                     <div class="row">
                       <label for="inputElement" class="col-sm-5 control-label">Modifica struttura</label>
                         <div class="col-sm-7">
                         <?php
-                        $gForm->selectFromDB('artico_group', 'newFacility', 'id_artico_group', $upd['facility'], false, 0, ' - ', 'descri', '', 'col-sm-8', array('value'=>0,'descri'=>''), 'tabindex="18" style="max-width: 250px;"');
+                        $gForm->selectFromDB('artico_group', 'newFacility', 'id_artico_group', $upd['facility'], false, 0, ' - ', 'descri', '', 'col-sm-7', array('value'=>0,'descri'=>''), 'tabindex="18" style="max-width: 250px;"');
                         ?>
                         </div>
                     </div>
-                    <label for="inputElement" class="col-sm-5 control-label">Modifica elemento feedback&nbsp;<i class="glyphicon glyphicon-flag" title="accetta tag lingue (<it></it>)"></i></label>
-                    <div class="col-sm-7">
-                      <input type="text" name="newElement" value="<?php echo $upd['element'];?>">
-                      <button type="submit" class="btn btn-success" name="SaveupdElement" value="<?php echo $upd['id']; ?>">
-                        <i class="glyphicon glyphicon-record"> Modifica elemento</i>
-                      </button>
+                    <div class="row">
+                      <label for="inputElement" class="col-sm-5 control-label">Modifica elemento feedback&nbsp;<i class="glyphicon glyphicon-flag" title="accetta tag lingue (<it></it>)"></i></label>
+                      <div class="col-sm-7">
+                        <input class="col-sm-9" type="text" name="newElement" value="<?php echo $upd['element'];?>">
+                        <button type="submit" class="btn btn-success col-sm-3" name="SaveupdElement" value="<?php echo $upd['id']; ?>">
+                          <i class="glyphicon glyphicon-record"> Modifica elemento</i>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div><!-- chiude row  -->
@@ -288,12 +293,14 @@ $reminders_pay = gaz_dbi_dyn_query("*", $gTables['company_config'], " var LIKE '
                       ?>
                       </div>
                   </div>
-                  <label for="inputElement" class="col-sm-5 control-label">Inserisci nuovo elemento feedback&nbsp;<i class="glyphicon glyphicon-flag" title="accetta tag lingue (<it></it>)"></i></label>
-                  <div class="col-sm-7">
-                    <input type="text" name="newElement">
-                    <button type="submit" class="btn btn-success" name="addElement">
-                      <i class="glyphicon glyphicon-plus"> Aggiungi elemento</i>
-                    </button>
+                  <div class="row">
+                    <label for="inputElement" class="col-sm-5 control-label">Inserisci nuovo elemento feedback&nbsp;<i class="glyphicon glyphicon-flag" title="accetta tag lingue (<it></it>)"></i></label>
+                    <div class="col-sm-7">
+                      <input class="col-sm-9" type="text" name="newElement">
+                      <button type="submit" class="btn btn-success col-sm-3" name="addElement">
+                        <i class="glyphicon glyphicon-plus"> Aggiungi elemento</i>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div><!-- chiude row  -->
