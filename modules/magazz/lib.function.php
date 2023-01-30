@@ -772,7 +772,7 @@ class magazzForm extends GAzieForm {
     } elseif ($tipdoc == 'CAM') {
         $desdoc = 'Registro di campagna';
     } elseif ($tipdoc == 'WTR') {
-        $desdoc = 'Trasferimento tra magazzini';
+        $desdoc = 'Trasferimento ';
     } elseif ($tipdoc == 'WAC') {
         $desdoc = 'Accettazione in c\lavorazione';
     } else {//documento di vendita
@@ -1118,7 +1118,7 @@ class magazzForm extends GAzieForm {
     $acc=[];
     if (strlen(trim($codart)) >= 1 ) {
       global $gTables;
-      $rs=gaz_dbi_query("SELECT pos.position, she.descri, war.name, COUNT(*) AS nummov, id_artico_position, caumag, SUM(quanti*(operat=1)) AS cari, SUM(quanti*(operat=-1)) AS scar FROM " . $gTables['movmag'] . " mm LEFT JOIN ".$gTables['artico'] ." art ON mm.artico = art.codice LEFT JOIN ".$gTables['artico_position'] ." pos ON mm.id_artico_position = pos.id_position LEFT JOIN ".$gTables['shelves'] ." she ON pos.id_shelf = she.id_shelf  LEFT JOIN ".$gTables['warehouse'] ." war ON she.id_warehouse = war.id WHERE mm.artico = '".$codart."' GROUP BY mm.id_artico_position");
+      $rs=gaz_dbi_query("SELECT pos.id_warehouse, pos.position, she.descri, war.name, COUNT(*) AS nummov, id_artico_position, caumag, SUM(quanti*(operat=1)) AS cari, SUM(quanti*(operat=-1)) AS scar FROM " . $gTables['movmag'] . " mm LEFT JOIN ".$gTables['artico'] ." art ON mm.artico = art.codice LEFT JOIN ".$gTables['artico_position'] ." pos ON mm.id_artico_position = pos.id_position LEFT JOIN ".$gTables['shelves'] ." she ON pos.id_shelf = she.id_shelf  LEFT JOIN ".$gTables['warehouse'] ." war ON she.id_warehouse = war.id WHERE mm.artico = '".$codart."' GROUP BY mm.id_artico_position");
       $firstl=true;
       while ($r = gaz_dbi_fetch_array($rs)) {
         if($r['caumag']<=98) {
@@ -1130,7 +1130,7 @@ class magazzForm extends GAzieForm {
             }
             $firstl=false;
           } else {
-            $acc[]=$r;
+            $acc[$r['id_artico_position']]=$r;
           }
         }
       }
@@ -1168,6 +1168,14 @@ class magazzForm extends GAzieForm {
       return $acc;
     }
   }
+
+  function getPositionRoot($id_position) {
+    global $gTables;
+    $rs=gaz_dbi_query("SELECT pos.*, she.descri, war.name FROM ".$gTables['artico_position'] ." pos LEFT JOIN ".$gTables['shelves'] ." she ON pos.id_shelf = she.id_shelf  LEFT JOIN ".$gTables['warehouse'] ." war ON she.id_warehouse = war.id WHERE pos.id_position = ".$id_position);
+    $r=gaz_dbi_fetch_array($rs);
+    return $r;
+  }
+
 
   function radioSelect($name, $transl, $sel, $class = 'col-xs-6') {
     $acc='';
