@@ -94,24 +94,24 @@ while ($r = gaz_dbi_fetch_array($result)) {
 }
 
 if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo accesso
-  $form = gaz_dbi_parse_post('artico');
-  $form['codice'] = trim($form['codice']);
-  $form['ritorno'] = $_POST['ritorno'];
-  $form['hidden_req'] = $_POST['hidden_req'];
-  $form['web_public_init'] = $_POST['web_public_init'];
-  $form['var_id'] = (isset($_POST['var_id']))?$_POST['var_id']:'';
-  $form['var_name'] = (isset($_POST['var_name']))?$_POST['var_name']:'';
-  $form['ref_code'] = substr($_POST['ref_code'], 0,32);
-  // i prezzi devono essere arrotondati come richiesti dalle impostazioni aziendali
-  $form["preacq"] = number_format($form['preacq'], $admin_aziend['decimal_price'], '.', '');
-  $form["preve1"] = number_format($form['preve1'], $admin_aziend['decimal_price'], '.', '');
-  $form["preve2"] = number_format($form['preve2'], $admin_aziend['decimal_price'], '.', '');
-  $form["preve3"] = number_format($form['preve3'], $admin_aziend['decimal_price'], '.', '');
-  $form["preve4"] = number_format($form['preve4'], $admin_aziend['decimal_price'], '.', '');
-  $form["web_price"] = number_format($form['web_price'], $admin_aziend['decimal_price'], '.', '');
-  $form['rows'] = [];
-	$form['cosepos']= $_POST['cosepos'];
-	$form['id_position'] = intval($_POST['id_position']);
+	$form = gaz_dbi_parse_post('artico');
+	$form['codice'] = trim($form['codice']);
+	$form['ritorno'] = $_POST['ritorno'];
+	$form['hidden_req'] = $_POST['hidden_req'];
+	$form['web_public_init'] = $_POST['web_public_init'];
+	$form['var_id'] = (isset($_POST['var_id']))?$_POST['var_id']:'';
+	$form['var_name'] = (isset($_POST['var_name']))?$_POST['var_name']:'';
+	$form['ref_code'] = substr($_POST['ref_code'], 0,32);
+	// i prezzi devono essere arrotondati come richiesti dalle impostazioni aziendali
+	$form["preacq"] = number_format($form['preacq'], $admin_aziend['decimal_price'], '.', '');
+	$form["preve1"] = number_format($form['preve1'], $admin_aziend['decimal_price'], '.', '');
+	$form["preve2"] = number_format($form['preve2'], $admin_aziend['decimal_price'], '.', '');
+	$form["preve3"] = number_format($form['preve3'], $admin_aziend['decimal_price'], '.', '');
+	$form["preve4"] = number_format($form['preve4'], $admin_aziend['decimal_price'], '.', '');
+	$form["web_price"] = number_format($form['web_price'], $admin_aziend['decimal_price'], '.', '');
+	$form['rows'] = [];
+	$form['cosepos']= (isset($_POST['cosepos']))?$_POST['cosepos']:'';
+	$form['id_position'] = (isset($_POST['id_position']))?intval($_POST['id_position']):0;
   $form['id_anagra'] = filter_input(INPUT_POST, 'id_anagra');
   if (isset ($_POST['search'])){
 	  foreach ($_POST['search'] as $k => $v) {
@@ -598,11 +598,10 @@ function choicePosition(idartico)
       $(".ui-autocomplete").css("z-index", 1000);
     },
 		select: function(event, ui) {
-      var vcodice = $("#suggest_new_codart").val();
       var titleacc = '';
       accidartico = '';
       titleacc += "<br/>" + $(this).attr("label");
-      accidartico = vcodice;
+      accidartico = idartico;
       $("#workingrow").append('a: '+titleacc);
 			$(".position_name").replaceWith(ui.item.label);
 			$("#confirm_position").dialog({
@@ -626,9 +625,7 @@ function choicePosition(idartico)
               type: 'GET',
               url: './operat.php',
               success: function(output){
-               	$("#submit_position" ).trigger( "click" );
-                // se uso quello sotto perdo le altre modifiche
-                // window.location.replace("./admin_artico.php?Update&codice="+idartico+"&tab=magazz");
+                window.location.replace("./admin_artico.php?Update&codice="+idartico+"&tab=magazz");
               }
             });
             }
@@ -733,7 +730,7 @@ if ($modal_ok_insert === true) {
                 <li><a data-toggle="pill" href="#magazz">Magazzino</a></li>
                 <li><a data-toggle="pill" href="#contab">Contabilità</a></li>
                 <li><a data-toggle="pill" href="#chifis">Chimico-fisiche</a></li>
-                <li style="float: right;"><?php echo '<input name="Submit" type="submit" id="submit_position" class="btn btn-warning" value="' . ucfirst($script_transl[$toDo]) . '" />'; ?></li>
+                <li style="float: right;"><?php echo '<input name="Submit" type="submit" class="btn btn-warning" value="' . ucfirst($script_transl[$toDo]) . '" />'; ?></li>
             </ul>
             <div class="tab-content">
               <div id="home" class="tab-pane fade in active">
@@ -1034,7 +1031,7 @@ if ($modal === false && $toDo=='update') {
 				 // se esiste un json per l'attributo della variante dell'e-commerce
 				if (isset ($form['var_id']) OR isset ($form['var_name'])){
 					?>
-					<div id="varID" class="row IERincludeExcludeRow">
+					<div id="webUrl" class="row IERincludeExcludeRow">
 						<div class="col-md-12">
 							<div class="form-group">
 								<label for="var_id" class="col-sm-4 control-label">ID attributo variante</label>
@@ -1042,7 +1039,7 @@ if ($modal === false && $toDo=='update') {
 							</div>
 						</div>
 					</div><!-- chiude row  -->
-					<div id="varName" class="row IERincludeExcludeRow">
+					<div id="webUrl" class="row IERincludeExcludeRow">
 						<div class="col-md-12">
 							<div class="form-group">
 								<label for="var_name" class="col-sm-4 control-label">Nome attributo variante</label>
@@ -1094,7 +1091,7 @@ if ($modal === false && $toDo=='update') {
                          </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div id="durability_mu" class="row IERincludeExcludeRow">
+				<div id="depliPublic" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="durability_mu" class="col-sm-4 control-label"><?php echo $script_transl['durability_mu']; ?></label>
@@ -1105,7 +1102,7 @@ if ($modal === false && $toDo=='update') {
                     </div>
                 </div><!-- chiude row  -->
 
-                <div id="durability" class="row IERincludeExcludeRow">
+                <div id="webUrl" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="durability" class="col-sm-4 control-label"><?php echo $script_transl['durability']; ?></label>
@@ -1114,7 +1111,7 @@ if ($modal === false && $toDo=='update') {
                     </div>
                 </div><!-- chiude row  -->
 
-                <div id="warranty_days" class="row IERincludeExcludeRow">
+                <div id="webUrl" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="warranty_days" class="col-sm-4 control-label"><?php echo $script_transl['warranty_days']; ?></label>
