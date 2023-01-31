@@ -412,24 +412,24 @@ if ($numrow>=1){
   $totq=0;
 
   while ($mv = gaz_dbi_fetch_array($result)) {
-      $totq+=floatval($mv['quanti']*$mv['operat']);
-      $tot_mom_v+=floatval($mv['quanti']*$mv['prezzo']);
-      $desop=(strlen($mv['desass'])>2)?$mv['desdoc'].' con '.$mv['desass']:$mv['desdoc'];
-      $pdf->Cell(20,4,gaz_format_date($mv['datreg']),1, 0, 'C', 0, '', 1);
-      $pdf->Cell(37,4,$mv['descau'],1, 0, 'C', 0, '', 1);
-      $pdf->Cell(62,4,$desop,1, 0, 'L', 0, '', 1);
-      $pdf->Cell(30,4,$mv['codice'],1, 0, 'C', 0, '', 1);
-      $pdf->Cell(37,4,$mv['desart'],1, 0, 'L', 0, '', 1);
-      $pdf->Cell(17,4,floatval($mv['quanti']),1, 0, 'R', 0, '', 1);
-      $pdf->Cell(7,4,$mv['unimis'],1, 0, 'C', 0, '', 1);
-	$reslot = gaz_dbi_get_row($gTables['lotmag'], "id", $mv['id_lotmag']);
-	$pdf->Cell(25, 4, ($reslot)?$reslot['identifier']:'',1, 0, 'L', 0, '', 1);
-	if (isset($reslot) AND $reslot['expiry']==0) {
-		$pdf->Cell(25, 4, "" ,1, 0, 'L', 0, '', 1);
-	} else {
-		$pdf->Cell(25, 4, ($reslot)?gaz_format_date($reslot['expiry']):'' ,1, 0, 'L', 0, '', 1);
-	}
-      $pdf->Cell(17,4,number_format($mv['prezzo'],$admin_aziend['decimal_price'],$admin_aziend['decimal_symbol'], $admin_aziend['thousands_symbol']),1, 1, 'C', 0, '', 1);
+    $totq+=floatval($mv['quanti']*$mv['operat']);
+    $tot_mom_v+=floatval($mv['quanti']*$mv['prezzo']);
+    $desop=(isset($mv['desass'])&&strlen($mv['desass'])>2)?$mv['desdoc'].' con '.$mv['desass']:$mv['desdoc'];
+    $pdf->Cell(20,4,gaz_format_date($mv['datreg']),1, 0, 'C', 0, '', 1);
+    $pdf->Cell(37,4,$mv['descau'],1, 0, 'C', 0, '', 1);
+    $pdf->Cell(62,4,$desop,1, 0, 'L', 0, '', 1);
+    $pdf->Cell(30,4,$mv['codice'],1, 0, 'C', 0, '', 1);
+    $pdf->Cell(37,4,$mv['desart'],1, 0, 'L', 0, '', 1);
+    $pdf->Cell(17,4,floatval($mv['quanti']),1, 0, 'R', 0, '', 1);
+    $pdf->Cell(7,4,$mv['unimis'],1, 0, 'C', 0, '', 1);
+    $reslot = gaz_dbi_get_row($gTables['lotmag'], "id", $mv['id_lotmag']);
+    $pdf->Cell(25, 4, ($reslot)?$reslot['identifier']:'',1, 0, 'L', 0, '', 1);
+    if (isset($reslot) AND $reslot['expiry']==0) {
+      $pdf->Cell(25, 4, "" ,1, 0, 'L', 0, '', 1);
+    } else {
+      $pdf->Cell(25, 4, ($reslot)?gaz_format_date($reslot['expiry']):'' ,1, 0, 'L', 0, '', 1);
+    }
+    $pdf->Cell(17,4,number_format($mv['prezzo'],$admin_aziend['decimal_price'],$admin_aziend['decimal_symbol'], $admin_aziend['thousands_symbol']),1, 1, 'C', 0, '', 1);
   }
   $pdf->SetFillColor(hexdec(substr($admin_aziend['colore'], 0, 2)), hexdec(substr($admin_aziend['colore'], 2, 2)), hexdec(substr($admin_aziend['colore'], 4, 2)));
   $pdf->SetFont('helvetica','B',9);
