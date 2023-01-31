@@ -242,7 +242,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 	echo "<td align=\"center\">".gaz_format_date($r["datreg"])."  </td>";
   echo "<td align=\"center\">".$r["caumag"]." - ".$r["descau"]."</td>";
   echo '<td align="center">'.($r['desmag']==''?'Sede':substr($r['desmag'],0,25))."</td>";
-  if (isset($hrefdoc->{$r['tipdoc']}) && $r['id_rif'] > 0 && intval($r['id_orderman'])==0){ // vedi sopra quando si vuole riferire ad un documento genitore di un modulo specifo
+  if (isset($hrefdoc->{$r['tipdoc']}) && $r['id_rif'] > 0){ // vedi sopra quando si vuole riferire ad un documento genitore di un modulo specifo
     echo '<td title="'.$title.'"><a href="'.$docdata['link'].'">'.$r['desdoc']." ".$script_transl[9]." ".gaz_format_date($r["datdoc"])."</a></td>";
   } elseif(intval($r['id_orderman'])==0) {
     echo '<td title="'.$title.'"><a href="admin_movmag.php?id_mov='.$r["id_mov"].'&Update">'.$r['desdoc']." ".$script_transl[9]." ".gaz_format_date($r["datdoc"])."</a></td>";
