@@ -6,28 +6,28 @@
 	  (http://www.devincentiis.it)
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
-	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP 
+	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP
 	  Copyright (C) 2018-2021 - Antonio Germani, Massignano (AP)
-	  https://www.lacasettabio.it 
+	  https://www.lacasettabio.it
 	  https://www.programmisitiweb.lacasettabio.it
 	  --------------------------------------------------------------------------
 	  Questo programma e` free software;   e` lecito redistribuirlo  e/o
 	  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
 	  come e` pubblicata dalla Free Software Foundation; o la versione 2
 	  della licenza o (a propria scelta) una versione successiva.
-	
+
 	  Questo programma  e` distribuito nella speranza  che sia utile, ma
 	  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
 	  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
 	  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
-	
+
 	  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
 	  Generica GNU insieme a   questo programma; in caso  contrario,  si
 	  scriva   alla   Free  Software Foundation,  Inc.,   59
 	  Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
-	  --------------------------------------------------------------------------	 
+	  --------------------------------------------------------------------------
 	  # free to use, Author name and references must be left untouched  #
-	  --------------------------------------------------------------------------	  
+	  --------------------------------------------------------------------------
 */
 // prevent direct access
 $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND
@@ -36,7 +36,7 @@ if (!$isAjax) {
     $user_error = 'Access denied - not an AJAX request...';
     trigger_error($user_error, E_USER_ERROR);
 }
-if (isset($_POST['type'])&&isset($_POST['ref'])) { 
+if (isset($_POST['type'])&&isset($_POST['ref'])) {
 	require("../../library/include/datlib.inc.php");
 	$admin_aziend = checkAdmin();
 	switch ($_POST['type']) {
@@ -66,26 +66,26 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 		break;
 		case "campmovmag":
 			$i=intval($_POST['ref']);
-			$form = gaz_dbi_get_row($gTables['movmag'], 'id_mov', $i);$id_mov=$i;$campo_impianto=$form['campo_impianto'];// Antonio Germani 
-			// inizio cancellazione ore operaio	
+			$form = gaz_dbi_get_row($gTables['movmag'], 'id_mov', $i);$id_mov=$i;$campo_impianto=$form['campo_impianto'];// Antonio Germani
+			// inizio cancellazione ore operaio
 			// controllo se clfoco è un operaio e ne prendo l'id_staff
 			$res = gaz_dbi_get_row($gTables['staff'], "id_clfoco", $form['clfoco']);
-			If (isset ($res)) { // se c'è nello staff, cioè è un operaio			
+			If (isset ($res)) { // se c'è nello staff, cioè è un operaio
 				$rin = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $res['id_staff'], "AND work_day ='{$form['datdoc']}'");
 				If (isset($rin)) { // se esiste il giorno dell'operaio prendo le ore normali lavorate e gli sottraggo quelle del movimento da cancellare
 					$hours_normal=$rin['hours_normal']-$form['quanti'];
 					// ne aggiorno il database
 					$query = "UPDATE ". $gTables['staff_worked_hours']." SET hours_normal ='".$hours_normal."' WHERE id_staff = '".$res['id_staff']."' AND work_day = '".$form['datdoc']."'";
 					gaz_dbi_query($query);
-				}	
-			} 
+				}
+			}
 			// fine cancellazione ore operaio
 			if ($campo_impianto>0) { // se c'è un campo di coltivazione aggiorno il giorno di sospensione
 				$form2 = gaz_dbi_get_row($gTables['campi'], 'codice', intval($campo_impianto));
-				if (intval($form2['id_mov'])==intval($id_mov)){		
+				if (intval($form2['id_mov'])==intval($id_mov)){
 					// prendo tutti i movimenti di magazzino che hanno interessato il campo di coltivazione
 					$n=0;$array=array();
-					$query="SELECT ".'*'." FROM ".$gTables['movmag']. " WHERE campo_impianto ='". $campo_impianto."' AND operat ='-1' AND id_mov <> ".$form2['id_mov'];		
+					$query="SELECT ".'*'." FROM ".$gTables['movmag']. " WHERE campo_impianto ='". $campo_impianto."' AND operat ='-1' AND id_mov <> ".$form2['id_mov'];
 					$result = gaz_dbi_query($query);
 					while($row = $result->fetch_assoc()) {
 						// cerco i giorni di sospensione del prodotto che si trovano in ogni movimento
@@ -99,14 +99,14 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 						$result2 = gaz_dbi_query($query2);
 						while ($row2 = $result2->fetch_assoc()) {
 							$temp_sosp=$row2['tempo_sosp'];
-						}				
+						}
 						// creo un array con tempo di sospensione + codice articolo + movimento magazzino
 						$temp_deca=(intval($temp_sosp)*86400)+strtotime($row["datdoc"]);
 						$array[$n]= array('temp_deca'=>$temp_deca,'datdoc'=>$row["datdoc"],'artico'=>$artico, 'id_mov'=>$row["id_mov"]);
-						$n=$n+1;        
+						$n=$n+1;
 					}
 					// ordino l'array per tempo di sospensione
-					rsort ($array);				
+					rsort ($array);
 					if (isset ($array[0]['temp_deca']) && $n>0) { // se c'è un tempo decadimento nei movimenti di magazzino e c'è almeno un movimento
 						// aggiorno la tabella del campo di coltivazione con il movimento di magazzino che ha il decadimento più elevato
 						$dt=date('Y/m/d', $array[0]['temp_deca']);
@@ -119,7 +119,7 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 					}
 				}
 			}
-			gaz_dbi_del_row($gTables['movmag'],"id_mov",$i);	// cancello il movimento di magazzino		
+			gaz_dbi_del_row($gTables['movmag'],"id_mov",$i);	// cancello il movimento di magazzino
 			if ($form['id_rif'] > 0) {  //se il movimento di magazzino è stato generato da un rigo di documento lo azzero
 				gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $form['id_rif'], 'id_mag', 0);
 			}
@@ -131,8 +131,8 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 			$i=intval($_POST['ref']);
 			gaz_dbi_del_row($gTables['caumag'],"codice",$i);
 		break;
-		case "artico":			
-			$i=substr($_POST['ref'],0,15);
+		case "artico":
+			$i=substr($_POST['ref'],0,32);
 			//Cancello le eventuali immagini web e i documenti
 			$rs=gaz_dbi_dyn_query ("*",$gTables['files'],"table_name_ref = 'artico' AND item_ref = '".$i."'");
 			foreach ($rs as $delimg){

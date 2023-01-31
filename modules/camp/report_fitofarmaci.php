@@ -158,7 +158,8 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 				<span class="gazie-tooltip" data-type="catmer-thumb" data-id="<?php echo $a_row['id']; ?>" data-title="<?php echo $a_row['cod_art']; ?>"><?php echo $a_row["cod_art"]; ?></span>
 			</td>
 			<?php
-			$res2 = gaz_dbi_get_row($gTables['artico'], 'codice', $a_row['cod_art']);$unimis=$res2['uniacq'];
+			$res2 = gaz_dbi_get_row($gTables['artico'], 'codice', $a_row['cod_art']);
+      $unimis=$res2['uniacq'];
 			$res = gaz_dbi_get_row($gTables['camp_colture'], 'id_colt', $a_row['id_colt']);
 			?>
 			<td>

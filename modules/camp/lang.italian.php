@@ -6,28 +6,28 @@
 	  (http://www.devincentiis.it)
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
-	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP 
+	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP
 	  Copyright (C) 2018-2021 - Antonio Germani, Massignano (AP)
-	  https://www.lacasettabio.it 
+	  https://www.lacasettabio.it
 	  https://www.programmisitiweb.lacasettabio.it
 	  --------------------------------------------------------------------------
 	  Questo programma e` free software;   e` lecito redistribuirlo  e/o
 	  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
 	  come e` pubblicata dalla Free Software Foundation; o la versione 2
 	  della licenza o (a propria scelta) una versione successiva.
-	
+
 	  Questo programma  e` distribuito nella speranza  che sia utile, ma
 	  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
 	  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
 	  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
-	
+
 	  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
 	  Generica GNU insieme a   questo programma; in caso  contrario,  si
 	  scriva   alla   Free  Software Foundation,  Inc.,   59
 	  Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
-	  --------------------------------------------------------------------------	 
+	  --------------------------------------------------------------------------
 	  # free to use, Author name and references must be left untouched  #
-	  --------------------------------------------------------------------------	  
+	  --------------------------------------------------------------------------
 */
 
 $strScript = array("camp_browse_document.php" =>
@@ -62,7 +62,7 @@ $strScript = array("camp_browse_document.php" =>
 			'codice_usato' => "Esiste già un contenitore con lo stesso codice",
 			'capacita' => "Capacità mancante"
         ),
-		
+
     ),
 	"admin_stabilim.php" =>
 	 array(" Stabilimento iscritto al SIAN ",
@@ -76,7 +76,7 @@ $strScript = array("camp_browse_document.php" =>
 			'codice_usato' => "Esiste già uno stabilimento con lo stesso codice",
 			'denomin' => "Denominazione stabilimento mancante"
         ),
-		
+
     ),
 	"sian.php" =>
 	 array(0 => 'Creazione file upload per SIAN',
@@ -93,7 +93,7 @@ $strScript = array("camp_browse_document.php" =>
         ),
 		'header' => array('Data' => '', 'Prodotto' => '', 'Quantit&agrave;' => '',
             'ID SIAN - Fornitore/Cliente' => '', 'Recipiente di stoccaggio' => '', 'Capacità' => '', 'Descrizione doc.' => '', 'Operazione SIAN' => ''
-			
+
         )
 	),
 	"admin_avversita.php" =>
@@ -259,7 +259,7 @@ $strScript = array("camp_browse_document.php" =>
 		'Limite di azoto per zone ZVN in Kg/ha',
 		'Limite di azoto per zone non ZVN in Kg/ha',
         'web_url' => 'Mappa di Google<br />(es: https://goo.gl/maps/YajAcRexvDp)'
-		
+
     ),
     "admin_ragstat.php" =>
     array("raggruppamento statistico ",
@@ -316,7 +316,7 @@ $strScript = array("camp_browse_document.php" =>
         'date' => 'Data di stampa ',
         'date_ini' => 'Data registrazione inizio  ',
         'date_fin' => 'Data registrazione fine ',
-        'header' => array('Data' => '', 'Causale' => '', 'Campo' => '', 'Superficie' => '', 'Coltura' => '', 'Prodotto' => '', 
+        'header' => array('Data' => '', 'Causale' => '', 'Campo' => '', 'Superficie' => '', 'Coltura' => '', 'Prodotto' => '',
 		'Classe' => '', 'Quantit&agrave;' => '', 'UM' => '', 'Avversit&agrave;' => '','Operatore' => '', 'Annotazioni' => ''
         )
     ),
@@ -540,23 +540,24 @@ $strScript = array("camp_browse_document.php" =>
             'valcod' => 'Inserire un codice valido',
             'descri' => 'Inserire una descrizione',
             'unimis' => 'Inserire l\'unit&agrave; di misura',
-			'unimis2' => 'Questo prodotto contiene rame metallo e quindi l\'unit&agrave; di misura può essere solo Kg o l',
-			'unimis3' => 'Questo prodotto contiene azoto e quindi l\'unit&agrave; di misura può essere solo Kg',
-			'unimis4' => 'Questo prodotto contiene fosforo e quindi l\'unit&agrave; di misura può essere solo Kg',
-			'unimis5' => 'Questo prodotto contiene potassio e quindi l\'unit&agrave; di misura può essere solo Kg',
+            'unimis2' => 'Questo prodotto contiene rame metallo e quindi l\'unit&agrave; di misura può essere solo Kg o l',
+            'unimis3' => 'Questo prodotto contiene azoto e quindi l\'unit&agrave; di misura può essere solo Kg',
+            'unimis4' => 'Questo prodotto contiene fosforo e quindi l\'unit&agrave; di misura può essere solo Kg',
+            'unimis5' => 'Questo prodotto contiene potassio e quindi l\'unit&agrave; di misura può essere solo Kg',
             'aliiva' => 'Inserire l\'aliquota I.V.A.',
-			'catmer' => 'Selezionare una categoria merceologica',
+            'catmer' => 'Selezionare una categoria merceologica',
             'lotmag' => 'Per avere la tracciabilità per lotti è necessario attivare la contabilità di magazzino in configurazione azienda',
-			'scaduto' =>'Il prodotto non può più essere usato: è scaduta l\'autorizzazione del Ministero!',
-			'updatedb' =>'Il db fitofarmaci non viene aggiornato da oltre 30 giorni. Per effettuarlo: Merci/servizi > Aggiorna tabella fitofarmaci',
-			'or_macro' =>'E\' necessario inserire l\'origine macro area!',
-			'or_spec' =>'E\' necessario specificare l\'origine specifica!',
-			'revocato' =>'Il prodotto non può più essere usato: l\'autorizzazione del Ministero è stata revocata!'
+            'scaduto' =>'Il prodotto non può più essere usato: è scaduta l\'autorizzazione del Ministero!',
+            'updatedb' =>'Il db fitofarmaci non viene aggiornato da oltre 30 giorni. Per effettuarlo: Merci/servizi > Aggiorna tabella fitofarmaci',
+            'or_macro' =>'E\' necessario inserire l\'origine macro area!',
+            'or_spec' =>'E\' necessario specificare l\'origine specifica!',
+            'revocato' =>'Il prodotto non può più essere usato: l\'autorizzazione del Ministero è stata revocata!',
+            'insert_before_OKsub' => 'Per inserire una dose specifica bisogna aver prima inserito il prodotto'
         ),
         'codice' => "Codice",
-		'perc_N' => "Titolo di azoto",
-		'perc_P' => "Titolo di fosforo",
-		'perc_K' => "Titolo di potassio",
+        'perc_N' => "Titolo di azoto",
+        'perc_P' => "Titolo di fosforo",
+        'perc_K' => "Titolo di potassio",
         'descri' => "Descrizione",
         'good_or_service' => "Tipologia di articolo",
         'good_or_service_value' => array(0 => 'Prodotto', 1 => 'Lavorazione o Servizio', 2=> 'Composizione'),
@@ -591,20 +592,20 @@ $strScript = array("camp_browse_document.php" =>
         'uniacq' => 'Unit&agrave; di misura acquisti',
         'tempo_sospensione' => 'Tempo di sospensione in gg',
         'dose_ha' => 'Dose massima generica ad ha',
-		'mostra_qdc' => 'Mostrare nel quaderno di campagna',
-		'SIAN' => 'Movimenta il carico e scarico del SIAN',
-		'estrazione' => 'Tipo di estrazione olio',
-		'biologico' => 'Tipo di agricoltura olio',
-		'etichetta' => 'Etichettatura olio',
-		'categoria' => 'Categoria olio',
-		'categoria_value' => array(0=>'',1=>'Olio di oliva vergine',2=>'Olio di oliva extravergine',3=>'Olio in attesa di classificazione',4=>'Olio di oliva',5=>'Olio di oliva raffinato',6=>'Olio di sansa di oliva',7=>'Olio di sansa raffinato'),
-		'or_macro' => 'Macroarea di origine',
-		'or_macro_value' => array(0=>'',1=>'ITA-Italia',2=>'PUE-Paesi dell\'Unione europea',3=>'UE-Unione europea',4=>'EXT-Paese extra Unione europea',5=>'Miscela di oli dell\'Unione europea',6=>'Combinazione stati e regioni UE',7=>'Miscela di oli non originari UE',8=>'Combinazione stati non UE e regioni extra UE',9=>'Miscela di oli originari UE e non originari UE',10=>'Combinazione stati e regioni Ue e extra UE',11=>'Olio (extra) vergine di oliva ottenuto nell\'UE',12=>'DOP IGP Italia',13=>'ADD-Olio/olive atto a divenire DOP/IGP (Italia)',14=>'DOP/IGP estera'),
-		'or_spec' => 'Origine specifica',
-		'or_spec_value' => array(0=>'',1=>'Spagna',2=>'Grecia',3=>'Portogallo',4=>'Francia',5=>'Malta',6=>'Cipro',7=>'Penisola Iberica',8=>'Altro'),
-		'confezione' => 'Capacità confezione olio in litri',
-		'classif_amb' => 'Classificazione tossicologica',
-		'classif_amb_value' => array(0=>'non classificato',1=>'Irritante',2=>'Nocivo',3=>'Tossico',4=>'Molto tossico',5=>'Pericoloso ambiente'),
+        'mostra_qdc' => 'Mostrare nel quaderno di campagna',
+        'SIAN' => 'Movimenta il carico e scarico del SIAN',
+        'estrazione' => 'Tipo di estrazione olio',
+        'biologico' => 'Tipo di agricoltura olio',
+        'etichetta' => 'Etichettatura olio',
+        'categoria' => 'Categoria olio',
+        'categoria_value' => array(0=>'',1=>'Olio di oliva vergine',2=>'Olio di oliva extravergine',3=>'Olio in attesa di classificazione',4=>'Olio di oliva',5=>'Olio di oliva raffinato',6=>'Olio di sansa di oliva',7=>'Olio di sansa raffinato'),
+        'or_macro' => 'Macroarea di origine',
+        'or_macro_value' => array(0=>'',1=>'ITA-Italia',2=>'PUE-Paesi dell\'Unione europea',3=>'UE-Unione europea',4=>'EXT-Paese extra Unione europea',5=>'Miscela di oli dell\'Unione europea',6=>'Combinazione stati e regioni UE',7=>'Miscela di oli non originari UE',8=>'Combinazione stati non UE e regioni extra UE',9=>'Miscela di oli originari UE e non originari UE',10=>'Combinazione stati e regioni Ue e extra UE',11=>'Olio (extra) vergine di oliva ottenuto nell\'UE',12=>'DOP IGP Italia',13=>'ADD-Olio/olive atto a divenire DOP/IGP (Italia)',14=>'DOP/IGP estera'),
+        'or_spec' => 'Origine specifica',
+        'or_spec_value' => array(0=>'',1=>'Spagna',2=>'Grecia',3=>'Portogallo',4=>'Francia',5=>'Malta',6=>'Cipro',7=>'Penisola Iberica',8=>'Altro'),
+        'confezione' => 'Capacità confezione olio in litri',
+        'classif_amb' => 'Classificazione tossicologica',
+        'classif_amb_value' => array(0=>'non classificato',1=>'Irritante',2=>'Nocivo',3=>'Tossico',4=>'Molto tossico',5=>'Pericoloso ambiente'),
         'peso_specifico' => 'Peso specifico/Moltiplicatore',
         'volume_specifico' => 'Volume specifico',
         'pack_units' => 'Pezzi in imballo',
@@ -624,7 +625,7 @@ $strScript = array("camp_browse_document.php" =>
         'iterate_invitation' => 'INSERISCI UN ALTRO ARTICOLO DI MAGAZZINO',
         'browse_for_file' => 'Sfoglia',
         'id_anagra' => 'Fornitore',
-		'rame_metallico' => "Rame metallo Kg/1Kg",
+        'rame_metallico' => "Rame metallo Kg/1Kg",
         'mesg' => array('La ricerca non ha dato risultati!',
             'Inserire almeno 1 carattere!',
             'Cambia fornitore'

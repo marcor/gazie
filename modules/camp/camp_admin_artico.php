@@ -7,7 +7,7 @@
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
 	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP
-	  Copyright (C) 2018-2021 - Antonio Germani, Massignano (AP)
+	  Copyright (C) 2018-2023 - Antonio Germani, Massignano (AP)
 	  https://www.lacasettabio.it
 	  https://www.programmisitiweb.lacasettabio.it
 	  --------------------------------------------------------------------------
@@ -69,15 +69,15 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	$form['or_spec']=$_POST['or_spec'];
 	$form['or_macro']=$_POST['or_macro'];
 	$form['confezione']=$_POST['confezione'];
-
-    $form['ritorno'] = $_POST['ritorno'];
-    $form['ref_code'] = substr($_POST['ref_code'], 0, 15);
+  $form['ritorno'] = $_POST['ritorno'];
+  $form['ref_code'] = substr($_POST['ref_code'], 0, 32);
 	$form['conferma'] = $_POST['conferma'];
 	$form['aliiva'] = $_POST['aliiva'];
 	if ($_POST['oldnomefito']<>$_POST['nomefito']){ // se è stato cambiato il nome del fitofarmaco prendo id_reg e propongo il codice
-		$_POST['id_reg']=gaz_dbi_get_row($gTables['camp_fitofarmaci'], 'PRODOTTO', $_POST['nomefito'])['NUMERO_REGISTRAZIONE'];
+		$resfit=gaz_dbi_get_row($gTables['camp_fitofarmaci'], 'PRODOTTO', $_POST['nomefito']);
+    $_POST['id_reg'] = $resfit['NUMERO_REGISTRAZIONE'];
 		if (intval($_POST['id_reg'])>0){ // se è stato trovato nel DB del ministero propongo il codice
-			$_POST['codice']=substr($_POST['nomefito'],0,15);
+			$_POST['codice']=substr($_POST['nomefito'],0,32);
 		} else { // altrimenti tolgo il nome del fitofarmaco che non esiste
 			$_POST['nomefito']="";
 			$_POST['id_reg']=0;
@@ -267,11 +267,11 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 		}
         if (count($msg['err']) == 0) { // nessun errore
             if ($_FILES['userfile']['size'] > 0) { //se c'e' una nuova immagine nel buffer
-				If ($largeimg==0){
-				 $form['image'] = file_get_contents($_FILES['userfile']['tmp_name']);
-				} else {
-					$form['image'] = file_get_contents($target_filename);
-				}
+              if ($largeimg==0){
+               $form['image'] = file_get_contents($_FILES['userfile']['tmp_name']);
+              } else {
+                $form['image'] = file_get_contents($target_filename);
+              }
             } elseif ($toDo == 'update') { // altrimenti riprendo la vecchia ma solo se è una modifica
                 $oldimage = gaz_dbi_get_row($gTables['artico'], 'codice', $form['ref_code']);
                 $form['image'] = $oldimage['image'];
@@ -286,21 +286,21 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             $tbt = trim($form['body_text']);
             // Se non ci sono errori  aggiorno il db
 
-			if($_POST['or_spec']==0){$form['or_spec']="";}
-			if($_POST['or_spec']==1){$form['or_spec']="Spagna";}
-			if($_POST['or_spec']==2){$form['or_spec']="Grecia";}
-			if($_POST['or_spec']==3){$form['or_spec']="Portogallo";}
-			if($_POST['or_spec']==4){$form['or_spec']="Francia";}
-			if($_POST['or_spec']==5){$form['or_spec']="Malta";}
-			if($_POST['or_spec']==6){$form['or_spec']="Cipro";}
-			if($_POST['or_spec']==7){$form['or_spec']="Penisola Iberica";}
-			if($_POST['or_spec']==8){$form['or_spec']="Altro";}
-			if ($toDo == 'insert') {
-                gaz_dbi_table_insert('artico', $form);
-				gaz_dbi_table_insert('camp_artico', $form);
-                if (!empty($tbt)) {
-                    bodytextInsert(array('table_name_ref' => 'artico_' . $form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
-                }
+            if($_POST['or_spec']==0){$form['or_spec']="";}
+            if($_POST['or_spec']==1){$form['or_spec']="Spagna";}
+            if($_POST['or_spec']==2){$form['or_spec']="Grecia";}
+            if($_POST['or_spec']==3){$form['or_spec']="Portogallo";}
+            if($_POST['or_spec']==4){$form['or_spec']="Francia";}
+            if($_POST['or_spec']==5){$form['or_spec']="Malta";}
+            if($_POST['or_spec']==6){$form['or_spec']="Cipro";}
+            if($_POST['or_spec']==7){$form['or_spec']="Penisola Iberica";}
+            if($_POST['or_spec']==8){$form['or_spec']="Altro";}
+            if ($toDo == 'insert') {
+              gaz_dbi_table_insert('artico', $form);
+              gaz_dbi_table_insert('camp_artico', $form);
+              if (!empty($tbt)) {
+                  bodytextInsert(array('table_name_ref' => 'artico_' . $form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
+              }
             } elseif ($toDo == 'update') {
 				gaz_dbi_table_update('artico', $form['ref_code'], $form);
                 $esist=gaz_dbi_get_row($gTables['camp_artico'], 'codice', $form['ref_code']);
@@ -338,8 +338,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     }
 
 } elseif (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo accesso per UPDATE
-    $form = gaz_dbi_get_row($gTables['artico'], 'codice', substr($_GET['codice'], 0, 15));
-	$camp = gaz_dbi_get_row($gTables['camp_artico'], 'codice', substr($_GET['codice'], 0, 15));
+  $form = gaz_dbi_get_row($gTables['artico'], 'codice', substr($_GET['codice'], 0, 32));
+	$camp = gaz_dbi_get_row($gTables['camp_artico'], 'codice', substr($_GET['codice'], 0, 32));
 	$query="SELECT * FROM ".$gTables['camp_uso_fitofarmaci']." LEFT JOIN ".$gTables['camp_avversita']." on (".$gTables['camp_avversita'].".id_avv = ".$gTables['camp_uso_fitofarmaci'].".id_avv) LEFT JOIN ".$gTables['camp_colture']." on (".$gTables['camp_colture'].".id_colt = ".$gTables['camp_uso_fitofarmaci'].".id_colt) WHERE numero_registrazione = ". $form['id_reg'] ." OR cod_art = '". $form['codice'] ."' ORDER BY nome_colt";
 	$res_usofito = gaz_dbi_query($query);
 	$res_fito=gaz_dbi_get_row($gTables['camp_fitofarmaci'], 'NUMERO_REGISTRAZIONE', $form['id_reg']);
@@ -351,7 +351,6 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	$form['or_spec']=($camp)?$camp['or_spec']:'';
 	$form['or_macro']=($camp)?$camp['or_macro']:0;
 	$form['confezione']=($camp)?$camp['confezione']:0;
-
 	$form['conferma'] = "";
 	if(!isset($form['or_spec'])){$form['or_spec']=0;}
 	if($form['or_spec']=="Spagna"){$form['or_spec']=1;}
@@ -402,21 +401,19 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	if ($checkdbfito -> num_rows ==0) {
 		$checkdbfito="WARNING";
 	}
-    $form = gaz_dbi_fields('artico');
-
-    $form['ritorno'] = $_SERVER['HTTP_REFERER'];
-
-    $form['ref_code'] = '';
-    $form['aliiva'] = $admin_aziend['preeminent_vat'];
-    // i prezzi devono essere arrotondati come richiesti dalle impostazioni aziendali
-    $form["preacq"] = number_format($form['preacq'], $admin_aziend['decimal_price'], '.', '');
-    $form["preve1"] = number_format($form['preve1'], $admin_aziend['decimal_price'], '.', '');
-    $form["preve2"] = number_format($form['preve2'], $admin_aziend['decimal_price'], '.', '');
-    $form["preve3"] = number_format($form['preve3'], $admin_aziend['decimal_price'], '.', '');
-    $form["preve4"] = number_format($form['preve4'], $admin_aziend['decimal_price'], '.', '');
-    $form["web_price"] = number_format($form['web_price'], $admin_aziend['decimal_price'], '.', '');
-    $form['web_public'] = 0;
-    $form['depli_public'] = 0;
+  $form = gaz_dbi_fields('artico');
+  $form['ritorno'] = $_SERVER['HTTP_REFERER'];
+  $form['ref_code'] = '';
+  $form['aliiva'] = $admin_aziend['preeminent_vat'];
+  // i prezzi devono essere arrotondati come richiesti dalle impostazioni aziendali
+  $form["preacq"] = number_format($form['preacq'], $admin_aziend['decimal_price'], '.', '');
+  $form["preve1"] = number_format($form['preve1'], $admin_aziend['decimal_price'], '.', '');
+  $form["preve2"] = number_format($form['preve2'], $admin_aziend['decimal_price'], '.', '');
+  $form["preve3"] = number_format($form['preve3'], $admin_aziend['decimal_price'], '.', '');
+  $form["preve4"] = number_format($form['preve4'], $admin_aziend['decimal_price'], '.', '');
+  $form["web_price"] = number_format($form['web_price'], $admin_aziend['decimal_price'], '.', '');
+  $form['web_public'] = 0;
+  $form['depli_public'] = 0;
 	$form['SIAN']=0;
 	$form['id_reg']=0;
 	$form['categoria']="";
@@ -451,12 +448,13 @@ if ($openmore==true){
 	<?php
 	$btn_uso="&#9660 Apri dosi e usi"; // valore di default del pulsante apri dosi specifiche
 }
+
 // se è stata inviata una dose specifica
 if (isset($_POST['OKsub']) AND $_POST['id_reg']>0 AND $_POST['dose']>0 AND intval($_POST['nome_colt'])>0 AND intval($_POST['nome_avv']>0)){// se inviata una dose specifica, la aggiungo al DB
 	$btn_uso="&#9650 Chiudi";
+  // controllo se è stata già inserita questa dose specifica
 	$rscheck = gaz_dbi_dyn_query("*", $gTables['camp_uso_fitofarmaci'], "numero_registrazione = '".$_POST['id_reg']."' AND id_colt = '".intval($_POST['nome_colt'])."' AND id_avv ='".intval($_POST['nome_avv'])."'" ,2,0,1);
-
-	if ($rscheck->num_rows == 0){ // controllo se è stata già inserita questa dose specifica
+	if ($rscheck->num_rows == 0){ // se non è già inserita, la inserisco
 		$formuso['id_colt'] = intval($_POST['nome_colt']);
 		$formuso['id_avv'] = intval($_POST['nome_avv']);
 		$formuso['cod_art'] = ($_POST)?$_POST['codice']:'';
@@ -465,8 +463,16 @@ if (isset($_POST['OKsub']) AND $_POST['id_reg']>0 AND $_POST['dose']>0 AND intva
 		$formuso['numero_registrazione'] = $_POST['id_reg'];
 		$formuso['max_tratt'] = $_POST['max_tratt'];
 		gaz_dbi_table_insert('camp_uso_fitofarmaci',$formuso);
+    ?><!-- continuo a tenere aperto il pannello dosi specifiche  -->
+    <style>#more { display:block; }</style>
+    <?php
+    // ricarico le dosi presenti nel DB
+    $query="SELECT * FROM ".$gTables['camp_uso_fitofarmaci']." LEFT JOIN ".$gTables['camp_avversita']." on (".$gTables['camp_avversita'].".id_avv = ".$gTables['camp_uso_fitofarmaci'].".id_avv) LEFT JOIN ".$gTables['camp_colture']." on (".$gTables['camp_colture'].".id_colt = ".$gTables['camp_uso_fitofarmaci'].".id_colt) WHERE numero_registrazione = ". $form['id_reg'] ." OR cod_art = '". $form['codice'] ."' ORDER BY nome_colt";
+    $res_usofito = gaz_dbi_query($query);
 	}
-} elseif  (isset($_POST['OKsub'])){
+} elseif(isset($_POST['OKsub']) AND $toDo == 'insert'){
+  $msg['err'][]= 'insert_before_OKsub';
+}elseif  (isset($_POST['OKsub'])){
 	?><!-- apro il pannello dosi specifiche  -->
 	<style>#more { display:block; }</style>
 	<?php
@@ -490,11 +496,11 @@ if (isset($_POST['nomefito'])){
 }
 
 if (isset($_POST['nomefito']) && strlen($form['nomefito'])>3){
-		$query="SELECT ".'SCADENZA_AUTORIZZAZIONE'.",".'INDICAZIONI_DI_PERICOLO'.",".'DESCRIZIONE_FORMULAZIONE'.",".'SOSTANZE_ATTIVE'.",".'IMPRESA'.",".'SEDE_LEGALE_IMPRESA'." FROM ".$gTables['camp_fitofarmaci']. " WHERE PRODOTTO ='". $form['nomefito']."'";
+		$query="SELECT ".'SCADENZA_AUTORIZZAZIONE'.",".'NUMERO_REGISTRAZIONE'.",".'INDICAZIONI_DI_PERICOLO'.",".'DESCRIZIONE_FORMULAZIONE'.",".'SOSTANZE_ATTIVE'.",".'IMPRESA'.",".'SEDE_LEGALE_IMPRESA'." FROM ".$gTables['camp_fitofarmaci']. " WHERE PRODOTTO ='". $form['nomefito']."'";
 		$result = gaz_dbi_query($query);
 			while ($row = $result->fetch_assoc()) {
 				if (isset($row)) {$presente=1;}
-			$form['descri']=$row['SOSTANZE_ATTIVE']." ".$row['DESCRIZIONE_FORMULAZIONE'];
+			$form['descri']=$row['NUMERO_REGISTRAZIONE']." - ".$row['SOSTANZE_ATTIVE']." ".$row['DESCRIZIONE_FORMULAZIONE'];
 			$form['body_text']=$row['SOSTANZE_ATTIVE']." ".$row['IMPRESA']." ".$row['SEDE_LEGALE_IMPRESA'];
 			$indper=$row['INDICAZIONI_DI_PERICOLO'];
 			$scadaut=strtotime(str_replace('/', '-', $row['SCADENZA_AUTORIZZAZIONE']));
