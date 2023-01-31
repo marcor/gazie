@@ -172,7 +172,8 @@ class magazzForm extends GAzieForm {
     function getOperators() {  // Creo l'array associativo degli operatori dei documenti
         return array("VCO" => -1, "VRI" => -1, "DDT" => -1, "FAD" => -1, "FAI" => -1, "FAA" => -1, "FAF" => -1, "FAQ" => -1, "FAP" => -1, "FNC" => 1, "FND" => -1,
             "DDR" => -1, "DDL" => -1, "DDV" => -1, "RDV" => 1, "DDY" => -1, "DDS" => -1, "AFA" => 1, "AFT" => 1, "ADT" => 1, "AFC" => -1, "AFD" => 1, "VPR" => -1,
-            "VOR" => -1, "VOW" => -1, "VOG" => -1, "CMR" => -1, "RDL" => 1, "INV" => 1, "XFA" => 0, "DDX" => -1, "DDZ" => -1, "DDW" => -1, "DDJ" => -1, "DDC" => -1, "DDM" => -1, "DDO" => -1);
+            "VOR" => -1, "VOW" => -1, "VOG" => -1, "CMR" => -1, "RDL" => 1, "INV" => 1, "XFA" => 0, "DDX" => -1, "DDZ" => -1, "DDW" => -1, "DDJ" => -1, "DDC" => -1,
+            "DDM" => -1, "DDO" => -1, "PRW"=>-1);
     }
 
     function get_codice_caumag($clifor,$insdoc,$operat) {  // trovo il codice della causale in base al tipo di partner e di documento
@@ -753,7 +754,7 @@ class magazzForm extends GAzieForm {
     global $gTables, $admin_aziend;
 		$synccommerce=explode(',',$admin_aziend['gazSynchro'])[0];
     $admin_aziend['synccommerce_classname'] = preg_replace("/[^a-zA-Z]/", "",$synccommerce)."gazSynchro";
-
+    $rigtable='rigdoc';
     $docOperat = $this->getOperators();
     if ($tipdoc == 'FAD') {  // per il magazzino una fattura differita è come dire DDT
         $tipdoc = 'DDT';
@@ -762,27 +763,34 @@ class magazzForm extends GAzieForm {
         $tipdoc = 'ADT';
     }
     if (substr($tipdoc, 0, 1) == 'A' or $tipdoc == 'DDR' or $tipdoc == 'DDL' or $tipdoc == 'RDL') { //documento di acquisto
-        require("../../modules/acquis/lang." . $admin_aziend['lang'] . ".php");
-        $desdoc = $strScript['admin_docacq.php'][0][$tipdoc];
+      require("../../modules/acquis/lang." . $admin_aziend['lang'] . ".php");
+      $desdoc = $strScript['admin_docacq.php'][0][$tipdoc];
     } elseif ($tipdoc == 'INV') {
-        require("../../modules/magazz/lang." . $admin_aziend['lang'] . ".php");
-        $desdoc = $strScript['admin_artico.php']['esiste'];
+      require("../../modules/magazz/lang." . $admin_aziend['lang'] . ".php");
+      $desdoc = $strScript['admin_artico.php']['esiste'];
     }  elseif ($tipdoc == 'MAG') {
-        $desdoc = 'Scarico per Produzione senza lotto';
+      $desdoc = 'Scarico per Produzione senza lotto';
     } elseif ($tipdoc == 'CAM') {
-        $desdoc = 'Registro di campagna';
+      $desdoc = 'Registro di campagna';
     } elseif ($tipdoc == 'WTR') {
-        $desdoc = 'Trasferimento ';
+      $rigtable='rigbro';
+      $desdoc = 'Trasferimento ';
     } elseif ($tipdoc == 'WAC') {
-        $desdoc = 'Accettazione in c\lavorazione';
+      $rigtable='rigbro';
+      $desdoc = 'Accettazione in c\lavorazione';
+    } elseif ($tipdoc == 'PRW') {
+      $rigtable='rigbro';
+      $desdoc = 'Utilizzato in lavorazione';
     } else {//documento di vendita
-        require("../../modules/vendit/lang." . $admin_aziend['lang'] . ".php");
-        $desdoc = $strScript['admin_docven.php']['doc_name'][$tipdoc];
+      require("../../modules/vendit/lang." . $admin_aziend['lang'] . ".php");
+      $desdoc = $strScript['admin_docven.php']['doc_name'][$tipdoc];
     }
     if (substr($tipdoc, 0, 1) == 'D' || $tipdoc == 'VCO') {
         $desdoc .= " n." . $numdoc;
         if ($seziva != '')
             $desdoc .= "/" . $seziva;
+    } elseif ($tipdoc =='PRW') {
+        $desdoc .= " n." . $numdoc;
     } else {
         $desdoc .= " n." . $numdoc;
         if ($seziva != '')
@@ -822,8 +830,7 @@ class magazzForm extends GAzieForm {
       'synccommerce_classname'=>$admin_aziend['synccommerce_classname']);
       if ($id_movmag == 0) {                             // si deve inserire un nuovo movimento
         $id_movmag = movmagInsert($row_movmag);
-        //gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $id_rigo_doc, 'id_mag', gaz_dbi_last_id());
-        gaz_dbi_query("UPDATE " . $gTables['rigdoc'] . " SET id_mag = " . $id_movmag . " WHERE `id_rig` = $id_rigo_doc ");
+        gaz_dbi_query("UPDATE " . $gTables[$rigtable] . " SET id_mag = " . $id_movmag . " WHERE `id_rig` = $id_rigo_doc ");
       } elseif ($id_rigo_doc === 'DEL') {                 // si deve eliminare un movimento esistente
         $old_movmag = gaz_dbi_get_row($gTables['movmag'], 'id_mov', $id_movmag);
         if ($old_movmag) {
@@ -1122,7 +1129,7 @@ class magazzForm extends GAzieForm {
       $firstl=true;
       while ($r = gaz_dbi_fetch_array($rs)) {
         if($r['caumag']<=98) {
-          if ($returntype==1){ // tabella html
+          if ($returntype===1){ // tabella html
             if ($r['descri'] == null){ // movimento non ubicato
               $table .= ($firstl?'':'<br/>').floatval($r['cari']-$r['scar']).' '.$unimis.' non sono stati ubicati';
             } else {
@@ -1135,7 +1142,7 @@ class magazzForm extends GAzieForm {
         }
       }
     }
-    if ($returntype==1) { // table
+    if ($returntype===1) { // table
       return $table;
     } else if ($returntype) {
       return json_encode($acc);
@@ -1152,7 +1159,7 @@ class magazzForm extends GAzieForm {
       $rs=gaz_dbi_query("SELECT art.codice, art.descri, art.unimis, COUNT(*) AS nummov, id_artico_position, caumag, SUM(quanti*(operat=1)) AS cari, SUM(quanti*(operat=-1)) AS scar FROM " . $gTables['movmag'] . " mm LEFT JOIN ".$gTables['artico'] ." art ON mm.artico = art.codice LEFT JOIN ".$gTables['artico_position'] ." pos ON mm.id_artico_position = pos.id_position LEFT JOIN ".$gTables['shelves'] ." she ON pos.id_shelf = she.id_shelf  LEFT JOIN ".$gTables['warehouse'] ." war ON she.id_warehouse = war.id WHERE mm.id_artico_position = ".$id_position." AND mm.id_artico_position >= 1 GROUP BY mm.artico");
       while ($r = gaz_dbi_fetch_array($rs)) {
         if($r['caumag']<=98) {
-          if ($returntype==1){ // tabella html
+          if ($returntype===1){ // tabella html
             $table .= '<div class="col-xs-12"> <a class="btn btn-default btn-xs" href="report_logisticartico.php?sea_codice='.$r['codice'].'"> '.$r['codice'].' </a> '.$r['descri'].' '.$r['unimis'].' '.floatval($r['cari']-$r['scar']).'  <a class="btn btn-xs btn-default" href="print_label.php?id='.$r['id_artico_position'].'&cod='.$r['codice'].'" title="Stampa etichetta"><i class="glyphicon glyphicon-tags"></i> Etichetta articolo <i class="glyphicon glyphicon-qrcode "></i></a></div>';
           } else {
             $acc[]=$r;
@@ -1160,7 +1167,7 @@ class magazzForm extends GAzieForm {
         }
       }
     }
-    if ($returntype==1) { // table
+    if ($returntype===1) { // table
       return $table;
     } else if ($returntype) {
       return json_encode($acc);
