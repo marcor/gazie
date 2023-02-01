@@ -40,7 +40,7 @@ while ($r = gaz_dbi_fetch_array($rs)) {
   if ($mv['q_g']<=0.000001){
     $mv['bg']='danger';
     $understock[]=$mv;
-  } else if ($mv['q_g']<$mv['scorta']) {
+  } else if ($mv['q_g']<=$mv['scorta']) {
     $mv['bg']='warning';
     $understock[]=$mv;
   }

@@ -1053,7 +1053,7 @@ class magazzForm extends GAzieForm {
     $available=[];
     global $gTables;
     // prima query sui movimenti
-    $rs=gaz_dbi_query("SELECT pos.position, she.descri, war.name, pos.id_warehouse, COUNT(*) AS nummov, id_artico_position, caumag, SUM(quanti*(operat=1)) AS cari, SUM(quanti*(operat=-1)) AS scar FROM " . $gTables['movmag'] . " mm LEFT JOIN ".$gTables['artico'] ." art ON mm.artico = art.codice LEFT JOIN ".$gTables['artico_position'] ." pos ON mm.id_artico_position = pos.id_position LEFT JOIN ".$gTables['shelves'] ." she ON pos.id_shelf = she.id_shelf  LEFT JOIN ".$gTables['warehouse'] ." war ON she.id_warehouse = war.id WHERE mm.artico = '".$codart."' GROUP BY mm.id_artico_position");
+    $rs=gaz_dbi_query("SELECT pos.position, she.descri, war.name, pos.id_warehouse, COUNT(*) AS nummov, id_artico_position, caumag, SUM(quanti*(operat=1)) AS cari, SUM(quanti*(operat=-1)) AS scar FROM " . $gTables['movmag'] . " mm LEFT JOIN ".$gTables['artico'] ." art ON mm.artico = art.codice LEFT JOIN ".$gTables['artico_position'] ." pos ON mm.id_artico_position = pos.id_position LEFT JOIN ".$gTables['shelves'] ." she ON pos.id_shelf = she.id_shelf  LEFT JOIN ".$gTables['warehouse'] ." war ON she.id_warehouse = war.id WHERE mm.caumag < 99 AND mm.artico = '".$codart."' GROUP BY mm.id_artico_position");
     $keyzero=false;
     while ($r = gaz_dbi_fetch_array($rs)) {
       $r['id_position']=$r['id_artico_position'];
@@ -1107,7 +1107,7 @@ class magazzForm extends GAzieForm {
   function getArticoPositionRest($codart,$id_position) {
     if (strlen(trim($codart)) >= 1 ) {
       global $gTables;
-      $rs=gaz_dbi_query("SELECT SUM(quanti*(operat=1)) AS cari, SUM(quanti*(operat=-1)) AS scar FROM " . $gTables['movmag'] . " mm WHERE mm.artico = '".$codart."' AND mm.id_artico_position = ".$id_position." GROUP BY mm.id_artico_position");
+      $rs=gaz_dbi_query("SELECT SUM(quanti*(operat=1)) AS cari, SUM(quanti*(operat=-1)) AS scar FROM " . $gTables['movmag'] . " mm WHERE mm.caumag < 99 AND mm.artico = '".$codart."' AND mm.id_artico_position = ".$id_position." GROUP BY mm.id_artico_position");
       $r = gaz_dbi_fetch_array($rs);
       if ($r) {
         return floatval($r['cari']-$r['scar']);
@@ -1125,7 +1125,7 @@ class magazzForm extends GAzieForm {
     $acc=[];
     if (strlen(trim($codart)) >= 1 ) {
       global $gTables;
-      $rs=gaz_dbi_query("SELECT pos.id_warehouse, pos.position, she.descri, war.name, COUNT(*) AS nummov, id_artico_position, caumag, SUM(quanti*(operat=1)) AS cari, SUM(quanti*(operat=-1)) AS scar FROM " . $gTables['movmag'] . " mm LEFT JOIN ".$gTables['artico'] ." art ON mm.artico = art.codice LEFT JOIN ".$gTables['artico_position'] ." pos ON mm.id_artico_position = pos.id_position LEFT JOIN ".$gTables['shelves'] ." she ON pos.id_shelf = she.id_shelf  LEFT JOIN ".$gTables['warehouse'] ." war ON she.id_warehouse = war.id WHERE mm.artico = '".$codart."' GROUP BY mm.id_artico_position");
+      $rs=gaz_dbi_query("SELECT pos.id_warehouse, pos.position, she.descri, war.name, COUNT(*) AS nummov, id_artico_position, caumag, SUM(quanti*(operat=1)) AS cari, SUM(quanti*(operat=-1)) AS scar FROM " . $gTables['movmag'] . " mm LEFT JOIN ".$gTables['artico'] ." art ON mm.artico = art.codice LEFT JOIN ".$gTables['artico_position'] ." pos ON mm.id_artico_position = pos.id_position LEFT JOIN ".$gTables['shelves'] ." she ON pos.id_shelf = she.id_shelf  LEFT JOIN ".$gTables['warehouse'] ." war ON she.id_warehouse = war.id WHERE mm.caumag < 99 AND mm.artico = '".$codart."' GROUP BY mm.id_artico_position");
       $firstl=true;
       while ($r = gaz_dbi_fetch_array($rs)) {
         if($r['caumag']<=98) {
@@ -1156,7 +1156,7 @@ class magazzForm extends GAzieForm {
     $acc=[];
     if ($id_position >= 1 ) {
       global $gTables;
-      $rs=gaz_dbi_query("SELECT art.codice, art.descri, art.unimis, COUNT(*) AS nummov, id_artico_position, caumag, SUM(quanti*(operat=1)) AS cari, SUM(quanti*(operat=-1)) AS scar FROM " . $gTables['movmag'] . " mm LEFT JOIN ".$gTables['artico'] ." art ON mm.artico = art.codice LEFT JOIN ".$gTables['artico_position'] ." pos ON mm.id_artico_position = pos.id_position LEFT JOIN ".$gTables['shelves'] ." she ON pos.id_shelf = she.id_shelf  LEFT JOIN ".$gTables['warehouse'] ." war ON she.id_warehouse = war.id WHERE mm.id_artico_position = ".$id_position." AND mm.id_artico_position >= 1 GROUP BY mm.artico");
+      $rs=gaz_dbi_query("SELECT art.codice, art.descri, art.unimis, COUNT(*) AS nummov, id_artico_position, caumag, SUM(quanti*(operat=1)) AS cari, SUM(quanti*(operat=-1)) AS scar FROM " . $gTables['movmag'] . " mm LEFT JOIN ".$gTables['artico'] ." art ON mm.artico = art.codice LEFT JOIN ".$gTables['artico_position'] ." pos ON mm.id_artico_position = pos.id_position LEFT JOIN ".$gTables['shelves'] ." she ON pos.id_shelf = she.id_shelf  LEFT JOIN ".$gTables['warehouse'] ." war ON she.id_warehouse = war.id WHERE mm.caumag < 99 AND mm.id_artico_position = ".$id_position." AND mm.id_artico_position >= 1 GROUP BY mm.artico");
       while ($r = gaz_dbi_fetch_array($rs)) {
         if($r['caumag']<=98) {
           if ($returntype===1){ // tabella html
