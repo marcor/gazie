@@ -53,5 +53,5 @@ $upgrade_db[152][]="ALTER TABLE `".$table_prefix."_XXXrental_events` ADD INDEX(`
 $upgrade_db[152][]="ALTER TABLE `".$table_prefix."_XXXrental_prices` ADD INDEX(`start`);";
 $upgrade_db[152][]="ALTER TABLE `".$table_prefix."_XXXrental_prices` ADD INDEX(`end`);";
 $upgrade_db[152][]="ALTER TABLE `".$table_prefix."_XXXrental_prices` ADD INDEX(`house_code`);";
-$upgrade_db[153][] "UPDATE `".$table_prefix."_XXXartico` SET `custom_field` = 'vacation_rental TASSA-TURISTICA' WHERE `".$table_prefix."_XXXartico`.`codice` = 'TASSA-TURISTICA';";
+$upgrade_db[153][]="UPDATE `".$table_prefix."_XXXartico` SET `custom_field` = 'vacation_rental TASSA-TURISTICA' WHERE `".$table_prefix."_XXXartico`.`codice` = 'TASSA-TURISTICA';";
 ?>
