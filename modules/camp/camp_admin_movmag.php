@@ -1115,7 +1115,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 		$rowanagra = gaz_dbi_get_row($gTables['anagra'], "id", $form['adminid']);
 		$form['rif_abilitazione'] = $rowanagra['custom_field'];
 		if (isset($rowanagra['custom_field']) && $data = json_decode($rowanagra['custom_field'], TRUE)){
-			if (is_array($data['camp'])){
+			if (isset($data['camp']) && is_array($data['camp'])){
 				$form['patent_number'] = $data['camp']['numero'];
 				$form['patent_expiry'] = $data['camp']['scadenza'];
 			} else {

@@ -81,10 +81,11 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
 			$decimal_quantity=$admin_aziend['decimal_quantity'];
 
 			if ( filter_var($magval, FILTER_VALIDATE_INT) === false ) {
-      }else{// is an integer
-        unset($magval);
-        $magval['q_g']=0;
-      }
+			}else{// is an integer
+			unset($magval);
+			$magval['q_g']=0;
+			}
+			$$decimal_quantity=2;
 			if (number_format($magval['q_g'],8)<0){
 				$decimal_quantity=8;
 			}
@@ -125,7 +126,7 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
         }
 		/*Antonio Germani prendo descrizione categoria merceologica */
 		$catmer = gaz_dbi_get_row($gTables['catmer'], 'codice',$row['catmer']);
-		$descatmer=$catmer['descri'];
+		$descatmer=(isset($catmer['descri']))?$catmer['descri']:'';
         ?>
 
         <tr>

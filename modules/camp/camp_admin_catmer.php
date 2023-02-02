@@ -81,8 +81,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
           if ($_FILES['userfile']['size'] > 0) { //se c'e' una nuova immagine nel buffer
              $form['image'] = file_get_contents($_FILES['userfile']['tmp_name']);
           } else {   // altrimenti riprendo la vecchia
-             $oldimage = gaz_dbi_get_row($gTables['catmer'],'codice',$form['codice']);
-             $form['image'] = $oldimage['image'];
+             $oldimage = gaz_dbi_get_row($gTables['catmer'],'codice',$form['codice']);			 
+             $form['image'] = (isset($oldimage['image']))?$oldimage['image']:'';
           }
           if ($toDo == 'update') { // e' una modifica
             gaz_dbi_table_update('catmer',$form["codice"],$form);

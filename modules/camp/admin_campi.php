@@ -218,7 +218,7 @@ if ($toDo == 'update') {
                 <div class="form-group">
 					<img class="col-sm-2" src="../root/view.php?table=campi&value=<?php echo $form['codice'];?>" width="100">
                     <label for="userfile" class="col-sm-5 control-label"><?php echo $script_transl[3]; ?></label>
-                    <input class="col-sm-5" type="file" value="<?php echo $form['userfile']; ?>" name="userfile" maxlength="50" />
+                    <input class="col-sm-5" type="file" value="<?php echo (isset($form['userfile']))?$form['userfile']:''; ?>" name="userfile" maxlength="50" />
                 </div>
             </div>
         </div><!-- chiude row  -->

@@ -149,6 +149,8 @@ $recordnav -> output();
 <?php
 
 while ($a_row = gaz_dbi_fetch_array($result)) {
+      $datediff = strtotime($a_row["giorno_decadimento"])-strtotime(date("Y-m-d"));
+      $days=round($datediff / (60 * 60 * 24));
 ?>
 			<tr class="FacetDataTD">
 			<td>
@@ -180,7 +182,9 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			<td align="center"><a  href="javascript:;" onclick="window.open('<?php echo($a_row["web_url"])?>', 'titolo', 'width=800, height=400, left=80%, top=80%, resizable, status, scrollbars=1, location');">
 			<i class="glyphicon glyphicon-picture"></i>
 			</a></td>
+      <?php if ($days>0){?>
 			<td align="center"><?php echo gaz_format_date($a_row["giorno_decadimento"]),"<br>ID mov.",$a_row["id_mov"];?></td>
+      <?php }else{ echo "<td></td>"; } ?>
 			<td align="center">
 				<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $a_row['codice'];?>" descamp="<?php echo $a_row['descri']; ?>">
 					<i class="glyphicon glyphicon-remove"></i>
