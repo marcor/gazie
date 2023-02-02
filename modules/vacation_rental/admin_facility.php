@@ -446,7 +446,7 @@ function itemErase(id,descri,group){
 				$( this ).dialog( "close" );
 			},
 			Togli: function() {
-				window.location.href = 'admin_group.php?delete='+id+'&group='+group;
+				window.location.href = 'admin_facility.php?delete='+id+'&group='+group;
 			}
 
 		  },
@@ -468,7 +468,7 @@ function groupErase(group,descri){
 				$( this ).dialog( "close" );
 			},
 			Togli: function() {
-				window.location.href = 'admin_group.php?group_delete='+group;
+				window.location.href = 'admin_facility.php?group_delete='+group;
 			}
 
 		  },
@@ -784,7 +784,8 @@ $("#datepicker_open_to").datepicker("setDate", "<?php echo $form['open_to']; ?>"
 									<?php
 									$select_artico = new selectartico("codart");
 									$select_artico->addSelected($form['codart']);
-									$select_artico->output(substr($form['cosear'], 0,32),'C',"");
+                  $select_artico->output($form['cosear'], " AND custom_field LIKE '%vacation_rental\":%' ");
+									//$select_artico->output(substr($form['cosear'], 0,32),'C',"");
 									?>
 								</div>
 								<div class="col-xs-12 col-md-2">

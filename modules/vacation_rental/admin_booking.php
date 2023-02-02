@@ -2742,7 +2742,7 @@ echo '<div class="fissa" ><div class="FacetSeparatorTD" align="center">Inserimen
 						$select_artico = new selectartico("in_codart");
 						$select_artico->addSelected($form['in_codart']);
 
-						$select_artico->output($form['cosear'], " AND custom_field LIKE '%vacation_rental%' OR codice = 'TASSA-TURISTICA'");
+						$select_artico->output($form['cosear'], " AND custom_field LIKE '%vacation_rental%' ");
 						?>
 					</td>
 				</tr>
