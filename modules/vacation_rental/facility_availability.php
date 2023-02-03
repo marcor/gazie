@@ -100,7 +100,7 @@ $id=substr($_GET['code'],0,9);
     <div id='calendar'>
       <form method="GET">
         <div style="display:none" id="tooltip" title="Tooltip">
-          <p><b>tooltip bla:</b></p>
+          <p><b>tooltip bla test:</b></p>
           <p>Codice</p>
           <p class="ui-state-highlight" id="idcodice"></p>
           <p>Descrizione</p>

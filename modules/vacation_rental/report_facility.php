@@ -222,7 +222,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 			echo '</td>';
 			echo '<td><span class="gazie-tooltip" data-type="group-thumb" data-id="'. $r['id_artico_group'] .'" data-title="" >'.$r['descri'].'</span>';
 			echo "</td>\n";
-			echo '<td class="text-center"><a class="btn btn-xs btn-default" style="cursor:pointer;" onclick="openframe(\'facility_availability.php?code='.$r["id_artico_group"].'\',\'Calendario disponibilità della struttura: '.$r["descri"].'\')" data-toggle="modal" data-target="#iframe"> <i class="glyphicon glyphicon-calendar" title="Calendario della disponibilità"></i></a>';
+			echo '<td class="text-center"><a class="btn btn-xs btn-default" style="cursor:pointer;" onclick="openframe(\'facility_availability.php?code='.$r["id_artico_group"].'\',\'Calendario disponibilità della struttura: '.$r["descri"].'. Le caselle bianche indicano tutto disponibile.\')" data-toggle="modal" data-target="#iframe"> <i class="glyphicon glyphicon-calendar" title="Calendario della disponibilità"></i></a>';
 			echo "</td>\n";
 			echo '<td class="text-center"><a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="'. $r['id_artico_group'].'" artico="'. $r['descri'].'"> <i class="glyphicon glyphicon-remove"></i></a>';
 			echo "</td>\n";
