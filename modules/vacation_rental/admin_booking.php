@@ -93,7 +93,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 
     if ($_POST['in_codart']!==$_POST['cosear']){// è appena stato selezionato un inserimento articolo alloggio
       $artico = gaz_dbi_get_row($gTables['artico'], "codice", $_POST['cosear']);
-      if ($artico['id_artico_group']>0 && ($data = json_decode($artico['custom_field'], TRUE))) { // se l'alloggio fa parte di una struttura e se esiste un json nel custom field dell'articolo
+      if (isset($artico) && $artico['id_artico_group']>0 && ($data = json_decode($artico['custom_field'], TRUE))) { // se l'alloggio fa parte di una struttura e se esiste un json nel custom field dell'articolo
         if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['accommodation_type'])){// se è un alloggio
           $facility = gaz_dbi_get_row($gTables['artico_group'], "id_artico_group", $artico['id_artico_group']);// leggo la struttura
           if ($data = json_decode($facility['custom_field'], TRUE)) { // se esiste un json nel custom field della struttura
@@ -970,9 +970,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['discount']+= (floatval($total_price)*floatval($discount['value']))/100;// aggiungo al totale sconti, lo sconto calcolato in percentuale
             $form['descri_discount'].=" ".$discount['title']." ".$discount['value']."%";// incremento la descrizione con lo sconto applicato
             }else{
-            $form['discount']+= floatval($discount['value'])/floatval("1.".$gen_iva_perc);// aggiungo al totale sconti, lo sconto a valore scorporando IVA
-            $form['descri_discount'].= " ".$discount['title']." ".$admin_aziend['symbol']." ".$discount['value'];/// incremento la descrizione con lo sconto applicato
-            }
+				$form['discount']+= floatval($discount['value'])/floatval("1.".$gen_iva_perc);// aggiungo al totale sconti, lo sconto a valore scorporando IVA
+				//$form['descri_discount'].= " ".$discount['title']." a valore".$admin_aziend['symbol']." ".number_format(floatval($discount['value'])/floatval("1.".$gen_iva_perc), $admin_aziend['decimal_price'], '.', '');/// incremento la descrizione con lo sconto applicato
+				$form['descri_discount'].= " ".$discount['title'];/// incremento la descrizione con lo sconto applicato
+			}
             if ($discount['stop_further_processing']==1){// se questo devo bloccare i successivi eventuali, interrompo il conteggio
             break;
             }
@@ -1465,7 +1466,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 
 
 			if ($form['in_tiprig'] == 0) {   // è un rigo normale controllo se l'articolo ha avuto uno sconto
-              if (floatval($form['discount'])>0) { // lo sconto c'è
+		
+              if (floatval($form['discount'])>0 && intval($form['in_accommodation_type'])>1) { // lo sconto c'è e non è un extra(accomodation_type>1)
                 $next_row++;
                 $form["row_$next_row"] = "";
                 $form['rows'][$next_row]['tiprig'] = 2;

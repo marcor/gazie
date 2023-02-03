@@ -231,7 +231,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 					$ratio = $width/$height;
 					if( $ratio > 1) {
 						$new_width = $maxDim;
-						$new_height = $maxDim/$ratio;
+						$new_height = intval($maxDim/$ratio);
 					} else {
 						$new_width = $maxDim*$ratio;
 						$new_height = $maxDim;
