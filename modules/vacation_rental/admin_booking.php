@@ -402,7 +402,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         }
     }
 
-	if ($_POST['start'] > $_POST['end']){
+    if ($_POST['start'] > $_POST['end']){
 			$msg .= "38+";
 		}
 	// Se viene inviata la richiesta di conferma totale ...
@@ -507,7 +507,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 gaz_dbi_del_row($gTables['rigbro'], "id_rig", $a_row['id_rig']);
 
               }
-
 
               gaz_dbi_del_row($gTables['rental_events'], "id_tesbro", $form['id_tes']);
               // dovrò aggiornare tesbro negli eventuali pagamenti effettuati su rental payment ma posso farlo solo dopo aver creato il nuovo tesbro
@@ -657,100 +656,19 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             }
             $_SESSION['print_request'] = $ultimo_id;
             if ($pdf_to_modal==0){
-              header("Location: invsta_broven.php");
+              header("Location: invsta_booking.php");
               exit;
             }
 
         }
     } elseif (isset($_POST['ord']) and $toDo == 'update') {  // si vuole generare una prenotazione da un preventivo
-    echo "ATTENZIONE da controllare prima di usare: ancora non si possono creare preventivi per le prenotazioni";die;
-        /*
-        $sezione = $form['seziva'];
-        $datemi = $form['annemi'] . "-" . $form['mesemi'] . "-" . $form['gioemi'];
-        $utsemi = mktime(0, 0, 0, $form['mesemi'], $form['gioemi'], $form['annemi']);
-        $initra = $form['anntra'] . "-" . $form['mestra'] . "-" . $form['giotra'];
-        $utstra = mktime(0, 0, 0, $form['mestra'], $form['giotra'], $form['anntra']);
-        if (!checkdate($form['mestra'], $form['giotra'], $form['anntra']))
-            $msg .= "37+";
-        if ($utstra < $utsemi) {
-            $msg .= "38+";
-        }
-        if (!isset($_POST['rows'])) {
-            $msg .= "39+";
-        }
-        if (!checkdate($form['mesemi'], $form['gioemi'], $form['annemi']))
-            $msg .= "46+";
-        if (empty($form['clfoco']))
-            $msg .= "47+";
-        if (empty($form['pagame']))
-            $msg .= "48+";
-        //controllo che i rows non abbiano descrizioni  e unita' di misura vuote in presenza di quantita diverse da 0
-        foreach ($form['rows'] as $i => $v) {
-            if ($v['descri'] == '' && ($v['quanti'] >= 0.00001 || $v['quanti'] <= -0.00001)) {
-                $msgrigo = $i + 1;
-                $msg .= "49+";
-            }
-            if ($v['unimis'] == '' && ($v['quanti'] >= 0.00001 || $v['quanti'] <= -0.00001)) {
-                $msgrigo = $i + 1;
-                $msg .= "50+";
-            }
-        }
-        if ($msg == "") {// nessun errore
 
-			// creo la descrizione del preventivo di origine
-            require("lang." . $admin_aziend['lang'] . ".php");
-            $descripreventivo = "rif. " . $strScript['admin_booking.php'][0]['VPR'] . " n." . $form['numdoc'] . " del " . $form['gioemi'] . "." . $form['mesemi'] . "." . $form['annemi'];
-			// fine creazione descrizione preventivo di origine
-            $sql_documento = "YEAR(datemi) = " . date("Y") . " and tipdoc = 'VOR'";
-            $rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesbro'], $sql_documento, "numdoc desc", 0, 1);
-            $ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
-            if ($ultimo_documento) {
-                $form['numdoc'] = $ultimo_documento['numdoc'] + 1;
-            } else {
-                $form['numdoc'] = 1;
-            }
-            //inserisco la testata
-            $form['initra'] = $initra;
-            $form['datemi'] = date("Y-m-d");
-            $form['tipdoc'] = 'VOR';
-            $form['status'] = 'GENERATO';
-            $form['destin'] = '';
-            $data=[];
-            $data= array('vacation_rental'=>array('status' => 'CONFIRMED','ip' => 'diretto'));
-            $form['custom_field'] = json_encode($data);
-            tesbroInsert($form);
-            //recupero l'id assegnato dall'inserimento
-            $ultimo_id = gaz_dbi_last_id();
-            //inserisco un rigo descrittivo per il riferimento al preventivo sull'ordine
-            $descrirow = array('id_tes' => $ultimo_id, 'tiprig' => 2, 'descri' => $descripreventivo);
-            rigbroInsert($descrirow);
-            //inserisco i rows
-            $count = count($form['rows']);
-            for ($i = 0; $i < $count; $i++) {
-                $form['rows'][$i]['id_tes'] = $ultimo_id;
-                rigbroInsert($form['rows'][$i]);
-                $last_rigbro_id = gaz_dbi_last_id();
-                if (isset($form["row_$i"])) { //se è un rigo testo lo inserisco il contenuto in body_text
-                    bodytextInsert(array('table_name_ref' => 'rigbro', 'id_ref' => $last_rigbro_id, 'body_text' => $form["row_$i"], 'lang_id' => $admin_aziend['id_language']));
-                    gaz_dbi_put_row($gTables['rigbro'], 'id_rig', $last_rigbro_id, 'id_body_text', gaz_dbi_last_id());
-                }
-            }
-            if ($after_newdoc_back_to_doclist==1) {
-              $_SESSION['print_queue'] = array();
-              $_SESSION['print_queue']['tpDoc'] =  $form['tipdoc'];
-              $_SESSION['print_queue']['idDoc'] = $ultimo_id;
-              $auxil = $form['tipdoc'];
-              if ($auxil == 'VOR') {
-                $auxil = 'VO_';
-              }
-              header("Location: report_broven.php?auxil=$auxil");
-	          exit;
-            }
-            $_SESSION['print_request'] = $ultimo_id;
-            header("Location: invsta_broven.php");
-            exit;
-        }
-        */
+      $columns = array('tipdoc');// colonne da aggiornare
+      $codice[0] = "id_tes";
+      $codice[1] = $form['id_tes'];
+      $newvalue['tipdoc'] = "VOR";
+      tableUpdate('tesbro', $columns, $codice, $newvalue);
+      header("Location: report_booking.php?auxil=VOR");
     }
 
     // Se viene inviata la richiesta di conferma cliente
@@ -2963,7 +2881,7 @@ if ($form['stamp'] > 0) {
 							';
 			}
 			if ($toDo == 'update' and $form['tipdoc'] == 'VPR') {
-				echo '<td colspan="2"><input type="submit" class="btn btn-default" accesskey="o" name="ord" value="Genera ordine" /></td></tr>';
+				echo '<td colspan="2"> <input type="submit" class="btn btn-default" accesskey="o" name="ord" value="Genera prenotazione" /></td></tr>';
 			}else{
 				echo '<td colspan="2"></td>';
 			}

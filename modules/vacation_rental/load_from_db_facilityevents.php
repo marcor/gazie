@@ -1,3 +1,4 @@
+
 <?php
 /*
     --------------------------------------------------------------------------
@@ -68,7 +69,7 @@ if ($_GET['token'] == md5($token.date('Y-m-d'))){
 
   foreach ($resulth as $resh){ // per ogni alloggio
     // prendo tutti gli eventi a partire da oggi dell'alloggio
-    $sql = "SELECT * FROM ".$azTables."rental_events WHERE house_code='".substr($resh['codice'], 0, 32)."' AND (start >= '".date('Y-m-d')."' OR end >= '".date('Y-m-d')."') ORDER BY id ASC";
+    $sql = "SELECT * FROM ".$azTables."rental_events LEFT JOIN ".$azTables."tesbro ON  ".$azTables."rental_events.id_tesbro = ".$azTables."tesbro.id_tes WHERE custom_field NOT LIKE '%QUOTE%' AND house_code='".substr($resh['codice'], 0, 32)."' AND (start >= '".date('Y-m-d')."' OR end >= '".date('Y-m-d')."') ORDER BY id ASC";
     $result = mysqli_query($link, $sql);
 
     foreach($result as $row){ // per ogni evento dell'alloggio
