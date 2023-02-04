@@ -150,7 +150,7 @@ $strScript = array(
 
       ),
     "admin_booking.php" =>
-    array(array("VPR" => "Nuova prenotazione", "VOR" => "Prenotazione diretta", "VOW" => "Prenotazione dal Web", "VOG" => "Ordine settimanale del giorno"),
+    array(array("VPR" => "PREVENTIVO prenotazione", "VOR" => "Prenotazione diretta", "VOW" => "Prenotazione dal Web", "VOG" => "Ordine settimanale del giorno"),
         'mesg' => array('La ricerca non ha dato risultati!',
             'Inserire almeno 2 caratteri!',
             'Cambia cliente'),

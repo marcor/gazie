@@ -33,6 +33,12 @@
 $dbname = constant("Database");
 global $table_prefix;
 
+$id_mod = gaz_dbi_get_row($table_prefix.'_module', 'name', 'vacation_rental')['id'];// id modulo vacation rental
+$query = "SELECT MAX(id) AS maxid FROM `".$table_prefix."_menu_module`";
+$result = gaz_dbi_query ($query);
+$row = gaz_dbi_fetch_array($result);
+$nextid=$row['maxid']+1;// ultimo id tabella menu_module
+
 // da qui in poi iserire le query che saranno eseguite su ogni azienda con il modulo attivo
 
 /*  >>> esempio di come vanno impostate le query il numero [147] rappresenta la versione dell'update di GAzie
@@ -54,4 +60,6 @@ $upgrade_db[152][]="ALTER TABLE `".$table_prefix."_XXXrental_prices` ADD INDEX(`
 $upgrade_db[152][]="ALTER TABLE `".$table_prefix."_XXXrental_prices` ADD INDEX(`end`);";
 $upgrade_db[152][]="ALTER TABLE `".$table_prefix."_XXXrental_prices` ADD INDEX(`house_code`);";
 $upgrade_db[153][]="UPDATE `".$table_prefix."_XXXartico` SET `custom_field` = 'vacation_rental TASSA-TURISTICA' WHERE `".$table_prefix."_XXXartico`.`codice` = 'TASSA-TURISTICA';";
+$upgrade_db[153][]="INSERT INTO `".$table_prefix."_menu_module` (`id`, `id_module`, `link`, `icon`, `class`, `translate_key`, `accesskey`, `weight`) VALUES ('".$nextid."', '".$id_mod."', 'report_booking.php?auxil=VPR', '', '', '7', '', '7') ";
+$upgrade_db[153][]="INSERT INTO `".$table_prefix."_menu_script` (`id`, `id_menu`, `link`, `icon`, `class`, `translate_key`, `accesskey`, `weight`) VALUES (NULL, '".$nextid."', 'admin_booking.php?Insert&tipdoc=VPR', '', '', '7', '', '7') ";
 ?>

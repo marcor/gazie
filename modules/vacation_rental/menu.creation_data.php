@@ -30,25 +30,27 @@
 
 $menu_data = array('m1' => array('link' => "docume_vacation_rental.php"),
                         'm2' => array(1 => array('link' => "report_accommodation.php", 'weight' => 1),
-										2 => array('link' => "report_facility.php", 'weight' => 2),
-                                        3 => array('link' => "report_booking.php", 'weight' => 3),
-										4 => array('link' => "report_extra.php", 'weight' => 4),
-                    5 => array('link' => "report_discount.php", 'weight' => 5),
-										6 => array('link' => "settings.php", 'weight' => 6)
-                                     ),
-						 'm3' => array('m2' => array(1 => array(
-																array('translate_key' => 1, 'link' => "admin_house.php?Insert", 'weight' => 10)
-															  ),
-													2 => array(
-																array('translate_key' => 2, 'link' => "admin_facility.php", 'weight' => 20)
-															  ),
-													3 => array( array('translate_key' => 3, 'link' => "admin_booking.php?Insert&tipdoc=VOR", 'weight' => 30)
-															  ),
-													4 => array( array('translate_key' => 4, 'link' => "admin_extra.php?Insert", 'weight' => 40)
-															  ),
+                        2 => array('link' => "report_facility.php", 'weight' => 2),
+                        3 => array('link' => "report_booking.php?auxil=VOR", 'weight' => 3),
+                        4 => array('link' => "report_extra.php", 'weight' => 4),
+                        5 => array('link' => "report_discount.php", 'weight' => 5),
+                        7 => array('link' => "report_booking.php?auxil=VPR", 'weight' => 7),
+                        6 => array('link' => "settings.php", 'weight' => 6)
+                        ),
+                        'm3' => array('m2' => array(
+                          1 => array( array('translate_key' => 1, 'link' => "admin_house.php?Insert", 'weight' => 10)
+                          ),
+                          2 => array(	array('translate_key' => 2, 'link' => "admin_facility.php", 'weight' => 20)
+                          ),
+                          3 => array( array('translate_key' => 3, 'link' => "admin_booking.php?Insert&tipdoc=VOR", 'weight' => 30)
+                          ),
+                          4 => array( array('translate_key' => 4, 'link' => "admin_extra.php?Insert", 'weight' => 40)
+                          ),
                           5 => array( array('translate_key' => 5, 'link' => "admin_discount.php?Insert", 'weight' => 50)
-															  )
-													)
+                          ),
+                          7 => array( array('translate_key' => 7, 'link' => "admin_booking.php?Insert&tipdoc=VPR", 'weight' => 70)
+                          )
+                        )
 									 )
                 );
 $module_class='fas fa-landmark';

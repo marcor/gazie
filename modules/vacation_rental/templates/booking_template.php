@@ -225,6 +225,9 @@ class Template extends TCPDI {
                 case "CANCELLED":
                   $this->status = 'CANCELLATO';
                 break;
+                case "QUOTE":
+                  $this->status = 'PREVENTIVO - Verificare sempre la disponibilità prima di prenotare';
+                break;
               }
               $this->Cell(75, 8, "STATO DELLA PRENOTAZIONE: ".$this->status, 1, 1, 'C', 0, '', 1);
             }

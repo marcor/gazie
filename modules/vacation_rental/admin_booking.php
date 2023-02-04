@@ -541,7 +541,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['datemi'] = $datemi;
             $form['id_agente'] = $form['id_tourOp'];// scambio perché l'agente è il tour operator mentre in id_agente ho il proprietario
             $data=[];
-            $data= array('vacation_rental'=>array('status' => 'CONFIRMED','ip' => 'diretto'));
+            if ($form['tipdoc']=='VPR'){
+              $data= array('vacation_rental'=>array('status' => 'QUOTE','ip' => 'diretto'));
+            }else{
+              $data= array('vacation_rental'=>array('status' => 'CONFIRMED','ip' => 'diretto'));
+            }
             $form['custom_field'] = json_encode($data);
             tesbroInsert($form);
             //recupero l'id assegnato dall'inserimento
@@ -1466,7 +1470,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 
 
 			if ($form['in_tiprig'] == 0) {   // è un rigo normale controllo se l'articolo ha avuto uno sconto
-		
+
               if (floatval($form['discount'])>0 && intval($form['in_accommodation_type'])>1) { // lo sconto c'è e non è un extra(accomodation_type>1)
                 $next_row++;
                 $form["row_$next_row"] = "";

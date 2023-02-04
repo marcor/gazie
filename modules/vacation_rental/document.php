@@ -731,6 +731,7 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
         'Ticket'=>'ticket',
         'Maintenance'=>'maintenance',
         'BookingSummary' => 'booking_summary',
+        'BookingQuote' => 'booking_quote',
         'Lease' => 'lease'
     );
 

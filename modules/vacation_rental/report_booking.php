@@ -931,6 +931,8 @@ $ts->output_navbar();
 
                   if ( $tipo == "VOG" ) {
                       echo "<a class=\"btn btn-xs btn-warning\" href=\"select_evaord_gio.php?weekday=".$r['weekday_repeat']."\">evadi</a>";
+                  } elseif ( $tipo == "VPR" ) {
+                    echo "PREVENTIVO";
                   } else {
                       echo "<a class=\"btn btn-xs btn-warning\" href=\"../../modules/vendit/select_evaord.php?id_tes=" . $r['id_tes'] . "\">Emetti documento fiscale</a>&nbsp;";
 
@@ -985,14 +987,16 @@ $ts->output_navbar();
                 echo " style=\"cursor:pointer;\" onclick=\"printPdf('".$modulo."')\"";
               }
               echo "><i class=\"glyphicon glyphicon-print\" title=\"Stampa prenotazione PDF\"></i></a>";
-              echo "&nbsp;<a class=\"btn btn-xs btn-default btn-stampa\"";
-              // vedo se è presente un file di template adatto alla stampa su carta già intestata
-              if($enable_lh_print_dialog>0 && withoutLetterHeadTemplate($r['tipdoc'])){
-                echo ' onclick="choice_template(\''.$modulo.'\');" title="Stampa contratto"';
-              }else{
-                echo " style=\"cursor:pointer;\" onclick=\"printPdf('stampa_contratto.php?id_tes=". $r['id_tes'] . "&id_ag=". $r['id_agent'] ."')\"";
+              if ( $tipo !== "VPR" ) {
+                echo "&nbsp;<a class=\"btn btn-xs btn-default btn-stampa\"";
+                // vedo se è presente un file di template adatto alla stampa su carta già intestata
+                if($enable_lh_print_dialog>0 && withoutLetterHeadTemplate($r['tipdoc'])){
+                  echo ' onclick="choice_template(\''.$modulo.'\');" title="Stampa contratto"';
+                }else{
+                  echo " style=\"cursor:pointer;\" onclick=\"printPdf('stampa_contratto.php?id_tes=". $r['id_tes'] . "&id_ag=". $r['id_agent'] ."')\"";
+                }
+                echo "><i class=\"glyphicon glyphicon-book\" title=\"Stampa contratto PDF\"></i></a>";
               }
-              echo "><i class=\"glyphicon glyphicon-book\" title=\"Stampa contratto PDF\"></i></a>";
               echo "</td>";
 
               // Colonna "Mail"
