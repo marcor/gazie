@@ -231,7 +231,8 @@ a, .panel-info {
     background-color: #aae2a8;
 }
 .btn-elimina {
-    color: #ff3939;
+  color: #ff3939;
+  border: 1px solid #ff393938;
 }
 .btn-xml {
     color: #0000ff;

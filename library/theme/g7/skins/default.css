@@ -195,6 +195,7 @@ table.selectTable td {
 }
 .btn-elimina {
 	color: #ff3939;
+  border: 1px solid #ff393938;
 }
 .btn-xml {
 	color: #0000ff;

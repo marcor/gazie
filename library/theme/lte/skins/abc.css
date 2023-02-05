@@ -124,7 +124,8 @@ html body.skin-blue.sidebar-mini.sidebar-collapse form div.wrapper header.main-h
   color : #72019b;
 }
 .btn-elimina {
-    color: #ff3939;
+  color: #ff3939;
+  border: 1px solid #ff393938;
 }
 .btn-edit {
 	background-color: #449d44;

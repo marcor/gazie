@@ -265,6 +265,7 @@ nav.navbar.navbar-static-top.company-color-bright {
 }
 .btn-elimina {
   color: #ff3939;
+  border: 1px solid #ff393938;
 }
 .ui-widget-content, .ui-widget-content a, .ui-autocomplete li.ui-menu-item {
 	color: #fdf0f0;
