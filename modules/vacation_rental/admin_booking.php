@@ -224,7 +224,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['caucon'] = $_POST['caucon'];
     $form['caumag'] = $_POST['caumag'];
     $form['id_agente'] = intval($_POST['id_agente']);
-    $form['id_tourOp'] = intval($_POST['id_tourOp']);
+    $form['id_tourOp'] = intval($_POST['id_tourOp']);// NB: PIù SOTTO AVVERRà UNO SCAMBIO FRA AGENTE E TOUROP
     $form['sconto'] = $_POST['sconto'];
     // inizio rigo di input
     $form['in_descri'] = $_POST['in_descri'];
@@ -250,10 +250,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_extdoc'] = $_POST['in_extdoc'];
     $form['in_status'] = $_POST['in_status'];
     // fine rigo input
-	$lang="it";
-	if (isset($cliente['id_language']) && intval($cliente['id_language'])>0 ){
-	$lang=gaz_dbi_get_row($gTables['languages'], 'lang_id', $cliente['id_language'])['sef'];
-	}
+    $lang="it";
+    if (isset($cliente['id_language']) && intval($cliente['id_language'])>0 ){
+      $lang=gaz_dbi_get_row($gTables['languages'], 'lang_id', $cliente['id_language'])['sef'];
+    }
 
     $ultimoprezzo=''; //info sugli ultimi prezzi
     if ($form['in_codart']<>$form['cosear']) { // ho cambiato articolo, cerco le 3 ultime vendite
@@ -274,6 +274,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
       while ($prezzi = gaz_dbi_fetch_array($result)) {
         $ultimoprezzo.="<br />Fattura n. ".$prezzi['numfat']." del ".gaz_format_date($prezzi['datfat'])." ____ quantit&agrave; ".gaz_format_quantity($prezzi['quanti'], 0, $admin_aziend['decimal_quantity'])." ____ prezzo ".gaz_format_number($prezzi['prelis'])." ____ sconto ".gaz_format_number($prezzi['sconto'])."% ____ provvigione ".gaz_format_number($prezzi['provvigione'])."%";
       }
+    }
+    if ($_POST['id_tourOp'] > 0) { // se c'è un agente/tour operator carico la provvigione standard
+      $provvigione = new Agenti;// NB: PIù SOTTO AVVERRà UNO SCAMBIO FRA AGENTE E TOUROP
+      $form['in_provvigione'] = $provvigione->getPercent($form['id_tourOp']);
     }
 
     $form['rows'] = array();
@@ -303,8 +307,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['quanti'] = (isset($v['quanti']))?gaz_format_quantity($v['quanti'], 0, $admin_aziend['decimal_quantity']):0;
             $form['rows'][$next_row]['codvat'] = intval($v['codvat']);
             $form['rows'][$next_row]['codric'] = intval($v['codric']);
-            if (isset($v['provvigione'])) {
-                $form['rows'][$next_row]['provvigione'] = intval($v['provvigione']);
+            if (isset($form['in_provvigione']) && $_POST['id_tourOp'] > 0){// NB: PIù SOTTO AVVERRà UNO SCAMBIO FRA AGENTE E TOUROP
+              $form['rows'][$next_row]['provvigione'] = $provvigione->getPercent($form['id_tourOp'], substr($v['codart'], 0, 32));
+            }else{
+              $form['rows'][$next_row]['provvigione'] = 0;
             }
             if (substr($v['codart'], 0, 15)=="TASSA-TURISTICA" && strlen($v['codice_fornitore'])<2){
               $msg .= '67+';
@@ -491,13 +497,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
           }
         }
         if ($msg == "") {// nessun errore
-			//echo "<pre>",print_r($form);die;
+        //echo "<pre>",print_r($form);die;
              $initra .= " " . $form['oratra'] . ":" . $form['mintra'] . ":00";
             if (preg_match("/^id_([0-9]+)$/", $form['clfoco'], $match)) {
                 $new_clfoco = $anagrafica->getPartnerData($match[1], 1);
                 $form['clfoco'] = $anagrafica->anagra_to_clfoco($new_clfoco, $admin_aziend['mascli'],$form['pagame']);
             }
             if ($toDo == 'update') { // e' una modifica
+
               // cancello tutto
               gaz_dbi_del_row($gTables['tesbro'], "id_tes", $form['id_tes']);
 
@@ -523,11 +530,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $sql_documento = "YEAR(datemi) = " . $form['annemi'] . " and tipdoc = '" . $form['tipdoc'] . "'";
             $rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesbro'], $sql_documento, $where, 0, 1);
             $ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
-            // se e' il primo documento dell'anno, resetto il contatore
-            if ($ultimo_documento) {
-                $form['numdoc'] = $ultimo_documento['numdoc'] + 1;
-            } else {
-                $form['numdoc'] = 1;
+            if (strlen($form['numdoc'])==0){// se è insert, mi ricavo il numdoc altrimenti ce l'ho già
+              if ($ultimo_documento) {// se non è il primo documentoo dell'anno proseguo la numerazione
+                  $form['numdoc'] = $ultimo_documento['numdoc'] + 1;
+              } else {// se e' il primo documento dell'anno, resetto il contatore
+                  $form['numdoc'] = 1;
+              }
             }
             $form['protoc'] = 0;
             $form['numfat'] = 0;
