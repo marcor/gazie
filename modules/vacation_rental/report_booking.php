@@ -973,10 +973,10 @@ $ts->output_navbar();
                   $ultimo_documento = 0;
                   mostra_documenti_associati( $r['id_tes'] );
                   if ( $tipo == "VOG" ) {
-                      echo "<a class=\"btn btn-xs btn-default\" href=\"select_evaord_gio.php\">evadi il rimanente</a>";
+                      echo "<a class=\"btn btn-xs btn-default\" href=\"../../modules/vendit/select_evaord_gio.php\">evadi il rimanente</a>";
                   } else {
-                      echo "<a class=\"btn btn-xs btn-warning\" href=\"select_evaord.php?id_tes=" . $r['id_tes'] . "\">evadi il rimanente</a>&nbsp;";
-                      echo "<a class=\"btn btn-xs btn-warning\" href=\"select_evaord.php?clfoco=" . $r['clfoco'] . "\">evadi cliente</a>";
+                      echo "<a class=\"btn btn-xs btn-warning\" href=\"../../modules/vendit/select_evaord.php?id_tes=" . $r['id_tes'] . "\">evadi il rimanente</a>&nbsp;";
+                      echo "<a class=\"btn btn-xs btn-warning\" href=\"../../modules/vendit/select_evaord.php?clfoco=" . $r['clfoco'] . "\">evadi cliente</a>";
                   }
               } else {
                   // l'ordine è completamente evaso, mostro i riferimenti ai documenti che lo hanno evaso
@@ -1020,7 +1020,7 @@ $ts->output_navbar();
                   echo ' <a class="btn btn-xs btn-default btn-emailC" onclick="confirMailC(this);return false;" id="docC' . $r['id_tes'] . '" urlC="stampa_contratto.php?id_tes='. $r['id_tes']. '&dest=E&id_ag='.$r['id_agent'].'" href="#" title="invia contratto a: ' . $r['base_mail'] . '"
                   mail="' . $r['base_mail'] . '" namedoc="Contratto n.' . $r['numdoc'] . ' del ' . gaz_format_date($r['datemi']) . '"><i class="glyphicon glyphicon-send"></i></a>';
               } else { // non ho mail
-                  echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" href="admin_client.php?codice=' . substr($r['clfoco'], 3) . '&Update"><i class="glyphicon glyphicon-edit"></i></a>';
+                  echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" href="../../modules/vendit/admin_client.php?codice=' . substr($r['clfoco'], 3) . '&Update"><i class="glyphicon glyphicon-edit"></i></a>';
               }
               echo "</td>";
 

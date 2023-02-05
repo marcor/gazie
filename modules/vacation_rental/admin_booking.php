@@ -1180,10 +1180,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['facility_id'] = $form['in_facility_id'];
                 $form['rows'][$next_row]['annota'] = $artico['annota'];
                 $form['rows'][$next_row]['pesosp'] = $artico['peso_specifico'];
-                $form['rows'][$next_row]['descri'] = (($night>0)?$night." notti - ":"")."check-in ".$form['start']." check-out ".$form['end']." - ".get_string_lang($artico['descri'], $lang);
+                $form['rows'][$next_row]['descri'] = (($night>0)?$night." notti - ":"")."check-in ".gaz_format_date($form['start'])." check-out ".gaz_format_date($form['end'])." - ".get_string_lang($artico['descri'], $lang);
 
                 if ($form['in_codart']=="TASSA-TURISTICA"){// se è il rigo della tassa turistica modifico la descrizione
-                  $form['rows'][$next_row]['descri'] = (($daytopay>0)?"Tassa per ".$daytopay." notti - ":"")."check-in ".$form['start']." check-out ".$form['end']." - ".$artico['descri'];
+                  $form['rows'][$next_row]['descri'] = (($daytopay>0)?"Tassa per ".$daytopay." notti - ":"")."check-in ".gaz_format_date($form['start'])." check-out ".gaz_format_date($form['end'])." - ".$artico['descri'];
                   $form['rows'][$next_row]['codice_fornitore']=$form['codice_fornitore'];
                 }else{
                   $form['rows'][$next_row]['codice_fornitore']="";
