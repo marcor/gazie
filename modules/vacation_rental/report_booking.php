@@ -126,7 +126,7 @@ $terzo = (isset($_GET['auxil']) && $_GET['auxil'] == 'VOG') ? ['weekday_repeat' 
 $sortable_headers = array(
     "ID" => "id_tes",
     $script_transl['number'] => "numdoc",
-    "Codice alloggio" => "",
+    "Codice alloggio" => "house_code",
     "Check-in" => "",
     "Check-out" => "",
     $script_transl[key($terzo)] => current($terzo),
@@ -168,6 +168,11 @@ $tipo = $auxil;
 
 # le <select> spaziano tra i documenti di un solo tipo (VPR, VOR o VOG)
 $where_select = sprintf("tipdoc LIKE '%s'", gaz_dbi_real_escape_string($tipo));
+
+if (isset($_GET['house_code'])){// se devo visualizzaro solo un determinato alloggio
+  $ts->where .= " AND ".$gTables['rental_events'].".house_code ='".$_GET['house_code']."'";
+}
+
 ?>
 <script>
 <?php
@@ -707,7 +712,9 @@ $ts->output_navbar();
                 <?php gaz_flt_disp_int("numero", "Numero Doc."); ?>
             </td>
             <td class="FacetFieldCaptionTD">
-
+              <?php
+              gaz_flt_disp_select("house_code", "house_code", $gTables["rental_events"]," type = 'ALLOGGIO' ", "house_code DESC");
+              ?>
             </td>
             <td class="FacetFieldCaptionTD">
 
@@ -734,6 +741,8 @@ $ts->output_navbar();
                         gaz_flt_disp_select("anno", "YEAR(datemi) as anno", $gTables["tesbro"], $where_select, "anno DESC");
                     }
                 ?>
+            </td>
+            <td class="FacetFieldCaptionTD">
             </td>
             <td class="FacetFieldCaptionTD">
 
@@ -802,7 +811,6 @@ $ts->output_navbar();
         $ts->where." AND template = 'booking' ", $ts->orderby,
         $ts->getOffset(), $ts->getLimit(),$gTables['rental_events'].".id_tesbro");
         $ctrlprotoc = "";
-
         while ($r = gaz_dbi_fetch_array($result)) {
             $r['id_agent']=0;
             $artico_custom_field=gaz_dbi_get_row($gTables['artico'], 'codice', $r['house_code'])['custom_field'];
