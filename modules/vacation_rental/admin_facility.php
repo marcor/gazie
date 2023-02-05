@@ -132,7 +132,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 				$array= array('vacation_rental'=>array('facility_type' => ''));// creo l'array per il custom field
 				$form['custom_field'] = json_encode($array);// codifico in json  e lo inserisco nel form
 				gaz_dbi_table_insert('artico_group', $form);
-				$form['custom_field']=$_POST['custom_field']; // riporto il custom field a quello di artico
+				$form['custom_field']=(isset($_POST['custom_field']))?$_POST['custom_field']:''; // riporto il custom field a quello di artico
 				$form['id_artico_group']=gaz_dbi_last_id();
 				gaz_dbi_table_update ("artico", $_POST['codart'], array("id_artico_group"=>$form['id_artico_group']) );
         if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){

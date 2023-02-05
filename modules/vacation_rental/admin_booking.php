@@ -1962,7 +1962,7 @@ if ( empty($msg) && !isset($_POST['ins']) && $scorrimento == '1' ) { // se ho un
 	}
 	echo '
 	$( function() {
-				$("html, body").delay(100).animate({scrollTop: $("'.$idlf.'").offset().top-100}, 1000);
+				$("html, body").delay(100).animate({scrollTop: $("'.$idlf.'").offset().top-100}, 100);
 				}); ';
 }
 
