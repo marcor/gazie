@@ -2736,7 +2736,7 @@ echo '<td>
                     <td><input type="hidden" name="rows[' . $k . '][quanti]" value="" /></td>
 					<td><input type="hidden" name="rows[' . $k . '][sconto]" value="" /></td>
 					<td><input type="hidden" name="rows[' . $k . '][provvigione]" value="" /></td>
-					<td></td>
+
 					<td></td>
 					<td class="text-right">
 						<input class="gazie-tooltip text-right" data-type="ritenuta" data-id="' . $v['ritenuta'] . '% = ' . gaz_format_number(round($imprig * (($v['ritenuta']) ?: 0) / 100, 2)) . '" data-title="' . $script_transl['ritenuta'] . '" type="text" name="rows[' . $k . '][prelis]" value="' . number_format($v['prelis'], 2, '.', '') . '" maxlength="11"';
