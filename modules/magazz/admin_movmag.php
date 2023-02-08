@@ -761,7 +761,7 @@ if (($form['artico'] != "" || $form['cosear'] != "") && $form['id_position'] < 1
     while ($rp = $result->fetch_assoc()) { // creo i bottoni
       echo '<br/><div style="padding-top: 3px;"><a class="btn btn-xs btn-success submit_position" val="'.$rp['id_position'].'">Usa ubicazione <b>' .$rp['position'] . '</b>' . '</a></div>';
     }
-  } elseif ($nump==1) { // ne ho solo una, la attribuisco in automatico
+  } elseif ($nump==1 && $toDo=='insert') { // in insert, ne ho solo una e vengo da un cambio articolo
     $rp = $result->fetch_assoc();
     $form['cosepos']=$rp['id_position'];
     $form['id_position']=$rp['id_position'];
