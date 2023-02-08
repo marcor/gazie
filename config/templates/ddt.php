@@ -67,6 +67,8 @@ class DDT extends Template_con_scheda
           $descri='Reso da rottamare';
       } elseif ($this->tesdoc['ddt_type'] == 'W') {
           $descri='Reso non conforme';
+      } elseif ($this->tesdoc['ddt_type'] == 'D') {
+          $descri='Conto deposito';
       } elseif ($this->tesdoc['ddt_type'] == 'J') {
           $descri='Reso non utilizzabile';
       } elseif ($this->tesdoc['ddt_type'] == 'C') {

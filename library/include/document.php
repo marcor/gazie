@@ -326,6 +326,7 @@ class DocContabVars {
           case "DDX":
           case "DDZ":
           case "DDW":
+          case "DDD":
           case "DDJ":
           case "DDC":
           case "DDM":

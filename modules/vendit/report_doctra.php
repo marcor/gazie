@@ -288,19 +288,20 @@ if (isset($_SESSION['print_request']) && intval($_SESSION['print_request'])>0){
                         case "DDX":
                         case "DDZ":
                         case "DDW":
+                        case "DDD":
                         case "DDJ":
                         case "DDC":
                         case "DDM":
                         case "DDO":
                             echo "<tr class=\"text-center\">";
                             // Colonna id
-                            echo "<td><a class=\"btn btn-xs btn-edit\" href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $r['tipdoc'].' '. $r["id_tes"] . "</a></td>";
+                            echo "<td><a class=\"btn btn-xs btn-edit\" href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-edit\"></i> " . $r['tipdoc'].' '. $r["id_tes"] . "</a></td>";
                             // Colonna protocollo
-                            echo "<td class=\"text-center\"><a href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\">" . $r["numdoc"] . "</a> &nbsp;</td>";
+                            echo "<td class=\"text-center\"><a href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\">" . $r["numdoc"] . "</a> </td>";
                             // Colonna type
-                            echo "<td><div class=\"btn btn-xs btn-primary btn-primary\" style=\"cursor: default;\">&nbsp;" . $script_transl['ddt_type'][$r["ddt_type"]] . "</div> &nbsp;</td>";
+                            echo "<td><div class=\"btn btn-xs btn-primary btn-primary\" style=\"cursor: default;\"> " . $script_transl['ddt_type'][$r["ddt_type"]] . "</div> </td>";
                             // Colonna data emissione
-                            echo "<td>" . gaz_format_date($r["datemi"]). " &nbsp;</td>";
+                            echo "<td>" . gaz_format_date($r["datemi"]). "  </td>";
                             // Colonna Cliente
                             ?>
                             <td class="text-left">
@@ -318,7 +319,7 @@ if (isset($_SESSION['print_request']) && intval($_SESSION['print_request'])>0){
                                 if ($r["id_con"] > 0) {
                                     echo "<a title=\"" . $script_transl['acc_entry'] . "\" href=\"../contab/admin_movcon.php?id_tes=" . $r["id_con"] . "&Update\">cont. n." . $r["id_con"] . "</a>";
                                 }
-                            } else if ($r['tipdoc'] == 'DDX' || $r['tipdoc'] == 'DDZ' ||$r['tipdoc'] == 'DDW' ||$r['tipdoc'] == 'DDJ' ||$r['tipdoc'] == 'DDC' ) {
+                            } else if ($r['tipdoc'] == 'DDX' || $r['tipdoc'] == 'DDZ' || $r['tipdoc'] == 'DDW' || $r['tipdoc'] == 'DDJ' || $r['tipdoc'] == 'DDD' || $r['tipdoc'] == 'DDC' ) {
                                echo '<td><a class="btn btn-xs btn-default" style="cursor: none;">da non fatturare</a></td>';
                             } else {
                                 if ($r['tipdoc'] == 'DDV' && $r['id_doc_ritorno'] > 0) {
@@ -389,10 +390,10 @@ if (isset($_SESSION['print_request']) && intval($_SESSION['print_request'])>0){
                             echo "<tr class=\"text-center\">";
                             // Colonna id
                             echo "<td><a class=\"btn btn-xs btn-".$btnclass."\" href=\"../acquis/admin_docacq.php?Update&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-edit\"></i>" . $r["tipdoc"] . "" . $r["id_tes"] . "</a></td>";
-                            echo "<td><a href=\"../acquis/admin_docacq.php?Update&id_tes=" . $r["id_tes"] . "\">&nbsp;" . $r["numdoc"] . "</a> &nbsp;</td>";
+                            echo "<td><a href=\"../acquis/admin_docacq.php?Update&id_tes=" . $r["id_tes"] . "\"> " . $r["numdoc"] . "</a>  </td>";
                             // Colonna type
-                            echo "<td><div class=\"btn btn-xs btn-".$btnclass."\" style=\"cursor: default;\" >&nbsp;" . $script_transl['ddt_type'][$r["tipdoc"]] . "</div> &nbsp;</td>";
-                            echo "<td>" . gaz_format_date($r["datemi"]) . " &nbsp;</td>";
+                            echo "<td><div class=\"btn btn-xs btn-".$btnclass."\" style=\"cursor: default;\" > " . $script_transl['ddt_type'][$r["tipdoc"]] . "</div>  </td>";
+                            echo "<td>" . gaz_format_date($r["datemi"]) . "  </td>";
                             ?>
                             <td class="text-left">
                                 <a href="../acquis/report_fornit.php?nome=<?php echo htmlspecialchars($r["ragso1"]); ?>">
@@ -447,13 +448,13 @@ if (isset($_SESSION['print_request']) && intval($_SESSION['print_request'])>0){
                             if ( $r['ddt_type'] != 'R') {
                             echo "<tr class=\"text-center\">";
                             // Colonna id
-                            echo "<td><a class=\"btn btn-xs btn-info\" href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-edit\"></i>".$r['tipdoc']."&nbsp;" . $r["id_tes"] . "</a></td>";
+                            echo "<td><a class=\"btn btn-xs btn-info\" href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-edit\"></i>".$r['tipdoc']." " . $r["id_tes"] . "</a></td>";
                             // Colonna protocollo
                             echo "<td><a href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\">" . $r["numdoc"] . "</a></td>";
                             // Colonna type
-                            echo "<td><div class=\"btn btn-xs btn-primary btn-primary\" style=\"cursor: default;\">&nbsp;" . $script_transl['ddt_type'][$r["ddt_type"]] . "</div> &nbsp;</td>";
+                            echo "<td><div class=\"btn btn-xs btn-primary btn-primary\" style=\"cursor: default;\"> " . $script_transl['ddt_type'][$r["ddt_type"]] . "</div>  </td>";
                             // Colonna Data emissione
-                            echo "<td>" . gaz_format_date($r["datemi"]) . " &nbsp;</td>";
+                            echo "<td>" . gaz_format_date($r["datemi"]) . "  </td>";
                             // Colonna Cliente
                             ?>
                             <td class="text-left">
@@ -468,7 +469,7 @@ if (isset($_SESSION['print_request']) && intval($_SESSION['print_request'])>0){
                             // Colonna Stato
                             echo "<td style=\"white-space:unset;\"><a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['print_invoice'] . " n. " . $r["numfat"] . "\" href=\"stampa_docven.php?td=2&si=" . $r["seziva"] . "&pi=" . $r['protoc'] . "&pf=" . $r['protoc'] . "&di=" . $r['datfat'] . "&df=" . $r['datfat'] . "\">Fat " . $r["numfat"] . "</a>";
                             if ($r["id_con"] > 0) {
-                                echo "&nbsp;<a class=\"btn btn-xs btn-default btn-registrazione\" title=\"" . $script_transl['acc_entry'] . "\" href=\"../contab/admin_movcon.php?id_tes=" . $r["id_con"] . "&Update\">Cont " . $r["id_con"] . "</a>";
+                                echo " <a class=\"btn btn-xs btn-default btn-registrazione\" title=\"" . $script_transl['acc_entry'] . "\" href=\"../contab/admin_movcon.php?id_tes=" . $r["id_con"] . "&Update\">Cont " . $r["id_con"] . "</a>";
                             }
                             echo "</td>";
 
