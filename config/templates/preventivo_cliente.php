@@ -213,7 +213,9 @@ class PreventivoCliente extends Template
         $this->Cell(186,6,((isset($vettor['descri']))?$vettor['descri']:''),1,1,'L');
         // $this->Cell(186,6,'Il presente preventivo ha una validità di 2 giorni lavorativi, trascorso questo termine, i prezzi e le condizioni di vendita potrebbero',0,1,'L');
         $this->Cell(186,6,'Il presente preventivo ha una validità di '.$this->tesdoc['day_of_validity'].' giorni lavorativi, trascorso questo termine, i prezzi e le condizioni di vendita potrebbero',0,1,'L');
-        $this->Cell(186,6,'subire delle modifiche che dipendono dalle situazioni di mercato.','B',1,'L');
+        $this->Cell(186,6,'subire delle modifiche che dipendono dalle situazioni di mercato.','',1,'L');
+        $this->Cell(120,6,'Firma per approvazione:',0,0,'R');
+        $this->Cell(66,6,'','B',1,'L');
 
 		if (isset($this->docVars->ExternalDoc)){ // se ho dei documenti esterni allegati
 			$this->print_header = false;

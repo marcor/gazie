@@ -61,6 +61,7 @@ foreach ($tn as $v) {
     $gTables[$v] = $table_prefix . "_" . $v;
 }
 
+date_default_timezone_set('Europe/Rome');
 
 if ($gazie_locale != "") {
   setlocale(LC_TIME, $gazie_locale);
