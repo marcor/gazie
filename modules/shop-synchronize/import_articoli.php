@@ -240,12 +240,12 @@ if (isset($_POST['conferma'])) { // se confermato
 			if ($esiste AND $_GET['upd']=="updval"){ // se esiste l'articolo ed è attivo l'update, aggiorno l'articolo
 				
 					// Body text
-					if (strlen(preg_replace('/[\x00-\x1f]/','',htmlspecialchars($product->Description)))>0 AND $_GET['upddes']=="upddes"){ // se c'è una descrizione estesa body_text ed è selezionata
+					if (strlen(htmlspecialchars_decode($product->Description))>0 AND $_GET['upddes']=="upddes"){ // se c'è una descrizione estesa body_text ed è selezionata
 						if ($product->Type=="parent"){ // se è un parent					
-							gaz_dbi_query("UPDATE ". $gTables['artico_group'] . " SET large_descri = '". htmlspecialchars_decode (addslashes(preg_replace('/[\x00-\x1f]/','',htmlspecialchars($product->Description)))) ."' WHERE ref_ecommerce_id_main_product = '".$_POST['product_id'.$ord]."'");
+							gaz_dbi_query("UPDATE ". $gTables['artico_group'] . " SET large_descri = '". addslashes (htmlspecialchars_decode ($product->Description)) ."' WHERE ref_ecommerce_id_main_product = '".$_POST['product_id'.$ord]."'");
 						} else {					
 							$esist = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", "artico_".$esiste['codice']);
-							$form['body_text'] = htmlspecialchars_decode (preg_replace('/[\x00-\x1f]/','',htmlspecialchars($product->Description)));
+							$form['body_text'] = htmlspecialchars_decode ($product->Description);// qui addslashes non si deve mettere perché ci pensa ga_dbi-...
 							if($esiste){
 								$form['table_name_ref']="artico_".$esiste['codice'];
 							} else {
@@ -305,10 +305,10 @@ if (isset($_POST['conferma'])) { // se confermato
 				}								
 				
 				if ($product->Type=="parent"){// se è un parent ***<<<<<
-					if (strlen(preg_replace('/[\x00-\x1f]/','',htmlspecialchars($product->Description)))>0 AND $_GET['impdes']!=="dwldes"){ // se non è stata selezionata la descrizione estesa
+					if (strlen(htmlspecialchars_decode($product->Description))>0 AND $_GET['impdes']!=="dwldes"){ // se non è stata selezionata la descrizione estesa
 						$product->Description = ""; // la annullo
 					}
-					gaz_dbi_query("INSERT INTO " . $gTables['artico_group'] . "(descri,large_descri,image,web_url,ref_ecommerce_id_main_product,web_public,depli_public,adminid) VALUES ('" . addslashes($product->Name) . "', '" . htmlspecialchars_decode (addslashes(preg_replace('/[\x00-\x1f]/','',htmlspecialchars($product->Description)))). "', '" . $immagine . "', '". $product->WebUrl . "', '". $_POST['product_id'.$ord] . "', '".$web_public."', '1', '". $admin_aziend['adminid'] ."')");
+					gaz_dbi_query("INSERT INTO " . $gTables['artico_group'] . "(descri,large_descri,image,web_url,ref_ecommerce_id_main_product,web_public,depli_public,adminid) VALUES ('" . addslashes($product->Name) . "', '" . addslashes (htmlspecialchars_decode ($product->Description)). "', '" . $immagine . "', '". $product->WebUrl . "', '". $_POST['product_id'.$ord] . "', '".$web_public."', '1', '". $admin_aziend['adminid'] ."')");
 				} else {
 					
 					if ($_GET['imppre']=="dwlprice") { // se devo inserire anche il prezzo web
@@ -316,8 +316,8 @@ if (isset($_POST['conferma'])) { // se confermato
 					} else { // altrimenti lo inserisco senza prezzo web
 						gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(web_url,web_multiplier,ecomm_option_attribute,catmer,barcode,peso_specifico,codice,ref_ecommerce_id_product,descri,web_mu,unimis,image,web_public,depli_public,aliiva,id_artico_group) VALUES ('". $product->WebUrl ."', '1', '". $arrayvar ."', '" . $category . "', '" . $product->BarCode . "', '" . $product->Weight . "', '" . $_POST['codice'.$ord] . "', '" . $_POST['product_id'.$ord]. "', '" . addslashes($product->Name). "', '".$product->Unimis . "', '".$product->Unimis."', '".$immagine."', '".$web_public."', '1', '".$vat['codice']."', '". $id_artico_group ."')");
 					}
-					if (strlen(preg_replace('/[\x00-\x1f]/','',htmlspecialchars($product->Description)))>0 AND $_GET['impdes']=="dwldes"){ // se c'è una descrizione estesa - body_text ed è selezionata
-						$form['body_text'] = htmlspecialchars_decode (preg_replace('/[\x00-\x1f]/','',htmlspecialchars($product->Description)));
+					if (strlen(htmlspecialchars_decode($product->Description))>0 AND $_GET['impdes']=="dwldes"){ // se c'è una descrizione estesa - body_text ed è selezionata
+						$form['body_text'] = htmlspecialchars_decode ($product->Description);// qui addslashes non si deve mettere perché ci pensa il successivo gaz_dbi_table_insert
 						$form['table_name_ref']="artico_".$_POST['codice'.$ord];
 						$form['lang_id']=1;
 						gaz_dbi_table_insert('body_text', $form); // la scrivo nel DB

@@ -684,7 +684,7 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
     }else{// altrimenti carico di default inglese
       require("./lang.english.php");
     }
-    $access="";
+    $access=" ";
     $script_transl = $strScript["admin_booking.php"];
     $sql = "SELECT val FROM ".$azTables."company_config"." WHERE var = 'vacation_url_user' LIMIT 1";
     $vacation_url_user="";
