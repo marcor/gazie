@@ -21,6 +21,8 @@
   scriva   alla   Free  Software Foundation, 51 Franklin Street,
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
+
+
  */
 require("../../library/include/datlib.inc.php");
 
@@ -53,6 +55,8 @@ require("../../library/include/datlib.inc.php");
 // m1 fine Modificato a mano
 
 $admin_aziend = checkAdmin();
+
+$suggest_new_codart = gaz_dbi_get_row($gTables['company_config'], 'var', 'suggest_new_codart');
 
 $msg = array('err' => array(), 'war' => array());
 $modal_ok_insert = false;
@@ -144,7 +148,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
   $form['body_text'] = filter_input(INPUT_POST, 'body_text');
   /** ENRICO FEDELE */
   /* Controllo se il submit viene da una modale */
-  if (isset($_POST['Submit']) || ($modal === true && isset($_POST['mode-act']))) { // ***  CONFERMA TUTTO ***
+  if (isset($_POST['Confirm']) || ($modal === true && isset($_POST['mode-act']))) { // ***  CONFERMA TUTTO ***
     /** ENRICO FEDELE */
     if ($toDo == 'update') {  // controlli in caso di modifica
         if ($form['codice'] != $form['ref_code']) { // se sto modificando il codice originario
@@ -601,7 +605,7 @@ function choicePosition(idartico)
       var titleacc = '';
       accidartico = '';
       titleacc += "<br/>" + $(this).attr("label");
-      accidartico = idartico;
+      accidartico = $('#actcodice').val();
       $("#workingrow").append('a: '+titleacc);
 			$(".position_name").replaceWith(ui.item.label);
 			$("#confirm_position").dialog({
@@ -625,7 +629,7 @@ function choicePosition(idartico)
               type: 'GET',
               url: './operat.php',
               success: function(output){
-                window.location.replace("./admin_artico.php?Update&codice="+idartico+"&tab=magazz");
+                $("#confirmform").click();
               }
             });
             }
@@ -730,7 +734,7 @@ if ($modal_ok_insert === true) {
                 <li><a data-toggle="pill" href="#magazz">Magazzino</a></li>
                 <li><a data-toggle="pill" href="#contab">Contabilità</a></li>
                 <li><a data-toggle="pill" href="#chifis">Chimico-fisiche</a></li>
-                <li style="float: right;"><?php echo '<input name="Submit" type="submit" class="btn btn-warning" value="' . ucfirst($script_transl[$toDo]) . '" />'; ?></li>
+                <li style="float: right;"><?php echo '<input name="Confirm" type="submit" class="btn btn-warning" value="' . ucfirst($script_transl[$toDo]) . '" />'; ?></li>
             </ul>
             <div class="tab-content">
               <div id="home" class="tab-pane fade in active">
@@ -738,7 +742,7 @@ if ($modal_ok_insert === true) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="codice" class="col-sm-4 control-label"><?php echo $script_transl['codice']; ?></label>
-                            <input class="col-sm-4" type="text" value="<?php echo ((isset($_POST['cod']))? serchCOD():$form["codice"]); ?>" name="codice" id="suggest_new_codart" maxlength="32" tabindex="1" /><input class="btn btn-xs" type="submit" value="" />
+                            <input class="col-sm-4" type="text" value="<?php echo ((isset($_POST['cod']))? serchCOD():$form["codice"]); ?>" name="codice" id="actcodice" <?php echo $suggest_new_codart?'':'id="suggest_new_codart"'; ?> maxlength="32" tabindex="1" /><input class="btn btn-xs" type="submit" value="" />
 							&nbsp;<input type="submit" name="cod" value="Genera codice" <?php  echo ($toDo == 'update')?'disabled':'';?>></td> <!-- M1 modificato a mano -->
                         </div>
                     </div>
@@ -1374,7 +1378,7 @@ if ($modal === false && $toDo=='update') {
         echo '<div class="col-sm-4 text-left"><input name="none" type="submit" value="" disabled></div>';
     }
     /** ENRICO FEDELE */
-    echo '<div class="col-sm-8 text-center"><input name="Submit" type="submit" class="btn btn-warning" value="' . ucfirst($script_transl[$toDo]) . '" /></div>';
+    echo '<div class="col-sm-8 text-center"><input name="Confirm" id="confirmform" type="submit" class="btn btn-warning" value="' . ucfirst($script_transl[$toDo]) . '" /></div>';
 }
 ?>
             </div>
