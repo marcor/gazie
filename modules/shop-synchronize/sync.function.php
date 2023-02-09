@@ -928,115 +928,123 @@ class shopsynchronizegazSynchro {
 
 						// Gestione righi ordine
 						foreach($xml->Documents->Document[$countDocument]->Rows->children() as $orderrow) { // carico le righe dell'ordine
+              if ($orderrow->Type <> "discount"){
+                // controllo se esiste l'articolo in GAzie
+                $ckart = gaz_dbi_get_row($gTables['artico'], "ref_ecommerce_id_product", $orderrow->Id);
+                if ($ckart){
+                  $codart=$ckart['codice']; // se esiste ne prendo il codice come $codart
+                  $descri=$ckart['descri'].$orderrow->AddDescription;// se esiste ne prendo descri e ci aggiungo una eventuale descrizione aggiuntiva
+                }
+                if (!$ckart){ // se non esiste creo un nuovo articolo su gazie
+                  if ($orderrow->Stock>0){
+                    $good_or_service=0;//come servizio, non deve movimentare il magazzino
+                  } else {
+                    $good_or_service=1; //come merce, movimenta il magazzino
+                  }
+                  if ($orderrow->VatAli==""){ // se il sito non ha mandato l'aliquota IVA dell'articolo di GAzie ci metto quella che deve mandare come base aziendale per le spese
+                    $orderrow->VatCode=$order->CostVatCode;
+                    $orderrow->VatAli=$order->CostVatAli;
+                  }
 
-							// controllo se esiste l'articolo in GAzie
-							$ckart = gaz_dbi_get_row($gTables['artico'], "ref_ecommerce_id_product", $orderrow->Id);
-							if ($ckart){
-								$codart=$ckart['codice']; // se esiste ne prendo il codice come $codart
-								$descri=$ckart['descri'].$orderrow->AddDescription;// se esiste ne prendo descri e ci aggiungo una eventuale descrizione aggiuntiva
-							}
-							if (!$ckart){ // se non esiste creo un nuovo articolo su gazie
-								if ($orderrow->Stock>0){
-									$good_or_service=0;//come servizio, non deve movimentare il magazzino
-								} else {
-									$good_or_service=1; //come merce, movimenta il magazzino
-								}
-								if ($orderrow->VatAli==""){ // se il sito non ha mandato l'aliquota IVA dell'articolo di GAzie ci metto quella che deve mandare come base aziendale per le spese
-									$orderrow->VatCode=$order->CostVatCode;
-									$orderrow->VatAli=$order->CostVatAli;
-								}
+                  if ($orderrow->VatCode<1){ // se il sito non ha mandato il codice iva di GAzie cerco di ricavarlo dalla tabella aliiva
+                    $vat = gaz_dbi_get_row($gTables['aliiva'], "aliquo", $orderrow->VatAli, " AND tipiva = 'I'");
+                    $codvat=$vat['codice'];
+                    $aliiva=$vat['aliquo'];
+                  } else {
+                    $codvat=$orderrow->VatCode;
+                    $aliiva=$orderrow->VatAli;
+                  }
+                  if ($order->PricesIncludeVat=="true" AND floatval($orderrow->Price) == 0){ // se l'e-commerce include l'iva e non ha mandato il prezzo imponibile, scorporo l'iva dal prezzo dell'articolo
+                    $div=floatval("1.".$aliiva);
+                    $Price=floatval($orderrow->PriceVATincl) / $div;
+                  } else {// se l'ecommerce non iclude l'iva uso il prezzo imponibile
+                    $Price=floatval($orderrow->Price);
+                  }
 
-								if ($orderrow->VatCode<1){ // se il sito non ha mandato il codice iva di GAzie cerco di ricavarlo dalla tabella aliiva
-									$vat = gaz_dbi_get_row($gTables['aliiva'], "aliquo", $orderrow->VatAli, " AND tipiva = 'I'");
-									$codvat=$vat['codice'];
-									$aliiva=$vat['aliquo'];
-								} else {
-									$codvat=$orderrow->VatCode;
-									$aliiva=$orderrow->VatAli;
-								}
-								if ($order->PricesIncludeVat=="true" AND floatval($orderrow->Price) == 0){ // se l'e-commerce include l'iva e non ha mandato il prezzo imponibile, scorporo l'iva dal prezzo dell'articolo
-									$div=floatval("1.".$aliiva);
-									$Price=floatval($orderrow->PriceVATincl) / $div;
-								} else {// se l'ecommerce non iclude l'iva uso il prezzo imponibile
-									$Price=floatval($orderrow->Price);
-								}
+                  $id_artico_group="";
+                  $arrayvar="";
+                  if ($orderrow->ParentId > 0 OR $orderrow->Type == "variant" ){ // se è una variante
 
-								$id_artico_group="";
-								$arrayvar="";
-								if ($orderrow->ParentId > 0 OR $orderrow->Type == "variant" ){ // se è una variante
+                    // controllo se esiste il suo artico_group/padre in GAzie
+                    unset($parent);
+                    $parent = gaz_dbi_get_row($gTables['artico_group'], "ref_ecommerce_id_main_product", $orderrow->ParentId);// trovo il padre in GAzie
+                    if ($parent){ // se esiste il padre
+                      $id_artico_group=$parent['id_artico_group']; // imposto il riferimento al padre
+                    } else {// se non esiste lo devo creare con i pochi dati che ho
+                      $parent['descri']=$orderrow->Description;
+                      gaz_dbi_query("INSERT INTO " . $gTables['artico_group'] . "(descri,large_descri,image,web_url,ref_ecommerce_id_main_product,web_public,depli_public,adminid) VALUES ('" . addslashes($parent['descri']) . "', '" . htmlspecialchars_decode ($parent['descri']). "', '', '', '". $orderrow->ParentId . "', '1', '1', '". $admin_aziend['adminid'] ."')");
+                      $id_artico_group=gaz_dbi_last_id(); // imposto il riferimento al padre
+                    }
 
-									// controllo se esiste il suo artico_group/padre in GAzie
-									unset($parent);
-									$parent = gaz_dbi_get_row($gTables['artico_group'], "ref_ecommerce_id_main_product", $orderrow->ParentId);// trovo il padre in GAzie
-									if ($parent){ // se esiste il padre
-										$id_artico_group=$parent['id_artico_group']; // imposto il riferimento al padre
-									} else {// se non esiste lo devo creare con i pochi dati che ho
-										$parent['descri']=$orderrow->Description;
-										gaz_dbi_query("INSERT INTO " . $gTables['artico_group'] . "(descri,large_descri,image,web_url,ref_ecommerce_id_main_product,web_public,depli_public,adminid) VALUES ('" . addslashes($parent['descri']) . "', '" . htmlspecialchars_decode ($parent['descri']). "', '', '', '". $orderrow->ParentId . "', '1', '1', '". $admin_aziend['adminid'] ."')");
-										$id_artico_group=gaz_dbi_last_id(); // imposto il riferimento al padre
-									}
+                    if (strlen($orderrow->Description)<2){ // se non c'è la descrizione della variante
+                      $orderrow->Description=$parent['descri']."-".$orderrow->Characteristic;// ci metto quella del padre accodandoci la variante
+                    }
 
-									if (strlen($orderrow->Description)<2){ // se non c'è la descrizione della variante
-										$orderrow->Description=$parent['descri']."-".$orderrow->Characteristic;// ci metto quella del padre accodandoci la variante
-									}
+                    // creo un json array per la variante
+                    $arrayvar= array("var_id" => floatval($orderrow->CharacteristicId), "var_name" => strval($orderrow->Characteristic));
+                    $arrayvar = json_encode ($arrayvar);
 
-									// creo un json array per la variante
-									$arrayvar= array("var_id" => floatval($orderrow->CharacteristicId), "var_name" => strval($orderrow->Characteristic));
-									$arrayvar = json_encode ($arrayvar);
+                  }
 
-								}
+                  // se l'e-commerce non ha inviato un codice me lo creo
+                  if (strlen($orderrow->Code)<1){
+                    $orderrow->Code = substr($orderrow->Description,0,10)."-".substr($orderrow->Id,-4);
+                  }
 
-								// se l'e-commerce non ha inviato un codice me lo creo
-								if (strlen($orderrow->Code)<1){
-									$orderrow->Code = substr($orderrow->Description,0,10)."-".substr($orderrow->Id,-4);
-								}
+                  // ricongiungo la categoria dell'e-commerce con quella di GAzie, se esiste
+                  $category="";
+                  if (intval($orderrow->Category)>0){
+                    $cat = gaz_dbi_get_row($gTables['catmer'], "ref_ecommerce_id_category", addslashes (substr($orderrow->Category,0,15)));// controllo se esiste in GAzie
+                    if ($cat){
+                      $category=$cat['codice'];
+                    }
+                  }
+                  // se non esiste la categoria in GAzie, la creo
+                  if ($category == 0 OR $category == ""){
+                    $ultimo_codice=array();
+                    $rs_ultimo_codice = gaz_dbi_dyn_query("*", $gTables['catmer'], 1 ,'codice desc',0,1);
+                    $ultimo_codice = gaz_dbi_fetch_array($rs_ultimo_codice);
+                    $cat['codice'] = $ultimo_codice['codice']+1;
+                    $cat['ref_ecommerce_id_category'] = $orderrow->Category;
+                    $cat['descri'] = $orderrow->ProductCategory;
+                    gaz_dbi_table_insert('catmer',$cat);
+                    // assegno l'id categoria al prossimo insert artico
+                    $category=$cat['codice'];
+                  }
 
-								// ricongiungo la categoria dell'e-commerce con quella di GAzie, se esiste
-								$category="";
-								if (intval($orderrow->Category)>0){
-									$cat = gaz_dbi_get_row($gTables['catmer'], "ref_ecommerce_id_category", addslashes (substr($orderrow->Category,0,15)));// controllo se esiste in GAzie
-									if ($cat){
-										$category=$cat['codice'];
-									}
-								}
-								// se non esiste la categoria in GAzie, la creo
-								if ($category == 0 OR $category == ""){
-									$ultimo_codice=array();
-									$rs_ultimo_codice = gaz_dbi_dyn_query("*", $gTables['catmer'], 1 ,'codice desc',0,1);
-									$ultimo_codice = gaz_dbi_fetch_array($rs_ultimo_codice);
-									$cat['codice'] = $ultimo_codice['codice']+1;
-									$cat['ref_ecommerce_id_category'] = $orderrow->Category;
-									$cat['descri'] = $orderrow->ProductCategory;
-									gaz_dbi_table_insert('catmer',$cat);
-									// assegno l'id categoria al prossimo insert artico
-									$category=$cat['codice'];
-								}
+                  // prima di inserire il nuovo articolo controllo se il suo codice è stato già usato
+                  unset($usato);
+                  $usato = gaz_dbi_get_row($gTables['artico'], "codice", $orderrow->Code);// controllo se il codice è già stato usato in GAzie
+                  if ($usato){ // se il codice è già in uso lo modifico accodandoci l'ID
+                    $orderrow->Code=substr($orderrow->Code,0,10)."-".substr($orderrow->Id,0,4);
+                  }
 
-								// prima di inserire il nuovo articolo controllo se il suo codice è stato già usato
-								unset($usato);
-								$usato = gaz_dbi_get_row($gTables['artico'], "codice", $orderrow->Code);// controllo se il codice è già stato usato in GAzie
-								if ($usato){ // se il codice è già in uso lo modifico accodandoci l'ID
-									$orderrow->Code=substr($orderrow->Code,0,10)."-".substr($orderrow->Id,0,4);
-								}
+                  gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(peso_specifico,web_mu,web_multiplier,ecomm_option_attribute,id_artico_group,codice,descri,ref_ecommerce_id_product,good_or_service,unimis,catmer,preve2,web_price,web_public,aliiva,codcon,adminid) VALUES ('". $orderrow->ProductWeight ."', '". $orderrow->MeasureUnit ."', '1', '". $arrayvar ."', '". $id_artico_group ."', '". substr($orderrow->Code,0,15) ."', '". addslashes($orderrow->Description) ."', '". $orderrow->Id ."', '". $good_or_service ."', '" . $orderrow->MeasureUnit . "', '" .$category . "', '". $Price ."', '". $orderrow->Price ."', '1', '".$codvat."', '420000006', '" . $admin_aziend['adminid'] . "')");
+                  $codart= substr($orderrow->Code,0,15);// dopo averlo creato ne prendo il codice come $codart
+                  $descri= $orderrow->Description.$orderrow->AddDescription; //prendo anche la descrizione e ci aggiungo una eventuale descrizione aggiuntiva
 
-								gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(peso_specifico,web_mu,web_multiplier,ecomm_option_attribute,id_artico_group,codice,descri,ref_ecommerce_id_product,good_or_service,unimis,catmer,preve2,web_price,web_public,aliiva,codcon,adminid) VALUES ('". $orderrow->ProductWeight ."', '". $orderrow->MeasureUnit ."', '1', '". $arrayvar ."', '". $id_artico_group ."', '". substr($orderrow->Code,0,15) ."', '". addslashes($orderrow->Description) ."', '". $orderrow->Id ."', '". $good_or_service ."', '" . $orderrow->MeasureUnit . "', '" .$category . "', '". $Price ."', '". $orderrow->Price ."', '1', '".$codvat."', '420000006', '" . $admin_aziend['adminid'] . "')");
-								$codart= substr($orderrow->Code,0,15);// dopo averlo creato ne prendo il codice come $codart
-								$descri= $orderrow->Description.$orderrow->AddDescription; //prendo anche la descrizione e ci aggiungo una eventuale descrizione aggiuntiva
+                } else { // se esiste l'articolo in GAzie uso comunque il prezzo dell'e-commerce
+                  $codvat=gaz_dbi_get_row($gTables['artico'], "codice", $codart)['aliiva'];
+                  $aliiva=$orderrow->VatAli;
+                  if ($order->PricesIncludeVat=="true" AND floatval($orderrow->Price) == 0){ // se l'e-commerce include l'iva e non ha mandato il prezzo imponibile, scorporo l'iva dal prezzo dell'articolo
+                    $div=floatval("1.".$aliiva);
+                    $Price=floatval($orderrow->PriceVATincl) / $div;
+                  } else {// se l'ecommerce non iclude l'iva uso il prezzo imponibile
+                    $Price=floatval($orderrow->Price);
+                  }
+                }
 
-							} else { // se esiste l'articolo in GAzie uso comunque il prezzo dell'e-commerce
-								$codvat=gaz_dbi_get_row($gTables['artico'], "codice", $codart)['aliiva'];
-								$aliiva=$orderrow->VatAli;
-								if ($order->PricesIncludeVat=="true" AND floatval($orderrow->Price) == 0){ // se l'e-commerce include l'iva e non ha mandato il prezzo imponibile, scorporo l'iva dal prezzo dell'articolo
-									$div=floatval("1.".$aliiva);
-									$Price=floatval($orderrow->PriceVATincl) / $div;
-								} else {// se l'ecommerce non iclude l'iva uso il prezzo imponibile
-									$Price=floatval($orderrow->Price);
-								}
-							}
-
-							// salvo rigo su database tabella rigbro
-							$rigbro['id_tes']=intval($id_tesbro);$rigbro['tiprig']=0;$rigbro['codart']=$codart;$rigbro['descri']=addslashes($descri);$rigbro['unimis']=$orderrow->MeasureUnit;$rigbro['quanti']=$orderrow->Qty;$rigbro['prelis']=$Price;$rigbro['sconto']=$percdisc;$rigbro['codvat']=$codvat;$rigbro['codric']='420000006';$rigbro['pervat']=$aliiva;$rigbro['status']='ONLINE-SHOP';
-							rigbroInsert($rigbro);
+                // salvo rigo su database tabella rigbro
+                $rigbro['id_tes']=intval($id_tesbro);$rigbro['tiprig']=0;$rigbro['codart']=$codart;$rigbro['descri']=addslashes($descri);$rigbro['unimis']=$orderrow->MeasureUnit;$rigbro['quanti']=$orderrow->Qty;$rigbro['prelis']=$Price;$rigbro['sconto']=$percdisc;$rigbro['codvat']=$codvat;$rigbro['codric']='420000006';$rigbro['pervat']=$aliiva;$rigbro['status']='ONLINE-SHOP';
+                rigbroInsert($rigbro);
+              }else{
+                // salvo rigo SCONTO su database tabella rigbro
+                $vat = gaz_dbi_get_row($gTables['aliiva'], "aliquo", $orderrow->VatAli, " AND tipiva = 'I'");
+                $codvat=$vat['codice'];
+                $aliiva=$vat['aliquo'];
+                $rigbro['id_tes']=intval($id_tesbro);$rigbro['tiprig']=0;$rigbro['codart']='';$rigbro['descri']=addslashes($orderrow->Description);$rigbro['unimis']='n';$rigbro['quanti']=$orderrow->Qty;$rigbro['prelis']= -$orderrow->Price;$rigbro['sconto']='';$rigbro['codvat']=$codvat;$rigbro['codric']='420000006';$rigbro['pervat']=$aliiva;$rigbro['status']='ONLINE-SHOP';
+                rigbroInsert($rigbro);
+              }
 						}
             if (strlen($order->CustomerNote)>3){// se l'ecommerce ha inviato delle note all'ordine, le accodo ai righi come rigo descrittivo
               $rigbro['id_tes']=intval($id_tesbro);$rigbro['tiprig']=2;$rigbro['codart']='';$rigbro['descri']=addslashes(substr($order->CustomerNote, 0, 1000));$rigbro['unimis']='';$rigbro['quanti']=0;$rigbro['prelis']=0;$rigbro['sconto']=0;$rigbro['codvat']=0;$rigbro['codric']=0;$rigbro['pervat']=0;$rigbro['status']='ONLINE-SHOP';

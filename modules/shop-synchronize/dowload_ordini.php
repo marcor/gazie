@@ -170,118 +170,127 @@ if (isset($_POST['conferma']) && isset($_POST['num_orders'])) { // se confermato
 
 			// Gestione righi ordine
 			for ($row=0; $row<=$_POST['num_rows'.$ord]; $row++){
-
-				// controllo se esiste l'articolo in GAzie
-				$ckart = gaz_dbi_get_row($gTables['artico'], "ref_ecommerce_id_product", $_POST['refid'.$ord.$row]);
-				if ($ckart){
-					$codart=$ckart['codice']; // se esiste ne prendo il codice come $codart
-					$descri=$ckart['descri'].$_POST['adddescri'.$ord.$row];// se esiste, lo metto in $descri e aggiungo l'eventuale adddescription
-				}
-
-				if (!$ckart){ // se non esiste, creo un nuovo articolo su gazie
-					if ($_POST['stock'.$ord.$row]>0){
-						$good_or_service=0;
-					} else {
-						$good_or_service=1;
-					}
-					if ($_POST['aliiva'.$ord.$row]==""){ // se il sito non ha mandato l'aliquota IVA dell'articolo ci metto quello che deve mandare come base aziendale riservato alle spese
-						$_POST['codvat'.$ord.$row]=$_POST['codvatcost'.$ord];
-						$_POST['aliiva'.$ord.$row]=$_POST['aliivacost'.$ord];
-					}
-					if ($_POST['codvat'.$ord.$row]<1){ // se il sito non ha mandato il codice iva di GAzie cerco di ricavarlo dalla tabella aliiva
-						$vat = gaz_dbi_get_row($gTables['aliiva'], "aliquo", $_POST['aliiva'.$ord.$row], " AND tipiva = 'I'");
-						$codvat=$vat['codice'];
-						$aliiva=$vat['aliquo'];
-					} else {
-						$codvat=$_POST['codvat'.$ord.$row];
-						$aliiva=$_POST['aliiva'.$ord.$row];
-					}
-					if ($includevat=="true" AND $_POST['prelis_imp'.$ord.$row]==0){ // se l'e-commerce include l'iva e non ha mandato il prezzo imponibile, scorporo l'iva dal prezzo dell'articolo
-						$div=0;
-						$div="1.".intval($aliiva);
-						$prelis=$_POST['prelis_vatinc'.$ord.$row] / $div;
-					} elseif ($includevat=="true" AND $_POST['prelis_imp'.$ord.$row]>0) {
-						$prelis=$_POST['prelis_imp'.$ord.$row];
-					}
-					if ($includevat!=="true"){ // se l'ecommerce non iclude l'iva uso il prezzo imponibile
-						$prelis=$_POST['prelis_imp'.$ord.$row];
+				
+				if ($_POST['type'.$ord.$row] <> "discount"){
+					// controllo se esiste l'articolo in GAzie
+					$ckart = gaz_dbi_get_row($gTables['artico'], "ref_ecommerce_id_product", $_POST['refid'.$ord.$row]);
+					if ($ckart){
+						$codart=$ckart['codice']; // se esiste ne prendo il codice come $codart
+						$descri=$ckart['descri'].$_POST['adddescri'.$ord.$row];// se esiste, lo metto in $descri e aggiungo l'eventuale adddescription
 					}
 
-					$id_artico_group="";
-					$arrayvar="";
-					if ($_POST['product_parent_id'.$ord.$row] > 0 OR $_POST['type'.$ord.$row] == "variant" ){ // se è una variante
-
-						// controllo se esiste il suo artico_group/padre in GAzie
-						unset($parent);
-						$parent = gaz_dbi_get_row($gTables['artico_group'], "ref_ecommerce_id_main_product", $_POST['product_parent_id'.$ord.$row]);// trovo il padre in GAzie
-						if ($parent){ // se esiste il padre
-							$id_artico_group=$parent['id_artico_group']; // imposto il riferimento al padre
-						} else {// se non esiste lo devo creare con i pochi dati che ho
-							$parent['descri']=$_POST['descri'.$ord.$row];
-							gaz_dbi_query("INSERT INTO " . $gTables['artico_group'] . "(descri,large_descri,image,web_url,ref_ecommerce_id_main_product,web_public,depli_public,adminid) VALUES ('" . addslashes($parent['descri']) . "', '" . htmlspecialchars_decode (addslashes($parent['descri'])). "', '', '', '". substr($_POST['product_parent_id'.$ord.$row], 0, 50) . "', '1', '1', '". $admin_aziend['adminid'] ."')");
-							$id_artico_group=gaz_dbi_last_id(); // imposto il riferimento al padre
+					if (!$ckart){ // se non esiste, creo un nuovo articolo su gazie
+						if ($_POST['stock'.$ord.$row]>0){
+							$good_or_service=0;
+						} else {
+							$good_or_service=1;
+						}
+						if ($_POST['aliiva'.$ord.$row]==""){ // se il sito non ha mandato l'aliquota IVA dell'articolo ci metto quello che deve mandare come base aziendale riservato alle spese
+							$_POST['codvat'.$ord.$row]=$_POST['codvatcost'.$ord];
+							$_POST['aliiva'.$ord.$row]=$_POST['aliivacost'.$ord];
+						}
+						if ($_POST['codvat'.$ord.$row]<1){ // se il sito non ha mandato il codice iva di GAzie cerco di ricavarlo dalla tabella aliiva
+							$vat = gaz_dbi_get_row($gTables['aliiva'], "aliquo", $_POST['aliiva'.$ord.$row], " AND tipiva = 'I'");
+							$codvat=$vat['codice'];
+							$aliiva=$vat['aliquo'];
+						} else {
+							$codvat=$_POST['codvat'.$ord.$row];
+							$aliiva=$_POST['aliiva'.$ord.$row];
+						}
+						if ($includevat=="true" AND $_POST['prelis_imp'.$ord.$row]==0){ // se l'e-commerce include l'iva e non ha mandato il prezzo imponibile, scorporo l'iva dal prezzo dell'articolo
+							$div=0;
+							$div="1.".intval($aliiva);
+							$prelis=$_POST['prelis_vatinc'.$ord.$row] / $div;
+						} elseif ($includevat=="true" AND $_POST['prelis_imp'.$ord.$row]>0) {
+							$prelis=$_POST['prelis_imp'.$ord.$row];
+						}
+						if ($includevat!=="true"){ // se l'ecommerce non iclude l'iva uso il prezzo imponibile
+							$prelis=$_POST['prelis_imp'.$ord.$row];
 						}
 
-						if (strlen($_POST['descri'.$ord.$row])<2){ // se non c'è la descrizione della variante
-							$_POST['descri'.$ord.$row]=$parent['descri']."-".$_POST['characteristic'.$ord.$row];// ci metto quella del padre accodandoci la variante
+						$id_artico_group="";
+						$arrayvar="";
+						if ($_POST['product_parent_id'.$ord.$row] > 0 OR $_POST['type'.$ord.$row] == "variant" ){ // se è una variante
+
+							// controllo se esiste il suo artico_group/padre in GAzie
+							unset($parent);
+							$parent = gaz_dbi_get_row($gTables['artico_group'], "ref_ecommerce_id_main_product", $_POST['product_parent_id'.$ord.$row]);// trovo il padre in GAzie
+							if ($parent){ // se esiste il padre
+								$id_artico_group=$parent['id_artico_group']; // imposto il riferimento al padre
+							} else {// se non esiste lo devo creare con i pochi dati che ho
+								$parent['descri']=$_POST['descri'.$ord.$row];
+								gaz_dbi_query("INSERT INTO " . $gTables['artico_group'] . "(descri,large_descri,image,web_url,ref_ecommerce_id_main_product,web_public,depli_public,adminid) VALUES ('" . addslashes($parent['descri']) . "', '" . htmlspecialchars_decode (addslashes($parent['descri'])). "', '', '', '". substr($_POST['product_parent_id'.$ord.$row], 0, 50) . "', '1', '1', '". $admin_aziend['adminid'] ."')");
+								$id_artico_group=gaz_dbi_last_id(); // imposto il riferimento al padre
+							}
+
+							if (strlen($_POST['descri'.$ord.$row])<2){ // se non c'è la descrizione della variante
+								$_POST['descri'.$ord.$row]=$parent['descri']."-".$_POST['characteristic'.$ord.$row];// ci metto quella del padre accodandoci la variante
+							}
+
+							// creo un json array per la variante
+							$arrayvar= array("var_id" => floatval($_POST['characteristic_id'.$ord.$row]), "var_name" => $_POST['characteristic'.$ord.$row]);
+							$arrayvar = json_encode ($arrayvar);
+
 						}
 
-						// creo un json array per la variante
-						$arrayvar= array("var_id" => floatval($_POST['characteristic_id'.$ord.$row]), "var_name" => $_POST['characteristic'.$ord.$row]);
-						$arrayvar = json_encode ($arrayvar);
+						// ricongiungo la categoria dell'e-commerce con quella di GAzie, se esiste
+						$category="";
+						if (intval($_POST['catmer'.$ord.$row])>0){
+							$cat = gaz_dbi_get_row($gTables['catmer'], "ref_ecommerce_id_category", addslashes (substr($_POST['catmer'.$ord.$row],0,15)));// controllo se esiste in GAzie
+							if ($cat){
+								$category=$cat['codice'];
+							}
+						}
 
-					}
-
-					// ricongiungo la categoria dell'e-commerce con quella di GAzie, se esiste
-					$category="";
-					if (intval($_POST['catmer'.$ord.$row])>0){
-						$cat = gaz_dbi_get_row($gTables['catmer'], "ref_ecommerce_id_category", addslashes (substr($_POST['catmer'.$ord.$row],0,15)));// controllo se esiste in GAzie
-						if ($cat){
+						// se non esiste la categoria in GAzie, la creo
+						if ($category == 0 OR $category == ""){
+							$rs_ultimo_codice = gaz_dbi_dyn_query("*", $gTables['catmer'], 1 ,'codice desc',0,1);
+							$ultimo_codice = gaz_dbi_fetch_array($rs_ultimo_codice);
+							$cat['codice'] = $ultimo_codice['codice']+1;
+							$cat['ref_ecommerce_id_category'] = substr($_POST['catmer'.$ord.$row], 0, 50);
+							$cat['descri'] = substr($_POST['catmer_descri'.$ord.$row], 0, 50);
+							gaz_dbi_table_insert('catmer',$cat);
+							// assegno l'id categoria al prossimo insert artico
 							$category=$cat['codice'];
 						}
-					}
 
-					// se non esiste la categoria in GAzie, la creo
-					if ($category == 0 OR $category == ""){
-						$rs_ultimo_codice = gaz_dbi_dyn_query("*", $gTables['catmer'], 1 ,'codice desc',0,1);
-						$ultimo_codice = gaz_dbi_fetch_array($rs_ultimo_codice);
-						$cat['codice'] = $ultimo_codice['codice']+1;
-						$cat['ref_ecommerce_id_category'] = substr($_POST['catmer'.$ord.$row], 0, 50);
-						$cat['descri'] = substr($_POST['catmer_descri'.$ord.$row], 0, 50);
-						gaz_dbi_table_insert('catmer',$cat);
-						// assegno l'id categoria al prossimo insert artico
-						$category=$cat['codice'];
-					}
+						// prima di inserire il nuovo articolo controllo se il suo codice è stato già usato
+						unset($usato);
+						$usato = gaz_dbi_get_row($gTables['artico'], "codice", substr($_POST['codice'.$ord.$row],0,15));// controllo se il codice è già stato usato in GAzie
+						if ($usato){ // se il codice è già in uso lo modifico accodandoci l'ID
+							$_POST['codice'.$ord.$row]=substr($_POST['codice'.$ord.$row],0,10)."-".substr($_POST['refid'.$ord.$row],0,4);
+						}
 
-					// prima di inserire il nuovo articolo controllo se il suo codice è stato già usato
-					unset($usato);
-					$usato = gaz_dbi_get_row($gTables['artico'], "codice", substr($_POST['codice'.$ord.$row],0,15));// controllo se il codice è già stato usato in GAzie
-					if ($usato){ // se il codice è già in uso lo modifico accodandoci l'ID
-						$_POST['codice'.$ord.$row]=substr($_POST['codice'.$ord.$row],0,10)."-".substr($_POST['refid'.$ord.$row],0,4);
-					}
+						// inserisco il nuovo articolo
+						gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(peso_specifico,web_mu,web_multiplier,ecomm_option_attribute,id_artico_group,web_public,codice,descri,ref_ecommerce_id_product,good_or_service,unimis,catmer,".$listinome.",aliiva,codcon,adminid) VALUES ('". $_POST['peso_specifico'.$ord.$row] ."', '". substr($_POST['unimis'.$ord.$row], 0, 3) ."', '1', '". $arrayvar ."', '". $id_artico_group ."', '1', '". addslashes (substr($_POST['codice'.$ord.$row],0,15)) ."', '". addslashes(substr($_POST['descri'.$ord.$row], 0, 50)) ."', '".substr($_POST['refid'.$ord.$row], 0, 50)."', '".$good_or_service."', '" . substr($_POST['unimis'.$ord.$row], 0, 3) . "', '". $category ."', '". $prelis ."', '".$codvat."', '420000006', '" . $admin_aziend['adminid'] . "')");
+						$codart= substr($_POST['codice'.$ord.$row],0,15);// dopo averlo creato ne prendo il codice come $codart
+						$descri= $_POST['descri'.$ord.$row].$_POST['adddescri'.$ord.$row]; //prendo anche la descrizione
 
-					// inserisco il nuovo articolo
-					gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(peso_specifico,web_mu,web_multiplier,ecomm_option_attribute,id_artico_group,web_public,codice,descri,ref_ecommerce_id_product,good_or_service,unimis,catmer,".$listinome.",aliiva,codcon,adminid) VALUES ('". $_POST['peso_specifico'.$ord.$row] ."', '". substr($_POST['unimis'.$ord.$row], 0, 3) ."', '1', '". $arrayvar ."', '". $id_artico_group ."', '1', '". addslashes (substr($_POST['codice'.$ord.$row],0,15)) ."', '". addslashes(substr($_POST['descri'.$ord.$row], 0, 50)) ."', '".substr($_POST['refid'.$ord.$row], 0, 50)."', '".$good_or_service."', '" . substr($_POST['unimis'.$ord.$row], 0, 3) . "', '". $category ."', '". $prelis ."', '".$codvat."', '420000006', '" . $admin_aziend['adminid'] . "')");
-					$codart= substr($_POST['codice'.$ord.$row],0,15);// dopo averlo creato ne prendo il codice come $codart
-					$descri= $_POST['descri'.$ord.$row].$_POST['adddescri'.$ord.$row]; //prendo anche la descrizione
-
-				} else {// se l'articolo esiste in GAzie
-					$codvat=gaz_dbi_get_row($gTables['artico'], "codice", $codart)['aliiva'];
-					$aliiva=$_POST['aliiva'.$ord.$row];
-					if ($includevat=="true" AND floatval($_POST['prelis_imp'.$ord.$row])==0){ // se l'e-commerce include l'iva e non ha mandato il prezzo imponibile, scorporo l'iva dal prezzo dell'articolo
-						$div=0;
-						$div="1.".intval($aliiva);
-						$prelis=$_POST['prelis_vatinc'.$ord.$row] / $div;
-					} elseif ($includevat=="true" AND floatval($_POST['prelis_imp'.$ord.$row])>0) {
-						$prelis=$_POST['prelis_imp'.$ord.$row];
+					} else {// se l'articolo esiste in GAzie
+						$codvat=gaz_dbi_get_row($gTables['artico'], "codice", $codart)['aliiva'];
+						$aliiva=$_POST['aliiva'.$ord.$row];
+						if ($includevat=="true" AND floatval($_POST['prelis_imp'.$ord.$row])==0){ // se l'e-commerce include l'iva e non ha mandato il prezzo imponibile, scorporo l'iva dal prezzo dell'articolo
+							$div=0;
+							$div="1.".intval($aliiva);
+							$prelis=$_POST['prelis_vatinc'.$ord.$row] / $div;
+						} elseif ($includevat=="true" AND floatval($_POST['prelis_imp'.$ord.$row])>0) {
+							$prelis=$_POST['prelis_imp'.$ord.$row];
+						}
+						if ($includevat!=="true"){ // se l'ecommerce non iclude l'iva uso il prezzo imponibile
+							$prelis=$_POST['prelis_imp'.$ord.$row];
+						}
 					}
-					if ($includevat!=="true"){ // se l'ecommerce non iclude l'iva uso il prezzo imponibile
-						$prelis=$_POST['prelis_imp'.$ord.$row];
-					}
+					// salvo rigo su database tabella rigbro
+					$rigbro['id_tes']=intval($id_tesbro);$rigbro['tiprig']=0;$rigbro['codart']=$codart;$rigbro['descri']=addslashes(substr($descri, 0, 50));$rigbro['unimis']=substr($_POST['unimis'.$ord.$row], 0, 3);$rigbro['quanti']=floatval($_POST['quanti'.$ord.$row]);$rigbro['prelis']=$prelis;$rigbro['sconto']=$percdisc;$rigbro['codvat']=$codvat;$rigbro['codric']='420000006';$rigbro['pervat']=$aliiva;$rigbro['status']='ONLINE-SHOP';
+					rigbroInsert($rigbro);
+				}else{
+					// salvo rigo sconto su database tabella rigbro
+					$vat = gaz_dbi_get_row($gTables['aliiva'], "aliquo", $_POST['aliiva'.$ord.$row], " AND tipiva = 'I'");
+					$codvat=$vat['codice'];//ricavo il codice dall'aliquota che mi ha passato l'e-commerce
+					$aliiva=$vat['aliquo'];
+					$rigbro['id_tes']=intval($id_tesbro);$rigbro['tiprig']=0;$rigbro['codart']='';$rigbro['descri']=addslashes(substr($_POST['descri'.$ord.$row], 0, 50));$rigbro['unimis']="n";$rigbro['quanti']=floatval($_POST['quanti'.$ord.$row]);$rigbro['prelis']= -$_POST['prelis_imp'.$ord.$row];$rigbro['sconto']="";$rigbro['codvat']=$codvat;$rigbro['codric']='420000006';$rigbro['pervat']=$aliiva;$rigbro['status']='ONLINE-SHOP';
+					rigbroInsert($rigbro);
 				}
-				// salvo rigo su database tabella rigbro
-				$rigbro['id_tes']=intval($id_tesbro);$rigbro['tiprig']=0;$rigbro['codart']=$codart;$rigbro['descri']=addslashes(substr($descri, 0, 50));$rigbro['unimis']=substr($_POST['unimis'.$ord.$row], 0, 3);$rigbro['quanti']=floatval($_POST['quanti'.$ord.$row]);$rigbro['prelis']=$prelis;$rigbro['sconto']=$percdisc;$rigbro['codvat']=$codvat;$rigbro['codric']='420000006';$rigbro['pervat']=$aliiva;$rigbro['status']='ONLINE-SHOP';
-				rigbroInsert($rigbro);
 			}
       if (strlen($_POST['note'.$ord])>3){// se l'ecommerce ha inviato delle note all'ordine, le accodo ai righi come rigo descrittivo
         $rigbro['id_tes']=intval($id_tesbro);$rigbro['tiprig']=2;$rigbro['codart']='';$rigbro['descri']=addslashes(substr($_POST['note'.$ord], 0, 1000));$rigbro['unimis']='';$rigbro['quanti']=0;$rigbro['prelis']=0;$rigbro['sconto']=0;$rigbro['codvat']=0;$rigbro['codric']=0;$rigbro['pervat']=0;$rigbro['status']='ONLINE-SHOP';
