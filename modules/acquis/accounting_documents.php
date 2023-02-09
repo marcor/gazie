@@ -475,7 +475,8 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
           $tes_id =tesmovInsert($newValue);
           //inserisco i righi iva nel db
           $acc_reverse_charge=[];
-          $tot_reverse_charge=0.00;
+          $imp_reverse_charge=0.00;
+          $iva_reverse_charge=0.00;
           foreach ($v['vat'] as $k => $vv) {
             $vat = gaz_dbi_get_row($gTables['aliiva'], 'codice', $vv['codiva']);
             //aggiungo i valori mancanti all'array
@@ -487,7 +488,8 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
             if (substr($vv['fae_natura'],0,2)=='N6' || $v['tes']['fiscal_reg'] == 'RF34' ) { // accumulo su matrice le aliquote che produrranno reverse charge usando come chiave l'id_rig del rigmoi appena inserito
               $vv['tesmov_id'] = $tes_id;
               $acc_reverse_charge[$iva_id] = $vv;
-              $tot_reverse_charge += $vv['impost'] + $vv['impcast'];
+              $imp_reverse_charge += $vv['imponi'];
+              $iva_reverse_charge += $vv['impost'];
             }
             if (!empty($vv['impneg']) && $vv['impneg']<0.00) {	// se ho un valore negativo sulla stessa aliquota creo uno storno
               $vv['impost'] = round($vv['impneg'] * $vv['periva']) / 100;
@@ -496,12 +498,14 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
               if (substr($vv['fae_natura'],0,3)=='N6.' || $v['tes']['fiscal_reg'] == 'RF34') {
                   $vv['tesmov_id'] = $tes_id;
                   $acc_reverse_charge[$iva_id] = $vv;
-                  $tot_reverse_charge -= $vv['impost'] + $vv['imponi'];
+                  $imp_reverse_charge -= $vv['imponi'];
+                  $iva_reverse_charge -= $vv['impost'];
               }
             }
           }
+          $tot_reverse_charge = $imp_reverse_charge + $iva_reverse_charge;
           // calcolo le rate
-          $rate = CalcolaScadenze($tot['tot'] - $v['rit'] - $tot_reverse_charge, substr($v['tes']['datfat'], 8, 2), substr($v['tes']['datfat'], 5, 2), substr($v['tes']['datfat'], 0, 4), $v['tes']['tipdec'], $v['tes']['giodec'], $v['tes']['numrat'], $v['tes']['tiprat'], $v['tes']['mesesc'], $v['tes']['giosuc']);
+          $rate = CalcolaScadenze($tot['tot'] - $v['rit'] - $iva_reverse_charge, substr($v['tes']['datfat'], 8, 2), substr($v['tes']['datfat'], 5, 2), substr($v['tes']['datfat'], 0, 4), $v['tes']['tipdec'], $v['tes']['giodec'], $v['tes']['numrat'], $v['tes']['tiprat'], $v['tes']['mesesc'], $v['tes']['giosuc']);
           // rateizzo anche l'iva split payment
           $rateisp = CalcolaScadenze($v['isp'], substr($v['tes']['datfat'], 8, 2), substr($v['tes']['datfat'], 5, 2), substr($v['tes']['datfat'], 0, 4), $v['tes']['tipdec'], $v['tes']['giodec'], $v['tes']['numrat'], $v['tes']['tiprat'], $v['tes']['mesesc'], $v['tes']['giosuc']);
           if ($tot['tot']>=0.01){
