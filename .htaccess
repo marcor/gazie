@@ -1,11 +1,11 @@
 # Decommentare le tre righe sottostanti per redirect ad https (indispensabile in produzione)
-# RewriteEngine On 
-# RewriteCond %{HTTPS} off 
+# RewriteEngine On
+# RewriteCond %{HTTPS} off
 # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
 
 DirectoryIndex admin.php /404.html
 php_flag magic_quotes_gpc off
-php_value max_input_vars 10000
+php_value max_input_vars 20000
 php_value date.timezone 'Europe/Rome'
 Options -Indexes
