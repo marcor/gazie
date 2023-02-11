@@ -919,9 +919,8 @@ class magazzForm extends GAzieForm {
       LEFT JOIN ". $gTables['tesbro'] ." ON ".$gTables['tesbro'].".id_tes=".$gTables['rigbro'].".id_tes
       LEFT JOIN ". $gTables['rigdoc'] ." ON ".$gTables['rigdoc'].".id_order = ".$gTables['rigbro'].".id_tes AND ". $gTables['rigdoc'].".codart = '". $codice. "'
       LEFT JOIN ". $gTables['clfoco'] ." ON ".$gTables['clfoco'].".codice=".$gTables['tesbro'].".clfoco
-      WHERE ". $gTables['rigbro'] .".codart ='" . $codice. "'  AND ". $gTables['rigbro'] .".tiprig = 0 AND ".$gTables['tesbro'].".tipdoc = 'VOR' AND ".$gTables['tesbro'].".status != 'EVASO'
-      GROUP BY id_rig_bro ASC
-      ";
+      WHERE (". $gTables['rigbro'] .".codart ='" . $codice. "' OR ". $gTables['rigbro'] .".codice_fornitore ='" . $codice. "') AND ". $gTables['rigbro'] .".tiprig = 0 AND ".$gTables['tesbro'].".tipdoc = 'VOR' AND ".$gTables['tesbro'].".status != 'EVASO'
+      GROUP BY id_rig_bro";
       $result = gaz_dbi_query($query); // eseguo query
       $return=[]; // creo l'array che conterrà tutti gli id tesbro ancora inevasi, anche se parzialmente
       while ($res=$result->fetch_assoc()){
