@@ -414,9 +414,11 @@ while ($r = gaz_dbi_fetch_array($result)) {
     echo "</td>\n";
     echo '<td class="text-center"><a class="btn btn-xs btn-default" href="clone_artico.php?codice='.$r["codice"].'"> <i class="glyphicon glyphicon-export"></i></a>';
 	echo "</td>\n";
-    echo '<td class="text-center"><a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="'. $r['codice'].'" artico="'. $r['descri'].'"';
+    echo '<td class="text-center"><a class="btn btn-xs btn-default btn-elimina';
     if ( $artmov >= 1 ){
-     echo ' disabled title="Articolo non è eliminabile perché movimentato "';
+      echo '" disabled title="Articolo non è eliminabile perché movimentato "';
+    } else {
+      echo ' dialog_delete" ref="'. $r['codice'].'" artico="'. $r['descri'].'"';
     }
     echo '> <i class="glyphicon glyphicon-remove"></i></a>';
 	echo "</td>\n";
