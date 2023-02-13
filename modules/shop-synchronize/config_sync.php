@@ -41,7 +41,7 @@ $getenable_sync = gaz_dbi_get_row($gTables['aziend'], 'codice', $admin_aziend['c
 $enable_sync = explode(",",$getenable_sync);
 
   if (count($_POST) > 0) { // ho modificato i valori
-echo "enable sync post:",$_POST['set_enable_sync']," - sync modul:",$enable_sync[0];
+
     $_POST  = filter_input_array(INPUT_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
 		if (!empty($_FILES['myfile']['name'])) {
