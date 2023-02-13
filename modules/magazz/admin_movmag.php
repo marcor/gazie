@@ -176,8 +176,8 @@ if (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo acces
 	if ($form['caumag']>97){
 		$form['tipdoc']="INV";
 	} else {
-		$form['tipdoc'] = "MAG";
-	}
+		$form['tipdoc']=substr($_POST['tipdoc'],0,3);
+  }
 	$form['desdoc'] = substr($_POST['desdoc'], 0, 50);
 	$form['giodoc'] = intval($_POST['giodoc']);
 	$form['mesdoc'] = intval($_POST['mesdoc']);
@@ -494,23 +494,23 @@ if (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo acces
     }
   }
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
-    $form['hidden_req'] = '';
-    //registri per il form della testata
-    $form['id_mov'] = 0;
-    $form['gioreg'] = date("d");
-    $form['mesreg'] = date("m");
-    $form['annreg'] = date("Y");
-    $form['caumag'] = "";
-    $form['operat'] = 0;
-    $form['clfoco'] = 0;
-    $form['clorfo'] = 0;
-    $form['tipdoc'] = "MAG";
-    $form['desdoc'] = "Movimento di magazzino";
-    $form['giodoc'] = date("d");
-    $form['mesdoc'] = date("m");
-    $form['anndoc'] = date("Y");
-    $form['scochi'] = 0;
-    $form['artico'] = "";
+  $form['hidden_req'] = '';
+  //registri per il form della testata
+  $form['id_mov'] = 0;
+  $form['gioreg'] = date("d");
+  $form['mesreg'] = date("m");
+  $form['annreg'] = date("Y");
+  $form['caumag'] = "";
+  $form['operat'] = 0;
+  $form['clfoco'] = 0;
+  $form['clorfo'] = 0;
+  $form['tipdoc'] = "MAG";
+  $form['desdoc'] = "Movimento di magazzino";
+  $form['giodoc'] = date("d");
+  $form['mesdoc'] = date("m");
+  $form['anndoc'] = date("Y");
+  $form['scochi'] = 0;
+  $form['artico'] = "";
 	$form['lot_or_serial']="";
 	$form['SIAN']="";
 	$form['cod_operazione'] = 11;
@@ -520,15 +520,15 @@ if (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo acces
 	$form['id_lotmag'] ="";
 	$form['identifier'] ="";
 	$form['expiry'] ="";
-    $form['quanti'] = 0;
+  $form['quanti'] = 0;
 	$print_unimis = "";
-    $form['prezzo'] = 0;
-    $form['scorig'] = 0;
-    $form['status'] = "";
-    $form['search_partner'] = "";
-    $form['cosear'] = "";
-    $form['id_rif'] = 0;
-    $form['id_orderman'] = 0;
+  $form['prezzo'] = 0;
+  $form['scorig'] = 0;
+  $form['status'] = "";
+  $form['search_partner'] = "";
+  $form['cosear'] = "";
+  $form['id_rif'] = 0;
+  $form['id_orderman'] = 0;
 	// dal custom field di admin_module relativo al magazzino trovo il magazzino di default
 	$magmodule = gaz_dbi_get_row($gTables['module'], "name",'magazz');
 	$magadmin_module = gaz_dbi_get_row($gTables['admin_module'], "moduleid",$magmodule['id']," AND adminid='{$admin_aziend['user_name']}' AND company_id=" . $admin_aziend['company_id']);
