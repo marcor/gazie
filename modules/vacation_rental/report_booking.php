@@ -54,27 +54,27 @@ function mostra_documenti_associati($ordine) {
         // a seconda del tipo di documento visualizzo il bottone corrispondente
         if ($tesdoc_r["tipdoc"] == "FAI") {
             // fattura immediata
-            echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza la fattura immediata\" href=\"stampa_docven.php?id_tes=" . $tesdoc_r['id_tes'] . "\">";
+            echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza la fattura immediata\" href=\"../vendit/stampa_docven.php?id_tes=" . $tesdoc_r['id_tes'] . "\">";
             echo "fatt. " . $tesdoc_r["numfat"];
             echo "</a> ";
         } elseif ($tesdoc_r["tipdoc"] == "DDT" || ($tesdoc_r["tipdoc"] == "FAD" && $tesdoc_r["ddt_type"]!='R')) {
             // documento di trasporto
-            echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza il documento di trasporto\" href=\"stampa_docven.php?id_tes=" . $tesdoc_r['id_tes'] . "&template=DDT\">";
+            echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza il documento di trasporto\" href=\"../vendit/stampa_docven.php?id_tes=" . $tesdoc_r['id_tes'] . "&template=DDT\">";
             echo "ddt " . $tesdoc_r["numdoc"];
             echo "</a> ";
         } elseif ($tesdoc_r["tipdoc"] == "CMR" || ($tesdoc_r["tipdoc"] == "FAD" && $tesdoc_r["ddt_type"]='R')) {
             // documento cmr
-            echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza il cmr\" href=\"stampa_docven.php?id_tes=" . $tesdoc_r['id_tes'] . "&template=CMR\">";
+            echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza il cmr\" href=\"../vendit/stampa_docven.php?id_tes=" . $tesdoc_r['id_tes'] . "&template=CMR\">";
             echo "cmr " . $tesdoc_r["numdoc"];
             echo "</a> ";
         } elseif ($tesdoc_r["tipdoc"] == "VCO") {
             // scontrino
-            echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza lo scontrino come fattura\" href=\"stampa_docven.php?id_tes=" . $tesdoc_r['id_tes'] . "&template=".$tesdoc_r["template"]."\">";
+            echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza lo scontrino come fattura\" href=\"../vendit/stampa_docven.php?id_tes=" . $tesdoc_r['id_tes'] . "&template=".$tesdoc_r["template"]."\">";
             echo "scontr. " . $tesdoc_r["numdoc"] . "<br /> " . gaz_format_date($tesdoc_r["datemi"]);
             echo "</a> ";
         } elseif ($tesdoc_r["tipdoc"] == "VRI") {
             // ricevuta
-            echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza la ricevuta\" href=\"stampa_docven.php?id_tes=" . $tesdoc_r['id_tes'] . "&template=Received\">";
+            echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza la ricevuta\" href=\"../vendit/stampa_docven.php?id_tes=" . $tesdoc_r['id_tes'] . "&template=Received\">";
             echo "ricevuta " . $tesdoc_r["numdoc"] . "<br /> " . gaz_format_date($tesdoc_r["datemi"]);
             echo "</a> ";
         } else {
@@ -834,7 +834,11 @@ $ts->output_navbar();
               $check_inout="OUT";
               $check_icon="log-out";
               $ckdate=date ('d-m-Y H:i', strtotime($r['checked_out_date']));
-              $title = "Checked-in ".date ('d-m-Y H:i', strtotime($r['checked_in_date']))." - Checked-out ".date ('d-m-Y H:i', strtotime($r['checked_out_date']));
+			  if (isset($r['checked_in_date'])){
+				$title = "Checked-in ".date ('d-m-Y H:i', strtotime($r['checked_in_date']))." - Checked-out ".date ('d-m-Y H:i', strtotime($r['checked_out_date']));
+			  }else{
+				 $title = "" ;
+			  }
             }elseif (isset($r['checked_in_date']) && strtotime($r['checked_in_date'])){
               $check_inout="IN";
               $check_icon="log-in";

@@ -181,9 +181,9 @@ class Lease extends Template
 
       $html .= "<dl>";
       if (strlen($this->ip)>7){// firme digitali
-        $html .= "<br><p><b>Firmato digitalmente on-line</b></p><span>Il locatore ".$this->intesta1."</span><span style=\" letter-spacing: 30px;\">&nbsp; &nbsp;</span><span> Il conduttore ".$this->cliente1." firmato on-line da IP:".$this->ip."</span>";
+        $html .= "<br><p><b>Firmato digitalmente on-line</b></p><span>Il locatore ".$this->intesta1."</span><span style=\" letter-spacing: 30px;\">&nbsp; &nbsp;</span><span> Il conduttore ".$this->cliente1." ".$this->cliente2." firmato on-line da IP:".$this->ip."</span>";
       }else{// firme fisiche
-        $html .= "<br><p><b>Firmato </b></p><span>Il locatore ".$this->intesta1."</span><span style=\" letter-spacing: 30px;\">&nbsp; &nbsp;</span><span> Il conduttore ".$this->cliente1."</span>";
+        $html .= "<br><p><b>Firmato </b></p><span>Il locatore ".$this->intesta1."</span><span style=\" letter-spacing: 30px;\">&nbsp; &nbsp;</span><span> Il conduttore ".$this->cliente1." ".$this->cliente2."</span>";
       }
       // output the HTML content
       $this->writeHTML($html, true, false, true, false, '');
