@@ -40,9 +40,9 @@ $admin_aziend = checkAdmin(9);
 $getenable_sync = gaz_dbi_get_row($gTables['aziend'], 'codice', $admin_aziend['codice'])['gazSynchro'];
 $enable_sync = explode(",",$getenable_sync);
 
-    if (count($_POST) > 0) { // ho modificato i valori
-
-        $_POST  = filter_input_array(INPUT_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+  if (count($_POST) > 0) { // ho modificato i valori
+echo "enable sync post:",$_POST['set_enable_sync']," - sync modul:",$enable_sync[0];
+    $_POST  = filter_input_array(INPUT_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
 		if (!empty($_FILES['myfile']['name'])) {
 			// cancello eventuale vecchio file e salvo il nuovo nella cartella files
@@ -57,7 +57,7 @@ $enable_sync = explode(",",$getenable_sync);
 
 		}
 
-        foreach ($_POST as $k => $v) {
+    foreach ($_POST as $k => $v) {
 			if ($k=="chiave" AND !empty($_FILES['myfile']['name'])){
 
 				if ( $v !== $_FILES['myfile']['name']){
@@ -65,11 +65,11 @@ $enable_sync = explode(",",$getenable_sync);
 				}
 				$v=$_FILES['myfile']['name'];
 			}
-            $value=filter_var($v, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-            $key=filter_var($k, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+      $value=filter_var($v, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+      $key=filter_var($k, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
-            $res=gaz_dbi_put_row($gTables['company_config'], 'var', $key, 'val', $value);
-        }
+      $res=gaz_dbi_put_row($gTables['company_config'], 'var', $key, 'val', $value);
+    }
 
 		$n=0;
 		unset ($value);
@@ -86,20 +86,23 @@ $enable_sync = explode(",",$getenable_sync);
 				$n++;
 			}
 		}
-
-		if ($_POST['set_enable_sync']=="SI" && $enable_sync[0] !== "shop-synchronize"){
-			array_unshift($enable_sync , 'shop-synchronize');// aggiungo shopsync all'inizio dell'array			
-		} else {
-			if ($enable_sync[0] == "shop-synchronize"){
-				unset($enable_sync[0]);
-			}			
-		}
-		$set_sync=implode(",", $enable_sync);
-		gaz_dbi_table_update("aziend", $admin_aziend['codice'], array("gazSynchro"=>$set_sync));// aggiorno i nomi dei moduli
-		
-        header("Location: config_sync.php?ok");
-        exit;
+    if ($_POST['set_enable_sync']=="SI" && $enable_sync[0] == "shop-synchronize"){// se era già attivato ed è rimasto attivato
+      // non faccio nulla
+    }else{
+      if ($_POST['set_enable_sync']=="SI" && $enable_sync[0] !== "shop-synchronize"){
+        array_unshift($enable_sync , 'shop-synchronize');// aggiungo shopsync all'inizio dell'array
+      } else {
+        if ($enable_sync[0] == "shop-synchronize"){
+          unset($enable_sync[0]);
+        }
+      }
+      $set_sync=implode(",", $enable_sync);
+      gaz_dbi_table_update("aziend", $admin_aziend['codice'], array("gazSynchro"=>$set_sync));// aggiorno i nomi dei moduli
     }
+
+    header("Location: config_sync.php?ok");
+    exit;
+  }
 
 //$script = basename($_SERVER['PHP_SELF']);
 require('../../library/include/header.php');

@@ -55,6 +55,11 @@ $file_upload = "upload_prodotti.php";
 $file_downloader = "import_articoli.php";
 $file_uploader = "export_articoli.php";
 $file_INVdownloader = "import_inv_articoli.php";
+if (file_exists($file_download2)) {
+  $ord_download2="ON";
+}else{
+  $ord_download2="OFF";
+}
 
 if (!isset($_POST['ritorno'])) {
     $_POST['ritorno'] = $_SERVER['HTTP_REFERER'];
@@ -72,7 +77,7 @@ if (isset ($_POST['download'])) {
         exit;
 	}
 } elseif (isset ($_POST['download2'])){
-	if (file_exists($file_download2)) {
+	if ($ord_download2=="ON") {
 		$period=0;
 		header("Location: " . $file_download2 );
 	} else {
@@ -141,7 +146,13 @@ if (isset ($_POST['download'])) {
 				</div>
 				<div class="col-sm-4  bg-success" align="center">
 					<input type="submit" id="preventDuplicate" class="btn btn-primary" name="download"  onClick="chkSubmit();" value="Scarica ordini">
-					<input type="submit" id="preventDuplicate" class="btn btn-primary" name="download2"  onClick="chkSubmit();" value="Scarica ordini2">
+          <?php
+          if ($ord_download2=="ON") {
+            ?>
+            <input type="submit" id="preventDuplicate" class="btn btn-primary" name="download2"  onClick="chkSubmit();" value="Scarica ordini2">
+            <?php
+          }
+          ?>
 				</div>
 				<div class="col-sm-4 bg-warning" align="center">
 					<input type="submit" id="preventDuplicate" class="btn btn-primary" name="upload"  onClick="chkSubmit();" value="Aggiorna q.t&agrave; prodotti">
