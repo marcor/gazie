@@ -848,6 +848,7 @@ class shopsynchronizegazSynchro {
 							$year=substr($order->DateOrder,0,4);
 						}elseif(intval(substr($order->DateOrder,0,4))> intval($year)) {// se è cambiato l'anno durante il ciclo degli ordini e sono nel nuovo anno
 							$numdoc = 1;// ricomincio la numerazione
+              $year=substr($order->DateOrder,0,4);
 						}
 						$query = "SHOW TABLE STATUS LIKE '" . $gTables['anagra'] . "'";
 						$result = gaz_dbi_query($query);

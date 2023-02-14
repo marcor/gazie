@@ -60,41 +60,42 @@ if (isset($_POST['conferma']) && isset($_POST['num_orders'])) { // se confermato
 	$numdoc=""; $year="";
     // scrittura ordini su database di GAzie
 	for ($ord=0 ; $ord<=$_POST['num_orders']; $ord++){// ciclo gli ordini e li scrivo nel database
+    if (isset($_POST['download'.$ord]) ) {
+      if ($numdoc=="" and $year==""){// se sono al primo ciclo degli ordini
+        // ricavo il progressivo numero d'ordine di GAzie in base al tipo di documento
+        $orderdb = "numdoc desc";
+        $sql_documento = "YEAR(datemi) = " . substr($_POST['datemi'.$ord],0,4) . " and tipdoc = 'VOW'";
+        $rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesbro'], $sql_documento, $orderdb, 0, 1);
+        $ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
+        // se e' il primo documento dell'anno, resetto il contatore
+        if ($ultimo_documento) {
+          $numdoc = $ultimo_documento['numdoc'] + 1;
+        } else {
+          $numdoc = 1;
+        }
+        $year=substr($_POST['datemi'.$ord],0,4);
+      }elseif(intval(substr($_POST['datemi'.$ord],0,4))> intval($year)) {// se è cambiato l'anno durante il ciclo degli ordini e sono nel nuovo anno
+        $numdoc = 1;// ricomincio la numerazione
+        $year=substr($_POST['datemi'.$ord],0,4);// reimposto year con il nuovo anno
+      }
 
-		if ($numdoc=="" and $year==""){// se sono al primo ciclo degli ordini
-			// ricavo il progressivo numero d'ordine di GAzie in base al tipo di documento
-			$orderdb = "numdoc desc";
-			$sql_documento = "YEAR(datemi) = " . substr($_POST['datemi'.$ord],0,4) . " and tipdoc = 'VOW'";
-			$rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesbro'], $sql_documento, $orderdb, 0, 1);
-			$ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
-			// se e' il primo documento dell'anno, resetto il contatore
-			if ($ultimo_documento) {
-				$numdoc = $ultimo_documento['numdoc'] + 1;
-			} else {
-				$numdoc = 1;
-			}
-			$year=substr($_POST['datemi'.$ord],0,4);
-		}elseif(intval(substr($_POST['datemi'.$ord],0,4))> intval($year)) {// se è cambiato l'anno durante il ciclo degli ordini e sono nel nuovo anno
-			$numdoc = 1;// ricomincio la numerazione
-		}
+      $query = "SHOW TABLE STATUS LIKE '" . $gTables['anagra'] . "'";
+      $result = gaz_dbi_query($query);
+      $row = $result->fetch_assoc();
+      $id_anagra = $row['Auto_increment']; // trovo l'ID che avrà ANAGRA: Anagrafica cliente
 
-		$query = "SHOW TABLE STATUS LIKE '" . $gTables['anagra'] . "'";
-		$result = gaz_dbi_query($query);
-		$row = $result->fetch_assoc();
-		$id_anagra = $row['Auto_increment']; // trovo l'ID che avrà ANAGRA: Anagrafica cliente
+      $anagrafica = new Anagrafica();
+      $last = $anagrafica->queryPartners('*', "codice BETWEEN " . $admin_aziend['mascli'] . "000000 AND " . $admin_aziend['mascli'] . "999999", "codice DESC", 0, 1);
+      $codice = substr($last[0]['codice'], 3) + 1;
+      $clfoco = $admin_aziend['mascli'] * 1000000 + $codice;// trovo il codice di CLFOCO da connettere all'anagrafica cliente	se cliente inesistente
 
-		$anagrafica = new Anagrafica();
-		$last = $anagrafica->queryPartners('*', "codice BETWEEN " . $admin_aziend['mascli'] . "000000 AND " . $admin_aziend['mascli'] . "999999", "codice DESC", 0, 1);
-		$codice = substr($last[0]['codice'], 3) + 1;
-		$clfoco = $admin_aziend['mascli'] * 1000000 + $codice;// trovo il codice di CLFOCO da connettere all'anagrafica cliente	se cliente inesistente
+      $listin=intval($_POST['numlist'.$ord]);
+      $listinome=$_POST['numlistnome'.$ord];
+      $includevat=$_POST['includevat'.$ord];
 
-		$listin=intval($_POST['numlist'.$ord]);
-		$listinome=$_POST['numlistnome'.$ord];
-		$includevat=$_POST['includevat'.$ord];
+      $stapre="T"; // stampa prezzi con totale
 
-		$stapre="T"; // stampa prezzi con totale
 
-		if (isset($_POST['download'.$ord]) ) {
 			$esiste=0;
 			if (strlen($_POST['ref_ecommerce_id_customer'.$ord])>0){ // controllo esistenza cliente per codice e-commerce
 				unset($cl);
@@ -170,7 +171,7 @@ if (isset($_POST['conferma']) && isset($_POST['num_orders'])) { // se confermato
 
 			// Gestione righi ordine
 			for ($row=0; $row<=$_POST['num_rows'.$ord]; $row++){
-				
+
 				if ($_POST['type'.$ord.$row] <> "discount"){
 					// controllo se esiste l'articolo in GAzie
 					$ckart = gaz_dbi_get_row($gTables['artico'], "ref_ecommerce_id_product", $_POST['refid'.$ord.$row]);
