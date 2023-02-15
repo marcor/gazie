@@ -1182,8 +1182,9 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
         $('#closePdf').on( "click", function() {
           $('.framePdf').css({'display': 'none'});
           const queryString = window.location.search;
-          const urlParams = new URLSearchParams(queryString);
-          const dest = urlParams.get('rievadi')
+          const urlParams = new URLSearchParams(queryString);  
+          var dest = urlParams.get('rievadi');
+          if (urlParams.get('rievadi') === null || urlParams.get('rievadi') === undefined) dest = 'VO_';
           window.location.replace("./report_broven.php?auxil="+dest);
         });
       });
