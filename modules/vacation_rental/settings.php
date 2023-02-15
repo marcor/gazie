@@ -289,7 +289,7 @@ $reminders_pay = gaz_dbi_dyn_query("*", $gTables['company_config'], " var LIKE '
                     <label for="inputElement" class="col-sm-5 control-label">Inserisci eventuale struttura</label>
                       <div class="col-sm-7">
                       <?php
-                      $gForm->selectFromDB('artico_group', 'newFacility', 'id_artico_group', 0, false, 0, ' - ', 'descri', '', 'col-sm-8', array('value'=>0,'descri'=>''), 'tabindex="18" style="max-width: 250px;"');
+                      $gForm->selectFromDB('artico_group', 'newFacility', 'id_artico_group', 0, false, 0, ' - ', 'descri', '', 'col-sm-8', array('value'=>0,'descri'=>''), 'tabindex="18" style="max-width: 250px;"',"custom_field LIKE '%vacation_rental%'");
                       ?>
                       </div>
                   </div>
