@@ -144,6 +144,7 @@ function setOrdineEvaso($righi)
     global $gTables;
     // controllo se ci sono ancora righi inevasi
     $id_tesArray = array_unique(array_column($righi, 'id_tes'));
+    if ( !isset($_GET['rievadi']) ) {
     foreach ($id_tesArray as $id_tes) {
         $inevasi = false;
         foreach ($righi as $rigo) {
@@ -163,7 +164,7 @@ function setOrdineEvaso($righi)
             // modifico lo status della testata dell'ordine solo se completamente evaso
             gaz_dbi_put_row($gTables['tesbro'], "id_tes", $id_tes, "status", "EVASO");
         }
-    }
+    }}
 }
 
 if (!isset($_POST['ritorno'])) {
@@ -1180,7 +1181,10 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
         $('.framePdf').css({'display': 'block','width': '90%', 'height': '80%', 'z-index':'2000'});
         $('#closePdf').on( "click", function() {
           $('.framePdf').css({'display': 'none'});
-          window.location.replace("./report_broven.php");
+          const queryString = window.location.search;
+          const urlParams = new URLSearchParams(queryString);
+          const dest = urlParams.get('rievadi')
+          window.location.replace("./report_broven.php?auxil="+dest);
         });
       });
     };
@@ -1416,6 +1420,9 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
                         $checkin = ' checked';
                         break;
                 }
+                // se si sta forzando la rievasione del preventivo mostra i righi nascosti
+                if ( isset($_GET['rievadi']) ) $checkin = ' checked';
+
                 if ($ctrl_tes != $v['id_tes']) {
                     echo "<tr><td class=\"FacetDataTD\" colspan=\"9\"> " . $script_transl['from'] . " <a href=\"admin_broven.php?Update&id_tes=" . $v["id_tes"] . "\" title=\"" . $script_transl['upd_ord'] . "\"> " . $script_transl['doc_name'][$v['tipdoc']] . " n." . $v['numdoc'] . "</a> " . $script_transl['del'] . ' ' . gaz_format_date($v['datemi']) . " </td>
                     <td id='forzaevasione'>

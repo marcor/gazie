@@ -829,7 +829,16 @@ function printPdf(urlPrintDoc){
                     if($rigdoc['id_order']>0){
                       $tesbro_result = gaz_dbi_dyn_query('*', $gTables['tesbro'], "id_tes = " . $rigdoc['id_order'], 'id_tes');
                       $t_r = gaz_dbi_fetch_array($tesbro_result);
-                      echo " <a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['view_ord'] . "\" href=\"stampa_ordcli.php?id_tes=" . $rigdoc['id_order'] . "\" style=\"font-size:10px;\"><i class=\"glyphicon glyphicon-check\"></i>&nbsp;Ord." . $t_r['numdoc'] . "</a>\n";
+                      $tipo_doc_evaso = $t_r['tipdoc'];
+                      switch($tipo_doc_evaso) {
+                        case "VPR":
+                          echo " <a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['view_ord'] . "\" href=\"stampa_precli.php?id_tes=" . $rigdoc['id_order'] . "\" style=\"font-size:10px;\"><i class=\"glyphicon glyphicon-check\"></i>&nbsp;Prev." . $t_r['numdoc'] . "</a>\n";
+                        break;
+                        case "VOR":
+                          echo " <a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['view_ord'] . "\" href=\"stampa_ordcli.php?id_tes=" . $rigdoc['id_order'] . "\" style=\"font-size:10px;\"><i class=\"glyphicon glyphicon-check\"></i>&nbsp;Ord." . $t_r['numdoc'] . "</a>\n";
+                        break;
+                      }
+                      
                     }
                   }
                   echo "</td>";

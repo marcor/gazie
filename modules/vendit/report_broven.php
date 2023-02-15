@@ -468,6 +468,9 @@ $ts->output_navbar();
                 }
             } else {
                 // l'ordine è completamente evaso, mostro i riferimenti ai documenti che lo hanno evaso
+                if ( $tipo=="VPR" ) {
+                    echo "<a class=\"btn btn-xs btn-warning\" href=\"select_evaord.php?id_tes=" . $r['id_tes'] . "&rievadi=VPR\">rievadi </a>&nbsp;";
+                }
                 $ultimo_documento = 0;
                 mostra_documenti_associati( $r['id_tes'] );
             }
