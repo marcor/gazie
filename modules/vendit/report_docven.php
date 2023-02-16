@@ -660,6 +660,14 @@ function printPdf(urlPrintDoc){
               // visualizzo la riga solo se rispetta il filtro informazioni
               if ( is_bool($paymov_status) || $paymov_status['style'] == $flt_info || $flt_info == "none" || ( $paymov_status['style'] == "" && $flt_info=="default") ) {
                 echo "<tr class=\"FacetDataTD\">";
+
+                // carico le impostazioni aggiuntive dal campo custom
+                $gaz_custom_data = "";
+                $gaz_custom_field = gaz_dbi_get_single_value( $gTables['tesdoc'], 'custom_field', 'id_tes = '.$r['id_tes'] );
+                if ( isset( $gaz_custom_field ) && $gaz_custom_field!="" ) {
+                    $gaz_custom_data = json_decode($gaz_custom_field,true);
+                }
+
                 // Colonna protocollo
                 if (!empty($modifi)) {
                   echo "<td class=\"text-center\"><a href=\"" . $modifi . "\" class=\"btn btn-xs " . $classe_btn . "\" title=\"Modifica " . $tipodoc . " \">" . $r["protoc"] . "&nbsp;" . $r["tipdoc"] . "&nbsp;<i class=\"glyphicon glyphicon-edit\"></i></a></td>";
@@ -796,7 +804,13 @@ function printPdf(urlPrintDoc){
                 // Colonna "Mail"
                 echo "<td align=\"center\">";
                 if (!empty($r["e_mail"])) {
-                  echo '<a class="btn btn-xs btn-default btn-email" onclick="confirMail(this);return false;" id="doc_' . $r["id_tes"] . '" url="' . $modulo . '&dest=E" href="#" title="Mailto: ' . $r["e_mail"] . '" mail="' . $r["e_mail"] . '" namedoc="' . $tipodoc . ' n.' . $r["numfat"] . ' del ' . gaz_format_date($r["datfat"]) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
+
+                  if ( !isset($gaz_custom_data['email_inviata'])) {
+                      $classe_mail = "btn-default";
+                  } else {
+                      $classe_mail = "btn-success";
+                  }
+                  echo '<a class="btn btn-xs '.$classe_mail.' btn-email" onclick="confirMail(this);return false;" id="doc_' . $r["id_tes"] . '" url="' . $modulo . '&dest=E" href="#" title="Mailto: ' . $r["e_mail"] . '" mail="' . $r["e_mail"] . '" namedoc="' . $tipodoc . ' n.' . $r["numfat"] . ' del ' . gaz_format_date($r["datfat"]) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
                 } else {
                   echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" href="admin_client.php?codice=' . substr($r['clfoco'], 3) . '&Update#email"><i class="glyphicon glyphicon-edit"></i></a>';
                 }

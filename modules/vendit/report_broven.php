@@ -421,6 +421,7 @@ $ts->output_navbar();
             echo "<tr class=\"FacetDataTD\">";
 
             // carico le impostazioni aggiuntive dal campo custom
+            $gaz_custom_data = "";
             $gaz_custom_field = gaz_dbi_get_single_value( $gTables['tesbro'], 'custom_field', 'id_tes = '.$r['id_tes'] );
             if ( isset( $gaz_custom_field ) && $gaz_custom_field!="" ) {
                 $gaz_custom_data = json_decode($gaz_custom_field,true);
