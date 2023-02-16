@@ -704,7 +704,33 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
         $content->encoding = "base64";
         $content->mimeType = "application/pdf";
         $gMail = new GAzieMail();
-        $gMail->sendMail($docVars->azienda, $docVars->user, $content, $docVars->client);
+        if ( $gMail->sendMail($docVars->azienda, $docVars->user, $content, $docVars->client) ) {
+            // memorizzo l'invio per questa email
+            switch ( $testata['tipdoc'] ) {
+                case 'VPR':
+                    $tabella_da_aggiornare = 'tesbro';
+                    break;
+                case 'VOR':
+                    $tabella_da_aggiornare = 'tesbro';
+                    break;
+                case 'FAD':
+                    $tabella_da_aggiornare = 'tesdoc';
+                    break;
+                case 'FAI':
+                    $tabella_da_aggiornare = 'tesdoc';
+                    break;
+                case 'DDT':
+                    $tabella_da_aggiornare = 'tesdoc';
+                    break;
+                default:
+                    break;
+            }
+            $gaz_custom_field = gaz_dbi_get_single_value( $gTables[$tabella_da_aggiornare], 'custom_field', 'id_tes = '.$testata['id_tes'] );
+            $gaz_custom_data = json_decode( $gaz_custom_field, true);
+            $gaz_custom_data['email_inviata'] = 'true';
+            $gaz_custom_field = json_encode($gaz_custom_data);
+            gaz_dbi_table_update ($tabella_da_aggiornare, array(0=>'id_tes',1=>$testata['id_tes']), array('custom_field'=>$gaz_custom_field));
+        }
     } elseif ($dest && $dest == 'X') { // è stata richiesta una stringa da allegare
         $dest = 'S';     // Genero l'output pdf come stringa binaria
         $content=$pdf->Output($doc_name, $dest);

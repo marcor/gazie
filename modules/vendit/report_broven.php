@@ -154,6 +154,7 @@ $tipo = $auxil;
 
 # le <select> spaziano tra i documenti di un solo tipo (VPR, VOR o VOG)
 $where_select = sprintf("tipdoc LIKE '%s'", gaz_dbi_real_escape_string($tipo));
+
 ?>
 <script>
 <?php
@@ -409,7 +410,6 @@ $ts->output_navbar();
             }
 			if ( ($form['swStatus']=="Tutti" OR $form['swStatus']=="") OR ($form['swStatus']=="Inevasi" AND  $remains_atleastone == true) ){
 
-
             if ($r['tipdoc'] == 'VPR') {
                 $modulo = "stampa_precli.php?id_tes=" . $r['id_tes'];
                 $modifi = "admin_broven.php?Update&id_tes=" . $r['id_tes'];
@@ -420,10 +420,20 @@ $ts->output_navbar();
             }
             echo "<tr class=\"FacetDataTD\">";
 
+            // carico le impostazioni aggiuntive dal campo custom
+            $gaz_custom_field = gaz_dbi_get_single_value( $gTables['tesbro'], 'custom_field', 'id_tes = '.$r['id_tes'] );
+            if ( isset( $gaz_custom_field ) && $gaz_custom_field!="" ) {
+                $gaz_custom_data = json_decode($gaz_custom_field,true);
+            }
+
 			if ($r['tipdoc']=="VOW"){
 				echo "<td><button title=\"Per modificare un ordine web lo si deve prima cancellare da GAzie, modificarlo nell'e-commerce e poi reimportarlo in GAzie\" class=\"btn btn-xs btn-default disabled\">&nbsp;" . substr($r['tipdoc'], 1, 2) . "&nbsp;" . $r['id_tes'] . " </button></td>";
 			}elseif (!empty($modifi)) {
-                echo '<td class="text-center"><a class="btn btn-xs btn-edit" title="' . $script_transl['type_value'][$r['tipdoc']] . "\" href=\"" . $modifi . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . substr($r['tipdoc'], 1, 2) . "&nbsp;" . $r['id_tes'] . "</td>";
+                if ( !isset($gaz_custom_data['descrizione'])) {
+                    echo '<td class="text-center"><a class="btn btn-xs btn-edit" title="' . $script_transl['type_value'][$r['tipdoc']] . "\" href=\"" . $modifi . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . substr($r['tipdoc'], 1, 2). " ".$r['id_tes'] . "</td>";
+                } else {
+                    echo '<td class="text-center"><a class="btn btn-xs btn-edit" title="' . $script_transl['type_value'][$r['tipdoc']] . "\" href=\"" . $modifi . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" .$gaz_custom_data['descrizione']."</td>";
+                }
             } else {
                 echo "<td><button class=\"btn btn-xs btn-default disabled\">&nbsp;" . substr($r['tipdoc'], 1, 2) . "&nbsp;" . $r['id_tes'] . " </button></td>";
             }
@@ -490,14 +500,20 @@ $ts->output_navbar();
 			/*
             echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-stampa\" href=\"" . $modulo . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a>";
             echo "</td>";*/
+
             // Colonna "Mail"
             echo "<td align=\"center\">";
             if (!empty($r['e_mail'])){ // ho una mail sulla destinazione
                 echo '<a class="btn btn-xs btn-default btn-email" onclick="confirMail(this);return false;" id="doc' . $r['id_tes'] . '" url="' . $modulo . '&dest=E" href="#" title="mailto: ' . $r['e_mail'] . '"
         mail="' . $r['e_mail'] . '" namedoc="' . $script_transl['type_value'][$r['tipdoc']] . ' n.' . $r['numdoc'] . ' del ' . gaz_format_date($r['datemi']) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
             } elseif (!empty($r['base_mail'])) { // ho una mail sul cliente
-                echo '<a class="btn btn-xs btn-default btn-email" onclick="confirMail(this);return false;" id="doc' . $r['id_tes'] . '" url="' . $modulo . '&dest=E" href="#" title="mailto: ' . $r['base_mail'] . '"
-        mail="' . $r['base_mail'] . '" namedoc="' . $script_transl['type_value'][$r['tipdoc']] . ' n.' . $r['numdoc'] . ' del ' . gaz_format_date($r['datemi']) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
+                if ( !isset($gaz_custom_data['email_inviata'])) {
+                    $classe_mail = "btn-default";
+                } else {
+                    $classe_mail = "btn-success";
+                }
+                echo '<a class="btn btn-xs '.$classe_mail.' btn-email" onclick="confirMail(this);return false;" id="doc' . $r['id_tes'] . '" url="' . $modulo . '&dest=E" href="#" title="mailto: ' . $r['base_mail'] . '"
+                    mail="' . $r['base_mail'] . '" namedoc="' . $script_transl['type_value'][$r['tipdoc']] . ' n.' . $r['numdoc'] . ' del ' . gaz_format_date($r['datemi']) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
             } else { // non ho mail
                 echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" href="admin_client.php?codice=' . substr($r['clfoco'], 3) . '&Update"><i class="glyphicon glyphicon-edit"></i></a>';
             }
