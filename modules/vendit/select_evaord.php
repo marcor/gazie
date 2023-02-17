@@ -536,7 +536,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])){ //conferma dell'evasione di u
 				}
 				// fine inserisco id_lotmag
             }
-            if ($v['tiprig'] >= 11 && $v['tiprig'] <= 13) {
+            if ($v['tiprig'] >= 11 && $v['tiprig'] <= 31) {
                 $row = $v;
                 unset($row['id_rig']);
                 $row['id_tes'] = $last_id;
@@ -1182,7 +1182,7 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
         $('#closePdf').on( "click", function() {
           $('.framePdf').css({'display': 'none'});
           const queryString = window.location.search;
-          const urlParams = new URLSearchParams(queryString);  
+          const urlParams = new URLSearchParams(queryString);
           var dest = urlParams.get('rievadi');
           if (urlParams.get('rievadi') === null || urlParams.get('rievadi') === undefined) dest = 'VO_';
           window.location.replace("./report_broven.php?auxil="+dest);
