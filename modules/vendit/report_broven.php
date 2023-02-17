@@ -430,10 +430,10 @@ $ts->output_navbar();
 			if ($r['tipdoc']=="VOW"){
 				echo "<td><button title=\"Per modificare un ordine web lo si deve prima cancellare da GAzie, modificarlo nell'e-commerce e poi reimportarlo in GAzie\" class=\"btn btn-xs btn-default disabled\">&nbsp;" . substr($r['tipdoc'], 1, 2) . "&nbsp;" . $r['id_tes'] . " </button></td>";
 			}elseif (!empty($modifi)) {
-                if ( !isset($gaz_custom_data['descrizione'])) {
+                if ( !isset($gaz_custom_data['vendit']['descrizione']) || $gaz_custom_data['vendit']['descrizione']=="") {
                     echo '<td class="text-center"><a class="btn btn-xs btn-edit" title="' . $script_transl['type_value'][$r['tipdoc']] . "\" href=\"" . $modifi . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . substr($r['tipdoc'], 1, 2). " ".$r['id_tes'] . "</td>";
                 } else {
-                    echo '<td class="text-center"><a class="btn btn-xs btn-edit" title="' . $script_transl['type_value'][$r['tipdoc']] . "\" href=\"" . $modifi . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" .$gaz_custom_data['descrizione']."</td>";
+                    echo '<td class="text-center"><a class="btn btn-xs btn-edit" title="' . $script_transl['type_value'][$r['tipdoc']] . "\" href=\"" . $modifi . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" .$gaz_custom_data['vendit']['descrizione']."</td>";
                 }
             } else {
                 echo "<td><button class=\"btn btn-xs btn-default disabled\">&nbsp;" . substr($r['tipdoc'], 1, 2) . "&nbsp;" . $r['id_tes'] . " </button></td>";

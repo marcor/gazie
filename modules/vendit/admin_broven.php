@@ -114,6 +114,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['round_stamp'] = intval($_POST['round_stamp']);
     $form['pagame'] = $_POST['pagame'];
     $form['change_pag'] = $_POST['change_pag'];
+    $form['descrizione'] = $_POST['descrizione'];
     if ($form['change_pag'] != $form['pagame']) {  //se e' stato cambiato il pagamento
         $new_pag = gaz_dbi_get_row($gTables['pagame'], "codice", $form['pagame']);
         if ($toDo == 'update') {  //se � una modifica mi baso sulle vecchie spese
@@ -165,7 +166,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['caucon'] = $_POST['caucon'];
     $form['caumag'] = $_POST['caumag'];
     $form['id_agente'] = $_POST['id_agente'];
-    $form['sconto'] = $_POST['sconto'];
+    $form['sconto'] = $_POST['sconto'];    
     // inizio rigo di input
     $form['in_descri'] = $_POST['in_descri'];
     $form['in_tiprig'] = $_POST['in_tiprig'];
@@ -336,6 +337,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         if (!isset($_POST['rows'])) {
             $msg .= "39+";
         }
+        
+
+
+
         // --- inizio controllo coerenza date-numerazione
         if ($toDo == 'update') {  // controlli in caso di modifica
             $rs_query = gaz_dbi_dyn_query("numdoc", $gTables['tesbro'], "YEAR(datemi) = " . $form['annemi'] . " and datemi < '$datemi' and tipdoc = '" . $form['tipdoc'] . "' and seziva = $sezione", "datemi DESC, numdoc DESC", 0, 1);
@@ -379,6 +384,15 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['clfoco'] = $anagrafica->anagra_to_clfoco($new_clfoco, $admin_aziend['mascli'],$form['pagame']);
             }
             if ($toDo == 'update') { // e' una modifica
+                // aggiorno il custom_field
+                $gaz_custom_data = "";
+                $gaz_custom_field = gaz_dbi_get_single_value( $gTables['tesbro'], 'custom_field', 'id_tes = '.$form['id_tes'] );
+                if ( isset( $gaz_custom_field ) && $gaz_custom_field!="" ) {
+                    $gaz_custom_data = json_decode($gaz_custom_field,true);
+                }
+                $gaz_custom_data['vendit']['descrizione'] = $form['descrizione'];
+                $form['custom_field'] = json_encode($gaz_custom_data);
+
                 // carico i vecchi righi presenti nel DB
                 $oldresult = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes = " . $form['id_tes'], "id_rig asc");
                 while($old_rows[] = mysqli_fetch_assoc($oldresult));
@@ -481,6 +495,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['initra'] = $initra;
                 $form['datemi'] = $datemi;
                 $codice = array('id_tes', $form['id_tes']);
+
                 tesbroUpdate($codice, $form);
 
                 // aggiorno l'e-commerce ove presente con i dati raccolti in precedenza nell'apposito array
@@ -496,6 +511,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 header("Location: report_broven.php".($form['tipdoc']=='VPR'?'?auxil=VPR':'')); // in  modifica torno sempre sul report
                 exit;
             } else { // e' un'inserimento
+                // carico le impostazioni aggiuntive dal campo custom
+                $gaz_custom_data = array();
+                $gaz_custom_data['vendit']['descrizione'] = $form['descrizione'];
+                $form['custom_field'] = json_encode($gaz_custom_data);
 
                 // ricavo i progressivi in base al tipo di documento
                 $where = "numdoc desc";
@@ -593,9 +612,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $msg .= "50+";
             }
         }
-        if ($msg == "") {// nessun errore
-			// creo la descrizione del preventivo di origine
+        if ($msg == "") {// nessun errore	
+            // carico le impostazioni aggiuntive dal campo custom
+            $gaz_custom_data = array();
+            $gaz_custom_data['vendit']['descrizione'] = $form['descrizione'];
+            $form['custom_field'] = json_encode($gaz_custom_data);
 
+            // creo la descrizione del preventivo di origine
             require("lang." . $admin_aziend['lang'] . ".php");
             $descripreventivo = "rif. " . $strScript['admin_broven.php'][0]['VPR'] . " n." . $form['numdoc'] . " del " . $form['gioemi'] . "." . $form['mesemi'] . "." . $form['annemi'];
 			// fine creazione descrizione preventivo di origine
@@ -795,6 +818,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         }
         $form['volume'] += $form['in_quanti'] * $artico['volume_specifico'];
         $form['in_good_or_service']=$artico['good_or_service'];
+
         // fine addizione peso,pezzi,volume
         }else{
           $form['net_weight']=0;
@@ -1237,7 +1261,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     /** inizio modifica FP 09/10/2015
      * inizializzo il campo con '#' per indicare che voglio lo sconto standard dell'articolo
      */
-//rimossa    $form['in_sconto'] = 0;
+    //rimossa    $form['in_sconto'] = 0;
     $form['in_sconto'] = '#';
     /* fine modifica FP */
     $form['in_quanti'] = 0;
@@ -1316,6 +1340,15 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['caumag'] = $tesbro['caumag'];
     $form['caucon'] = $tesbro['caucon'];
     $form['sconto'] = $tesbro['sconto'];
+
+    // carico le impostazioni aggiuntive dal campo custom
+    $gaz_custom_data = "";
+    $gaz_custom_field = gaz_dbi_get_single_value( $gTables['tesbro'], 'custom_field', 'id_tes = '.$form['id_tes'] );
+    if ( isset( $gaz_custom_field ) && $gaz_custom_field!="" ) {
+        $gaz_custom_data = json_decode($gaz_custom_field,true);
+    }
+    $form['descrizione'] = $gaz_custom_data['vendit']['descrizione'];
+
     $next_row = 0;
     while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
         $articolo = gaz_dbi_get_row($gTables['artico'], "codice", $rigo['codart']);
@@ -1397,10 +1430,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_ritenuta'] = 0;
     $form['in_unimis'] = "";
     $form['in_prelis'] = 0.000;
+    $form['descrizione'] = "";
+    
     /** inizio modifica FP 09/10/2015
      * inizializzo il campo con '#' per indicare che voglio lo sconto standard dell'articolo
      */
-//rimossa    $form['in_sconto'] = 0;
+    //rimossa    $form['in_sconto'] = 0;
     $form['in_sconto'] = '#';
     /* fine modifica FP */
     $form['in_quanti'] = 0;
@@ -2397,6 +2432,7 @@ if ($next_row > 0) {
 						<input name="prestampa" class="btn btn-info" onClick="preStampa();" type="button" value="Prestampa">
 					</td>
 					<td colspan="4" class="text-center FacetFooterTD">
+                        <input name="descrizione" type="text" placeholder="Descrizione preventivo" value="'.$form['descrizione'].'"/>
 						<input name="ins" class="btn '.$class_btn_confirm.'" id="preventDuplicate" onClick="chkSubmit();" type="submit" value="' . ucfirst($script_transl[$toDo]) . '">
 					</td>
 				';
