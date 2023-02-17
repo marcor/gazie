@@ -191,7 +191,7 @@ if (!defined("MESSAGE_WELCOME")) {
     define("WORDING_NEW_USERNAME", "New username (username cannot be empty and must be azAZ09 and 2-64 characters)");
     define("WORDING_OLD_PASSWORD", "Your OLD Password");
     define("WORDING_PASSWORD", "Password");
-    define("WORDING_PROFILE_PICTURE", "Your profile picture (from gravatar):");
+    define("WORDING_PROFILE_PICTURE", "Your profile picture");
     define("WORDING_REGISTER", "Registrami");
     define("WORDING_REGISTER_NEW_ACCOUNT", "Sono un nuovo alunno");
     define("WORDING_REGISTER_NEW_ADMIN", "Sono un nuovo utente");

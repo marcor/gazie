@@ -54,17 +54,13 @@ class Login
 	*/
 	private $user_is_logged_in = false;
 	/**
-	* @var string $user_gravatar_image_url The user's gravatar profile pic url (or a default one)
-	*/
-	public $user_gravatar_image_url = "";
-	/**
-	* @var string $user_gravatar_image_tag The user's gravatar profile pic url with <img ... /> around
-	*/
-	public $user_gravatar_image_tag = "";
-	/**
 	* @var boolean $password_reset_link_is_valid Marker for view handling
 	*/
 	private $password_reset_link_is_valid = false;
+	/**
+	* @var int $password_is_expired 0 non scaduta, 1 scaduta da poco, >=2 scaduta da oltre 30gg
+	*/
+	private $password_is_expired = 0;
 	/**
 	* @var boolean $password_reset_was_successful Marker for view handling
 	*/
@@ -139,11 +135,6 @@ class Login
 			$this->checkIfEmailVerificationCodeIsValid($_GET["user_name"], $_GET["verification_code"]);
 		} elseif (isset($_POST["submit_new_password"])) {
 			$this->editNewPassword($_POST['user_name'], $_POST['user_password_reset_hash'], $_POST['user_password_new'], $_POST['user_password_repeat']);
-		}
-
-		// get gravatar profile picture if user is logged in
-		if ($this->isUserLoggedIn() == true) {
-			$this->getGravatarImageUrl($this->user_email);
 		}
 	}
 
@@ -229,7 +220,7 @@ class Login
 	/**
 	* Logs in via the Cookie
 	* @return bool success state of cookie login
-	*/
+
 	private function loginWithCookieData()
 	{
 		if (isset($_COOKIE['rememberme'])) {
@@ -250,22 +241,22 @@ class Login
 					$sth->bindValue(':user_rememberme_token', $token, PDO::PARAM_STR);
 					$sth->execute();
 					// get result row (as an object)
-					$result_row = $sth->fetchObject();
+					$userdata = $sth->fetchObject();
 
-					if (isset($result_row->user_id)) {
+					if (isset($userdata->user_id)) {
 						// INIZIO ---- ripresa del valore del tema (g6,g7,lte)
 						$rt = $this->db_connection->prepare('SELECT var_value FROM ' . DB_TABLE_PREFIX . '_admin_config WHERE var_name = \'theme\' AND adminid = :user_name COLLATE utf8_bin');
-						$rt->bindValue(':user_name', $result_row->user_name, PDO::PARAM_STR);
+						$rt->bindValue(':user_name', $userdata->user_name, PDO::PARAM_STR);
 						$rt->execute();
 						// get result row (as an object)
 						$rt_row = $rt->fetchObject();
 						$_SESSION['theme'] = $rt_row->var_value;
 						// FINE ---- ripresa del valore del tema (g6,g7,lte)
 
-						/*  se sul file config/config/gconfig.php scelgo di comunicare ad un hosting d'appoggio
-							il mio eventuale nuovo IP DINAMICO del router ADSL faccio un ping ad esso così altri utenti
-							che sono a conoscenza del meccanismo possono richiederlo e successivamente essere ridiretti
-							qui tramite HTTPS */
+						//  se sul file config/config/gconfig.php scelgo di comunicare ad un hosting d'appoggio
+						//	il mio eventuale nuovo IP DINAMICO del router ADSL faccio un ping ad esso così altri utenti
+						//	che sono a conoscenza del meccanismo possono richiederlo e successivamente essere ridiretti
+						//	qui tramite HTTPS
 						if (SET_DYNAMIC_IP != '') {
 							@ini_set('default_socket_timeout',3);
 							@file_get_contents(SET_DYNAMIC_IP);
@@ -274,26 +265,26 @@ class Login
 						// increment the login counter for that user
 						$acc = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . '_admin '
 						. " SET Access = Access+1, last_ip = '". $this->getUserIP()."' WHERE user_name = :user_name ;");
-						$acc->execute(array(':user_name' => $result_row->user_name));
+						$acc->execute(array(':user_name' => $userdata->user_name));
 
 						// insert login user data into gaz_admin_login_history
 						$acc = $this->db_connection->prepare('INSERT INTO ' . DB_TABLE_PREFIX . '_admin_login_history '
-						. ' (`login_user_id`, `login_datetime`, `login_user_ip`) VALUES ('. $result_row->user_id.",'".date('Y-m-d H:i:s')."', '".$this->getUserIP()."');");
+						. ' (`login_user_id`, `login_datetime`, `login_user_ip`) VALUES ('. $userdata->user_id.",'".date('Y-m-d H:i:s')."', '".$this->getUserIP()."');");
 						$acc->execute();
 
 						// write user data into PHP SESSION [a file on your server]
-						$_SESSION['user_id'] = $result_row->user_id;
-						$_SESSION['user_name'] = $result_row->user_name;
-						$_SESSION['user_email'] = $result_row->user_email;
-						$_SESSION['company_id'] = $result_row->company_id;
+						$_SESSION['user_id'] = $userdata->user_id;
+						$_SESSION['user_name'] = $userdata->user_name;
+						$_SESSION['user_email'] = $userdata->user_email;
+						$_SESSION['company_id'] = $userdata->company_id;
 						$_SESSION['user_logged_in'] = 1;
-						$_SESSION['aes_key'] = $result_row->aes_key_pass;
+						$_SESSION['aes_key'] = $userdata->aes_key_pass;
 
 						// declare user id, set the login status to true
-						$this->user_id = $result_row->user_id;
-						$this->user_name = $result_row->user_name;
-						$this->user_email = $result_row->user_email;
-						$this->company_id = $result_row->company_id;
+						$this->user_id = $userdata->user_id;
+						$this->user_name = $userdata->user_name;
+						$this->user_email = $userdata->user_email;
+						$this->company_id = $userdata->company_id;
 						$this->user_is_logged_in = true;
 
 						// Cookie token usable only once
@@ -308,7 +299,7 @@ class Login
 		}
 		return false;
 	}
-
+	*/
 	/**
 	* Logs in with the data provided in $_POST, coming from the login form
 	* @param $user_name
@@ -328,7 +319,7 @@ class Login
 			// if user has not typed a valid email address, we try to identify him with his user_name
 			if (!filter_var($user_name, FILTER_VALIDATE_EMAIL)) {
 				// database query, getting all the info of the selected user
-				$result_row = $this->getUserData(trim($user_name), $user_password);
+				$userdata = $this->getUserData(trim($user_name), $user_password);
 				// if user has typed a valid email address, we try to identify him with his user_email
 			} else if ($this->databaseConnection()) {
 				// database query, getting all the info of the selected user
@@ -336,11 +327,11 @@ class Login
 				$query_user->bindValue(':user_email', trim($user_name), PDO::PARAM_STR);
 				$query_user->execute();
 				// get result row (as an object)
-				$result_row = $query_user->fetchObject();
+				$userdata = $query_user->fetchObject();
 			}
 
 			// if this user not exists
-			if (! isset($result_row->user_id)) {
+			if (! isset($userdata->user_id)) {
 				// se la password risulta essere sbagliata ed ho un il vecchio nome della colonna "Password" propongo di aggiornare il database
 				$query_us = $this->db_connection->prepare('SELECT * FROM ' . DB_TABLE_PREFIX . '_admin WHERE user_name = :user_name COLLATE utf8_bin');
 				$query_us->bindValue(':user_name', trim($user_name), PDO::PARAM_STR);
@@ -354,10 +345,10 @@ class Login
 					// to prevent potential attackers showing if the user exists
 					$this->errors[] = MESSAGE_LOGIN_FAILED;
 				}
-			} else if (($result_row->user_failed_logins >= 3) && ($result_row->user_last_failed_login > (time() - 60))) {
+			} else if (($userdata->user_failed_logins >= 3) && ($userdata->user_last_failed_login > (time() - 60))) {
 				$this->errors[] = MESSAGE_PASSWORD_WRONG_3_TIMES;
 				// using PHP 5.5's password_verify() function to check if the provided passwords fits to the hash of that user's password
-			} else if (!password_verify($user_password, $result_row->user_password_hash)) {
+			} else if (!password_verify($user_password, $userdata->user_password_hash)) {
 				// increment the failed login counter for that user
 				$sth = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . '_admin '
 				. 'SET user_failed_logins = user_failed_logins+1, user_last_failed_login = :user_last_failed_login '
@@ -366,17 +357,17 @@ class Login
 
 				$this->errors[] = MESSAGE_PASSWORD_WRONG;
 				// has the user activated their account with the verification email
-			} else if ($result_row->user_active != 1) {
+			} else if ($userdata->user_active != 1) {
 				$this->errors[] = MESSAGE_ACCOUNT_NOT_ACTIVATED;
 			} else {
-				// INIZIO ---- ripresa del valore del tema (g6,g7,lte)
+				// INIZIO ---- ripresa del valore del tema (g7,lte o altri personalizzati)
 				$rt = $this->db_connection->prepare('SELECT var_value FROM ' . DB_TABLE_PREFIX . '_admin_config WHERE var_name = \'theme\' AND adminid = :user_name COLLATE utf8_bin');
-				$rt->bindValue(':user_name', $result_row->user_name, PDO::PARAM_STR);
+				$rt->bindValue(':user_name', $userdata->user_name, PDO::PARAM_STR);
 				$rt->execute();
 				// get result row (as an object)
 				$rt_row = $rt->fetchObject();
 				$_SESSION['theme'] = $rt_row->var_value;
-				// FINE ---- ripresa del valore del tema (g6,g7,lte)
+				// FINE ---- ripresa del valore del tema (g7,lte o altri personalizzati)
 
 				/*  se sul file config/config/gconfig.php scelgo di comunicare ad un hosting d'appoggio
 				il mio eventuale nuovo IP DINAMICO del router ADSL faccio un ping ad esso così altri utenti
@@ -387,78 +378,86 @@ class Login
 					@file_get_contents(SET_DYNAMIC_IP);
 				}
 
-				// increment the login counter for that user
-				$acc = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . '_admin '
-				. " SET Access = Access+1, last_ip = '". $this->getUserIP()."' WHERE user_name = :user_name ;");
-				$acc->execute(array(':user_name' => $result_row->user_name));
+        // riprendo dalla configurazione generale i giorni di scadenza password
+        $giopas = $this->db_connection->prepare("SELECT cvalue FROM  ". DB_TABLE_PREFIX . "_config WHERE variable = 'giornipass'");
+        $giopas->execute();
+        // get result row (as an object)
+        $valgiopas = $giopas->fetchObject(); // in $valgiopas->cvalue ho i giorni di validità della password
+        $vgp = (int)$valgiopas->cvalue;
+        $today = new DateTime();
+        $datpasone = new DateTime($userdata->datpas);
+        $datpastwo = new DateTime($userdata->datpas);
+        $datpasone->modify('+'.$vgp.' days');
+        $datpastwo->modify('+'.($vgp+30).' days');
+        // si possono verificare 3 casi: password scaduta da poco, scaduta da oltre 30gg, e non scaduta (rispetto alla data odierna + giornipass di gaz_config)
+        if ($today >= $datpastwo ) { //  scaduta oltre i 30gg
+          $this->password_is_expired = 2;
+        } elseif ($today >= $datpasone ) { // scaduta entro i 30gg
+          $this->password_is_expired = 1;
+        }
 
-				// insert login user data into gaz_admin_login_history
-				$acc = $this->db_connection->prepare('INSERT INTO ' . DB_TABLE_PREFIX . '_admin_login_history '
-				. ' (`login_user_id`, `login_datetime`, `login_user_ip`) VALUES ('. $result_row->user_id.",'".date('Y-m-d H:i:s')."', '".$this->getUserIP()."');");
-				$acc->execute();
-				// write user data into PHP SESSION [a file on your server]
-				$_SESSION['user_id'] = $result_row->user_id;
-				$_SESSION['user_name'] = $result_row->user_name;
-				$_SESSION['user_email'] = $result_row->user_email;
-				$_SESSION['company_id'] = $result_row->company_id;
-				$_SESSION['user_logged_in'] = 1;
-        $prepared_key = openssl_pbkdf2($user_password.$result_row->user_name, AES_KEY_SALT, 16, 1000, "sha256");
-        $_SESSION['aes_key'] = openssl_decrypt(base64_decode($result_row->aes_key),"AES-128-CBC",$prepared_key,OPENSSL_RAW_DATA, AES_KEY_IV);
-				// declare user id, set the login status to true
-				$this->user_id = $result_row->user_id;
-				$this->user_name = $result_row->user_name;
-				$this->user_email = $result_row->user_email;
-				$this->company_id = $result_row->company_id;
-				$this->user_is_logged_in = true;
-        // ad ogni login cancello il direttorio della cache dei files temporanei di tcpdf
-        if ($handle = @opendir(K_PATH_CACHE)) {
-          while ( false !== ( $file_name = readdir( $handle ) ) ) {
-            if (preg_match('/^__[A-Za-z0-9]{4,5}.tmp$/',$file_name) || preg_match('/^__tcpdf_[A-Za-z0-9]+_img_[A-Za-z0-9]+$/',$file_name) ) {
-              if ((filemtime(K_PATH_CACHE.$file_name)+100) < time()){ // se sono passati 1000 secondi posso cancellarlo
-                unlink(K_PATH_CACHE.$file_name);
-              }
+        if ($this->password_is_expired <= 1) {
+          // increment the login counter for that user
+          $acc = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . '_admin '
+          . " SET Access = Access+1, last_ip = '". $this->getUserIP()."' WHERE user_name = :user_name ;");
+          $acc->execute(array(':user_name' => $userdata->user_name));
+
+          // insert login user data into gaz_admin_login_history
+          $acc = $this->db_connection->prepare('INSERT INTO ' . DB_TABLE_PREFIX . '_admin_login_history '
+          . ' (`login_user_id`, `login_datetime`, `login_user_ip`) VALUES ('. $userdata->user_id.",'".date('Y-m-d H:i:s')."', '".$this->getUserIP()."');");
+          $acc->execute();
+          // write user data into PHP SESSION [a file on your server]
+          $_SESSION['user_id'] = $userdata->user_id;
+          $_SESSION['user_name'] = $userdata->user_name;
+          $_SESSION['user_email'] = $userdata->user_email;
+          $_SESSION['company_id'] = $userdata->company_id;
+          $_SESSION['user_logged_in'] = 1;
+          $prepared_key = openssl_pbkdf2($user_password.$userdata->user_name, AES_KEY_SALT, 16, 1000, "sha256");
+          $_SESSION['aes_key'] = openssl_decrypt(base64_decode($userdata->aes_key),"AES-128-CBC",$prepared_key,OPENSSL_RAW_DATA, AES_KEY_IV);
+          // declare user id, set the login status to true
+          $this->user_id = $userdata->user_id;
+          $this->user_name = $userdata->user_name;
+          $this->user_email = $userdata->user_email;
+          $this->company_id = $userdata->company_id;
+          $this->user_is_logged_in = true;
+          // reset the failed login counter for that user
+          $sth = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . '_admin '
+          . 'SET user_failed_logins = 0, user_last_failed_login = NULL '
+          . 'WHERE user_id = :user_id AND user_failed_logins != 0');
+          $sth->execute(array(':user_id' => $userdata->user_id));
+          // if user has check the "remember me" checkbox, then generate token and write cookie
+          if (isset($user_rememberme)) {
+            $this->newRememberMeCookie();
+          } else {
+            // Reset remember-me token
+            $this->deleteRememberMeCookie();
+          }
+        }
+
+        // OPTIONAL: recalculate the user's password hash
+        // DELETE this if-block if you like, it only exists to recalculate users's hashes when you provide a cost factor,
+        // by default the script will use a cost factor of 10 and never change it.
+        // check if the have defined a cost factor in config/hashing.php
+        if (defined('HASH_COST_FACTOR')) {
+          // check if the hash needs to be rehashed
+          if (password_needs_rehash($userdata->user_password_hash, PASSWORD_DEFAULT, array('cost' => HASH_COST_FACTOR))) {
+
+            // calculate new hash with new cost factor
+            $user_password_hash = password_hash($user_password, PASSWORD_DEFAULT, array('cost' => HASH_COST_FACTOR));
+
+            // TODO: this should be put into another method !?
+            $query_update = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . '_admin SET user_password_hash = :user_password_hash WHERE user_id = :user_id');
+            $query_update->bindValue(':user_password_hash', $user_password_hash, PDO::PARAM_STR);
+            $query_update->bindValue(':user_id', $userdata->user_id, PDO::PARAM_INT);
+            $query_update->execute();
+
+            if ($query_update->rowCount() == 0) {
+              // writing new hash was successful. you should now output this to the user ;)
+            } else {
+              // writing new hash was NOT successful. you should now output this to the user ;)
             }
           }
-          closedir($handle);
         }
-				// reset the failed login counter for that user
-				$sth = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . '_admin '
-				. 'SET user_failed_logins = 0, user_last_failed_login = NULL '
-				. 'WHERE user_id = :user_id AND user_failed_logins != 0');
-				$sth->execute(array(':user_id' => $result_row->user_id));
-
-				// if user has check the "remember me" checkbox, then generate token and write cookie
-				if (isset($user_rememberme)) {
-					$this->newRememberMeCookie();
-				} else {
-					// Reset remember-me token
-					$this->deleteRememberMeCookie();
-				}
-
-				// OPTIONAL: recalculate the user's password hash
-				// DELETE this if-block if you like, it only exists to recalculate users's hashes when you provide a cost factor,
-				// by default the script will use a cost factor of 10 and never change it.
-				// check if the have defined a cost factor in config/hashing.php
-				if (defined('HASH_COST_FACTOR')) {
-					// check if the hash needs to be rehashed
-					if (password_needs_rehash($result_row->user_password_hash, PASSWORD_DEFAULT, array('cost' => HASH_COST_FACTOR))) {
-
-						// calculate new hash with new cost factor
-						$user_password_hash = password_hash($user_password, PASSWORD_DEFAULT, array('cost' => HASH_COST_FACTOR));
-
-						// TODO: this should be put into another method !?
-						$query_update = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . '_admin SET user_password_hash = :user_password_hash WHERE user_id = :user_id');
-						$query_update->bindValue(':user_password_hash', $user_password_hash, PDO::PARAM_STR);
-						$query_update->bindValue(':user_id', $result_row->user_id, PDO::PARAM_INT);
-						$query_update->execute();
-
-						if ($query_update->rowCount() == 0) {
-							// writing new hash was successful. you should now output this to the user ;)
-						} else {
-							// writing new hash was NOT successful. you should now output this to the user ;)
-						}
-					}
-				}
 			}
 		}
 	}
@@ -533,6 +532,14 @@ class Login
 	}
 
 	/**
+	*  ritorna lo stato di scadenza password utente
+	*/
+	public function isPasswordExpired()
+	{
+		return $this->password_is_expired;
+	}
+
+	/**
 	* Edit the user's name, provided in the editing form
 	*/
 	public function editUserName($user_name)
@@ -550,9 +557,9 @@ class Login
 
 		} else {
 			// check if new username already exists
-			$result_row = $this->getUserData($user_name);
+			$userdata = $this->getUserData($user_name);
 
-			if (isset($result_row->user_id)) {
+			if (isset($userdata->user_id)) {
 				$this->errors[] = MESSAGE_USERNAME_EXISTS;
 			} else {
 				// write user's new data into database
@@ -587,9 +594,9 @@ class Login
 
 		} else {
 			// check if new username already exists
-			$result_row = $this->getUserData($user_name);
+			$userdata = $this->getUserData($user_name);
 
-			if (isset($result_row->user_id)) {
+			if (isset($userdata->user_id)) {
 				$this->errors[] = MESSAGE_USERNAME_EXISTS;
 			} else {
 				// write user's new data into database
@@ -625,13 +632,13 @@ class Login
 			// all the above tests are ok
 		} else {
 			// database query, getting hash of currently logged in user (to check with just provided password)
-			$result_row = $this->getUserData($_SESSION['user_name']);
+			$userdata = $this->getUserData($_SESSION['user_name']);
 
 			// if this user exists
-			if (isset($result_row->user_password_hash)) {
+			if (isset($userdata->user_password_hash)) {
 
 				// using PHP 5.5's password_verify() function to check if the provided passwords fits to the hash of that user's password
-				if (password_verify($user_password_old, $result_row->user_password_hash)) {
+				if (password_verify($user_password_old, $userdata->user_password_hash)) {
 
 					// now it gets a little bit crazy: check if we have a constant HASH_COST_FACTOR defined (in config/hashing.php),
 					// if so: put the value into $hash_cost_factor, if not, make $hash_cost_factor = null
@@ -682,10 +689,10 @@ class Login
 			// generate random hash for email password reset verification (40 char string)
 			$user_password_reset_hash = sha1(uniqid(mt_rand(), true));
 			// database query, getting all the info of the selected user
-			$result_row = $this->getUserData($user_name);
+			$userdata = $this->getUserData($user_name);
 
 			// if this user exists
-			if (isset($result_row->user_id)) {
+			if (isset($userdata->user_id)) {
 
 				// database query:
 				$query_update = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . '_admin SET user_password_reset_hash = :user_password_reset_hash, user_password_reset_timestamp = :user_password_reset_timestamp WHERE user_name = :user_name');
@@ -697,7 +704,7 @@ class Login
 				// check if exactly one row was successfully changed:
 				if ($query_update->rowCount() == 1) {
 					// send a mail to the user, containing a link with that token hash string
-					$this->sendPasswordResetMail($user_name, $result_row->user_email, $user_password_reset_hash);
+					$this->sendPasswordResetMail($user_name, $userdata->user_email, $user_password_reset_hash);
 					return true;
 				} else {
 					$this->errors[] = MESSAGE_DATABASE_ERROR;
@@ -779,14 +786,14 @@ class Login
 			$this->errors[] = MESSAGE_LINK_PARAMETER_EMPTY;
 		} else {
 			// database query, getting all the info of the selected user
-			$result_row = $this->getUserData($user_name);
+			$userdata = $this->getUserData($user_name);
 
 			// if this user exists and have the same hash in database
-			if (isset($result_row->user_id) && $result_row->user_password_reset_hash == $verification_code) {
+			if (isset($userdata->user_id) && $userdata->user_password_reset_hash == $verification_code) {
 
 				$timestamp_one_hour_ago = time() - 3600; // 3600 seconds are 1 hour
 
-				if ($result_row->user_password_reset_timestamp > $timestamp_one_hour_ago) {
+				if ($userdata->user_password_reset_timestamp > $timestamp_one_hour_ago) {
 					// set the marker to true, making it possible to show the password reset edit form view
 					$this->password_reset_link_is_valid = true;
 				} else {
@@ -874,38 +881,4 @@ class Login
 		return $this->user_name;
 	}
 
-	/**
-	* Get either a Gravatar URL or complete image tag for a specified email address.
-	* Gravatar is the #1 (free) provider for email address based global avatar hosting.
-	* The URL (or image) returns always a .jpg file !
-	* For deeper info on the different parameter possibilities:
-	* @see http://de.gravatar.com/site/implement/images/
-	*
-	* @param string $email The email address
-	* @param string $s Size in pixels, defaults to 50px [ 1 - 2048 ]
-	* @param string $d Default imageset to use [ 404 | mm | identicon | monsterid | wavatar ]
-	* @param string $r Maximum rating (inclusive) [ g | pg | r | x ]
-	* @param array $atts Optional, additional key/value attributes to include in the IMG tag
-	* @source http://gravatar.com/site/implement/images/php/
-	*/
-	public function getGravatarImageUrl($email, $s = 50, $d = 'mm', $r = 'g', $atts = array())
-	{
-		$url = 'https://www.gravatar.com/avatar/';
-		$url .= md5(strtolower(trim($email)));
-		//$url .= "?s=$s&d=$d&r=$r&f=y";
-
-		// the image url (on gravatarr servers), will return in something like
-		// http://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?s=80&d=mm&r=g
-		// note: the url does NOT have something like .jpg
-		$this->user_gravatar_image_url = $url;
-
-		// build img tag around
-		$url = '<img src="' . $url . '"';
-		foreach ($atts as $key => $val)
-		$url .= ' ' . $key . '="' . $val . '"';
-		$url .= ' />';
-
-		// the image url like above but with an additional <img src .. /> around
-		$this->user_gravatar_image_tag = $url;
-	}
 }

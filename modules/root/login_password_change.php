@@ -40,18 +40,12 @@ require_once('classes/Login.php');
 // so this single line handles the entire login process.
 $login = new Login();
 
-// ... ask if we are logged in here:
-if ($login->isPasswordExpired() >= 1) {
-  // password scaduta
-  include("views/password_change.php");
-} else if ($login->isUserLoggedIn() == true) {
-  // the user is logged in. you can do whatever you want here.
-  // for demonstration purposes, we simply show the "you are logged in" view.
-  redirect("admin.php");
-  exit;
-} else {
-  // the user is not logged in. you can do whatever you want here.
-  // for demonstration purposes, we simply show the "you are not logged in" view.
-  include("views/not_logged_in.php");
-}
+// the user has just successfully entered a new password
+// so we show the index page = the login page
+if ($login->passwordChangeWasSuccessful() == true) {
+    include("views/not_logged_in.php");
 
+} else {
+    // show the request-a-password-change
+    include("views/password_change.php");
+}
