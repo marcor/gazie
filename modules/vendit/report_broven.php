@@ -464,8 +464,13 @@ $ts->output_navbar();
                 if ( $tipo == "VOG" ) {
                     echo "<a class=\"btn btn-xs btn-warning\" href=\"select_evaord_gio.php?weekday=".$r['weekday_repeat']."\">evadi</a>";
                 } else {
-                    echo "<a class=\"btn btn-xs btn-warning\" href=\"select_evaord.php?id_tes=" . $r['id_tes'] . "\">evadi</a>&nbsp;";
-                    echo "<a class=\"btn btn-xs btn-warning\" href=\"select_evaord.php?clfoco=" . $r['clfoco'] . "\">evadi cliente</a>";
+                    if( $r['tipdoc']=='VPR') {
+                        $ritorno = "&ritorno=VPR";
+                    } else {
+                        $ritorno = "&ritorno=VOR";
+                    }
+                    echo "<a class=\"btn btn-xs btn-warning\" href=\"select_evaord.php?id_tes=" . $r['id_tes'] . $ritorno."\">evadi</a>&nbsp;";
+                    echo "<a class=\"btn btn-xs btn-warning\" href=\"select_evaord.php?clfoco=" . $r['clfoco'] . $ritorno."\">evadi cliente</a>";
                 }
             } elseif ($remains_atleastone) {
                 // l'ordine è parzialmente evaso, mostro lista documenti e tasto per evadere rimanenze
@@ -480,7 +485,7 @@ $ts->output_navbar();
             } else {
                 // l'ordine è completamente evaso, mostro i riferimenti ai documenti che lo hanno evaso
                 if ( $tipo=="VPR" ) {
-                    echo "<a class=\"btn btn-xs btn-warning\" href=\"select_evaord.php?id_tes=" . $r['id_tes'] . "&rievadi=VPR\">rievadi </a>&nbsp;";
+                    echo "<a class=\"btn btn-xs btn-warning\" href=\"select_evaord.php?id_tes=" . $r['id_tes'] . "&ritorno=VPR\">rievadi </a>&nbsp;";
                 }
                 $ultimo_documento = 0;
                 mostra_documenti_associati( $r['id_tes'] );

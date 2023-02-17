@@ -114,7 +114,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['round_stamp'] = intval($_POST['round_stamp']);
     $form['pagame'] = $_POST['pagame'];
     $form['change_pag'] = $_POST['change_pag'];
-    $form['descrizione'] = $_POST['descrizione'];
+    if ( isset($_POST['descrizione']))
+        $form['descrizione'] = $_POST['descrizione'];
     if ($form['change_pag'] != $form['pagame']) {  //se e' stato cambiato il pagamento
         $new_pag = gaz_dbi_get_row($gTables['pagame'], "codice", $form['pagame']);
         if ($toDo == 'update') {  //se � una modifica mi baso sulle vecchie spese
@@ -1342,12 +1343,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['sconto'] = $tesbro['sconto'];
 
     // carico le impostazioni aggiuntive dal campo custom
-    $gaz_custom_data = "";
+    $gaz_custom_data = array();
     $gaz_custom_field = gaz_dbi_get_single_value( $gTables['tesbro'], 'custom_field', 'id_tes = '.$form['id_tes'] );
     if ( isset( $gaz_custom_field ) && $gaz_custom_field!="" ) {
         $gaz_custom_data = json_decode($gaz_custom_field,true);
+        $form['descrizione'] = $gaz_custom_data['vendit']['descrizione'];
+    } else {
+        $form['descrizione'] = "";
     }
-    $form['descrizione'] = $gaz_custom_data['vendit']['descrizione'];
 
     $next_row = 0;
     while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
@@ -2432,7 +2435,7 @@ if ($next_row > 0) {
 						<input name="prestampa" class="btn btn-info" onClick="preStampa();" type="button" value="Prestampa">
 					</td>
 					<td colspan="4" class="text-center FacetFooterTD">
-                        <input name="descrizione" type="text" placeholder="Descrizione preventivo" value="'.$form['descrizione'].'"/>
+                        <input name="descrizione"  maxlength="20" type="text" placeholder="Descrizione preventivo" value="'.$form['descrizione'].'"/>
 						<input name="ins" class="btn '.$class_btn_confirm.'" id="preventDuplicate" onClick="chkSubmit();" type="submit" value="' . ucfirst($script_transl[$toDo]) . '">
 					</td>
 				';

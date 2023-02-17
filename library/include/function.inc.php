@@ -1591,6 +1591,7 @@ class GAzieMail {
 			<tr>
 				<td>mail send has been successful... <strong>OK</strong></td>
 			</tr>
+            <tr><td><button onclick="history.back()">Torna indietro</button></td></tr>
 		</table>
 		</center>
 <?php
@@ -1610,6 +1611,7 @@ class GAzieMail {
                         <tr>
                                 <td>mail send has been successful... <strong>OK</strong></td>
                         </tr>
+                        <tr><td><button onclick="history.back()">Torna indietro</button></td></tr>
                 </table>
                 </center>
 
@@ -1632,6 +1634,7 @@ class GAzieMail {
                         <tr>
 			<td>Errore: <?php echo $mail->ErrorInfo; ?></td>
                         </tr>
+                        <tr><td ><button onclick="history.back()">Torna indietro</button></td></tr>
                 </table>
                 </center>
 

@@ -144,7 +144,7 @@ function setOrdineEvaso($righi)
     global $gTables;
     // controllo se ci sono ancora righi inevasi
     $id_tesArray = array_unique(array_column($righi, 'id_tes'));
-    if ( !isset($_GET['rievadi']) ) {
+    if ( !isset($_GET['ritorno']) ) {
     foreach ($id_tesArray as $id_tes) {
         $inevasi = false;
         foreach ($righi as $rigo) {
@@ -1183,8 +1183,8 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
           $('.framePdf').css({'display': 'none'});
           const queryString = window.location.search;
           const urlParams = new URLSearchParams(queryString);
-          var dest = urlParams.get('rievadi');
-          if (urlParams.get('rievadi') === null || urlParams.get('rievadi') === undefined) dest = 'VO_';
+          var dest = urlParams.get('ritorno');
+          if (urlParams.get('ritorno') === null || urlParams.get('ritorno') === undefined) dest = 'VO_';
           window.location.replace("./report_broven.php?auxil="+dest);
         });
       });
@@ -1422,7 +1422,7 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
                         break;
                 }
                 // se si sta forzando la rievasione del preventivo mostra i righi nascosti
-                if ( isset($_GET['rievadi']) ) $checkin = ' checked';
+                if ( isset($_GET['ritorno']) ) $checkin = ' checked';
 
                 if ($ctrl_tes != $v['id_tes']) {
                     echo "<tr><td class=\"FacetDataTD\" colspan=\"9\"> " . $script_transl['from'] . " <a href=\"admin_broven.php?Update&id_tes=" . $v["id_tes"] . "\" title=\"" . $script_transl['upd_ord'] . "\"> " . $script_transl['doc_name'][$v['tipdoc']] . " n." . $v['numdoc'] . "</a> " . $script_transl['del'] . ' ' . gaz_format_date($v['datemi']) . " </td>
