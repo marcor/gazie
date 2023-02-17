@@ -43,9 +43,8 @@ $login = new Login();
 // the user has just successfully entered a new password
 // so we show the index page = the login page
 if ($login->passwordChangeWasSuccessful() == true) {
-    include("views/not_logged_in.php");
-
+  include("views/not_logged_in.php");
 } else {
-    // show the request-a-password-change
-    include("views/password_change.php");
+  // show the request-a-password-change
+  include("views/password_change.php");
 }

@@ -66,6 +66,10 @@ class Login
 	*/
 	private $password_reset_was_successful = false;
 	/**
+	* @var boolean $password_change_was_successful Marker for view handling
+	*/
+	private $password_change_was_successful = false;
+	/**
 	* @var array $errors Collection of error messages
 	*/
 	public $errors = array();
@@ -134,7 +138,11 @@ class Login
 		} elseif (isset($_GET["user_name"]) && isset($_GET["verification_code"])) {
 			$this->checkIfEmailVerificationCodeIsValid($_GET["user_name"], $_GET["verification_code"]);
 		} elseif (isset($_POST["submit_new_password"])) {
-			$this->editNewPassword($_POST['user_name'], $_POST['user_password_reset_hash'], $_POST['user_password_new'], $_POST['user_password_repeat']);
+			$this->editNewPassword($_POST['user_name'], $_POST['user_password_reset_hash'],$_POST['user_password_new'], $_POST['user_password_repeat']);
+		} elseif (isset($_POST["submit_change_password"])) {
+			$this->changePassword( $_POST['user_password_new'], $_POST['user_password_repeat']);
+		} elseif (isset($_POST["change_very_old_password"])) {
+			$this->changeVeryoldPassword($_POST['user_name'], $_POST['user_password'],$_POST['user_password_new'], $_POST['user_password_repeat']);
 		}
 	}
 
@@ -626,7 +634,7 @@ class Login
 		} elseif ($user_password_new !== $user_password_repeat) {
 			$this->errors[] = MESSAGE_PASSWORD_BAD_CONFIRM;
 			// password need to have a minimum length of 6 characters
-		} elseif (strlen($user_password_new) < 6) {
+		} elseif (strlen($user_password_new) < 8) {
 			$this->errors[] = MESSAGE_PASSWORD_TOO_SHORT;
 
 			// all the above tests are ok
@@ -819,7 +827,7 @@ class Login
 		} else if ($user_password_new !== $user_password_repeat) {
 			$this->errors[] = MESSAGE_PASSWORD_BAD_CONFIRM;
 			// password need to have a minimum length of 6 characters
-		} else if (strlen($user_password_new) < 6) {
+		} else if (strlen($user_password_new) < 8) {
 			$this->errors[] = MESSAGE_PASSWORD_TOO_SHORT;
 			// if database connection opened
 		} else if ($this->databaseConnection()) {
@@ -853,6 +861,101 @@ class Login
 	}
 
 	/**
+	* Checks and writes the new password.
+	*/
+	public function changePassword($user_password_new, $user_password_repeat)
+	{
+		$user_name = $_SESSION['user_name'];
+    $this->password_is_expired = 1;
+    if ($user_password_new !== $user_password_repeat) {
+			$this->errors[] = MESSAGE_PASSWORD_BAD_CONFIRM;
+			// password need to have a minimum length of 6 characters
+		} else if (strlen($user_password_new) < 8) {
+			$this->errors[] = MESSAGE_PASSWORD_TOO_SHORT;
+			// if database connection opened
+		} else if ($this->databaseConnection()) {
+			// now it gets a little bit crazy: check if we have a constant HASH_COST_FACTOR defined (in config/hashing.php),
+			// if so: put the value into $hash_cost_factor, if not, make $hash_cost_factor = null
+			$hash_cost_factor = (defined('HASH_COST_FACTOR') ? HASH_COST_FACTOR : null);
+      $user_password_hash = password_hash($user_password_new , PASSWORD_DEFAULT, ['cost' => $hash_cost_factor]);
+      // ripreparo la chiave per criptare la chiave contenuta in $_SESSION con la nuova password e metterla aes_key di gaz_admin
+      $prepared_key = openssl_pbkdf2($user_password_new.$user_name, AES_KEY_SALT, 16, 1000, "sha256");
+      $aes_key = base64_encode(openssl_encrypt($_SESSION['aes_key'],"AES-128-CBC",$prepared_key,OPENSSL_RAW_DATA, AES_KEY_IV));
+
+			// write users new  password hash and aes_key into database
+			$query_update = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . '_admin SET user_password_hash = :user_password_hash,
+														user_password_reset_hash = NULL, user_password_reset_timestamp = NULL, aes_key = :aes_key, datpas = NOW()
+														WHERE user_name = :user_name AND aes_key <> :aes_key ');
+			$query_update->bindValue(':user_password_hash', $user_password_hash, PDO::PARAM_STR);
+			$query_update->bindValue(':aes_key', $aes_key, PDO::PARAM_STR); // con aes_key controllo se effettivamente l'utente ha cambiato la password
+			$query_update->bindValue(':user_name', $user_name, PDO::PARAM_STR);
+			$query_update->execute();
+			// check if exactly one row was successfully changed:
+			if ($query_update->rowCount() == 1) {
+				$this->password_change_was_successful = true;
+        $this->password_is_expired = 0;
+				$this->messages[] = MESSAGE_PASSWORD_CHANGED_SUCCESSFULLY;
+			} else {
+				$this->errors[] = MESSAGE_PASSWORD_CHANGE_FAILED;
+			}
+		}
+	}
+
+	public function changeVeryoldPassword($user_name, $user_password, $user_password_new, $user_password_repeat)
+	{
+    $this->password_is_expired = 2;
+		$user_name = trim($user_name);
+		if (empty($user_name) || empty($user_password) || empty($user_password_new) || empty($user_password_repeat)) {
+			$this->errors[] = MESSAGE_PASSWORD_EMPTY;
+			// is the repeat password identical to password
+		} else if ($user_password_new !== $user_password_repeat) {
+			$this->errors[] = MESSAGE_PASSWORD_BAD_CONFIRM;
+			// password need to have a minimum length of 6 characters
+		} else if ($user_password_new == $user_password) {
+			$this->errors[] = MESSAGE_PASSWORD_SAME;
+		} else if (strlen($user_password_new) < 8) {
+			$this->errors[] = MESSAGE_PASSWORD_TOO_SHORT;
+			// if database connection opened
+		} else if ($this->databaseConnection()) {
+			// now it gets a little bit crazy: check if we have a constant HASH_COST_FACTOR defined (in config/hashing.php),
+			// if so: put the value into $hash_cost_factor, if not, make $hash_cost_factor = null
+			$hash_cost_factor = (defined('HASH_COST_FACTOR') ? HASH_COST_FACTOR : null);
+      $user_password_hash = password_hash($user_password_new , PASSWORD_DEFAULT, ['cost' => $hash_cost_factor]);
+      // faccio la verifica della vecchia
+      $query_user = $this->db_connection->prepare("SELECT * FROM " . DB_TABLE_PREFIX . '_admin WHERE user_name = :user_name');
+      $query_user->bindValue(':user_name', trim($user_name), PDO::PARAM_STR);
+      $query_user->execute();
+      $userdata = $query_user->fetchObject();
+      if (password_verify( $user_password  , $userdata->user_password_hash )){ // verifico la vecchia password
+        // sostituisco aes_key
+        $prepared_key = openssl_pbkdf2($user_password.$user_name, AES_KEY_SALT, 16, 1000, "sha256");
+        $old_aes_key = openssl_decrypt(base64_decode($userdata->aes_key),"AES-128-CBC",$prepared_key,OPENSSL_RAW_DATA, AES_KEY_IV);
+        $prepared_key = openssl_pbkdf2($user_password_new.$user_name, AES_KEY_SALT, 16, 1000, "sha256");
+        $aes_key = base64_encode(openssl_encrypt($old_aes_key,"AES-128-CBC",$prepared_key,OPENSSL_RAW_DATA, AES_KEY_IV));
+        // write users new hash into database
+        $query_update = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . '_admin SET user_password_hash = :user_password_hash,
+                              user_password_reset_hash = NULL, user_password_reset_timestamp = NULL, aes_key = :aes_key, datpas = NOW()
+                              WHERE user_name = :user_name');
+        $query_update->bindValue(':user_password_hash', $user_password_hash, PDO::PARAM_STR);
+        $query_update->bindValue(':aes_key', $aes_key, PDO::PARAM_STR); // con aes_key controllo se effettivamente l'utente ha cambiato la password
+        $query_update->bindValue(':user_name', $user_name, PDO::PARAM_STR);
+        $query_update->execute();
+        // check if exactly one row was successfully changed:
+        if ($query_update->rowCount() == 1) {
+          $this->password_change_was_successful = true;
+          $this->password_is_expired = 0;
+          $this->messages[] = MESSAGE_PASSWORD_CHANGED_SUCCESSFULLY;
+        } else {
+          $this->errors[] = MESSAGE_PASSWORD_CHANGE_FAILED;
+        }
+
+      } else {
+				$this->errors[] = MESSAGE_LOGIN_FAILED;
+			}
+		}
+	}
+
+	/**
 	* Gets the success state of the password-reset-link-validation.
 	* TODO: should be more like getPasswordResetLinkValidationStatus
 	* @return boolean
@@ -871,6 +974,12 @@ class Login
 	{
 		return $this->password_reset_was_successful;
 	}
+
+	public function passwordChangeWasSuccessful()
+	{
+		return $this->password_change_was_successful;
+	}
+
 
 	/**
 	* Gets the username

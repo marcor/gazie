@@ -31,7 +31,7 @@ include('_header.php');?>
                   }
                   if ($login->messages) {
                       foreach ($login->messages as $message) {
-                          echo '<div id="login-alert" class="alert alert-danger col-sm-12">';
+                          echo '<div id="login-alert" class="alert alert-success col-sm-12">';
                           echo $message;
                           echo '</div>';
                       }

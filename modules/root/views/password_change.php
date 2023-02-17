@@ -43,7 +43,7 @@ document.getElementById('user_password_repeat').value=forge_sha256(document.getE
                             <input id="user_password_repeat" type="password" name="user_password_repeat" pattern=".{6,}" required autocomplete="off" style="height: 34px;" class="form-control"  placeholder="<?php echo WORDING_NEW_PASSWORD_REPEAT; ?>" />
                         </div>
                         <div style="padding-bottom: 25px;" class="input-group col-sm-12">
-                            <input style="float:right;" class="btn btn-warning" type="submit" name="submit_new_password" value="<?php echo WORDING_SUBMIT_NEW_PASSWORD; ?>" />
+                            <input style="float:right;" class="btn btn-warning" type="submit" name="submit_change_password" value="<?php echo WORDING_SUBMIT_NEW_PASSWORD; ?>" />
                         </div>
                         <div style="padding-bottom: 25px;" class="input-group">
                             <a style="float:left;" href="login_user.php"><?php echo WORDING_BACK_TO_LOGIN; ?></a>
@@ -105,7 +105,7 @@ document.getElementById('user_password_repeat').value=forge_sha256(document.getE
                             <input id="user_password_repeat" type="password" name="user_password_repeat" pattern=".{6,}" required autocomplete="off" style="height: 34px;" class="form-control"  placeholder="<?php echo WORDING_NEW_PASSWORD_REPEAT; ?>" />
                         </div>
                         <div style="padding-bottom: 25px;" class="input-group col-sm-12">
-                            <input style="float:right;" class="btn btn-warning" type="submit" name="submit_new_password" value="<?php echo WORDING_SUBMIT_NEW_PASSWORD; ?>" />
+                            <input style="float:right;" class="btn btn-warning" type="submit" name="change_very_old_password" value="<?php echo WORDING_SUBMIT_NEW_PASSWORD; ?>" />
                         </div>
                     </div>
                 </div>
