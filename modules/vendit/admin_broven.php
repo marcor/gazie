@@ -114,8 +114,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['round_stamp'] = intval($_POST['round_stamp']);
     $form['pagame'] = $_POST['pagame'];
     $form['change_pag'] = $_POST['change_pag'];
-    if ( isset($_POST['descrizione']))
-        $form['descrizione'] = $_POST['descrizione'];
+    $form['shortdescri'] = substr($_POST['shortdescri'],0,20);
     if ($form['change_pag'] != $form['pagame']) {  //se e' stato cambiato il pagamento
         $new_pag = gaz_dbi_get_row($gTables['pagame'], "codice", $form['pagame']);
         if ($toDo == 'update') {  //se � una modifica mi baso sulle vecchie spese
@@ -167,7 +166,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['caucon'] = $_POST['caucon'];
     $form['caumag'] = $_POST['caumag'];
     $form['id_agente'] = $_POST['id_agente'];
-    $form['sconto'] = $_POST['sconto'];    
+    $form['sconto'] = $_POST['sconto'];
     // inizio rigo di input
     $form['in_descri'] = $_POST['in_descri'];
     $form['in_tiprig'] = $_POST['in_tiprig'];
@@ -338,7 +337,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         if (!isset($_POST['rows'])) {
             $msg .= "39+";
         }
-        
+
 
 
 
@@ -391,7 +390,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 if ( isset( $gaz_custom_field ) && $gaz_custom_field!="" ) {
                     $gaz_custom_data = json_decode($gaz_custom_field,true);
                 }
-                $gaz_custom_data['vendit']['descrizione'] = $form['descrizione'];
+                $gaz_custom_data['vendit']['shortdescri'] = $form['shortdescri'];
                 $form['custom_field'] = json_encode($gaz_custom_data);
 
                 // carico i vecchi righi presenti nel DB
@@ -514,7 +513,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             } else { // e' un'inserimento
                 // carico le impostazioni aggiuntive dal campo custom
                 $gaz_custom_data = array();
-                $gaz_custom_data['vendit']['descrizione'] = $form['descrizione'];
+                $gaz_custom_data['vendit']['shortdescri'] = $form['shortdescri'];
                 $form['custom_field'] = json_encode($gaz_custom_data);
 
                 // ricavo i progressivi in base al tipo di documento
@@ -613,10 +612,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $msg .= "50+";
             }
         }
-        if ($msg == "") {// nessun errore	
+        if ($msg == "") {// nessun errore
             // carico le impostazioni aggiuntive dal campo custom
             $gaz_custom_data = array();
-            $gaz_custom_data['vendit']['descrizione'] = $form['descrizione'];
+            $gaz_custom_data['vendit']['shortdescri'] = $form['shortdescri'];
             $form['custom_field'] = json_encode($gaz_custom_data);
 
             // creo la descrizione del preventivo di origine
@@ -1347,9 +1346,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $gaz_custom_field = gaz_dbi_get_single_value( $gTables['tesbro'], 'custom_field', 'id_tes = '.$form['id_tes'] );
     if ( isset( $gaz_custom_field ) && $gaz_custom_field!="" ) {
         $gaz_custom_data = json_decode($gaz_custom_field,true);
-        $form['descrizione'] = $gaz_custom_data['vendit']['descrizione'];
+        $form['shortdescri'] = $gaz_custom_data['vendit']['shortdescri'];
     } else {
-        $form['descrizione'] = "";
+        $form['shortdescri'] = "";
     }
 
     $next_row = 0;
@@ -1433,8 +1432,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_ritenuta'] = 0;
     $form['in_unimis'] = "";
     $form['in_prelis'] = 0.000;
-    $form['descrizione'] = "";
-    
+    $form['shortdescri'] = "";
+
     /** inizio modifica FP 09/10/2015
      * inizializzo il campo con '#' per indicare che voglio lo sconto standard dell'articolo
      */
@@ -2434,11 +2433,15 @@ if ($next_row > 0) {
 					<td colspan="2" class="text-right">
 						<input name="prestampa" class="btn btn-info" onClick="preStampa();" type="button" value="Prestampa">
 					</td>
-					<td colspan="4" class="text-center FacetFooterTD">
-                        <input name="descrizione"  maxlength="20" type="text" placeholder="Descrizione preventivo" value="'.$form['descrizione'].'"/>
+					<td colspan="2" class="text-center FacetFooterTD">
+            <input name="shortdescri" maxlength="20" type="text" placeholder="Breve descrizione preventivo" value="'.$form['shortdescri'].'"/>
+					</td>
+					<td colspan="2" class="text-center FacetFooterTD">
 						<input name="ins" class="btn '.$class_btn_confirm.'" id="preventDuplicate" onClick="chkSubmit();" type="submit" value="' . ucfirst($script_transl[$toDo]) . '">
 					</td>
 				';
+} else {
+  echo '<input name="shortdescri" type="hidden" value="'.$form['shortdescri'].'"/>';
 }
 if ($toDo == 'update' and $form['tipdoc'] == 'VPR') {
     echo '<td colspan="2"><input type="submit" class="btn btn-default" accesskey="o" name="ord" value="Genera ordine" /></td></tr>';
