@@ -111,10 +111,6 @@ class DDT extends Template_2xA5
                 $this->totddt += $tot_row;
             }
             // fine calcolo importo rigo, totale e castelletto IVA
-
-            if ($rigo['sconto'] < 0.001) {
-                $rigo['sconto']='';
-            }
             if ($this->GetY() >= 215) {
                 $this->Cell(155,6,'','T',1);
                 $this->SetFont('helvetica', '', 20);
@@ -131,7 +127,7 @@ class DDT extends Template_2xA5
                     $this->Cell(20,6,gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
                     if (($this->docVars->client['stapre'] == 'S' OR $this->docVars->client['stapre'] == 'T' ) && floatval($rigo['prelis']) >= 0.00001 ) {
                         $this->Cell(17,6,number_format($tot_row,$this->decimal_price,',',''),'TB',0,'R');
-                        $this->Cell(7,6,$rigo['sconto'],1,0,'R');
+                        $this->Cell(7,6,$rigo['sconto']>=0.01?floatval($rigo['sconto']):'',1,0,'R',0,'',1);
                     } else {
                         $this->Cell(17,6);
                         $this->Cell(7,6,'','R',0);
@@ -143,7 +139,7 @@ class DDT extends Template_2xA5
                     $this->Cell(20,6,gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
                     if (($this->docVars->client['stapre'] == 'S' OR $this->docVars->client['stapre'] == 'T') && floatval($rigo['prelis']) >= 0.00001 ) {
                         $this->Cell(17,6,number_format($tot_row,$this->decimal_price,',',''),'TB',0,'R');
-                        $this->Cell(7,6,$rigo['sconto'],1,1,'R');
+                        $this->Cell(7,6,$rigo['sconto']>=0.01?floatval($rigo['sconto']):'',1,1,'R',0,'',1);
                     } else {
                         $this->Cell(17,6);
                         $this->Cell(7,6,'','R',1);
@@ -192,7 +188,7 @@ class DDT extends Template_2xA5
                     $this->Cell(101, 6, $rigo['descri'],1,0,'L',0,'',1);
                     if ($this->docVars->client['stapre'] == 'S' OR $this->docVars->client['stapre'] == 'T') {
                         $this->Cell(17,6,number_format($rigo['importo'],$this->decimal_price,',',''),'TB',0,'R');
-                        $this->Cell(7,6,$rigo['sconto'],1,1,'R');
+                        $this->Cell(7,6,$rigo['sconto']>=0.01?floatval($rigo['sconto']):'',1,1,'R',0,'',1);
                     } else {
                         $this->Cell(17,6);
                         $this->Cell(7,6,'','R',1);
