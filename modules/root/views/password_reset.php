@@ -3,8 +3,7 @@
 <?php
 if ($login->passwordResetLinkIsValid() == true) {
     ?>
-    <form method="post" onsubmit="document.getElementById('user_password_new').value=forge_sha256(document.getElementById('user_password_new').value);
-document.getElementById('user_password_repeat').value=forge_sha256(document.getElementById('user_password_repeat').value);" action="login_password_reset.php" name="new_password_form" id="resetform">
+    <form method="post" onsubmit="document.getElementById('login-password').value=forge_sha256(document.getElementById('login-password').value);document.getElementById('user_password_new').value=forge_sha256(document.getElementById('user_password_new').value);document.getElementById('user_password_repeat').value=forge_sha256(document.getElementById('user_password_repeat').value);" action="login_password_reset.php" name="new_password_form" id="resetform">
         <div class="container">
             <div id="loginbox" style="margin-top:50px;" class="mainbox mainbox col-sm-offset-2 col-sm-8">
                 <div class="panel panel-info" >
@@ -35,6 +34,10 @@ document.getElementById('user_password_repeat').value=forge_sha256(document.getE
                             }
                         }
                         ?>
+                        <div style="padding-bottom: 25px;" class="input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                            <input type="password" autocomplete="off" required style="height: 34px;" id="login-password" class="form-control" name="user_password" placeholder="<?php echo WORDING_PASSWORD; ?>">
+                        </div>
                         <div style="padding-bottom: 25px;" class="input-group">
                             <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
                             <input id="user_password_new" type="password" name="user_password_new" pattern=".{6,}" required autocomplete="off"  style="height: 34px;" class="form-control" placeholder="<?php echo WORDING_NEW_PASSWORD; ?>" />

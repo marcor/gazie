@@ -138,7 +138,7 @@ class Login
 		} elseif (isset($_GET["user_name"]) && isset($_GET["verification_code"])) {
 			$this->checkIfEmailVerificationCodeIsValid($_GET["user_name"], $_GET["verification_code"]);
 		} elseif (isset($_POST["submit_new_password"])) {
-			$this->editNewPassword($_POST['user_name'], $_POST['user_password_reset_hash'],$_POST['user_password_new'], $_POST['user_password_repeat']);
+			$this->editNewPassword($_POST['user_name'], $_POST['user_password'],$_POST['user_password_new'], $_POST['user_password_repeat']);
 		} elseif (isset($_POST["submit_change_password"])) {
 			$this->changePassword( $_POST['user_password_new'], $_POST['user_password_repeat']);
 		} elseif (isset($_POST["change_very_old_password"])) {
@@ -816,12 +816,12 @@ class Login
 	/**
 	* Checks and writes the new password.
 	*/
-	public function editNewPassword($user_name, $user_password_reset_hash, $user_password_new, $user_password_repeat)
+	public function editNewPassword($user_name, $user_password, $user_password_new, $user_password_repeat )
 	{
 		// TODO: timestamp!
 		$user_name = trim($user_name);
 
-		if (empty($user_name) || empty($user_password_reset_hash) || empty($user_password_new) || empty($user_password_repeat)) {
+		if (empty($user_name) || empty($user_password_new) || empty($user_password_repeat) || empty($user_password) ){
 			$this->errors[] = MESSAGE_PASSWORD_EMPTY;
 			// is the repeat password identical to password
 		} else if ($user_password_new !== $user_password_repeat) {
@@ -831,32 +831,38 @@ class Login
 			$this->errors[] = MESSAGE_PASSWORD_TOO_SHORT;
 			// if database connection opened
 		} else if ($this->databaseConnection()) {
-			// now it gets a little bit crazy: check if we have a constant HASH_COST_FACTOR defined (in config/hashing.php),
-			// if so: put the value into $hash_cost_factor, if not, make $hash_cost_factor = null
 			$hash_cost_factor = (defined('HASH_COST_FACTOR') ? HASH_COST_FACTOR : null);
-
-			// crypt the user's password with the PHP 5.5's password_hash() function, results in a 60 character hash string
-			// the PASSWORD_DEFAULT constant is defined by the PHP 5.5, or if you are using PHP 5.3/5.4, by the password hashing
-			// compatibility library. the third parameter looks a little bit shitty, but that's how those PHP 5.5 functions
-			// want the parameter: as an array with, currently only used with 'cost' => XX.
 			$user_password_hash = password_hash($user_password_new, PASSWORD_DEFAULT, array('cost' => $hash_cost_factor));
+      // faccio la verifica della vecchia
+      $query_user = $this->db_connection->prepare("SELECT * FROM " . DB_TABLE_PREFIX . '_admin WHERE user_name = :user_name');
+      $query_user->bindValue(':user_name', trim($user_name), PDO::PARAM_STR);
+      $query_user->execute();
+      $userdata = $query_user->fetchObject();
+      if (password_verify( $user_password  , $userdata->user_password_hash )){ // verifico la vecchia password
+        // sostituisco aes_key
+        $prepared_key = openssl_pbkdf2($user_password.$user_name, AES_KEY_SALT, 16, 1000, "sha256");
+        $old_aes_key = openssl_decrypt(base64_decode($userdata->aes_key),"AES-128-CBC",$prepared_key,OPENSSL_RAW_DATA, AES_KEY_IV);
+        $prepared_key = openssl_pbkdf2($user_password_new.$user_name, AES_KEY_SALT, 16, 1000, "sha256");
+        $aes_key = base64_encode(openssl_encrypt($old_aes_key,"AES-128-CBC",$prepared_key,OPENSSL_RAW_DATA, AES_KEY_IV));
+        // write users new hash into database
+        $query_update = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . '_admin SET user_password_hash = :user_password_hash,
+                              user_password_reset_hash = NULL, user_password_reset_timestamp = NULL, aes_key = :aes_key, datpas = NOW()
+                              WHERE user_name = :user_name');
+        $query_update->bindValue(':user_password_hash', $user_password_hash, PDO::PARAM_STR);
+        $query_update->bindValue(':aes_key', $aes_key, PDO::PARAM_STR); // con aes_key controllo se effettivamente l'utente ha cambiato la password
+        $query_update->bindValue(':user_name', $user_name, PDO::PARAM_STR);
+        $query_update->execute();
 
-			// write users new hash into database
-			$query_update = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . '_admin SET user_password_hash = :user_password_hash,
-														user_password_reset_hash = NULL, user_password_reset_timestamp = NULL
-														WHERE user_name = :user_name AND user_password_reset_hash = :user_password_reset_hash');
-			$query_update->bindValue(':user_password_hash', $user_password_hash, PDO::PARAM_STR);
-			$query_update->bindValue(':user_password_reset_hash', $user_password_reset_hash, PDO::PARAM_STR);
-			$query_update->bindValue(':user_name', $user_name, PDO::PARAM_STR);
-			$query_update->execute();
-
-			// check if exactly one row was successfully changed:
-			if ($query_update->rowCount() == 1) {
-				$this->password_reset_was_successful = true;
-				$this->messages[] = MESSAGE_PASSWORD_CHANGED_SUCCESSFULLY;
-			} else {
-				$this->errors[] = MESSAGE_PASSWORD_CHANGE_FAILED;
+        // check if exactly one row was successfully changed:
+        if ($query_update->rowCount() == 1) {
+          $this->password_reset_was_successful = true;
+          $this->messages[] = MESSAGE_PASSWORD_CHANGED_SUCCESSFULLY;
+        } else {          $this->errors[] = MESSAGE_PASSWORD_CHANGE_FAILED;
+        }
+      } else {
+        $this->errors[] = MESSAGE_LOGIN_FAILED;
 			}
+
 		}
 	}
 
