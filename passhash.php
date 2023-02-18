@@ -1,20 +1,47 @@
+<!DOCTYPE html>
 <?php
 if (isset($_POST['password'])) {
 
 } else {
   $_POST['password']='';
   $_POST['user_name']='';
-};
+  $_POST['aeskey']='JnèGCM(ùRp$9ò{-c';
+}
 ?>
-<body>
-<title>Trova l'hash della password di GAzie ver.9</title>
-<h1 style="background-color: aquamarine;" >Trova l'hash della password di GAzie ver.9</h1>
-<form method="post">
-<div><input type="text" name="user_name" value="<?php echo $_POST['user_name'];?>" placeholder="nome utente"></div>
-<div><input type="password" name="password" value="<?php echo $_POST['password'];?>" placeholder="password in chiaro">
-     <input class="btn btn-info" name="login" type="submit" value="Conferma" ></div>
+<html lang="it">
 
-</form>
+<head>
+  <meta name="description" content="Utilià per trovare gli hash della password di GAzie" />
+  <meta charset="utf-8">
+  <title>Trova l'hash della password di GAzie</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="Antonio de Vincentiis">
+</head>
+
+<body>
+<script>
+function makeaeskey(length) {
+  let result = '';
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!£$%&/()=?^,.-òàùè+[]@#}{;:_';
+  const charactersLength = characters.length;
+  let counter = 0;
+  while (counter < length) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    counter += 1;
+  }
+  var ak = document.getElementById('aeskey');
+  ak.value = result;
+  //console.log(result);
+  document.getElementById('myForm').submit();
+}
+</script>
+
+
+<h1 style="background-color: aquamarine;" >Trova l'hash della password di GAzie ver.9</h1>
+<form method="post" id="myForm">
+<p><input type="text" name="user_name" value="<?php echo $_POST['user_name'];?>" placeholder="nome utente"></p>
+<p><input type="password" name="password" value="<?php echo $_POST['password'];?>" placeholder="password in chiaro"></p>
+<p><input type="hidden" name="aeskey" id="aeskey" value="<?php echo $_POST['aeskey']; ?>" ><input type="submit" value="Conferma" ></p>
 <?php
 if (isset($_POST['password'])) {
   if (strlen($_POST['password']) > 3 ) {
@@ -28,23 +55,18 @@ if (isset($_POST['password'])) {
       echo 'ERRORE';
     }
     $ciphertext_b64 = "";
-
-    // $aeskey è il valore della chiave che si dovrà ritrovare nel registro globale $_SESSION['aes_key'] dopo il login di qualsiasi utente
-    // qui è definita in variabile solo come esempio ma dovrebbe essere chiesta in fase di prima installazione del getionale e poi non presente in nessun luogo
-    // in quanto successivamente generata onthefly al login dal decrypt del valore di aes_key del database usando come chiave $prepared_key (lunga 16 byte)
-    $aeskey = "8i2;3Gt6]1JG.òç@";
-
-// definiti in root/config_login.php
+    // definiti anche in root/config_login.php
     define("AES_KEY_SALT","CK4OGOAtec0zgbNoCK4OGOAtec0zgbNoCK4OGOAtec0zgbNoCK4OGOAtec0zgbNo");
     define("AES_KEY_IV","LQjFLCU3sAVplBC3");
 
     $prepared_key = openssl_pbkdf2($sha256password.$_POST['user_name'], AES_KEY_SALT, 16, 1000, "sha256");
-    $ciphertext_b64 = base64_encode(openssl_encrypt($aeskey,"AES-128-CBC",$prepared_key,OPENSSL_RAW_DATA, AES_KEY_IV));
+    $ciphertext_b64 = base64_encode(openssl_encrypt($_POST['aeskey'],"AES-128-CBC",$prepared_key,OPENSSL_RAW_DATA, AES_KEY_IV));
     $aeskey = openssl_decrypt(base64_decode($ciphertext_b64),"AES-128-CBC",$prepared_key,OPENSSL_RAW_DATA, AES_KEY_IV);
-    echo "<p>Se si assume di voler usare come chiave di encrypt/decrypt dei campi da proteggere uguale a: <br/><b>".$aeskey . "</b>";
+    echo "<p>Se si assume di voler usare come chiave di encrypt/decrypt dei campi da proteggere uguale a: <br/><b>".$aeskey. '</b>  <button type="button" onclick="makeaeskey(16)">Cambia</button>';
     echo "<p>consegue che nella colonna <b>aes_key</b> della tabella <b>gaz_admin</b> dovrai avere: <br/><b>".$ciphertext_b64. "</b></p>";
   }
 }
-print '<p> Versione PHP '.phpversion().'<p>';
 ?>
+</form>
 </body>
+</html>
