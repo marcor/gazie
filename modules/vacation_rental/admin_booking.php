@@ -885,7 +885,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         if (isset($overbooking)){
            $msg .= "63+";// Overbooking
         }
-
         $start="";
         $form['in_prelis']=$total_price;
       }
@@ -1161,7 +1160,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             ksort($form['rows']);
         } else { //se è un rigo da inserire
 
-
             $form['rows'][$next_row]['tiprig'] = $form['in_tiprig'];
             $form['rows'][$next_row]['id_doc'] = $form['in_id_doc'];
             $form['rows'][$next_row]['descri'] = $form['in_descri'];
@@ -1215,13 +1213,29 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['provvigione'] = $provvigione->getPercent($form['id_tourOp'], $form['in_codart']);
                 if (!isset($tmpPrezzoNetto_Sconto) or ( $tmpPrezzoNetto_Sconto >= 0)) { // non ho trovato un prezzo netto per il cliente/articolo
                     if ($form['listin'] == 2) {
-                        $form['rows'][$next_row]['prelis'] = number_format($artico['preve2'], $admin_aziend['decimal_price'], '.', '');
+						if (floatval($artico['preve2'])<=0){
+							echo "ERRORE il cliente ha il listino ",$form['listin']," ma questo listino non ha un prezzo inserito";
+						}else{
+							$form['rows'][$next_row]['prelis'] = number_format($artico['preve2'], $admin_aziend['decimal_price'], '.', '');
+						}
                     } elseif ($form['listin'] == 3) {
-                        $form['rows'][$next_row]['prelis'] = number_format($artico['preve3'], $admin_aziend['decimal_price'], '.', '');
+						if (floatval($artico['preve3'])<=0){
+							echo "ERRORE il cliente ha il listino ",$form['listin']," ma questo listino non ha un prezzo inserito";
+						}else{
+							$form['rows'][$next_row]['prelis'] = number_format($artico['preve3'], $admin_aziend['decimal_price'], '.', '');
+						}
                     } elseif ($form['listin'] == 4) {
-                        $form['rows'][$next_row]['prelis'] = number_format($artico['preve4'], $admin_aziend['decimal_price'], '.', '');
-                    } elseif ($form['listin'] == 5) {
-                        $form['rows'][$next_row]['prelis'] = number_format($form['in_prelis'], $admin_aziend['decimal_price'], '.', '');
+						if (floatval($artico['preve4'])<=0){
+							echo "ERRORE il cliente ha il listino ",$form['listin']," ma questo listino non ha un prezzo inserito";
+						}else{
+							$form['rows'][$next_row]['prelis'] = number_format($artico['preve4'], $admin_aziend['decimal_price'], '.', '');
+						}
+                    } elseif ($form['listin'] == 5) {// prezzo web
+						if (floatval($artico['preve5'])<=0){
+							echo "ERRORE il cliente ha il listino ",$form['listin']," ma questo listino non ha un prezzo inserito";
+						}else{
+							$form['rows'][$next_row]['prelis'] = number_format($form['in_prelis'], $admin_aziend['decimal_price'], '.', '');
+						}
                     } else {
                         $form['rows'][$next_row]['prelis'] = number_format($form['in_prelis'], $admin_aziend['decimal_price'], '.', '');
                     }

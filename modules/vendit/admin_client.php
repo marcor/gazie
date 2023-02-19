@@ -788,7 +788,7 @@ $gForm->selectFromDB('imball', 'imball', 'codice', $form['imball'], 'codice', tr
                 <div class="form-group">
                     <label for="listin" class="col-sm-4 control-label"><?php echo $script_transl['listin']; ?> </label>
     <?php
-$gForm->selectNumber('listin', $form['listin'], 0, 1, 4);
+$gForm->selectNumber('listin', $form['listin'], 0, 1, 5);
     ?>
                 </div>
             </div>
