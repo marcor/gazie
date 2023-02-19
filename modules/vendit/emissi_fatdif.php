@@ -280,7 +280,7 @@ if (isset($_POST['genera']) && $msg == "") {
     $date_fin = new DateTime($form['date_fin_Y'] . '-' . $form['date_fin_M'] . '-' . $form['date_fin_D']);
     $date = array('exe' => $date_exe->format('Y-m-d'), 'ini' => $date_ini->format('Y-m-d'), 'fin' => $date_fin->format('Y-m-d'));
     $invoices = getInvoiceableBills($date, $form['seziva'], $form['clfoco'], $form['changeStatus']);
-    var_dump($invoices);
+    //var_dump($invoices);
     if (isset($invoices['excluded'])) {
         foreach ($invoices['excluded'] as $i => $testate) {
 	    foreach ($testate as $id_tes => $v) {

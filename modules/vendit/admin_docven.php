@@ -2182,9 +2182,9 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
   $cliente['codfis'] = "";
   $cliente['pariva'] = "";
   if (substr($form['tipdoc'],0,2)=='DD') { // in caso di DDT propongo lo stesso tipo dell'ultimo emesso
-    $rs_ultimo_ddt = gaz_dbi_dyn_query($gTables['tesdoc'] . ".tipdoc", $gTables['tesdoc'], "tipdoc LIKE 'DD_' AND seziva = " .$form['seziva'], 'datemi DESC, numdoc DESC', 0, 1);
+    $rs_ultimo_ddt = gaz_dbi_dyn_query($gTables['tesdoc'] . ".ddt_type", $gTables['tesdoc'], "(tipdoc LIKE 'DD_' OR tipdoc LIKE 'FAD') AND ddt_type <> '' AND seziva = " .$form['seziva'], 'datemi DESC, numdoc DESC', 0, 1);
     $ultimo_ddt = gaz_dbi_fetch_array($rs_ultimo_ddt);
-    $form['tipdoc']=$ultimo_ddt?$ultimo_ddt['tipdoc']:$form['tipdoc'];
+    $form['tipdoc']=$ultimo_ddt?'DD'.$ultimo_ddt['ddt_type']:$form['tipdoc'];
     $form['ddt_type']=substr($form['tipdoc'],2,1);
   }
 
