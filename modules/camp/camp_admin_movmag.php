@@ -381,6 +381,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 			$form['prezzo'][$m] = gaz_format_quantity($_POST['prezzo' . $m], 0, $admin_aziend['decimal_quantity']);
 			if (isset($_POST['quanti2' . $m])){
 				$form['quanti2'][$m] = gaz_format_quantity($_POST['quanti2' . $m], 0, $admin_aziend['decimal_quantity']);
+				
 			} else {
 				$form['quanti2'][$m]=0;
 			}
@@ -1186,7 +1187,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
     $form['prezzo'][$form['mov']] = 0;
     $form['scorig'][$form['mov']] = 0;
 	$form['quanti2'][$form['mov']] = 0;
-    $form['prezzo2'][$form['mov']] = 0;
+    $form['prezzo2'][$form['mov']] = (isset($acqua['preacq']))?$acqua['preacq']:0;
     $form['scorig2'][$form['mov']] = 0;
     $form['clfoco'][$form['mov']] = 0;
 	$form['ins_op'][$form['mov']] = "";
