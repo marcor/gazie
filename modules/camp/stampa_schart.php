@@ -176,12 +176,12 @@ while ($mv = gaz_dbi_fetch_array($result)) {
         //$aRiportare['top'][2]['nam'] = gaz_format_number($mval['v_g']);
         // $aRiportare['bot'][2]['nam'] = gaz_format_number($mval['v_g']);
         if ($ctrl_id <> $mv['id_mov']) {
-          if (strlen($mv['recip_stocc'])>0){
+          if (isset($mv['recip_stocc']) && strlen($mv['recip_stocc'])>0){
             $addes .=" Silos:".$mv['recip_stocc'];
           }
           if (strlen($mv['quality'])>0){
             $addes .=" Var.:".$mv['quality'];
-          }if (strlen($mv['identifier'])>0){
+          }if (isset($mv['identifier']) && strlen($mv['identifier'])>0){
             $addes .=" Lotto:".$mv['identifier'];
           }
           $pdf->Cell(16,4,gaz_format_date($mv['datreg']),'LTR',0,'C');
