@@ -272,14 +272,14 @@ if (isset($_POST['preview']) and $msg=='') {
         $linkHeaders=new linkHeaders($script_transl['header']);
         $linkHeaders->output();
         echo "</tr>";
-       foreach ($m AS $key => $mv) {
+        foreach ($m AS $key => $mv) {
             if ($ctr_mv != $mv['artico']) {
                gaz_set_time_limit (30);
                if (!empty($ctr_mv)) {
-                  echo "\t<tr>\n";
-                  echo "\t<td colspan=\"10\" align=\"right\"></td>\n";
-                  echo "\t </tr>\n";
-                  $sum=0.00;
+                echo "\t<tr>\n";
+                echo "\t<td colspan=\"10\" align=\"right\"></td>\n";
+                echo "\t </tr>\n";
+                $sum=0.00;
                }
                echo "\t<tr>\n";
                echo "\t<td colspan=\"10\">".$mv['artico']." - ".$mv['desart']."</td>\n";
@@ -290,16 +290,17 @@ if (isset($_POST['preview']) and $msg=='') {
             $magval= $gForm->getStockValue($mv['id_mov'],$mv['artico'],$mv['datreg'],$admin_aziend['stock_eval_method']);
             $r_span=count($magval);
             foreach ($magval as $mval) {
-				$addes="";
+              $addes="";
               if ($ctrl_id <> $mv['id_mov']) {
-				if (strlen($mv['recip_stocc'])>0){
-					$addes .="-Silos:".$mv['recip_stocc'];
-				}
-				if (strlen($mv['quality'])>0){
-					$addes .="-Var.:".$mv['quality'];
-				}if (strlen($mv['identifier'])>0){
-					$addes .="-Lotto:".$mv['identifier'];
-				}
+                if (isset($mv['recip_stocc']) && strlen($mv['recip_stocc'])>0){
+                  $addes .="-Silos:".$mv['recip_stocc'];
+                }
+                if (strlen($mv['quality'])>0){
+                  $addes .="-Var.:".$mv['quality'];
+                }
+                if (isset($mv['identifier']) && strlen($mv['identifier'])>0){
+                  $addes .="-Lotto:".$mv['identifier'];
+                }
                 echo "<tr><td class=\"FacetDataTD\" rowspan=\"$r_span\">".gaz_format_date($mv['datreg'])." id:".$mv['id_mov']."</td>";
                 echo "<td align=\"center\" class=\"FacetDataTD\" rowspan=\"$r_span\">".$mv['caumag'].'-'.substr($mv['descri'],0,20)."</td>";
                 echo "<td class=\"FacetDataTD\" rowspan=\"$r_span\">".substr($mv['desdoc'].' del '.gaz_format_date($mv['datdoc']).' - '.$mv['ragso1'].' '.$mv['ragso2'],0,85).$addes."</td>";
@@ -309,22 +310,22 @@ if (isset($_POST['preview']) and $msg=='') {
                 echo "<tr>";
               }
               echo "<td align=\"right\" class=\"FacetDataTD\">".gaz_format_quantity($mval['q']*$mv['operat'],1,$admin_aziend['decimal_quantity'])."</td>";
-             /* if ($mv['operat']==1) {
+              /* if ($mv['operat']==1) {
                 echo "<td align=\"right\" class=\"FacetDataTD\">".number_format($mval['v'],$admin_aziend['decimal_price'],',','')."</td><td></td>";
               } else {
                 echo "<td></td><td align=\"right\" class=\"FacetDataTD\">".number_format($mval['v'],$admin_aziend['decimal_price'],',','')."</td>";
               }*/
               echo "<td align=\"right\" class=\"FacetDataTD\">".gaz_format_quantity($mval['q_g'],1,$admin_aziend['decimal_quantity'])."</td>";
-             /* echo "<td align=\"right\" class=\"FacetDataTD\">".gaz_format_number($mval['v_g'])."</td>";*/
+              /* echo "<td align=\"right\" class=\"FacetDataTD\">".gaz_format_number($mval['v_g'])."</td>";*/
               echo "</tr>";
               $ctrl_id = $mv['id_mov'];
             }
             $ctr_mv = $mv['artico'];
-         }
-         echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
-         echo '<td colspan="10" align="right"><input type="submit" name="print" value="'.$script_transl['print'].'">';
-         echo "\t </td>\n";
-         echo "\t </tr>\n";
+       }
+       echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
+       echo '<td colspan="10" align="right"><input type="submit" name="print" value="'.$script_transl['print'].'">';
+       echo "\t </td>\n";
+       echo "\t </tr>\n";
   }
   echo "</table></form>";
 }

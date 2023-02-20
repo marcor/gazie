@@ -1632,7 +1632,7 @@ if (intval($form['nome_colt']) == 0) {
 					<?php
 						if (isset($resord)){
 							$resbro = gaz_dbi_get_row($gTables['rigbro'], "id_rig", $resord['id_rigbro']);
-							echo "Periodo di coltivazione: dal ",$resord['start_work']," al ",$resord['end_work'], " Prodotto da raccogliere: ",($resbro)?$resbro['codart']:''," ",($resbro)?$resbro['descri']:'';
+							echo "Periodo di coltivazione: dal ",gaz_format_date($resord['start_work'])," al ",gaz_format_date($resord['end_work']), " Prodotto da raccogliere: ",($resbro)?$resbro['codart']:''," ",($resbro)?$resbro['descri']:'';
 						}
 					?>
 					</p>
@@ -2486,7 +2486,7 @@ if (intval($form['nome_colt']) == 0) {
 				<div>
 					<label>Numero: </label>
 					<input type="text" name="patent_number" value="<?php echo $form['patent_number']; ?>" >
-					<input type="hidden" name="rif_abilitazione" value="<?php echo htmlspecialchars($form['rif_abilitazione']); ?>" >
+					<input type="hidden" name="rif_abilitazione" value="<?php echo htmlspecialchars((isset($form['rif_abilitazione']))?$form['rif_abilitazione']:''); ?>" >
 					<label>Scadenza: </label>
 					<input class="datepicker" type="datetime-local" name="patent_expiry"  value="<?php echo $form['patent_expiry']; ?>">
 				</div>
@@ -2549,6 +2549,7 @@ if (count($instantwarning)>0){
 <script>
 document.getElementById("<?php echo $anchor; ?>").scrollIntoView({behavior:'smooth'});//◄■■■ JUMP TO LOCAL ANCHOR.
 </script>
+<span class="navbar-fixed-bottom" style="left:20%; z-index:2000;"> Registro di campagna è un modulo di Antonio Germani</span>
 <?php
 require ("../../library/include/footer.php");
 ?>

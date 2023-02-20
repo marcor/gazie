@@ -6,28 +6,28 @@
 	  (http://www.devincentiis.it)
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
-	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP 
+	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP
 	  Copyright (C) 2018-2021 - Antonio Germani, Massignano (AP)
-	  https://www.lacasettabio.it 
+	  https://www.lacasettabio.it
 	  https://www.programmisitiweb.lacasettabio.it
 	  --------------------------------------------------------------------------
 	  Questo programma e` free software;   e` lecito redistribuirlo  e/o
 	  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
 	  come e` pubblicata dalla Free Software Foundation; o la versione 2
 	  della licenza o (a propria scelta) una versione successiva.
-	
+
 	  Questo programma  e` distribuito nella speranza  che sia utile, ma
 	  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
 	  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
 	  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
-	
+
 	  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
 	  Generica GNU insieme a   questo programma; in caso  contrario,  si
 	  scriva   alla   Free  Software Foundation,  Inc.,   59
 	  Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
-	  --------------------------------------------------------------------------	 
+	  --------------------------------------------------------------------------
 	  # free to use, Author name and references must be left untouched  #
-	  --------------------------------------------------------------------------	  
+	  --------------------------------------------------------------------------
 */
 require("../../library/include/datlib.inc.php");
 
@@ -134,6 +134,7 @@ if ($toDo == 'update') {
 }
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[2]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"descri\" value=\"" . $form['descri'] . "\" maxlength=\"50\"  /></td></tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[11]</td><td class=\"FacetDataTD\">\n";
+/*
 print "<select name=\"clifor\" class=\"FacetSelect\">\n";
 for ($counter = -1; $counter <= 1; $counter++) {
     $selected = "";
@@ -143,6 +144,7 @@ for ($counter = -1; $counter <= 1; $counter++) {
     print "<option value=\"$counter\" $selected > " . $script_transl[$counter + 13] . "</option>\n";
 }
 print "</select></td></tr>\n";
+
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[3]</td><td class=\"FacetDataTD\">\n";
 print "<select name=\"insdoc\" class=\"FacetSelect\">\n";
 for ($counter = 0; $counter <= 1; $counter++) {
@@ -153,6 +155,11 @@ for ($counter = 0; $counter <= 1; $counter++) {
     print "<option value=\"$counter\" $selected > " . $script_transl[$counter + 6] . "</option>\n";
 }
 print "</select></td></tr>\n";
+*/
+?>
+<input type="hidden" name="clifor" value="0" />
+<input type="hidden" name="insdoc" value="1" />
+<?
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[4]</td><td class=\"FacetDataTD\">\n";
 print "<select name=\"operat\" class=\"FacetSelect\">\n";
 for ($counter = -1; $counter <= 1; $counter++) {
@@ -167,13 +174,13 @@ print "</select></td></tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[18]</td><td class=\"FacetDataTD\">\n";
 print "<select name=\"type_cau\" class=\"FacetSelect\">\n";
 unset ($sel);
-for ($counter = 0; $counter <= 9; $counter++) { 
+for ($counter = 0; $counter <= 9; $counter++) {
     if ($form['type_cau'] == $counter) {
         $sel[$counter] = " selected ";
     } else {
 		$sel[$counter] = $counter;
 	}
-}	
+}
 print "<option value=\"0\" $sel[0] > " . $script_transl[19] . "</option>\n";
 print "<option value=\"1\" $sel[1] > " . $script_transl[20] . "</option>\n";
 print "<option value=\"9\" $sel[9] > " . $script_transl[21] . "</option>\n";
