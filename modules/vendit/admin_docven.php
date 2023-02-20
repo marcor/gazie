@@ -532,7 +532,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
         }
       }
     } else {    //controlli in caso di inserimento
-      if ($form['tipdoc'] == 'DDT' || $form['tipdoc'] == 'DDV' || $form['tipdoc'] == 'DDS' || $form['tipdoc'] == 'DDY') {  //se è un DDT
+      if (substr($form['tipdoc'],0,2) == 'DD') {  //se è un DDT
         $rs_ultimo_ddt = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . substr($datemi,0,4) . " AND (tipdoc LIKE 'DD_' OR tipdoc = 'FAD') AND ddt_type!='R' AND seziva = " . $sezione, "datemi DESC ,numdoc DESC ", 0, 1);
         $ultimo_ddt = gaz_dbi_fetch_array($rs_ultimo_ddt);
         if ($ultimo_ddt){
