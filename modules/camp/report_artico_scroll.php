@@ -92,6 +92,7 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
 
 		} 	else {
 			$magval['q_g'] = 0;
+      $decimal_quantity=$admin_aziend['decimal_quantity'];
 		}
 		$class = 'default';
         if ($magval['q_g'] < 0) { // giacenza inferiore a 0

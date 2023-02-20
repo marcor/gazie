@@ -166,7 +166,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 	$fito=0;
     //recupero il movimento
     $result = gaz_dbi_get_row($gTables['movmag'], "id_mov", $_GET['id_mov']);
-	$itemart = gaz_dbi_get_row($gTables['artico'], "codice", $result['artico']);	
+	$itemart = gaz_dbi_get_row($gTables['artico'], "codice", $result['artico']);
     $form['id_mov'] = $result['id_mov'];
 	if ($result['id_rif']>$result['id_mov'] ){ // il movimento è connesso ad un movimento acqua, recupero anche il movimento acqua
 		$result2 = gaz_dbi_get_row($gTables['movmag'], "id_mov", $result['id_rif']);
@@ -222,7 +222,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 		$form['adminname'] = "";
 		$form['rif_abilitazione'] = "";
 	}
-	
+
 	if (intval($itemart['id_reg'])>0){// se è un fitofarmaco
 		// controllo validità patentino
 		if (strlen($form['patent_number'])>1 && strlen($form['patent_expiry'])>1){ // se c'è un patentino
@@ -234,12 +234,12 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 				$instantwarning[]="L'autorizzazione per l'acquisto e l'uso di prodotti fitosanotari scadrà il ".$form['patent_expiry'];
 			}
 		}else { // se non c'è un patentino segnalo la mancanza
-				
+
 				$avv_conf=3;
-				$instantwarning[]="L'uso di fitofarmaci può essere fatto da un operatore in possesso di relativo patentino";
+				$instantwarning[]="L'uso di fitofarmaci deve essere fatto da un operatore in possesso di relativo patentino";
 
 			}
-		
+
 	}
 
     $form['id_orderman'] = intval($result['id_orderman']);
@@ -381,7 +381,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 			$form['prezzo'][$m] = gaz_format_quantity($_POST['prezzo' . $m], 0, $admin_aziend['decimal_quantity']);
 			if (isset($_POST['quanti2' . $m])){
 				$form['quanti2'][$m] = gaz_format_quantity($_POST['quanti2' . $m], 0, $admin_aziend['decimal_quantity']);
-				
+
 			} else {
 				$form['quanti2'][$m]=0;
 			}
@@ -480,7 +480,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 	}
     $form['adminid'] = $_POST['adminid'];
 	if (isset($_POST['confermapat'.$form['adminid']]) && $_POST['confermapat'.$form['adminid']]== "Non voglio continuare"){
-		
+
 		header("Location: " . $_POST['ritorno']);
         exit;
 	}
