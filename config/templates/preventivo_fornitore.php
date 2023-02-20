@@ -186,8 +186,7 @@ class PreventivoFornitore extends Template
         break;
         case "50":
           // accumulo il file da allegare e lo indico al posto del codice articolo
-          $this->docVars->id_rig=$rigo['id_rig'];
-          $file=$this->docVars->getExtDoc();
+          $file=$this->docVars->getExtDoc($rigo['id_rig']);
           $this->Cell(25, 6, $file['file'],1,0,'L',0,'',1);
           $this->Cell(100, 6, $rigo['descri'],1,0,'L',0,'',1);
           $this->Cell(7,  6, $rigo['unimis'],1,0,'C');
@@ -196,8 +195,7 @@ class PreventivoFornitore extends Template
         break;
         case "51":
 					// accumulo il file da allegare e lo indico al posto del codice articolo
-					$this->docVars->id_rig=$rigo['id_rig'];
-					$file=$this->docVars->getExtDoc();
+					$file=$this->docVars->getExtDoc($rigo['id_rig']);
           $this->Cell(25, 6, $file['file'],1,0,'L',0,'',1);
           $this->Cell(100,6,$rigo['descri'],'LR',0,'L',0,'',1);
           $this->Cell(61,6,'','R',1);
