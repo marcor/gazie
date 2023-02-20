@@ -464,7 +464,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 		$form['adminname'] = $row_adminname['ragso1']." ".$row_adminname['ragso2'];
 		$form['rif_abilitazione'] = $row_adminname['custom_field'];
 		if (isset($row_adminname['custom_field']) && $data = json_decode($row_adminname['custom_field'], TRUE)){
-			if (is_array($data['camp'])){ // se c'è un patentino
+			if (isset($data['camp']) && is_array($data['camp'])){ // se c'è un patentino
 				$form['patent_number'] = $data['camp']['numero'];
 				$form['patent_expiry'] = $data['camp']['scadenza'];
 				// controllo validità patentino
@@ -479,6 +479,8 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 				$form['patent_number'] = "";
 				$form['patent_expiry'] = "";
 				$avv_conf=3;
+				$instantwarning[]="L'uso di fitofarmaci può essere fatto da un operatore in possesso di relativo patentino";
+
 			}
 		} else {
 			$form['patent_number'] = "";
@@ -948,7 +950,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 							while ($row = $result->fetch_assoc()) {
 								$tempo_sosp = $row['tempo_sosp'];// se è presente in $temp_sosp ci metto quello specifico
 							}
-							if ($tempo_sosp == 0) { // se non è presente un tempo di sospensione specifico prendo quello generico. Lo metto in $temp_sosp
+							if (!isset($tempo_sosp)) { // se non è presente un tempo di sospensione specifico prendo quello generico. Lo metto in $temp_sosp
 								$temp_sosp = $itemart['tempo_sospensione'];
 							}
 							if (intval($temp_sosp)>0){  // se c'è un tempo di sospensione
@@ -1898,7 +1900,6 @@ if (intval($form['nome_colt']) == 0) {
 													?><!-- Acqua -->
 
 
-														<input class="col-sm-6" type="text" name="artico2<?php echo $form['mov']; ?>" value="<?php echo $form['artico2'][$form['mov']]; ?>" disabled="disabled"/>
 														<?php
 
 														if ($form['artico2'][$form['mov']]!==""){ // se è stata inserita l'acqua carico unità di misura e visualizzo input q.tà
@@ -1908,8 +1909,14 @@ if (intval($form['nome_colt']) == 0) {
 																$print_unimis2 = $itemart2['unimis'];
 															}
 															?>
+															<input class="col-sm-6" type="text" name="artico2<?php echo $form['mov']; ?>" value="<?php echo $form['artico2'][$form['mov']]; ?>" disabled="disabled"/>
+
 															<span class="col-sm-1"><?php echo $print_unimis2;?></span>
 															<input class="col-sm-5" type="text" value="<?php echo gaz_format_quantity($form['quanti2'][$form['mov']], 1, $admin_aziend['decimal_quantity']); ?>" maxlength="10" name="quanti2<?php echo $form['mov']; ?>" >
+															<?php
+														}else{
+															?>
+															<input class="col-sm-6" type="hidden" name="artico2<?php echo $form['mov']; ?>" value="<?php echo $form['artico2'][$form['mov']]; ?>" disabled="disabled"/>
 															<?php
 														}
 														?>
