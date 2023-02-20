@@ -41,11 +41,14 @@ function getDayNameFromDayNumber($day_number) {
 $upd_mm = new magazzForm;
 $docOperat = $upd_mm->getOperators();
 if (!isset($_POST['ritorno'])) {
+  echo $_GET['tipdoc'];
     if (isset($after_newdoc_back_to_doclist)){
       if ($after_newdoc_back_to_doclist==0){
-        $form['ritorno']="admin_broven.php?Insert&tipdoc=VOR";
+        $td=(isset($_GET['tipdoc']) && $_GET['tipdoc']=='VPR')?'VPR':'VOR';
+        $form['ritorno']="admin_broven.php?Insert&tipdoc=".$td;
       }else{
-         $form['ritorno']="report_broven.php";
+        $td=(isset($_GET['tipdoc']) && $_GET['tipdoc']=='VPR')?'?tipdoc=VPR':'';
+        $form['ritorno']="report_broven.php".$td;
       }
     } else{
       $form['ritorno'] = $_SERVER['HTTP_REFERER'];
