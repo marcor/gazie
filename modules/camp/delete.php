@@ -66,7 +66,8 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 		break;
 		case "campmovmag":
 			$i=intval($_POST['ref']);
-			$form = gaz_dbi_get_row($gTables['movmag'], 'id_mov', $i);$id_mov=$i;$campo_impianto=$form['campo_impianto'];// Antonio Germani
+			$form = gaz_dbi_get_row($gTables['movmag'], 'id_mov', $i);
+			$id_mov=$i;$campo_impianto=$form['campo_impianto'];
 			// inizio cancellazione ore operaio
 			// controllo se clfoco è un operaio e ne prendo l'id_staff
 			$res = gaz_dbi_get_row($gTables['staff'], "id_clfoco", $form['clfoco']);
@@ -120,8 +121,8 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 				}
 			}
 			gaz_dbi_del_row($gTables['movmag'],"id_mov",$i);	// cancello il movimento di magazzino
-			if ($form['id_rif'] > 0) {  //se il movimento di magazzino è stato generato da un rigo di documento lo azzero
-				gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $form['id_rif'], 'id_mag', 0);
+			if (intval ($form['id_rif']) > 0 && intval ($form['id_rif'])<>intval($i)) {  //se il movimento di magazzino era connesso all'acqua
+				gaz_dbi_del_row($gTables['movmag'],"id_mov",intval ($form['id_rif']));	// cancello il movimento di magazzino acqua
 			}
 		break;
 		case "caumag":
