@@ -166,7 +166,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 	$fito=0;
     //recupero il movimento
     $result = gaz_dbi_get_row($gTables['movmag'], "id_mov", $_GET['id_mov']);
-	$itemart = gaz_dbi_get_row($gTables['artico'], "codice", $result['artico']);
+	$itemart = gaz_dbi_get_row($gTables['artico'], "codice", $result['artico']);	
     $form['id_mov'] = $result['id_mov'];
 	if ($result['id_rif']>$result['id_mov'] ){ // il movimento è connesso ad un movimento acqua, recupero anche il movimento acqua
 		$result2 = gaz_dbi_get_row($gTables['movmag'], "id_mov", $result['id_rif']);
@@ -206,7 +206,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 		$form['adminname'] = $rowanagra['ragso1']." ".$rowanagra['ragso2'];
 		$form['rif_abilitazione'] = $rowanagra['custom_field'];
 		if ($data = json_decode($rowanagra['custom_field'], TRUE)){
-			if (is_array($data['camp'])){
+			if (isset($data['camp']) && is_array($data['camp'])){
 				$form['patent_number'] = $data['camp']['numero'];
 				$form['patent_expiry'] = $data['camp']['scadenza'];
 			} else {
@@ -221,6 +221,25 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 	} else {
 		$form['adminname'] = "";
 		$form['rif_abilitazione'] = "";
+	}
+	
+	if (intval($itemart['id_reg'])>0){// se è un fitofarmaco
+		// controllo validità patentino
+		if (strlen($form['patent_number'])>1 && strlen($form['patent_expiry'])>1){ // se c'è un patentino
+			$exp=strtotime($form['patent_expiry']);
+			$today=strtotime(date("Y/m/d"));
+			if ($today>$exp){ //se è scaduto
+				$avv_conf=2;
+			} elseif (($exp-7776000)<$today ){// se sta per scadere -> 1 Day: 86400 Seconds 3 mesi: 7776000
+				$instantwarning[]="L'autorizzazione per l'acquisto e l'uso di prodotti fitosanotari scadrà il ".$form['patent_expiry'];
+			}
+		}else { // se non c'è un patentino segnalo la mancanza
+				
+				$avv_conf=3;
+				$instantwarning[]="L'uso di fitofarmaci può essere fatto da un operatore in possesso di relativo patentino";
+
+			}
+		
 	}
 
     $form['id_orderman'] = intval($result['id_orderman']);
@@ -459,6 +478,11 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 		$form['ncamp']=1;
 	}
     $form['adminid'] = $_POST['adminid'];
+	if (isset($_POST['confermapat'.$form['adminid']]) && $_POST['confermapat'.$form['adminid']]== "Non voglio continuare"){
+		
+		header("Location: " . $_POST['ritorno']);
+        exit;
+	}
 	if (intval($form['adminid'])>0 && $fito==1){// se c'è almeno un fitofarmaco controllo il patentino
 		$row_adminname = gaz_dbi_get_row($gTables['anagra'], "id", $form['adminid']);
 		$form['adminname'] = $row_adminname['ragso1']." ".$row_adminname['ragso2'];
@@ -953,7 +977,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 							if (!isset($tempo_sosp)) { // se non è presente un tempo di sospensione specifico prendo quello generico. Lo metto in $temp_sosp
 								$temp_sosp = $itemart['tempo_sospensione'];
 							}
-							if (intval($temp_sosp)>0){  // se c'è un tempo di sospensione
+							if (isset($temp_sosp) && intval($temp_sosp)>0){  // se c'è un tempo di sospensione
 								$dt = $dt + (86400 * intval($temp_sosp)); //aggiiungo al giorno di attuazione i giorni di sospensione (Un giorno = 86400 timestamp)
 								// Antonio Germani controllo se il tempo di sospensione del campo di coltivazione è inferiore a quello che si crea con questo trattamento. Se lo è aggiorno il database campi nel campo di coltivazione selezionato
 
@@ -1404,13 +1428,13 @@ if (count($instantwarning)>0) {
 	}
 }
 if ($avv_conf==1) { // segnalo autorizzazione fitofarmaco scaduta con scelta
-	echo "<script type='text/javascript'> $(window).on('load',(function(){ $('#scadaut').modal('show'); }); </script>";
+	echo "<script type='text/javascript'> $(window).on('load',(function(){ $('#scadaut').modal('show'); })); </script>";
 }
 if ($avv_conf==2 AND $form['confermapat'][$form['adminid']]!=="Confermo deroga" ) { // segnalo autorizzazione patentinoscaduta con scelta
-	echo "<script type='text/javascript'> $(window).on('load',(function(){ $('#patexp').modal('show'); }); </script>";
+	echo "<script type='text/javascript'> $(window).on('load',(function(){ $('#patexp').modal('show'); })); </script>";
 }
 if ($avv_conf==3 AND $form['confermapat'][$form['adminid']]!=="Confermo deroga" ) { // segnalo mancanza autorizzazione patentino con scelta
-	echo "<script type='text/javascript'> $(window).on('load',(function(){ $('#patempty').modal('show'); }); </script>";
+	echo "<script type='text/javascript'> $(window).on('load',(function(){ $('#patempty').modal('show'); })); </script>";
 }
 ?>
 
