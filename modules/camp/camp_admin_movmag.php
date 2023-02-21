@@ -1943,7 +1943,7 @@ if (intval($form['nome_colt']) == 0) {
 															<input class="col-sm-6" type="text" name="artico2<?php echo $form['mov']; ?>" value="<?php echo $form['artico2'][$form['mov']]; ?>" disabled="disabled"/>
 
 															<span class="col-sm-1"><?php echo $print_unimis2;?></span>
-															<input class="col-sm-5" type="text" value="<?php echo gaz_format_quantity($form['quanti2'][$form['mov']], 1, $admin_aziend['decimal_quantity']); ?>" maxlength="10" name="quanti2<?php echo $form['mov']; ?>" >
+															<input class="col-sm-5" id="quanti2<?php echo $form['mov']; ?>" type="text" value="<?php echo gaz_format_quantity($form['quanti2'][$form['mov']], 1, $admin_aziend['decimal_quantity']); ?>" maxlength="10" name="quanti2<?php echo $form['mov']; ?>" >
 															<?php
 														}else{
 															?>
@@ -2056,6 +2056,8 @@ if (intval($form['nome_colt']) == 0) {
 										echo "<br>Dose massima ammessa:<span id='dosemax".$form['mov']."'> ", gaz_format_quantity($dose, 1, $admin_aziend['decimal_quantity']),"</span>&nbsp;", $print_unimis,"/ha";
 									}
 									echo "&nbsp; &nbsp; &nbsp;<span id='doseuse".$form['mov']."'></span>&nbsp;", $print_unimis,"/ha";
+									echo "&nbsp; &nbsp; &nbsp;<span id='acquadoseuse".$form['mov']."'></span>&nbsp;", $print_unimis,"/hl";
+
 								}
 								if ($service == 2 && $form['operat'] == 1) { // se è articolo composito avviso che non è possibile il carico
 									echo '<div><button class="btn btn-xs btn-danger" type="image" >';
@@ -2582,16 +2584,48 @@ if (intval($form['nome_colt']) == 0) {
 			quanti= parseFloat(quanti.replace(',','.'));
 			var doseuse = quanti/dim;
 			$("#doseuse"+i).html("Dose usata: "+doseuse.toFixed(4).replace('.',','));
+			var quanti2= $('#quanti2'+i).val();	
+			var quanti= $('#quanti'+i).val();
+			quanti= parseFloat(quanti.replace(',','.'));
+			quanti2= parseFloat(quanti2.replace(',','.'));
+			//alert(quanti2);alert(dim);
+			if (quanti>0 && quanti2>0){
+				var acquadoseuse = (quanti/quanti2)*100;
+			}else{
+				var acquadoseuse = 0;
+			}
+			$("#acquadoseuse"+i).html("Dose usata: "+acquadoseuse.toFixed(4).replace('.',','));
 		}
 	});
 	for (let i = 0; i < <?php echo $form['nmov']+1; ?>; i++) { 
 		$("#quanti"+i).on("keyup",function(){			
 			var dim = parseFloat(<?php echo $form['dim_campi']; ?>);
-			var quanti= $('#quanti'+i).val();			
+			var quanti= $('#quanti'+i).val();
+			var quanti2= $('#quanti2'+i).val();	
 			quanti= parseFloat(quanti.replace(',','.'));
+			quanti2= parseFloat(quanti2.replace(',','.'));
 			//alert(quanti);alert(dim);
 			var doseuse = quanti/dim;
 			$("#doseuse"+i).html("Dose usata: "+doseuse.toFixed(4).replace('.',','));
+			if (quanti>0 && quanti2>0){
+				var acquadoseuse = (quanti/quanti2)*100;
+			}else{
+				var acquadoseuse = 0;
+			}
+			$("#acquadoseuse"+i).html("Dose usata: "+acquadoseuse.toFixed(4).replace('.',','));
+		});
+		$("#quanti2"+i).on("keyup",function(){			
+			var quanti2= $('#quanti2'+i).val();	
+			var quanti= $('#quanti'+i).val();
+			quanti= parseFloat(quanti.replace(',','.'));
+			quanti2= parseFloat(quanti2.replace(',','.'));
+			//alert(quanti2);alert(dim);
+			if (quanti>0 && quanti2>0){
+				var acquadoseuse = (quanti/quanti2)*100;
+			}else{
+				var acquadoseuse = 0;
+			}
+			$("#acquadoseuse"+i).html("Dose usata: "+acquadoseuse.toFixed(4).replace('.',','));
 		});
 	}
 		
