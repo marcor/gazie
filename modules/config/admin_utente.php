@@ -69,12 +69,10 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
 	$form["Abilit"] = intval($_POST['Abilit']);
   $form['hidden_req'] = $_POST['hidden_req'];
 	$form['company_id'] = intval($_POST['company_id']);
-	$form['search']['company_id'] = $_POST['search']['company_id'];
+	$form['search']['company_id'] = isset($_POST['search'])?$_POST['search']['company_id']:'';
 	$form["Access"] = intval($_POST['Access']);
 	$form["user_name"] = preg_replace("/[^A-Za-z0-9]/", '',substr($_POST["user_name"], 0, 64));
-	$form["user_password_old"] = substr($_POST['user_password_old'], 0, 65);
-	$form["user_password_new"] = substr($_POST['user_password_new'], 0, 65);
-	$form["user_password_ver"] = substr($_POST['user_password_ver'], 0, 65);
+	$form["user_password_new"] = $toDo=='insert'?substr($_POST['user_password_new'], 0, 65):'';
 	$form["user_active"] = intval($_POST['user_active']);
 	$form['body_text'] = filter_input(INPUT_POST, 'body_text');
 	if ($toDo == 'insert') {
@@ -99,9 +97,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
   $mod_customfield['custom_field'] = ($mod_customfield['custom_field'] === NULL) ? '' : $mod_customfield['custom_field'];
 	$customfield=json_decode($mod_customfield['custom_field']);
 	$form['id_warehouse'] = (isset($customfield->user_id_warehouse))?$customfield->user_id_warehouse:0;
-	$form['user_password_old'] = '';
 	$form['user_password_new'] = '';
-	$form['user_password_ver'] = '';
 	$form['theme'] = $admin_config['var_value'];
   // attingo il testo delle email dalla tabella configurazione utente
 	$az_mail = gaz_dbi_get_row($gTables['admin_config'], 'var_name', 'az_email', "AND adminid = '{$form['user_name']}' AND company_id = '".$admin_aziend['company_id']."'");
@@ -117,7 +113,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
 	$form['user_email'] = '';
   $form['az_email'] = '';
 	$form["image"] = "";
-	$form["theme"] = "/library/theme/g7";
+	$form["theme"] = "/library/theme/lte";
 	$form["style"] = $admin_aziend['style'];
 	$form["skin"] = $admin_aziend['skin'];
 	$form["lang"] = $admin_aziend['lang'];
@@ -129,9 +125,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
   $form['search']['company_id'] = '';
 	$form["Access"] = 0;
 	$form["user_name"] = "";
-	$form['user_password_old'] = '';
-	$form['user_password_new'] = '';
-	$form['user_password_ver'] = '';
+	$form["user_password_new"] = "";
 	$form["user_active"] = 1;
 	$form['body_text'] = "";
 
@@ -154,19 +148,11 @@ if (isset($_POST['Submit'])) {
   if (!filter_var($form['az_email'], FILTER_VALIDATE_EMAIL) && !empty($form['az_email'])) {
 		$msg['err'][] = 'email'; // errore email
 	}
-	if ($toDo == 'update' && $form["user_password_old"] != 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855') {
-		if (password_verify( $form["user_password_old"]  , $old_data["user_password_hash"] )) {
-			// voglio reimpostare la password ed è giusta
-		} else {
-			$msg['err'][] = 'passold'; // non coincide, segnalo l'errore
-		}
-	} else if ($toDo == 'insert'){
+  if ($toDo == 'insert'){
 		if (strlen($form["user_password_new"]) < $global_config->getValue('psw_min_length'))
 		$msg['err'][] = 'passlen';
 
 	}
-	if ($form["user_password_new"] != $form["user_password_ver"])
-	$msg['err'][] = 'confpass';
 	if (preg_match("/[<> \/\"]+/i", $form["user_password_new"])) {
 		$msg['err'][] = 'charpass';
 	}
@@ -213,7 +199,6 @@ if (isset($_POST['Submit'])) {
 		$query="UPDATE ".$gTables['admin_module']." SET custom_field='".$form['custom_field']."' WHERE moduleid=".$magmodule['id']." AND adminid='{$form['user_name']}' AND company_id=" . $admin_aziend['company_id'];
 		gaz_dbi_query($query);
 		$form["datacc"] = date("YmdHis");
-		$form["datpas"] = date("YmdHis");
 		$tbt = trim($form['body_text']);
 		if ($user_data['Abilit'] == 9) {
 			foreach ($_POST AS $key => $value) {
@@ -311,7 +296,7 @@ if (isset($_POST['Submit'])) {
 			$form['legrap_pf_cognome']="";
 			$form['email']=$form['user_email'];
 			$form['id_anagra']=gaz_dbi_table_insert('anagra', $form);
-
+      $form['datpas'] = date("YmdHis");
 			gaz_dbi_table_insert('admin', $form);
 			$form['adminid'] = $form["user_name"];
 			$form['var_descri'] = 'Menu/header/footer personalizzabile';
@@ -332,18 +317,7 @@ if (isset($_POST['Submit'])) {
 			}
 
 		} elseif ($toDo == 'update') {
-			if ($form["user_password_old"] != 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855') {
-				if (password_verify( $form["user_password_old"]  , $old_data["user_password_hash"] )) {
-					$form["datpas"] = date("YmdHis"); //cambio la data di modifica password
-					// faccio l'hash della password prima di scrivere sul db
-					require_once('../../modules/root/config_login.php');
-					$hash_cost_factor = (defined('HASH_COST_FACTOR') ? HASH_COST_FACTOR : null);
-					$form["user_password_hash"] = password_hash($form["user_password_new"] , PASSWORD_DEFAULT, ['cost' => $hash_cost_factor]);
-          // ripreparo la chiave per criptare la chiave contenuta in $_SESSION con la nuova password e metterla aes_key di gaz_admin
-          $prepared_key = openssl_pbkdf2($form["user_password_new"].$form["user_name"], AES_KEY_SALT, 16, 1000, "sha256");
-          $form["aes_key"] = base64_encode(openssl_encrypt($_SESSION['aes_key'],"AES-128-CBC",$prepared_key,OPENSSL_RAW_DATA, AES_KEY_IV));
-				}
-			}
+
 			gaz_dbi_table_update('admin', array("user_name", $form["user_name"]), $form);
 			// se esiste aggiorno anche il tema
 			$admin_config_theme = gaz_dbi_get_row($gTables['admin_config'], 'var_name', 'theme', "AND adminid = '{$form['user_name']}'");
@@ -499,7 +473,7 @@ $(function(){
 		});
 		$("#dialog_module_card" ).dialog( "open" );
 	});
-  $('#login-password, #user_password_new, #user_password_ver').keypress(function(e) {
+  $('#user_password_new').keypress(function(e) {
     var s = String.fromCharCode( e.which );
     var pfield = $(this).position();
     if ((s.toUpperCase() === s && s.toLowerCase() !== s && !e.shiftKey) || (s.toUpperCase() !== s && s.toLowerCase() === s && e.shiftKey)){
@@ -534,9 +508,7 @@ if (preg_match("/([a-z0-9]{1,9})[0-9]{4}$/", $table_prefix, $tp)) {
 }
 if (!is_array($student)){
 ?>
-onsubmit="document.getElementById('login-password').value=forge_sha256(document.getElementById('login-password').value);
-document.getElementById('user_password_new').value=forge_sha256(document.getElementById('user_password_new').value);
-document.getElementById('user_password_ver').value=forge_sha256(document.getElementById('user_password_ver').value);"
+onsubmit="document.getElementById('user_password_new').value=forge_sha256(document.getElementById('user_password_new').value);"
 <?php
 }
 ?>
@@ -554,9 +526,7 @@ $gForm = new configForm();
 if (count($msg['err']) > 0) { // ho un errore
 	$gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
   // svuoto le password
-	$form['user_password_old'] = '';
 	$form['user_password_new'] = '';
-	$form['user_password_ver'] = '';
 }
 echo '<input type="hidden" name="' . ucfirst($toDo) . '" value="">';
 ?>
@@ -574,6 +544,21 @@ echo '<input type="hidden" name="' . ucfirst($toDo) . '" value="">';
 <td colspan="2" class="FacetDataTD"><input title="Mail" type="email" name="user_email" value="<?php print $form["user_email"] ?>" class="FacetInput" maxlength="50">&nbsp;</td>
 </tr>
 <tr>
+<?php
+if ($toDo == 'insert') {
+?>
+<tr><td class="FacetFieldCaptionTD"><?php echo $script_transl["user_name"]; ?></td>
+<td class="FacetDataTD" colspan="2"><input title="user_name" type="text" name="user_name" value="<?php echo  $form["user_name"]; ?>" maxlength="20" class="FacetInput"></td>
+	</tr>
+<tr>
+<td class="FacetFieldCaptionTD"><?php echo $script_transl['user_password_new']; ?> </td>
+<td colspan="2" class="FacetDataTD"><input title="Prima password" type="password" id="user_password_new" name="user_password_new" value="<?php echo $form["user_password_new"]; ?>" maxlength="40" class="FacetInput" id="cpass" /><div class="FacetDataTDred" id="cmsg"></div></td>
+</tr>
+<?php
+} else {
+echo '<tr><td class="FacetFieldCaptionTD"></td><td colspan="2" class="FacetDataTD text-right"><a href="../root/login_password_change.php" class="btn btn-warning">'.$script_transl['change'].' password</a></td></tr>';
+}
+?>
 <td class="FacetFieldCaptionTD"><?php echo $script_transl['az_email']; ?></td>
 <td colspan="2" class="FacetDataTD"><input title="Mail" type="email" name="az_email" value="<?php print $form["az_email"] ?>" class="FacetInput" maxlength="50">&nbsp;</td>
 </tr>
@@ -687,26 +672,17 @@ if ($user_data['Abilit'] == 9 || is_array($student)) {
 </tr>
 <tr>
 <td class="FacetFieldCaptionTD"><?php echo $script_transl['Access']; ?></td>
-<td colspan="2" class="FacetDataTD"><input title="Accessi" type="text" name="Access" value="<?php print $form["Access"] ?>" maxlength="7" class="FacetInput">&nbsp;</td>
-</tr>
+<td colspan="2" class="FacetDataTD">
 <?php
-if ($toDo == 'insert') {
-	echo '<tr><td class="FacetFieldCaptionTD">' . $script_transl["user_name"] . ' *</td>
-	<td class="FacetDataTD" colspan="2"><input title="user_name" type="text" name="user_name" value="' . $form["user_name"] . '" maxlength="20" class="FacetInput">&nbsp;</td>
-	</tr>';
+if ($user_data['Abilit'] == 9){
+?>
+<input title="Accessi" type="text" name="Access" value="<?php echo $form["Access"]; ?>" maxlength="7" class="FacetInput">
+<?php
+} else {
+  echo '<input type="hidden" name="Access" value="'.$form["Access"].'">'.$form["Access"];
 }
 ?>
-<tr>
-<td class="FacetFieldCaptionTD"><?php echo $script_transl['user_password_old'] ?></td>
-<td colspan="2" class="FacetDataTD"><input title="Vecchia password" type="password" id="login-password" name="user_password_old" value="<?php echo $form["user_password_old"]; ?>" maxlength="40" class="FacetInput" id="ppass" /><div class="FacetDataTDred" id="pmsg"></div>&nbsp;</td>
-</tr>
-<tr>
-<td class="FacetFieldCaptionTD"><?php echo $script_transl['user_password_new']; ?> </td>
-<td colspan="2" class="FacetDataTD"><input title="Conferma Password" type="password" id="user_password_new" name="user_password_new" value="<?php print $form["user_password_new"]; ?>" maxlength="40" class="FacetInput" id="cpass" /><div class="FacetDataTDred" id="cmsg"></div>&nbsp;</td>
-</tr>
-<tr>
-<td class="FacetFieldCaptionTD"><?php echo $script_transl['user_password_ver']; ?></td>
-<td colspan="2" class="FacetDataTD"><input title="Conferma Password" type="password" id="user_password_ver" name="user_password_ver" value="<?php print $form["user_password_ver"]; ?>" maxlength="40" class="FacetInput" id="cpass" /><div class="FacetDataTDred" id="cmsg"></div>&nbsp;</td>
+</td>
 </tr>
 <tr>
 <td class="FacetFieldCaptionTD"><?php echo $script_transl['user_active']; ?></td>
