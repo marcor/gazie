@@ -303,6 +303,7 @@ if (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo acces
 			$warnmsg.="34+";
 		}
 	}
+
 	if ($form['lot_or_serial']==1){ // se articolo con lotti ...
 		$form['datreg'] = $form['annreg'] . "-" . substr("0".$form['mesreg'],-2) . "-" . substr("0".$form['gioreg'],-2);
 		if ($form['operat'] == -1){
@@ -324,9 +325,10 @@ if (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo acces
     if ($form['caumag']>80 || $toDo=="insert"){ // non deriva da un documento cambio la descrizione
       $form['desdoc'] = $cm['descri'];
     }
+    $form['hidden_req']='';
   }
 
-  if (!empty($_POST['Insert'])) {        //          Se viene inviata la richiesta di conferma totale ...
+  if (!empty($_POST['Insert'])) { // se viene inviata la richiesta di conferma totale ...
     //formatto le date
     $form['datreg'] = $form['annreg'] . "-" . $form['mesreg'] . "-" . $form['gioreg'];
     $form['datdoc'] = $form['anndoc'] . "-" . $form['mesdoc'] . "-" . $form['giodoc'];
@@ -335,7 +337,7 @@ if (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo acces
     if (!checkdate($form['mesreg'], $form['gioreg'], $form['annreg'])) $msg .= "16+";
     if (!checkdate($form['mesdoc'], $form['giodoc'], $form['anndoc'])) $msg .= "15+";
     if ($utsdoc > $utsreg) { $msg .= "17+"; }
-    if ($form['lot_or_serial']==1 AND $form['caumag']<>99){ // se è un articolo con lotti e non è un movimento inventario
+    if ($form['lot_or_serial']==1 && $form['caumag']<>99){ // se è un articolo con lotti e non è un movimento inventario
       if (strlen ($form['identifier'])<= 0 || intval($form['id_lotmag'])==0 ){
         $msg .= "21+"; // manca il lotto
       }else{
@@ -348,19 +350,17 @@ if (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo acces
     if (intval($form['caumag']) < 1){ // senza causale
       $msg .= "37+";
     }
-    if (intval($form['caumag'])==98 AND intval($form['operat'])==0){ // su storno inventario bisogna indicare se entrata o uscita
+    if (intval($form['caumag'])==98 && intval($form['operat'])==0){ // su storno inventario bisogna indicare se entrata o uscita
       $msg .= "29+";
     }
-    if (intval($form['caumag'])==99 AND intval($form['operat'])!==1){ // inventario deve essere entrata
+    if (intval($form['caumag'])==99 && intval($form['operat'])!==1){ // inventario deve essere entrata
       $msg .= "30+";
     }
-    if (intval($form['caumag'])==98 AND $form['prezzo'] <= 0) { // Se storno inventario e non è stato dato un prezzo controllo precedente inventario
+    if (intval($form['caumag'])==98 && $form['prezzo'] <= 0) { // Se storno inventario e non è stato dato un prezzo controllo precedente inventario
       $rs_last_inventory = gaz_dbi_dyn_query("*", $gTables['movmag'], "artico = '".$form['artico']."' AND caumag = 99 AND datreg <= '" . $form['datreg'] . "'", "datreg DESC, id_mov DESC");
       $last_inventory = gaz_dbi_fetch_array($rs_last_inventory);
       if ($last_inventory) {
         $form['prezzo'] = $last_inventory['prezzo'];// imposto il valore sulla base dell'ultimo inventario 99
-      } else { // se non c'è un inventario 99 non si può fare uno storno 98
-        $msg .= "31+";
       }
     }
     if (empty($form['artico'])) {  //manca l'articolo
@@ -369,7 +369,7 @@ if (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo acces
     if ($form['operat']==1 && $item_artico['good_or_service']==2 && $tipo_composti['val']=="STD") {  //E' un articolo composto che non può essere caricato da movmag
             $msg .= "22+";
     }
-    if ($form['quanti'] == 0) {  //la quantit� � zero
+    if ($form['quanti'] == 0) {  //la quantità è zero
       $msg .= "19+";
     }
     if (isset($_GET['id_mov']) && intval($_GET['id_mov'])>0){
@@ -379,31 +379,31 @@ if (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo acces
       }
     }
     // inizio controllo operazioni particolari SIAN
-    if ($form['SIAN']>0 AND $form['operat']==1 AND $form['cod_operazione']==10 AND $camp_artico['confezione']>0){
+    if ($form['SIAN']>0 && $form['operat']==1 && $form['cod_operazione']==10 && $camp_artico['confezione']>0){
       $msg .="23+";
     }
-    if ($form['SIAN']>0 AND $form['operat']==1 AND $form['cod_operazione']==10 AND $camp_artico['confezione']==0 AND $form['recip_stocc']==""){
+    if ($form['SIAN']>0 && $form['operat']==1 && $form['cod_operazione']==10 && $camp_artico['confezione']==0 && $form['recip_stocc']==""){
       $msg .="24+";
     }
-    if ($form['SIAN']>0 AND $form['operat']==-1 AND $form['cod_operazione']==0 AND $camp_artico['confezione']==0){
+    if ($form['SIAN']>0 && $form['operat']==-1 && $form['cod_operazione']==0 && $camp_artico['confezione']==0){
       $msg .="25+";
     }
-    if ($form['SIAN']>0 AND $form['cod_operazione']==11){
+    if ($form['SIAN']>0 && $form['cod_operazione']==11){
       $msg .="26+";
     }
-    if ($form['SIAN']>0 AND $form['operat']==-1 AND $form['cod_operazione']==6 AND $camp_artico['confezione']==0){
+    if ($form['SIAN']>0 && $form['operat']==-1 && $form['cod_operazione']==6 && $camp_artico['confezione']==0){
       $msg .="27+";
     }
-    if ($form['SIAN']>0 AND $form['operat']==-1 AND $form['cod_operazione']==7 AND $camp_artico['confezione']==0 AND $form['recip_stocc']==""){
+    if ($form['SIAN']>0 && $form['operat']==-1 && $form['cod_operazione']==7 && $camp_artico['confezione']==0 && $form['recip_stocc']==""){
       $msg .="24+";
     }
-    if ($form['SIAN']>0 AND $form['operat']==-1 AND $form['cod_operazione']==8 AND $camp_artico['confezione']==0 AND $form['recip_stocc']==""){
+    if ($form['SIAN']>0 && $form['operat']==-1 && $form['cod_operazione']==8 && $camp_artico['confezione']==0 && $form['recip_stocc']==""){
       $msg .="24+";
     }
-    if ($form['SIAN']>0 AND $form['operat']==-1 AND $form['cod_operazione']==13 AND $camp_artico['confezione']>0){
+    if ($form['SIAN']>0 && $form['operat']==-1 && $form['cod_operazione']==13 && $camp_artico['confezione']>0){
       $msg .="28+";
     }
-    if ($form['SIAN']>0 AND $form['operat']==-1 AND strlen($form['recip_stocc'])>0){
+    if ($form['SIAN']>0 && $form['operat']==-1 && strlen($form['recip_stocc'])>0){
       $content = $sil -> getCont($form['recip_stocc'],$form['artico']);
       if ($content < $form['quanti']){ // se non c'è suffiente olio nel silos selezionato
         $msg .="32+";
@@ -470,12 +470,12 @@ if (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo acces
           exit;
         } else {
           $id_movmag=$upd_mm->uploadMag($form['id_rif'], $form['tipdoc'],0,0,$form['datdoc'], $form['clfoco'], $form['scochi'], $form['caumag'], $form['artico'], $form['quanti'], $form['prezzo'], $form['scorig'], $form['id_mov'], $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => $form['operat'], 'desdoc' => $form['desdoc'], 'id_artico_position' => $form['id_position']));
-          if ($form['SIAN']>0 AND $toDo=="insert"){
+          if ($form['SIAN']>0 && $toDo=="insert"){
             $form['id_movmag']=$id_movmag;// imposto l'id mov mag e salvo il movimento del SIAN
             $form['varieta']=$item_artico['quality'];
             gaz_dbi_table_insert('camp_mov_sian', $form);
           }
-          if ($form['SIAN']>0 AND $toDo=="update") {
+          if ($form['SIAN']>0 && $toDo=="update") {
             // aggiorno il movimento del SIAN
             $update = array();
             $update[]="id_movmag";
@@ -868,7 +868,7 @@ if ($form['artico'] != "" && intval( $item_artico['lot_or_serial'] && $form['cau
 				<input type="hidden" name="expiry" value="<?php echo $selected_lot['expiry']; ?>">
 				<?php
 
-				if (isset ($count[$selected_lot['identifier']]) AND $form['quanti']>$count[$selected_lot['identifier']]+$prev_qta['quanti']) { // Se il lotto scelto non ha disponibilità sufficienti segnalo errore
+				if (isset ($count[$selected_lot['identifier']]) && $form['quanti']>$count[$selected_lot['identifier']]+$prev_qta['quanti']) { // Se il lotto scelto non ha disponibilità sufficienti segnalo errore
 					?>
 					<div class="alert alert-warning alert-dismissible">
 					<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
@@ -957,7 +957,7 @@ if (isset($form['operat']) && strlen($form['artico'])>0 && ($form['operat']==1 &
 	<?php
 }
 // Se l'articolo movimenta il SIAN
-if ($form['SIAN']>0 AND $form['operat']<>0){
+if ($form['SIAN']>0 && $form['operat']<>0){
 	?>
 	<div class="container-fluid">
 					<div class="row">
@@ -980,7 +980,7 @@ if ($form['SIAN']>0 AND $form['operat']<>0){
 					<?php } else {
 						echo '<input type="hidden" value="" name="recip_stocc" />';
 					}
-					if (($form['cod_operazione']==4 AND $form['operat']==-1) || ($form['cod_operazione']==5 AND $form['operat']==1)) { // se è un movimento aziendale chiedo recipiente destinazione
+					if (($form['cod_operazione']==4 && $form['operat']==-1) || ($form['cod_operazione']==5 && $form['operat']==1)) { // se è un movimento aziendale chiedo recipiente destinazione
 						?>
 						<div class="row">
 							<label for="camp_recip_destin" class="col-sm-6 control-label"><?php echo "Recipiente destinazione"; ?></label>
