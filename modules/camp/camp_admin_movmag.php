@@ -194,6 +194,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
     $form['mesreg'] = substr($result['datreg'], 5, 2);
     $form['annreg'] = substr($result['datreg'], 0, 4);
     $form['campo_impianto1'] = $result['campo_impianto']; //campo di coltivazione
+	$form['dim_campi'] = gaz_dbi_get_row($gTables['campi'], "codice", $result['campo_impianto'])['ricarico'];
 	$form['ncamp']=1;
 	$n=1;
     $form['clfoco'][$form['mov']] = $result['clfoco'];
@@ -463,13 +464,16 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 	$form['ncamp']= $_POST['ncamp'];
 	$nmax=$form['ncamp'];
 	$nn=0;
-	for ($n = 1;$n <= $nmax;++$n) {
+	$form['dim_campi']=0;
+	for ($n = 1;$n <= $nmax;++$n) {// ciclo i campi inseriti
 		if (!isset($_POST['campo_impianto'.$n])){
 			$form['campo_impianto'.$n]=""; $form['ncamp']--;
 		} else {
 		if ($_POST['campo_impianto'.$n]>0 ){
 			$nn++;
 			$form['campo_impianto'.$nn] = intval($_POST['campo_impianto'.$n]); //campo di coltivazione
+			$form['dim_campi'] += floatval(gaz_dbi_get_row($gTables['campi'], "codice", $_POST['campo_impianto'.$n])['ricarico']);
+
 		} else {
 			$form['campo_impianto'.$n]=""; $form['ncamp']--;
 		}
@@ -1133,6 +1137,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 	$res_caumag = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
 	$form['ncamp']=1;
     $form['campo_impianto1']= ""; //campo di coltivazione
+	$form['dim_campi'] = 0;
     $form['clfocoin'] = 0;
     $form['quantiin'] = 0;
     $form['datdocin'] = "";
@@ -1690,6 +1695,7 @@ if (intval($form['nome_colt']) == 0) {
 						}
 						$form['ncamp']=$n;
 						?>
+						<span>Superficie totale <?php echo $form['dim_campi']; ?> ha</span>
 						<input type="hidden" name="ncamp" value="<?php echo $form['ncamp']; ?>">
 					</div>
 				</div>
@@ -2047,8 +2053,9 @@ if (intval($form['nome_colt']) == 0) {
 										}
 									}
 									if ($dose > 0) {
-										echo "<br>Dose: ", gaz_format_quantity($dose, 1, $admin_aziend['decimal_quantity']), " ", $print_unimis, "/ha";
+										echo "<br>Dose massima ammessa:<span id='dosemax".$form['mov']."'> ", gaz_format_quantity($dose, 1, $admin_aziend['decimal_quantity']),"</span>&nbsp;", $print_unimis,"/ha";
 									}
+									echo "&nbsp; &nbsp; &nbsp;<span id='doseuse".$form['mov']."'></span>&nbsp;", $print_unimis,"/ha";
 								}
 								if ($service == 2 && $form['operat'] == 1) { // se è articolo composito avviso che non è possibile il carico
 									echo '<div><button class="btn btn-xs btn-danger" type="image" >';
@@ -2064,6 +2071,34 @@ if (intval($form['nome_colt']) == 0) {
 						</div>
 					</div>
 				</div><!-- chiude row  articolo-->
+				
+				<div class="row"><!-- AVVERSITà -->
+					<div class="col-md-12">
+						<div class="form-group">
+							<label class="FacetFieldCaptionTD">
+								<span data-toggle="popover" title="Inserimento Avversità"
+								data-content="Inserire l'avversità che deve essere presente nell'elenco avversita (menù 'Fitofarmaci'->'Avversità').<br>
+								Inserendo l'avversità si attivano una serie di controlli, con relativo avviso, come:<br>
+								- superamento della dose specifica coltura-avversità<br>
+								- superamento del numero massimo di trattamenti coltura-avversità (se c'è una produzione il numero è riferito al periodo della produzione, altrimenti è riferito all'anno solare)<br>"
+								class="glyphicon glyphicon-info-sign" style="cursor: pointer;">
+								</span>
+								<?php echo $script_transl[20]; ?>
+							</label>
+
+							<!-- per funzionare autocomplete, id dell'input deve essere autocomplete3 -->
+							<input class="FacetSelect" id="autocomplete3" type="text" value="<?php echo $form['nome_avv'][$form['mov']]; ?>" name="nome_avv<?php echo $form['mov']; ?>" maxlength="15" />
+							<input type="hidden" value="<?php echo intval($form['nome_avv'][$form['mov']]); ?>" name="id_avversita<?php echo $form['mov']; ?>"/>
+							<?php
+							if ($dose_usofito > 0) {
+								echo "Dose specifica: ", gaz_format_quantity($dose_usofito, 1, $admin_aziend['decimal_quantity']), " ", $print_unimis, "/ha";
+							}
+							?>
+
+						</div>
+					</div>
+				</div><!-- chiude row  -->		
+				
 				<div class="row"><!-- Quantità -->
 					<div class="col-md-12">
 						<div class="form-group">
@@ -2074,7 +2109,7 @@ if (intval($form['nome_colt']) == 0) {
 								<input type="time" name="quanti_time<?php echo $form['mov']; ?>" value="<?php echo $form['quanti_time'][$form['mov']]; ?>">
 								<input type="hidden" name="quanti<?php echo $form['mov']; ?>" value="" />
 							<?php } else {?>
-								<input class="FacetSelect" type="text" value="<?php echo gaz_format_quantity($form['quanti'][$form['mov']], 1, $admin_aziend['decimal_quantity']); ?>" maxlength="10" name="quanti<?php echo $form['mov']; ?>" onChange="this.form.submit()">
+								<input class="FacetSelect" id="quanti<?php echo $form['mov']; ?>" type="text" value="<?php echo gaz_format_quantity($form['quanti'][$form['mov']], 1, $admin_aziend['decimal_quantity']); ?>" maxlength="10" name="quanti<?php echo $form['mov']; ?>" onChange="this.form.submit()">
 								<input type="hidden" name="quanti_time<?php echo $form['mov']; ?>" value="" />
 								<?php
 							}
@@ -2342,32 +2377,7 @@ if (intval($form['nome_colt']) == 0) {
 					}
 
 					?>
-					<div class="row"><!-- AVVERSITà -->
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="FacetFieldCaptionTD">
-									<span data-toggle="popover" title="Inserimento Avversità"
-									data-content="Inserire l'avversità che deve essere presente nell'elenco avversita (menù 'Fitofarmaci'->'Avversità').<br>
-									Inserendo l'avversità si attivano una serie di controlli, con relativo avviso, come:<br>
-									- superamento della dose specifica coltura-avversità<br>
-									- superamento del numero massimo di trattamenti coltura-avversità (se c'è una produzione il numero è riferito al periodo della produzione, altrimenti è riferito all'anno solare)<br>"
-									class="glyphicon glyphicon-info-sign" style="cursor: pointer;">
-									</span>
-									<?php echo $script_transl[20]; ?>
-								</label>
-
-								<!-- per funzionare autocomplete, id dell'input deve essere autocomplete3 -->
-								<input class="FacetSelect" id="autocomplete3" type="text" value="<?php echo $form['nome_avv'][$form['mov']]; ?>" name="nome_avv<?php echo $form['mov']; ?>" maxlength="15" />
-								<input type="hidden" value="<?php echo intval($form['nome_avv'][$form['mov']]); ?>" name="id_avversita<?php echo $form['mov']; ?>"/>
-								<?php
-								if ($dose_usofito > 0) {
-									echo "Dose specifica: ", gaz_format_quantity($dose_usofito, 1, $admin_aziend['decimal_quantity']), " ", $print_unimis, "/ha";
-								}
-								?>
-
-							</div>
-						</div>
-					</div><!-- chiude row  -->
+					
 					<div class="row"><!-- FASE FENOLOGICA -->
 						<div class="col-md-12">
 							<div class="form-group">
@@ -2564,6 +2574,27 @@ if (intval($form['nome_colt']) == 0) {
 			html: true
 		});
 	});
+	
+	$(document).ready(function() {		
+		for (let i = 0; i < <?php echo $form['nmov']+1; ?>; i++) { 		
+			var dim = parseFloat(<?php echo $form['dim_campi']; ?>);
+			var quanti= $('#quanti'+i).val();			
+			quanti= parseFloat(quanti.replace(',','.'));
+			var doseuse = quanti/dim;
+			$("#doseuse"+i).html("Dose usata: "+doseuse.toFixed(4).replace('.',','));
+		}
+	});
+	for (let i = 0; i < <?php echo $form['nmov']+1; ?>; i++) { 
+		$("#quanti"+i).on("keyup",function(){			
+			var dim = parseFloat(<?php echo $form['dim_campi']; ?>);
+			var quanti= $('#quanti'+i).val();			
+			quanti= parseFloat(quanti.replace(',','.'));
+			//alert(quanti);alert(dim);
+			var doseuse = quanti/dim;
+			$("#doseuse"+i).html("Dose usata: "+doseuse.toFixed(4).replace('.',','));
+		});
+	}
+		
 </script>
 <style>
 .popover{
