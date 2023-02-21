@@ -39,24 +39,31 @@ if (isset($_POST['mode']) || isset($_GET['mode'])) {
 
 if (count($_POST) > 10) {
 	$error='&ok_insert';
-    $_POST  = filter_input_array(INPUT_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    foreach ($_POST as $k => $v) {
-        $key=filter_var($k, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-		if(substr($key,0,4)=='json'){
-			$v=html_entity_decode($v, ENT_QUOTES, 'UTF-8');
-			if (isJson($v)){
-				$value=$v;
-			} else {
-				$value='ERRORE!!! JSON NON VALIDO!: '.filter_var($v, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-				$error='&json_error';
-			}
-		} else {
-            $value=filter_var($v, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-		}
+  $_POST  = filter_input_array(INPUT_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+  foreach ($_POST as $k => $v) {
+    $key=filter_var($k, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    if(substr($key,0,4)=='json'){
+      $v=html_entity_decode($v, ENT_QUOTES, 'UTF-8');
+      if (isJson($v)){
+        $value=$v;
+      } else {
+        $value='ERRORE!!! JSON NON VALIDO!: '.filter_var($v, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $error='&json_error';
+      }
+    } else {
+      $value=filter_var($v, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+      if ( strpos($key,"pass")===false && strpos($key,"psw")===false ){
         gaz_dbi_put_row($gTables['company_config'], 'var', $key, 'val', $value);
+      } else { // solo se le password sono di lunghezza >=8 aggiorno altrimenti lascio com'era
+        $tripsw=trim($value);
+        if ( strlen($tripsw)>=8 ) {
+          gaz_dbi_put_row($gTables['company_config'], 'var', $key, 'val', $tripsw);
+        }
+      }
     }
-    header("Location: config_aziend.php?mode=modal".$error);
-    exit;
+  }
+  header("Location: config_aziend.php?mode=modal".$error);
+  exit;
 }
 
 if ($modal === false) {
@@ -115,12 +122,22 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
                         ?>
                         <textarea id="input<?php echo $r["id"]; ?>" name="<?php echo $r["var"]; ?>" style="width:100%;"><?php echo $r['val']; ?></textarea>
 						<?php
-                        }else{
-							if($r['var']=='reply_to'){
-							 $mail_sender = $r['val'];
-							}
+                        } else {
+                          if ($r['var']=='reply_to') {
+                           $mail_sender = $r['val'];
+                          }
+                          if ( strpos($r["var"],"pass")===false && strpos($r["var"],"psw")===false ) {
+                            $icls='';
+                            $ph=$r["var"];
+                            $ty='text';
+                          } else {
+                            $ph='Invisibile, digita solo se vuoi cambiarla';
+                            $r["val"] ='';
+                            $icls='text-bold';
+                            $ty='password';
+                          }
                         ?>
-                        <input type="<?php echo ((strpos($r["var"],"pass")===false&&strpos($r["var"],"psw")===false)?'text':'password'); ?>" class="form-control input-sm" id="input<?php echo $r["id"]; ?>" name="<?php echo $r["var"]; ?>" placeholder="<?php echo $r["var"]; ?>" value="<?php echo $r["val"]; ?>">
+                        <input type="<?php echo $ty; ?>" class="form-control input-sm <?php echo $icls; ?>" id="input<?php echo $r["id"]; ?>" name="<?php echo $r["var"]; ?>" placeholder="<?php echo $ph; ?>" value="<?php echo $r["val"]; ?>">
 						<?php
 						}
 						?>
