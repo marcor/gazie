@@ -142,12 +142,12 @@ if (sizeof($result) > 0 AND $type=="di campagna") {
 		$pdf->Cell(35,6,$row['descri'],1, 0, 'l', 0, '', 1);
 
 		if (isset($res['zona_vulnerabile']) AND $res['zona_vulnerabile']==0){
-			$pdf->Cell(12,6,substr($row['campo_impianto'],0,5),1);
+			$pdf->Cell(12,6,substr($row['campo_impianto'],0,5),1,0,'L',0,'',1);
 		} else {
-			$pdf->Cell(12,6,substr($row['campo_impianto']." ZVN",0,5),1);
+			$pdf->Cell(12,6,substr($row['campo_impianto']." ZVN",0,5),1,0,'L',0,'',1);
 		}
 		// Antonio Germani Inserisco superficie e coltura
-		$pdf->Cell(10,6,str_replace('.', ',',($res)?$res['ricarico']:0),1);
+		$pdf->Cell(10,6,str_replace('.', ',',($res)?$res['ricarico']:0),1,0,'L',0,'',1);
 		$res4 = gaz_dbi_get_row($gTables['camp_colture'], 'id_colt', ($res)?$res['id_colture']:0);
 		$fase="";
 		if ($data=json_decode($row['custom_field'],true)){// se c'è un json nel custom_field
@@ -155,7 +155,7 @@ if (sizeof($result) > 0 AND $type=="di campagna") {
 				$fase = " >> ".$data['camp']['fase_fenologica'];
 			}
 		}
-		$pdf->Cell(38,6,substr(($res4)?$res4['nome_colt'].$fase:'',0,40),1);
+		$pdf->Cell(38,6,substr(($res4)?$res4['nome_colt'].$fase:'',0,40),1,0,'L',0,'',1);
 		// fine inserisco superficie, coltura
 
 		$pdf->Cell(58,6,$row['artico'].' - '.$row['desart'], 1, 0, 'l', 0, '', 1);
@@ -173,9 +173,9 @@ if (sizeof($result) > 0 AND $type=="di campagna") {
 			$acqua = gaz_dbi_get_row($gTables['movmag'], 'id_mov', $row['id_rif']);
 			$unimis_acqua = gaz_dbi_get_row($gTables['artico'], 'codice', $acqua['artico'])['unimis'];
 
-			$pdf->Cell(13,6,$unimis_acqua. " ".gaz_format_quantity($acqua['quanti'],1,$admin_aziend['decimal_quantity']),1);
+			$pdf->Cell(13,6,$unimis_acqua. " ".gaz_format_quantity($acqua['quanti'],1,$admin_aziend['decimal_quantity']),1,0,'L',0,'',1);
 		} else {
-			$pdf->Cell(13,6,"",1);
+			$pdf->Cell(13,6,"",1,0,'L',0,'',1);
 		}
 
 		$res3 = gaz_dbi_get_row($gTables['camp_avversita'], 'id_avv', $row['id_avversita']);
