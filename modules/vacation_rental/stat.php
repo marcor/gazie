@@ -6,6 +6,12 @@
          (http://www.devincentiis.it)
            <http://gazie.sourceforge.net>
  --------------------------------------------------------------------------
+   --------------------------------------------------------------------------
+  GAzie - MODULO 'VACATION RENTAL'
+  Copyright (C) 2022-2023 - Antonio Germani, Massignano (AP)
+  (http://www.programmisitiweb.lacasettabio.it)
+
+  --------------------------------------------------------------------------
     Questo programma e` free software;   e` lecito redistribuirlo  e/o
     modificarlo secondo i  termini della Licenza Pubblica Generica GNU
     come e` pubblicata dalla Free Software Foundation; o la versione 2
