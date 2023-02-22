@@ -693,7 +693,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                           if ($toDo == 'update'){ // se è UPDATE
                             $check_lot= gaz_dbi_query("SELECT id FROM " . $gTables['lotmag'] . " WHERE id_movmag = '" . $form['rows'][$i]['id_mag']."'");// controllo se il lotto inserito nel form esiste già
                             $rowc = $check_lot->fetch_assoc();
-                            if ($rowc['id']>0) {  // se il lotto c'era lo aggiorno
+                            if (isset($rowc['id']) && $rowc['id']>0) {  // se il lotto c'era lo aggiorno
                               $id_lotmag=$rowc['id']; // ne prendo l'id che andrò a memorizzare nel movimento di magazzino
                               gaz_dbi_query("UPDATE " . $gTables['lotmag'] . " SET codart = '" . $form['rows'][$i]['codart'] . "' , id_rigdoc = '". $form['rows'][$i]['id_rig'] ."', identifier = '" . $form['rows'][$i]['identifier'] . "', id_movmag = '" . $id_mag . "' , expiry = '". $form['rows'][$i]['expiry'] ."' WHERE id = '" . $id_lotmag . "'");
                             } else { // se non c'era creo il rigo lotto nella tabella lotmag
