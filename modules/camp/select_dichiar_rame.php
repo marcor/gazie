@@ -6,28 +6,28 @@
 	  (http://www.devincentiis.it)
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
-	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP 
-	  Copyright (C) 2018-2021 - Antonio Germani, Massignano (AP)
-	  https://www.lacasettabio.it 
+	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP
+	  Copyright (C) 2018-2023 - Antonio Germani, Massignano (AP)
+	  https://www.lacasettabio.it
 	  https://www.programmisitiweb.lacasettabio.it
 	  --------------------------------------------------------------------------
 	  Questo programma e` free software;   e` lecito redistribuirlo  e/o
 	  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
 	  come e` pubblicata dalla Free Software Foundation; o la versione 2
 	  della licenza o (a propria scelta) una versione successiva.
-	
+
 	  Questo programma  e` distribuito nella speranza  che sia utile, ma
 	  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
 	  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
 	  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
-	
+
 	  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
 	  Generica GNU insieme a   questo programma; in caso  contrario,  si
 	  scriva   alla   Free  Software Foundation,  Inc.,   59
 	  Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
-	  --------------------------------------------------------------------------	 
+	  --------------------------------------------------------------------------
 	  # free to use, Author name and references must be left untouched  #
-	  --------------------------------------------------------------------------	  
+	  --------------------------------------------------------------------------
 */
 require("../../library/include/datlib.inc.php");
 require ("../../modules/magazz/lib.function.php");
@@ -42,7 +42,7 @@ function getMovements($date_ini,$date_fin)
         $what=$gTables['movmag'].".*, ".
               $gTables['caumag'].".codice, ".$gTables['caumag'].".descri, ".
               $gTables['artico'].".codice, ".$gTables['artico'].".descri AS desart, ".$gTables['artico'].".perc_K, ".$gTables['artico'].".perc_P, ".$gTables['artico'].".perc_N, ".$gTables['artico'].".unimis, ".$gTables['artico'].".scorta, ".$gTables['artico'].".catmer, ".$gTables['artico'].".rame_metallico ";
-        $table=$gTables['movmag']." LEFT JOIN ".$gTables['caumag']." ON (".$gTables['movmag'].".caumag = ".$gTables['caumag'].".codice)     
+        $table=$gTables['movmag']." LEFT JOIN ".$gTables['caumag']." ON (".$gTables['movmag'].".caumag = ".$gTables['caumag'].".codice)
                LEFT JOIN ".$gTables['artico']." ON (".$gTables['movmag'].".artico = ".$gTables['artico'].".codice)";
         $rs=gaz_dbi_dyn_query ($what,$table,$where, 'datreg ASC, tipdoc ASC, clfoco ASC, operat DESC, id_mov ASC');
         while ($r = gaz_dbi_fetch_array($rs)) {
@@ -50,7 +50,7 @@ function getMovements($date_ini,$date_fin)
         }
         return $m;
     }
-	
+
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['hidden_req'] = '';
 	$form['sta_fert'] = false;
@@ -196,36 +196,36 @@ if (isset($_POST['preview']) and $msg=='') {
 			$linkHeaders=new linkHeaders($script_transl['header_fert']);
 		}
         $linkHeaders->output();
-        echo "</tr>";        		
-      
-		foreach($m as $key => $mv) {					
+        echo "</tr>";
+
+		foreach($m as $key => $mv) {
 			If ($mv['campo_impianto']>0 && $mv['type_mov']==1){ // se nel movimento è inserito un campo di coltivazione ed è un movimento del registro di campagna
 				if ($mv['rame_metallico']>0 OR ($mv['perc_N']>0 AND $form['sta_fert']==true)){ // se l'articolo contiene rame metallo o azoto con stampa fertilizzazioni
-					$camp = gaz_dbi_get_row($gTables['campi'], 'codice', $mv['campo_impianto']); //carico i dati del campo di coltivazione			
-			
+					$camp = gaz_dbi_get_row($gTables['campi'], 'codice', $mv['campo_impianto']); //carico i dati del campo di coltivazione
+
 					$datedoc = substr($mv['datdoc'],8,2).'-'.substr($mv['datdoc'],5,2).'-'.substr($mv['datdoc'],0,4);
 					$datereg = substr($mv['datreg'],8,2).'-'.substr($mv['datreg'],5,2).'-'.substr($mv['datreg'],0,4);
-					
+
 					echo "<tr><td class=\"FacetDataTD\">".$datedoc." &nbsp;</td>";
 					echo "<td  align=\"left\" class=\"FacetDataTD\">".$mv['caumag'].'-'.substr($mv['descri'],0,20)." &nbsp</td>";
-            
+
 					// Antonio Germani carico la tabella campi e Inserisco campo, superficie e coltura
-					$res = gaz_dbi_get_row ($gTables['campi'], 'codice', $mv['campo_impianto']);			
+					$res = gaz_dbi_get_row ($gTables['campi'], 'codice', $mv['campo_impianto']);
 					echo "<td align=\"left\" class=\"FacetDataTD\">".$mv['campo_impianto']." - ".$res['descri']." &nbsp;</td>";
-					echo "<td class=\"FacetDataTD\" align=\"left\">".gaz_format_quantity($res['ricarico'],1,$admin_aziend['decimal_quantity'])." ha"." &nbsp;</td>\n"; 
-					// fine inserisco campo, superficie, coltura	
-	
-					echo "<td class=\"FacetDataTD\" align=\"left\">".$mv['artico']." &nbsp;</td>\n";			
+					echo "<td class=\"FacetDataTD\" align=\"left\">".gaz_format_quantity($res['ricarico'],1,$admin_aziend['decimal_quantity'])." ha"." &nbsp;</td>\n";
+					// fine inserisco campo, superficie, coltura
+
+					echo "<td class=\"FacetDataTD\" align=\"left\">".$mv['artico']." &nbsp;</td>\n";
 					echo "<td class=\"FacetDataTD\" align=\"left\">".$mv['unimis']." ".gaz_format_quantity($mv['quanti'],1,$admin_aziend['decimal_quantity'])."</td>\n";
-					
+
 					echo "<td class=\"FacetDataTD\" align=\"left\">"."Kg ".gaz_format_quantity(($mv['quanti']*$mv['rame_metallico']),1,$admin_aziend['decimal_quantity'])." </td>\n";
-					if ($form['sta_fert']==true){					
+					if ($form['sta_fert']==true){
 						echo "<td class=\"FacetDataTD\" align=\"left\">"."Kg ".gaz_format_quantity(($mv['quanti']*$mv['perc_N'])/100,1,$admin_aziend['decimal_quantity'])." </td>\n";
 					}
 					echo "</tr>\n";
 					$ctr_mv = $mv['artico'];
-				} 
-			}	
+				}
+			}
         }
          echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
          echo '<td colspan="7" align="right"><input type="submit" name="print" value="';

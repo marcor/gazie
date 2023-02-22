@@ -6,31 +6,31 @@
 	  (http://www.devincentiis.it)
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
-	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP 
-	  Copyright (C) 2018-2021 - Antonio Germani, Massignano (AP)
-	  https://www.lacasettabio.it 
+	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP
+	  Copyright (C) 2018-2023 - Antonio Germani, Massignano (AP)
+	  https://www.lacasettabio.it
 	  https://www.programmisitiweb.lacasettabio.it
 	  --------------------------------------------------------------------------
 	  Questo programma e` free software;   e` lecito redistribuirlo  e/o
 	  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
 	  come e` pubblicata dalla Free Software Foundation; o la versione 2
 	  della licenza o (a propria scelta) una versione successiva.
-	
+
 	  Questo programma  e` distribuito nella speranza  che sia utile, ma
 	  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
 	  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
 	  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
-	
+
 	  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
 	  Generica GNU insieme a   questo programma; in caso  contrario,  si
 	  scriva   alla   Free  Software Foundation,  Inc.,   59
 	  Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
-	  --------------------------------------------------------------------------	 
+	  --------------------------------------------------------------------------
 	  # free to use, Author name and references must be left untouched  #
-	  --------------------------------------------------------------------------	  
+	  --------------------------------------------------------------------------
 */
  // >> Gestione File upload anagrafica clienti/fornitori SIAN <<
- 
+
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $msg='';
@@ -52,7 +52,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 }
 
 // inizio controlli
-	
+
 // fine controlli
 
 // Antonio Germani - prendo tutti i clienti e fornitori che hanno un codice SIAN nella loro anagrafica
@@ -67,7 +67,7 @@ $where="id_SIAN > 0";
         while ($r = gaz_dbi_fetch_array($rs)) {
             $cf[] = $r;
         }
-		
+
 // controllo se sono state spuntate delle righe e, se sì, ci creo un array $rows
 $n=0;
 $rows=array();
@@ -77,17 +77,17 @@ foreach ($cf as $row){
 	}
 	$n++;
 }
-		
+
 if (isset($_POST['create']) && $msg=='') { // se non ci sono errori
-    // creazione file anagrafica SIAN 
+    // creazione file anagrafica SIAN
 	if (isset($rows[0])){
 		header("Location: create_anagrasian.php?".http_build_query($rows));
 		exit;
 	}
-} 
+}
 
 require("../../library/include/header.php");
-$script_transl = HeadMain();   
+$script_transl = HeadMain();
 ?>
 
 <form method="POST" name="select">
@@ -125,9 +125,9 @@ $script_transl = HeadMain();
 				</div>
 			</div>
 		</div>
-		<?php 
+		<?php
 		$n=0;
-		foreach ($cf as $row){			
+		foreach ($cf as $row){
 			?>
 			<div class="row">
 				<div class="col-sm-1 bg-warning">
@@ -151,23 +151,23 @@ $script_transl = HeadMain();
 				<?php } else { ?>
 					<input type="checkbox" name="trasmettere<?php echo $n;?>" value="trasmettere"/>
 				<?php } ?>
-				</div>				
+				</div>
 			</div>
 			<?php
 			$n++;
-		}?>		
+		}?>
 		<div class="row">
 			<div class="col-sm-6 bg-success">
 				<button type="submit" name="return" value="<?php echo $script_transl['return']; ?>"><?php echo $script_transl['return']; ?>
 				<span class="glyphicon glyphicon-step-backward text-success" title="Clicca per gestione anagrafica SIAN"></span>
-				</button>				
-			</div>			
+				</button>
+			</div>
 			<div class="col-sm-6 bg-success">
 				<button type="submit" name="create" value="CREA file">CREA file upload SIAN
 				<span class="glyphicon glyphicon-play-circle text-success" title="Clicca per creare il file anagrafica SIAN"></span>
-				</button>				
+				</button>
 			</div>
-		</div>				
+		</div>
 	</div>
 </div>
     <?php

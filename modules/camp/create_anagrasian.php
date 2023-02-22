@@ -6,28 +6,28 @@
 	  (http://www.devincentiis.it)
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
-	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP 
-	  Copyright (C) 2018-2021 - Antonio Germani, Massignano (AP)
-	  https://www.lacasettabio.it 
+	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP
+	  Copyright (C) 2018-2023 - Antonio Germani, Massignano (AP)
+	  https://www.lacasettabio.it
 	  https://www.programmisitiweb.lacasettabio.it
 	  --------------------------------------------------------------------------
 	  Questo programma e` free software;   e` lecito redistribuirlo  e/o
 	  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
 	  come e` pubblicata dalla Free Software Foundation; o la versione 2
 	  della licenza o (a propria scelta) una versione successiva.
-	
+
 	  Questo programma  e` distribuito nella speranza  che sia utile, ma
 	  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
 	  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
 	  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
-	
+
 	  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
 	  Generica GNU insieme a   questo programma; in caso  contrario,  si
 	  scriva   alla   Free  Software Foundation,  Inc.,   59
 	  Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
-	  --------------------------------------------------------------------------	 
+	  --------------------------------------------------------------------------
 	  # free to use, Author name and references must be left untouched  #
-	  --------------------------------------------------------------------------	  
+	  --------------------------------------------------------------------------
 */
 // >> Creazione del file .txt di upload per il SIAN <<
 
@@ -52,11 +52,11 @@ if ($handle = opendir(DATA_DIR.'files/'.$admin_aziend['codice'].'/sian/')){
    closedir($handle);
 }
 
-if (!isset ($id_sian) or intval($id_sian['val']==0)){ 
+if (!isset ($id_sian) or intval($id_sian['val']==0)){
 echo "errore manca id sian. Per utilizzare questa gestione file SIAN è necessario inserire il proprio codice identificativo in configurazione azienda";
 die;}
-	
-$type_array=array(); 
+
+$type_array=array();
 // $type_zero è la stringa ANAGFCTO formattata SIAN vuota *** NON TOCCARE MAI!!! ***
 $type_zero="                ;  ;                ;0000000000;                                                                                                                                                      ;                                                                                                                                                      ;  ;   ;   ;";
 // $type_zero è la stringa formattata SIAN vuota *** NON TOCCARE MAI!!! ***
@@ -66,7 +66,7 @@ $datsta=date("Y").date("m").date("d");
 $progr=0;
 foreach ($prevfiles as $files){ // se nella stessa giornata sono stati creati altri file SIAN come ANAGFCTO aumento il progressivo
 	$f=explode("_",$files);
-	if (isset($f[1]) AND $f[3] == "ANAGFCTO.txt"){ 
+	if (isset($f[1]) AND $f[3] == "ANAGFCTO.txt"){
 		if ($f[1]==$datsta){
 			if($f[1]>$progr){
 				$progr=$f[2];
@@ -85,12 +85,12 @@ $ritorno="file creato";
 
 if (sizeof($_GET) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti e la pagina non è stata ricaricata creo il file
 	$myfile = fopen(DATA_DIR."files/".$admin_aziend['codice']."/sian/".$namefile, "w") or die("Unable to open file!");
-	
+
 	foreach ($_GET as $row) {
 		$type_array= explode (";", $type_zero); // azzero il type array per ogni movimento da creare
-						
+
 					// >> Antonio Germani - creo il record per questa anagrafica
-					
+
 					$anagra = gaz_dbi_get_row($gTables['anagra'],"id_SIAN",$row);
 					if ($anagra['country']=="IT"){
 						$municip = gaz_dbi_get_row($gTables['municipalities'],"name",$anagra['citspe']);
@@ -103,25 +103,25 @@ if (sizeof($_GET) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti e
 							$stato="NE";$iso=$anagra['iso'];$istatpro="";$istatcom="";
 						}
 					}
-					
+
 					// Antonio Germani - campi comuni a tutti i casi
 					$type_array[0]=str_pad($admin_aziend['codfis'], 16); // aggiunge spazi finali
 					$type_array[1]=$stato; // Stato ditta
 					$type_array[2]=str_pad ($anagra['codfis'],16); // Identificativo fiscale
-					$type_array[3]=sprintf("%010d",$anagra['id_SIAN']);// codice soggetto					
+					$type_array[3]=sprintf("%010d",$anagra['id_SIAN']);// codice soggetto
 					$type_array[4]=str_pad($anagra['ragso1']." ".$anagra['ragso2'], 150);// denominazione soggetto
-					$type_array[5]=str_pad($anagra['indspe'], 150);// indirizzo soggetto								
+					$type_array[5]=str_pad($anagra['indspe'], 150);// indirizzo soggetto
 					$type_array[6]=str_pad($iso, 2); // codice ISO Nazione
 					$type_array[7]=str_pad($istatpro, 3); // codice ISTAT provincia
 					$type_array[8]=str_pad($istatcom, 3); // codice ISTAT comune
-										
+
 					$type= implode(";",$type_array);
 					$type=$type."\r\n";// il SIAN richiede un ritorno a capo dopo ogni record
 					fwrite($myfile, $type);
-					
+
 					// aggiorno il campo status_sian in clfoco
 					$id=$anagra['id'];
-					gaz_dbi_put_query($gTables['clfoco'],"id_anagra=$id","status_SIAN","1");							
+					gaz_dbi_put_query($gTables['clfoco'],"id_anagra=$id","status_SIAN","1");
 	}
 	fclose($myfile);
 	?>
@@ -155,7 +155,7 @@ $namefile=substr($namefile,0,-4)
 					<p><a href="../camp/getfilesian.php?filename=<?php echo $namefile;?>&ext=txt&company_id=<?php echo $admin_aziend['codice']; ?>" class="col-sm-6 control-label">
 					<?php echo $namefile; ?>
 					<i class="glyphicon glyphicon-file" title="Scarica il file appena generato"></i>
-					</a></p>				
+					</a></p>
 				</div>
 			</div>
 		</div>

@@ -6,28 +6,28 @@
 	  (http://www.devincentiis.it)
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
-	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP 
-	  Copyright (C) 2018-2021 - Antonio Germani, Massignano (AP)
-	  https://www.lacasettabio.it 
+	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP
+	  Copyright (C) 2018-2023 - Antonio Germani, Massignano (AP)
+	  https://www.lacasettabio.it
 	  https://www.programmisitiweb.lacasettabio.it
 	  --------------------------------------------------------------------------
 	  Questo programma e` free software;   e` lecito redistribuirlo  e/o
 	  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
 	  come e` pubblicata dalla Free Software Foundation; o la versione 2
 	  della licenza o (a propria scelta) una versione successiva.
-	
+
 	  Questo programma  e` distribuito nella speranza  che sia utile, ma
 	  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
 	  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
 	  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
-	
+
 	  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
 	  Generica GNU insieme a   questo programma; in caso  contrario,  si
 	  scriva   alla   Free  Software Foundation,  Inc.,   59
 	  Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
-	  --------------------------------------------------------------------------	 
+	  --------------------------------------------------------------------------
 	  # free to use, Author name and references must be left untouched  #
-	  --------------------------------------------------------------------------	  
+	  --------------------------------------------------------------------------
 */
 // ANTONIO GERMANI   >>> aggiungi o modifcica coltura  <<<
 
@@ -56,9 +56,9 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form=gaz_dbi_parse_post('camp_colture');
     // Se viene inviata la richiesta di conferma totale ...
     if (isset($_POST['ins'])) {
-      
-       if ($toDo == 'insert') { // controllo se il codice esiste se e' un inserimento 
-          $rs_ctrl = gaz_dbi_get_row($gTables['camp_colture'],'id_colt',$form['id_colt']); 
+
+       if ($toDo == 'insert') { // controllo se il codice esiste se e' un inserimento
+          $rs_ctrl = gaz_dbi_get_row($gTables['camp_colture'],'id_colt',$form['id_colt']);
           if ($rs_ctrl){
              $msg .= "4+";
           }
@@ -66,12 +66,12 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
        if (empty($form['nome_colt'])){  //descrizione vuota
              $msg .= "3+";
        }
-       if ($msg == "") {// nessun errore        
-          
+       if ($msg == "") {// nessun errore
+
           if ($toDo == 'update') { // e' una modifica
-		  $query="UPDATE " . $gTables['camp_colture'] . " SET nome_colt = '"  .$form['nome_colt']. "' WHERE id_colt ='". $form["id_colt"] ."'"; 
+		  $query="UPDATE " . $gTables['camp_colture'] . " SET nome_colt = '"  .$form['nome_colt']. "' WHERE id_colt ='". $form["id_colt"] ."'";
 			gaz_dbi_query ($query) ;
-		  
+
           } else { // e' un'inserimento
             gaz_dbi_table_insert('camp_colture',$form);
           }
@@ -84,14 +84,14 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['ritorno'] = $_POST['ritorno'];
     $form['id_colt'] = $camp_colture['id_colt'];
     $form['nome_colt'] = $camp_colture['nome_colt'];
-    
+
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
     $rs_ultimo_id_colt = gaz_dbi_dyn_query("*", $gTables['camp_colture'], 1 ,'id_colt desc',0,1);
     $ultimo_id_colt = gaz_dbi_fetch_array($rs_ultimo_id_colt);
     $form['id_colt'] = $ultimo_id_colt['id_colt']+1;
     $form['nome_colt'] = "";
-    
+
 }
 require("../../library/include/header.php");
 $script_transl = HeadMain();

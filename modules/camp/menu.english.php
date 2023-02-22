@@ -6,28 +6,28 @@
 	  (http://www.devincentiis.it)
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
-	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP 
-	  Copyright (C) 2018-2021 - Antonio Germani, Massignano (AP)
-	  https://www.lacasettabio.it 
+	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP
+	  Copyright (C) 2018-2023 - Antonio Germani, Massignano (AP)
+	  https://www.lacasettabio.it
 	  https://www.programmisitiweb.lacasettabio.it
 	  --------------------------------------------------------------------------
 	  Questo programma e` free software;   e` lecito redistribuirlo  e/o
 	  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
 	  come e` pubblicata dalla Free Software Foundation; o la versione 2
 	  della licenza o (a propria scelta) una versione successiva.
-	
+
 	  Questo programma  e` distribuito nella speranza  che sia utile, ma
 	  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
 	  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
 	  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
-	
+
 	  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
 	  Generica GNU insieme a   questo programma; in caso  contrario,  si
 	  scriva   alla   Free  Software Foundation,  Inc.,   59
 	  Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
-	  --------------------------------------------------------------------------	 
+	  --------------------------------------------------------------------------
 	  # free to use, Author name and references must be left untouched  #
-	  --------------------------------------------------------------------------	  
+	  --------------------------------------------------------------------------
 */
 $transl['camp'] = array('name' => "Registro di campagna",
                           'title' => "Gestione registro di campagna",
@@ -44,7 +44,7 @@ $transl['camp'] = array('name' => "Registro di campagna",
                                          4 =>array("Inserisci un nuova categoria merceologica","Nuova categoria merceologica"),
                                          5 =>array("Inserisci un nuovo movimento nel registro","Nuova registrazione Quaderno di campagna"),
                                          6 =>array("Stampa schedari articoli di magazzino","Stampa schedari articoli di magazzino"),
-                                         7 =>array("Stampa Quaderno di campagna","Stampa Quaderno di campagna"),	 
+                                         7 =>array("Stampa Quaderno di campagna","Stampa Quaderno di campagna"),
                                          8 =>array("Inserisci una nuova causale di magazzino","Nuova causale di magazzino"),
 										 9 =>array("Inserisci un nuovo campo","Nuovo campo di coltivazione"),
 										 10 =>array("Stampa dichiarazione rame metallo","Dichiarazione rame metallo"),
@@ -53,7 +53,7 @@ $transl['camp'] = array('name' => "Registro di campagna",
 										 13 =>array("Gestione avversità","Avversità"),
 										 14 =>array("Gestione colture","Colture"),
 										 15 =>array("Gestione uso fitofarmaci","Uso fitofarmaci")
-										 
+
                                       )
                           );
 ?>

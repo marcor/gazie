@@ -6,28 +6,28 @@
 	  (http://www.devincentiis.it)
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
-	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP 
-	  Copyright (C) 2018-2021 - Antonio Germani, Massignano (AP)
-	  https://www.lacasettabio.it 
+	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP
+	  Copyright (C) 2018-2023 - Antonio Germani, Massignano (AP)
+	  https://www.lacasettabio.it
 	  https://www.programmisitiweb.lacasettabio.it
 	  --------------------------------------------------------------------------
 	  Questo programma e` free software;   e` lecito redistribuirlo  e/o
 	  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
 	  come e` pubblicata dalla Free Software Foundation; o la versione 2
 	  della licenza o (a propria scelta) una versione successiva.
-	
+
 	  Questo programma  e` distribuito nella speranza  che sia utile, ma
 	  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
 	  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
 	  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
-	
+
 	  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
 	  Generica GNU insieme a   questo programma; in caso  contrario,  si
 	  scriva   alla   Free  Software Foundation,  Inc.,   59
 	  Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
-	  --------------------------------------------------------------------------	 
+	  --------------------------------------------------------------------------
 	  # free to use, Author name and references must be left untouched  #
-	  --------------------------------------------------------------------------	  
+	  --------------------------------------------------------------------------
 */
 //requisito di gazie
 require("../../library/include/datlib.inc.php");
@@ -43,11 +43,11 @@ if (isset($_POST['Return'])) {
 }
 
 if (isset($_POST['print'])) {
-	// da fare 
-	
+	// da fare
+
 
  header("Location: ".$_POST['ritorno']);
-          exit;	
+          exit;
 }
 
 if (isset($_POST['id_produzione'])){
@@ -98,10 +98,10 @@ while ($row = gaz_dbi_fetch_array($result)) {
     $selected = "";
     if ($form['id_produzione'] == $row['id']) {
         $selected = " selected ";
-    }	
+    }
     echo "<option value=\"" . $row['id'] . "\"" . $selected . ">" . $row['id'] . " - " . $row['description'] . " - Periodo di coltivazione ". gaz_format_date ($row['start_work']) ." - ". gaz_format_date ($row['end_work']) ."</option>\n";
-	
-} 
+
+}
 echo "</select>&nbsp;";
 // prendo la produzione
 $item = gaz_dbi_get_row($gTables['orderman'], "id", $form['id_produzione']);
@@ -114,7 +114,7 @@ $item2 = gaz_dbi_get_row($gTables['campi'], "codice", ($item)?$item['campo_impia
 $costo_produzione=0;
 $query="SELECT * FROM ".$gTables['movmag']." WHERE ".'id_orderman' . " = " . "'".$form['id_produzione']."'" ;
 	$res = gaz_dbi_query($query);
-	
+
 while($row = $res->fetch_assoc()){
 	if ($row['operat']<1) { // Antonio Germani evito che ci entri un acquisto > solo per sicurezza poi si potrà pure togliere <
 	$imp_riga=(($row['prezzo']-(($row['prezzo']*$row['scorig'])/100))*$row['quanti']);

@@ -7,7 +7,7 @@
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
 	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP
-	  Copyright (C) 2018-2021 - Antonio Germani, Massignano (AP)
+	  Copyright (C) 2018-2023 - Antonio Germani, Massignano (AP)
 	  https://www.lacasettabio.it
 	  https://www.programmisitiweb.lacasettabio.it
 	  --------------------------------------------------------------------------
@@ -297,7 +297,7 @@ class silos {
 		}elseif($excluded_movmag <> 0){
 			$where=$where." AND ".$gTables['movmag'].".id_mov <> ".$excluded_movmag;
 		}
-		
+
 		if (strlen($date)>0){
 			$where = $where." AND (datdoc > '".$date."' OR(datdoc = '".$date."' AND id_mov > ".$id_mov."))";
 		}

@@ -6,28 +6,28 @@
 	  (http://www.devincentiis.it)
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
-	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP 
-	  Copyright (C) 2018-2021 - Antonio Germani, Massignano (AP)
-	  https://www.lacasettabio.it 
+	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP
+	  Copyright (C) 2018-2023 - Antonio Germani, Massignano (AP)
+	  https://www.lacasettabio.it
 	  https://www.programmisitiweb.lacasettabio.it
 	  --------------------------------------------------------------------------
 	  Questo programma e` free software;   e` lecito redistribuirlo  e/o
 	  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
 	  come e` pubblicata dalla Free Software Foundation; o la versione 2
 	  della licenza o (a propria scelta) una versione successiva.
-	
+
 	  Questo programma  e` distribuito nella speranza  che sia utile, ma
 	  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
 	  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
 	  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
-	
+
 	  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
 	  Generica GNU insieme a   questo programma; in caso  contrario,  si
 	  scriva   alla   Free  Software Foundation,  Inc.,   59
 	  Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
-	  --------------------------------------------------------------------------	 
+	  --------------------------------------------------------------------------
 	  # free to use, Author name and references must be left untouched  #
-	  --------------------------------------------------------------------------	  
+	  --------------------------------------------------------------------------
 */
 // >> Gestione stabilimenti iscritti al SIAN - portale olio <<
 require("../../library/include/datlib.inc.php");
@@ -52,9 +52,9 @@ if ((isset($_GET['Update']) and  !isset($_GET['id_rif'])) or isset($_POST['Retur
 }
 
 if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il primo accesso
-	//Parsing 
+	//Parsing
 	$form=gaz_dbi_parse_post('campi');
-	
+
 	if (isset($_POST['ins'])){//            Se viene inviata la richiesta di conferma totale ...
         if ($toDo == 'insert'){ // e' un inserimento, controllo se il codice esiste
 			$rs_ctrl = gaz_dbi_get_row($gTables['campi'],'id_rif',$form['id_rif']);
@@ -78,7 +78,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 		}
 	}
 } elseif ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo accesso per UPDATE
-	$form['ritorno'] = $_POST['ritorno']; 
+	$form['ritorno'] = $_POST['ritorno'];
     $campi = gaz_dbi_get_row($gTables['campi'],"id_rif",$_GET['id_rif']);
 	$form['codice'] = $campi['codice'];
     $form['id_rif'] = $campi['id_rif'];
@@ -121,7 +121,7 @@ if ($toDo == 'update') {
             <div class="col-md-12">
                 <div class="form-group">
                     <label for="cod_sian" class="col-sm-4 control-label"><?php echo $script_transl[1]; ?></label>
-                    <input class="col-sm-8" type="text" onkeyup="this.value=this.value.replace(/[^\d]/,'')" value="<?php echo $form['id_rif']; ?>" name="id_rif" maxlength="10" />					
+                    <input class="col-sm-8" type="text" onkeyup="this.value=this.value.replace(/[^\d]/,'')" value="<?php echo $form['id_rif']; ?>" name="id_rif" maxlength="10" />
                 </div>
             </div>
 		</div><!-- chiude row  -->
@@ -129,23 +129,23 @@ if ($toDo == 'update') {
             <div class="col-md-12">
                 <div class="form-group">
                     <label for="denominazione" class="col-sm-4 control-label"><?php echo $script_transl[2]; ?></label>
-                    <input class="col-sm-8" type="text" value="<?php echo $form['descri']; ?>" name="descri" maxlength="50" />				
+                    <input class="col-sm-8" type="text" value="<?php echo $form['descri']; ?>" name="descri" maxlength="50" />
                 </div>
-            </div>		
+            </div>
 		</div><!-- chiude row  -->
 		<div class="row">
             <div class="col-md-12">
                 <div class="form-group">
                     <label for="indirizzo" class="col-sm-4 control-label"><?php echo $script_transl[3]; ?></label>
-                    <input class="col-sm-8" type="text" value="<?php echo $form['indirizzo']; ?>" name="indirizzo" maxlength="50" />				
+                    <input class="col-sm-8" type="text" value="<?php echo $form['indirizzo']; ?>" name="indirizzo" maxlength="50" />
                 </div>
-            </div>		
-		</div><!-- chiude row  -->		
+            </div>
+		</div><!-- chiude row  -->
 		<div class="row">
             <div class="col-md-12">
                 <div class="form-group">
                     <label for="comune" class="col-sm-4 control-label"><?php echo $script_transl[5]; ?></label>
-                    <input class="col-sm-8" type="text" value="<?php echo $form['comune']; ?>" name="comune" maxlength="50" />				
+                    <input class="col-sm-8" type="text" value="<?php echo $form['comune']; ?>" name="comune" maxlength="50" />
                 </div>
             </div>
 		</div><!-- chiude row  -->
@@ -153,9 +153,9 @@ if ($toDo == 'update') {
             <div class="col-md-12">
                 <div class="form-group">
                     <label for="provincia" class="col-sm-4 control-label"><?php echo $script_transl[4]; ?></label>
-                    <input class="col-sm-8" type="text" value="<?php echo $form['provincia']; ?>" name="provincia" maxlength="2" />				
+                    <input class="col-sm-8" type="text" value="<?php echo $form['provincia']; ?>" name="provincia" maxlength="2" />
                 </div>
-            </div>		
+            </div>
 		</div><!-- chiude row  -->
 		<div class="col-sm-6 text-left"><input type="submit" name="Return" value="<?php echo $script_transl['return']; ?>"></div>
 <?php

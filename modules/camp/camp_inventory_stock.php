@@ -6,28 +6,28 @@
 	  (http://www.devincentiis.it)
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
-	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP 
-	  Copyright (C) 2018-2021 - Antonio Germani, Massignano (AP)
-	  https://www.lacasettabio.it 
+	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP
+	  Copyright (C) 2018-2023 - Antonio Germani, Massignano (AP)
+	  https://www.lacasettabio.it
 	  https://www.programmisitiweb.lacasettabio.it
 	  --------------------------------------------------------------------------
 	  Questo programma e` free software;   e` lecito redistribuirlo  e/o
 	  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
 	  come e` pubblicata dalla Free Software Foundation; o la versione 2
 	  della licenza o (a propria scelta) una versione successiva.
-	
+
 	  Questo programma  e` distribuito nella speranza  che sia utile, ma
 	  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
 	  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
 	  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
-	
+
 	  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
 	  Generica GNU insieme a   questo programma; in caso  contrario,  si
 	  scriva   alla   Free  Software Foundation,  Inc.,   59
 	  Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
-	  --------------------------------------------------------------------------	 
+	  --------------------------------------------------------------------------
 	  # free to use, Author name and references must be left untouched  #
-	  --------------------------------------------------------------------------	  
+	  --------------------------------------------------------------------------
 */
 require("../../library/include/datlib.inc.php");
 require ("../../modules/magazz/lib.function.php");
@@ -56,7 +56,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
 
         while ($r = gaz_dbi_fetch_array($result)) {
 			if ($r['mostra_qdc']==1){ // Antonio Germani esclude l'articolo dall'inventario se non è specifico per il Qdc
-			
+
             $mv = $gForm->getStockValue(false, $r['codice'], $date, null, $admin_aziend['decimal_price']);
             $magval = array_pop($mv);
             $form['a'][$r['codice']]['i_d'] = $r['descri'];
@@ -69,7 +69,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
 			if (isset($magval['q_g']) && round($magval['q_g'],6) == "-0"){
 				$magval['q_g']=0;
 			}
-            $form['a'][$r['codice']]['g_a'] = $magval['q_g'];			
+            $form['a'][$r['codice']]['g_a'] = $magval['q_g'];
             $form['a'][$r['codice']]['g_r'] = number_format($magval['q_g'],3);
             $form['a'][$r['codice']]['v_g'] = $magval['v_g'];
             $form['vac_on' . $r['codice']] = '';
@@ -97,7 +97,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
         header("Location: " . $_POST['ritorno']);
         exit;
     }
-	
+
     $form['date_Y'] = intval($_POST['date_Y']);
     $form['date_M'] = intval($_POST['date_M']);
     $form['date_D'] = intval($_POST['date_D']);
@@ -133,7 +133,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
 					$magval['q_g']=0;
 				}
                 $form['a'][$r['codice']]['g_r'] = number_format($magval['q_g'],3);
-                $form['a'][$r['codice']]['g_a'] = $magval['q_g'];				
+                $form['a'][$r['codice']]['g_a'] = $magval['q_g'];
                 $form['a'][$r['codice']]['v_g'] = $magval['v_g'];
                 $form['vac_on' . $r['codice']] = '';
                 if ($magval['q_g'] < 0) {
@@ -148,7 +148,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
                 }
                 // Calcolo totale valore giacenza by DF
                 $tot_val_giac += $magval['v_g'];
-				}	
+				}
             }
         }
     } elseif (isset($_POST['preview']) || isset($_POST['insert'])) {  //in caso di conferma
@@ -169,7 +169,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
                         } elseif ($va['g_r'] == 0 && $va['g_a'] == 0) { //inutile fare l'inventario di una cosa che non c'era e non c'e'
                             $msg .= $ka . '-2+';
                         }
-                        
+
                     }
                     $form['vac_on' . $ka] = '';
                     if (isset($_POST['vac' . $ka]))
@@ -289,7 +289,7 @@ $script_transl = $strScript["camp_inventory_stock.php"] + HeadMain(0, array(/** 
     /*
      $( function() {
      // ENRICO FEDELE, .live è stato eliminato a partire dalla jquery 1.7, adesso si deve usare .on
-     
+
      $( '.checkAll' ).on( 'change', function() {
      $( '.jq_chk' ).attr( 'checked', $( this ).is( ':checked' ) ? 'checked' : '' );
      });
@@ -323,10 +323,10 @@ echo '	<thead>
 				<th class="FacetFieldCaptionTD">' . $script_transl['code'] . '</th>
 				<th class="FacetFieldCaptionTD">' . $script_transl['descri'] . '</th>
 				<th class="FacetFieldCaptionTD">' . $script_transl['mu'] . '</th>
-				
+
 				<th class="FacetFieldCaptionTD">' . $script_transl['g_a'] . '</th>
 				<th class="FacetFieldCaptionTD" align="right">' . $script_transl['g_r'] . '</th>
-				
+
 			</tr>
 		</thead>
 		<tbody>';
@@ -380,12 +380,12 @@ if (isset($form['a'])) {
 						<td ' . $class . ' align="left"><span ' . $tooltip . '>' . $k . '</span></td>
 						<td ' . $class . ' align="left"><span ' . $tooltip . '>' . $v['i_d'] . '</span></td>
 						<td ' . $class . ' align="center">' . $v['i_u'] . '</td>
-						
+
 						<td ' . $class . ' align="center" align="right">' . gaz_format_quantity($v['g_a'], 0, $admin_aziend['decimal_quantity']) . '</td>
 						<td ' . $class . ' align="right">
 							<input type="text" style="text-align:right" onchange="document.maschera.chk' . $k . '.checked=true" name="a[' . $k . '][g_r]" value="' . $v['g_r'] . '">
 						</td>
-						
+
 					</tr>';
         $ctrl_cm = $v['i_g'];
         $elem_n++;
@@ -411,7 +411,7 @@ if (isset($form['a'])) {
 						<td class="FacetFieldCaptionTD">' . $script_transl['mu'] . '</td>
 						<td class="FacetFieldCaptionTD" align="right">' . $script_transl['load'] . '</td>
 						<td class="FacetFieldCaptionTD" align="right">' . $script_transl['unload'] . '</td>
-						
+
 					</tr>';
         foreach ($form['a'] as $k => $v) { // ciclo delle singole righe (a)
             if ($form['chk_on' . $k] == ' checked ') {   // e' un rigo da movimentare
@@ -427,7 +427,7 @@ if (isset($form['a'])) {
 							<td class="FacetDataTD" align="left">' . $v['i_u'] . '</td>
 							<td class="FacetDataTD"></td>
 							<td class="FacetDataTD" align="right">' . gaz_format_quantity($mq, 0, $admin_aziend['decimal_quantity']) . '</td>
-							
+
 						</tr>';
                 } elseif ($v['g_a'] < $v['g_r']) { // se maggiore carico
                     // devo fare prima uno storno per caricare
@@ -439,7 +439,7 @@ if (isset($form['a'])) {
 							<td class="FacetDataTD" align="left">' . $v['i_u'] . '</td>
 							<td class="FacetDataTD" align="right">' . gaz_format_quantity($mq, 0, $admin_aziend['decimal_quantity']) . '</td>
 							<td class="FacetDataTD"></td>
-							
+
 						</tr>';
                 }
                 echo '		<tr>
@@ -449,7 +449,7 @@ if (isset($form['a'])) {
 							<td class="FacetDataTD" align="left">' . $v['i_u'] . '</td>
 							<td class="FacetDataTD" align="right">' . $v['g_r'] . '</td>
 							<td class="FacetDataTD"></td>
-							
+
 						</tr>';
             }
         }

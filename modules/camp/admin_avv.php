@@ -6,28 +6,28 @@
 	  (http://www.devincentiis.it)
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
-	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP 
-	  Copyright (C) 2018-2021 - Antonio Germani, Massignano (AP)
-	  https://www.lacasettabio.it 
+	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP
+	  Copyright (C) 2018-2023 - Antonio Germani, Massignano (AP)
+	  https://www.lacasettabio.it
 	  https://www.programmisitiweb.lacasettabio.it
 	  --------------------------------------------------------------------------
 	  Questo programma e` free software;   e` lecito redistribuirlo  e/o
 	  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
 	  come e` pubblicata dalla Free Software Foundation; o la versione 2
 	  della licenza o (a propria scelta) una versione successiva.
-	
+
 	  Questo programma  e` distribuito nella speranza  che sia utile, ma
 	  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
 	  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
 	  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
-	
+
 	  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
 	  Generica GNU insieme a   questo programma; in caso  contrario,  si
 	  scriva   alla   Free  Software Foundation,  Inc.,   59
 	  Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
-	  --------------------------------------------------------------------------	 
+	  --------------------------------------------------------------------------
 	  # free to use, Author name and references must be left untouched  #
-	  --------------------------------------------------------------------------	  
+	  --------------------------------------------------------------------------
 */
 // ANTONIO GERMANI       >>> gestione avversità <<<
 
@@ -71,8 +71,8 @@ $(function() {
 			show: "blind",
 			hide: "explode",
 			buttons: {
-				delete:{ 
-					text:'Elimina', 
+				delete:{
+					text:'Elimina',
 					'class':'btn btn-danger',
 					click:function (event, ui) {
 					$.ajax({
@@ -90,7 +90,7 @@ $(function() {
 				}
 			}
 		});
-		$("#dialog_delete" ).dialog( "open" );  
+		$("#dialog_delete" ).dialog( "open" );
 	});
 });
 </script>
@@ -114,11 +114,11 @@ $recordnav -> output();
                 <td class="FacetFieldCaptionTD">Nome avversità:
                     <input type="text" name="auxil" value="<?php if ($auxil != "&all=yes") echo $auxil; ?>" maxlength="6" tabindex="1" class="FacetInput" />
 					<input type="submit" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;" />
-                
+
                     <input type="submit" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value=1;" />
-					
+
                 </td>
-                <td align="center">               
+                <td align="center">
 				<a class="btn btn-xs btn-default" href="admin_avversita.php?insert" title="Aggiungi nuova avversità">
 					<i class="glyphicon glyphicon-plus-sign"></i> Aggiungi
 				</a>
@@ -129,7 +129,7 @@ $recordnav -> output();
 	$result = gaz_dbi_dyn_query ('*', $gTables['camp_avversita'], $where, $orderby, $limit, $passo);
 	// creo l'array (header => campi) per l'ordinamento dei record
 	$headers_avv = array("ID"      => "id_avv",
-							"Nome avversità" => "nome_avv"							
+							"Nome avversità" => "nome_avv"
 							);
 	$linkHeaders = new linkHeaders($headers_avv);
 	$linkHeaders -> output();
@@ -161,6 +161,6 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     </table>
     <?php
 ?>
-<?php    
+<?php
 require("../../library/include/footer.php");
 ?>

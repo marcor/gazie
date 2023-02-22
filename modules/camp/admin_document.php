@@ -6,28 +6,28 @@
 	  (http://www.devincentiis.it)
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
-	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP 
-	  Copyright (C) 2018-2021 - Antonio Germani, Massignano (AP)
-	  https://www.lacasettabio.it 
+	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP
+	  Copyright (C) 2018-2023 - Antonio Germani, Massignano (AP)
+	  https://www.lacasettabio.it
 	  https://www.programmisitiweb.lacasettabio.it
 	  --------------------------------------------------------------------------
 	  Questo programma e` free software;   e` lecito redistribuirlo  e/o
 	  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
 	  come e` pubblicata dalla Free Software Foundation; o la versione 2
 	  della licenza o (a propria scelta) una versione successiva.
-	
+
 	  Questo programma  e` distribuito nella speranza  che sia utile, ma
 	  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
 	  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
 	  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
-	
+
 	  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
 	  Generica GNU insieme a   questo programma; in caso  contrario,  si
 	  scriva   alla   Free  Software Foundation,  Inc.,   59
 	  Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
-	  --------------------------------------------------------------------------	 
+	  --------------------------------------------------------------------------
 	  # free to use, Author name and references must be left untouched  #
-	  --------------------------------------------------------------------------	  
+	  --------------------------------------------------------------------------
 */
 require("../../library/include/datlib.inc.php");
 require ("../../modules/magazz/lib.function.php");
@@ -47,7 +47,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 		if ($_FILES['userfile']['error']==0) { // se è stato selezionato un nuovo file
 			preg_match("/\.([^\.]+)$/", $_FILES['userfile']['name'], $matches);
 			if (strlen($form['title'])==0){// se non è stata inserita una descrizione inserisco quella di default
-				$form['title']='Original name: '.$_FILES["userfile"]["name"]; 
+				$form['title']='Original name: '.$_FILES["userfile"]["name"];
 			}
 			$form['extension']=$matches[1];
 			//print $_FILES['userfile']['type'];
@@ -73,7 +73,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 				}
 			// controllo che il file sia inferiore a 8Mb
 			if ( $_FILES['userfile']['size'] > 8388000 ){
-				$msg .= "1+"; 
+				$msg .= "1+";
 			} elseif($_FILES['userfile']['size'] == 0)  {
 				$msg .= "2+";
 			}
@@ -125,7 +125,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['ritorno']=$_SERVER['HTTP_REFERER'];
     $artico = gaz_dbi_get_row($gTables['artico'], 'codice',substr($_GET['item_ref'],0,15));
     if (!empty($artico)) { //l'articolo è stato trovato
-       $form['item_ref']= $artico['codice'];    
+       $form['item_ref']= $artico['codice'];
     } else { // scappo!
        header("Location: ".$form['ritorno']);
        exit;
