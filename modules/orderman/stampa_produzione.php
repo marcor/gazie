@@ -124,7 +124,7 @@ if ($result->num_rows >0) {
   while($r = $result->fetch_assoc()){
     $pdf->Cell(20,5,gaz_format_date($r['datemi']),'LBR',0,'C');
     $pdf->Cell(80,5,$r['des_staff'],'LBR',0,'L');
-    $pdf->Cell(105,5,$r['descri'],'LBR',0,'L');
+    $pdf->Cell(105,5,$r['descri'],'LBR',0,'L', 0, '', 1);
     $pdf->Cell(20,5,floatval($r['quanti']),'LBR',0,'C');
     $pdf->Cell(25,5,gaz_format_number($r['prelis']),'LBR',0,'R');
     $pdf->Cell(27,5,gaz_format_number($r['quanti']*$r['prelis']),'LBR',1,'R');
@@ -547,10 +547,10 @@ if ($totgen>=0.01){
   $pdf->Ln(8);
   $pdf->Cell(70);
   $pdf->Cell(126,5,' R I E P I L O G O    T O T A L I',1, 1, 'C', 1, '', 1);
-  if($tot_prw_v>=0.01){
+  if(($tot_prw_v+$tot_pr4)>=0.01){
 	$pdf->Cell(70);
 	$pdf->Cell(100,5,'COSTO DEL LAVORO: ','LBT', 0, 'L', 0, '', 1);
-	$pdf->Cell(26,5,gaz_format_number($tot_pr4),'RBT', 1, 'R', 0, '', 1);
+	$pdf->Cell(26,5,gaz_format_number($tot_prw_v+$tot_pr4),'RBT', 1, 'R', 0, '', 1);
   }
   if($tot_aor>=0.01){
 	$pdf->Cell(70);
