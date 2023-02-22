@@ -2075,32 +2075,7 @@ if (intval($form['nome_colt']) == 0) {
 					</div>
 				</div><!-- chiude row  articolo-->
 
-				<div class="row"><!-- AVVERSITà -->
-					<div class="col-md-12">
-						<div class="form-group">
-							<label class="FacetFieldCaptionTD">
-								<span data-toggle="popover" title="Inserimento Avversità"
-								data-content="Inserire l'avversità che deve essere presente nell'elenco avversita (menù 'Fitofarmaci'->'Avversità').<br>
-								Inserendo l'avversità si attivano una serie di controlli, con relativo avviso, come:<br>
-								- superamento della dose specifica coltura-avversità<br>
-								- superamento del numero massimo di trattamenti coltura-avversità (se c'è una produzione il numero è riferito al periodo della produzione, altrimenti è riferito all'anno solare)<br>"
-								class="glyphicon glyphicon-info-sign" style="cursor: pointer;">
-								</span>
-								<?php echo $script_transl[20]; ?>
-							</label>
-
-							<!-- per funzionare autocomplete, id dell'input deve essere autocomplete3 -->
-							<input class="FacetSelect" id="autocomplete3" type="text" value="<?php echo $form['nome_avv'][$form['mov']]; ?>" name="nome_avv<?php echo $form['mov']; ?>" maxlength="15" />
-							<input type="hidden" value="<?php echo intval($form['nome_avv'][$form['mov']]); ?>" name="id_avversita<?php echo $form['mov']; ?>"/>
-							<?php
-							if ($dose_usofito > 0) {
-								echo "Dose specifica: ", gaz_format_quantity($dose_usofito, 1, $admin_aziend['decimal_quantity']), " ", $print_unimis, "/ha";
-							}
-							?>
-
-						</div>
-					</div>
-				</div><!-- chiude row  -->
+				
 
 				<div class="row"><!-- Quantità -->
 					<div class="col-md-12">
@@ -2380,6 +2355,32 @@ if (intval($form['nome_colt']) == 0) {
 					}
 
 					?>
+					<div class="row"><!-- AVVERSITà -->
+						<div class="col-md-12">
+							<div class="form-group">
+								<label class="FacetFieldCaptionTD">
+									<span data-toggle="popover" title="Inserimento Avversità"
+									data-content="Inserire l'avversità che deve essere presente nell'elenco avversita (menù 'Fitofarmaci'->'Avversità').<br>
+									Inserendo l'avversità si attivano una serie di controlli, con relativo avviso, come:<br>
+									- superamento della dose specifica coltura-avversità<br>
+									- superamento del numero massimo di trattamenti coltura-avversità (se c'è una produzione il numero è riferito al periodo della produzione, altrimenti è riferito all'anno solare)<br>"
+									class="glyphicon glyphicon-info-sign" style="cursor: pointer;">
+									</span>
+									<?php echo $script_transl[20]; ?>
+								</label>
+
+								<!-- per funzionare autocomplete, id dell'input deve essere autocomplete3 -->
+								<input class="FacetSelect" id="autocomplete3" type="text" value="<?php echo $form['nome_avv'][$form['mov']]; ?>" name="nome_avv<?php echo $form['mov']; ?>" maxlength="15" />
+								<input type="hidden" value="<?php echo intval($form['nome_avv'][$form['mov']]); ?>" name="id_avversita<?php echo $form['mov']; ?>"/>
+								<?php
+								if ($dose_usofito > 0) {
+									echo "Dose specifica: ", gaz_format_quantity($dose_usofito, 1, $admin_aziend['decimal_quantity']), " ", $print_unimis, "/ha";
+								}
+								?>
+
+							</div>
+						</div>
+					</div><!-- chiude row  -->
 
 					<div class="row"><!-- FASE FENOLOGICA -->
 						<div class="col-md-12">
@@ -2421,23 +2422,35 @@ if (intval($form['nome_colt']) == 0) {
 
 				/* Antonio Germani  prezzo e sconto del rigo movimento */
 				$importo_totale = ($form['prezzo'][$form['mov']] * floatval(preg_replace("/\,/", '.', $form['quanti'][$form['mov']]))) - ((($form['prezzo'][$form['mov']] * floatval(preg_replace("/\,/", '.', $form['quanti'][$form['mov']]))) * $form['scorig'][$form['mov']]) / 100);
-				?>
-				<div class="row" ><!-- COSTO MOVIMENTO  -->
-					<div class="col-md-12">
-						<div class="form-group">
-							<label class="FacetFieldCaptionTD"><?php echo $script_transl[13]; ?>
-							</label>
+				if ($form['ins_op'][$form['mov']] == "") { // se non è un operaio attivo costo movimento
+					?>
+					<div class="row" ><!-- COSTO MOVIMENTO  -->
+						<div class="col-md-12">
+							<div class="form-group">
+								<label class="FacetFieldCaptionTD"><?php echo $script_transl[13]; ?>
+								</label>
 
-							<input type="text" class="FacetFieldCaptionTD" value="<?php echo number_format($importo_totale, $admin_aziend['decimal_price'], ',', ''); ?>" name="total" readonly>
-							<?php echo "&nbsp;" . $admin_aziend['symbol'] . "&nbsp;&nbsp;&nbsp;&nbsp;" . $script_transl[31]; ?>
-							<input type="text" class="FacetFieldCaptionTD" value="<?php echo number_format($form['prezzo'][$form['mov']], $admin_aziend['decimal_price'], ',', '') ?>" maxlength="12" name="prezzo<?php echo $form['mov'] ?>" readonly>
-							<input type="hidden" class="FacetFieldCaptionTD" value="<?php echo number_format($form['prezzo2'][$form['mov']], $admin_aziend['decimal_price'], ',', '') ?>" maxlength="12" name="prezzo2<?php echo $form['mov'] ?>" readonly>
-							<?php echo " " . $admin_aziend['symbol']; ?>
-							<input type="hidden" value="<?php echo $form['scorig'][$form['mov']]; ?>" maxlength="4" name="scorig<?php echo $form['mov'] ?>" onChange="this.form.submit()">
-							<input type="hidden" value="<?php echo $form['scorig2'][$form['mov']]; ?>" maxlength="4" name="scorig2<?php echo $form['mov'] ?>" onChange="this.form.submit()">
-							</div>
-					</div>
-				</div><!-- chiude row  -->
+								<input type="text" class="FacetFieldCaptionTD" value="<?php echo number_format($importo_totale, $admin_aziend['decimal_price'], ',', ''); ?>" name="total" readonly>
+								<?php echo "&nbsp;" . $admin_aziend['symbol'] . "&nbsp;&nbsp;&nbsp;&nbsp;" . $script_transl[31]; ?>
+								<input type="text" class="FacetFieldCaptionTD" value="<?php echo number_format($form['prezzo'][$form['mov']], $admin_aziend['decimal_price'], ',', '') ?>" maxlength="12" name="prezzo<?php echo $form['mov'] ?>" readonly>
+								<input type="hidden" class="FacetFieldCaptionTD" value="<?php echo number_format($form['prezzo2'][$form['mov']], $admin_aziend['decimal_price'], ',', '') ?>" maxlength="12" name="prezzo2<?php echo $form['mov'] ?>" readonly>
+								<?php echo " " . $admin_aziend['symbol']; ?>
+								<input type="hidden" value="<?php echo $form['scorig'][$form['mov']]; ?>" maxlength="4" name="scorig<?php echo $form['mov'] ?>" onChange="this.form.submit()">
+								<input type="hidden" value="<?php echo $form['scorig2'][$form['mov']]; ?>" maxlength="4" name="scorig2<?php echo $form['mov'] ?>" onChange="this.form.submit()">
+								</div>
+						</div>
+					</div><!-- chiude row  -->
+					<?php
+				}else{
+					?>
+					<input type="hidden" value="<?php echo number_format($importo_totale, $admin_aziend['decimal_price'], ',', ''); ?>" name="total" >
+					<input type="hidden" value="<?php echo number_format($form['prezzo'][$form['mov']], $admin_aziend['decimal_price'], ',', '') ?>" name="prezzo<?php echo $form['mov'] ?>">
+					<input type="hidden" value="<?php echo number_format($form['prezzo2'][$form['mov']], $admin_aziend['decimal_price'], ',', '') ?>" name="prezzo2<?php echo $form['mov'] ?>">
+					<input type="hidden" value="<?php echo $form['scorig'][$form['mov']]; ?>" name="scorig<?php echo $form['mov'] ?>">
+					<input type="hidden" value="<?php echo $form['scorig2'][$form['mov']]; ?>" name="scorig2<?php echo $form['mov'] ?>">					
+					<?php
+				}
+				?>
 				<div class="row bg-success">
 					<div class="col-md-4" style="font-size:8pt;" id="<?php echo $form['mov'] ?>">
 						<?php
