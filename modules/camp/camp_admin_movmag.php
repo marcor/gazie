@@ -2546,7 +2546,7 @@ if (intval($form['nome_colt']) == 0) {
 					<input type="text" name="patent_number" value="<?php echo $form['patent_number']; ?>" >
 					<input type="hidden" name="rif_abilitazione" value="<?php echo htmlspecialchars((isset($form['rif_abilitazione']))?$form['rif_abilitazione']:''); ?>" >
 					<label>Scadenza: </label>
-					<input class="datepicker" type="datetime-local" name="patent_expiry"  value="<?php echo $form['patent_expiry']; ?>">
+					<input class="" type="date" name="patent_expiry"  value="<?php echo $form['patent_expiry']; ?>">
 				</div>
 				<div class="row">
 					<input type="submit" class="btn btn-warning" name="patent" value="Save patent">
