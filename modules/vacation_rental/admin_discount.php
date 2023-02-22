@@ -256,6 +256,7 @@ if ($toDo == 'update') {
     </tr>
   </table>
 </form>
+<a href="https://programmisitiweb.lacasettabio.it/gazie/vacation-rental-il-gestionale-per-case-vacanza-residence-bb-e-agriturismi/" target="_blank" class="navbar-fixed-bottom" style="max-width:350px; left:20%; z-index:2000;"> Vacation rental è un modulo di Antonio Germani</a>
 <?php
 require("../../library/include/footer.php");
 ?>

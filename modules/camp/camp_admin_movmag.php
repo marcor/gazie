@@ -21,9 +21,10 @@
 	  scriva   alla   Free  Software Foundation,  Inc.,   59
 	  Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
 	  --------------------------------------------------------------------------
-
-	  Registro di Campagna è un modulo creato da Antonio Germani Massignano AP
-	  https://www.lacasettabio.it https://www.programmisitiweb.lacasettabio.it
+	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP
+	  Copyright (C) 2018-2023 - Antonio Germani, Massignano (AP)
+	  https://www.lacasettabio.it
+	  https://www.programmisitiweb.lacasettabio.it
 	  --------------------------------------------------------------------------
 */
 require ("../../library/include/datlib.inc.php");
@@ -166,7 +167,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 	$fito=0;
     //recupero il movimento
     $result = gaz_dbi_get_row($gTables['movmag'], "id_mov", $_GET['id_mov']);
-	$itemart = gaz_dbi_get_row($gTables['artico'], "codice", $result['artico']);	
+	$itemart = gaz_dbi_get_row($gTables['artico'], "codice", $result['artico']);
     $form['id_mov'] = $result['id_mov'];
 	if ($result['id_rif']>$result['id_mov'] ){ // il movimento è connesso ad un movimento acqua, recupero anche il movimento acqua
 		$result2 = gaz_dbi_get_row($gTables['movmag'], "id_mov", $result['id_rif']);
@@ -223,7 +224,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 		$form['adminname'] = "";
 		$form['rif_abilitazione'] = "";
 	}
-	
+
 	if (intval($itemart['id_reg'])>0){// se è un fitofarmaco
 		// controllo validità patentino
 		if (strlen($form['patent_number'])>1 && strlen($form['patent_expiry'])>1){ // se c'è un patentino
@@ -235,12 +236,12 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 				$instantwarning[]="L'autorizzazione per l'acquisto e l'uso di prodotti fitosanotari scadrà il ".$form['patent_expiry'];
 			}
 		}else { // se non c'è un patentino segnalo la mancanza
-				
+
 				$avv_conf=3;
 				$instantwarning[]="L'uso di fitofarmaci può essere fatto da un operatore in possesso di relativo patentino";
 
 			}
-		
+
 	}
 
     $form['id_orderman'] = intval($result['id_orderman']);
@@ -382,7 +383,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 			$form['prezzo'][$m] = gaz_format_quantity($_POST['prezzo' . $m], 0, $admin_aziend['decimal_quantity']);
 			if (isset($_POST['quanti2' . $m])){
 				$form['quanti2'][$m] = gaz_format_quantity($_POST['quanti2' . $m], 0, $admin_aziend['decimal_quantity']);
-				
+
 			} else {
 				$form['quanti2'][$m]=0;
 			}
@@ -484,7 +485,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 	}
     $form['adminid'] = $_POST['adminid'];
 	if (isset($_POST['confermapat'.$form['adminid']]) && $_POST['confermapat'.$form['adminid']]== "Non voglio continuare"){
-		
+
 		header("Location: " . $_POST['ritorno']);
         exit;
 	}
@@ -2073,7 +2074,7 @@ if (intval($form['nome_colt']) == 0) {
 						</div>
 					</div>
 				</div><!-- chiude row  articolo-->
-				
+
 				<div class="row"><!-- AVVERSITà -->
 					<div class="col-md-12">
 						<div class="form-group">
@@ -2099,8 +2100,8 @@ if (intval($form['nome_colt']) == 0) {
 
 						</div>
 					</div>
-				</div><!-- chiude row  -->		
-				
+				</div><!-- chiude row  -->
+
 				<div class="row"><!-- Quantità -->
 					<div class="col-md-12">
 						<div class="form-group">
@@ -2379,7 +2380,7 @@ if (intval($form['nome_colt']) == 0) {
 					}
 
 					?>
-					
+
 					<div class="row"><!-- FASE FENOLOGICA -->
 						<div class="col-md-12">
 							<div class="form-group">
@@ -2576,15 +2577,15 @@ if (intval($form['nome_colt']) == 0) {
 			html: true
 		});
 	});
-	
-	$(document).ready(function() {		
-		for (let i = 0; i < <?php echo $form['nmov']+1; ?>; i++) { 		
+
+	$(document).ready(function() {
+		for (let i = 0; i < <?php echo $form['nmov']+1; ?>; i++) {
 			var dim = parseFloat(<?php echo $form['dim_campi']; ?>);
-			var quanti= $('#quanti'+i).val();			
+			var quanti= $('#quanti'+i).val();
 			quanti= parseFloat(quanti.replace(',','.'));
 			var doseuse = quanti/dim;
 			$("#doseuse"+i).html("Dose usata: "+doseuse.toFixed(4).replace('.',','));
-			var quanti2= $('#quanti2'+i).val();	
+			var quanti2= $('#quanti2'+i).val();
 			var quanti= $('#quanti'+i).val();
 			quanti= parseFloat(quanti.replace(',','.'));
 			quanti2= parseFloat(quanti2.replace(',','.'));
@@ -2597,11 +2598,11 @@ if (intval($form['nome_colt']) == 0) {
 			$("#acquadoseuse"+i).html("Dose usata: "+acquadoseuse.toFixed(4).replace('.',','));
 		}
 	});
-	for (let i = 0; i < <?php echo $form['nmov']+1; ?>; i++) { 
-		$("#quanti"+i).on("keyup",function(){			
+	for (let i = 0; i < <?php echo $form['nmov']+1; ?>; i++) {
+		$("#quanti"+i).on("keyup",function(){
 			var dim = parseFloat(<?php echo $form['dim_campi']; ?>);
 			var quanti= $('#quanti'+i).val();
-			var quanti2= $('#quanti2'+i).val();	
+			var quanti2= $('#quanti2'+i).val();
 			quanti= parseFloat(quanti.replace(',','.'));
 			quanti2= parseFloat(quanti2.replace(',','.'));
 			//alert(quanti);alert(dim);
@@ -2614,8 +2615,8 @@ if (intval($form['nome_colt']) == 0) {
 			}
 			$("#acquadoseuse"+i).html("Dose usata: "+acquadoseuse.toFixed(4).replace('.',','));
 		});
-		$("#quanti2"+i).on("keyup",function(){			
-			var quanti2= $('#quanti2'+i).val();	
+		$("#quanti2"+i).on("keyup",function(){
+			var quanti2= $('#quanti2'+i).val();
 			var quanti= $('#quanti'+i).val();
 			quanti= parseFloat(quanti.replace(',','.'));
 			quanti2= parseFloat(quanti2.replace(',','.'));
@@ -2628,7 +2629,7 @@ if (intval($form['nome_colt']) == 0) {
 			$("#acquadoseuse"+i).html("Dose usata: "+acquadoseuse.toFixed(4).replace('.',','));
 		});
 	}
-		
+
 </script>
 <style>
 .popover{

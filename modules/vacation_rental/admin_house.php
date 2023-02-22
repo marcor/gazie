@@ -1427,6 +1427,7 @@ if ($modal_ok_insert === true) {
 		<table id="tblAppendGrid"></table>
 	</div>
 </form>
+<a href="https://programmisitiweb.lacasettabio.it/gazie/vacation-rental-il-gestionale-per-case-vacanza-residence-bb-e-agriturismi/" target="_blank" class="navbar-fixed-bottom" style="max-width:350px; left:20%; z-index:2000;"> Vacation rental è un modulo di Antonio Germani</a>
 <script type="text/javascript">
     // Basato su: http://www.abeautifulsite.net/whipping-file-inputs-into-shape-with-bootstrap-3/
     $(document).on('change', '.btn-file :file', function () {

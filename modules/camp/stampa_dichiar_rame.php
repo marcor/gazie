@@ -7,7 +7,7 @@
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
 	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP
-	  Copyright (C) 2018-2021 - Antonio Germani, Massignano (AP)
+	  Copyright (C) 2018-2023 - Antonio Germani, Massignano (AP)
 	  https://www.lacasettabio.it
 	  https://www.programmisitiweb.lacasettabio.it
 	  --------------------------------------------------------------------------
@@ -118,7 +118,7 @@ if ($sta_fert==false){
 $n=0; $campi=array();
 if (sizeof($result) > 0) {
 	foreach ($result as $key => $row) {
-		
+
 		if ($row['campo_impianto']>0 && $row['type_mov']==1){ // se nel movimento è inserito un campo di coltivazione ed è un movimento del registro di campagna
 
 			if ($row['rame_metallico']>0 OR ($row['perc_N']>0 AND $sta_fert==true)){ // se l'articolo contiene rame metallo o azoto con stampa fertilizzazioni
