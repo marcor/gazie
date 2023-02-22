@@ -70,7 +70,7 @@ if (isset($_GET['ds'])) {
    $luogo_data .= ucwords($gazTimeFormatter->format(new DateTime()));
 
 }
-$sta_fert = $_GET['stf'];
+$sta_fert = (isset($_GET['stf']))?$_GET['stf']:NULL;
 $giori = substr($_GET['ri'],0,2);
 $mesri = substr($_GET['ri'],2,2);
 $annri = substr($_GET['ri'],4,4);
@@ -81,6 +81,7 @@ $annrf = substr($_GET['rf'],4,4);
 $utsrf= mktime(0,0,0,$mesrf,$giorf,$annrf);
 $gazTimeFormatter->setPattern('yyyyMMdd');
 $result=getMovements($gazTimeFormatter->format(new DateTime('@'.$utsri)),$gazTimeFormatter->format(new DateTime('@'.$utsrf)));
+
 $giorni=intval(($utsrf-$utsri)/86400);
 require("../../config/templates/report_template_qc.php");
 $gazTimeFormatter->setPattern('dd MMMM yyyy');
@@ -117,7 +118,8 @@ if ($sta_fert==false){
 $n=0; $campi=array();
 if (sizeof($result) > 0) {
 	foreach ($result as $key => $row) {
-		If ($row['campo_impianto']>0 && $row['type_mov']==1){ // se nel movimento è inserito un campo di coltivazione ed è un movimento del registro di campagna
+		
+		if ($row['campo_impianto']>0 && $row['type_mov']==1){ // se nel movimento è inserito un campo di coltivazione ed è un movimento del registro di campagna
 
 			if ($row['rame_metallico']>0 OR ($row['perc_N']>0 AND $sta_fert==true)){ // se l'articolo contiene rame metallo o azoto con stampa fertilizzazioni
 				//carico i dati per ogni campo di coltivazione
@@ -130,8 +132,8 @@ if (sizeof($result) > 0) {
 							'superficie'=>$camp['ricarico'],
 							'rame_metallo_usato_su_campo'=>$row['rame_metallico']*$row['quanti'],
 							'qta_N'=>($row['perc_N']*$row['quanti'])/100,
-							'qta_P'=>($row['perc_N']*$row['quanti'])/100,
-							'qta_K'=>($row['perc_N']*$row['quanti'])/100,
+							'qta_P'=>($row['perc_P']*$row['quanti'])/100,
+							'qta_K'=>($row['perc_K']*$row['quanti'])/100,
 							'ZVN'=>$camp['zona_vulnerabile'],
 							'lim_N_ZVN'=>$camp['limite_azoto_zona_vulnerabile'],
 							'lim_N'=>$camp['limite_azoto_zona_non_vulnerabile']
@@ -142,7 +144,6 @@ if (sizeof($result) > 0) {
 	}
 
 	rsort ($array); // ordino l'array per il primo valore che è il campo di coltivazione
-
 	$c=0;
 	for ($i=0; $i<$n; $i++){
 	 	if ($i==0){
@@ -163,6 +164,9 @@ if (sizeof($result) > 0) {
 			if ($array[$i]['campo_impianto']==$array[$i-1]['campo_impianto']){
 				$campi[$c]['totale_rame']=$campi[$c]['totale_rame']+$array[$i]['rame_metallo_usato_su_campo'];
 				$campi[$c]['tot_N']=$campi[$c]['tot_N']+$array[$i]['qta_N'];
+				$campi[$c]['tot_P']=$campi[$c]['tot_P']+$array[$i]['qta_P'];
+				$campi[$c]['tot_K']=$campi[$c]['tot_K']+$array[$i]['qta_K'];
+
 			} else {
 			$c=$c+1;
 			$campi[$c]=array(
@@ -199,16 +203,16 @@ $pdf->SetFont('helvetica','',9);
 			$N_ammesso = $campi[$i]['lim_N_ZVN']*$campi[$i]['superficie'];
 			$campi[$i]['campo_impianto'] = $campi[$i]['campo_impianto']." ZVN";
 		}
-		$pdf->Cell(13,6,$campi[$i]['campo_impianto'],1);
-		$pdf->Cell(55,6,$campi[$i]['descri_campo'],1);
-		$pdf->Cell(17,6,"ha ".gaz_format_quantity($campi[$i]['superficie'],1,$admin_aziend['decimal_quantity']),1);
-		$pdf->Cell(30,6,"Kg ".gaz_format_quantity($campi[$i]['totale_rame'],1,$admin_aziend['decimal_quantity']),1);
-		$pdf->Cell(30,6,"Kg ".gaz_format_quantity($rame_ammesso,1,$admin_aziend['decimal_quantity'])." annuo",1);
+		$pdf->Cell(13,6,$campi[$i]['campo_impianto'],1,0,'L',0,'',1);
+		$pdf->Cell(55,6,$campi[$i]['descri_campo'],1,0,'L',0,'',1);
+		$pdf->Cell(17,6,"ha ".gaz_format_quantity($campi[$i]['superficie'],1,$admin_aziend['decimal_quantity']),1,0,'L',0,'',1);
+		$pdf->Cell(30,6,"Kg ".gaz_format_quantity($campi[$i]['totale_rame'],1,$admin_aziend['decimal_quantity']),1,0,'L',0,'',1);
+		$pdf->Cell(30,6,"Kg ".gaz_format_quantity($rame_ammesso,1,$admin_aziend['decimal_quantity'])." annuo",1,0,'L',0,'',1);
 		if ($sta_fert==true){
-			$pdf->Cell(15,6,"Kg ".gaz_format_quantity($campi[$i]['tot_N'],1,$admin_aziend['decimal_quantity']),1);
-			$pdf->Cell(15,6,"Kg ".gaz_format_quantity($campi[$i]['tot_P'],1,$admin_aziend['decimal_quantity']),1);
-			$pdf->Cell(15,6,"Kg ".gaz_format_quantity($campi[$i]['tot_K'],1,$admin_aziend['decimal_quantity']),1);
-			$pdf->Cell(18,6,"Kg ".gaz_format_quantity($N_ammesso,1,$admin_aziend['decimal_quantity']),1);
+			$pdf->Cell(15,6,"Kg ".gaz_format_quantity($campi[$i]['tot_N'],1,$admin_aziend['decimal_quantity']),1,0,'L',0,'',1);
+			$pdf->Cell(15,6,"Kg ".gaz_format_quantity($campi[$i]['tot_P'],1,$admin_aziend['decimal_quantity']),1,0,'L',0,'',1);
+			$pdf->Cell(15,6,"Kg ".gaz_format_quantity($campi[$i]['tot_K'],1,$admin_aziend['decimal_quantity']),1,0,'L',0,'',1);
+			$pdf->Cell(18,6,"Kg ".gaz_format_quantity($N_ammesso,1,$admin_aziend['decimal_quantity']),1,0,'L',0,'',1);
 		}
 
 		if (strlen($campi[$i]['img_campo'])>0){
