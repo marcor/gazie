@@ -1958,7 +1958,7 @@ if (intval($form['nome_colt']) == 0) {
 												} else {
 													?>
 													<input type="hidden" id="artico2" name="artico2" value="<?php echo $form['artico2'][$form['mov']]; ?>">
-													<input type="hidden" value="" name="quanti2<?php echo $form['mov']; ?>" >
+													<input type="hidden" id="quanti2<?php echo $form['mov']; ?>" value="" name="quanti2<?php echo $form['mov']; ?>" >
 													<?php
 												}
 												?>
@@ -1971,7 +1971,7 @@ if (intval($form['nome_colt']) == 0) {
 											<input type="hidden" name="codart" value="" />
 											<input type="hidden" name="fase_feno<?php echo $form['mov']; ?>" value="" />
 											<input type="hidden" id="artico2" name="artico2" value="">
-											<input type="hidden" value="" name="quanti2<?php echo $form['mov']; ?>" >
+											<input type="hidden" id="quanti2<?php echo $form['mov']; ?>" value="" name="quanti2<?php echo $form['mov']; ?>" >
 											<input type="hidden" value="" name="artico<?php echo $form['mov']; ?>" >
 
 											<?php
@@ -2013,7 +2013,7 @@ if (intval($form['nome_colt']) == 0) {
 								<input type="hidden" name="staff<?php echo $form['mov']; ?>" value="<?php echo $form['staff'][$form['mov']]; ?>" />
 								<input type="hidden" name="artico<?php echo $form['mov']; ?>" value="<?php echo $form['artico'][$form['mov']]; ?>" />
 								<input type="hidden" name="artico2<?php echo $form['mov']; ?>" value="<?php echo $form['artico2'][$form['mov']]; ?>" />
-								<input type="hidden" name="quanti2<?php echo $form['mov']; ?>" value="<?php echo $form['quanti2'][$form['mov']]; ?>" />
+								<input type="hidden" id="quanti2<?php echo $form['mov']; ?>" name="quanti2<?php echo $form['mov']; ?>" value="<?php echo $form['quanti2'][$form['mov']]; ?>" />
 
 								<?php
 								echo $form['artico'][$form['mov']]," - ";
@@ -2056,8 +2056,8 @@ if (intval($form['nome_colt']) == 0) {
 									if ($dose > 0) {
 										echo "<br>Dose massima ammessa:<span id='dosemax".$form['mov']."'> ", gaz_format_quantity($dose, 1, $admin_aziend['decimal_quantity']),"</span>&nbsp;", $print_unimis,"/ha";
 									}
-									echo "&nbsp; &nbsp; &nbsp;<span id='doseuse".$form['mov']."'></span>&nbsp;", $print_unimis,"/ha";
-									echo "&nbsp; &nbsp; &nbsp;<span id='acquadoseuse".$form['mov']."'></span>&nbsp;", $print_unimis,"/hl";
+									echo "&nbsp; &nbsp; &nbsp;<span id='doseuse".$form['mov']."'>--</span>&nbsp;", $print_unimis,"/ha";
+									echo "&nbsp; &nbsp; &nbsp;<span id='acquadoseuse".$form['mov']."'>--</span>&nbsp;", $print_unimis,"/hl";
 
 								}
 								if ($service == 2 && $form['operat'] == 1) { // se è articolo composito avviso che non è possibile il carico
@@ -2602,7 +2602,6 @@ if (intval($form['nome_colt']) == 0) {
 			var quanti= $('#quanti'+i).val();
 			quanti= parseFloat(quanti.replace(',','.'));
 			quanti2= parseFloat(quanti2.replace(',','.'));
-			//alert(quanti2);alert(dim);
 			if (quanti>0 && quanti2>0){
 				var acquadoseuse = (quanti/quanti2)*100;
 			}else{
