@@ -28,7 +28,14 @@ $admin_aziend = checkAdmin(9);
 
 if (count($_POST) > 0) {
     foreach ($_POST as $key => $value) {
+      if ($key == 'admin_mail_pass' || $key == 'admin_smtp_password' ) {
+        $tripsw=trim($value);
+        if ( strlen($tripsw)>=8 ) {
+          gaz_dbi_put_row($gTables['config'], 'variable', $key, 'cvalue', $value);
+        }
+      } else {
         gaz_dbi_put_row($gTables['config'], 'variable', $key, 'cvalue', $value);
+      }
     }
     header("Location: set_config_data.php?ok");
 }
@@ -72,17 +79,17 @@ if ($_GET['iframe']="TRUE"){
           </div>
           <?php
           if (isset($_GET["ok"])) {
-              echo '<div class="alert alert-success text-center" role="alert"><strong>*** Le modifiche sono state salvate! ***</strong></div>';
+            echo '<div class="alert alert-success text-center" role="alert"><strong>*** Le modifiche sono state salvate! ***</strong></div>';
           }
           if (gaz_dbi_num_rows($result) > 0) {
             while ($r = gaz_dbi_fetch_array($result)) {
-                  ?>
-            <div class="form-group">
-              <label for="input<?php echo $r["id"]; ?>" class="col-sm-4 control-label"><?php echo $r["description"]; ?></label>
-              <div class="col-sm-8">
-            <?php
-              if ($r['variable'] == "theme") {
-                  echo '<select name="' . $r["variable"] . '" class="form-control input-sm">';
+              ?>
+              <div class="form-group">
+                <label for="input<?php echo $r["id"]; ?>" class="col-sm-4 control-label"><?php echo $r["description"]; ?></label>
+                <div class="col-sm-8">
+              <?php
+              if ($r['variable'] == 'theme') {
+                  echo '<select name="' . $r['variable'] . '" class="form-control input-sm">';
                   $relativePath = '../../library/theme/';
                   if ($handle = opendir($relativePath)) {
                       while ($file = readdir($handle)) {
@@ -99,23 +106,21 @@ if ($_GET['iframe']="TRUE"){
                       closedir($handle);
                       echo "</select>";
                   }
+              } else if ($r['variable'] == 'admin_mail_pass' || $r['variable'] == 'admin_smtp_password' ) {
+?>
+                <input type="password" class="form-control input-sm text-bold" id="input<?php echo $r["id"]; ?>" name="<?php echo $r['variable']; ?>" placeholder="Invisibile, digita solo se vuoi cambiarla" value='' >
+<?php
               } else {
-                  ?>
-                <input type="<?php
-                if ($r["variable"]=='admin_mail_pass'||
-                  $r["variable"]=='admin_smtp_password') {
-                  echo "password";
-                } else {
-                  echo "text";
-                } ?>" class="form-control input-sm" id="input<?php echo $r["id"]; ?>" name="<?php echo $r["variable"]; ?>" placeholder="<?php echo $r["variable"]; ?>" value='<?php echo $r["cvalue"]; ?>' >
-
-                  <?php
+?>
+                <input type="text" class="form-control input-sm" id="input<?php echo $r["id"]; ?>" name="<?php echo $r['variable']; ?>" placeholder="<?php echo $r['variable']; ?>" value='<?php echo $r["cvalue"]; ?>' >
+<?php
               }
-              echo "</div>
-              </div>";
+              ?>
+              <?php
+              echo '</div></div>';
             }
           }
-          ?>
+?>
           <div class="form-group">
               <div class="col-sm-offset-6 col-sm-6">
                   <button type="submit" class="btn btn-warning">Salva</button>

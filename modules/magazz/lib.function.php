@@ -1119,7 +1119,7 @@ class magazzForm extends GAzieForm {
   }
 
 
-  function getArticoPositions($codart,$returntype=false, $unimis='n.') {
+  function getArticoPositions($codart,$returntype=false, $unimis='n.',$zero=false) {
     $table='';
     $acc=[];
     if (strlen(trim($codart)) >= 1 ) {
@@ -1127,12 +1127,13 @@ class magazzForm extends GAzieForm {
       $rs=gaz_dbi_query("SELECT pos.id_warehouse, pos.position, she.descri, war.name, COUNT(*) AS nummov, id_artico_position, caumag, SUM(quanti*(operat=1)) AS cari, SUM(quanti*(operat=-1)) AS scar FROM " . $gTables['movmag'] . " mm LEFT JOIN ".$gTables['artico'] ." art ON mm.artico = art.codice LEFT JOIN ".$gTables['artico_position'] ." pos ON mm.id_artico_position = pos.id_position LEFT JOIN ".$gTables['shelves'] ." she ON pos.id_shelf = she.id_shelf  LEFT JOIN ".$gTables['warehouse'] ." war ON she.id_warehouse = war.id WHERE mm.caumag < 99 AND mm.artico = '".$codart."' GROUP BY mm.id_artico_position");
       $firstl=true;
       while ($r = gaz_dbi_fetch_array($rs)) {
-        if($r['caumag']<=98) {
+        $giac=floatval($r['cari']-$r['scar']);
+        if ( $r['caumag']<=98 && ($giac >= 0.00001 || $zero ) ) {
           if ($returntype===1){ // tabella html
             if ($r['descri'] == null){ // movimento non ubicato
-              $table .= ($firstl?'':'<br/>').floatval($r['cari']-$r['scar']).' '.$unimis.' non sono stati ubicati';
+              $table .= ($firstl?'':'<br/>').$giac.' '.$unimis.' non sono stati ubicati';
             } else {
-              $table .= ($firstl?'':'<br/>').($r['name']==null?'SEDE':$r['name']).'->'.$r['descri'].'-><a class="btn btn-default btn-xs" href="report_positions.php?id_position='.$r['id_artico_position'].'">'.$r['position'].'</a> '.$unimis.' '.floatval($r['cari']-$r['scar']).' <a class="btn btn-xs btn-default" href="print_label.php?id='.$r['id_artico_position'].'&cod='.$codart.'" title="Stampa etichetta"><i class="glyphicon glyphicon-tags"></i> Etichetta articolo <i class="glyphicon glyphicon-qrcode "></i></a>';
+              $table .= ($firstl?'':'<br/>').($r['name']==null?'SEDE':$r['name']).'->'.$r['descri'].'-><a class="btn btn-default btn-xs" href="report_positions.php?id_position='.$r['id_artico_position'].'">'.$r['position'].'</a> '.$unimis.' '.$giac.' <a class="btn btn-xs btn-default" href="print_label.php?id='.$r['id_artico_position'].'&cod='.$codart.'" title="Stampa etichetta"><i class="glyphicon glyphicon-tags"></i> Etichetta articolo <i class="glyphicon glyphicon-qrcode "></i></a>';
             }
             $firstl=false;
           } else {
