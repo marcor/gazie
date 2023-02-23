@@ -563,13 +563,13 @@ class magazzForm extends GAzieForm {
 				$last_invPrice = $last_inventory['prezzo'];
 				$last_invQuanti = $last_inventory['quanti'];
         // quando ho un inventario nello stesso giorno considero solo quello, e non i movimenti in pari data successivi, di conseguenza gli inventari andrebbero registrati a fine giorno lavorativo
-        $where_condition = " ( id_mov = ".$last_inventory['id_mov']." OR (datreg  BETWEEN '$datePrev' AND '$date' AND id_mov <= $id_mov) )";
+        $where_condition = " ( id_mov = ".$last_inventory['id_mov']." OR (datreg  BETWEEN '$datePrev' AND '$date') )";
 			} else {
 				$last_invPrice = 0;
 				$last_invQuanti = 0;
         $utsdatePrev = mktime(0, 0, 0, intval(substr($date, 5, 2)), intval(substr($date, 8, 2)) - 1, intval(substr($date, 0, 4)));
         $datePrev = date("Y-m-d", $utsdatePrev);
-        $where_condition = "( datreg <= '$datePrev' OR (datreg = '$date' AND id_mov <= $id_mov) )";
+        $where_condition = "( datreg <= '$datePrev' OR (datreg = '$date') )";
 			}
 
 		// fine ricerca inventario
