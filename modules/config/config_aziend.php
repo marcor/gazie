@@ -57,7 +57,7 @@ if (count($_POST) > 10) {
       } else { // solo se le password sono di lunghezza >=8 aggiorno altrimenti lascio com'era
         $tripsw=trim($value);
         if ( strlen($tripsw)>=8 ) {
-          gaz_dbi_put_row($gTables['company_config'], 'var', $key, 'val', $tripsw);
+          gaz_dbi_query("UPDATE ".$gTables['company_config']." SET val = TO_BASE64(AES_ENCRYPT('".$value."','".$_SESSION['aes_key']."')) WHERE var = '".$key."'");
         }
       }
     }
@@ -131,13 +131,16 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
                             $ph=$r["var"];
                             $ty='text';
                           } else {
+                            //$rsdec=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = '".$r["var"]."'");
+                            //$rdec=gaz_dbi_fetch_row($rsdec);
+                            //var_dump($rdec);
                             $ph='Invisibile, digita solo se vuoi cambiarla';
                             $r["val"] ='';
                             $icls='text-bold';
                             $ty='password';
                           }
                         ?>
-                        <input type="<?php echo $ty; ?>" class="form-control input-sm <?php echo $icls; ?>" id="input<?php echo $r["id"]; ?>" name="<?php echo $r["var"]; ?>" placeholder="<?php echo $ph; ?>" value="<?php echo $r["val"]; ?>">
+                        <input type="<?php echo $ty; ?>" class="form-control input-sm <?php echo $icls; ?>" id="input<?php echo $r["id"]; ?>" title="<?php echo $r["var"]; ?>" name="<?php echo $r["var"]; ?>" placeholder="<?php echo $ph; ?>" value="<?php echo $r["val"]; ?>">
 						<?php
 						}
 						?>

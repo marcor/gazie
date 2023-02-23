@@ -31,7 +31,7 @@ if (count($_POST) > 0) {
       if ($key == 'admin_mail_pass' || $key == 'admin_smtp_password' ) {
         $tripsw=trim($value);
         if ( strlen($tripsw)>=8 ) {
-          gaz_dbi_put_row($gTables['config'], 'variable', $key, 'cvalue', $value);
+          gaz_dbi_query("UPDATE ".$gTables['config']." SET cvalue = TO_BASE64(AES_ENCRYPT('".$value."','".$_SESSION['aes_key']."')) WHERE variable = '".$key."'");
         }
       } else {
         gaz_dbi_put_row($gTables['config'], 'variable', $key, 'cvalue', $value);
@@ -107,12 +107,15 @@ if ($_GET['iframe']="TRUE"){
                       echo "</select>";
                   }
               } else if ($r['variable'] == 'admin_mail_pass' || $r['variable'] == 'admin_smtp_password' ) {
+                //$rsdec=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(cvalue),'".$_SESSION['aes_key']."') FROM ".$gTables['config']." WHERE variable = '".$r["variable"]."'");
+                //$rdec=gaz_dbi_fetch_row($rsdec);
+                //var_dump($rdec);
 ?>
                 <input type="password" class="form-control input-sm text-bold" id="input<?php echo $r["id"]; ?>" name="<?php echo $r['variable']; ?>" placeholder="Invisibile, digita solo se vuoi cambiarla" value='' >
 <?php
               } else {
 ?>
-                <input type="text" class="form-control input-sm" id="input<?php echo $r["id"]; ?>" name="<?php echo $r['variable']; ?>" placeholder="<?php echo $r['variable']; ?>" value='<?php echo $r["cvalue"]; ?>' >
+                <input type="text" class="form-control input-sm" id="input<?php echo $r["id"]; ?>" title="<?php echo $r['variable']; ?>" name="<?php echo $r['variable']; ?>" placeholder="<?php echo $r['variable']; ?>" value='<?php echo $r["cvalue"]; ?>' >
 <?php
               }
               ?>
