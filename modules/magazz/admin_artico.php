@@ -758,11 +758,11 @@ if ($modal_ok_insert === true) {
               <?php
               if ($toDo != 'update'){
               ?>
-                          <input type="submit" name="cod" value="Genera codice" <?php  echo ($toDo == 'update')?'disabled':'';?>></div>
+                          <input type="submit" name="cod" value="Genera codice" <?php  echo ($toDo == 'update')?'disabled':'';?>>
               <?php
               }
               ?>
-                        </div>
+                       </div></div>
                     </div>
                 </div><!-- chiude row  -->
                 <div class="row">
