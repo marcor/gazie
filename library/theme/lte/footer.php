@@ -22,10 +22,6 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
-
-
-#$admin_aziend = \GAzie\GAzie::factory()->getCheckAdmin();
-
 require("../../modules/root/lang.".$admin_aziend['lang'].".php");
 
 ?>
@@ -34,20 +30,18 @@ require("../../modules/root/lang.".$admin_aziend['lang'].".php");
 <?php
 // se viene visualizzata una pagina specifica non visualizzare il footer
 $url = basename($_SERVER['REQUEST_URI'], '?' . $_SERVER['QUERY_STRING']);
-if ( $url!='ruburl.php' ) {
 ?>
     <footer class="main-footer">
-        <?php
-         // mostra le variabili $global e $server nella pagina
-         echo "<div>";
-          // solo quando verrà aggiornato KINT potremo utilizzarlo, tolto sulla 7.43
-          // if ( $debug_active == true ) d($GLOBALS, $_SERVER);
-         echo "</div>";
-        ?>
         <div class="pull-right hidden-xs">
         <?php echo $strScript['admin.php']['auth']; ?>:  <a  target="_new" title="<?php echo $strScript['admin.php']['auth']; ?>" href="https://<?php echo $contact_link; ?>">https://<?php echo $contact_link; ?></a>
         </div>
-Version <?php echo GAZIE_VERSION; ?>
+        Version
+        <?php
+        echo GAZIE_VERSION;
+        if ( $debug_active == true ){
+          echo " -->  ".$_SESSION['aes_key'];
+        } ;
+        ?>
     </footer>
 
     <!-- Control Sidebar -->
@@ -61,15 +55,6 @@ Version <?php echo GAZIE_VERSION; ?>
         <div class="tab-content">
           <!-- Home tab content -->
           <div class="tab-pane active" id="control-sidebar-home-tab">
-
-              <!--<form action="" method="post">
-        <select class="changeStatus" name="changeStatus">
-                <option value="0">Starting</option>
-                <option value="1">Ongoing</option>
-                <option value="2">Over</option>
-        </select>
-        <input class="projectId" type="hidden" name="projectId" value="<?php //echo $data['id'];?>"/>
-               </form>-->
               <ul class="control-sidebar-menu">
                 <?php
             $result   = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $admin_aziend['company_id'] . '" AND adminid="' . $admin_aziend["user_name"] . '" ', ' click DESC, last_use DESC', 0, 20);
@@ -144,36 +129,12 @@ Version <?php echo GAZIE_VERSION; ?>
           </div><!-- /.tab-pane -->
         </div>
       </aside>
-      <?php
-}
-?>
+
       <div class="control-sidebar-bg"></div>
     </div><!-- ./wrapper -->
     <script src="../../js/jquery.ui/jquery-ui.min.js"></script>
     <script><!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
       $.widget.bridge('uibutton', $.ui.button);
-    </script>
-    <script type="text/javascript">
-        function processForm(el) {
-            var checkbox = $(el);
-            $.ajax( {
-                type: 'POST',
-                url: '../../modules/root/lte_post_config.php',
-                data: { 'name': checkbox.attr('name'),
-                        'val': checkbox.is(':checked'),
-                        'desc': checkbox.attr('hint')
-                },
-                success: function(data) {
-                    $('#message').html(data);
-                }
-            });
-            //window.location.reload();
-        }
-        <?php
-         // solo quando verrà aggiornato KINT potremo utilizzarlo, tolto sulla 7.43
-         // mostra le variabili $global e $server nella pagina
-         //if ( $debug_active == true ) d($GLOBALS, $_SERVER);
-    ?>
     </script>
     <script src="../../js/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script src="../../library/theme/lte/plugins/slimScroll/jquery.slimscroll.min.js"></script>

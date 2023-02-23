@@ -89,29 +89,30 @@ if ($_GET['iframe']="TRUE"){
                 <div class="col-sm-8">
               <?php
               if ($r['variable'] == 'theme') {
-                  echo '<select name="' . $r['variable'] . '" class="form-control input-sm">';
-                  $relativePath = '../../library/theme/';
-                  if ($handle = opendir($relativePath)) {
-                      while ($file = readdir($handle)) {
-                          if (($file == ".") or ( $file == "..") or ( $file == ".svn"))
-                              continue;
-                          $selected = "";
-                          if ($r["cvalue"] == $file) {
-                              $selected = " selected ";
-                          }
-                          echo "<option value=\"" . $file . "\"" . $selected . ">" . ucfirst($file) . "</option>";
-                      }
-
-
-                      closedir($handle);
-                      echo "</select>";
+                echo '<select name="' . $r['variable'] . '" class="form-control input-sm">';
+                $relativePath = '../../library/theme/';
+                if ($handle = opendir($relativePath)) {
+                  while ($file = readdir($handle)) {
+                    if (($file == ".") or ( $file == "..") or ( $file == ".svn"))
+                      continue;
+                    $selected = "";
+                    if ($r["cvalue"] == $file) {
+                        $selected = " selected ";
+                    }
+                    echo "<option value=\"" . $file . "\"" . $selected . ">" . ucfirst($file) . "</option>";
                   }
+                  closedir($handle);
+                  echo "</select>";
+                }
               } else if ($r['variable'] == 'admin_mail_pass' || $r['variable'] == 'admin_smtp_password' ) {
-                //$rsdec=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(cvalue),'".$_SESSION['aes_key']."') FROM ".$gTables['config']." WHERE variable = '".$r["variable"]."'");
-                //$rdec=gaz_dbi_fetch_row($rsdec);
-                //var_dump($rdec);
+                $title='';
+                if ( $debug_active == true ){ // con il debug attivo mostro le password in chiaro in title
+                  $rsdec=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(cvalue),'".$_SESSION['aes_key']."') FROM ".$gTables['config']." WHERE variable = '".$r["variable"]."'");
+                  $rdec=gaz_dbi_fetch_row($rsdec);
+                  $title = $rdec?'title="'.$rdec[0].'"':'';
+                }
 ?>
-                <input type="password" class="form-control input-sm text-bold" id="input<?php echo $r["id"]; ?>" name="<?php echo $r['variable']; ?>" placeholder="Invisibile, digita solo se vuoi cambiarla" value='' >
+                <input type="password" class="form-control input-sm text-bold" id="input<?php echo $r["id"]; ?>" name="<?php echo $r['variable']; ?>" placeholder="Invisibile, digita solo se vuoi cambiarla" value='' <?php echo $title; ?> >
 <?php
               } else {
 ?>

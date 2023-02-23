@@ -129,18 +129,21 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
                           if ( strpos($r["var"],"pass")===false && strpos($r["var"],"psw")===false ) {
                             $icls='';
                             $ph=$r["var"];
+                            $title=$r["var"];
                             $ty='text';
                           } else {
-                            //$rsdec=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = '".$r["var"]."'");
-                            //$rdec=gaz_dbi_fetch_row($rsdec);
-                            //var_dump($rdec);
+                            if ( $debug_active == true ){ // con il debug attivo mostro le password in chiaro in title
+                              $rsdec=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = '".$r["var"]."'");
+                              $rdec=gaz_dbi_fetch_row($rsdec);
+                              $title=$rdec?$rdec[0]:'';
+                            }
                             $ph='Invisibile, digita solo se vuoi cambiarla';
                             $r["val"] ='';
                             $icls='text-bold';
                             $ty='password';
                           }
                         ?>
-                        <input type="<?php echo $ty; ?>" class="form-control input-sm <?php echo $icls; ?>" id="input<?php echo $r["id"]; ?>" title="<?php echo $r["var"]; ?>" name="<?php echo $r["var"]; ?>" placeholder="<?php echo $ph; ?>" value="<?php echo $r["val"]; ?>">
+                        <input type="<?php echo $ty; ?>" class="form-control input-sm <?php echo $icls; ?>" id="input<?php echo $r["id"]; ?>" title="<?php echo $title; ?>" name="<?php echo $r["var"]; ?>" placeholder="<?php echo $ph; ?>" value="<?php echo $r["val"]; ?>">
 						<?php
 						}
 						?>
