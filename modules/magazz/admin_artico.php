@@ -751,19 +751,25 @@ if ($modal_ok_insert === true) {
             <div class="tab-content">
               <div id="home" class="tab-pane fade in active">
                  <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-xs-12">
                         <div class="form-group">
-                            <label for="codice" class="col-sm-4 control-label"><?php echo $script_transl['codice']; ?></label>
-                            <input class="col-sm-4" type="text" value="<?php echo ((isset($_POST['cod']))? serchCOD():$form["codice"]); ?>" name="codice" <?php echo $suggest_new_codart?'id="actcodice" ':'id="suggest_new_codart"'; ?> maxlength="32" tabindex="1" /><input class="btn btn-xs" type="submit" value="" />
-							&nbsp;<input type="submit" name="cod" value="Genera codice" <?php  echo ($toDo == 'update')?'disabled':'';?>></td> <!-- M1 modificato a mano -->
+                            <label for="codice" class="col-xs-12 col-md-4 control-label"><?php echo $script_transl['codice']; ?></label>
+                            <input class="col-xs-12 col-md-4" type="text" value="<?php echo ((isset($_POST['cod']))? serchCOD():$form["codice"]); ?>" name="codice" <?php echo $suggest_new_codart?' id="actcodice" ':' id="suggest_new_codart"'; ?> maxlength="32" tabindex="1" /><div class="col-xs-12 col-md-4"><input type="submit" value="" />
+              <?php
+              if ($toDo != 'update'){
+              ?>
+                          <input type="submit" name="cod" value="Genera codice" <?php  echo ($toDo == 'update')?'disabled':'';?>></div>
+              <?php
+              }
+              ?>
                         </div>
                     </div>
                 </div><!-- chiude row  -->
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label for="descri" class="col-sm-4 control-label"><?php echo $script_transl['descri']; ?></label>
-                            <input class="col-sm-8" type="text" value="<?php echo $form['descri']; ?>" name="descri" maxlength="255" id="suggest_descri_artico" />
+                            <label for="descri" class="col-xs-12 col-md-4 control-label"><?php echo $script_transl['descri']; ?></label>
+                            <input class="col-xs-12 col-md-8" type="text" value="<?php echo $form['descri']; ?>" name="descri" maxlength="255" id="suggest_descri_artico" />
                         </div>
                     </div>
                 </div><!-- chiude row  -->
