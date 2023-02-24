@@ -8,7 +8,7 @@
   --------------------------------------------------------------------------
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
-  Copyright (C) 2004-2023 - Antonio De Vincentiis Montesilvano (PE)
+  Copyright (C) 2004-2022 - Antonio De Vincentiis Montesilvano (PE)
   (http://www.devincentiis.it)
   <http://gazie.sourceforge.net>
   --------------------------------------------------------------------------
@@ -61,7 +61,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         if (empty($form['description'])) {  //descrizione vuota
             $msg .= "manca_descri+";
         }
-        if ($form['value'] >= 98) {  //valore vuoto
+        if ($form['value'] < 1) {  //valore vuoto
             $msg .= "valore_vuoto+";
         }
         //print_r($form);die;
@@ -231,15 +231,7 @@ if ($toDo == 'update') {
       </td>
       </td>
     </tr>
-    <!--
-    <tr>
-      <td class="FacetFieldCaptionTD"><?php echo $script_transl['id_anagra']; ?>
-      </td>
-      <td class="FacetDataTD">
-        <input type="text" name="id_anagra" value="<?php echo $form['id_anagra'];?>" maxlength="50"/>
-      </td>
-    </tr>
-    -->
+ 
     <tr>
       <td class="FacetFieldCaptionTD"><input type="reset" name="Cancel" value="<?php echo $script_transl['cancel'];?>">
       </td>
@@ -256,7 +248,6 @@ if ($toDo == 'update') {
     </tr>
   </table>
 </form>
-<a href="https://programmisitiweb.lacasettabio.it/gazie/vacation-rental-il-gestionale-per-case-vacanza-residence-bb-e-agriturismi/" target="_blank" class="navbar-fixed-bottom" style="max-width:350px; left:20%; z-index:2000;"> Vacation rental è un modulo di Antonio Germani</a>
 <?php
 require("../../library/include/footer.php");
 ?>
