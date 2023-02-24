@@ -1439,138 +1439,133 @@ class selectvettor extends SelectBox {
 class GAzieMail {
 
     function sendMail($admin_data, $user, $content, $receiver, $mail_message = '') {
-		// su $admin_data['other_email'] ci va un eventuale indirizzo mail diverso da quello in anagrafica
+      // su $admin_data['other_email'] ci va un eventuale indirizzo mail diverso da quello in anagrafica
+      global $gTables, $debug_active;
+      require_once "../../library/phpmailer/class.phpmailer.php";
+      require_once "../../library/phpmailer/class.smtp.php";
 
-		global $gTables, $debug_active;
+      if (isset ($receiver['mod_fae']) && strpos($receiver['mod_fae'], 'pec')===0){// se c'è il modulo per invio fae che inizia il suo nome con 'pec' definisco il server smtp con la pec
+        $config_port = gaz_dbi_get_row($gTables['company_config'], 'var', 'pec_smtp_port');
+        $config_secure = gaz_dbi_get_row($gTables['company_config'], 'var', 'pec_smtp_secure');
+        $config_user = gaz_dbi_get_row($gTables['company_config'], 'var', 'pec_smtp_usr');
+        $rspsw=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = 'pec_smtp_psw'");
+        $rpsw=gaz_dbi_fetch_row($rspsw);
+        $config_pass = $rpsw?$rpsw[0]:'';
+        //$config_pass = gaz_dbi_get_row($gTables['company_config'], 'var', 'pec_smtp_psw'); // GAzie <=9.03
+        $config_host = gaz_dbi_get_row($gTables['company_config'], 'var', 'pec_smtp_server');
+        $admin_data['other_email'] = $admin_data['pec'];
+        $mailto = $receiver['e_mail']; //recipient-DESTINATARIO
+      } else {// altrimenti prendo la configurazione smtp semplice
+        $config_port = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_port');
+        $config_secure = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_secure');
+        $config_user = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_user');
+        $rspsw=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = 'smtp_password'");
+        $rpsw=gaz_dbi_fetch_row($rspsw);
+        $config_pass = $rpsw?$rpsw[0]:'';
+        //$config_pass = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_password');
+        $config_host = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_server');
+        $mailto = $receiver['e_mail']; //recipient-DESTINATARIO
+      }
+      // definisco il server SMTP e il mittente
+      $config_mailer = gaz_dbi_get_row($gTables['company_config'], 'var', 'mailer');
+      $config_notif = gaz_dbi_get_row($gTables['company_config'], 'var', 'return_notification');
+      $config_replyTo = gaz_dbi_get_row($gTables['company_config'], 'var', 'reply_to');
+      // attingo il contenuto del corpo della email dall'apposito campo della tabella configurazione utente
+      $user_text = gaz_dbi_get_row($gTables['admin_config'], 'var_name', 'body_send_doc_email', "AND adminid = '{$user['user_name']}'");
+      // attingo indirizzo email specifico dalla tabella configurazione utente
+      $az_email = gaz_dbi_get_row($gTables['admin_config'], 'var_name', 'az_email', "AND adminid = '". $user['user_name'] ."' AND company_id = ".$admin_data['codice']);
+      $company_text = gaz_dbi_get_row($gTables['company_config'], 'var', 'company_email_text');
+      $admin_data['web_url'] = trim($admin_data['web_url']);
+      if (!empty($admin_data['other_email']) && strlen($admin_data['other_email'])>=10){
+        $mailto = $admin_data['other_email']; //recipient
+      }
+      $subject = $admin_data['ragso1'] . " " . $admin_data['ragso2'] . " - Trasmissione " . str_lreplace('.pdf', '', (isset($admin_data['doc_name']))?$admin_data['doc_name']:''); //subject
+      // aggiungo al corpo  dell'email
+      $body_text = "<div><b>" . ((isset($admin_data['cliente1']))?$admin_data['cliente1']:'') . "</b></div>\n";
+      $body_text .= "<div>" . ((isset($admin_data['doc_name']))?$admin_data['doc_name']:''). "</div>\n";
+      $body_text .= "<div>" . ( !empty($mail_message) ? $mail_message : $company_text['val']) . "</div>\n";
+      $body_text .= ( empty($admin_data['web_url']) ? "" : "<h4><span style=\"color: #000000;\">Web: <a href=\"" . $admin_data['web_url'] . "\">" . $admin_data['web_url'] . "</a></span></h4>" );
+      $body_text .= "<h3><span style=\"color: #000000; background-color: #" . $admin_data['colore'] . ";\">" . $admin_data['ragso1'] . " " . $admin_data['ragso2'] . "</span></h3>";
+      $body_text .= "<address><div style=\"color: #" . $admin_data['colore'] . ";\">" . $user['user_firstname'] . " " . $user['user_lastname'] . "</div>\n";
+      $body_text .= "<div>" . $user_text['var_value'] . "</div></address>\n";
+      $body_text .= "<hr /><small>" . EMAIL_FOOTER . " " . GAZIE_VERSION . "</small>\n";
+      //
+      // Inizializzo PHPMailer
+      //
+      $mail = new PHPMailer();
+      $mail->Host = $config_host['val'];
+      $mail->IsHTML();                                // Modalita' HTML
+      $mail->CharSet = 'UTF-8';
+      // Imposto il server SMTP
+      if (!empty($config_port['val'])) {
+          $mail->Port = $config_port['val'];             // Imposto la porta del servizio SMTP
+      }
+      switch ($config_mailer['val']) {
+        case "smtp":
+          // Invio tramite protocollo SMTP
+          $mail->SMTPDebug = FALSE;                           // Attivo il debug
+          $mail->IsSMTP();                                // Modalita' SMTP
+          if (!empty($config_secure['val'])) {
+            $mail->SMTPSecure = $config_secure['val']; // Invio tramite protocollo criptato
+          } else {
+            $mail->SMTPOptions = ['ssl' => ['verify_peer' => false, 'verify_peer_name' => false, 'allow_self_signed' => true]];
+          }
+          $mail->SMTPAuth = (!empty($config_user['val']) && $config_mailer['val'] == 'smtp' ? TRUE : FALSE );
+          if ($mail->SMTPAuth) {
+            $mail->Username = $config_user['val'];     // Imposto username per autenticazione SMTP
+            $mail->Password = $config_pass;     // Imposto password per autenticazione SMTP
+          }
+        break;
+      }
+      /* Imposto email a cui rispondere (se � stata impostata nella tabella gaz_xxxcompany_config`)
+       * deve stare prima di $mail->SetFrom perch� altrimenti aggiunge il from al reply
+       */
+      if (isset($config_replyTo) && !empty($config_replyTo['val'])) {  // utilizzo l'indirizzo in company_config
+          $mittente = $config_replyTo['val'];
+      } elseif (strlen($user['user_email'])>=10)  { // utilizzo quella dell'utente
+          $mittente = $user['user_email'];
+      } else { // utilizzo quella dell'azienda, la stessa che appare sui documenti
+          $mittente = $admin_data['e_mail'];
+      }
+      if (isset ($receiver['mod_fae']) && strpos($receiver['mod_fae'], 'pec')===0){// se c'è il modulo per invio fae che inizia il suo nome con 'pec' cambio il mittente come da impostazioni specifiche
+        $mittente=$admin_data['pec'];
+        $config_send_fae = gaz_dbi_get_row($gTables['company_config'], 'var', 'pecsdi_sdi_email')['val'];
+        if (strlen($config_send_fae)>0){// se c'è un indirizzo per i pacchetti zip in configurazione azienda
+          $mail->AddAddress($config_send_fae, $admin_data['ragso1'] . " " . $admin_data['ragso2']);// Aggiungo PEC SDI come Destinatario
+        }
+      }
+      // Imposto eventuale richiesta di notifica
+      if ($config_notif['val'] == 'yes') {
+          $mail->AddCustomHeader($mail->HeaderLine("Disposition-notification-to", $mittente));
+      }
+      $mail->setLanguage(strtolower($admin_data['country']));
+      // Imposto email del mittente
+      $mail->SetFrom($mittente, $admin_data['ragso1'] . " " . $admin_data['ragso2']);
+      // Imposto email del destinatario
+      $mail->Hostname = $config_host;
+      $mail->AddAddress($mailto);//Destinatario
+      if (isset($az_email) && strlen($az_email['var_value'])>6){ // Antonio Germani: se c'è un indirizzo specifico utente/azienda, invio per cc a questo $az_email['var_value']
+        $mail->AddCC($az_email['var_value'], $admin_data['ragso1'] . " " . $admin_data['ragso2']); // Aggiungo mittente come destinatario per conoscenza, per avere una copia
+      }elseif (strlen($user['user_email'])>=10) { // altrimenti, quando l'utente che ha inviato la mail ha un suo indirizzo il cc avviene su di lui
+        $usermail = $user['user_email'];
+        $mail->AddCC($usermail, $admin_data['ragso1'] . " " . $admin_data['ragso2']); // Aggiungo mittente come destinatario per conoscenza, per avere una copia
+      }
 
-        require_once "../../library/phpmailer/class.phpmailer.php";
-        require_once "../../library/phpmailer/class.smtp.php";
-        //
-        //
-        // Si procede con la costruzione del messaggio.
-        //
-
-		if (isset ($receiver['mod_fae']) && strpos($receiver['mod_fae'], 'pec')===0){// se c'è il modulo per invio fae che inizia il suo nome con 'pec' definisco il server smtp con la pec
-			$config_port = gaz_dbi_get_row($gTables['company_config'], 'var', 'pec_smtp_port');
-			$config_secure = gaz_dbi_get_row($gTables['company_config'], 'var', 'pec_smtp_secure');
-			$config_user = gaz_dbi_get_row($gTables['company_config'], 'var', 'pec_smtp_usr');
-			$config_pass = gaz_dbi_get_row($gTables['company_config'], 'var', 'pec_smtp_psw');
-			$config_host = gaz_dbi_get_row($gTables['company_config'], 'var', 'pec_smtp_server');
-			$admin_data['other_email'] = $admin_data['pec'];
-			$mailto = $receiver['e_mail']; //recipient-DESTINATARIO
-		} else {// altrimenti prendo la configurazione smtp semplice
-			$config_port = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_port');
-			$config_secure = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_secure');
-			$config_user = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_user');
-			$config_pass = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_password');
-			$config_host = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_server');
-			$mailto = $receiver['e_mail']; //recipient-DESTINATARIO
-		}
-        // definisco il server SMTP e il mittente
-        $config_mailer = gaz_dbi_get_row($gTables['company_config'], 'var', 'mailer');
-        $config_notif = gaz_dbi_get_row($gTables['company_config'], 'var', 'return_notification');
-        $config_replyTo = gaz_dbi_get_row($gTables['company_config'], 'var', 'reply_to');
-        // attingo il contenuto del corpo della email dall'apposito campo della tabella configurazione utente
-        $user_text = gaz_dbi_get_row($gTables['admin_config'], 'var_name', 'body_send_doc_email', "AND adminid = '{$user['user_name']}'");
-        // attingo indirizzo email specifico dalla tabella configurazione utente
-        $az_email = gaz_dbi_get_row($gTables['admin_config'], 'var_name', 'az_email', "AND adminid = '". $user['user_name'] ."' AND company_id = ".$admin_data['codice']);
-        $company_text = gaz_dbi_get_row($gTables['company_config'], 'var', 'company_email_text');
-        $admin_data['web_url'] = trim($admin_data['web_url']);
-        if (!empty($admin_data['other_email']) && strlen($admin_data['other_email'])>=10){
-          $mailto = $admin_data['other_email']; //recipient
-        }
-        $subject = $admin_data['ragso1'] . " " . $admin_data['ragso2'] . " - Trasmissione " . str_lreplace('.pdf', '', (isset($admin_data['doc_name']))?$admin_data['doc_name']:''); //subject
-        // aggiungo al corpo  dell'email
-        $body_text = "<div><b>" . ((isset($admin_data['cliente1']))?$admin_data['cliente1']:'') . "</b></div>\n";
-        $body_text .= "<div>" . ((isset($admin_data['doc_name']))?$admin_data['doc_name']:''). "</div>\n";
-        $body_text .= "<div>" . ( !empty($mail_message) ? $mail_message : $company_text['val']) . "</div>\n";
-        $body_text .= ( empty($admin_data['web_url']) ? "" : "<h4><span style=\"color: #000000;\">Web: <a href=\"" . $admin_data['web_url'] . "\">" . $admin_data['web_url'] . "</a></span></h4>" );
-        $body_text .= "<h3><span style=\"color: #000000; background-color: #" . $admin_data['colore'] . ";\">" . $admin_data['ragso1'] . " " . $admin_data['ragso2'] . "</span></h3>";
-        $body_text .= "<address><div style=\"color: #" . $admin_data['colore'] . ";\">" . $user['user_firstname'] . " " . $user['user_lastname'] . "</div>\n";
-        $body_text .= "<div>" . $user_text['var_value'] . "</div></address>\n";
-        $body_text .= "<hr /><small>" . EMAIL_FOOTER . " " . GAZIE_VERSION . "</small>\n";
-        //
-        // Inizializzo PHPMailer
-        //
-        $mail = new PHPMailer();
-        $mail->Host = $config_host['val'];
-        $mail->IsHTML();                                // Modalita' HTML
-        $mail->CharSet = 'UTF-8';
-        // Imposto il server SMTP
-        if (!empty($config_port['val'])) {
-            $mail->Port = $config_port['val'];             // Imposto la porta del servizio SMTP
-        }
-        switch ($config_mailer['val']) {
-            case "smtp":
-                // Invio tramite protocollo SMTP
-                $mail->SMTPDebug = FALSE;                           // Attivo il debug
-                $mail->IsSMTP();                                // Modalita' SMTP
-                if (!empty($config_secure['val'])) {
-                    $mail->SMTPSecure = $config_secure['val']; // Invio tramite protocollo criptato
-                } else {
-                    $mail->SMTPOptions = array('ssl' => array('verify_peer' => false,
-                            'verify_peer_name' => false,
-                            'allow_self_signed' => true));
-                }
-                $mail->SMTPAuth = (!empty($config_user['val']) && $config_mailer['val'] == 'smtp' ? TRUE : FALSE );
-                if ($mail->SMTPAuth) {
-                    $mail->Username = $config_user['val'];     // Imposto username per autenticazione SMTP
-                    $mail->Password = $config_pass['val'];     // Imposto password per autenticazione SMTP
-                }
-                break;
-            case "mail":
-            default:
-                break;
-        }
-        /* Imposto email a cui rispondere (se � stata impostata nella tabella gaz_xxxcompany_config`)
-         * deve stare prima di $mail->SetFrom perch� altrimenti aggiunge il from al reply
-         */
-        if (isset($config_replyTo) && !empty($config_replyTo['val'])) {  // utilizzo l'indirizzo in company_config
-            $mittente = $config_replyTo['val'];
-        } elseif (strlen($user['user_email'])>=10)  { // utilizzo quella dell'utente
-            $mittente = $user['user_email'];
-        } else { // utilizzo quella dell'azienda, la stessa che appare sui documenti
-            $mittente = $admin_data['e_mail'];
-        }
-		if (isset ($receiver['mod_fae']) && strpos($receiver['mod_fae'], 'pec')===0){// se c'è il modulo per invio fae che inizia il suo nome con 'pec' cambio il mittente come da impostazioni specifiche
-			$mittente=$admin_data['pec'];
-			$config_send_fae = gaz_dbi_get_row($gTables['company_config'], 'var', 'pecsdi_sdi_email')['val'];
-			if (strlen($config_send_fae)>0){// se c'è un indirizzo per i pacchetti zip in configurazione azienda
-				$mail->AddAddress($config_send_fae, $admin_data['ragso1'] . " " . $admin_data['ragso2']);// Aggiungo PEC SDI come Destinatario
-			}
-		}
-        // Imposto eventuale richiesta di notifica
-        if ($config_notif['val'] == 'yes') {
-            $mail->AddCustomHeader($mail->HeaderLine("Disposition-notification-to", $mittente));
-        }
-        $mail->setLanguage(strtolower($admin_data['country']));
-        // Imposto email del mittente
-        $mail->SetFrom($mittente, $admin_data['ragso1'] . " " . $admin_data['ragso2']);
-        // Imposto email del destinatario
-        $mail->Hostname = $config_host;
-        $mail->AddAddress($mailto);//Destinatario
-        if (isset($az_email) && strlen($az_email['var_value'])>6){ // Antonio Germani: se c'è un indirizzo specifico utente/azienda, invio per cc a questo $az_email['var_value']
-          $mail->AddCC($az_email['var_value'], $admin_data['ragso1'] . " " . $admin_data['ragso2']); // Aggiungo mittente come destinatario per conoscenza, per avere una copia
-        }elseif (strlen($user['user_email'])>=10) { // altrimenti, quando l'utente che ha inviato la mail ha un suo indirizzo il cc avviene su di lui
-          $usermail = $user['user_email'];
-          $mail->AddCC($usermail, $admin_data['ragso1'] . " " . $admin_data['ragso2']); // Aggiungo mittente come destinatario per conoscenza, per avere una copia
-        }
-
-        // Imposto l'oggetto dell'email
-        $mail->Subject = $subject;
-        // Imposto il testo HTML dell'email
-        $mail->MsgHTML($body_text);
-        // Aggiungo la fattura in allegato
-		if (!empty($content->urlfile)) { // se devo trasmettere un file allegato passo il suo url
-			$mail->AddAttachment( $content->urlfile, $content->name );
-		} else { // altrimenti metto il contenuto del pdf che presumibilmente mi arriva da document.php
-			$mail->AddStringAttachment($content->string, $content->name, $content->encoding, $content->mimeType);
-		}
-        // Creo una veste grafica
-		//require('../../library/include/datlib.inc.php');
-        $admin_aziend = checkAdmin();
-        require('../../library/include/header.php');
-        $script_transl = HeadMain();
+      // Imposto l'oggetto dell'email
+      $mail->Subject = $subject;
+      // Imposto il testo HTML dell'email
+      $mail->MsgHTML($body_text);
+      // Aggiungo la fattura in allegato
+      if (!empty($content->urlfile)) { // se devo trasmettere un file allegato passo il suo url
+        $mail->AddAttachment( $content->urlfile, $content->name );
+      } else { // altrimenti metto il contenuto del pdf che presumibilmente mi arriva da document.php
+        $mail->AddStringAttachment($content->string, $content->name, $content->encoding, $content->mimeType);
+      }
+      // Creo una veste grafica
+      //require('../../library/include/datlib.inc.php');
+      $admin_aziend = checkAdmin();
+      require('../../library/include/header.php');
+      $script_transl = HeadMain();
 
 	// Invio...
 	if ($debug_active) {
