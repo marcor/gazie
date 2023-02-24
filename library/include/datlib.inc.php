@@ -63,6 +63,16 @@ foreach ($tn as $v) {
 
 date_default_timezone_set($Timezone);
 
+if ($gazie_locale != "") {
+  setlocale(LC_TIME, $gazie_locale);
+} else {
+  if ($link) {
+    $local = (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') ? gaz_dbi_get_row($gTables['config'], 'variable', 'win_locale'):gaz_dbi_get_row($gTables['config'], 'variable', 'lin_locale');
+    $gazie_locale = $local['cvalue'];
+    setlocale(LC_TIME, $local['cvalue']);
+  }
+}
+
 $gazTimeFormatter = new IntlDateFormatter($gazie_locale,IntlDateFormatter::FULL,IntlDateFormatter::FULL,$Timezone);
 
 $id = 1;
