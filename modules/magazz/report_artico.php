@@ -39,8 +39,8 @@ $search_fields = [
 $sortable_headers = array  (
             "Codice" => 'codice',
             "Descrizione"=>'descri',
-            "Merce<br/>Servizio" => 'good_or_service',
             "Categoria" => 'catmer',
+            "Merce<br/>Servizio" => 'good_or_service',
             'U.M.' => 'unimis',
             'Prezzo vend.<br/>listino 1' => 'preve1',
             'Ordini clienti' => '',
@@ -286,10 +286,10 @@ $ts->output_navbar();
 			<input type="text" name="des_artico" placeholder="descrizione"  id="suggest_descri_artico" class="input-sm form-control" value="<?php echo (isset($des_artico))? htmlentities($des_artico, ENT_QUOTES) : ""; ?>" maxlength="30">
         </td>
 		<td class="FacetFieldCaptionTD">
-        <?php gaz_flt_disp_select("gos", $gTables['artico'].".good_or_service AS gos", $tablejoin, 1,'good_or_service ASC', $script_transl['good_or_service_value']); ?>
+        <?php gaz_flt_disp_select("codcat", $gTables['catmer'].".codice AS codcat, ". $gTables['catmer'].".descri AS descat", $tablejoin, 1,'codcat ASC','descat'); ?>
         </td>
 		<td class="FacetFieldCaptionTD">
-        <?php gaz_flt_disp_select("codcat", $gTables['catmer'].".codice AS codcat, ". $gTables['catmer'].".descri AS descat", $tablejoin, 1,'codcat ASC','descat'); ?>
+        <?php gaz_flt_disp_select("gos", $gTables['artico'].".good_or_service AS gos", $tablejoin, 1,'good_or_service ASC', $script_transl['good_or_service_value']); ?>
         </td>
 		<td class="FacetFieldCaptionTD">
 			<input type="text" name="unimis" placeholder="U.M." class="input-sm form-control" value="<?php echo (isset($unimis))? $unimis : ""; ?>" maxlength="3">
@@ -306,7 +306,15 @@ $ts->output_navbar();
 $gForm = new magazzForm();
 
 $result = gaz_dbi_dyn_query ( $gTables['artico']. ".*, ".$gTables['catmer']. ".descri AS descat, ".$gTables['catmer']. ".codice AS codcat",$tablejoin, $ts->where, $ts->orderby, $ts->getOffset(), $ts->getLimit());
+?>
+	<tr class="visible-xs hidden-xs">
+		<td colspan="2" class="text-center">
+			<input type="submit" class="btn btn-sm btn-default" name="search" value="<?php echo $script_transl['search'];?>" onClick="javascript:document.report.all.value=1;">
+			<a class="btn btn-sm btn-default" href="?">Reset</a>
+		</td>
+	</tr>
 
+<?php
 echo '<tr>';
 $ts->output_headers();
 echo '</tr>';
@@ -382,13 +390,13 @@ while ($r = gaz_dbi_fetch_array($result)) {
     echo '</td>';
     echo '<td><span class="gazie-tooltip" data-type="product-thumb" data-id="'. $r['codice'] .'" data-title="'. $r['annota'].'" >'.$r['descri'].'</span>';
     echo "</td>\n";
+    echo '<td class="text-center">'.$r['catmer'].'-'.$r['descat'];
+    echo "</td>\n";
     echo '<td class="text-center">'.$des_bom. ' ';
 	if ($r['id_artico_group']>0){
 		echo '<a class="btn btn-xs btn-default" title="Gruppo varianti"  onclick="getgroup(\''.$r['id_artico_group'].'\');"> <i class="glyphicon glyphicon-level-up"></i> </a> ';
     }
 	echo "</td>\n";
-    echo '<td class="text-center">'.$r['catmer'].'-'.$r['descat'];
-    echo "</td>\n";
     echo '<td class="text-center">'.$r['unimis'];
 	echo "</td>\n";
     echo '<td class="text-center">'.number_format($r['preve1'], $admin_aziend['decimal_price'], ',', '.');
