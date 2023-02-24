@@ -308,9 +308,9 @@ $gForm = new magazzForm();
 $result = gaz_dbi_dyn_query ( $gTables['artico']. ".*, ".$gTables['catmer']. ".descri AS descat, ".$gTables['catmer']. ".codice AS codcat",$tablejoin, $ts->where, $ts->orderby, $ts->getOffset(), $ts->getLimit());
 ?>
 	<tr class="visible-xs hidden-xs">
-		<td colspan="2" class="text-center">
-			<input type="submit" class="btn btn-sm btn-default" name="search" value="<?php echo $script_transl['search'];?>" onClick="javascript:document.report.all.value=1;">
-			<a class="btn btn-sm btn-default" href="?">Reset</a>
+		<td colspan="2" class="text-center col-xs-12 text-small" style="padding: 2px;">
+			<input type="submit" class="btn btn-xs btn-default col-xs-4" name="search" value="<?php echo $script_transl['search'];?>" onClick="javascript:document.report.all.value=1;"><div class="col-xs-4"><i class="glyphicon glyphicon-search"></i></div>
+			<a class="btn btn-xs btn-default col-xs-4" href="?">Reset</a>
 		</td>
 	</tr>
 

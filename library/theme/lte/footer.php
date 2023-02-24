@@ -39,7 +39,7 @@ $url = basename($_SERVER['REQUEST_URI'], '?' . $_SERVER['QUERY_STRING']);
         <?php
         echo GAZIE_VERSION;
         if ( $debug_active == true ){
-          echo " -->  ".$_SESSION['aes_key'];
+          echo '<span class="bg-danger text-danger">DEBUG ATTIVATO -->  '.$_SESSION['aes_key'].'</span>';
         } ;
         ?>
     </footer>
