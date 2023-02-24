@@ -494,45 +494,40 @@ class selectAgente extends SelectBox {
 
 }
 
-#[AllowDynamicProperties]
 class Config {
-    function __construct() {
-        global $gTables;
-        $results = gaz_dbi_query("SELECT variable, cvalue FROM " . $gTables['config']);
-        while ($row = gaz_dbi_fetch_object($results)) {
-            $this->{$row->variable} = $row->cvalue;
-        }
-    }
 
-    function getValue($variable) {
-        return $this->{$variable};
-    }
+  function getValue($variable) {
+    global $gTables;
+    $variable = filter_var(substr($variable, 0, 100), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $cval = gaz_dbi_get_row($gTables['config'], 'variable', $variable);
+    return $cval?$cval['cvalue']:false;
+  }
 
-    function setValue($variable, $value = array('description' => '', 'cvalue' => '', 'show' => 0)) {
-        /* in $variabile va sempre il nome della variabile,
-         * la tabella viene aggiornata ne caso in cui il nome variabile esiste mentre
-         * viene inserita qualora non esista.
-         * In caso di inserimento � necessario passare un array in $value mentre in caso di
-         * aggiornamento � sufficiente un valore */
-        global $gTables;
-        $variable = filter_var(substr($variable, 0, 100), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $result = gaz_dbi_dyn_query("*", $gTables['config'], "variable='" . $variable . "'");
-        if (gaz_dbi_num_rows($result) >= 1) { // � un aggiornamento
-            if (is_array($value)) {
-                $row = gaz_dbi_fetch_array($result);
-                $value['cvalue'] = filter_var(substr($value['cvalue'], 0, 100), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-                $this->{$variable} = $value['cvalue'];
-                $value['variable'] = $variable;
-                ;
-                gaz_dbi_table_update('config', array('id', $row['id']), $value);
-            } else {
-                $this->{$variable} = filter_var(substr($value, 0, 100), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-                gaz_dbi_put_row($gTables['config'], 'variable', $variable, 'cvalue', $value['cvalue']);
-            }
-        } else { // � un inserimento
-            gaz_dbi_table_insert('config', $value);
-        }
-    }
+  function setValue($variable, $value = array('description' => '', 'cvalue' => '', 'show' => 0)) {
+      /* in $variabile va sempre il nome della variabile,
+       * la tabella viene aggiornata ne caso in cui il nome variabile esiste mentre
+       * viene inserita qualora non esista.
+       * In caso di inserimento � necessario passare un array in $value mentre in caso di
+       * aggiornamento � sufficiente un valore */
+      global $gTables;
+      $variable = filter_var(substr($variable, 0, 100), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+      $result = gaz_dbi_dyn_query("*", $gTables['config'], "variable='" . $variable . "'");
+      if (gaz_dbi_num_rows($result) >= 1) { // � un aggiornamento
+          if (is_array($value)) {
+              $row = gaz_dbi_fetch_array($result);
+              $value['cvalue'] = filter_var(substr($value['cvalue'], 0, 100), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+              $this->{$variable} = $value['cvalue'];
+              $value['variable'] = $variable;
+              ;
+              gaz_dbi_table_update('config', array('id', $row['id']), $value);
+          } else {
+              $this->{$variable} = filter_var(substr($value, 0, 100), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+              gaz_dbi_put_row($gTables['config'], 'variable', $variable, 'cvalue', $value['cvalue']);
+          }
+      } else { // � un inserimento
+          gaz_dbi_table_insert('config', $value);
+      }
+  }
 
 }
 
