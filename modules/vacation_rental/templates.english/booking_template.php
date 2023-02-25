@@ -3,7 +3,7 @@
 /*
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
-  Copyright (C) 2004-2023 - Antonio De Vincentiis Montesilvano (PE)
+  Copyright (C) 2004-2022 - Antonio De Vincentiis Montesilvano (PE)
   (http://www.devincentiis.it)
   <http://gazie.sourceforge.net>
   --------------------------------------------------------------------------
@@ -62,6 +62,8 @@ class Template extends TCPDI {
         $this->cliente4b = $docVars->cliente4b; // Nazione
         $this->cliente5 = $docVars->cliente5;  // P.IVA e C.F.
         $this->agente = $docVars->name_agente;
+		$this->status = $docVars->status;
+		$this->res_events = $docVars->res_events;
         /*
         if ( $docVars->destinazione == "" && isset($docVars->client['destin'])) {
             $this->destinazione = $docVars->client['destin'];
@@ -150,7 +152,7 @@ class Template extends TCPDI {
 				$this->SetTextColor(0,0,0);
 			}
             $this->SetFont('helvetica', '', 11);
-            $this->Cell(110, 5, $this->tipdoc, 1, 1, 'L', 1, '', 1);
+			$this->Cell(100, 5, $this->tipdoc, 1, 1, 'L', 1, '', 1);// tipo documento es.: prenotazione n. etc
             if ($this->tesdoc['tipdoc'] == 'NOP' || $this->withoutPageGroup) {
                 $this->Cell(30, 5);
             } else {
@@ -160,54 +162,57 @@ class Template extends TCPDI {
             $interlinea = $this->GetY();
             $this->Ln(6);
             $this->SetFont('helvetica', '', 9);
-            if (!empty($this->destinazione)) {
-                if (is_array($this->destinazione)) { //quando si vuole indicare un titolo diverso da destinazione si deve passare un array con titolo index 0 e descrizione index 1
-                    $this->Cell(80, 5, $this->destinazione[0], 'LTR', 2, 'L', 1);
-                    $this->MultiCell(80, 4, $this->destinazione[1], 'LBR', 'L');
-                } else {
-                    $this->Cell(80, 5, "Destinazione :", 'LTR', 2, 'L', 1);
-                    $this->MultiCell(80, 4, $this->destinazione, 'LBR', 'L');
-                }
-            }
-			if ($this->codice_partner > 0){
-				$this->SetXY(35, $interlinea - 5);
-				$this->Cell(13, 4, $this->descri_partner, 'LT', 0, 'R', 1, '', 1);
-				$this->Cell(72, 4, ': ' . $this->cliente5, 'TR', 1, 0, '', 1);
-				$this->Cell(25);
-				$this->Cell(20, 4, ' cod.: ' . $this->codice_partner, 'LB', 0, 'L');
-				$to='';
-				if (trim($this->cod_univoco)!=''){
-					$to.=' Dest: '.$this->cod_univoco;
-				}
-				if (trim($this->pec_cliente)!=''){
-					$to.=' Pec: '.$this->pec_cliente;
-				}
-				$this->Cell(65, 4,$to.' ' , 'BR', 0, 'L', 0, '', 1);
-            }
-			$this->SetXY(110, $interlinea + 6);
-            $this->SetFont('helvetica', '', 10);
-			if (!empty($this->cliente1)){ // Antonio Germani - se non c'è cliente evito di scrivere (serve per template scontrino)
-            $this->Cell(15, 5, $this->pers_title.' ', 0, 0, 'R');
-            $this->Cell(75, 5, $this->cliente1, 0, 1, 'L', 0, '', 1);
-			} else {
-				$this->Cell(15, 5,'', 0, 0, 'R');
-				$this->Cell(75, 5,'', 0, 1, 'L', 0, '', 1);
+			$this->SetY($interlinea - 11);
+			$add_int=0;$extras="";
+			while ($row_event = gaz_dbi_fetch_array($this->res_events))
+			{
+				
+				if ($row_event['type']=='ALLOGGIO'){
+					$this->SetX(110);$this->Cell(88, 5, " ".$row_event['house_code']." check-in:".date_format(date_create($row_event['start']),"d-m-Y")." check-out:".date_format(date_create($row_event['end']),"d-m-Y"), 1, 1, 'C', 0, '', 1);
+					$add_int+=2;
+				}else{// se non è alloggio allora è extra
+					$extras .= " ".$row_event['house_code']." -";// aggiungo l'extra al rigo che verrà stampato dopo il while							
+				}			
 			}
-            if (!empty($this->cliente2)) {
-                $this->Cell(115);
-                $this->Cell(75, 5, $this->cliente2, 0, 1, 'L', 0, '', 1);
+			$add_int = ($add_int>2)?$add_int:0;
+			if (!empty($extras)){
+				$this->SetX(110);
+				$this->Cell(88, 4, "Extra:".$extras, 1, 1, 'L', 0, '', 1);
+			}
+			if (!empty($this->agente)) {
+				$this->SetXY(10, $interlinea +$add_int +5 );
+				$this->Cell(75, 6, "TOUR OPERATOR: ".$this->agente, 1, 1, 'C', 0, '', 1);
+            }
+            if ($this->codice_partner > 0){
+              $this->SetXY(35, $interlinea +$add_int - 5);
+              $this->Cell(13, 4, $this->descri_partner, 'LT', 0, 'R', 1, '', 1);
+              $this->Cell(62, 4, ': ' . $this->cliente5, 'TR', 1, 0, '', 1);//cod.fisc. cliente
+              $this->Cell(25);
+              $this->Cell(20, 4, ' cod.: ' . $this->codice_partner, 'LB', 0, 'L');// id codice cliente
+              $to='';
+              if (trim($this->cod_univoco)!=''){
+                $to.=' Dest: '.$this->cod_univoco;
+              }
+              if (trim($this->pec_cliente)!=''){
+                $to.=' Pec: '.$this->pec_cliente;
+              }
+              $this->Cell(55, 4,$to.' ' , 'BR', 0, 'L', 0, '', 1);
+            } 
+			$this->SetXY(110, $interlinea +$add_int+ 6);
+            $this->SetFont('helvetica', '', 10);
+            if (!empty($this->cliente1)){ // Antonio Germani - se non c'è cliente evito di scrivere (serve per template scontrino)
+                  $this->Cell(15, 5, $this->pers_title.' ', 0, 0, 'R');
+                  $this->Cell(75, 5, $this->cliente1, 0, 1, 'L', 0, '', 1);
+            } else {
+              $this->Cell(15, 5,'', 0, 0, 'R');
+              $this->Cell(75, 5,'', 0, 1, 'L', 0, '', 1);
             }
             $this->SetFont('helvetica', '', 10);
             $this->Cell(115);
             $this->Cell(75, 5, $this->cliente3, 0, 1, 'L', 0, '', 1);
             $this->Cell(115);
             $this->Cell(75, 5, $this->cliente4, 0, 1, 'L', 0, '', 1);
-/* QUESTO NON SO CHI LO HA FATTO MA MI VEDO COSTRETTO A COMMENTARLO PERCHE' VA AD ACCAVALLARSI CON IL CORPO
-            if (!empty($this->cliente4b)) {
-                $this->Cell(115);
-                $this->Cell(75, 5, $this->cliente4b, 0, 1, 'L', 0, '', 1);
-            }
-*/
+
             $this->SetFont('helvetica', '', 7);
             if (!empty($this->c_Attenzione)) {
                 $this->SetFont('helvetica', '', 10);
@@ -234,8 +239,11 @@ class Template extends TCPDI {
                 case "CANCELLED":
                   $this->status = 'CANCELLED';
                 break;
+				case "QUOTE":
+                  $this->status = 'QUOTE - Before booking, check availability always.';
+                break;
               }
-              $this->Cell(75, 8, "STATO DELLA PRENOTAZIONE: ".$this->status, 1, 1, 'C', 0, '', 1);
+              $this->Cell(75, 8, "BOOKING STATUS: ".$this->status, 1, 1, 'C', 0, '', 1);
             }
             $this->SetFont('helvetica', '', 7);
             if ($this->fiscal_rapresentative) {

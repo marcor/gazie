@@ -386,11 +386,11 @@ class DocContabVars {
         //if ($fr=getRegimeFiscale($this->tesdoc["seziva"])) $this->regime_fiscale=$fr;
         $res=false;
         $sql = "SELECT * FROM ".$azTables."company_config"." WHERE var = 'sezione_regime_fiscale' LIMIT 1";
-            if ($result = mysqli_query($link, $sql)) {
-              $conf_rf = mysqli_fetch_assoc($result);
-            }else{
-              echo "Error: " . $sql . "<br>" . mysqli_error($link);
-            }
+		if ($result = mysqli_query($link, $sql)) {
+		  $conf_rf = mysqli_fetch_assoc($result);
+		}else{
+		  echo "Error: " . $sql . "<br>" . mysqli_error($link);
+		}
         $rrff=($conf_rf)?trim($conf_rf['val']):0;
         $rf=explode(';',$rrff);
         if (isset($rf[0])&&!empty($rf[0])){// ho almeno un altro regime
@@ -405,6 +405,12 @@ class DocContabVars {
         if ($fr){
           $this->regime_fiscale=$fr;
         }
+		$sql = "SELECT * FROM ".$azTables."rental_events"." WHERE id_tesbro = '".$tesdoc['id_tes']."' AND (type ='ALLOGGIO' OR type='EXTRA') ORDER BY id";
+		if ($result = mysqli_query($link, $sql)) {
+		  $this->res_events = $result;
+		}else{
+		  echo "Error: " . $sql . "<br>" . mysqli_error($link);
+		}
   }
 
     function initializeTotals() {

@@ -48,7 +48,7 @@ class BookingSummary extends Template
         $this->Cell(7, 6,'M.u.',1,0,'C',1);
         $this->Cell(16,6,'Quantity',1,0,'R',1);
         $this->Cell(18,6,'Price',1,0,'R',1);
-        $this->Cell(8, 6,'%disc.',1,0,'C',1);
+        $this->Cell(8, 6,'%disc.',1,0,'C',1,'',1);
         $this->Cell(20,6,'Amount',1,0,'R',1);
         $this->Cell(12,6,'%VAT',1,1,'R',1);
     }
@@ -157,7 +157,7 @@ class BookingSummary extends Template
         $this->SetY(200);
         $this->SetFont('helvetica','',9);
         $this->Cell(36, 6,'Tot. Body',1,0,'C',1);
-        $this->Cell(16, 6,'% Discount',1,0,'C',1);
+        $this->Cell(16, 6,'% Discount',1,0,'C',1,'',1);
         $this->Cell(24, 6,'Payment costs',1,0,'C',1);
         //$this->Cell(26, 6,'Trasporto',1,0,'C',1);
         $this->Cell(36, 6,'Tot.Taxable',1,0,'C',1);
@@ -176,8 +176,8 @@ class BookingSummary extends Template
 		}
 
 		$this->SetY(224);
-		$this->Cell(100, 6, 'Pagamenti effettuati', 'LTR', 0, 'C', 1);
-		$this->Cell(30, 6, 'Importo', 'LTR', 1, 'C', 1);
+		$this->Cell(100, 6, 'Payments already made', 'LTR', 0, 'C', 1);
+		$this->Cell(30, 6, 'Amount', 'LTR', 1, 'C', 1);
 		$payments = $this->docVars->getPag();
 		$payed=0;
 		foreach ($payments AS $key => $pay) {

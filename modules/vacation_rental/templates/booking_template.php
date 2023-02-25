@@ -63,7 +63,7 @@ class Template extends TCPDI {
         $this->cliente5 = $docVars->cliente5;  // P.IVA e C.F.
         $this->agente = $docVars->name_agente;
         $this->status = $docVars->status;
-
+		$this->res_events = $docVars->res_events;
         /*
         if ( $docVars->destinazione == "" && isset($docVars->client['destin'])) {
             $this->destinazione = $docVars->client['destin'];
@@ -152,7 +152,7 @@ class Template extends TCPDI {
               $this->SetTextColor(0,0,0);
             }
             $this->SetFont('helvetica', '', 11);
-            $this->Cell(110, 5, $this->tipdoc, 1, 1, 'L', 1, '', 1);
+            $this->Cell(100, 5, $this->tipdoc, 1, 1, 'L', 1, '', 1);// tipo documento es.: prenotazione n. etc
             if ($this->tesdoc['tipdoc'] == 'NOP' || $this->withoutPageGroup) {
                 $this->Cell(30, 5);
             } else {
@@ -162,15 +162,32 @@ class Template extends TCPDI {
             $interlinea = $this->GetY();
             $this->Ln(6);
             $this->SetFont('helvetica', '', 9);
-            if (!empty($this->agente)) {
-              $this->Cell(75, 8, "TOUR OPERATOR: ".$this->agente, 1, 1, 'C', 0, '', 1);
+			$this->SetY($interlinea - 11);
+			$add_int=0;$extras="";
+			while ($row_event = gaz_dbi_fetch_array($this->res_events)){
+				
+				if ($row_event['type']=='ALLOGGIO'){
+					$this->SetX(110);$this->Cell(88, 5, " ".$row_event['house_code']." check-in:".date_format(date_create($row_event['start']),"d-m-Y")." check-out:".date_format(date_create($row_event['end']),"d-m-Y"), 1, 1, 'C', 0, '', 1);
+					$add_int+=2;
+				}else{// se non è alloggio allora è extra
+					$extras .= " ".$row_event['house_code']." -";// aggiungo l'extra al rigo che verrà stampato dopo il while							
+				}			
+			}
+			$add_int = ($add_int>2)?$add_int:0;
+			if (!empty($extras)){
+				$this->SetX(110);
+				$this->Cell(88, 4, "Extra:".$extras, 1, 1, 'L', 0, '', 1);
+			}
+			if (!empty($this->agente)) {
+				$this->SetXY(10, $interlinea +$add_int +5 );
+				$this->Cell(75, 6, "TOUR OPERATOR: ".$this->agente, 1, 1, 'C', 0, '', 1);
             }
             if ($this->codice_partner > 0){
-              $this->SetXY(35, $interlinea - 5);
+              $this->SetXY(35, $interlinea +$add_int - 5);
               $this->Cell(13, 4, $this->descri_partner, 'LT', 0, 'R', 1, '', 1);
-              $this->Cell(72, 4, ': ' . $this->cliente5, 'TR', 1, 0, '', 1);
+              $this->Cell(62, 4, ': ' . $this->cliente5, 'TR', 1, 0, '', 1);//cod.fisc. cliente
               $this->Cell(25);
-              $this->Cell(20, 4, ' cod.: ' . $this->codice_partner, 'LB', 0, 'L');
+              $this->Cell(20, 4, ' cod.: ' . $this->codice_partner, 'LB', 0, 'L');// id codice cliente
               $to='';
               if (trim($this->cod_univoco)!=''){
                 $to.=' Dest: '.$this->cod_univoco;
@@ -178,10 +195,11 @@ class Template extends TCPDI {
               if (trim($this->pec_cliente)!=''){
                 $to.=' Pec: '.$this->pec_cliente;
               }
-              $this->Cell(65, 4,$to.' ' , 'BR', 0, 'L', 0, '', 1);
-            }
-            $this->SetXY(110, $interlinea + 6);
-                  $this->SetFont('helvetica', '', 10);
+              $this->Cell(55, 4,$to.' ' , 'BR', 0, 'L', 0, '', 1);
+            }           
+			
+			$this->SetXY(110, $interlinea +$add_int+ 6);
+            $this->SetFont('helvetica', '', 10);
             if (!empty($this->cliente1)){ // Antonio Germani - se non c'è cliente evito di scrivere (serve per template scontrino)
                   $this->Cell(15, 5, $this->pers_title.' ', 0, 0, 'R');
                   $this->Cell(75, 5, $this->cliente1, 0, 1, 'L', 0, '', 1);
@@ -189,6 +207,7 @@ class Template extends TCPDI {
               $this->Cell(15, 5,'', 0, 0, 'R');
               $this->Cell(75, 5,'', 0, 1, 'L', 0, '', 1);
             }
+			
             if (!empty($this->cliente2)) {
                 $this->Cell(115);
                 $this->Cell(75, 5, $this->cliente2, 0, 1, 'L', 0, '', 1);
@@ -198,13 +217,13 @@ class Template extends TCPDI {
             $this->Cell(75, 5, $this->cliente3, 0, 1, 'L', 0, '', 1);
             $this->Cell(115);
             $this->Cell(75, 5, $this->cliente4, 0, 1, 'L', 0, '', 1);
-
             $this->SetFont('helvetica', '', 7);
             if (!empty($this->c_Attenzione)) {
                 $this->SetFont('helvetica', '', 10);
                 $this->Cell(115, 8, 'alla C.A.', 0, 0, 'R');
                 $this->Cell(75, 8, $this->c_Attenzione, 0, 1, 'L', 0, '', 1);
             }
+			
             if (!empty($this->status)) {
               switch ($this->status) {
                 case "GENERATO":
@@ -229,7 +248,7 @@ class Template extends TCPDI {
                   $this->status = 'PREVENTIVO - Verificare sempre la disponibilità prima di prenotare';
                 break;
               }
-              $this->Cell(75, 8, "STATO DELLA PRENOTAZIONE: ".$this->status, 1, 1, 'C', 0, '', 1);
+              $this->Cell(75, 6, "STATO DELLA PRENOTAZIONE: ".$this->status, 1, 1, 'C', 1, '', 1);
             }
 
             $this->SetFont('helvetica', '', 7);
