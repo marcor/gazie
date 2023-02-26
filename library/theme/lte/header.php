@@ -99,16 +99,24 @@ if (file_exists(DATA_DIR.'files/'.$admin_aziend['codice'].'/favicon.ico')) { // 
     <link rel="stylesheet" href="../../library/theme/lte/adminlte/dist/css/AdminLTE.css">
     <link href="../../js/jquery.ui/jquery-ui.css" rel="stylesheet">
 		<script src="../../js/jquery/jquery.js"></script>
-
-
-        <?php
-        if (!empty($admin_aziend['style']) && file_exists("../../library/theme/lte/scheletons/" . $admin_aziend['style'])) {
-            $style = $admin_aziend['style'];
+    <?php
+    if (!empty($admin_aziend['style']) && file_exists("../../library/theme/lte/scheletons/" . $admin_aziend['style'])) {
+        $style = $admin_aziend['style'];
+    }
+    if (!empty($admin_aziend['skin']) && file_exists("../../library/theme/lte/skins/" . $admin_aziend['skin'])) {
+        $skin = $admin_aziend['skin'];
+        if (strpos($skin,'black')===false){ // non cambio lo sfondo
+        } else { // se è black inverto lo sfondo (negativo)
+          $im = @imagecreatefrompng( DATA_DIR . 'files/' . $admin_aziend['codice'] . '/sfondo.png');
+          imagefilter($im, IMG_FILTER_NEGATE);
+          ob_start ();
+          imagepng($im);
+          $image_data = ob_get_contents ();
+          ob_end_clean ();
+          $sfondo=base64_encode($image_data);
         }
-        if (!empty($admin_aziend['skin']) && file_exists("../../library/theme/lte/skins/" . $admin_aziend['skin'])) {
-            $skin = $admin_aziend['skin'];
-        }
-        ?>
+    }
+    ?>
         <link href="../../library/theme/lte/scheletons/<?php echo $style; ?>" rel="stylesheet" type="text/css" />
         <link href="../../library/theme/lte/skins/<?php echo $skin; ?>" rel="stylesheet" type="text/css" />
         <style>
