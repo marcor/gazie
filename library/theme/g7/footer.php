@@ -47,10 +47,20 @@ $contact_link=(isset($contact_link))?$contact_link:'';
 ?>
 
 <!-- questo è contenuto in library/theme/g7/footer.php -->
-<div class="navbar navbar-fixed-bottom" style="border:none;" >
-    <div style="background:white;" >Version: <?php echo GAZIE_VERSION; ?>
-        <a  class="pull-right hidden-xs" target="_new" href="https://<?php echo $contact_link; ?>">https://<?php echo $contact_link; ?></a>
-    </div>
+<div class="navbar navbar-fixed-bottom" style="border:none; background-color: white;" >
+  <div class="col-lg-4 col-xs-12">
+    Version <?php echo GAZIE_VERSION; ?>
+  </div>
+  <div class=" text-center col-lg-4 hidden-xs">
+    <?php
+    if ( $debug_active == true ){
+      echo '<span class="bg-danger text-danger">DEBUG ATTIVATO --> '.$_SESSION['aes_key'].'</span> <a class="btn btn-xs btn-info" href="../../passhash.php" >HASHES UTILITY</a>';
+    } ;
+    ?>
+  </div>
+  <div class="text-right col-lg-4 hidden-xs">
+    <a  target="_new" href="https://<?php echo $contact_link; ?>">https://<?php echo $contact_link; ?></a>
+  </div>
 </div>
 <script src="../../js/jquery.ui/jquery-ui.min.js"></script>
 <script><!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->

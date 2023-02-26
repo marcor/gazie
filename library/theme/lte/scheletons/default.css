@@ -650,3 +650,7 @@ section.content-header div h1 {
 	padding-top: 20px;
   color: #000;
 }
+.main-footer {
+	padding-bottom: 25px;
+	padding-top: 5px;
+}

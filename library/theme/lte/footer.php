@@ -32,16 +32,19 @@ require("../../modules/root/lang.".$admin_aziend['lang'].".php");
 $url = basename($_SERVER['REQUEST_URI'], '?' . $_SERVER['QUERY_STRING']);
 ?>
     <footer class="main-footer">
-        <div class="pull-right hidden-xs">
-        <?php echo $strScript['admin.php']['auth']; ?>:  <a  target="_new" title="<?php echo $strScript['admin.php']['auth']; ?>" href="https://<?php echo $contact_link; ?>">https://<?php echo $contact_link; ?></a>
-        </div>
-        Version
+      <div class="col-lg-4 col-xs-12">
+        Version <?php echo GAZIE_VERSION; ?>
+      </div>
+      <div class=" text-center col-lg-4 hidden-xs">
         <?php
-        echo GAZIE_VERSION;
         if ( $debug_active == true ){
-          echo '<span class="bg-danger text-danger">DEBUG ATTIVATO -->  '.$_SESSION['aes_key'].'</span>';
+          echo '<span class="bg-danger text-danger">DEBUG ATTIVATO --> '.$_SESSION['aes_key'].'</span> <a class="btn btn-xs btn-info" href="../../passhash.php" >HASHES UTILITY</a>';
         } ;
         ?>
+      </div>
+      <div class="text-right col-lg-4 hidden-xs">
+        <?php echo $strScript['admin.php']['auth']; ?>:  <a  target="_new" title="<?php echo $strScript['admin.php']['auth']; ?>" href="https://<?php echo $contact_link; ?>">https://<?php echo $contact_link; ?></a>
+      </div>
     </footer>
 
     <!-- Control Sidebar -->
