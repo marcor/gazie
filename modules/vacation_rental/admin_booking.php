@@ -1639,7 +1639,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     if (isset($pagame) && ($pagame['tippag'] == 'B' or $pagame['tippag'] == 'T' or $pagame['tippag'] == 'V' or $pagame['tippag'] == 'K') and $cliente['speban'] == 'S') {
         $form['numrat'] = $pagame['numrat'];
     } else {
-        $form['speban'] = 0.00;
         $form['numrat'] = 1;
     }
     $form['banapp'] = $tesbro['banapp'];

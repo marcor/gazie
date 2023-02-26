@@ -261,7 +261,35 @@ function tour_tax_daytopay($night,$start,$end,$tour_tax_from,$tour_tax_to,$tour_
 }
 
 // calcolo totale locazione
-function get_total_booking($tesbro){// da fare ...
-  global $link, $azTables;
+function get_totalprice_booking($tesbro){
+  if ($tesbro!==''){
+    global $link, $azTables, $gTables;
+    if ($azTables){
+      $tablerig = $azTables."rigbro";
+      $tabletes = $azTables."tesbro";
+    }else{
+      $tablerig = $gTables['rigbro'];
+      $tabletes = $gTables['tesbro'];
+    }
+    $where = " WHERE id_tes = '".$tesbro."'";
+    $sql = "SELECT SUM(quanti * prelis) AS totalprice FROM ".$tablerig.$where;
+    if ($result = mysqli_query($link, $sql)) {
+       $row = mysqli_fetch_assoc($result);
+        $where = " WHERE id_tes = '".$tesbro."'";
+        $sql = "SELECT speban FROM ".$tabletes.$where." LIMIT 1";
+        if ($result = mysqli_query($link, $sql)) {
+          $rowtes = mysqli_fetch_assoc($result);
+          $totalprice= $row['totalprice']+$rowtes['speban'];// aggiungo eventuali spese bancarie
+           return  $totalprice;
+        }else{
+          echo "Error: " . $sql . "<br>" . mysqli_error($link);
+        }
+    }else {
+       echo "Error: " . $sql . "<br>" . mysqli_error($link);
+    }
+  }else{
+    $err="tesbro vuoto";
+    return $err ;
+  }
 }
 ?>
