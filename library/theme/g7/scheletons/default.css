@@ -809,3 +809,6 @@ div#fattura-container {
 	padding-top: 20px;
   color: #000;
 }
+.ui-button {
+  padding: 1px;
+}

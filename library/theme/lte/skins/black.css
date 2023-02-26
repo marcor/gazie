@@ -35,8 +35,7 @@ button, optgroup, select {
 	border: px solid #444;
 }
 input, textarea {
-	background-color: #f4fdfd;
-  color: #000;
+	background-color: #121a1a;
 	border: 1px solid #888;
 }
 .FacetColumnTD {
@@ -257,9 +256,7 @@ nav.navbar.navbar-static-top.company-color-bright {
   border: 2px;
 	border-style: solid;
 }
-.ui-selectmenu-button span.ui-selectmenu-text {
-	background-color: #020202;
-}
+
 .table > tbody > tr.info > td, .table > tbody > tr.info > th, .table > tbody > tr > td.info, .table > tbody > tr > th.info, .table > tfoot > tr.info > td, .table > tfoot > tr.info > th, .table > tfoot > tr > td.info, .table > tfoot > tr > th.info, .table > thead > tr.info > td, .table > thead > tr.info > th, .table > thead > tr > td.info, .table > thead > tr > th.info {
 	background-color: #284360;
 }
@@ -309,4 +306,13 @@ ul.distintabase,
 .ui-widget-content .ui-state-active,
 .ui-widget-header .ui-state-active {
 	color: #000;
+}
+.ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited, a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
+	color: #fff;
+}
+.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus, .ui-button:hover, .ui-button:focus {
+	color: #fff;
+}
+.ui-button {
+  background: unset;
 }

@@ -654,3 +654,6 @@ section.content-header div h1 {
 	padding-bottom: 25px;
 	padding-top: 5px;
 }
+.ui-button {
+  padding: 1px;
+}
