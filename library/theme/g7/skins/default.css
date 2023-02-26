@@ -19,6 +19,10 @@ table.Tlarge {
 th {
 	background-color: #c4c7ca;
 }
+.main-footer {
+	background: #fff;
+	color: #000;
+}
 table.Tsmall {
 	border-color : #000000;
 }
