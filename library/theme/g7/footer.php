@@ -47,7 +47,7 @@ $contact_link=(isset($contact_link))?$contact_link:'';
 ?>
 
 <!-- questo è contenuto in library/theme/g7/footer.php -->
-<div class="navbar navbar-fixed-bottom" style="border:none; background-color: white;" >
+<div class="navbar navbar-fixed-bottom main-footer" >
   <div class="col-lg-4 col-xs-12">
     Version <?php echo GAZIE_VERSION; ?>
   </div>
