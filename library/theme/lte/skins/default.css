@@ -15,8 +15,8 @@ body {
 .dropdown-menu {
     border-color: #000;
 }
-.FacetFieldCaptionTD {
-    background-color: #9b9b8aab;
+.FacetFieldCaptionTD, label.control-label {
+    background-color: #9b9b8a24;
     color: #000;
 }
 th {

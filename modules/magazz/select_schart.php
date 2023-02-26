@@ -285,7 +285,7 @@ echo "</div>\n";
         </div>
       </div>
     </div><!-- chiude row  -->
-    <div class="row text-center bg-info">
+    <div class="text-center FacetFooterTD col-xs-12">
     <input type="submit" class="btn btn-info" accesskey="i" name="preview" value="<?php echo $script_transl['view']; ?>" tabindex="100" >
     </div><!-- chiude row  -->
   </div>

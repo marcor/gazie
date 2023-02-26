@@ -22,7 +22,7 @@ th a {
 th a:hover {
     color: #eee;
 }
-.FacetFieldCaptionTD {
+.FacetFieldCaptionTD, label.control-label {
 	background-color: #c7e8b1;
 	color: #000;
 }
