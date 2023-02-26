@@ -218,51 +218,79 @@ echo "<input type=\"hidden\" value=\"".$form['ritorno']."\" name=\"ritorno\" />\
 $gForm = new magazzForm();
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['title'];
 echo "</div>\n";
-echo '<table class="Tmiddle table-striped">';
-if (!empty($msg)) {
-    echo '<tr><td colspan="2" class="FacetDataTDred">'.$gForm->outputErrors($msg,$script_transl['errors'])."</td></tr>\n";
-}
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['date']."</td><td class=\"text-center\">\n";
-$gForm->CalendarPopup('this_date',$form['this_date_D'],$form['this_date_M'],$form['this_date_Y'],'FacetSelect',1);
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['cm_ini']."</td><td class=\"text-center\">\n";
-$gForm->selectFromDB('catmer','cm_ini','codice',$form['cm_ini'],false,false,'-','descri','cm_ini');
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['cm_fin']."</td><td class=\"text-center\">\n";
-$gForm->selectFromDB('catmer','cm_fin','codice',$form['cm_fin'],false,false,'-','descri','cm_fin');
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['art_ini']."</td><td class=\"text-center\">\n";
-$gForm->selItem('art_ini',$form['art_ini'],$form['search']['art_ini'],$script_transl['mesg'],$form['hidden_req']);
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['art_fin']."</td><td class=\"text-center\">\n";
-$gForm->selItem('art_fin',$form['art_fin'],$form['search']['art_fin'],$script_transl['mesg'],$form['hidden_req']);
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">Articolo pers.(% jolly)</td><td class=\"text-center\">\n";
-echo "<input name=\"ric\" value=\"".$form['ric']."\"/>";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['date_ini']."</td><td class=\"text-center\">\n";
-$gForm->CalendarPopup('date_ini',$form['date_ini_D'],$form['date_ini_M'],$form['date_ini_Y'],'FacetSelect',1);
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['date_fin']."</td><td class=\"text-center\">\n";
-$gForm->CalendarPopup('date_fin',$form['date_fin_D'],$form['date_fin_M'],$form['date_fin_Y'],'FacetSelect',1);
-echo "</tr>\n";
-echo "\t<tr>\n";
-echo '<td class="FacetFooterTD"></td>';
-echo '<td class="FacetFooterTD" align="center"> <input type="submit" class="btn btn-info" accesskey="i" name="preview" value="';
-echo $script_transl['view'];
-echo '" tabindex="100" >';
-echo "\t </td>\n";
-echo "\t </tr>\n";
-echo "</table>\n";
-
+?>
+<div class="panel panel-info gaz-table-form div-bordered">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="form-group">
+          <label for="date" class="col-xs-12 col-md-4 control-label"><?php echo $script_transl['date']; ?></label>
+          <?php $gForm->CalendarPopup('this_date',$form['this_date_D'],$form['this_date_M'],$form['this_date_Y'],'FacetSelect',1); ?>
+        </div>
+      </div>
+    </div><!-- chiude row  -->
+    <div class="row">
+      <div class="col-md-12">
+        <div class="form-group">
+          <label for="cm_ini" class="col-xs-12 col-md-4 control-label"><?php echo $script_transl['cm_ini']; ?></label>
+          <?php $gForm->selectFromDB('catmer','cm_ini','codice',$form['cm_ini'],false,false,'-','descri','cm_ini'); ?>
+        </div>
+      </div>
+    </div><!-- chiude row  -->
+    <div class="row">
+      <div class="col-md-12">
+        <div class="form-group">
+          <label for="cm_fin" class="col-xs-12 col-md-4 control-label"><?php echo $script_transl['cm_fin']; ?></label>
+          <?php $gForm->selectFromDB('catmer','cm_fin','codice',$form['cm_fin'],false,false,'-','descri','cm_fin'); ?>
+        </div>
+      </div>
+    </div><!-- chiude row  -->
+    <div class="row">
+      <div class="col-md-12">
+        <div class="form-group">
+          <label for="art_ini" class="col-xs-12 col-md-4 control-label"><?php echo $script_transl['art_ini']; ?></label>
+          <?php $gForm->selItem('art_ini',$form['art_ini'],$form['search']['art_ini'],$script_transl['mesg'],$form['hidden_req']); ?>
+        </div>
+      </div>
+    </div><!-- chiude row  -->
+    <div class="row">
+      <div class="col-md-12">
+        <div class="form-group">
+          <label for="art_fin" class="col-xs-12 col-md-4 control-label"><?php echo $script_transl['art_fin']; ?></label>
+          <?php $gForm->selItem('art_fin',$form['art_fin'],$form['search']['art_fin'],$script_transl['mesg'],$form['hidden_req']); ?>
+        </div>
+      </div>
+    </div><!-- chiude row  -->
+    <div class="row">
+      <div class="col-md-12">
+        <div class="form-group">
+          <label for="art_fin" class="col-xs-12 col-md-4 control-label">Articolo pers.(% jolly)</label>
+          <input name="ric" value="<?php echo $form['ric']; ?>"/>
+        </div>
+      </div>
+    </div><!-- chiude row  -->
+    <div class="row">
+      <div class="col-md-12">
+        <div class="form-group">
+          <label for="date_ini" class="col-xs-12 col-md-4 control-label"><?php echo $script_transl['date_ini']; ?></label>
+          <?php $gForm->CalendarPopup('date_ini',$form['date_ini_D'],$form['date_ini_M'],$form['date_ini_Y'],'FacetSelect',1); ?>
+        </div>
+      </div>
+    </div><!-- chiude row  -->
+    <div class="row">
+      <div class="col-md-12">
+        <div class="form-group">
+          <label for="date_fin" class="col-xs-12 col-md-4 control-label"><?php echo $script_transl['date_fin']; ?></label>
+          <?php $gForm->CalendarPopup('date_fin',$form['date_fin_D'],$form['date_fin_M'],$form['date_fin_Y'],'FacetSelect',1); ?>
+        </div>
+      </div>
+    </div><!-- chiude row  -->
+    <div class="row text-center bg-info">
+    <input type="submit" class="btn btn-info" accesskey="i" name="preview" value="<?php echo $script_transl['view']; ?>" tabindex="100" >
+    </div><!-- chiude row  -->
+  </div>
+</div>
+<?php
 $date_ini =  sprintf("%04d%02d%02d",$form['date_ini_Y'],$form['date_ini_M'],$form['date_ini_D']);
 $date_fin =  sprintf("%04d%02d%02d",$form['date_fin_Y'],$form['date_fin_M'],$form['date_fin_D']);
 if (isset($_POST['preview']) and $msg=='') {
