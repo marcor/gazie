@@ -42,12 +42,22 @@ if (file_exists(DATA_DIR.'files/'.$admin_aziend['codice'].'/favicon.ico')) { // 
     // carico il css strutturale grandezza font, posizione, ecc
     $style = 'base.css';
     if (!empty($admin_aziend['style']) && file_exists("../../library/theme/g7/scheletons/" . $admin_aziend['style'])) {
-        $style = $admin_aziend['style'];
+      $style = $admin_aziend['style'];
     }
     // carico i fogli di stile personalizzati nella subdir skin si imposta l'aspetto (colori, font, ecc)
     $skin = 'base.css';
     if (!empty($admin_aziend['skin']) && file_exists("../../library/theme/g7/skins/" . $admin_aziend['skin'])) {
-        $skin = $admin_aziend['skin'];
+      $skin = $admin_aziend['skin'];
+      if (strpos($skin,'black')===false){ // non cambio lo sfondo
+      } else { // se è black inverto lo sfondo (negativo)
+        $im = @imagecreatefrompng( DATA_DIR . 'files/' . $admin_aziend['codice'] . '/sfondo.png');
+        imagefilter($im, IMG_FILTER_NEGATE);
+        ob_start ();
+        imagepng($im);
+        $image_data = ob_get_contents ();
+        ob_end_clean ();
+        $sfondo=base64_encode($image_data);
+      }
     }
     function hex_color_mod($hex, $diff) {
       $rgb = str_split($hex, 2);
