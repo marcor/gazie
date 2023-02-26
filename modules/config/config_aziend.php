@@ -251,8 +251,9 @@ $( "#upsave" ).click(function() {
 ?>
 </script>
 <?php
-require("../../library/include/footer.php");
-
+if ($modal === false) {
+  require("../../library/include/footer.php");
+}
 function isJson($str) {
 	return !preg_match('/[^,:{}\\[\\]0-9.\\-+Eaeflnr-u \\n\\r\\t]/', preg_replace('/"(\\.|[^"\\\\])*"/', '', $str));
 }
