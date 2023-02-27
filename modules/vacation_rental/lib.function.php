@@ -263,7 +263,8 @@ function tour_tax_daytopay($night,$start,$end,$tour_tax_from,$tour_tax_to,$tour_
 // calcolo totale locazione
 function get_totalprice_booking($tesbro){
   if ($tesbro!==''){
-    global $link, $azTables, $gTables;
+    $tesbro=intval($tesbro);
+    global $link, $azTables, $gTables;// posso chiamare la funzione con entrambi i metodi
     if ($azTables){
       $tablerig = $azTables."rigbro";
       $tabletes = $azTables."tesbro";
@@ -279,6 +280,7 @@ function get_totalprice_booking($tesbro){
         $sql = "SELECT speban FROM ".$tabletes.$where." LIMIT 1";
         if ($result = mysqli_query($link, $sql)) {
           $rowtes = mysqli_fetch_assoc($result);
+		  $rowtes['speban']=(isset($rowtes['speban']))?$rowtes['speban']:0;
           $totalprice= $row['totalprice']+$rowtes['speban'];// aggiungo eventuali spese bancarie
            return  $totalprice;
         }else{
@@ -292,4 +294,93 @@ function get_totalprice_booking($tesbro){
     return $err ;
   }
 }
+
+function get_total_promemo($startprom,$endprom){
+  global $link, $azTables, $gTables;// posso chiamare la funzione con entrambi i metodi
+  if ($azTables){
+    $tableart = $azTables."artico";
+    $tablerent_ev = $azTables."rental_events";
+    $tabletes = $azTables."tesbro";
+  }else{
+    $tableart = $gTables['artico'];
+    $tablerent_ev = $gTables['rental_events'];
+    $tabletes = $gTables['tesbro'];
+  }
+  $data = [];
+  $tot_nights_booked=0;
+  $ret=[];
+  $ret['totalprice_booking']=0;
+  $what = "codice";
+  $datediff = strtotime($endprom)-strtotime($startprom);
+  $night_promemo = round($datediff / (60 * 60 * 24));// numero notti dell'arco di tempo richiesto
+  $where = "good_or_service=1 AND (custom_field REGEXP 'accommodation_type')";
+  $sql = "SELECT ".$what." FROM ".$tableart." WHERE ".$where;
+  $resulth = mysqli_query($link, $sql); // prendo tutti gli alloggi
+  foreach ($resulth as $resh){ // per ogni alloggio
+    // prendo tutti gli eventi dell'alloggio che interessano l'arco di tempo richiesto
+    $sql = "SELECT * FROM ".$tablerent_ev." LEFT JOIN ".$tabletes." ON  ".$tablerent_ev.".id_tesbro = ".$tabletes.".id_tes WHERE (custom_field IS NULL OR custom_field LIKE '%PENDING%' OR custom_field LIKE '%CONFIRMED%' OR custom_field LIKE '%FROZEN%') AND house_code='".substr($resh['codice'], 0, 32)."' AND (start >= '".$startprom."' OR start <= '".$endprom."' OR end >= '".$startprom."' OR end <= '".$endprom."') ORDER BY id ASC";
+    //echo $sql;
+    $result = mysqli_query($link, $sql);
+    $num_all = $result->num_rows;// numero alloggi presenti in GAzie
+    foreach($result as $row){ // per ogni evento dell'alloggio
+      //echo "<pre>evento alloggio:",print_r($row);die;
+      $datediff = strtotime($row['end'])-strtotime($row['start']);
+      $nights_event = round($datediff / (60 * 60 * 24));// numero notti totali della prenotazione(evento)
+      $tot_n_event_in_promemo=0;
+      $start=$row['start'];
+      $end=$row['end'];
+      // ciclo i giorni dell'evento
+      while (strtotime($start) < strtotime($end)) {// per ogni giorno dell'evento
+
+        if ($start >= $startprom AND $start <= $endprom) {// se il giorno è dentro l'arco di tempo richiesto
+
+          if (!isset($data[$start])){
+            $data[$start]=array();
+          }
+            if (!in_array($row['house_code'],$data[$start])){// escludendo i giorni che hanno già quell'alloggio
+             array_push($data[$start],$row['house_code']);// conteggio il giorno per questo alloggio
+             $tot_nights_booked  ++;
+             $tot_n_event_in_promemo ++;
+          }
+
+        }
+        $start = date ("Y-m-d", strtotime("+1 days", strtotime($start)));// aumento di un giorno il ciclo
+      }
+      $ret['totalprice_booking'] += ((get_totalprice_booking($row['id_tesbro']))/$nights_event)*$tot_n_event_in_promemo;// aggiungo il costo medio della locazione(evento) calcolata sui giorni che rientrano nell'arco di tempo richiesto
+    }
+  }
+  $ret['tot_nights_bookable']= $num_all * $night_promemo;
+  $ret['perc_booked'] = ($tot_nights_booked/$ret['tot_nights_bookable'])*100;
+  $ret['tot_nights_booked'] = $tot_nights_booked;
+
+  return $ret;
+}
+
+function get_next_check($startprom,$endprom){
+  global $link, $azTables, $gTables;// posso chiamare la funzione con entrambi i metodi
+  $next['in']=[];
+  $next['out']=[];
+  if ($azTables){
+    $tableart = $azTables."artico";
+    $tablerent_ev = $azTables."rental_events";
+    $tabletes = $azTables."tesbro";
+  }else{
+    $tableart = $gTables['artico'];
+    $tablerent_ev = $gTables['rental_events'];
+    $tabletes = $gTables['tesbro'];
+  }
+  $rs_booking = gaz_dbi_dyn_query("*", $tablerent_ev, 'start >= '.$startprom.' OR start <= '.$endprom.' OR end >= '.$startprom.' OR end <= '.$endprom, "id asc");
+  while ($booking = gaz_dbi_fetch_array($rs_booking)){// ciclo le prenotazioni che interessano arco di tempo richiesto
+    if ($booking['start']>= $startprom && $booking['start'] <= $endprom){//se la data di check-in è dentro
+      $next['in'][]=$booking['id'];
+    }
+    if ($booking['end']>= $startprom && $booking['end'] <= $endprom){//se la data di check-out è dentro
+      $next['out'][]=$booking['id'];
+    }
+  }
+  return $next;
+
+}
+
+
 ?>
