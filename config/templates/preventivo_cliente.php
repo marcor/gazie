@@ -162,7 +162,7 @@ class PreventivoCliente extends Template
           foreach ($this->docVars->cast as $key => $value) {
             $this->Cell(62);
             $this->Cell(18, 4, gaz_format_number($value['impcast']).' ', 0, 0, 'R');
-            $this->Cell(32, 4, $value['descriz'],0,0,'C');
+            $this->Cell(32, 4, $value['descriz'],0,0,'C', 0, '', 1);
             $this->Cell(18, 4, gaz_format_number($value['ivacast']).' ',0,1,'R');
           }
 		}
