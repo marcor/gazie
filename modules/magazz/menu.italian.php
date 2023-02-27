@@ -49,7 +49,8 @@ $transl['magazz'] = array('name' => "Magazzino",
                                          12 =>array("Inserisci un nuovo raggruppamento statistico","Nuovo Raggruppamento statistico"),
                                          13 =>array("Situazione di Magazzino","Visualizza situazione di magazzino"),
                                          14 =>array("Inserisci un nuovo gruppo","Inserisci nuovo gruppo"),
-                                         15 =>array("Inserisci un nuovo magazzino","Inserisci nuovo magazzino")
+                                         15 =>array("Inserisci un nuovo magazzino","Inserisci nuovo magazzino"),
+                                         16 =>array("Cambio codice articolo","Cambio codice articolo")
                                       )
                           );
 ?>

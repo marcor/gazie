@@ -605,6 +605,19 @@ $strScript = array(
         'web_url' => 'Indirizzo web',
         'image' => 'Immagine',
         'note_other' => 'Descrizione/Indirizzo',
-    )
+    ),
+    "change_codart.php" =>
+      array(0 => 'Cambia codici articoli di magazzino',
+        'title' => 'Cambio codici articoli di magazzino',
+        'mesg' => array('La ricerca non ha dato risultati!',
+            'Inserire almeno 1 carattere!',
+            'Cambia articolo'
+        ),
+        'err' => ['noold'=>'Codice attuale dell\'articolo non selezionato','nonew'=>'Nuovo codice non selezionato'],
+        'war' => ['alert'=>' La modifica di un codice articolo viene propagato su tutte le tabelle in cui è stato utilizzato e quindi su tutti i documenti emessi in passato anche se essi hanno valenza fiscale e/o giuridica, ad esempio: fatture, documenti di trasposto, ordini, preventivi, movimenti e schedari di magazzino ecc  '
+        ],
+        'oldcodart' => 'Codice attuale dell\'articolo',
+        'newcodart' => 'Nuovo codice'
+      )
 );
 ?>

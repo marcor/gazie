@@ -95,19 +95,19 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
         $form['ric'] = "";
     }
     if (isset($_GET['id'])) {
-       $item=gaz_dbi_get_row($gTables['artico'],'codice',substr($_GET['id'],0,15));
+       $item=gaz_dbi_get_row($gTables['artico'],'codice',substr($_GET['id'],0,32));
        $form['art_ini']=$item['codice'];
        $form['art_fin']=$item['codice'];
        $form['cm_ini']=$item['catmer'];
        $form['cm_fin']=$item['catmer'];
     }  else {
        if (isset($_GET['ai'])) {
-          $form['art_ini']=substr($_GET['ai'],0,15);
+          $form['art_ini']=substr($_GET['ai'],0,32);
        } else {
           $form['art_ini']=getExtremeValue($gTables['artico']);
        }
        if (isset($_GET['af'])) {
-          $form['art_fin']=substr($_GET['af'],0,15);
+          $form['art_fin']=substr($_GET['af'],0,32);
        } else {
           $form['art_fin']=getExtremeValue($gTables['artico'],'MAX');
        }
@@ -138,9 +138,9 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['this_date_D']=intval($_POST['this_date_D']);
     $form['cm_ini']=intval($_POST['cm_ini']);
     $form['cm_fin']=intval($_POST['cm_fin']);
-    $form['art_ini']=substr($_POST['art_ini'],0,15);
-    $form['art_fin']=substr($_POST['art_fin'],0,15);
-    $form['ric']=substr($_POST['ric'],0,15);
+    $form['art_ini']=substr($_POST['art_ini'],0,32);
+    $form['art_fin']=substr($_POST['art_fin'],0,32);
+    $form['ric']=substr($_POST['ric'],0,32);
 	foreach($_POST['search'] as $k=>$v){
        $form['search'][$k]=$v;
     }
