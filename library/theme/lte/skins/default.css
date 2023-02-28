@@ -9,6 +9,10 @@ body {
 .contenuto-help {
    background-color: #fff;
 }
+aside.control-sidebar.control-sidebar-dark.control-sidebar-open div.tab-content
+{
+  background-color: #000;
+}
 .control-label {
    /*background-color: #c4c7ca;*/
 }
