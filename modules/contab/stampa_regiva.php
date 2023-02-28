@@ -343,7 +343,7 @@ for ($i = 1; $i <= $p_max; $i++) {
     $totimpost_liq = 0.00;
     $totindetr_liq = 0.00;
     foreach ($pdf->rows as $k => $v) {
-		$pdf->SetTextColor(0);
+      $pdf->SetTextColor(0);
         switch ($v['operat']) {
             case "1":
                 $imponi = $v['imponi'];
@@ -465,6 +465,7 @@ for ($i = 1; $i <= $p_max; $i++) {
         }
         $ctrl = $v['id_tes'];
     }
+    $pdf->SetTextColor(0);
 
     $pdf->setTopCarryBar('');
     $pdf->setBotCarryBar('');
