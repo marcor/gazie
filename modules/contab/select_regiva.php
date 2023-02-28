@@ -55,11 +55,9 @@ function getLastMonth($sez, $reg) { // Antonio Germani - funzione per recuperare
 
 function getMovements($vat_section, $vat_reg, $date_ini, $date_fin) {
     global $gTables, $admin_aziend;
-
     // BEGIN fromthestone: prendo il valore della configurazione per numerazione note credito/debito
     $num_nc_nd = gaz_dbi_get_row($gTables['company_config'], 'var', 'num_note_separate')['val'];
     // END fromthestone
-
     $m = array();
     $where = "(datreg BETWEEN $date_ini AND $date_fin OR datliq BETWEEN $date_ini AND $date_fin) AND seziva = $vat_section AND regiva = $vat_reg";
     $orderby = "datreg, protoc";
@@ -80,101 +78,101 @@ function getMovements($vat_section, $vat_reg, $date_ini, $date_fin) {
     $c_p = 0;
     $c_ndoc = array();
     while ($r = gaz_dbi_fetch_array($rs)) {
-        // inizio controllo errori di numerazione
-		$date_reg=gaz_format_date($r['datreg'],false,3);
-        if (empty($r['tipiva'])) {  // errore: aliquota IVA non tipizzata
-            $r['err_t'] = 'ERROR';
+      $r['numdoc']=reset(array_filter(preg_split("/\D+/", $r['numdoc'])));
+      // inizio controllo errori di numerazione
+      $date_reg=gaz_format_date($r['datreg'],false,3);
+      if (empty($r['tipiva'])) {  // errore: aliquota IVA non tipizzata
+        $r['err_t'] = 'ERROR';
+      }
+      if ($c_sr != ($r['ctrl_sr'])) { // devo azzerare tutto perché cambiato l'anno
+        $c_sr = 0;
+        $c_id = 0;
+        $c_p = 0;
+        $c_ndoc = array();
+        if ($r['protoc'] <> 1) { // errore: il protocollo non é 1
+          // non lo rilevo in quanto i registri IVA non sono annuali
         }
-		if ($c_sr != ($r['ctrl_sr'])) { // devo azzerare tutto perché cambiato l'anno
-			$c_sr = 0;
-			$c_id = 0;
-			$c_p = 0;
-			$c_ndoc = array();
-			if ($r['protoc'] <> 1) { // errore: il protocollo non é 1
-				// non lo rilevo in quanto i registri IVA non sono annuali
-			}
-		} else {
-			$ex = $c_p + 1;
-			if ($r['protoc'] <> $ex && $r['id_tes'] <> $c_id) {  // errore: il protocollo non � consecutivo
-				if ($date_reg>=$date_ini&&$date_reg<=$date_fin){ // controllo solo i movimenti registrati nel periodo selezionato, gli altri liquidabili no
-					$r['err_p'] = $ex;
-				}
-			}
-		}
-        if ($r['regiva'] < 4 && $vat_section <> $admin_aziend['reverse_charge_sez']) { // il controllo sul numero solo per i registri delle fatture di vendita e non reverse charge
-          // fromthestone: comportamento standard, note credito e debito con diversa numerazione da fatture ->
-          // num_note_separate = 1
-          // per evitare la segnalazione di errore quando si passa da fattura immediata a differita e viceversa
-          if ($num_nc_nd == 1) {
-            $r['caucon'] = ($r['caucon']=='FAD')?'FAI':$r['caucon'];
-          } else {
-            // fromthestone: note credito e debito stessa numerazione da fatture
-            $r['caucon'] = ($r['caucon'] == 'FAD' || $r['caucon'] == 'FNC' || $r['caucon'] == 'FND') ? 'FAI' : $r['caucon'];
+      } else {
+        $ex = $c_p + 1;
+        if ($r['protoc'] <> $ex && $r['id_tes'] <> $c_id) {  // errore: il protocollo non � consecutivo
+          if ($date_reg>=$date_ini&&$date_reg<=$date_fin){ // controllo solo i movimenti registrati nel periodo selezionato, gli altri liquidabili no
+            $r['err_p'] = $ex;
           }
-
-            if (isset($c_ndoc[$r['caucon']])) { // controllo se il numero precedente � questo-1
-                $ex = $c_ndoc[$r['caucon']] + 1;
-                if ($r['numdoc'] <> $ex && $c_id <> $r['id_tes']) {  // errore: il numero non � consecutivo
-                    $r['err_n'] = $ex;
-                }
-            } else {  // dal primo documento di questo tipo ci si aspetta il n.1
-                if ($r['numdoc'] <> 1) { // errore: il numero non � 1
-                    // non lo rilevo in quanto i registri IVA non sono annuali
-                }
-            }
         }
-        $c_ndoc[$r['caucon']] = $r['numdoc'];
-		$c_sr = $r['ctrl_sr'];
-		$c_id = $r['id_tes'];
-		$c_p = $r['protoc'];
-        // fine controllo errori di numerazione
-        $m[] = $r;
+      }
+      if ($r['regiva'] < 4 && $vat_section <> $admin_aziend['reverse_charge_sez']) { // il controllo sul numero solo per i registri delle fatture di vendita e non reverse charge
+        // fromthestone: comportamento standard, note credito e debito con diversa numerazione da fatture ->
+        // num_note_separate = 1
+        // per evitare la segnalazione di errore quando si passa da fattura immediata a differita e viceversa
+        if ($num_nc_nd == 1) {
+          $r['caucon'] = ($r['caucon']=='FAD')?'FAI':$r['caucon'];
+        } else {
+          // fromthestone: note credito e debito stessa numerazione da fatture
+          $r['caucon'] = ($r['caucon'] == 'FAD' || $r['caucon'] == 'FNC' || $r['caucon'] == 'FND') ? 'FAI' : $r['caucon'];
+        }
+        if (isset($c_ndoc[$r['caucon']])) { // controllo se il numero precedente � questo-1
+          $ex = $c_ndoc[$r['caucon']] + 1;
+          if ($r['numdoc'] <> $ex && $c_id <> $r['id_tes']) {  // errore: il numero non � consecutivo
+            $r['err_n'] = $ex;
+          }
+        } else {  // dal primo documento di questo tipo ci si aspetta il n.1
+          if ($r['numdoc'] <> 1) { // errore: il numero non � 1
+            // non lo rilevo in quanto i registri IVA non sono annuali
+          }
+        }
+      }
+      $c_ndoc[$r['caucon']] = $r['numdoc'];
+      $c_sr = $r['ctrl_sr'];
+      $c_id = $r['id_tes'];
+      $c_p = $r['protoc'];
+      // fine controllo errori di numerazione
+      $m[] = $r;
     }
     return $m;
 }
 
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
-    $form['hidden_req'] = '';
-    $form['ritorno'] = $_SERVER['HTTP_REFERER'];
-    require("lang." . $admin_aziend['lang'] . ".php");
+  $form['hidden_req'] = '';
+  $form['ritorno'] = $_SERVER['HTTP_REFERER'];
+  require("lang." . $admin_aziend['lang'] . ".php");
 	$last_month_print = getLastMonth(1,2); // Antonio Germani - prendo l'ultimo mese stampato dal DB e propongo nel form il mese successivo
-    if ($admin_aziend['ivam_t'] == 'M') {
-        $utsdatini = mktime(0, 0, 0, $last_month_print + 1, 1, date("Y"));
-        $utsdatfin = mktime(0, 0, 0, $last_month_print + 2, 0, date("Y"));
-    } elseif ($last_month_print >= 1 and $last_month_print < 4) {
-        $utsdatini = mktime(0, 0, 0, 4, 1, date("Y"));
-        $utsdatfin = mktime(0, 0, 0, 6, 30, date("Y"));
-    } elseif ($last_month_print >= 4 and $last_month_print < 7) {
-        $utsdatini = mktime(0, 0, 0, 7, 1, date("Y"));
-        $utsdatfin = mktime(0, 0, 0, 9, 30, date("Y"));
-    } elseif ($last_month_print >= 7 and $last_month_print < 10) {
-        $utsdatini = mktime(0, 0, 0, 10, 1, date("Y"));
-        $utsdatfin = mktime(0, 0, 0, 12, 31, date("Y"));
-    } elseif ($last_month_print >= 10 and $last_month_print <= 12) {
-        $utsdatini = mktime(0, 0, 0, 1, 1, date("Y")+1);
-        $utsdatfin = mktime(0, 0, 0, 3, 31, date("Y")+1);
-    } elseif ($last_month_print == 0 ) {
-        $utsdatini = mktime(0, 0, 0, 1, 1, date("Y"));
-        $utsdatfin = mktime(0, 0, 0, 3, 31, date("Y"));
-    }
-    $form['jump'] = 'jump';
-    $form['date_ini_D'] = 1;
-    $form['date_ini_M'] = date("m", $utsdatini);
-    $form['date_ini_Y'] = date("Y", $utsdatini);
-    $form['date_fin_D'] = date("d", $utsdatfin);
-    $form['date_fin_M'] = date("m", $utsdatfin);
-    $form['date_fin_Y'] = date("Y", $utsdatfin);
-    $form['vat_section'] = 1;
-    $form['vat_reg'] = 2;
-	$form['lastvatreg'] = $form['vat_reg'];
-	$form['lastvatsection'] = $form['vat_section'];
-    $form['sta_def'] = false;
-    $form['sem_ord'] = 1;
-    $form['cover'] = false;
-    $form['page_ini'] = getPage_ini(1, 2);
+  if ($admin_aziend['ivam_t'] == 'M') {
+      $utsdatini = mktime(0, 0, 0, $last_month_print + 1, 1, date("Y"));
+      $utsdatfin = mktime(0, 0, 0, $last_month_print + 2, 0, date("Y"));
+  } elseif ($last_month_print >= 1 and $last_month_print < 4) {
+      $utsdatini = mktime(0, 0, 0, 4, 1, date("Y"));
+      $utsdatfin = mktime(0, 0, 0, 6, 30, date("Y"));
+  } elseif ($last_month_print >= 4 and $last_month_print < 7) {
+      $utsdatini = mktime(0, 0, 0, 7, 1, date("Y"));
+      $utsdatfin = mktime(0, 0, 0, 9, 30, date("Y"));
+  } elseif ($last_month_print >= 7 and $last_month_print < 10) {
+      $utsdatini = mktime(0, 0, 0, 10, 1, date("Y"));
+      $utsdatfin = mktime(0, 0, 0, 12, 31, date("Y"));
+  } elseif ($last_month_print >= 10 and $last_month_print <= 12) {
+      $utsdatini = mktime(0, 0, 0, 1, 1, date("Y")+1);
+      $utsdatfin = mktime(0, 0, 0, 3, 31, date("Y")+1);
+  } elseif ($last_month_print == 0 ) {
+      $utsdatini = mktime(0, 0, 0, 1, 1, date("Y"));
+      $utsdatfin = mktime(0, 0, 0, 3, 31, date("Y"));
+  }
+  $form['jump'] = 'jump';
+  $form['date_ini_D'] = 1;
+  $form['date_ini_M'] = date("m", $utsdatini);
+  $form['date_ini_Y'] = date("Y", $utsdatini);
+  $form['date_fin_D'] = date("d", $utsdatfin);
+  $form['date_fin_M'] = date("m", $utsdatfin);
+  $form['date_fin_Y'] = date("Y", $utsdatfin);
+  $form['vat_section'] = 1;
+  $form['vat_reg'] = 2;
+  $form['lastvatreg'] = $form['vat_reg'];
+  $form['lastvatsection'] = $form['vat_section'];
+  $form['sta_def'] = false;
+  $form['sem_ord'] = 1;
+  $form['cover'] = false;
+  $form['page_ini'] = getPage_ini(1, 2);
 } else { // accessi successivi
-    $form['hidden_req'] = htmlentities($_POST['hidden_req']);
-    $form['ritorno'] = $_POST['ritorno'];
+  $form['hidden_req'] = htmlentities($_POST['hidden_req']);
+  $form['ritorno'] = $_POST['ritorno'];
 	$form['lastvatreg']=$_POST['lastvatreg'];
 	$form['lastvatsection']=$_POST['lastvatsection'];
 	// Antonio Germani - se è stato cambiato registro IVA o sezione IVA prendo l'ultimo mese stampato dal DB e propongo nel form il mese successivo
@@ -215,42 +213,42 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 		$form['date_fin_M'] = intval($_POST['date_fin_M']);
 		$form['date_fin_Y'] = intval($_POST['date_fin_Y']);
 	}
-    $form['vat_section'] = intval($_POST['vat_section']);
-    $form['vat_reg'] = intval($_POST['vat_reg']);
-    if (isset($_POST['sta_def'])) {
-        $form['sta_def'] = substr($_POST['sta_def'], 0, 8);
-    } else {
-        $form['sta_def'] = '';
-    }
-    if (isset($_POST['jump'])) {
-        $form['jump'] = substr($_POST['jump'], 0, 8);
-    } else {
-        $form['jump'] = '';
-    }
-    $form['sem_ord'] = intval($_POST['sem_ord']);
-    if (isset($_POST['cover'])) {
-        $form['cover'] = substr($_POST['cover'], 0, 8);
-    } else {
-        $form['cover'] = '';
-    }
-    if ($form['hidden_req'] == 'vat_reg' || $form['hidden_req'] == 'vat_section') {
-        require("lang." . $admin_aziend['lang'] . ".php");
-        $form['page_ini'] = getPage_ini($form['vat_section'], $form['vat_reg']);
-		if ($form['vat_reg']==9){ // ho cambiato per vedere i versamenti propongo tutta la lista dall'anno precedente
-			$dl = new DateTime('-1 year');
-			$form['date_ini_D'] = 1;
-			$form['date_ini_M'] = 1;
-			$form['date_ini_Y'] = $dl->format('Y');
-			$form['jump'] = '';
-		}
-        $form['hidden_req'] = '';
-    } else {
-        $form['page_ini'] = intval($_POST['page_ini']);
-    }
-    if (isset($_POST['return'])) {
-        header("Location: " . $form['ritorno']);
-        exit;
-    }
+  $form['vat_section'] = intval($_POST['vat_section']);
+  $form['vat_reg'] = intval($_POST['vat_reg']);
+  if (isset($_POST['sta_def'])) {
+    $form['sta_def'] = substr($_POST['sta_def'], 0, 8);
+  } else {
+    $form['sta_def'] = '';
+  }
+  if (isset($_POST['jump'])) {
+    $form['jump'] = substr($_POST['jump'], 0, 8);
+  } else {
+    $form['jump'] = '';
+  }
+  $form['sem_ord'] = intval($_POST['sem_ord']);
+  if (isset($_POST['cover'])) {
+    $form['cover'] = substr($_POST['cover'], 0, 8);
+  } else {
+    $form['cover'] = '';
+  }
+  if ($form['hidden_req'] == 'vat_reg' || $form['hidden_req'] == 'vat_section') {
+      require("lang." . $admin_aziend['lang'] . ".php");
+      $form['page_ini'] = getPage_ini($form['vat_section'], $form['vat_reg']);
+  if ($form['vat_reg']==9){ // ho cambiato per vedere i versamenti propongo tutta la lista dall'anno precedente
+    $dl = new DateTime('-1 year');
+    $form['date_ini_D'] = 1;
+    $form['date_ini_M'] = 1;
+    $form['date_ini_Y'] = $dl->format('Y');
+    $form['jump'] = '';
+  }
+    $form['hidden_req'] = '';
+  } else {
+    $form['page_ini'] = intval($_POST['page_ini']);
+  }
+  if (isset($_POST['return'])) {
+    header("Location: " . $form['ritorno']);
+    exit;
+  }
 }
 
 //controllo i campi
