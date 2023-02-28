@@ -53,15 +53,17 @@ class FatturaImmediata extends Template_con_scheda
       } else {
         $nomemese = '';
       }
-        $this->virtual_taxstamp=$this->tesdoc['virtual_taxstamp'];
-        $this->taxstamp=$this->tesdoc['taxstamp'];
-        $this->sconto = $this->tesdoc['sconto'];
-        $this->trasporto = $this->tesdoc['traspo'];
-		if ($this->tesdoc['numfat']>0){
-			$numfat = $this->tesdoc['numfat'].'/'.$this->tesdoc['seziva'];
-		} else {
-			$numfat = '_ _ _ _ _ _ _';
-		}
+      $this->virtual_taxstamp=$this->tesdoc['virtual_taxstamp'];
+      $this->taxstamp=$this->tesdoc['taxstamp'];
+      $this->sconto = $this->tesdoc['sconto'];
+      $this->trasporto = $this->tesdoc['traspo'];
+      if (strlen($this->tesdoc['fattura_elettronica_original_name'])>10){ // file importato
+        $numfat = $this->tesdoc['numfat'];
+      } else if ($this->tesdoc['numfat']>0){
+        $numfat = $this->tesdoc['numfat'].'/'.$this->tesdoc['seziva'];
+      } else {
+        $numfat = '_ _ _ _ _ _ _';
+      }
         if ($this->tesdoc['tipdoc'] == 'FAF') {
             $descri = 'Autofattura (TD26) n.';
         } elseif ($this->tesdoc['tipdoc'] == 'FAA') {

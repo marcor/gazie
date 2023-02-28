@@ -42,12 +42,12 @@ class FatturaSemplice extends Template {
   public $descriptive_last_row;
   public $show_artico_composit;
 
-    function setTesDoc() {
-      $this->tesdoc = $this->docVars->tesdoc;
-      $this->destinazione = '';
-      $this->giorno = substr($this->tesdoc['datfat'], 8, 2);
-      $this->mese = substr($this->tesdoc['datfat'], 5, 2);
-      $this->anno = substr($this->tesdoc['datfat'], 0, 4);
+  function setTesDoc() {
+    $this->tesdoc = $this->docVars->tesdoc;
+    $this->destinazione = '';
+    $this->giorno = substr($this->tesdoc['datfat'], 8, 2);
+    $this->mese = substr($this->tesdoc['datfat'], 5, 2);
+    $this->anno = substr($this->tesdoc['datfat'], 0, 4);
 		if ($this->tesdoc['datfat']){
       $datfat =  new DateTime($this->tesdoc['datfat']);
       $this->docVars->gazTimeFormatter->setPattern('MMMM');
@@ -55,32 +55,34 @@ class FatturaSemplice extends Template {
 		} else {
 			$nomemese = '';
 		}
-        $this->sconto = $this->tesdoc['sconto'];
-        $this->virtual_taxstamp = $this->tesdoc['virtual_taxstamp'];
-        $this->trasporto = $this->tesdoc['traspo'];
-        if ($this->tesdoc['tipdoc'] == 'FAD') {
-            $descri = 'Fattura differita n.';
-        } elseif ($this->tesdoc['tipdoc'] == 'FNC') {
-            $descri = 'Nota di credito n.';
-        } elseif ($this->tesdoc['tipdoc'] == 'FND') {
-            $descri = 'Nota di debito n.';
-        } elseif ($this->tesdoc['tipdoc'] == 'FAA') {
-            $descri = 'Fattura di acconto n.';
-        } elseif ($this->tesdoc['tipdoc'] == 'FAF') {
-            $descri = 'Autofattura (TD26) n.';
-        } elseif ($this->tesdoc['tipdoc'] == 'FAQ') {
-            $descri = 'Parcella d\'acconto n.';
-        } else {
-            $descri = 'Fattura immediata n.';
-        }
-		if ($this->tesdoc['numfat']>0){
+    $this->sconto = $this->tesdoc['sconto'];
+    $this->virtual_taxstamp = $this->tesdoc['virtual_taxstamp'];
+    $this->trasporto = $this->tesdoc['traspo'];
+    if ($this->tesdoc['tipdoc'] == 'FAD') {
+        $descri = 'Fattura differita n.';
+    } elseif ($this->tesdoc['tipdoc'] == 'FNC') {
+        $descri = 'Nota di credito n.';
+    } elseif ($this->tesdoc['tipdoc'] == 'FND') {
+        $descri = 'Nota di debito n.';
+    } elseif ($this->tesdoc['tipdoc'] == 'FAA') {
+        $descri = 'Fattura di acconto n.';
+    } elseif ($this->tesdoc['tipdoc'] == 'FAF') {
+        $descri = 'Autofattura (TD26) n.';
+    } elseif ($this->tesdoc['tipdoc'] == 'FAQ') {
+        $descri = 'Parcella d\'acconto n.';
+    } else {
+        $descri = 'Fattura immediata n.';
+    }
+    if (strlen($this->tesdoc['fattura_elettronica_original_name'])>10){ // file importato
+      $numfat = $this->tesdoc['numfat'];
+    } else if ($this->tesdoc['numfat']>0){
 			$numfat = $this->tesdoc['numfat'].'/'.$this->tesdoc['seziva'];
 		} else {
 			$numfat = ' _ _ _ _ _ _ _';
 		}
-        $this->tipdoc = $descri . $numfat . ' del ' . $this->giorno . ' ' . $nomemese . ' ' . $this->anno;
-        $this->descriptive_last_row = $this->docVars->descriptive_last_row;
-    }
+    $this->tipdoc = $descri . $numfat . ' del ' . $this->giorno . ' ' . $nomemese . ' ' . $this->anno;
+    $this->descriptive_last_row = $this->docVars->descriptive_last_row;
+  }
 
     function newPage() {
         $this->AddPage();
