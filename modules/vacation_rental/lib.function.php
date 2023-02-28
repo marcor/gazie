@@ -318,12 +318,12 @@ function get_total_promemo($startprom,$endprom){
   $resulth = mysqli_query($link, $sql); // prendo tutti gli alloggi
   foreach ($resulth as $resh){ // per ogni alloggio
     // prendo tutti gli eventi dell'alloggio che interessano l'arco di tempo richiesto
-    $sql = "SELECT * FROM ".$tablerent_ev." LEFT JOIN ".$tabletes." ON  ".$tablerent_ev.".id_tesbro = ".$tabletes.".id_tes WHERE (custom_field IS NULL OR custom_field LIKE '%PENDING%' OR custom_field LIKE '%CONFIRMED%' OR custom_field LIKE '%FROZEN%') AND house_code='".substr($resh['codice'], 0, 32)."' AND (start >= '".$startprom."' OR start <= '".$endprom."' OR end >= '".$startprom."' OR end <= '".$endprom."') ORDER BY id ASC";
+    $sql = "SELECT * FROM ".$tablerent_ev." LEFT JOIN ".$tabletes." ON  ".$tablerent_ev.".id_tesbro = ".$tabletes.".id_tes WHERE  ".$tablerent_ev.".type = 'ALLOGGIO' AND ".$tablerent_ev.".id_tesbro > 0 AND (custom_field IS NULL OR custom_field LIKE '%PENDING%' OR custom_field LIKE '%CONFIRMED%' OR custom_field LIKE '%FROZEN%') AND house_code='".substr($resh['codice'], 0, 32)."' AND (start >= '".$startprom."' OR start <= '".$endprom."' OR end >= '".$startprom."' OR end <= '".$endprom."') ORDER BY id ASC";
     //echo $sql;
     $result = mysqli_query($link, $sql);
     $num_all = $result->num_rows;// numero alloggi presenti in GAzie
     foreach($result as $row){ // per ogni evento dell'alloggio
-      //echo "<pre>evento alloggio:",print_r($row);die;
+      //echo "<pre>evento alloggio:",print_r($row);
       $datediff = strtotime($row['end'])-strtotime($row['start']);
       $nights_event = round($datediff / (60 * 60 * 24));// numero notti totali della prenotazione(evento)
       $tot_n_event_in_promemo=0;
@@ -333,7 +333,7 @@ function get_total_promemo($startprom,$endprom){
       while (strtotime($start) < strtotime($end)) {// per ogni giorno dell'evento
 
         if ($start >= $startprom AND $start <= $endprom) {// se il giorno è dentro l'arco di tempo richiesto
-
+		  //echo "<br>",$start," è dentro";
           if (!isset($data[$start])){
             $data[$start]=array();
           }
@@ -347,7 +347,8 @@ function get_total_promemo($startprom,$endprom){
         $start = date ("Y-m-d", strtotime("+1 days", strtotime($start)));// aumento di un giorno il ciclo
       }
       $ret['totalprice_booking'] += ((get_totalprice_booking($row['id_tesbro']))/$nights_event)*$tot_n_event_in_promemo;// aggiungo il costo medio della locazione(evento) calcolata sui giorni che rientrano nell'arco di tempo richiesto
-    }
+	  //echo "<br>totale:",$ret['totalprice_booking']," prezzo prenotazione:",((get_totalprice_booking($row['id_tesbro']))/$nights_event)*$tot_n_event_in_promemo;
+	}
   }
   $ret['tot_nights_bookable']= $num_all * $night_promemo;
   $ret['perc_booked'] = ($tot_nights_booked/$ret['tot_nights_bookable'])*100;
