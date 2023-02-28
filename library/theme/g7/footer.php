@@ -29,6 +29,7 @@ if (isset($styles) && is_array($styles)) {
         <?php
     }
 }
+$period=(isset($period))?$period:'';
 if (!isset($_SESSION['menu_alerts_lastcheck'])||((round(time()/60)-$_SESSION['menu_alerts_lastcheck'])> $period )){ // sono passati $period minuti
 	// non ho mai controllato se ci sono nuovi ordini oppure è passato troppo tempo dall'ultimo controllo vado a farlo
 		echo '<script>menu_check_from_modules();</script>';

@@ -726,8 +726,11 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
                     break;
             }
             $gaz_custom_field = gaz_dbi_get_single_value( $gTables[$tabella_da_aggiornare], 'custom_field', 'id_tes = '.$testata['id_tes'] );
-            $gaz_custom_data = ($gaz_custom_field!==null)?json_decode( $gaz_custom_field, true):'';
-            $gaz_custom_data['email_inviata'] = 'true';
+            if ($gaz_custom_data = json_decode( $gaz_custom_field, true)){
+              $gaz_custom_data['email_inviata'] = 'true';
+            }else{
+              $gaz_custom_data['email_inviata'] = 'true';
+            }
             $gaz_custom_field = json_encode($gaz_custom_data);
             gaz_dbi_table_update ($tabella_da_aggiornare, array(0=>'id_tes',1=>$testata['id_tes']), array('custom_field'=>$gaz_custom_field));
         }
