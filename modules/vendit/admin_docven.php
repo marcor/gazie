@@ -3292,7 +3292,7 @@ if ($toDo == "insert"){
             </div>
             <div class="form-group col-xs-12 col-sm-6 col-md-3">
                 <label for="in_ritenuta" ><?php echo ' %' . $script_transl['ritenuta']; ?></label>
-                <input type="text" value="<?php $form['in_ritenuta']; ?>" maxlength="6" name="in_ritenuta">
+                <input type="text" value="<?php echo $form['in_ritenuta']; ?>" maxlength="6" name="in_ritenuta">
             </div>
             <div class="form-group col-xs-12 col-sm-6 col-md-3">
                 <label for="in_codric" class="col-xs-3"><?php echo  $script_transl[18]; ?></label>
