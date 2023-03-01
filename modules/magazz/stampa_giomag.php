@@ -142,23 +142,28 @@ $config = new Config;
 $pdf->AddPage('L',$config->getValue('page_format'));
 $pdf->SetFont('helvetica','',7);
 if (sizeof($result) > 0) {
-	foreach ($result AS $key => $row) {
-      $datadoc = substr($row['datdoc'],8,2).'-'.substr($row['datdoc'],5,2).'-'.substr($row['datdoc'],0,4);
-      $datareg = substr($row['datreg'],8,2).'-'.substr($row['datreg'],5,2).'-'.substr($row['datreg'],0,4);
-      $movQuanti = $row['quanti']*$row['operat'];
-      $pdf->Cell(20,3,$datareg,1,0,'C');
-      $pdf->Cell(36,3,$row['caumag'].'-'.substr($row['descri'],0,25),1, 0, 'l', 0, '', 1);
-      $pdf->Cell(83,3,$row['artico'].' - '.substr($row['desart'],0,70),1, 0, 'l', 0, '', 1);
-	  $pdf->Cell(22,3,substr($row['id_lotmag'],-20),1, 0, 'l', 0, '', 1); // L'identificatore lotto, se troppo lungo, viene accorciato agli ultimi 15 caratteri
-      $pdf->Cell(56,3,$row['desdoc'].' del '.$datadoc,1, 0, 'l', 0, '', 1);
+  $rf=false;
+  $nr=0;
+  $pdf->SetFillColor(238,238,238);
+  foreach ($result as $key => $row) {
+    $nr++;
+    $rf=$nr%2;
+    $datadoc = substr($row['datdoc'],8,2).'-'.substr($row['datdoc'],5,2).'-'.substr($row['datdoc'],0,4);
+    $datareg = substr($row['datreg'],8,2).'-'.substr($row['datreg'],5,2).'-'.substr($row['datreg'],0,4);
+    $movQuanti = $row['quanti']*$row['operat'];
+    $pdf->Cell(20,3,$datareg,1,0,'C',$rf);
+    $pdf->Cell(36,3,$row['caumag'].'-'.substr($row['descri'],0,25),1, 0, 'L',$rf, '', 1);
+    $pdf->Cell(83,3,$row['artico'].' - '.substr($row['desart'],0,70),1, 0, 'L',$rf, '', 1);
+	  $pdf->Cell(22,3,substr($row['id_lotmag'],-20),1, 0, 'L',$rf, '', 1); // L'identificatore lotto, se troppo lungo, viene accorciato agli ultimi 15 caratteri
+    $pdf->Cell(56,3,$row['desdoc'].' del '.$datadoc,1, 0, 'L',$rf, '', 1);
 	  if ($_GET['pr']==1){
-		$pdf->Cell(17,3,number_format($row['prezzo'],$admin_aziend['decimal_price'],',','.'),1,0,'R');
-		$pdf->Cell(18,3,gaz_format_number(CalcolaImportoRigo($row['quanti'],$row['prezzo'],array($row['scochi'],$row['scorig']))),1,0,'R');
-      } else {
-		$pdf->Cell(20,3,substr($row['ragsoc'],0,30),1, 0, 'l', 0, '', 1);
+      $pdf->Cell(17,3,number_format($row['prezzo'],$admin_aziend['decimal_price'],',','.'),1,0,'R',$rf);
+      $pdf->Cell(18,3,gaz_format_number(CalcolaImportoRigo($row['quanti'],$row['prezzo'],array($row['scochi'],$row['scorig']))),1,0,'R',$rf);
+    } else {
+      $pdf->Cell(20,3,substr($row['ragsoc'],0,30),1, 0, 'L',$rf, '', 1);
 	  }
-	  $pdf->Cell(10,3,$row['unimis'],1,0,'C');
-      $pdf->Cell(15,3,gaz_format_quantity($movQuanti,1,$admin_aziend['decimal_quantity']),1,1,'R');
+	  $pdf->Cell(10,3,$row['unimis'],1,0,'C',$rf);
+    $pdf->Cell(15,3,gaz_format_quantity($movQuanti,1,$admin_aziend['decimal_quantity']),1,1,'R',$rf);
   }
 }
 $pdf->Output();

@@ -129,72 +129,73 @@ $mval['q_g']=0;
 $mval['v_g']=0;
 $mval['v_g']=0;
 $gazTimeFormatter->setPattern('dd-MM-yyyy');
+$rf=false;
+$nr=0;
+$pdf->SetFillColor(238,238,238);
 while ($mv = gaz_dbi_fetch_array($result)) {
-      $pdf->setRiporti($aRiportare);
-      if ($ctrlArtico != $mv['artico']) {
-         gaz_set_time_limit (30);
-         if (!empty($ctrlArtico)) {
-                   $pdf->StartPageGroup();
-                   $pdf->SetFont('helvetica','B',8);
-                   $pdf->Cell($aRiportare['top'][0]['lun'],4,$script_transl['tot'].$gazTimeFormatter->format(new DateTime('@'.$utsrf)).' : ',1,0,'R');
-                   $pdf->Cell($aRiportare['top'][1]['lun'],4,$aRiportare['top'][1]['nam'],1,0,'R');
-                   $pdf->Cell($aRiportare['top'][2]['lun'],4,$aRiportare['top'][2]['nam'],1,0,'R');
-                   $pdf->SetFont('helvetica','',7);
-         }
-         $aRiportare['top'][1]['nam'] = 0;
-         $aRiportare['bot'][1]['nam'] = 0;
-         $aRiportare['top'][2]['nam'] = 0;
-         $aRiportare['bot'][2]['nam'] = 0;
-         $item_head['bot']= array(array('lun' => 32,'nam'=>$mv['artico']),
-                                  array('lun' => 18,'nam'=>$mv['catmer']),
-                                  array('lun' => 110,'nam'=>$mv['desart']),
-                                  array('lun' => 10,'nam'=>$mv['unimis']),
-                                  array('lun' => 18,'nam'=>number_format($mv['scorta'],1,',',''))
-                                  );
-
-		$pdf->setItemGroup($item_head);
-
-        $pdf->setRiporti('');
-        $pdf->AddPage('L',$config->getValue('page_format'));
-      }
-	  if (!empty($mv['image'])){
-		$pdf->Image('@'.$mv['image'], 250, 22, 10, 0,'', '','', true, 300, '', false, false, 0, false, false, false);
-	  }
-
-      // passo tutte le variabili al metodo in modo da non costringere lo stesso a fare le query per ricavarsele
-      $magval= $gForm->getStockValue($mv['id_mov'],$mv['artico'],$mv['datreg'],$admin_aziend['stock_eval_method']);
-      $mval=end($magval);
-      $aRiportare['top'][1]['nam'] = gaz_format_quantity($mval['q_g'],1,$admin_aziend['decimal_quantity']);
-      $aRiportare['bot'][1]['nam'] = gaz_format_quantity($mval['q_g'],1,$admin_aziend['decimal_quantity']);
-      $aRiportare['top'][2]['nam'] = gaz_format_number($mval['v_g']);
-      $aRiportare['bot'][2]['nam'] = gaz_format_number($mval['v_g']);
-      $pdf->Cell(16,4,gaz_format_date($mv['datreg']),'LTR',0,'C');
-      $pdf->Cell(30,4,$mv['caumag'].'-'.substr($mv['descau'],0,17),'TR',0,'',0,'',1);
-      $accdescr=$mv['desdoc'];
-	  if ($mv['id_orderman']>0){
-		$accdescr.=' '.$mv['desorderman'];
-	  }
-      $accdescr.= ' del '.gaz_format_date($mv['datdoc']);
-      if (isset($mv['ragso1']) && strlen($mv['ragso1'])>3) {
-			$accdescr.= $mv['ragso1'].' '.$mv['ragso2'];
-	  }
-	  if (intval($mv['id_lotmag'])>0){
-		$accdescr.=" lotto: ".$mv['identifier'];
-      }
-      $pdf->Cell(100,4,substr($accdescr,0,120),'TR',0,'',0,'',1);
-      $pdf->Cell(17,4,number_format($mv['prezzo'],$admin_aziend['decimal_price'],',',' '),'TR',0,'R');
-      $pdf->Cell(8,4,$mv['unimis'],'TR',0,'C');
-      $pdf->Cell(17,4,gaz_format_quantity($mv['quanti']*$mv['operat'],1,$admin_aziend['decimal_quantity']),1,0,'R');
-      if ($mv['operat']==1) {
-          $pdf->Cell(17,4,number_format($mv['prezzo']*$mv['quanti'],$admin_aziend['decimal_price'],',',''),1,0,'R');
-          $pdf->Cell(17,4,'',1);
-      } else {
-          $pdf->Cell(17,4,'',1);
-          $pdf->Cell(17,4,number_format($mv['prezzo']*$mv['quanti'],$admin_aziend['decimal_price'],',',''),1,0,'R');
-      }
-      $pdf->Cell(20,4,gaz_format_quantity($mval['q_g'],1,$admin_aziend['decimal_quantity']),1,0,'R');
-      $pdf->Cell(20,4,gaz_format_number($mval['v_g']),1,1,'R');
-      $ctrlArtico = $mv['artico'];
+  $nr++;
+  $rf=$nr%2;
+  $pdf->setRiporti($aRiportare);
+  if ($ctrlArtico != $mv['artico']) {
+    if (!empty($ctrlArtico)) {
+      $pdf->StartPageGroup();
+      $pdf->SetFont('helvetica','B',8);
+      $pdf->Cell($aRiportare['top'][0]['lun'],4,$script_transl['tot'].$gazTimeFormatter->format(new DateTime('@'.$utsrf)).' : ',1,0,'R');
+      $pdf->Cell($aRiportare['top'][1]['lun'],4,$aRiportare['top'][1]['nam'],1,0,'R');
+      $pdf->Cell($aRiportare['top'][2]['lun'],4,$aRiportare['top'][2]['nam'],1,0,'R');
+      $pdf->SetFont('helvetica','',7);
+     }
+     $aRiportare['top'][1]['nam'] = 0;
+     $aRiportare['bot'][1]['nam'] = 0;
+     $aRiportare['top'][2]['nam'] = 0;
+     $aRiportare['bot'][2]['nam'] = 0;
+     $item_head['bot']= array(array('lun' => 32,'nam'=>$mv['artico']),
+                              array('lun' => 18,'nam'=>$mv['catmer']),
+                              array('lun' => 110,'nam'=>$mv['desart']),
+                              array('lun' => 10,'nam'=>$mv['unimis']),
+                              array('lun' => 18,'nam'=>number_format($mv['scorta'],1,',',''))
+                              );
+    $pdf->setItemGroup($item_head);
+    $pdf->setRiporti('');
+    $pdf->AddPage('L',$config->getValue('page_format'));
+  }
+  if (!empty($mv['image'])){
+    $pdf->Image('@'.$mv['image'], 250, 22, 10, 0,'', '','', true, 300, '', false, false, 0, false, false, false);
+  }
+  // passo tutte le variabili al metodo in modo da non costringere lo stesso a fare le query per ricavarsele
+  $magval= $gForm->getStockValue($mv['id_mov'],$mv['artico'],$mv['datreg'],$admin_aziend['stock_eval_method']);
+  $mval=end($magval);
+  $aRiportare['top'][1]['nam'] = gaz_format_quantity($mval['q_g'],1,$admin_aziend['decimal_quantity']);
+  $aRiportare['bot'][1]['nam'] = gaz_format_quantity($mval['q_g'],1,$admin_aziend['decimal_quantity']);
+  $aRiportare['top'][2]['nam'] = gaz_format_number($mval['v_g']);
+  $aRiportare['bot'][2]['nam'] = gaz_format_number($mval['v_g']);
+  $pdf->Cell(16,4,gaz_format_date($mv['datreg']),'LTR',0,'C',$rf);
+  $pdf->Cell(30,4,$mv['caumag'].'-'.substr($mv['descau'],0,17),'TR',0,'',$rf,'',1);
+  $accdescr=$mv['desdoc'];
+  if ($mv['id_orderman']>0){
+    $accdescr.=' '.$mv['desorderman'];
+  }
+  $accdescr.= ' del '.gaz_format_date($mv['datdoc']);
+  if (isset($mv['ragso1']) && strlen($mv['ragso1'])>3) {
+    $accdescr.= $mv['ragso1'].' '.$mv['ragso2'];
+  }
+  if (intval($mv['id_lotmag'])>0){
+    $accdescr.=" lotto: ".$mv['identifier'];
+  }
+  $pdf->Cell(100,4,substr($accdescr,0,120),'TR',0,'',$rf,'',1);
+  $pdf->Cell(17,4,number_format($mv['prezzo'],$admin_aziend['decimal_price'],',',' '),'TR',0,'R',$rf);
+  $pdf->Cell(8,4,$mv['unimis'],'TR',0,'C',$rf);
+  $pdf->Cell(17,4,gaz_format_quantity($mv['quanti']*$mv['operat'],1,$admin_aziend['decimal_quantity']),1,0,'R',$rf);
+  if ($mv['operat']==1) {
+    $pdf->Cell(17,4,number_format($mv['prezzo']*$mv['quanti'],$admin_aziend['decimal_price'],',',''),1,0,'R',$rf);
+    $pdf->Cell(17,4,'',1,0,'',$rf);
+  } else {
+    $pdf->Cell(17,4,'',1,0,'',$rf);
+    $pdf->Cell(17,4,number_format($mv['prezzo']*$mv['quanti'],$admin_aziend['decimal_price'],',',''),1,0,'R',$rf);
+  }
+  $pdf->Cell(20,4,gaz_format_quantity($mval['q_g'],1,$admin_aziend['decimal_quantity']),1,0,'R',$rf);
+  $pdf->Cell(20,4,gaz_format_number($mval['v_g']),1,1,'R',$rf);
+  $ctrlArtico = $mv['artico'];
 }
 $pdf->SetFont('helvetica','B',8);
 $pdf->Cell($aRiportare['top'][0]['lun'],4,$script_transl['tot'].$gazTimeFormatter->format(new DateTime('@'.$utsrf)).' : ',1,0,'R');

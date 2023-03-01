@@ -702,7 +702,7 @@ function printPdf(urlPrintDoc){
                 echo "</td>";
                 // Colonna "Fattura elettronica"
                 if (substr($r['tipdoc'], 0, 1) == 'F') {
-                  if(strlen($r['fattura_elettronica_original_name'])>10){ // ho un file importato dall'esterno
+                  if($r['fattura_elettronica_original_name'] !== null && strlen($r['fattura_elettronica_original_name'])>10){ // ho un file importato dall'esterno
                     echo '<td><a class="btn btn-xs btn-warning" target="_blank" href="../acquis/view_fae.php?id_tes=' . $r["id_tes"] . '">File importato<i class="glyphicon glyphicon-eye-open"></i></a>'.'<a class="btn btn-xs btn-edit" title="Scarica il file XML originale" href="download_zip_package.php?fn='.$r['fattura_elettronica_original_name'].'">xml <i class="glyphicon glyphicon-download"></i> </a></td>';
                   } else { // il file è generato al volo dal database
                     echo '<td align="center"';
@@ -852,7 +852,7 @@ function printPdf(urlPrintDoc){
                           echo " <a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['view_ord'] . "\" href=\"stampa_ordcli.php?id_tes=" . $rigdoc['id_order'] . "\" style=\"font-size:10px;\"><i class=\"glyphicon glyphicon-check\"></i>&nbsp;Ord." . $t_r['numdoc'] . "</a>\n";
                         break;
                       }
-                      
+
                     }
                   }
                   echo "</td>";

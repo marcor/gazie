@@ -123,6 +123,7 @@ $totavere = 0.00;
 $movSaldo = 0.00;
 $rf=false;
 $nr=0;
+$pdf->SetFillColor(238,238,238);
 while ($row = gaz_dbi_fetch_array($result)) {
   $nr++;
   $rf=$nr%2;
@@ -167,7 +168,6 @@ while ($row = gaz_dbi_fetch_array($result)) {
 			$pdf->Cell(166,4,'SALDO PRECEDENTE',1,0,'R');
 			$pdf->Cell(20,4,gaz_format_number($movSaldo),1,1,'R');
 		}
-    $pdf->SetFillColor(238,238,238);
 	}
 	if ($row['darave'] == 'D'){
 		$totdare+= $row['import'];
