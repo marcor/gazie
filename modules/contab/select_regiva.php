@@ -78,7 +78,7 @@ function getMovements($vat_section, $vat_reg, $date_ini, $date_fin) {
     $c_p = 0;
     $c_ndoc = array();
     while ($r = gaz_dbi_fetch_array($rs)) {
-      $r['numdoc']=reset(array_filter(preg_split("/\D+/", $r['numdoc'])));
+      $r['numdoc']=is_numeric($r['numdoc'])?$r['numdoc']:reset(array_filter(preg_split("/\D+/", $r['numdoc'])));
       // inizio controllo errori di numerazione
       $date_reg=gaz_format_date($r['datreg'],false,3);
       if (empty($r['tipiva'])) {  // errore: aliquota IVA non tipizzata

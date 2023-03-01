@@ -121,7 +121,11 @@ $ctrlConto = '';
 $totdare = 0.00;
 $totavere = 0.00;
 $movSaldo = 0.00;
+$rf=false;
+$nr=0;
 while ($row = gaz_dbi_fetch_array($result)) {
+  $nr++;
+  $rf=$nr%2;
 	$datadoc = substr($row['datdoc'],8,2).'-'.substr($row['datdoc'],5,2).'-'.substr($row['datdoc'],0,4);
 	$datareg = substr($row['datreg'],8,2).'-'.substr($row['datreg'],5,2).'-'.substr($row['datreg'],0,4);
 	$pdf->setRiporti($aRiportare);
@@ -163,6 +167,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
 			$pdf->Cell(166,4,'SALDO PRECEDENTE',1,0,'R');
 			$pdf->Cell(20,4,gaz_format_number($movSaldo),1,1,'R');
 		}
+    $pdf->SetFillColor(238,238,238);
 	}
 	if ($row['darave'] == 'D'){
 		$totdare+= $row['import'];
@@ -177,7 +182,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
 	}
 	$aRiportare['top'][1]['nam'] = gaz_format_number($movSaldo);
 	$aRiportare['bot'][1]['nam'] = gaz_format_number($movSaldo);
-	$pdf->Cell(18,4,$datareg,1,0,'C');
+	$pdf->Cell(18,4,$datareg,1,0,'C',$rf);
 	if ((!empty($row['partner']) || !empty($row['numdoc'])) && $row['caucon'] != 'APE' && $row['caucon'] != 'CHI'){
 		$pdf->SetFont('helvetica','',6);
 		$row['tesdes'].=' ('.$row['partner'];
@@ -189,11 +194,11 @@ while ($row = gaz_dbi_fetch_array($result)) {
 		}
 		$row['tesdes'].=')';
 	}
-	$pdf->Cell(108,4,$row['tesdes'],'LTB',0,'L',0,'',1);
+	$pdf->Cell(108,4,$row['tesdes'],'LTB',0,'L',$rf,'',1);
 	$pdf->SetFont('helvetica','',7);
-	$pdf->Cell(20,4,$dare,1,0,'R');
-	$pdf->Cell(20,4,$avere,1,0,'R');
-	$pdf->Cell(20,4,gaz_format_number($movSaldo),1,1,'R');
+	$pdf->Cell(20,4,$dare,1,0,'R',$rf);
+	$pdf->Cell(20,4,$avere,1,0,'R',$rf);
+	$pdf->Cell(20,4,gaz_format_number($movSaldo),1,1,'R',$rf);
 	$ctrlConto = $row['codcon'];
 }
 
