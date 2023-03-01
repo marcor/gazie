@@ -57,7 +57,7 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 	  if (file_exists("lang.".$lang.".php")){// se esist
 		include "lang.".$lang.".php";// carico il file traduzione lingua
 	  }else{// altrimenti carico di default la lingua inglese
-        include "lang.english.php"; 
+        include "lang.english.php";
       }
       $script_transl=$strScript['booking_form.php'];
 
@@ -83,7 +83,10 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
         // imposto PHP Mailer per invio email di cambio stato
         $host = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_server')['val'];
         $usr = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_user')['val'];
-        $psw = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_password')['val'];
+        //$psw = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_password')['val'];
+        $rsdec=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = 'smtp_password'");
+        $rdec=gaz_dbi_fetch_row($rsdec);
+        $psw=$rdec?$rdec[0]:'';
         $port = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_port')['val'];
         $mail = new PHPMailer(true);
         $mail->CharSet = 'UTF-8';
@@ -124,7 +127,7 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
       if (file_exists("lang.".$lang.".php")){// se esist
 		include "lang.".$lang.".php";// carico il file traduzione lingua
 	  }else{// altrimenti carico di default la lingua inglese
-        include "lang.english.php"; 
+        include "lang.english.php";
       }
       $script_transl=$strScript['booking_form.php'];
       $res=gaz_dbi_get_row($gTables['company_config'], "var", 'vacation_url_user');
@@ -147,7 +150,10 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
         // imposto PHP Mailer per invio email di cambio stato
         $host = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_server')['val'];
         $usr = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_user')['val'];
-        $psw = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_password')['val'];
+        //$psw = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_password')['val'];
+        $rsdec=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = 'smtp_password'");
+        $rdec=gaz_dbi_fetch_row($rsdec);
+        $psw=$rdec?$rdec[0]:'';
         $port = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_port')['val'];
         $mail = new PHPMailer(true);
         $mail->CharSet = 'UTF-8';

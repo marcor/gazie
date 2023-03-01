@@ -30,7 +30,7 @@
 */
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
-include_once("manual_settings.php");
+include_once("manual_settings.php");// deve stare sempre dopo require("../../library/include/datlib.inc.php")
 $genTables = constant("table_prefix")."_";
 $azTables = constant("table_prefix").$idDB;
 

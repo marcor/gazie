@@ -144,20 +144,20 @@ if (isset($_GET['anteprima']) and $msg == "") {
 
     $result = gaz_dbi_dyn_query($select, $tabella, $where , 'start');
     $numrow = gaz_dbi_num_rows($result);
-	
+
     while($rows[] = mysqli_fetch_assoc($result));array_pop($rows);// cre un array con tutte le prenotazioni
 
     $currentDate = strtotime($datainizio);
     $count=array();
 	$fmt = new \IntlDateFormatter('it_IT', IntlDateFormatter::FULL, IntlDateFormatter::FULL);
-	$fmt->setPattern('MMMM'); 
-	
+	$fmt->setPattern('MMMM');
+
     echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
     if ($numrow > 0) {// se ci sono state prenotazioni avvio i calcoli statistici
 
       while ($currentDate <= strtotime($datafine)){ // ciclo un giorno alla volta tutto l'intervallo richiesto
-	  
-        $month = $fmt->format(new \DateTime(date("Y-m-d",$currentDate))); 
+
+        $month = $fmt->format(new \DateTime(date("Y-m-d",$currentDate)));
         $n=0;
         foreach ($rows as $row) {// per ogni prenotazione
           //echo "<pre>",print_r($row);
@@ -315,7 +315,7 @@ if (isset($_GET['anteprima']) and $msg == "") {
                       (isset($count[$facil][$month]['daytopay']))?$count[$facil][$month]['daytopay'] += $daytopay:$count[$facil][$month]['daytopay'] = $daytopay;
 
                       //echo "<br>start:",date("Y-m-d",$currentDate),"-end:",date("Y-m-d",strtotime("+1 day", $currentDate));
-                    }                
+                    }
 					if (isset($data_rif['vacation_rental']['tur_tax_mode'])){
 						// calcolo prezzo tassa turistica
 						switch ($data_rif['vacation_rental']['tur_tax_mode']) {//0 => 'a persona', '1' => 'a persona escluso i minori', '2' => 'a notte', '3' => 'a notte escluso i minori'
