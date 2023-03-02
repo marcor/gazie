@@ -38,16 +38,24 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
   $form['oldcodart']=substr(trim($_POST['oldcodart']),0,32);
   $form['newcodart']=substr(trim($_POST['newcodart']),0,32);
 	$form['cosear'] = filter_var($_POST['cosear'],FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-  if (isset($_POST['yeschange']) || isset($_POST['view']) ) {
+  if (isset($_POST['yeschange']) || isset($_POST['view']) || isset($_POST['mergecodart']) ) {
+    $artico = gaz_dbi_get_row($gTables['artico'], 'codice' , $form['newcodart']); // se il nuovo codice è esistente segnalo errore e chiedo se fonderlo
+    if ($artico && !isset($_POST['mergecodart'])){
+      $msg['err'][] = 'codexist';
+    }
     if (strlen($form['oldcodart'])<=1){
       $msg['err'][] = 'noold';
     }
     if (strlen($form['newcodart'])<=1){
       $msg['err'][] = 'nonew';
     }
-    if (count($msg['err'])<=0 && isset($_POST['yeschange'])){
+    if (count($msg['err'])<=0 && (isset($_POST['yeschange']) || isset($_POST['mergecodart'])) ){
       // procedo con le modifiche
-     	gaz_dbi_query ("UPDATE ".$gTables['artico']." SET codice = '".$form['newcodart']."' WHERE codice = '".$form['oldcodart']."'");
+      if (isset($_POST['mergecodart'])){ // ho fuso con codice esistente, elimino il vecchio
+        gaz_dbi_query ("DELETE FROM ".$gTables['artico']." WHERE codice = '".$form['oldcodart']."'");
+      } else {
+        gaz_dbi_query ("UPDATE ".$gTables['artico']." SET codice = '".$form['newcodart']."' WHERE codice = '".$form['oldcodart']."'");
+      }
      	gaz_dbi_query ("UPDATE ".$gTables['artico_position']." SET codart = '".$form['newcodart']."' WHERE codart = '".$form['oldcodart']."'");
       gaz_dbi_query ("UPDATE ".$gTables['assets']." SET codice_artico = '".$form['newcodart']."' WHERE codice_artico = '".$form['oldcodart']."'");
       gaz_dbi_query ("UPDATE ".$gTables['assist']." SET codart = '".$form['newcodart']."' WHERE codart = '".$form['oldcodart']."'");
@@ -180,11 +188,13 @@ if (strlen($form['oldcodart'])>1 && strlen($form['oldcodart'])>1 && isset($_POST
   $r = gaz_dbi_fetch_row($rs);
   $nr += $r?$r[0]:0;
 
+  if (count($msg['err'])<=0){
 ?>
-<div class="text-center FacetFooterTD col-xs-12">
-<input type="submit" class="btn btn-danger" accesskey="i" name="yeschange" value="<?php echo $script_transl['update'].' il codice sull\'anagrafica e su '.$nr; ?> righi delle tabelle del database">
-</div><!-- chiude row  -->
+  <div class="text-center FacetFooterTD col-xs-12">
+  <input type="submit" class="btn btn-danger" accesskey="i" name="yeschange" value="<?php echo $script_transl['update'].' il codice sull\'anagrafica e su '.$nr; ?> righi delle tabelle del database">
+  </div><!-- chiude row  -->
 <?php
+  }
 }
 ?>
 </form>

@@ -613,7 +613,7 @@ $strScript = array(
             'Inserire almeno 1 carattere!',
             'Cambia articolo'
         ),
-        'err' => ['noold'=>'Codice attuale dell\'articolo non selezionato','nonew'=>'Nuovo codice non selezionato'],
+        'err' => ['noold'=>'Codice attuale dell\'articolo non selezionato','nonew'=>'Nuovo codice non selezionato','codexist'=>'Il nuovo codice esiste già se si tratta dello stesso prodotti clicca su: <input type="submit" class="btn btn-xs btn-default" name="mergecodart" value="Unisci in codice esistente">'],
         'war' => ['alert'=>' La modifica di un codice articolo viene propagato su tutte le tabelle in cui è stato utilizzato e quindi su tutti i documenti emessi in passato anche se essi hanno valenza fiscale e/o giuridica, ad esempio: fatture, documenti di trasposto, ordini, preventivi, movimenti e schedari di magazzino ecc  '
         ],
         'oldcodart' => 'Codice attuale dell\'articolo',
