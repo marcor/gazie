@@ -44,9 +44,6 @@ if (!isset($_POST['access'])){// primo accesso
   <div id="generale" class="tab-pane fade in ">
     <form method="post" id="sbmt-form" enctype="multipart/form-data">
       <div class="panel panel-info col-sm-12">
-        <?php
-
-        ?>
         <div class="box-header bg-info">
           <h4 class="box-title"><i class="glyphicon glyphicon-blackboard"></i> Riepilogo Vacation rental</h4>
           <a class="pull-right dialog_grid" id_bread="<?php echo $grr['id_bread']; ?>" style="cursor:pointer;"><i class="glyphicon glyphicon-cog"></i></a>
@@ -68,7 +65,7 @@ if (!isset($_POST['access'])){// primo accesso
           // prendo i dati statistici
           $tot_promemo = get_total_promemo($form['start'],$form['end']);
           // prendo i check-in nei prossimi 7 giorni
-          $next_check = get_next_check(date("Y-m-d"),date('Y-m-d', strtotime($form['start'] . ' + 7 day')));
+          $next_check = get_next_check(date("Y-m-d"),date('Y-m-d', strtotime(date("Y-m-d") . ' + 7 day')));
           ?>
           <div class="row">
             <div class="column" style="float: left; width: 25%;">
@@ -114,51 +111,69 @@ if (!isset($_POST['access'])){// primo accesso
           </div>
           <div class="row">
             <table class="Tlarge table table-striped table-bordered table-condensed">
+              <h5 class="box-title"><i class="glyphicon glyphicon-pushpin"></i> Nei prossimi 7 giorni </h5>
               <?php
               if (count($next_check['in']) >0){
+                $keys = array_column($next_check['in'], 'start');
+                array_multisort($keys, SORT_ASC, $next_check['in']);// ordino per start
                 ?>
-                <tr>
-                  <td><?php echo "Prossimi check-in"; ?></td>
 
-                </tr>
+                <table class="Tlarge table table-striped table-bordered text-left">
+                  <tr>
+                    <th class="text-center"><i class="glyphicon glyphicon-log-in"></i>&nbsp;&nbsp;<?php echo "Check-in"; ?></th>
+
+                  </tr>
+                  <?php
+                  foreach($next_check['in'] as $next_row){
+
+                    $table = $gTables['rental_events'] ." LEFT JOIN ". $gTables['tesbro'] ." ON ". $gTables['tesbro'] .".id_tes = " . $gTables['rental_events'] . ".id_tesbro LEFT JOIN ". $gTables['clfoco'] ." ON ". $gTables['clfoco'] .".codice = " . $gTables['tesbro'] . ".clfoco LEFT JOIN ". $gTables['anagra'] ." ON ". $gTables['anagra'] .".id = " . $gTables['clfoco'] . ".id_anagra";
+                    $where = $gTables['rental_events'].".id = '".$next_row['id']."'";
+                    $what = $gTables['rental_events'] .".*, ". $gTables['anagra'] . ".ragso1, ".	$gTables['anagra'] .".ragso2, ". 	$gTables['tesbro'] . ".numdoc, ".	$gTables['tesbro'] . ".datemi ";
+                    $result = gaz_dbi_dyn_query($what, $table, $where, "start DESC");
+                    $row=gaz_dbi_fetch_array($result);
+                    if (isset($row)){
+                      ?>
+                      <tr>
+                      <td><?php echo "<b>",gaz_format_date($row['start']),"</b> ",$row['type']," ",$row['house_code'],"<b> -> </b>",$row['ragso1']," ",$row['ragso2']," prenotazione n.",$row['numdoc']," del ",gaz_format_date($row['datemi']); ?></td>
+                      </tr>
+                      <?php
+                    }
+                  }
+                  ?>
+                </table>
+
                 <?php
-                foreach($next_check['in'] as $next_row){
-                  $table = $gTables['rental_events'] ." LEFT JOIN ". $gTables['tesbro'] ." ON ". $gTables['tesbro'] .".id_tes = " . $gTables['rental_events'] . ".id_tesbro LEFT JOIN ". $gTables['clfoco'] ." ON ". $gTables['clfoco'] .".codice = " . $gTables['tesbro'] . ".clfoco LEFT JOIN ". $gTables['anagra'] ." ON ". $gTables['anagra'] .".id = " . $gTables['clfoco'] . ".id_anagra";
-                  $where = $gTables['rental_events'].".id_tesbro = '".$next_row."'";
-                  $what = $gTables['rental_events'] .".*, ". $gTables['anagra'] . ".ragso1, ".	$gTables['anagra'] .".ragso2, ". 	$gTables['tesbro'] . ".numdoc, ".	$gTables['tesbro'] . ".datemi ";
-                  $result = gaz_dbi_dyn_query($what, $table, $where, "start DESC");
-                  $row=gaz_dbi_fetch_array($result);
-				  if (isset($row)){
-					  ?>
-					  <tr>
-						<td><?php echo $row['start']," ",$row['type']," ",$row['house_code']," - ",$row['ragso1']," ",$row['ragso2']," prenotazione n.",$row['numdoc']," del ",$row['datemi']; ?></td>
-					  </tr>
-					  <?php
-				  }
-                }
               }
               if (count($next_check['out']) >0){
+                $keys = array_column($next_check['out'], 'end');
+                array_multisort($keys, SORT_ASC, $next_check['out']);// ordino per end
                 ?>
-                <tr>
-                  <td><?php echo "Prossimi check-out"; ?></td>
-                </tr>
+
+                <table class="Tlarge table table-striped table-bordered text-left">
+                  <tr>
+                    <th class="text-center"><i class="glyphicon glyphicon-log-out"></i>&nbsp;&nbsp;<?php echo "Check-out"; ?></th>
+                  </tr>
+                  <?php
+                  foreach($next_check['out'] as $next_row){
+                    $table = $gTables['rental_events'] ." LEFT JOIN ". $gTables['tesbro'] ." ON ". $gTables['tesbro'] .".id_tes = " . $gTables['rental_events'] . ".id_tesbro LEFT JOIN ". $gTables['clfoco'] ." ON ". $gTables['clfoco'] .".codice = " . $gTables['tesbro'] . ".clfoco LEFT JOIN ". $gTables['anagra'] ." ON ". $gTables['anagra'] .".id = " . $gTables['clfoco'] . ".id_anagra";
+                    $where = $gTables['rental_events'].".id = '".$next_row['id']."'";
+                    $what = $gTables['rental_events'] .".*, ". $gTables['anagra'] . ".ragso1, ".	$gTables['anagra'] .".ragso2, ". 	$gTables['tesbro'] . ".numdoc, ".	$gTables['tesbro'] . ".datemi ";
+                    $result = gaz_dbi_dyn_query($what, $table, $where, "end DESC");
+                    $row=gaz_dbi_fetch_array($result);
+                    if (isset($row)){
+                      ?>
+                      <tr>
+                      <td><?php echo "<b>",gaz_format_date($row['end']),"</b> ",$row['type']," ",$row['house_code'],"<b> -> </b>",$row['ragso1']," ",$row['ragso2']," prenotazione n.",$row['numdoc']," del ",gaz_format_date($row['datemi']); ?></td>
+                      </tr>
+                      <?php
+                    }
+                  }
+                  ?>
+                </table>
+
                 <?php
-                foreach($next_check['out'] as $next_row){
-                  $table = $gTables['rental_events'] ." LEFT JOIN ". $gTables['tesbro'] ." ON ". $gTables['tesbro'] .".id_tes = " . $gTables['rental_events'] . ".id_tesbro LEFT JOIN ". $gTables['clfoco'] ." ON ". $gTables['clfoco'] .".codice = " . $gTables['tesbro'] . ".clfoco LEFT JOIN ". $gTables['anagra'] ." ON ". $gTables['anagra'] .".id = " . $gTables['clfoco'] . ".id_anagra";
-                  $where = $gTables['rental_events'].".id_tesbro = '".$next_row."'";
-                  $what = $gTables['rental_events'] .".*, ". $gTables['anagra'] . ".ragso1, ".	$gTables['anagra'] .".ragso2, ". 	$gTables['tesbro'] . ".numdoc, ".	$gTables['tesbro'] . ".datemi ";
-                  $result = gaz_dbi_dyn_query($what, $table, $where, "end DESC");
-                  $row=gaz_dbi_fetch_array($result);
-					if (isset($row)){
-					  ?>
-					  <tr>
-						<td><?php echo $row['end']," ",$row['type']," ",$row['house_code']," - ",$row['ragso1']," ",$row['ragso2']," prenotazione n.",$row['numdoc']," del ",$row['datemi']; ?></td>
-					  </tr>
-					  <?php
-					}
-                }
               }
-            ?>
+              ?>
 
             </table>
           </div>

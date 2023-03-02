@@ -961,10 +961,12 @@ $ts->output_navbar();
                         echo " style=\"cursor:pointer;\" onclick=\"pay('". $r['id'] ."')\"";
                         echo "><i class=\"glyphicon glyphicon-credit-card\" title=\"Carta di credito\"></i></a>";
                       }
-                      echo "&nbsp;&nbsp;<a class=\"btn btn-xs btn-default \"";
+                      $paid=get_total_paid($r['id_tes']);
+                      $stato_pig_btn = ($paid>0)?'btn-success':'btn-default';
+                      $addtext=($paid>0)?"&nbsp;Pagato € ".gaz_format_quantity($paid,1,2):"";
+                      echo "&nbsp;&nbsp;<a class=\"btn btn-xs btn-default ",$stato_pig_btn,"\"";
                       echo " style=\"cursor:pointer;\" onclick=\"payment('". $r['id_tes'] ."')\"";
-                      echo "><i class=\"glyphicon glyphicon-piggy-bank\" title=\"Pagamenti\"></i></a>";
-
+                      echo "><i class=\"glyphicon glyphicon-piggy-bank \" title=\"Pagamenti\">",$addtext,"</i></a>";
                       ?>&nbsp;&nbsp;<a title="Stato della prenotazione" class="btn btn-xs <?php echo $stato_btn; ?> dialog_stato_lavorazione" refsta="<?php echo $r['id_tes']; ?>" prodes="<?php echo $r['ragso1']," ",$r['ragso2']; ?>" prosta="<?php echo $r['status']; ?>" cust_mail="<?php echo $r['base_mail']; ?>">
                           <i class="glyphicon glyphicon-modal-window">&nbsp;</i><?php echo $r['status']; ?>
                         </a>

@@ -316,12 +316,13 @@ function get_total_promemo($startprom,$endprom){
   $where = "good_or_service=1 AND (custom_field REGEXP 'accommodation_type')";
   $sql = "SELECT ".$what." FROM ".$tableart." WHERE ".$where;
   $resulth = mysqli_query($link, $sql); // prendo tutti gli alloggi
+  $num_all = $resulth->num_rows;// numero alloggi presenti in GAzie
   foreach ($resulth as $resh){ // per ogni alloggio
     // prendo tutti gli eventi dell'alloggio che interessano l'arco di tempo richiesto
     $sql = "SELECT * FROM ".$tablerent_ev." LEFT JOIN ".$tabletes." ON  ".$tablerent_ev.".id_tesbro = ".$tabletes.".id_tes WHERE  ".$tablerent_ev.".type = 'ALLOGGIO' AND ".$tablerent_ev.".id_tesbro > 0 AND (custom_field IS NULL OR custom_field LIKE '%PENDING%' OR custom_field LIKE '%CONFIRMED%' OR custom_field LIKE '%FROZEN%') AND house_code='".substr($resh['codice'], 0, 32)."' AND (start >= '".$startprom."' OR start <= '".$endprom."' OR end >= '".$startprom."' OR end <= '".$endprom."') ORDER BY id ASC";
     //echo $sql;
     $result = mysqli_query($link, $sql);
-    $num_all = $result->num_rows;// numero alloggi presenti in GAzie
+
     foreach($result as $row){ // per ogni evento dell'alloggio
       //echo "<pre>evento alloggio:",print_r($row);
       $datediff = strtotime($row['end'])-strtotime($row['start']);
@@ -370,18 +371,36 @@ function get_next_check($startprom,$endprom){
     $tablerent_ev = $gTables['rental_events'];
     $tabletes = $gTables['tesbro'];
   }
-  $rs_booking = gaz_dbi_dyn_query("*", $tablerent_ev, 'start >= '.$startprom.' OR start <= '.$endprom.' OR end >= '.$startprom.' OR end <= '.$endprom, "id asc");
-  while ($booking = gaz_dbi_fetch_array($rs_booking)){// ciclo le prenotazioni che interessano arco di tempo richiesto
-    if ($booking['start']>= $startprom && $booking['start'] <= $endprom){//se la data di check-in è dentro
-      $next['in'][]=$booking['id'];
+
+  $rs_booking = gaz_dbi_dyn_query("id,start,end", $tablerent_ev, "(start >= ".$startprom." OR start <= ".$endprom." OR end >= ".$startprom." OR end <= ".$endprom.")  AND type = 'ALLOGGIO'", "id asc");
+
+  while ($booking = gaz_dbi_fetch_assoc($rs_booking)){// ciclo le prenotazioni che interessano arco di tempo richiesto
+    if (intval($booking['id'])>0 && $booking['start']>= $startprom && $booking['start'] <= $endprom){//se la data di check-in è dentro
+      $next['in'][]=$booking;
     }
-    if ($booking['end']>= $startprom && $booking['end'] <= $endprom){//se la data di check-out è dentro
-      $next['out'][]=$booking['id'];
+    if (intval($booking['id'])>0 && $booking['end']>= $startprom && $booking['end'] <= $endprom){//se la data di check-out è dentro
+
+	  $next['out'][]=$booking;
     }
   }
   return $next;
-
 }
 
+function get_total_paid($idtesbro){
+  global $link, $azTables, $gTables;// posso chiamare la funzione con entrambi i metodi
+  if ($azTables){
+    $tablerent_pay = $azTables."rental_payments";
+  }else{
+    $tablerent_pay = $gTables['rental_payments'];
+  }
+  $where = " WHERE id_tesbro = '".$idtesbro."' AND payment_status = 'Completed'";
+  $sql = "SELECT SUM(payment_gross) AS totalpaid FROM ".$tablerent_pay.$where;
+  if ($result = mysqli_query($link, $sql)) {
+    $row = mysqli_fetch_assoc($result);
 
+    return $row['totalpaid'];
+  }else {
+     echo "Error: " . $sql . "<br>" . mysqli_error($link);
+  }
+}
 ?>
