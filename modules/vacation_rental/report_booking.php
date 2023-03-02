@@ -130,6 +130,7 @@ $sortable_headers = array(
     $script_transl[key($terzo)] => current($terzo),
     "Cliente" => "clfoco",
     "Località" => "",
+    "Importo imponib." => "",
     $script_transl['status'] => "status",
     $script_transl['print'] => "",
     "Mail" => "",
@@ -746,11 +747,11 @@ $ts->output_navbar();
 
                 <?php
                 if ($partner_select) {
-                    gaz_flt_disp_select("cliente", "clfoco AS cliente, ragso1 AS nome",
+                    gaz_flt_disp_select("cliente", "clfoco AS cliente, CONCAT(ragso1,' ',ragso2) AS ragso1",
                       $tesbro_e_partners,
                       $where_select,
-                            "nome ASC",
-                      "nome");
+                            "ragso1 ASC",
+                      "ragso1");
                 } else {
                     gaz_flt_disp_int("cliente", "Cliente");
                 }?>
@@ -940,11 +941,18 @@ $ts->output_navbar();
               echo "<td><a title=\"Dettagli cliente\" href=\"../vendit/report_client.php?nome=" . $r['ragso1'] . "\">". $r['ragso1'] ." ".  $r['ragso2'] ."</a> &nbsp;</td>";
               echo "<td>".$r['citspe']."</td>";
 
-              // colonna stato ordine
+              // Colonna importo
+              $amount=get_totalprice_booking($r['id_tes']);
+              echo "<td class='text-right'>","€ ".gaz_format_quantity($amount,1,2),"";
+			  $paid=get_total_paid($r['id_tes']);
+                      $stato_pig_btn = ($paid>0)?'btn-success':'btn-default';
+                      $addtext=($paid>0)?"&nbsp;Pagato ".gaz_format_quantity($paid,1,2):"";
+                      echo "&nbsp;&nbsp;<a class=\"btn btn-xs btn-default ",$stato_pig_btn,"\"";
+                      echo " style=\"cursor:pointer;\" onclick=\"payment('". $r['id_tes'] ."')\"";
+                      echo "><i class=\"glyphicon glyphicon-piggy-bank \" title=\"Pagamenti\">",$addtext,"</i></a></td>";
 
-              // Se l'ordine e' da evadere , verifica lo status ed
-              // eventualmente lo aggiorna.
-              //
+              // colonna stato ordine
+              // Se l'ordine e' da evadere , verifica lo status ed eventualmente lo aggiorna.
               echo "<td style='text-align: left;'>";
               if ($remains_atleastone && !$processed_atleastone) {
                   // L'ordine e'  da evadere.
@@ -960,13 +968,7 @@ $ts->output_navbar();
                         echo "&nbsp;&nbsp;<a class=\"btn btn-xs btn-default \"";
                         echo " style=\"cursor:pointer;\" onclick=\"pay('". $r['id'] ."')\"";
                         echo "><i class=\"glyphicon glyphicon-credit-card\" title=\"Carta di credito\"></i></a>";
-                      }
-                      $paid=get_total_paid($r['id_tes']);
-                      $stato_pig_btn = ($paid>0)?'btn-success':'btn-default';
-                      $addtext=($paid>0)?"&nbsp;Pagato € ".gaz_format_quantity($paid,1,2):"";
-                      echo "&nbsp;&nbsp;<a class=\"btn btn-xs btn-default ",$stato_pig_btn,"\"";
-                      echo " style=\"cursor:pointer;\" onclick=\"payment('". $r['id_tes'] ."')\"";
-                      echo "><i class=\"glyphicon glyphicon-piggy-bank \" title=\"Pagamenti\">",$addtext,"</i></a>";
+                      }                      
                       ?>&nbsp;&nbsp;<a title="Stato della prenotazione" class="btn btn-xs <?php echo $stato_btn; ?> dialog_stato_lavorazione" refsta="<?php echo $r['id_tes']; ?>" prodes="<?php echo $r['ragso1']," ",$r['ragso2']; ?>" prosta="<?php echo $r['status']; ?>" cust_mail="<?php echo $r['base_mail']; ?>">
                           <i class="glyphicon glyphicon-modal-window">&nbsp;</i><?php echo $r['status']; ?>
                         </a>
