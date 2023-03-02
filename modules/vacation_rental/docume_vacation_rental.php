@@ -64,6 +64,7 @@ $admin_aziend=checkAdmin(9);
           <li>Gestione di un eventuale tour operator che ha venduto la prenotazione</li>
           <li>Gestione dell'accettazione (check-in/check-out) con data e ora e, al check-out, possibilità di inviare e-mail di richiesta recensione</li>
           <li>Creazione di statistiche generali, suddivise per strutture, anche ai fini della compilazione del mod ISA (indici sintetici affidabilità fiscale) e del pagamento della tassa di soggiorno turistica</li>
+          <li>Widget nella home page di GAzie con riepilogo occupazione e prossimi check-in e check-out</li>
         </ul>
 
     </div>
@@ -85,7 +86,7 @@ $admin_aziend=checkAdmin(9);
         <li>Creazione di statistiche generali, suddivise per strutture, anche ai fini della compilazione del mod ISA (indici sintetici affidabilità fiscale) e del pagamento della tassa di soggiorno turistica</li>
         <li>Invio automatico di promemoria/benvenuto x giorni prima del check-in (richiede un cron job)</li>
         <li>Controllo automatico delle prenotazioni con caparra non pagata, invio di sollecito e successivo annullamento automatico (richiede un cron job)</li>
-
+        <li>Widget nella home page di GAzie con riepilogo occupazione e prossimi check-in e check-out</li>
 
         <p><br>Utilizzabile in un qualsiasi sito web tramite apposito Iframe:</p>
         <li>Front-end per il cliente tramite iframe su qualsiasi sito internet</li>
