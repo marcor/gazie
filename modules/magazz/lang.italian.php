@@ -50,7 +50,7 @@ $strScript = array(
         'descri' => "Descrizione",
         'ricerca' => "Ricerca",
         'good_or_service' => "Merce-Servizio",
-        'good_or_service_value' => array(0=>'Merce',1=>'Servizio',2=>'Composizione'),
+        'good_or_service_value' => [0=>'<span class="text-success bg-success"><b>Merce</b></span>',1=>'<span class="text-warning bg-warning"><b>Servizio</b></span>',2=>'Composizione'],
         'unimis' => "U.M.",
         'catmer' => "Cat. merc.",
         'preacq' => 'Prezzo acquisto',
