@@ -227,18 +227,6 @@ function confirMailC(link){
 }
 ';
 ?>
-function delete_payment(ref) {
-  if (confirm("Stai per eliminare un pagamento.")){
-    $.ajax({
-      data: {'type':'delete_payment',ref:ref},
-      type: 'POST',
-      url: '../vacation_rental/delete.php',
-      success: function(output){
-        window.location.replace("./report_booking.php?auxil=<?php echo $tipo;?>");
-      }
-    });
-  }
-}
 
 function choice_template(modulo) {
 	$( function() {
@@ -333,7 +321,75 @@ function pay(ref) {
 		});
 }
 
+function delete_payment(ref,tes) {
+  if (confirm("Stai per eliminare un pagamento.")){
+    $.ajax({
+      data: {'type':'delete_payment',ref:ref},
+      type: 'POST',
+      url: '../vacation_rental/delete.php',
+      success: function(output){
+        var tot=0;
+        $.ajax({
+          data: {'type':'payment_list',ref:tes},
+          type: 'POST',
+          url: '../vacation_rental/manual_payment.php',
+          dataType: 'json',
+          success: function(response){
+            var response = JSON.stringify(response);
+            arr = $.parseJSON(response); //convert to javascript array
+            $.each(arr, function(n, val) {
+              if (val.payment_gross>0){
+                tot = tot+parseFloat(val.payment_gross);
+              }
+            });
+            if (tot>0){
+              $("#atest"+tes).addClass("btn-success");
+              $("#test"+tes).html(" Pagato "+tot.toFixed(2)+"");
+            }else if(tot<=0){
+              $("#atest"+tes).removeClass("btn-success");
+              $("#atest"+tes).addClass("btn-default");
+              $("#test"+tes).html("");
+            }
+            tot=0;
+            //$("p#payment_des").append("<br><b>TOTALE "+tot.toFixed(2)+"</b>");
+          }
+        });
+        $("#type").val('');
+        $("#txn_id").val('');
+        $("#payment_gross").val('');
+        $("#payment_des").html('');
+        $("p#payment_des").html('');
+        tot=0;
+        $("#dialog_payment").dialog("close");
+      }
+    });
+  }
+}
+
+var tot=0;
 function payment(ref) {
+  setTimeout(function(){
+        // all'apertura del dialog prendo tutti i pagamenti già fatti e mostro il totale;
+        $.ajax({
+          data: {'type':'payment_list',ref:ref},
+          type: 'POST',
+          url: '../vacation_rental/manual_payment.php',
+          dataType: 'json',
+          success: function(response){
+            var response = JSON.stringify(response);
+            arr = $.parseJSON(response); //convert to javascript array
+            tot=0;
+            $.each(arr, function(n, val) {
+              $("p#payment_des").append(val.currency_code+" "+val.payment_gross+" - "+val.payment_status+" - "+val.created+" "+val.type+" <input type='submit' class='btn btn-sm btn-default' name='delete form='report_form' onClick='delete_payment("+val.payment_id+","+ref+");' value='ELIMINA'><br>");
+              if (val.payment_status=="Completed"){
+                tot = tot+parseFloat(val.payment_gross);
+              }
+            });
+            $("p#payment_des").append("<br><b>TOTALE "+tot.toFixed(2)+"</b>");
+          }
+        });
+    },100);
+
 		$( "#dialog_payment" ).dialog({
 			minHeight: 1,
 			width: "auto",
@@ -355,11 +411,20 @@ function payment(ref) {
               dataType: 'text',
               success: function(response){
                 alert(response);
+                tot=parseFloat(tot)+parseFloat(payment_gross);
+                if (tot>0 && payment_gross){
+                  $("#atest"+ref).addClass("btn-success");
+                  $("#test"+ref).html(" Pagato "+tot.toFixed(2)+"");
+                }else if(tot<=0){
+                  $("#atest"+ref).addClass("btn-default");
+                  $("#test"+ref).html("");
+                }
                 $("#type").val('');
                 $("#txn_id").val('');
                 $("#payment_gross").val('');
                 $("#payment_des").html('');
                 $("#dialog_payment").dialog("close");
+                tot=0;
               }
             });
 				}},
@@ -368,33 +433,13 @@ function payment(ref) {
           $("#txn_id").val('');
           $("#payment_gross").val('');
           $("#payment_des").html('');
+          tot=0;
 					$("#dialog_payment").dialog("close");
 				}
 			}
 		});
 		$("#dialog_payment" ).dialog( "open" );
-    setTimeout(function(){
-        // all'apertura del dialog prendo tutti i pagamenti già fatti e mostro il totale;
-        //
-        $.ajax({
-          data: {'type':'payment_list',ref:ref},
-          type: 'POST',
-          url: '../vacation_rental/manual_payment.php',
-          dataType: 'json',
-          success: function(response){
-            var response = JSON.stringify(response);
-            arr = $.parseJSON(response); //convert to javascript array
-            var tot = 0;
-            $.each(arr, function(n, val) {
-              $("p#payment_des").append(val.currency_code+" "+val.payment_gross+" - "+val.payment_status+" - "+val.created+" "+val.type+" <input type='submit' class='btn btn-sm btn-default' name='delete form='report_form' onClick='delete_payment("+val.payment_id+");' value='ELIMINA'><br>");
-              if (val.payment_status=="Completed"){
-                tot = tot+parseFloat(val.payment_gross);
-              }
-            });
-            $("p#payment_des").append("<br><b>TOTALE "+tot.toFixed(2)+"</b>");
-          }
-        });
-    },100);
+
 }
 
 $(function() {
@@ -944,12 +989,12 @@ $ts->output_navbar();
               // Colonna importo
               $amount=get_totalprice_booking($r['id_tes']);
               echo "<td class='text-right'>","€ ".gaz_format_quantity($amount,1,2),"";
-			  $paid=get_total_paid($r['id_tes']);
-                      $stato_pig_btn = ($paid>0)?'btn-success':'btn-default';
-                      $addtext=($paid>0)?"&nbsp;Pagato ".gaz_format_quantity($paid,1,2):"";
-                      echo "&nbsp;&nbsp;<a class=\"btn btn-xs btn-default ",$stato_pig_btn,"\"";
-                      echo " style=\"cursor:pointer;\" onclick=\"payment('". $r['id_tes'] ."')\"";
-                      echo "><i class=\"glyphicon glyphicon-piggy-bank \" title=\"Pagamenti\">",$addtext,"</i></a></td>";
+              $paid=get_total_paid($r['id_tes']);
+              $stato_pig_btn = ($paid>0)?'btn-success':'btn-default';
+              $addtext=($paid>0)?"&nbsp;Pagato ".gaz_format_quantity($paid,1,2):"";
+              echo "&nbsp;&nbsp;<a id=\"atest",$r['id_tes'],"\" class=\"btn btn-xs btn-default ",$stato_pig_btn,"\"";
+              echo " style=\"cursor:pointer;\" onclick=\"payment('". $r['id_tes'] ."')\"";
+              echo "><i id=\"test",$r['id_tes'],"\" class=\"glyphicon glyphicon-piggy-bank \" title=\"Pagamenti\">",$addtext,"</i></a></td>";
 
               // colonna stato ordine
               // Se l'ordine e' da evadere , verifica lo status ed eventualmente lo aggiorna.
@@ -968,7 +1013,7 @@ $ts->output_navbar();
                         echo "&nbsp;&nbsp;<a class=\"btn btn-xs btn-default \"";
                         echo " style=\"cursor:pointer;\" onclick=\"pay('". $r['id'] ."')\"";
                         echo "><i class=\"glyphicon glyphicon-credit-card\" title=\"Carta di credito\"></i></a>";
-                      }                      
+                      }
                       ?>&nbsp;&nbsp;<a title="Stato della prenotazione" class="btn btn-xs <?php echo $stato_btn; ?> dialog_stato_lavorazione" refsta="<?php echo $r['id_tes']; ?>" prodes="<?php echo $r['ragso1']," ",$r['ragso2']; ?>" prosta="<?php echo $r['status']; ?>" cust_mail="<?php echo $r['base_mail']; ?>">
                           <i class="glyphicon glyphicon-modal-window">&nbsp;</i><?php echo $r['status']; ?>
                         </a>
