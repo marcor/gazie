@@ -42,7 +42,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
     if (!empty($form['catmer'])) {
       $result = gaz_dbi_dyn_query($gTables['artico'] . '.*, ' . $gTables['catmer'] . '.descri AS descat,' . $gTables['catmer'] . '.annota AS anncat', $gTables['artico'] . ' LEFT JOIN ' . $gTables['catmer'] . ' ON catmer = ' . $gTables['catmer'] . '.codice', "catmer = " . $form["catmer"] ." AND (" . $gTables['artico'] . '.good_or_service = 0 OR '. $gTables['artico'] . '.good_or_service = 2 ) AND ' . $gTables['artico'] . '.id_assets = 0', 'catmer ASC, ' . $gTables['artico'] . '.codice ASC');
     } else {
-      $result = gaz_dbi_dyn_query($gTables['artico'] . '.*, ' . $gTables['catmer'] . '.descri AS descat,' . $gTables['catmer'] . '.annota AS anncat', $gTables['artico'] . ' LEFT JOIN ' . $gTables['catmer'] . ' ON catmer = ' . $gTables['catmer'] . '.codice', "1=1", 'catmer ASC, ' . $gTables['artico'] . '.codice ASC');
+      $result = gaz_dbi_dyn_query($gTables['artico'] . '.*, ' . $gTables['catmer'] . '.descri AS descat,' . $gTables['catmer'] . '.annota AS anncat', $gTables['artico'] . ' LEFT JOIN ' . $gTables['catmer'] . ' ON catmer = ' . $gTables['catmer'] . '.codice', $gTables['artico'] . '.good_or_service = 0 OR '. $gTables['artico'] . '.good_or_service = 2', 'catmer ASC, ' . $gTables['artico'] . '.codice ASC');
     }
     if ($result) {
       // Imposto totale valore giacenza by DF
