@@ -2552,7 +2552,7 @@ function checkAdmin($Livaut = 0) {
         redirect("../root/login_user.php?tp=" . $table_prefix);
         exit;
     } else {
-        $_SESSION["Abilit"] = true;
+        $_SESSION["Abilit"] = $admin_aziend["Abilit"];
 		// includo le funzioni per la sincronizzazione dello shop online, il nome del modulo per il sync dell'ecommerce dev'essere sempre il primo rispetto ad altri eventuali moduli
         $admin_aziend['synccommerce_classname'] = '';
         $synccommerce=explode(',',$admin_aziend['gazSynchro'])[0];

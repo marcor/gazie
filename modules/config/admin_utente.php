@@ -556,7 +556,7 @@ if ($toDo == 'insert') {
 </tr>
 <?php
 } else {
-echo '<tr><td class="FacetFieldCaptionTD"></td><td colspan="2" class="FacetDataTD text-right"><a href="../root/login_password_change.php" class="btn btn-warning">'.$script_transl['change'].' password</a></td></tr>';
+echo '<tr><td class="FacetFieldCaptionTD"></td><td colspan="2" class="FacetDataTD text-right"><a href="../root/login_password_change.php?un='.$form["user_name"].'" class="btn btn-warning">'.$script_transl['change'].' password</a></td></tr>';
 }
 ?>
 <td class="FacetFieldCaptionTD"><?php echo $script_transl['az_email']; ?></td>

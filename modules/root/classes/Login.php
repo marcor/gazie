@@ -46,6 +46,10 @@ class Login
 	*/
 	private $user_name = "";
 	/**
+	* @var string $username_obj The user's name target of change
+	*/
+	private $username_obj = "";
+	/**
 	* @var string $user_email The user's mail
 	*/
 	private $user_email = "";
@@ -69,6 +73,10 @@ class Login
 	* @var boolean $password_change_was_successful Marker for view handling
 	*/
 	private $password_change_was_successful = false;
+	/**
+	* @var boolean $administrator_change_usr_password_was_successful Marker for view handling
+	*/
+	private $administrator_change_usr_password_was_successful = false;
 	/**
 	* @var array $errors Collection of error messages
 	*/
@@ -119,6 +127,12 @@ class Login
 				// function below uses $_SESSION['user_name'] and $_SESSION['user_id']
 				$this->editUserPassword($_POST['user_password_old'], $_POST['user_password_new'], $_POST['user_password_repeat']);
 			}
+      // un amministratore sta reimpostando un password ad un utente
+      if (isset($_GET["un"])) {
+				$this->username_obj=substr($_GET['un'],0,64);
+			} elseif (isset($_POST["un"])) {
+				$this->username_obj=substr($_POST['un'],0,64);
+			}
 
 			// login with cookie
 		} elseif (isset($_COOKIE['rememberme'])) {
@@ -131,7 +145,6 @@ class Login
 			}
 			$this->loginWithPostData($_POST['user_name'], $_POST['user_password'], $_POST['user_rememberme']);
 		}
-
 		// checking if user requested a password reset mail
 		if (isset($_POST["request_password_reset"]) && isset($_POST['user_name'])) {
 			$this->setPasswordResetDatabaseTokenAndSendMail($_POST['user_name']);
@@ -143,6 +156,8 @@ class Login
 			$this->changePassword( $_POST['user_password_new'], $_POST['user_password_repeat']);
 		} elseif (isset($_POST["change_very_old_password"])) {
 			$this->changeVeryoldPassword($_POST['user_name'], $_POST['user_password'],$_POST['user_password_new'], $_POST['user_password_repeat']);
+		} elseif (isset($_POST["administrator_change_usr_password"])) {
+      $this->administratorChangeUsrPassword( $_POST['user_password_new'], $_POST['user_password_repeat']);
 		}
 	}
 
@@ -961,6 +976,50 @@ class Login
 		}
 	}
 
+	public function administratorChangeUsrPassword($user_password_new, $user_password_repeat)
+	{
+    $this->password_is_expired = 0;
+		$user_name = $this->username_obj;
+		if (empty($user_name) || empty($user_password_new) || empty($user_password_repeat)) {
+			$this->errors[] = MESSAGE_PASSWORD_EMPTY;
+			// is the repeat password identical to password
+		} else if ($user_password_new !== $user_password_repeat) {
+			$this->errors[] = MESSAGE_PASSWORD_BAD_CONFIRM;
+			// password need to have a minimum length of 6 characters
+		} else if (strlen($user_password_new) < 8) {
+			$this->errors[] = MESSAGE_PASSWORD_TOO_SHORT;
+			// if database connection opened
+		} else if ($this->databaseConnection()) {
+			// now it gets a little bit crazy: check if we have a constant HASH_COST_FACTOR defined (in config/hashing.php),
+			// if so: put the value into $hash_cost_factor, if not, make $hash_cost_factor = null
+			$hash_cost_factor = (defined('HASH_COST_FACTOR') ? HASH_COST_FACTOR : null);
+      $user_password_hash = password_hash($user_password_new , PASSWORD_DEFAULT, ['cost' => $hash_cost_factor]);
+      // faccio la verifica della vecchia
+      $query_user = $this->db_connection->prepare("SELECT * FROM " . DB_TABLE_PREFIX . '_admin WHERE user_name = :user_name');
+      $query_user->bindValue(':user_name', trim($user_name), PDO::PARAM_STR);
+      $query_user->execute();
+      $userdata = $query_user->fetchObject();
+      // sostituisco aes_key
+      $prepared_key = openssl_pbkdf2($user_password_new.$user_name, AES_KEY_SALT, 16, 1000, "sha256");
+      $aes_key = base64_encode(openssl_encrypt($_SESSION['aes_key'],"AES-128-CBC",$prepared_key,OPENSSL_RAW_DATA, AES_KEY_IV));
+      // write users new hash into database
+      $query_update = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . '_admin SET user_password_hash = :user_password_hash,
+                            user_password_reset_hash = NULL, user_password_reset_timestamp = NULL, aes_key = :aes_key, datpas = NOW()
+                            WHERE user_name = :user_name');
+      $query_update->bindValue(':user_password_hash', $user_password_hash, PDO::PARAM_STR);
+      $query_update->bindValue(':aes_key', $aes_key, PDO::PARAM_STR); // con aes_key controllo se effettivamente l'utente ha cambiato la password
+      $query_update->bindValue(':user_name', $user_name, PDO::PARAM_STR);
+      $query_update->execute();
+      // check if exactly one row was successfully changed:
+      if ($query_update->rowCount() == 1) {
+        $this->administrator_change_usr_password_was_successful = true;
+        $this->messages[] = MESSAGE_PASSWORD_CHANGED_SUCCESSFULLY;
+      } else {
+        $this->errors[] = MESSAGE_PASSWORD_CHANGE_FAILED;
+      }
+		}
+	}
+
 	/**
 	* Gets the success state of the password-reset-link-validation.
 	* TODO: should be more like getPasswordResetLinkValidationStatus
@@ -984,6 +1043,16 @@ class Login
 	public function passwordChangeWasSuccessful()
 	{
 		return $this->password_change_was_successful;
+	}
+
+	public function administratorChangeUsrPasswordWasSuccessful()
+	{
+		return $this->administrator_change_usr_password_was_successful;
+	}
+
+	public function getUsernameObj()
+	{
+		return $this->username_obj;
 	}
 
 

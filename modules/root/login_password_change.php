@@ -44,6 +44,8 @@ $login = new Login();
 // so we show the index page = the login page
 if ($login->passwordChangeWasSuccessful() == true) {
   include("views/not_logged_in.php");
+} elseif ($login->administratorChangeUsrPasswordWasSuccessful() == true) {
+  header("Location: ../config/report_utenti.php");
 } else {
   // show the request-a-password-change
   include("views/password_change.php");

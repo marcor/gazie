@@ -1,7 +1,57 @@
 <?php include('_header.php'); ?>
 <script src='../../js/sha256/forge-sha256.min.js'></script>
 <?php
-if ($login->isPasswordExpired() == 1) { // password scaduta da poco
+if($login->getUsernameObj() <> '' && $login->getUsername() <> $login->getUsernameObj() && $_SESSION['Abilit'] >= 9) { // sono un amministratore e sto cambiando la password ad un utente (e rigenero aes_key)
+?>
+    <form method="post" action="login_password_change.php" name="password_change_form" onsubmit="document.getElementById('user_password_new').value=forge_sha256(document.getElementById('user_password_new').value);document.getElementById('user_password_repeat').value=forge_sha256(document.getElementById('user_password_repeat').value);">
+        <div class="container">
+            <div id="loginbox" style="margin-top:50px;" class="mainbox mainbox col-sm-offset-2 col-sm-8">
+                <div class="panel panel-success" >
+                    <div class="panel-heading panel-gazie">
+                        <div class="panel-title">
+                            <?php echo 'RIPRISTINA PASSWORD ED AES_KEY DELL\'UTENTE: '.$login->getUsernameObj().'<input type="hidden" name="un" value="'.$login->getUsernameObj().'"'; ?>
+                        </div>
+                        <div style="color: red; float:right; font-size: 100%; position: relative; top:-10px"></div>
+                    </div>
+                    <div style="padding-top:10px" class="panel-body" >
+                        <?php
+                        if (isset($login)) {
+                            if ($login->errors) {
+                                foreach ($login->errors as $error) {
+                                    echo '<div id="login-alert" class="alert alert-danger col-sm-12">';
+                                    echo $error;
+                                    echo '</div>';
+                                }
+                            }
+                            if ($login->messages) {
+                                foreach ($login->messages as $message) {
+                                    echo '<div id="login-alert" class="alert alert-success col-sm-12">';
+                                    echo $message;
+                                    echo '</div>';
+                                }
+                            }
+                        }
+                        ?>
+                        <div style="padding-bottom: 25px;" class="input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                            <input id="user_password_new" type="password" name="user_password_new" pattern=".{6,}" required autocomplete="off"  style="height: 34px;" class="form-control" placeholder="<?php echo WORDING_NEW_PASSWORD; ?>" />
+                        </div>
+
+                        <div style="padding-bottom: 25px;" class="input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                            <input id="user_password_repeat" type="password" name="user_password_repeat" pattern=".{6,}" required autocomplete="off" style="height: 34px;" class="form-control"  placeholder="<?php echo WORDING_NEW_PASSWORD_REPEAT; ?>" />
+                        </div>
+                        <div style="padding-bottom: 25px;" class="input-group col-sm-12">
+                            <input style="float:right;" class="btn btn-warning" type="submit" name="administrator_change_usr_password" value="<?php echo WORDING_SUBMIT_NEW_PASSWORD; ?>" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- chiude div container -->
+    </form>
+
+<?php
+} elseif ($login->isPasswordExpired() == 1) { // password scaduta da poco
     ?>
     <form method="post" onsubmit="document.getElementById('user_password_new').value=forge_sha256(document.getElementById('user_password_new').value);
 document.getElementById('user_password_repeat').value=forge_sha256(document.getElementById('user_password_repeat').value);" action="login_password_change.php" name="password_change_form" id="changeform">
