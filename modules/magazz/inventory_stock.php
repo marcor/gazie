@@ -103,7 +103,8 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
           $where = 1;
       }
       // visualizzo solo gli articoli escludendo i servizi
-      if ( gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit')['val']==0) {
+      $sac=gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
+      if (!$sac || $sac['val']==0 || $sac['val']=='') {
         $where .= " AND good_or_service != 1";
       } else {
         $where .= " AND good_or_service = 0"; // ... e articoli composti se previsto in configurazione avanzata azienda
