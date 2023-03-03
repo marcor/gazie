@@ -340,6 +340,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
         $magval['q_g']=0;
     } elseif ($magval['q_g'] < 0) { // giacenza inferiore a 0
         $class = 'danger';
+
     } elseif ($magval['q_g'] > 0) { //
       if ($magval['q_g']<=$r['scorta']){
         $class = 'warning';
@@ -407,8 +408,15 @@ while ($r = gaz_dbi_fetch_array($result)) {
     echo '<td class="text-center">';
     echo ' <a class="btn btn-xs btn-default" title="Acquisti"  onclick="getlastbuys(\''.$r['codice'].'\');"> <i class="glyphicon glyphicon-download-alt"></i></a>';
 	echo "</td>\n";
+  if (($r['mostra_qdc']==1 && $r["good_or_service"]==1) or ($r["good_or_service"]==1 && floatval($magval['q_g'])==0)){//se è riservato al quaderno di campagna ed è servizio || è servizio e la q.tà è zero
+     echo "<td></td>";// colonna quantità vuota
+  }elseif ($r["good_or_service"]==1 && floatval($magval['q_g'])<>0 ){// se è un servizio ma sono stati registrati movimenti
+    echo '<td class="text-right text-danger">'.gaz_format_quantity(floatval(substr($magval['q_g'],0,15)),1,$admin_aziend['decimal_quantity']);
+    echo "</td>\n";// segnalo in rosso
+  }else{
     echo '<td class="text-right">'.gaz_format_quantity(floatval(substr($magval['q_g'],0,15)),1,$admin_aziend['decimal_quantity']).' '.$com;
-	echo "</td>\n";
+    echo "</td>\n";
+  }
     echo '<td class="text-center">'.floatval($iva['aliquo']);
 	echo "</td>\n";
     echo '<td class="text-center">';
