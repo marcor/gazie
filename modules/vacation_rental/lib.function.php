@@ -352,7 +352,7 @@ function get_total_promemo($startprom,$endprom){
 	}
   }
   $ret['tot_nights_bookable']= $num_all * $night_promemo;
-  $ret['perc_booked'] = ($tot_nights_booked/$ret['tot_nights_bookable'])*100;
+  $ret['perc_booked'] = ($ret['tot_nights_bookable']>0)?(($tot_nights_booked/$ret['tot_nights_bookable'])*100):0;
   $ret['tot_nights_booked'] = $tot_nights_booked;
 
   return $ret;
