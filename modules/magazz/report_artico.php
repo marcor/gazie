@@ -411,7 +411,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
   if (($r['mostra_qdc']==1 && $r["good_or_service"]==1) or ($r["good_or_service"]==1 && floatval($magval['q_g'])==0)){//se è riservato al quaderno di campagna ed è servizio || è servizio e la q.tà è zero
      echo "<td></td>";// colonna quantità vuota
   }elseif ($r["good_or_service"]==1 && floatval($magval['q_g'])<>0 ){// se è un servizio ma sono stati registrati movimenti
-    echo '<td class="text-right text-danger">'.gaz_format_quantity(floatval(substr($magval['q_g'],0,15)),1,$admin_aziend['decimal_quantity']);
+    echo '<td class="text-right bg-danger text-danger">'.gaz_format_quantity(floatval(substr($magval['q_g'],0,15)),1,$admin_aziend['decimal_quantity']);
     echo "</td>\n";// segnalo in rosso
   }else{
     echo '<td class="text-right">'.gaz_format_quantity(floatval(substr($magval['q_g'],0,15)),1,$admin_aziend['decimal_quantity']).' '.$com;
