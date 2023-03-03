@@ -920,10 +920,12 @@ $ts->output_navbar();
                 $stato_btn_lease = 'btn-success';
               }
             } else {
-            $r['status'] = '';
+              $r['status'] = '';
+
             }
+            $disabled="pointer-events: none;";
             if ($r['status']=='CONFIRMED'){
-              $stato_btn = 'btn-success';
+              $stato_btn = 'btn-success';$disabled="";
             }elseif ($r['status']=='ISSUE'){
               $stato_btn = 'btn-warning';
             }elseif ($r['status']=='PENDING' || $r['status']=='FROZEN'){
@@ -937,7 +939,6 @@ $ts->output_navbar();
             }elseif ($r['feed_status']==2){
               $feed_stato_btn = 'btn-danger';
             }
-
             $remains_atleastone = false; // Almeno un rigo e' rimasto da evadere.
             $processed_atleastone = false; // Almeno un rigo e' gia' stato evaso.
             $rigbro_result = gaz_dbi_dyn_query('*', $gTables['rigbro'], "id_tes = " . $r['id_tes'] . " AND tiprig <=1 ", 'id_tes DESC');
@@ -1073,12 +1074,12 @@ $ts->output_navbar();
               if (!empty($r['e_mail'])){ // ho una mail sulla destinazione
                   echo '<a class="btn btn-xs btn-default btn-email '.$stato_btn_booking.'" onclick="confirMail(this);return false;" id="doc' . $r['id_tes'] . '" url="' . $modulo . '&dest=E" href="#" title="Invia prenotazione: ' . $r['e_mail'] . '"
                   mail="' . $r['e_mail'] . '" namedoc="' . $script_transl['type_value'][$r['tipdoc']] . ' n.' . $r['numdoc'] . ' del ' . gaz_format_date($r['datemi']) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
-                  echo ' <a class="btn btn-xs btn-default btn-emailC '.$stato_btn_lease.'" onclick="confirMailC(this);return false;" id="docC' . $r['id_tes'] . '" urlC="stampa_contratto.php?id_tes='. $r['id_tes']. '&dest=E&id_ag='.$r['id_agent'].'" href="#" title="invia contratto a: ' . $r['e_mail'] . '"
+                  echo ' <a style="',$disabled,'" class="btn btn-xs btn-default btn-emailC '.$stato_btn_lease.'" onclick="confirMailC(this);return false;" id="docC' . $r['id_tes'] . '" urlC="stampa_contratto.php?id_tes='. $r['id_tes']. '&dest=E&id_ag='.$r['id_agent'].'" href="#" title="invia contratto a: ' . $r['e_mail'] . '"
                   mail="' . $r['e_mail'] . '" namedoc="' . $script_transl['type_value'][$r['tipdoc']] . ' n.' . $r['numdoc'] . ' del ' . gaz_format_date($r['datemi']) . '"><i class="glyphicon glyphicon-send"></i></a>';
               } elseif (!empty($r['base_mail'])) { // ho una mail sul cliente
                   echo ' <a class="btn btn-xs btn-default btn-email '.$stato_btn_booking.'" onclick="confirMail(this);return false;" id="doc' . $r['id_tes'] . '" url="' . $modulo . '&dest=E" href="#" title="Invia prenotazione: ' . $r['base_mail'] . '"
                   mail="' . $r['base_mail'] . '" namedoc="' . $script_transl['type_value'][$r['tipdoc']] . ' n.' . $r['numdoc'] . ' del ' . gaz_format_date($r['datemi']) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
-                  echo ' <a class="btn btn-xs btn-default btn-emailC '.$stato_btn_lease.'" onclick="confirMailC(this);return false;" id="docC' . $r['id_tes'] . '" urlC="stampa_contratto.php?id_tes='. $r['id_tes']. '&dest=E&id_ag='.$r['id_agent'].'" href="#" title="invia contratto a: ' . $r['base_mail'] . '"
+                  echo ' <a style="',$disabled,'" class="btn btn-xs btn-default btn-emailC '.$stato_btn_lease.'" onclick="confirMailC(this);return false;" id="docC' . $r['id_tes'] . '" urlC="stampa_contratto.php?id_tes='. $r['id_tes']. '&dest=E&id_ag='.$r['id_agent'].'" href="#" title="invia contratto a: ' . $r['base_mail'] . '"
                   mail="' . $r['base_mail'] . '" namedoc="Contratto n.' . $r['numdoc'] . ' del ' . gaz_format_date($r['datemi']) . '"><i class="glyphicon glyphicon-send"></i></a>';
               } else { // non ho mail
                   echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" href="../../modules/vendit/admin_client.php?codice=' . substr($r['clfoco'], 3) . '&Update"><i class="glyphicon glyphicon-edit"></i></a>';
