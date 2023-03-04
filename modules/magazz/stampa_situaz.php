@@ -36,17 +36,14 @@ require("../../config/templates/report_template.php");
 require("lang.".$admin_aziend['lang'].".php");
 $passo=1000;
 $limit=0;
-if ( $res=gaz_dbi_get_row($gTables['company_config'], 'var', 'composite_mag')) {
-    $result = gaz_dbi_dyn_query("*", $gTables['artico'], "good_or_service != 1", $orderby, $limit, $passo);
-} else {
-	// 27/07/20 Antonio Germani - Nella tabella company_config non esiste composite_mag ?!?! A causa di ciò vengono erroneamente esclusi gli articoli composti
-	//Nel dubbio se sia un errore o altro lascio e modifico come segue
-	if ( gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti')['val']=='STD') {
-		$result = gaz_dbi_dyn_query("*", $gTables['artico'], "good_or_service!=1", $orderby, $limit, $passo);
-	}  else {
-		$result = gaz_dbi_dyn_query("*", $gTables['artico'], "good_or_service=0", $orderby, $limit, $passo);
-	}
+
+
+if ( gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti')['val']=='STD') {
+  $result = gaz_dbi_dyn_query("*", $gTables['artico'], "good_or_service!=1", $orderby, $limit, $passo);
+}  else {
+  $result = gaz_dbi_dyn_query("*", $gTables['artico'], "good_or_service=0", $orderby, $limit, $passo);
 }
+
 
 $pdf = new Report_template();
 $filename = $title.'_'.date("Ymd").'.pdf';
