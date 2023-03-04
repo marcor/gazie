@@ -22,7 +22,7 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
-if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
+if ($admin_aziend['Abilit'] >= 8) {
 	if (isset($_POST['datref_for'])){
 		$form['datref_for']=substr($_POST['datref_for'],0,10);
 	} else {
