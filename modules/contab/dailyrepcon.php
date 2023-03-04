@@ -131,6 +131,7 @@ $totimp=0;
 		$totspevar=0;
 		$totspevarvat=0;
 		$n=0;$tot_qta=0;
+		$rigo_stampa=[];
 		$key = array();
 		$rigo = array();
 		foreach ($retcat as $cat){ // ciclo le righe per categoria raggruppata
@@ -222,7 +223,7 @@ $totimp=0;
 			$totAdE_iva += $totspevarvat;
 		}
 		$rk=-1;
-		if ($totAdE <> gaz_format_number(($totimp+$totiva))){ // se i totali non coincidono
+		if (isset($rigo_stampa['pr_un_ivato']) && $totAdE <> gaz_format_number(($totimp+$totiva))){ // se i totali non coincidono
 			$key1="";$key2="";$r=0;$aster="";
 			foreach ($rigo_stampa['pr_un_ivato'] as $row){ // trovo il prezzo unitario più alto con la minima quantità
 				if ($r == 0){
