@@ -114,7 +114,14 @@ document.getElementById('user_password_repeat').value=forge_sha256(document.getE
                 <div class="panel panel-danger" >
                     <div class="panel-heading panel-gazie">
                         <div class="panel-title">
-                            <?php echo 'PASSWORD SCADUTA DA OLTRE 30 GIORNI'; ?>
+                            <?php
+                            $usr=$login->getUsername();
+                            if ($login->getUsernameObj() == $usr) {
+                              echo 'CAMBIA LA PASSWORD DELL\'UTENTE: <b>'.$usr.'</b>' ;
+                            } else {
+                              echo 'PASSWORD SCADUTA DA OLTRE 30 GIORNI';
+                            }
+                            ?>
                         </div>
                         <div style="color: red; float:right; font-size: 100%; position: relative; top:-10px"></div>
                     </div>
@@ -139,7 +146,7 @@ document.getElementById('user_password_repeat').value=forge_sha256(document.getE
                         ?>
                         <div style="padding-bottom: 25px;" class="input-group">
                             <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                            <input id="user_name" type="text" name="user_name" required class="form-control" style="height: 34px;" placeholder="<?php echo WORDING_USERNAME; ?>" />
+                            <input id="user_name" type="text" name="user_name" value="<?php echo $usr; ?>" required class="form-control" style="height: 34px;" placeholder="<?php echo WORDING_USERNAME; ?>" />
                         </div>
                         <div style="padding-bottom: 25px;" class="input-group">
                             <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
