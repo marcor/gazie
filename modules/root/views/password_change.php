@@ -117,7 +117,7 @@ document.getElementById('user_password_repeat').value=forge_sha256(document.getE
                             <?php
                             $usr=$login->getUsername();
                             if ($login->getUsernameObj() == $usr) {
-                              echo 'CAMBIA LA PASSWORD DELL\'UTENTE: <b>'.$usr.'</b>' ;
+                              echo 'CAMBIA LA PASSWORD DELL\'UTENTE: <b>'.$usr.'</b><input type="hidden" name="un" value="'.$login->getUsernameObj().'">' ;
                             } else {
                               echo 'PASSWORD SCADUTA DA OLTRE 30 GIORNI';
                             }
