@@ -222,7 +222,7 @@ $(function(){
             </div>
             <?php
         }
-$get_widgets = gaz_dbi_dyn_query("*", $gTables['breadcrumb'],"exec_mode=2 AND adminid='".$admin_aziend['user_name']."'", 'position_order');
+$get_widgets = gaz_dbi_dyn_query("*", $gTables['breadcrumb'],"exec_mode=2 AND adminid='".$admin_aziend['user_name']."' AND (codice_aziend = 0 OR codice_aziend = ".$admin_aziend['codice'].")", 'position_order');
 echo '<div id="sortable" class="vertical-align">';
 while ( $grr = gaz_dbi_fetch_array($get_widgets) ) {
   $dfn = explode('/',$grr['file']);
