@@ -30,8 +30,6 @@ $rescomp=gaz_dbi_get_row($gTables['config'], 'variable', 'users_noadmin_all_comp
 $company_choice = ($rescomp)?$rescomp['cvalue']:'';
 require( "../../modules/vendit/lib.function.php");
 $lm = new lotmag;
-$schedule_view = gaz_dbi_get_row($gTables['company_config'], 'var', 'schedule_view');
-
 
 if (!isset($_POST['hidden_req'])) {
     $form['hidden_req'] = '';
