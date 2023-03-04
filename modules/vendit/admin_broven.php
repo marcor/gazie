@@ -387,7 +387,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             }
             if ($toDo == 'update') { // e' una modifica
                 // aggiorno il custom_field
-                $gaz_custom_data = "";
+                $gaz_custom_data = [];
                 $gaz_custom_field = gaz_dbi_get_single_value( $gTables['tesbro'], 'custom_field', 'id_tes = '.$form['id_tes'] );
                 if ( isset( $gaz_custom_field ) && $gaz_custom_field!="" ) {
                     $gaz_custom_data = json_decode($gaz_custom_field,true);
