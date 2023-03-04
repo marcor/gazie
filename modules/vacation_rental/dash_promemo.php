@@ -44,7 +44,7 @@ if (!isset($_POST['access'])){// primo accesso
   <div id="generale" class="tab-pane fade in ">
     <form method="post" id="sbmt-form" enctype="multipart/form-data">
       <div class="panel panel-info col-sm-12">
-        <div class="box-header bg-info">
+        <div class="box-header company-color">
           <h4 class="box-title"><i class="glyphicon glyphicon-blackboard"></i> Riepilogo Vacation rental</h4>
           <a class="pull-right dialog_grid" id_bread="<?php echo $grr['id_bread']; ?>" style="cursor:pointer;"><i class="glyphicon glyphicon-cog"></i></a>
         </div>
@@ -67,47 +67,21 @@ if (!isset($_POST['access'])){// primo accesso
           // prendo i check-in nei prossimi 7 giorni
           $next_check = get_next_check(date("Y-m-d"),date('Y-m-d', strtotime(date("Y-m-d") . ' + 7 day')));
           ?>
-          <div class="row">
-            <div class="column" style="float: left; width: 25%;">
-              <table class="Tlarge table-bordered " style="width:95%;">
+          <div class="table-responsive table-bordered table-striped">
+            <table class="col-xs-12">
                 <tr>
-                  <th>Importo totale</th>
+                  <th class="text-center">Importo totale</th>
+                  <th class="text-center">Notti periodo</th>
+                  <th class="text-center">Notti vendute</th>
+                  <th class="text-center">Occupazione</th>
                 </tr>
                 <tr>
-                  <td><?php echo "€ ",number_format($tot_promemo['totalprice_booking'], 2, '.', ''); ?></td>
+                  <td class="text-center"><?php echo "€ ",number_format($tot_promemo['totalprice_booking'], 2, '.', ''); ?></td>
+                  <td class="text-center"><?php echo $tot_promemo['tot_nights_bookable']; ?></td>
+                  <td class="text-center"><?php echo $tot_promemo['tot_nights_booked']; ?></td>
+                  <td class="text-center"><?php echo number_format($tot_promemo['perc_booked'], 2, '.', ''),"%"; ?></td>
                 </tr>
-              </table>
-            </div>
-            <div class="column" style="float: left; width: 25%;">
-              <table class="Tlarge table-bordered " style="width:95%;">
-                <tr>
-                  <th>Notti periodo</th>
-                </tr>
-                <tr>
-                  <td><?php echo $tot_promemo['tot_nights_bookable']; ?></td>
-                </tr>
-              </table>
-            </div>
-            <div class="column" style="float: left; width: 25%;">
-              <table class="Tlarge table-bordered " style="width:95%;">
-                <tr>
-                  <th>Notti vendute</th>
-                </tr>
-                <tr>
-                  <td><?php echo $tot_promemo['tot_nights_booked']; ?></td>
-                </tr>
-              </table>
-            </div>
-            <div class="column" style="float: left; width: 25%;">
-              <table class="Tlarge table-bordered " style="width:95%;">
-                <tr>
-                  <th>Occupazione</th>
-                </tr>
-                <tr>
-                  <td><?php echo number_format($tot_promemo['perc_booked'], 2, '.', ''),"%"; ?></td>
-                </tr>
-              </table>
-            </div>
+            </table>
           </div>
           <div class="row">
             <table class="Tlarge table table-striped table-bordered table-condensed">
