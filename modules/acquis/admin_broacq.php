@@ -102,8 +102,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             } elseif ($fornitore['speban'] == 'S') { //altrimenti mi avvalgo delle nuove dell'azienda se il fornitore lo richiede
                 $form['speban'] = $admin_aziend['sperib'];
             }
-        } elseif (($new_pag['tippag'] == 'C' or $new_pag['tippag'] == 'D' or $new_pag['tippag'] == 'O')
-                and ( $old_pag['tippag'] == 'B' or $old_pag['tippag'] == 'T' or $old_pag['tippag'] == 'V')) { // se devo togliere le spese
+        } elseif (($new_pag['tippag'] == 'C' || $new_pag['tippag'] == 'D' || $new_pag['tippag'] == 'O') && $old_pag && ( $old_pag['tippag'] == 'B' || $old_pag['tippag'] == 'T' || $old_pag['tippag'] == 'V')) { // se devo togliere le spese
             $form['speban'] = 0.00;
             $form['numrat'] = 1;
         }
@@ -457,8 +456,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['banapp'] = $fornitore['banapp'];
         $form['listin'] = $fornitore['listin'];
         $pagame = gaz_dbi_get_row($gTables['pagame'], "codice", $form['pagame']);
-        if (($pagame['tippag'] == 'B' or $pagame['tippag'] == 'T' or $pagame['tippag'] == 'V')
-                and $fornitore['speban'] == 'S') {
+        if ($pagame && ($pagame['tippag'] == 'B' || $pagame['tippag'] == 'T' || $pagame['tippag'] == 'V') && $fornitore['speban'] == 'S') {
             $form['speban'] = $admin_aziend['sperib'];
             $form['numrat'] = $pagame['numrat'];
         } else {

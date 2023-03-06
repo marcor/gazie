@@ -217,8 +217,8 @@ function choice_template(modulo) {
 	});
 	});
 }
-</script>
-<script>
+
+
 $(function() {
 	$("#dialog_delete").dialog({ autoOpen: false });
 	$('.dialog_delete').click(function() {
@@ -258,6 +258,7 @@ $(function() {
 		$("#dialog_delete" ).dialog( "open" );
 	});
 });
+
 function printPdf(urlPrintDoc){
 	$(function(){
 		$('#framePdf').attr('src',urlPrintDoc);

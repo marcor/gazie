@@ -396,7 +396,7 @@ if (isset($_POST['clfoco']) || isset($_GET['clfoco'])) {
     $form['clfoco'] = 0;
 }
 
-if (isset($_POST['ddt']) || isset($_POST['cmr'])){ //conferma dell'evasione di un ddt
+if (isset($_POST['ddt']) || isset($_POST['ddo']) ||isset($_POST['ddm']) || isset($_POST['cmr'])){ //conferma dell'evasione di un ddt
     //controllo i campi
 
     $dataemiss = $_POST['datemi_Y'] . "-" . $_POST['datemi_M'] . "-" . $_POST['datemi_D'];
@@ -471,11 +471,17 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])){ //conferma dell'evasione di u
         if (isset($_POST['cmr'])) {
             $form['ddt_type'] = 'R';
             $form['tipdoc'] = 'CMR';
+        } elseif (isset($_POST['ddm'])) {
+            $form['ddt_type'] = 'M';
+            $form['tipdoc'] = 'DDM';
+        } elseif (isset($_POST['ddo'])) {
+            $form['ddt_type'] = 'O';
+            $form['tipdoc'] = 'DDO';
         } else {
             $form['ddt_type'] = 'T';
             $form['tipdoc'] = $_POST['tipdoc'];  // RIMESSO perchè NON lo prende dall'elenco a discesa e poi deve essere valorizzato con il $_POST e non con $form
         }
-        $form['template'] = "FatturaSemplice";
+        $form['template'] = "";
         $form['id_con'] = '';
         $form['status'] = 'GENERATO';
         $form['initra'] = $iniziotrasporto;
@@ -1116,7 +1122,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])){ //conferma dell'evasione di u
 require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autocomplete'));
 ?>
-<script type="text/javascript">
+<script>
     function pulldown_menu(selectName, destField)
     {
         // Create a variable url to contain the value of the
@@ -1156,6 +1162,62 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
         return((Math.round(totalecheck * 100) / 100).toFixed(2));
     }
 
+function choice_ddt_type() {
+	$( function() {
+    var dialog,
+    dialog = $("#confirm_type").dialog({
+      modal: true,
+      show: "blind",
+      hide: "explode",
+      width: "400",
+      buttons:[
+        {
+          text:'Annulla',
+					'class':'btn btn-default',
+          click:function() {
+            $(this).dialog("close");
+          }
+        },
+        {
+          text: "CMR",
+          "class": 'btn btn-success col-xs-12',
+          click: function () {
+            $("#choice_ddt_type").attr('name', 'cmr');
+            $('form#myform').submit();
+          },
+        },
+        {
+          text: "Vendita",
+          "class": 'btn btn-success col-xs-12',
+          click: function () {
+            $("#choice_ddt_type").attr('name', 'ddt');
+            $('form#myform').submit();
+          },
+        },
+        {
+          text: "Reso da lavorazione",
+          "class": 'btn btn-success col-xs-12',
+          click: function () {
+            $("#choice_ddt_type").attr('name', 'ddo');
+            $('form#myform').submit();
+          },
+        },
+        {
+          text: "Reso montaggio",
+          "class": 'btn btn-success col-xs-12',
+          click: function () {
+            $("#choice_ddt_type").attr('name', 'ddm');
+            $('form#myform').submit();
+          },
+        }
+      ],
+      close: function(){
+        (this).dialog('destroy');
+      }
+    });
+	});
+}
+
 </script>
 <script type="text/javascript" id="datapopup">
     var cal = new CalendarPopup();
@@ -1190,7 +1252,7 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
       });
     };
 </script>
-<form method="POST" name="myform">
+<form method="POST" name="myform" id="myform">
   <div class="framePdf panel panel-success" style="display: none; position: fixed; left: 5%; top: 10px">
     <div class="col-lg-12">
       <div class="col-xs-11"><h4><?php echo $script_transl['print'];; ?></h4></div>
@@ -1679,8 +1741,8 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
             echo "<input type=\"submit\" name=\"Return\" value=\"" . $script_transl['return'] . "\">&nbsp;</td>\n";
             echo "<td align=\"right\" colspan=\"6\" class=\"FacetFieldCaptionTD\">\n";
 			echo "<input type=\"submit\" class=\"btn btn-success\" name=\"vri\" value=\"" . $script_transl['issue_vri'] . "\" accesskey=\"m\" />\n";
-            echo "<input type=\"submit\" class=\"btn btn-success\" name=\"cmr\" value=\"" . $script_transl['issue_cmr'] . "\" accesskey=\"m\" />\n";
-            echo "<input type=\"submit\" class=\"btn btn-success\" name=\"ddt\" value=\"" . $script_transl['issue_ddt'] . "\" accesskey=\"d\" />\n";
+            echo '<input type="hidden"  id="choice_ddt_type" name="" />';
+            echo ' <a class="btn btn-success" onclick="choice_ddt_type();" title="Scegli modulo per stampa"/>' . $script_transl['issue_ddt'] . "</a> ";
             echo "<input type=\"submit\" class=\"btn btn-success\" name=\"fai\" value=\"" . $script_transl['issue_fat'] . "\" accesskey=\"f\" />\n";
             if (!empty($alert_sezione))
                 echo " &sup1;";
@@ -1701,9 +1763,10 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
         }
         ?>
     </table>
+	<div class="modal" id="confirm_type" title="Scegli il tipo di DdT da generare"></div>
 </form>
 <?php
-if ((isset($_POST['ddt']) || isset($_POST['fai']) || isset($_POST['cmr'])) && $msg == "" && $pdf_to_modal!==0) {// stampa pdf in popup iframe
+if ((isset($_POST['ddt']) || isset($_POST['ddo']) || isset($_POST['ddm']) || isset($_POST['fai']) || isset($_POST['cmr'])) && $msg == "" && $pdf_to_modal!==0) {// stampa pdf in popup iframe
   ?>
   <script>
     printPdf('invsta_docven.php');

@@ -41,7 +41,7 @@ class Ticket extends Template
       $this->mese = substr($this->tesdoc['datemi'],5,2);
       $this->anno = substr($this->tesdoc['datemi'],0,4);
       $this->docVars->gazTimeFormatter->setPattern('MMMM');
-      $this->nomemese = $this->docVars->gazTimeFormatter->format(new DateTime($this->tesdoc['datemi']);
+      $this->nomemese = $this->docVars->gazTimeFormatter->format(new DateTime($this->tesdoc['datemi']));
       $this->sconto = $this->tesdoc['sconto'];
       $this->trasporto = $this->tesdoc['traspo'];
       $this->tipdoc = 'Ticket di assistenza n.'.$this->tesdoc['numdoc'].'/'.$this->tesdoc['seziva'].' del '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
