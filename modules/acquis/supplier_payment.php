@@ -74,7 +74,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
             }
             if ($add_desc[$k] >= 0.01) { // posso mettere una descrizione perchè il pagamento interessa pure questa partita
                 $dd = $paymov->getDocumentData($k);
-                $desmov .= ' n.' . $dd['numdoc'] . '/' . substr($dd['datdoc'], 0, 4);
+                $desmov .= $dd?' n.' . $dd['numdoc'] . '/' .substr($dd['datdoc'], 0, 4):'';
             }
         }
         if (strlen($desmov) <= 85) { // la descrizione entra in 50 caratteri
@@ -394,7 +394,7 @@ if ($form['partner'] > 100000000) { // partner selezionato
             $form['paymov'][$k][$ki]['amount'] = $amount;
             $form['paymov'][$k][$ki]['id_tesdoc_ref'] = $k;
         }
-        $form_tot += $form['paymov'][$k][$ki]['amount'];
+        $form_tot += floatval($form['paymov'][$k][$ki]['amount']);
         $open = 'cl';
         if ($amount >= 0.01) {
             // attributo opcl per js come aperto

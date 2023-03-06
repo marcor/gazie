@@ -84,8 +84,8 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
             $form['paymov'][$k] = $v;  // qui dovrei fare il parsing
             $add_desc[$k] = 0.00;
             foreach ($v as $ki => $vi) { // calcolo il totale
-                $acc_tot += $vi['amount'];
-                $add_desc[$k] += $vi['amount'];
+                $acc_tot += floatval($vi['amount']);
+                $add_desc[$k] += floatval($vi['amount']);
             }
             if ($add_desc[$k] >= 0.01) { // posso mettere una descrizione perchè il pagamento interessa pure questa partita
                 $dd = $paymov->getDocumentData($k);
@@ -431,13 +431,13 @@ END;
             $form['paymov'][$k][$ki]['amount'] = $amount;
             $form['paymov'][$k][$ki]['id_tesdoc_ref'] = $k;
         }
-        $form_tot += $form['paymov'][$k][$ki]['amount'];
+        $form_tot += floatval($form['paymov'][$k][$ki]['amount']);
         $open = 'cl';
         if ($amount >= 0.01) {
             // attributo opcl per js come aperto
             $open = 'op';
         }
-        $orival = number_format($form['paymov'][$k][$ki]['amount'], 2, '.', '');
+        $orival = number_format(floatval($form['paymov'][$k][$ki]['amount']), 2, '.', '');
         echo <<<END
 
             <td class="hidden">
