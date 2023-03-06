@@ -31,7 +31,7 @@ if (count($_POST) > 0) {
       if ($key == 'admin_mail_pass' || $key == 'admin_smtp_password' ) {
         $tripsw=trim($value);
         if ( strlen($tripsw)>=8 ) {
-          gaz_dbi_query("UPDATE ".$gTables['config']." SET cvalue = TO_BASE64(AES_ENCRYPT('".$value."','".$_SESSION['aes_key']."')) WHERE variable = '".$key."'");
+          gaz_dbi_query("UPDATE ".$gTables['config']." SET cvalue = TO_BASE64(AES_ENCRYPT('".addslashes($value)."','".$_SESSION['aes_key']."')) WHERE variable = '".$key."'");
         }
       } else {
         gaz_dbi_put_row($gTables['config'], 'variable', $key, 'cvalue', $value);

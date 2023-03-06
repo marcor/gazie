@@ -57,7 +57,7 @@ if (count($_POST) > 10) {
       } else { // solo se le password sono di lunghezza >=8 aggiorno altrimenti lascio com'era
         $tripsw=trim($value);
         if ( strlen($tripsw)>=8 ) {
-          gaz_dbi_query("UPDATE ".$gTables['company_config']." SET val = TO_BASE64(AES_ENCRYPT('".$value."','".$_SESSION['aes_key']."')) WHERE var = '".$key."'");
+          gaz_dbi_query("UPDATE ".$gTables['company_config']." SET val = TO_BASE64(AES_ENCRYPT('".addslashes($value)."','".$_SESSION['aes_key']."')) WHERE var = '".$key."'");
         }
       }
     }
