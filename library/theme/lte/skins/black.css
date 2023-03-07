@@ -318,7 +318,7 @@ a, .panel-info {
 	background-color: transparent;
 }
 nav.navbar.navbar-static-top.company-color-bright:hover {
-  background: linear-gradient(to top,#0b0b0bc9,#fff0 70%);
+  background: linear-gradient(to left,#0b0b0b60,#fff0);
 }
 .modal .panel-body {
 	color: #fdf8cc;
