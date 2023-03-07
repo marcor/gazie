@@ -33,6 +33,19 @@ Antonio de Vincentiis
 require('template_lh.php');
 class PreventivoCliente extends Template
 {
+
+  public $giorno;
+  public $mese;
+  public $anno;
+  public $nomemese;
+  public $sconto;
+  public $trasporto;
+  public $tipdoc;
+  public $show_artico_composit;
+  public $extdoc_acc;
+  public $numPages;
+  public $_tplIdx;
+
     function setTesDoc()
     {
       $this->tesdoc = $this->docVars->tesdoc;

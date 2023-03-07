@@ -38,7 +38,6 @@ require('../../library/tcpdf/tcpdi.php');
 
 class Template extends TCPDI {
 
-
   public $docVars;
   public $gaz_path;
   public $rigbro;
@@ -87,9 +86,6 @@ class Template extends TCPDI {
   public $descriptive_last_ddt;
   public $layout_pos_logo_on_doc;
   public $iban;
-
-
-
 
     function setVars(&$docVars, $Template = '') {
         $this->docVars = & $docVars;

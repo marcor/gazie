@@ -250,7 +250,7 @@ class OrdineFornitore extends Template
         $this->Cell(63,6, 'Pagamento','LTR',0,'C',1);
         $this->Cell(68,6, 'Castelletto    I.V.A.','LTR',0,'C',1);
         $this->Cell(57,6, 'T O T A L E','LTR',1,'C',1);
-        $this->Cell(63,6, $this->pagame['descri'],'LR',0,'C');
+        $this->Cell(63,6, $this->pagame['descri'],'LR',0,'C',0,'',1);
         $this->SetFont('helvetica', '', 8);
         $this->Cell(18,4, 'Imponibile','LR',0,'C',1);
         $this->Cell(32,4, 'Aliquota','LR',0,'C',1);
@@ -260,7 +260,7 @@ class OrdineFornitore extends Template
                 if ($this->tesdoc['id_tes'] > 0) {
                    $this->Cell(63);
                    $this->Cell(18, 4, gaz_format_number($value['impcast']).' ', 'R', 0, 'R');
-                   $this->Cell(32, 4, $value['descriz'],0,0,'C');
+                   $this->Cell(32, 4, $value['descriz'],0,0,'C',0,'',1);
                    $this->Cell(18, 4, gaz_format_number($value['ivacast']).' ','L',1,'R');
                 } else {
                    $this->Cell(63);
@@ -278,7 +278,7 @@ class OrdineFornitore extends Template
         if ($impbol > 0) {
             $this->Cell(62);
             $this->Cell(18, 4, gaz_format_number($impbol).' ', 0, 0, 'R');
-            $this->Cell(32, 4, $this->docVars->iva_bollo['descri'], 'LR', 0, 'C');
+            $this->Cell(32, 4, $this->docVars->iva_bollo['descri'], 'LR', 0, 'C',0,'',1);
             $this->Cell(18, 4,gaz_format_number($this->docVars->iva_bollo['aliquo']*$impbol).' ',0,1,'R');
         }
         //stampo i totali
