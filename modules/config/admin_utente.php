@@ -135,7 +135,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
 	};
 }
 
-if (isset($_POST['Submit'])) {
+if (isset($_POST['conferma'])) {
 	$old_data = gaz_dbi_get_row($gTables['admin'], "user_name", $form["user_name"]);
 	//controllo i campi
 	if (empty($form["user_lastname"]))
@@ -515,13 +515,15 @@ onsubmit="document.getElementById('user_password_new').value=forge_sha256(docume
  id="logform" autocomplete="off">
 <input type="hidden" name="ritorno" value="<?php print $_POST['ritorno']; ?>">
 <input type="hidden" name="hidden_req" value="<?php if (isset($_POST['hidden_req'])){ print $_POST['hidden_req']; } ?>">
+<div class="col-xs-12"><div class="col-xs-2"></div><div class="text-center col-xs-7"><h3>
 <?php
 if ($toDo == 'insert') {
-	echo "<div class=\"text-center\"><h3>" . $script_transl['ins_this'] . "</h3></div>\n";
+	echo $script_transl['ins_this'] ;
 } else {
-	echo "<div class=\"text-center\"><h3>" . $script_transl['upd_this'] . " '" . $form["user_name"] . "'</h3></div>\n";
-	echo "<input type=\"hidden\" value=\"" . $form["user_name"] . "\" name=\"user_name\" />\n";
+	echo $script_transl['upd_this'] . " '" . $form["user_name"] . "'";
+	echo '<input type="hidden" value="' . $form["user_name"] . '" name="user_name" />';
 }
+echo '</h3></div><div class="col-xs-3"><input name="conferma" id="conferma" class="btn btn-warning" type="submit" value="'.ucfirst($script_transl[$toDo]).'"></div></div>';
 $gForm = new configForm();
 if (count($msg['err']) > 0) { // ho un errore
 	$gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
@@ -781,7 +783,7 @@ if ($user_data["Abilit"] == 9) {
 
 ?>
 </table><br/>
-<div class="FacetFooterTD text-center"><input name="Submit" class="btn btn-warning" type="submit" value="<?php echo ucfirst($script_transl[$toDo]); ?>"></div>
+<div class="FacetFooterTD text-center"><input name="conferma" id="conferma" class="btn btn-warning" type="submit" value="<?php echo ucfirst($script_transl[$toDo]); ?>"></div>
 </form>
 <?php
 if ($admin_aziend['Abilit']==9){
