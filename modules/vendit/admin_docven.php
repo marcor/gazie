@@ -3564,16 +3564,13 @@ if ($next_row > 0) {
 		$class_btn_confirm = "btn-danger";
 		$addvalue=" Nonostante l'errore";
 	}
-    echo '		<tr>
-					<td colspan="8" class="text-center FacetFooterTD">
-						<input name="ins" class="btn '.$class_btn_confirm.'" id="preventDuplicate" onClick="chkSubmit();" type="submit" value="' . ucfirst($script_transl[$toDo]). @$addvalue . '">
-					</td>
-				</tr>';
+
 }
-echo '</table>';
+echo '</table></div>';
+echo '<div class="text-center col-xs-12 FacetFooterTD"><input name="ins" class="btn '.$class_btn_confirm.'" id="preventDuplicate" onClick="chkSubmit();" type="submit" value="' . ucfirst($script_transl[$toDo]). @$addvalue . '"></div>';
 ?>
-</div>
 </form>
+</div>
 <div id="edit-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
