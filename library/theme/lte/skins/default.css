@@ -78,9 +78,9 @@ div.th {
 	background-color : #ece3dc;
 	color : #000000;
 }
-html body.adminlte-gazie.sidebar-mini.sidebar-collapse form div.wrapper header.main-header nav.navbar.navbar-static-top div.navbar-custom-menu ul.nav.navbar-nav li.dropdown.user.user-menu.open ul.dropdown-menu li.user-footer div.pull-right input.btn.btn-default.btn-flat {
-    height: 34px;
-    width: 65px;
+
+nav.navbar.navbar-static-top.company-color-bright:hover {
+  background: linear-gradient(to top,#0b0b0b70,#fff0 70%);
 }
 .row.alternate-row-odd{
   background-color: #eeeeee;
@@ -118,10 +118,103 @@ td.ui-datepicker-other-month>a.ui-state-default.ui-priority-secondary{
 	background: #ccccff;
 }
 .blink {
-    color: #f00;
-    font-weight: bold;
-    animation: blink 0.5s infinite;
+  color: #f00;
+  font-weight: bold;
+  animation: blink 0.5s infinite;
 }
+.adminlte-gazie .main-header {
+  background-color:  #aae2a8;
+}
+.adminlte-gazie .main-header .navbar .nav > li > a {
+  color: #123311;
+}
+.dropdown-toggle {
+  color: #123311;
+}
+.adminlte-gazie .main-header .navbar .sidebar-toggle {
+  color: #123311;
+}
+.adminlte-gazie .main-header .navbar .sidebar-toggle:hover {
+  color: #000;
+  background: #f7f7f7;
+}
+@media (max-width: 767px) {
+  .adminlte-gazie .main-header .navbar .dropdown-menu li.divider {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  .adminlte-gazie .main-header .navbar .dropdown-menu li a {
+    color: #fff;
+  }
+  .adminlte-gazie .main-header .navbar .dropdown-menu li a:hover {
+    background: #99d197;
+  }
+}
+.adminlte-gazie .main-header {
+  background-color: #d6c188;
+  color: #123311;
+  border-bottom: 0 solid transparent;
+}
+.adminlte-gazie .content-header {
+  background: transparent;
+}
+.adminlte-gazie .wrapper,
+.adminlte-gazie .main-sidebar,
+.adminlte-gazie .left-side {
+  background-color: #222d32;
+}
+.adminlte-gazie .user-panel > .info,
+.adminlte-gazie .user-panel > .info > a {
+  color: #fff;
+}
+.adminlte-gazie .sidebar-menu > li.header {
+  color: #4b646f;
+  background: #1a2226;
+}
+.adminlte-gazie .sidebar-menu > li:hover > a,
+.adminlte-gazie .sidebar-menu > li.active > a {
+  color: #ffffff;
+  background: #1e282c;
+}
+.adminlte-gazie .sidebar-menu > li > .treeview-menu {
+  margin: 0 1px;
+  background: #2c3b41;
+}
+.adminlte-gazie .sidebar a:hover {
+  text-decoration: none;
+}
+.adminlte-gazie .treeview-menu > li.active > a,
+.adminlte-gazie .treeview-menu > li > a:hover {
+  color: #ffffff;
+}
+.sidebar-menu .treeview-menu.menu-open {
+	background-color: #282728;
+}
+.adminlte-gazie .sidebar-form input[type="text"],
+.adminlte-gazie .sidebar-form .btn {
+  background-color: #374850;
+}
+.adminlte-gazie .sidebar-form input[type="text"] {
+  color: #666;
+}
+.adminlte-gazie .sidebar-form input[type="text"]:focus,
+.adminlte-gazie .sidebar-form input[type="text"]:focus + .input-group-btn .btn {
+  background-color: #fff;
+  color: #666;
+}
+.adminlte-gazie .sidebar-form input[type="text"]:focus + .input-group-btn .btn {
+  border-left-color: #fff;
+}
+.adminlte-gazie .sidebar-form .btn {
+  color: #999;
+}
+.adminlte-gazie.layout-top-nav .main-header > .logo {
+  background-color: #aae2a8;
+  color: #ffffff;
+}
+.adminlte-gazie.layout-top-nav .main-header > .logo:hover {
+  background-color: #3b8ab8;
+}
+
 .navbar-nav > .user-menu > .dropdown-menu > .user-footer {
 	background-color: #a1a29f;
 }

@@ -79,7 +79,10 @@ select {
 .adminlte-gazie .treeview-menu > li > a:hover {
   color: #ffffff;
 }
-
+html body.adminlte-gazie.sidebar-mini.sidebar-collapse form div.wrapper header.main-header nav.navbar.navbar-static-top div.navbar-custom-menu ul.nav.navbar-nav li.dropdown.user.user-menu.open ul.dropdown-menu li.user-footer div.pull-right input.btn.btn-default.btn-flat {
+  height: 34px;
+  width: 65px;
+}
 .sidebar-menu .treeview-menu .treeview-menu {
 	padding-left: 2px;
 }
