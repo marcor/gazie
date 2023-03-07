@@ -125,10 +125,10 @@ $(function() {
             <?php gaz_flt_disp_select("tipeff", $gTables['effett'].".tipeff", $table, $t->where, "tipeff DESC",$script_transl['tipeff_value']); ?>
         </td>
         <td class="FacetFieldCaptionTD">
-            <?php gaz_flt_disp_select("anno", "YEAR(".$gTables['files'].".last_modified) AS anno", $table, $t->where, "anno DESC"); ?>
+            <?php gaz_flt_disp_select("codbanacc", $gTables['clfoco'].".descri AS desbanacc,".$gTables['clfoco'].".codice AS codbanacc ", $table, $t->where, "codice DESC",$optval); ?>
         </td>
         <td class="FacetFieldCaptionTD">
-            <?php gaz_flt_disp_select("codbanacc", $gTables['clfoco'].".descri AS desbanacc,".$gTables['clfoco'].".codice AS codbanacc ", $table, $t->where, "codice DESC",$optval); ?>
+            <?php gaz_flt_disp_select("anno", "YEAR(".$gTables['files'].".last_modified) AS anno", $table, $t->where, "anno DESC"); ?>
         </td>
 		<td class="FacetFieldCaptionTD" colspan="2">
 			<input type="submit" class="btn btn-xs btn-default" name="search" value="<?php echo $script_transl['search'];?>" tabindex="1" onClick="javascript:document.report.all.value=1;">
