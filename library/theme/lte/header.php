@@ -303,7 +303,7 @@ setInterval(menu_check_from_modules,<?php echo intval((int)$period*60000);?>);
     if ($config->getValue('LTE_SidebarOpen') == "true")
         $val .= " control-sidebar-open";
 
-    echo "<body class=\"hold-transition skin-blue sidebar-mini " . $val . "\">";
+    echo "<body class=\"hold-transition adminlte-gazie sidebar-mini " . $val . "\">";
     ?>
 
     <form method="POST" name="head_form" action="../../modules/root/admin.php">

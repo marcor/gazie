@@ -79,7 +79,7 @@ div.th {
   margin-bottom: 10px;
 }
 
-html body.skin-blue.sidebar-mini.sidebar-collapse form div.wrapper header.main-header nav.navbar.navbar-static-top div.navbar-custom-menu ul.nav.navbar-nav li.dropdown.user.user-menu.open ul.dropdown-menu li.user-footer div.pull-right input.btn.btn-default.btn-flat {
+html body.adminlte-gazie.sidebar-mini.sidebar-collapse form div.wrapper header.main-header nav.navbar.navbar-static-top div.navbar-custom-menu ul.nav.navbar-nav li.dropdown.user.user-menu.open ul.dropdown-menu li.user-footer div.pull-right input.btn.btn-default.btn-flat {
   height: 34px;
   width: 65px;
 }
@@ -209,8 +209,9 @@ a, .panel-info {
 .table-bordered > thead > tr > th, .table-bordered > tbody > tr > th, .table-bordered > tfoot > tr > th, .table-bordered > thead > tr > td, .table-bordered > tbody > tr > td, .table-bordered > tfoot > tr > td {
 	border: 1px solid #4f4747;
 }
-.input-area {
-  background-color: #122e5b;
+.input-area,.form-control {
+	color: #fbfafa;
+	background-color: #151414;
 }
 .FacetFooterTD {
 	background-color: #484b77;
