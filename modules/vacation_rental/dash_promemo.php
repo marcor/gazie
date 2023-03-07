@@ -29,6 +29,7 @@
 	  # free to use, Author name and references must be left untouched  #
 	  --------------------------------------------------------------------------
 */
+require_once("../../library/include/datlib.inc.php");
 require("../../modules/vacation_rental/lib.function.php");
 require("../../modules/vacation_rental/lib.data.php");
 if (!isset($_POST['access'])){// primo accesso
@@ -39,13 +40,47 @@ if (!isset($_POST['access'])){// primo accesso
   $form['end']=$_POST['end'];
 }
 ?>
+<script>
+$('#closePdf').on( "click", function() {
+		$('.framePdf').css({'display': 'none'});
+	});
+function openframe(url,codice){
+  var response = jQuery.ajax({
+		url: url,
+		type: 'HEAD',
+		async: false
+	}).status;
+	if(response == "200") {
+    $(function(){
+      $("#titolo").append(codice);
+      $('#framePdf').attr('src',url);
+      $('#framePdf').css({'height': '100%'});
+      $('.framePdf').css({'display': 'block','width': '90%', 'height': '100%', 'z-index':'2000'});
 
+    });
+  }else{
+    alert('Il file richiesto fa parte della versione PRO di questo modulo: contattare lo sviluppatore');
+  };
+	$('#closePdf').on( "click", function() {
+		$("#titolo").empty();
+		$('.framePdf').css({'display': 'none'});
+	});
+};
+</script>
 
   <div id="generale" class="tab-pane fade in ">
     <form method="post" id="sbmt-form" enctype="multipart/form-data">
+    	<div class="framePdf panel panel-success" style="display: none; position: fixed; left: 5%; top: 5px">
+          <div class="col-lg-12">
+            <div class="col-xs-11" id="titolo" ></div>
+            <div class="col-xs-1"><span><button type="button" id="closePdf"><i class="glyphicon glyphicon-remove"></i></button></span></div>
+          </div>
+          <iframe id="framePdf"  style="height: 100%; width: 100%" src=""></iframe>
+      </div>
       <div class="panel panel-info col-sm-12">
         <div class="box-header company-color">
           <h4 class="box-title"><i class="glyphicon glyphicon-blackboard"></i> Riepilogo Vacation rental</h4>
+          <a class="pull-left" style="cursor:pointer;" onclick="openframe('../../modules/vacation_rental/total_availability_it.php','<h3>Calendario generale</h3>')" data-toggle="modal" data-target="#iframe"> <i class="glyphicon glyphicon-calendar" title="Calendario della disponibilità"></i></a>
           <a class="pull-right dialog_grid" id_bread="<?php echo $grr['id_bread']; ?>" style="cursor:pointer;"><i class="glyphicon glyphicon-cog"></i></a>
         </div>
         <div class="box-body">
