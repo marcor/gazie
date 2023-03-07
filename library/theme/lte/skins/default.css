@@ -80,7 +80,7 @@ div.th {
 }
 
 nav.navbar.navbar-static-top.company-color-bright:hover {
-  background: linear-gradient(to top,#0b0b0b70,#fff0 70%);
+  background: linear-gradient(to left,#0b0b0b60,#fff0);
 }
 .row.alternate-row-odd{
   background-color: #eeeeee;
