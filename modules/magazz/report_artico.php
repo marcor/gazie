@@ -352,7 +352,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     $com = '';
     if ($admin_aziend['conmag'] > 0 && $r["good_or_service"] != 1 && $tipo_composti['val']=="STD") {
         $com = '<a class="btn btn-xs btn-'.$class.'" href="../magazz/select_schart.php?di=0101' . date('Y') . '&df=' . date('dmY') . '&id=' . $r['codice'] . '" target="_blank">
-	  <i class="glyphicon glyphicon-check"></i><i class="glyphicon glyphicon-print"></i>
+	  <i class="glyphicon glyphicon-list"></i> <i class="glyphicon glyphicon-print"></i>
 	  </a>';
     }
     // IVA

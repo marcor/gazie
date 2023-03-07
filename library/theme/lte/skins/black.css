@@ -170,11 +170,6 @@ div.th {
 .adminlte-gazie.layout-top-nav .main-header > .logo:hover {
   background-color: #3b8ab8;
 }
-
-html body.adminlte-gazie.sidebar-mini.sidebar-collapse form div.wrapper header.main-header nav.navbar.navbar-static-top div.navbar-custom-menu ul.nav.navbar-nav li.dropdown.user.user-menu.open ul.dropdown-menu li.user-footer div.pull-right input.btn.btn-default.btn-flat {
-  height: 34px;
-  width: 65px;
-}
 .row.alternate-row-odd{
   background-color: #eeeeee2b;
 }
@@ -323,7 +318,7 @@ a, .panel-info {
 	background-color: transparent;
 }
 nav.navbar.navbar-static-top.company-color-bright:hover {
-  background: linear-gradient(to top,#0b0b0bc9,#fff0 40%);
+  background: linear-gradient(to top,#0b0b0bc9,#fff0 70%);
 }
 .modal .panel-body {
 	color: #fdf8cc;

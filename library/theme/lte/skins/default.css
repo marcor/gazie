@@ -122,9 +122,7 @@ td.ui-datepicker-other-month>a.ui-state-default.ui-priority-secondary{
   font-weight: bold;
   animation: blink 0.5s infinite;
 }
-.adminlte-gazie .main-header {
-  background-color:  #aae2a8;
-}
+
 .adminlte-gazie .main-header .navbar .nav > li > a {
   color: #123311;
 }
@@ -150,7 +148,6 @@ td.ui-datepicker-other-month>a.ui-state-default.ui-priority-secondary{
   }
 }
 .adminlte-gazie .main-header {
-  background-color: #d6c188;
   color: #123311;
   border-bottom: 0 solid transparent;
 }

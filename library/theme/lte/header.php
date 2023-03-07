@@ -120,7 +120,8 @@ if (file_exists(DATA_DIR.'files/'.$admin_aziend['codice'].'/favicon.ico')) { // 
         <link href="../../library/theme/lte/scheletons/<?php echo $style; ?>" rel="stylesheet" type="text/css" />
         <link href="../../library/theme/lte/skins/<?php echo $skin; ?>" rel="stylesheet" type="text/css" />
         <style>
-            .company-color, .company-color-bright, li.user-header, .company-color-logo, .dropdown-menu > li > a:hover, .dropdown-menu > li.user-body:hover, .navbar-default .navbar-nav > li > a:hover
+            .company-color, .company-color-bright, li.user-header, .company-color-logo, .dropdown-menu > li > a:hover, .dropdown-menu > li.user-body:hover, .navbar-default .navbar-nav > li > a:hover,
+            nav.navbar.navbar-static-top.company-color-bright:hover
             {
               background-color: #<?php echo $admin_aziend['colore']; ?>;
               color: black;
