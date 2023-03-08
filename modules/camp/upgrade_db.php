@@ -40,6 +40,8 @@ $upgrade_db[147][]="ALTER TABLE ".$table_prefix."_XXXrental_discounts ADD `test2
 */
 
 $upgrade_db[148][]="ALTER TABLE ".$table_prefix."_camp_fitofarmaci ADD INDEX(`PRODOTTO`);";
+$upgrade_db[155][]="ALTER TABLE `".$table_prefix."_camp_uso_fitofarmaci` CHANGE `dose` `dose` DECIMAL(8,3) NOT NULL COMMENT 'unità di misura / ha'; ";
+$upgrade_db[155][]="ALTER TABLE `".$table_prefix."_camp_uso_fitofarmaci` ADD `dose_hl` DECIMAL(8,3) NOT NULL COMMENT 'unità di misura / hl' AFTER `dose`; ";
 
 
 ?>
