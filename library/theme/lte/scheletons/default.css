@@ -1,13 +1,18 @@
 /*
- * Skin: Gazie
+ * Scheleton Gazie
  * ----------
  */
+
 select {
   border-radius: 5px;
 }
 html body.adminlte-gazie.sidebar-mini.sidebar-collapse form div.wrapper header.main-header nav.navbar.navbar-static-top div.navbar-custom-menu ul.nav.navbar-nav li.dropdown.user.user-menu.open ul.dropdown-menu li.user-footer div.pull-right input.btn.btn-default.btn-flat {
     height: 34px;
     width: 65px;
+}
+.sidebar-menu > li > a {
+	padding: 7px 5px 7px 15px;
+	display: block;
 }
 .sidebar-menu .treeview-menu .treeview-menu {
 	padding-left: 2px;
@@ -203,28 +208,28 @@ section.content {
 	white-space: unset;
 }
 .btn-50 {
-    width: 50px;
+  width: 50px;
 }
 .btn-100 {
-    text-align: right;
-    padding-right: 15px;
-    width: 100px;
+  text-align: right;
+  padding-right: 15px;
+  width: 100px;
 }
 .glyphicon-edit {
-    padding-right: 5px;
+  padding-right: 5px;
 }
 .right {
-    text-align: right;
-    margin-right: 1em;
+  text-align: right;
+  margin-right: 1em;
 }
 .btn-200 {
-    width: 200px;
+  width: 200px;
 }
 .btn-full {
-    width: 100%;
+  width: 100%;
 }
 .FacetFieldCaptionTD {
-    padding: 5px 5px 5px 5px;
+  padding: 5px 5px 5px 5px;
 }
 .FacetDataTD input,select,textarea,select[class^='col-'] {
 	padding-left: unset;
@@ -240,9 +245,9 @@ section.content {
     border: medium none;
 }
 .nav-tabs > li > a:hover{
-    border-top: 1px solid #ddd;
-    border-left: 1px solid #ddd;
-    border-right: 1px solid #ddd;
+  border-top: 1px solid #ddd;
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
 }
 .table {
   margin-bottom: 5px;
@@ -267,100 +272,91 @@ table.Tmiddle tr>td, table.Tsmall tr>td {
 }
 #products-list
 {
-    border-top: 0px solid;
+  border-top: 0px solid;
 }
 .panel {
 	-webkit-box-shadow: 2px 1px 1px rgba(1,1,1,.5);
 	box-shadow: 2px 1px 1px rgba(1,1,1,.5);
 }
 .panel-company {
-    min-height: 200px;
+  min-height: 200px;
 	width: 100%;
 }
 .navbar-static-bottom {
 	border-bottom: 1px solid #000;
 }
 .panel-user {
-    min-height: 200px;
+  min-height: 200px;
 	width: 100%;
 }
 .sidebar-menu .treeview-menu > li > a {
-    padding: 5px 5px 5px 5px;
+  padding: 3px;
 }
-
-/* il titolo sopra al header della tabella*/
 .FacetFormHeaderFont {
-    font-size: 18px;
-    text-align: center;
-    font-weight: bold;
-    padding-top: 8px;
+  font-size: 18px;
+  text-align: center;
+  font-weight: bold;
+  padding-top: 8px;
 }
 .control-sidebar-menu .menu-info {
-    margin-left: 0px;
+  margin-left: 0px;
 }
 .control-sidebar-menu > li > a {
-    padding: 2px 15px;
+  padding: 2px 15px;
 }
 .gaz-home-scadenze {
-    min-height: 260px;
+  min-height: 260px;
 }
 #fornitori span {
-    display:none;
+  display:none;
 }
 #clienti span {
-    display:none;
+  display:none;
 }
 @media only screen and (max-width: 991px) {
-    /* Force table to not be like tables anymore */
-    #gaz-responsive-table table,
-    #gaz-responsive-table thead,
-    #gaz-responsive-table tbody,
-    #gaz-responsive-table th,
-    #gaz-responsive-table td,
-    #gaz-responsive-table tr {
-        display: block;
-    }
-    #gaz-responsive-table table{
-        padding: 2px;
-    }
-    /* Hide table headers (but not display: none;, for accessibility) */
-    #gaz-responsive-table thead tr {
-        position: absolute;
-        top: -9999px;
-        left: -9999px;
-    }
-
-    #gaz-responsive-table tr { border: 1px solid #ccc; }
-
-    #gaz-responsive-table td {
-        border: none;
-        border-bottom: 1px solid #eee;
-        position: relative;
-        padding-left: 30%;
-        padding-top: 2px;
-        padding-bottom: 2px;
-        white-space: normal;
-        text-align:left;
-    }
-
-    #gaz-responsive-table td:before {
-        /* Now like a table header */
-        position: absolute;
-        /* Top/left values mimic padding */
-        top: 6px;
-        left: 6px;
-        width: 45%;
-        padding-right: 10px;
-        white-space: nowrap;
-        text-align:left;
-        font-weight: bold;
-    }
-
-    #gaz-responsive-table td:before { content: attr(data-title); }
-
-    .gaz-table-form .form-group {
-        background-color: rgba(0, 0, 0, 0.04);
-    }
+  #gaz-responsive-table table,
+  #gaz-responsive-table thead,
+  #gaz-responsive-table tbody,
+  #gaz-responsive-table th,
+  #gaz-responsive-table td,
+  #gaz-responsive-table tr {
+    display: block;
+  }
+  #gaz-responsive-table table{
+    padding: 2px;
+  }
+  #gaz-responsive-table thead tr {
+      position: absolute;
+      top: -9999px;
+      left: -9999px;
+  }
+  #gaz-responsive-table tr { border: 1px solid #ccc; }
+  #gaz-responsive-table td {
+      border: none;
+      border-bottom: 1px solid #eee;
+      position: relative;
+      padding-left: 30%;
+      padding-top: 2px;
+      padding-bottom: 2px;
+      white-space: normal;
+      text-align:left;
+  }
+  #gaz-responsive-table td:before {
+      /* Now like a table header */
+      position: absolute;
+      /* Top/left values mimic padding */
+      top: 6px;
+      left: 6px;
+      width: 45%;
+      padding-right: 10px;
+      white-space: nowrap;
+      text-align:left;
+      font-weight: bold;
+  }
+  #gaz-responsive-table td:before { content: attr(data-title); }
+  .gaz-table-form .form-group {
+    background-color: rgba(0, 0, 0, 0.04);
+  }
 }
 
 /*    --------------------------------------------------
