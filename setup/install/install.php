@@ -435,9 +435,8 @@ function executeModulesUpdate(){// Antonio Germani 12/07/2022 - funzione per ese
   $result = gaz_dbi_query ($query);
 
   while($module=gaz_dbi_fetch_array($result)){ // in ogni modulo attivo
-
+    $upgrade_db=[];
     if (file_exists("../../modules/". $module['name'] ."/upgrade_db.php")){ // cerco se c'è il file di aggiornamento
-
       include("../../modules/". $module['name'] ."/upgrade_db.php"); // carico l'array
       if (isset($upgrade_db)){ //se c'è
         // prendo l'ultima versione archivio
@@ -454,10 +453,17 @@ function executeModulesUpdate(){// Antonio Germani 12/07/2022 - funzione per ese
                     exit;
                   }
                 }
-              } else { // query singola sulla tabella comune alle aziende
+              }
+            }
+          }
+        }
+        foreach ($upgrade_db as $k => $v){ //ciclo nuovamente le istruzioni in base alla chiave
+          if ($k > $version){ // se la chiave è maggiore della versione attuale archivio
+            foreach ($upgrade_db[$k] as $instruction){ //ciclo le istruzioni e le eseguo per le tabelle comuni
+              if (!preg_match("/XXX/",$instruction)) { // query ricorsive sulle tabelle comuni
                 if (!gaz_dbi_query($instruction)) { //se non è stata eseguita l'istruzione lo segnalo
                   echo "Query Fallita";
-                  echo "$sql <br/>";
+                  echo "$instruction <br/>";
                   exit;
                 }
               }
