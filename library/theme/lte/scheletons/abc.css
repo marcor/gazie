@@ -79,6 +79,9 @@ select {
 .adminlte-gazie .treeview-menu > li > a:hover {
   color: #ffffff;
 }
+.adminlte-gazie .main-sidebar {
+	background: linear-gradient(to left,#0b0b0bc4,#060606e6 20%);
+}
 html body.adminlte-gazie.sidebar-mini.sidebar-collapse form div.wrapper header.main-header nav.navbar.navbar-static-top div.navbar-custom-menu ul.nav.navbar-nav li.dropdown.user.user-menu.open ul.dropdown-menu li.user-footer div.pull-right input.btn.btn-default.btn-flat {
   height: 34px;
   width: 65px;

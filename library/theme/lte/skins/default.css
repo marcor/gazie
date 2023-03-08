@@ -20,7 +20,7 @@ aside.control-sidebar.control-sidebar-dark.control-sidebar-open div.tab-content
     border-color: #000;
 }
 .FacetFieldCaptionTD, label.control-label {
-    background-color: #9b9b8a24;
+    background-color: #9b9b8a7a;
     color: #000;
 }
 th {
@@ -169,8 +169,8 @@ td.ui-datepicker-other-month>a.ui-state-default.ui-priority-secondary{
 }
 .adminlte-gazie .sidebar-menu > li:hover > a,
 .adminlte-gazie .sidebar-menu > li.active > a {
-  color: #ffffff;
-  background: #1e282c;
+  color: #fff;
+  background: #09080873;
 }
 .adminlte-gazie .sidebar-menu > li > .treeview-menu {
   margin: 0 1px;

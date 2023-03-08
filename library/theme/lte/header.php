@@ -126,6 +126,9 @@ if (file_exists(DATA_DIR.'files/'.$admin_aziend['codice'].'/favicon.ico')) { // 
               background-color: #<?php echo $admin_aziend['colore']; ?>;
               color: black;
             }
+            .adminlte-gazie .main-sidebar {
+              background-color: #<?php echo $admin_aziend['colore']; ?>;
+            }
             .company-color-logo:hover {
               filter: brightness(80%);
             }
