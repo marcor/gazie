@@ -81,7 +81,11 @@ if (file_exists(DATA_DIR.'files/'.$admin_aziend['codice'].'/favicon.ico')) { // 
         background-image: url("data:image/x-icon;base64,<?php echo $sfondo; ?>");
       }
       .navbar-default .navbar-collapse {
-          background-color: <?php echo hex_color_mod($admin_aziend['colore'],20); ?> ;
+        background-color: <?php echo hex_color_mod($admin_aziend['colore'],20); ?> ;
+      }
+      .navbar.navbar-default .collapse.navbar-collapse:hover {
+        background: linear-gradient(to left, #0000005e,#0000 70%);
+        background-color: <?php echo hex_color_mod($admin_aziend['colore'],20); ?> ;
       }
       .company-color {
           background-color: #<?php echo $admin_aziend['colore']; ?> ;

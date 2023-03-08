@@ -510,10 +510,6 @@ label {
     margin-bottom: 1px;
     min-height:20px;
 }
-.navbar-default {
-    background-color: transparent;
-}
-
 .navbar-header {
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
@@ -532,7 +528,6 @@ label {
     margin: 0px 0px;
     padding-left: 10px;
 }
-
 .dropdown-menu > li > a {
     font-size: 90%;
 }
