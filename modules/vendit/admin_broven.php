@@ -1241,6 +1241,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     }
 } elseif ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo accesso per UPDATE
     $tesbro = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $_GET['id_tes']);
+    // torno indietro se il tipdoc non è tra quelli gestiti da questo modulo ( tesbro può essere usato per molto altro)
+    if (!$tesbro['tipdoc']=='VOR' && !$tesbro['tipdoc']=='VPR'){
+      header("Location: " . $_SERVER['HTTP_REFERER']);
+    }
     $anagrafica = new Anagrafica();
     $cliente = $anagrafica->getPartner($tesbro['clfoco']);
     $form['indspe'] = $cliente['indspe'];
@@ -1306,7 +1310,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['change_pag'] = $tesbro['pagame'];
     $form['speban'] = $tesbro['speban'];
     $pagame = gaz_dbi_get_row($gTables['pagame'], "codice", $form['pagame']);
-    if (($pagame['tippag'] == 'B' or $pagame['tippag'] == 'T' or $pagame['tippag'] == 'V' or $pagame['tippag'] == 'K') and $cliente['speban'] == 'S') {
+    if ($pagame && ($pagame['tippag'] == 'B' || $pagame['tippag'] == 'T' || $pagame['tippag'] == 'V' || $pagame['tippag'] == 'K') && $cliente['speban'] == 'S') {
         $form['numrat'] = $pagame['numrat'];
     } else {
         $form['speban'] = 0.00;

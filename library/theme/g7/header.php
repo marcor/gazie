@@ -89,9 +89,6 @@ if (file_exists(DATA_DIR.'files/'.$admin_aziend['codice'].'/favicon.ico')) { // 
       .dropdown-menu > li > a:hover {
           background-color: #<?php echo $admin_aziend['colore']; ?> ;
       }
-      .navbar-default .navbar-nav > li > a:hover {
-          background-color: #<?php echo $admin_aziend['colore']; ?>;
-      }
       div.blink{
         animation:blink 700ms infinite alternate;
         padding-top:10px;

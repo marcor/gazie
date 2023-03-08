@@ -116,6 +116,9 @@ if (file_exists(DATA_DIR.'files/'.$admin_aziend['codice'].'/favicon.ico')) { // 
           $sfondo=base64_encode($image_data);
         }
     }
+    if ( $debug_active == true ){
+      echo '<style> pre.xdebug-var-dump { z-index: 820; position: relative; } </style>';
+    } ;
     ?>
         <link href="../../library/theme/lte/scheletons/<?php echo $style; ?>" rel="stylesheet" type="text/css" />
         <link href="../../library/theme/lte/skins/<?php echo $skin; ?>" rel="stylesheet" type="text/css" />

@@ -352,3 +352,6 @@ ul.distintabase,
 .ui-button {
   background: unset;
 }
+.navbar-default .navbar-nav > li > a:hover {
+  background-color: #e7e7e7;
+}
