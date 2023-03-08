@@ -718,12 +718,20 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ // se NON è il pri
 	$form['id_rigbro'] = $result['id_rigbro'];
 	$form['add_info'] = $result['add_info'];
 	$form['day_of_validity'] = $result['duration'];
-	$s = strtotime($result['start_work']);
-	$form['iniprod'] = date('d-m-Y', $s);
-	$form['iniprodtime'] = date('H:i', $s);
-	$s = strtotime($result['end_work']);
-	$form['fineprod'] = date('d-m-Y', $s);
-	$form['fineprodtime'] = date('H:i', $s);
+  $form['iniprod'] = '';
+  $form['iniprodtime'] = '00:00';
+	if (is_string($result['start_work'])){
+    $s = strtotime($result['start_work']);
+    $form['iniprod'] = date('d-m-Y', $s);
+    $form['iniprodtime'] = date('H:i', $s);
+  }
+	$form['fineprod'] = '';
+	$form['fineprodtime'] = '00:00';
+	if (is_string($result['end_work'])){
+    $s=strtotime($result['end_work']);
+    $form['fineprod'] = date('d-m-Y', $s);
+    $form['fineprodtime'] = date('H:i', $s);
+  }
 	$result4 = gaz_dbi_get_row($gTables['movmag'], "id_orderman", intval($_GET['codice']), "AND operat ='1'");
 	$form['datreg'] = ($result4)?$result4['datreg']:'';
 	$form['quantip'] = ($result4)?$result4['quanti']:0;
