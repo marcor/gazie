@@ -284,11 +284,14 @@ a, .panel-info {
 .gaz-table-form div.container-fluid div.row:nth-of-type(odd) {
 	background-color: #191919;
 }
+form div.table-responsive table.Tlarge tr:hover, form div.table-responsive table.Tlarge tbody tr:hover {
+	background: linear-gradient(180deg, #ffffff20,#060606,#ffffff20);
+}
 .table-striped > tbody > tr:nth-of-type(odd) {
-    background-color: #292929;
+  background-color: #292929;
 }
 .table-striped > tbody > tr:nth-of-type(even) {
-    background-color: #191919;
+  background-color: #191919;
 }
 .table > tbody > tr.success > td, .table > tbody > tr.success > th, .table > tbody > tr > td.success, .table > tbody > tr > th.success, .table > tfoot > tr.success > td, .table > tfoot > tr.success > th, .table > tfoot > tr > td.success, .table > tfoot > tr > th.success, .table > thead > tr.success > td, .table > thead > tr.success > th, .table > thead > tr > td.success, .table > thead > tr > th.success {
 	background-color: #13240c;

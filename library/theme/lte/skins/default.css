@@ -255,6 +255,9 @@ td.ui-datepicker-other-month>a.ui-state-default.ui-priority-secondary{
 .table-striped > tbody > tr:nth-of-type(even) {
     background-color: #f9f9f9;
 }
+form div.table-responsive table.Tlarge tr:hover, form div.table-responsive table.Tlarge tbody tr:hover {
+	background: linear-gradient(180deg, #00000017,#fff,#00000017);
+}
 .nav-pills > li {
 	border-top: 1px solid #222d32;
 	border-left: 1px solid #222d32;
