@@ -169,6 +169,7 @@ if (file_exists(DATA_DIR.'files/'.$admin_aziend['codice'].'/favicon.ico')) { // 
               width: auto;
               max-width: 50px;
               max-height: 50px;
+              padding: 1px;
             }
 
         </style>

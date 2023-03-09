@@ -140,7 +140,7 @@ div.th {
 }
 .adminlte-gazie .treeview-menu > li.active > a,
 .adminlte-gazie .treeview-menu > li > a:hover {
-  color: #ffffff;
+  background: linear-gradient(180deg,#ffffff40,#000,#ffffff40);
 }
 .sidebar-menu .treeview-menu.menu-open {
 	background-color: #282728;
