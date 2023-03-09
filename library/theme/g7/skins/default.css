@@ -13,6 +13,9 @@ select:focus, input:focus {
 .FacetFormTABLE,table.Tmiddle,table.Tsmall {
 	background-color: #ebf2f49e;
 }
+form div.table-responsive table.Tlarge tr:hover, form div.table-responsive table.Tlarge tbody tr:hover {
+	background: linear-gradient(180deg, #00000017,#fff,#00000017);
+}
 table.Tlarge {
   background-color: #e6e6e6;
 }

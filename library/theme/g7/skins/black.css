@@ -80,16 +80,14 @@ div.th {
   background-color: #c4c7ca;
   margin-bottom: 10px;
 }
-
-html body.skin-blue.sidebar-mini.sidebar-collapse form div.wrapper header.main-header nav.navbar.navbar-static-top div.navbar-custom-menu ul.nav.navbar-nav li.dropdown.user.user-menu.open ul.dropdown-menu li.user-footer div.pull-right input.btn.btn-default.btn-flat {
-  height: 34px;
-  width: 65px;
-}
 .row.alternate-row-odd{
   background-color: #eeeeee2b;
 }
 .row.alternate-row-even{
   background-color: #cccccc08;
+}
+form div.table-responsive table.Tlarge tr:hover, form div.table-responsive table.Tlarge tbody tr:hover {
+	background: linear-gradient(180deg, #ffffff20,#060606,#ffffff20);
 }
 .btn-effetti {
   background-color: #D4CB6A;

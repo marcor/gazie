@@ -55,7 +55,7 @@ $contact_link=(isset($contact_link))?$contact_link:'';
   <div class=" text-center col-lg-4 hidden-xs">
     <?php
     if ( $debug_active == true ){
-      echo '<span class="bg-danger text-danger">DEBUG ATTIVATO --> '.$_SESSION['aes_key'].'</span> <a class="btn btn-xs btn-info" href="../../passhash.php" >HASHES UTILITY</a>';
+      echo '<a class="btn btn-xs btn-danger" href="" style="cursor:default;"> DEBUG ATTIVATO </a> '.$_SESSION['aes_key'].' <a class="btn btn-xs btn-info" href="../../passhash.php" > HASHES UTILITY </a>';
     } ;
     ?>
   </div>
