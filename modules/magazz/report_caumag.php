@@ -101,14 +101,15 @@ echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl[1].$s
 echo "<form method=\"GET\">";
 ?>
 <div style="display:none" id="dialog_delete" title="Conferma eliminazione">
-		<p><b>causale di magazzino:</b></p>
-		<p>Codice</p>
-        <p class="ui-state-highlight" id="idcodice"></p>
-        <p>Descrizione</p>
-        <p class="ui-state-highlight" id="iddescri"></p>
-	</div>
+  <p><b>causale di magazzino:</b></p>
+	<p>Codice</p>
+  <p class="ui-state-highlight" id="idcodice"></p>
+  <p>Descrizione</p>
+  <p class="ui-state-highlight" id="iddescri"></p>
+</div>
+<div class="table-responsive">
+<table class="Tlarge table table-striped table-bordered table-condensed">
 <?php
-echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
 echo "<tr><td></td><td class=\"FacetFieldCaptionTD\">".$script_transl[2].":\n";
 echo "<input type=\"text\" name=\"auxil\" value=\"";
 if ($auxil != "&all=yes"){
@@ -146,6 +147,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 }
 ?>
 </table>
+</div>
 <?php
 require("../../library/include/footer.php");
 ?>
