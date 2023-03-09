@@ -284,8 +284,12 @@ a, .panel-info {
 .gaz-table-form div.container-fluid div.row:nth-of-type(odd) {
 	background-color: #191919;
 }
-form div.table-responsive table.Tlarge tr:hover, form div.table-responsive table.Tlarge tbody tr:hover {
+div.table-responsive table.Tlarge tr:hover,
+div.table-responsive table.Tlarge tbody tr:hover,
+div.table-responsive table.dataTable tbody tr:hover,
+div.box-body table.dataTable tbody tr:hover {
 	background: linear-gradient(180deg, #ffffff20,#060606,#ffffff20);
+  font-weight: 600;
 }
 .table-striped > tbody > tr:nth-of-type(odd) {
   background-color: #292929;
