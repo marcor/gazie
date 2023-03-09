@@ -23,7 +23,7 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
- 
+
 // Antonio Germani
 // ATTENZIONE!! QUESTO TEMPLATE è STUDIATO PER IL MODULO RICEVUTE FISCALI DELLA DITTA BUFFETTI ART.8205L2000
 
@@ -31,6 +31,54 @@ require('../../library/tcpdf/tcpdf.php');
 require('../../library/tcpdf/tcpdi.php');
 
 class Template_2xA5 extends TCPDI {
+  public $docVars;
+  public $gaz_path;
+  public $rigbro;
+  public $aliiva;
+  public $tesdoc;
+  public $testat;
+  public $pagame;
+  public $banapp;
+  public $banacc;
+  public $logo;
+  public $link;
+  public $intesta1;
+  public $intesta1bis;
+  public $intesta2;
+  public $intesta3;
+  public $intesta4;
+  public $sedelegale;
+  public $colore;
+  public $decimal_quantity;
+  public $decimal_price;
+  public $perbollo;
+  public $codice_partner;
+  public $descri_partner;
+  public $cod_univoco;
+  public $pec_cliente;
+  public $cliente1;
+  public $cliente2;
+  public $cliente3;
+  public $cliente4;  // CAP, Città, Provincia
+  public $cliente4b; // Nazione
+  public $cliente5;  // P.IVA e C.F.
+  public $agente;
+  public $destinazione;
+  public $clientSedeLegale;
+  public $pers_title;
+  public $fiscal_rapresentative;
+  public $c_Attenzione;
+  public $min;
+  public $ora;
+  public $day;
+  public $month;
+  public $year;
+  public $withoutPageGroup;
+  public $efattura;
+  public $descriptive_last_row;
+  public $descriptive_last_ddt;
+  public $layout_pos_logo_on_doc;
+  public $iban;
 
     function setVars(&$docVars, $Template = '') {
         $this->docVars = & $docVars;
@@ -96,7 +144,7 @@ class Template_2xA5 extends TCPDI {
                 $this->Cell(80, 4, $this->intesta1bis, 0, 1, 'L');
                 $interlinea = 10;
             }
-			
+
 			$y = $this->gety();
 			$this->SetFont('helvetica', '', 12);
 			$this->multiCell(8, 5, 'XX', 0, 'L', 0, 0,89,5);
@@ -106,14 +154,14 @@ class Template_2xA5 extends TCPDI {
 			$this->SetFont('helvetica', '', 10);
 			$this->multiCell(30, 5, $this->datdoc, 0, 'L', 0, 0,110,33);
 			$this->multiCell(30, 5, $this->datdoc, 0, 'L', 0, 1,260,33);
-		
+
 			$this->sety($y);
 			$this->SetFont('helvetica', '', 10);
             $this->Cell(50, 4, $this->intesta2, 0, 0, 'L',0,'',1);// indirizzo
-			
+
 			$this->Cell(100);
             $this->Cell(50, 4, $this->intesta2, 0, 1, 'L',0,'',1);
-			
+
             $this->Cell(50, 2, $this->intesta3, 0, 0, 'L',0,'',1);// telefono email
 			$this->Cell(100);
             $this->Cell(50, 2, $this->intesta3, 0, 1, 'L',0,'',1);
@@ -124,9 +172,9 @@ class Template_2xA5 extends TCPDI {
             $this->Image('@' . $this->logo, 211, 12, 25, 0, '', $this->link);
             $this->Ln($interlinea);
             $this->SetFont('helvetica', '', 9);
-            
+
 			$this->Cell(70);
-            
+
 			$this->Cell(70);
             /*
             if ($this->tesdoc['tipdoc'] == 'NOP' || $this->withoutPageGroup) {
@@ -139,7 +187,7 @@ class Template_2xA5 extends TCPDI {
 			*/
             $this->Ln(2);
             $interlinea = $this->GetY();
-            
+
             $this->SetFont('helvetica', '', 7);
 			/*
             if (!empty($this->destinazione)) {
@@ -180,25 +228,25 @@ class Template_2xA5 extends TCPDI {
 
 			}
 			*/
-			
+
             $this->SetFont('helvetica', '', 15);
-            
+
             $this->Cell(130, 0, 'Egr. ' . $this->cliente1 ." ". $this->cliente2, 0, 0, 'L', 0, '', 1);
 			$this->Cell(20);
-            
+
             $this->Cell(130, 0, 'Egr. ' .$this->cliente1 ." ". $this->cliente2, 0, 1, 'L', 0, '', 1);
-            
-           
-           
+
+
+
             $this->Cell(130, 10, $this->cliente3, 0, 0, 'L', 0, '', 1);//indirizzo
             $this->Cell(20);
             $this->Cell(130, 10, $this->cliente3, 0, 1, 'L', 0, '', 1);
-            
+
             $this->Cell(130, 8, $this->cliente4 ." ". $this->cliente4b, 0, 0, 'L', 0, '', 1); // località
             $this->Cell(20);
             $this->Cell(130, 8, $this->cliente4 ." ". $this->cliente4b, 0, 1, 'L', 0, '', 1);
-           
-           
+
+
 			/*
             if (!empty($this->c_Attenzione)) {
                 $this->SetFont('helvetica', '', 10);

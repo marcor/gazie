@@ -25,6 +25,8 @@
 require('template.php');
 class CartaIntestata extends Template
 {
+  public $tipdoc;
+
     function setTesDoc()
     {
       $this->tipdoc = $this->tesdoc['imball'];

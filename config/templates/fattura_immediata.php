@@ -57,7 +57,7 @@ class FatturaImmediata extends Template_con_scheda
       $this->taxstamp=$this->tesdoc['taxstamp'];
       $this->sconto = $this->tesdoc['sconto'];
       $this->trasporto = $this->tesdoc['traspo'];
-      if (strlen($this->tesdoc['fattura_elettronica_original_name'])>10){ // file importato
+      if (isset($this->tesdoc['fattura_elettronica_original_name']) && strlen($this->tesdoc['fattura_elettronica_original_name'])>10){ // file importato
         $numfat = $this->tesdoc['numfat'];
       } else if ($this->tesdoc['numfat']>0){
         $numfat = $this->tesdoc['numfat'].'/'.$this->tesdoc['seziva'];

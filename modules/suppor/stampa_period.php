@@ -71,14 +71,14 @@ $where = $sql;
     return $out;
 }*/
 
-$file = "../../config/templates/report_period_".$_GET["stato"].".php";
+$file = "./report_period_".$_GET["stato"].".php";
 if ( file_exists($file) ) {
    $result = gaz_dbi_dyn_query($gTables['assist'].".*,
-		".$gTables['anagra'].".ragso1, ".$gTables['anagra'].".ragso2, ".$gTables['anagra'].".indspe, 
-      ".$gTables['anagra'].".capspe, ".$gTables['anagra'].".telefo, ".$gTables['anagra'].".cell, 
+		".$gTables['anagra'].".ragso1, ".$gTables['anagra'].".ragso2, ".$gTables['anagra'].".indspe,
+      ".$gTables['anagra'].".capspe, ".$gTables['anagra'].".telefo, ".$gTables['anagra'].".cell,
       ".$gTables['anagra'].".citspe, ".$gTables['anagra'].".prospe, ".$gTables['anagra'].".fax,
       ".$gTables['clfoco'].".codice ",  $gTables['assist'].
-		" LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['assist'].".clfoco = ".$gTables['clfoco'].".codice". 
+		" LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['assist'].".clfoco = ".$gTables['clfoco'].".codice".
 		" LEFT JOIN ".$gTables['anagra'].' ON '.$gTables['clfoco'].'.id_anagra = '.$gTables['anagra'].'.id',
 		$where, "id", $limit, $passo);
 
@@ -91,23 +91,23 @@ if ( file_exists($file) ) {
    $pdf->SetFillColor(hexdec(substr($admin_aziend['colore'],0,2)),hexdec(substr($admin_aziend['colore'],2,2)),hexdec(substr($admin_aziend['colore'],4,2)));
    $row = gaz_dbi_fetch_array($result);
    $html = file_get_contents( $file );
-   
+
    //cerca i tag per compilare le variabili
    $var = "row";
    $content = getTextBetweenTags($var, $html);
    foreach( $content as $item )
-   {     
+   {
       $html = str_replace ( "<".$var.">".$item."</".$var.">", $row[$item], $html );
    }
-   
+
    $var = "admin_aziend";
    $content = getTextBetweenTags($var, $html);
    foreach( $content as $item )
    {
       $html = str_replace ( "<".$var.">".$item."</".$var.">", $admin_aziend[$item], $html );
    }
-   
-   
+
+
    $pdf->writeHTMLCell(0, 20, '', '', $html, 0, 1, 0, true, '', true);
    $pdf->Output();
 } else {
