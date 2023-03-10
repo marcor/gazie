@@ -691,68 +691,67 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
     $pdf->compose();
     $pdf->pageFooter();
     $doc_name = preg_replace("/[^a-zA-Z0-9]+/", "_", $docVars->intesta1 . '_' . $pdf->tipdoc) . '.pdf';
-	// aggiungo all'array con indice 'azienda' altri dati
-	$docVars->azienda['cliente1']=$docVars->cliente1;
-	$docVars->azienda['doc_name']=$pdf->tipdoc.'.pdf';
+    // aggiungo all'array con indice 'azienda' altri dati
+    $docVars->azienda['cliente1']=$docVars->cliente1;
+    $docVars->azienda['doc_name']=$pdf->tipdoc.'.pdf';
     if ($dest && $dest == 'E') { // è stata richiesta una e-mail
-        $dest = 'S';     // Genero l'output pdf come stringa binaria
-        // Costruisco oggetto con tutti i dati del file pdf da allegare
-        $content = new StdClass;
-		$content->urlfile=false;
-        $content->name = $doc_name;
-        $content->string = $pdf->Output($doc_name, $dest);
-        $content->encoding = "base64";
-        $content->mimeType = "application/pdf";
-        $gMail = new GAzieMail();
-        if ( $gMail->sendMail($docVars->azienda, $docVars->user, $content, $docVars->client) ) {
-            // memorizzo l'invio per questa email
-            switch ( $testata['tipdoc'] ) {
-                case 'VPR':
-                    $tabella_da_aggiornare = 'tesbro';
-                    $email_elem='ord';
-                    break;
-                case 'VOR':
-                    $tabella_da_aggiornare = 'tesbro';
-                    $email_elem='ord';
-                    break;
-                case 'FAD':
-                    $tabella_da_aggiornare = 'tesdoc';
-                    $email_elem='fat';
-                    break;
-                case 'FAI':
-                    $tabella_da_aggiornare = 'tesdoc';
-                    $email_elem='fat';
-                    break;
-                case 'DDT':
-                    $tabella_da_aggiornare = 'tesdoc';
-                    $email_elem='ddt';
-                    break;
-                default:
-                    break;
-            }
-            if ( $templateName == 'DDT' ){
-              $email_elem='ddt';
-            }
-            $gaz_custom_field = gaz_dbi_get_single_value( $gTables[$tabella_da_aggiornare], 'custom_field', 'id_tes = '.$testata['id_tes'] );
-            if ($gaz_custom_field !== NULL && $gaz_custom_data = json_decode( $gaz_custom_field, true)){
-              $gaz_custom_data['email'][$email_elem] = date("d-m-Y h:i:s");
-            }else{
-              $gaz_custom_data['email'][$email_elem] = date("d-m-Y h:i:s");
-            }
-            $gaz_custom_field = json_encode($gaz_custom_data);
-            gaz_dbi_table_update ($tabella_da_aggiornare, array(0=>'id_tes',1=>$testata['id_tes']), array('custom_field'=>$gaz_custom_field));
+      $dest = 'S';     // Genero l'output pdf come stringa binaria
+      // Costruisco oggetto con tutti i dati del file pdf da allegare
+      $content = new StdClass;
+      $content->urlfile=false;
+      $content->name = $doc_name;
+      $content->string = $pdf->Output($doc_name, $dest);
+      $content->encoding = "base64";
+      $content->mimeType = "application/pdf";
+      $gMail = new GAzieMail();
+      if ( $gMail->sendMail($docVars->azienda, $docVars->user, $content, $docVars->client) ) {
+        // memorizzo l'invio per questa email
+        switch ( substr($testata['tipdoc'],0,2) ) {
+          case 'VP': // preventivo cliente
+          case 'VO': // ordine cliente
+          case 'AP': // preventivo fornitore
+          case 'AO': // ordine fornitore
+            // sulla tabella tesbro ho già una colonna "email" dove memorizzo l'indirizzo al quale è stato spedito, al momento viene usata solo dal modulo acquisti (preventivi/ordini a fornitore) ma si potrebbe pensare di estendere il sistema anche sul modulo vendite
+            $tabella_da_aggiornare = 'tesbro';
+            $email_elem='ord';
+            break;
+          case 'FA': // fattura di vendita, parcella, ecc
+          case 'FN': // nota credito o debito  vendita
+            $tabella_da_aggiornare = 'tesdoc';
+            $email_elem='fat';
+            break;
+          case 'DD': // documento di trasporto
+            $tabella_da_aggiornare = 'tesdoc';
+            $email_elem='ddt';
+            break;
+          default: // non rientra nella casistica gestita al momento quindi non aggiorno custom_field
+            $tabella_da_aggiornare = FALSE;
+            break;
         }
+        if ( $templateName == 'DDT' ) { // sul db potrei avere il tipdoc = FAD ma sto inviando una email
+          $email_elem='ddt';
+        }
+        if ( $tabella_da_aggiornare ) { // è un tipo di documento per cui è previstorichiedo di aggiornare la colonna custom_field c
+          $gaz_custom_field = gaz_dbi_get_single_value( $gTables[$tabella_da_aggiornare], 'custom_field', 'id_tes = '.$testata['id_tes'] );
+          if ($gaz_custom_field !== NULL && $gaz_custom_data = json_decode( $gaz_custom_field, true)){
+            $gaz_custom_data['email'][$email_elem] = date("d-m-Y h:i:s");
+          }else{
+            $gaz_custom_data['email'][$email_elem] = date("d-m-Y h:i:s");
+          }
+          $gaz_custom_field = json_encode($gaz_custom_data);
+          gaz_dbi_table_update ($tabella_da_aggiornare, array(0=>'id_tes',1=>$testata['id_tes']), array('custom_field'=>$gaz_custom_field));
+        }
+      }
     } elseif ($dest && $dest == 'X') { // è stata richiesta una stringa da allegare
-        $dest = 'S';     // Genero l'output pdf come stringa binaria
-        $content=$pdf->Output($doc_name, $dest);
-        return ($content);
+      $dest = 'S';     // Genero l'output pdf come stringa binaria
+      $content=$pdf->Output($doc_name, $dest);
+      return ($content);
     } else { // va all'interno del browser
       if ($testata['tipdoc']=='AOR'){
-        /* in caso di ordine a fornitore che non viene inviato via mail al fornitore ma solo al browser
-        cambio la descrizione del file per ricordare a chi è stato fatto*/
+        // in caso di ordine a fornitore che non viene inviato via mail al fornitore ma solo al browser cambio la descrizione del file per ricordare a chi è stato fatto*/
         $doc_name = preg_replace("/[^a-zA-Z0-9]+/", "_", $docVars->cliente1 . '_' . $pdf->tipdoc) . '.pdf';
       }
-        $pdf->Output($doc_name);
+      $pdf->Output($doc_name);
     }
 }
 
