@@ -813,8 +813,8 @@ class shopsynchronizegazSynchro {
 		global $gTables,$admin_aziend;
         $rawres=[];
 		$urlinterf = gaz_dbi_get_row($gTables['company_config'], 'var', 'path')['val']."ordini-gazie.php";
-		$accpass = gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val'];
-
+		$accpassrow = gaz_dbi_get_row($gTables['company_config'], "var", "accpass");
+    $accpass = (isset($accpassrow['val']))?$accpassrow['val']:'';
 		$access=base64_encode($accpass);
 		// avvio il file di interfaccia presente nel sito web remoto
 		$headers = @get_headers($urlinterf.'?access='.$access);
