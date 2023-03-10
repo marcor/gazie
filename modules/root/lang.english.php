@@ -81,8 +81,14 @@ $strScript = array("admin.php" =>
         'sca_fornitore' => 'Fornitore',
         'sca_avere' => 'Avere',
         'sca_dare' => 'Dare',
-		'sca_saldo' => 'Saldo', //*+ DC - 07/02/2018 -*//
-        'sca_scadenza' => 'Scadenza'
+        'sca_saldo' => 'Saldo',
+        'sca_scadenza' => 'Scadenza',
+        'cod' => 'Codice',
+        'des' => 'Descrizione',
+        'lot' => 'Lotto',
+        'res' => 'Quantità',
+        'inscalot' => 'Lotti in scadenza',
+        'scalot' => 'Lotti scaduti'
     ),
     "login_admin.php" =>
     array(/* 0 */ " The new password to be long at least ",

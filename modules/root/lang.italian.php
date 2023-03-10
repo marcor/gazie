@@ -84,14 +84,14 @@ $strScript = array("admin.php" =>
         'sca_fornitore' => 'Fornitore',
         'sca_avere' => 'Avere',
         'sca_dare' => 'Dare',
-		'sca_saldo' => 'Saldo', //*+ DC - 07/02/2018 -*//
+        'sca_saldo' => 'Saldo',
         'sca_scadenza' => 'Scadenza',
-		'cod' => 'Codice',
-		'des' => 'Descrizione',
-		'lot' => 'Lotto',
-		'res' => 'Quantità',
-		'inscalot' => 'Lotti in scadenza',
-		'scalot' => 'Lotti scaduti'
+        'cod' => 'Codice',
+        'des' => 'Descrizione',
+        'lot' => 'Lotto',
+        'res' => 'Quantità',
+        'inscalot' => 'Lotti in scadenza',
+        'scalot' => 'Lotti scaduti'
     ),
     "set_config_data.php" =>
     array("title" => "Configurazione principale di GAzie",),
