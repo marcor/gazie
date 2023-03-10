@@ -911,13 +911,22 @@ $ts->output_navbar();
               }
               $stato_btn_booking ='btn-default';
               $stato_btn_lease ='btn-default';
+              if (!empty($r['e_mail'])){
+                $title_booking = 'Invia prenotazione a: ' . $r['e_mail'];
+                $title_lease = 'Invia contratto a: ' . $r['e_mail'];
+              }else{
+                $title_booking = 'Invia prenotazione a: ' . $r['base_mail'];
+                $title_lease = 'Invia contratto a: ' . $r['base_mail'];
+              }
               if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['BookingSummary_email_inviata'])){
                 $r['BookingSummary_email_inviata'] = $data['vacation_rental']['BookingSummary_email_inviata'];
                 $stato_btn_booking = 'btn-success';
+                $title_booking = "Ultimo invio: ". $r['BookingSummary_email_inviata'];
               }
               if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['Lease_email_inviata'])){
                 $r['Lease_email_inviata'] = $data['vacation_rental']['Lease_email_inviata'];
                 $stato_btn_lease = 'btn-success';
+                $title_lease = "Ultimo invio: ". $r['Lease_email_inviata'];
               }
             } else {
               $r['status'] = '';
@@ -1076,14 +1085,14 @@ $ts->output_navbar();
               // Colonna "Mail"
               echo "<td align=\"center\">";
               if (!empty($r['e_mail'])){ // ho una mail sulla destinazione
-                  echo '<a class="btn btn-xs btn-default btn-email '.$stato_btn_booking.'" onclick="confirMail(this);return false;" id="doc' . $r['id_tes'] . '" url="' . $modulo . '&dest=E" href="#" title="Invia prenotazione: ' . $r['e_mail'] . '"
+                  echo '<a class="btn btn-xs btn-default btn-email '.$stato_btn_booking.'" onclick="confirMail(this);return false;" id="doc' . $r['id_tes'] . '" url="' . $modulo . '&dest=E" href="#" title="' . $title_booking . '"
                   mail="' . $r['e_mail'] . '" namedoc="' . $script_transl['type_value'][$r['tipdoc']] . ' n.' . $r['numdoc'] . ' del ' . gaz_format_date($r['datemi']) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
-                  echo ' <a class="btn btn-xs btn-default btn-emailC '.$stato_btn_lease.'" ',$disabled_email_style,' onclick="confirMailC(this);return false;" id="docC' . $r['id_tes'] . '" urlC="stampa_contratto.php?id_tes='. $r['id_tes']. '&dest=E&id_ag='.$r['id_agent'].'" href="#" title="invia contratto a: ' . $r['e_mail'] . '"
+                  echo ' <a class="btn btn-xs btn-default btn-emailC '.$stato_btn_lease.'" ',$disabled_email_style,' onclick="confirMailC(this);return false;" id="docC' . $r['id_tes'] . '" urlC="stampa_contratto.php?id_tes='. $r['id_tes']. '&dest=E&id_ag='.$r['id_agent'].'" href="#" title="' . $title_lease . '"
                   mail="' . $r['e_mail'] . '" namedoc="' . $script_transl['type_value'][$r['tipdoc']] . ' n.' . $r['numdoc'] . ' del ' . gaz_format_date($r['datemi']) . '"><i class="glyphicon glyphicon-send"></i></a>';
               } elseif (!empty($r['base_mail'])) { // ho una mail sul cliente
-                  echo ' <a class="btn btn-xs btn-default btn-email '.$stato_btn_booking.'" onclick="confirMail(this);return false;" id="doc' . $r['id_tes'] . '" url="' . $modulo . '&dest=E" href="#" title="Invia prenotazione: ' . $r['base_mail'] . '"
+                  echo ' <a class="btn btn-xs btn-default btn-email '.$stato_btn_booking.'" onclick="confirMail(this);return false;" id="doc' . $r['id_tes'] . '" url="' . $modulo . '&dest=E" href="#" title="' . $title_booking . '"
                   mail="' . $r['base_mail'] . '" namedoc="' . $script_transl['type_value'][$r['tipdoc']] . ' n.' . $r['numdoc'] . ' del ' . gaz_format_date($r['datemi']) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
-                  echo ' <a class="btn btn-xs btn-default btn-emailC '.$stato_btn_lease.'" ',$disabled_email_style,' onclick="confirMailC(this);return false;" id="docC' . $r['id_tes'] . '" urlC="stampa_contratto.php?id_tes='. $r['id_tes']. '&dest=E&id_ag='.$r['id_agent'].'" href="#" title="invia contratto a: ' . $r['base_mail'] . '"
+                  echo ' <a class="btn btn-xs btn-default btn-emailC '.$stato_btn_lease.'" ',$disabled_email_style,' onclick="confirMailC(this);return false;" id="docC' . $r['id_tes'] . '" urlC="stampa_contratto.php?id_tes='. $r['id_tes']. '&dest=E&id_ag='.$r['id_agent'].'" href="#" title="' . $title_lease . '"
                   mail="' . $r['base_mail'] . '" namedoc="Contratto n.' . $r['numdoc'] . ' del ' . gaz_format_date($r['datemi']) . '"><i class="glyphicon glyphicon-send"></i></a>';
               } else { // non ho mail
                   echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" href="../../modules/vendit/admin_client.php?codice=' . substr($r['clfoco'], 3) . '&Update"><i class="glyphicon glyphicon-edit"></i></a>';
