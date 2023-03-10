@@ -341,15 +341,28 @@ if (isset($_SESSION['print_request']) && intval($_SESSION['print_request'])>0){
                             $urlPrintCmr = "stampa_docven.php?id_tes=" . $r["id_tes"]."&template=Cmr";
                             $targetPrintDoc = ($pdf_to_modal==0)?'href="stampa_docven.php?id_tes=' . $r["id_tes"] .'&template=DDT" target="_blank" ':"onclick=\"printPdf('stampa_docven.php?id_tes=" . $r["id_tes"] . "&template=DDT')\"";
                             echo "<td>";
-							echo '<a class="btn btn-xs btn-default" style="cursor:pointer;" '.$targetPrintDoc.' ><i class="glyphicon glyphicon-print" title="Stampa documento"></i></a>';
+                            echo '<a class="btn btn-xs btn-default" style="cursor:pointer;" '.$targetPrintDoc.' ><i class="glyphicon glyphicon-print" title="Stampa documento"></i></a>';
                             echo "<a class=\"btn btn-xs btn-default\" style=\"cursor:pointer;\" onclick=\"printPdf('".$urlPrintEtichette."')\" data-toggle=\"modal\" data-target=\"#print_doc\" ><i class=\"glyphicon glyphicon-tag\" title=\"Stampa etichetta\"></i></a>";
-							echo "</td>\n";
+                            echo "</td>\n";
 
                             // Colonna "Mail"
                             echo "<td>";
                             if (!empty($r["e_mail"])) {
-                                echo '<a class="btn btn-xs btn-default btn-mail" onclick="confirMail(this);return false;" id="doc' . $r["id_tes"] . '" url="' . $urlPrintDoc . '&dest=E" href="#" title="mailto: ' . $r["e_mail"] . '"
-                mail="' . $r["e_mail"] . '" namedoc="' . $r['tipdoc'] . ' n.' . $r["numdoc"] . ' del ' . gaz_format_date($r["datemi"]) . '"><i class="glyphicon glyphicon-envelope" title="Invia documento per email"></i></a>';
+                              $gaz_custom_field = gaz_dbi_get_single_value( $gTables['tesdoc'], 'custom_field', 'id_tes = '.$r['id_tes'] );
+                              if (isset($gaz_custom_field) && $gaz_custom_data = json_decode($gaz_custom_field,true)){
+                                if ( !isset($gaz_custom_data['email']['ddt'])) {
+                                    $classe_mail = "btn-default";
+                                    $title= "Mai inviata. Inviala a ".$r["e_mail"];
+                                } else {
+                                    $classe_mail = "btn-success";
+                                    $title="Ultimo invio: ".$gaz_custom_data['email']['ddt'];
+                                }
+                              }else{
+                                $classe_mail = "btn-default";
+                                $title= "Mai inviata. Inviala a ".$r["e_mail"];
+                              }
+                                echo '<a class="btn btn-xs '.$classe_mail.' btn-default btn-mail" title="',$title,'" onclick="confirMail(this);return false;" id="doc' . $r["id_tes"] . '" url="' . $urlPrintDoc . '&dest=E" href="#" title="' . $title . '"
+                                mail="' . $r["e_mail"] . '" namedoc="' . $r['tipdoc'] . ' n.' . $r["numdoc"] . ' del ' . gaz_format_date($r["datemi"]) . '"><i class="glyphicon glyphicon-envelope" title="Invia documento per email"></i></a>';
                             } else {
                                 echo '<a title="' . $script_transl['no_mail'] . '" target="_blank" href="admin_client.php?codice=' . substr($r["clfoco"], 3) . '&Update"><i class="glyphicon glyphicon-edit"></i></a>';
                             }
@@ -373,20 +386,20 @@ if (isset($_SESSION['print_request']) && intval($_SESSION['print_request'])>0){
 
                             if ($ultimoddt == $r["numdoc"] && $r['numfat'] < 1 ){
                                 echo "<td>";
-								?>
-								<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento" ref="<?php echo $r['id_tes'];?>" ragso1="<?php echo $r['ragso1'];?>">
-									<i class="glyphicon glyphicon-remove"></i>
-								</a>
-								<?php
-								echo "</td>";
+                                ?>
+                                <a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento" ref="<?php echo $r['id_tes'];?>" ragso1="<?php echo $r['ragso1'];?>">
+                                  <i class="glyphicon glyphicon-remove"></i>
+                                </a>
+                                <?php
+                                echo "</td>";
                             } else{
                                 echo "<td><button class=\"btn btn-xs btn-default btn-elimina disabled\"><i class=\"glyphicon glyphicon-remove\"></i></button></td>";
-								echo "</tr>\n";
-							}
+                              echo "</tr>\n";
+                            }
                             break;
-                        case "DDR":
-                        case "DDL":
-							$btnclass=($r['tipdoc']=='DDR')?'danger':'warning';
+                            case "DDR":
+                            case "DDL":
+                            $btnclass=($r['tipdoc']=='DDR')?'danger':'warning';
                             echo "<tr class=\"text-center\">";
                             // Colonna id
                             echo "<td><a class=\"btn btn-xs btn-".$btnclass."\" href=\"../acquis/admin_docacq.php?Update&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-edit\"></i>" . $r["tipdoc"] . "" . $r["id_tes"] . "</a></td>";
@@ -412,37 +425,50 @@ if (isset($_SESSION['print_request']) && intval($_SESSION['print_request'])>0){
                             echo "<td>";
                             echo '<a class="btn btn-xs btn-default" style="cursor:pointer;" '.$targetPrintDoc.' ><i class="glyphicon glyphicon-print" title="Stampa documento"></i></a>';
                             echo "<a class=\"btn btn-xs btn-default\" style=\"cursor:pointer;\" onclick=\"printPdf('".$urlPrintEtichette."')\" data-toggle=\"modal\" data-target=\"#print_doc\" ><i class=\"glyphicon glyphicon-tag\" title=\"Stampa etichetta\"></i></a>";
-							echo "</td>\n";
+                            echo "</td>\n";
 
                             // Colonna "Mail"
                             echo "<td>";
                             if (!empty($r["e_mail"])) {
-                                echo '<a class="btn btn-xs btn-default btn-mail" onclick="confirMail(this);return false;" id="doc' . $r["id_tes"] . '" url="' . $urlPrintDoc . '&dest=E" href="#" title="mailto: ' . $r["e_mail"] . '"
-								mail="' . $r["e_mail"] . '" namedoc="' . $r['tipdoc'] . ' n.' . $r["numdoc"] . ' del ' . gaz_format_date($r["datemi"]) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
+                              $gaz_custom_field = gaz_dbi_get_single_value( $gTables['tesdoc'], 'custom_field', 'id_tes = '.$r['id_tes'] );
+                              if (isset($gaz_custom_field) && $gaz_custom_data = json_decode($gaz_custom_field,true)){
+                                if ( !isset($gaz_custom_data['email']['ddt'])) {
+                                    $classe_mail = "btn-default";
+                                    $title= "Mai inviata. Inviala a ".$r["e_mail"];
+                                } else {
+                                    $classe_mail = "btn-success";
+                                    $title="Ultimo invio: ".$gaz_custom_data['email']['ddt'];
+                                }
+                              }else{
+                                $classe_mail = "btn-default";
+                                $title= "Mai inviata. Inviala a ".$r["e_mail"];
+                              }
+                              echo '<a class="btn btn-xs '.$classe_mail.' btn-default btn-mail" onclick="confirMail(this);return false;" id="doc' . $r["id_tes"] . '" url="' . $urlPrintDoc . '&dest=E" href="#" title="' . $title . '"
+                              mail="' . $r["e_mail"] . '" namedoc="' . $r['tipdoc'] . ' n.' . $r["numdoc"] . ' del ' . gaz_format_date($r["datemi"]) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
                             } else {
                                 echo '<a title="' . $script_transl['no_mail'] . '" target="_blank" href="../acquis/admin_fornit.php?codice=' . substr($r["clfoco"], 3) . '&Update"><i class="glyphicon glyphicon-edit"></i></a>';
                             }
                             echo "</td>\n";
                             echo "<td></td>";
-							if ($r['tipdoc']=='DDL'){ // i ddt per lavorazioni ricorrenti possono essere duplicati
-								echo "<td><a class=\"btn btn-xs btn-default btn-duplica\" href=\"../acquis/admin_docacq.php?Duplicate&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-duplicate\"></i></a>";
-								echo "</td>";
-							} else {
-								echo "<td ></td>";
-							}
+                            if ($r['tipdoc']=='DDL'){ // i ddt per lavorazioni ricorrenti possono essere duplicati
+                              echo "<td><a class=\"btn btn-xs btn-default btn-duplica\" href=\"../acquis/admin_docacq.php?Duplicate&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-duplicate\"></i></a>";
+                              echo "</td>";
+                            } else {
+                              echo "<td ></td>";
+                            }
                             if ($ultimoddt == $r["numdoc"] && $r['numfat'] < 1){
                             // Colonna Elimina
                                 echo "<td>";
-								?>
-								<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento" ref="<?php echo $r['id_tes'];?>" ragso1="<?php echo $r['ragso1'];?>">
-									<i class="glyphicon glyphicon-remove"></i>
-								</a>
-								</td>
-								<?php
-							} else {
-                                echo "<td></td>";
-                            echo "</tr>\n";
-							}
+                              ?>
+                              <a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento" ref="<?php echo $r['id_tes'];?>" ragso1="<?php echo $r['ragso1'];?>">
+                                <i class="glyphicon glyphicon-remove"></i>
+                              </a>
+                              </td>
+                              <?php
+                            } else {
+                              echo "<td></td>";
+                              echo "</tr>\n";
+                            }
                             break;
                         case "FAD":
                             if ( $r['ddt_type'] != 'R') {
@@ -483,8 +509,21 @@ if (isset($_SESSION['print_request']) && intval($_SESSION['print_request'])>0){
                             // Colonna "Mail"
                             echo "<td>";
                             if (!empty($r["e_mail"])) {
-                                echo '<a class="btn btn-xs btn-default btn-mail" onclick="confirMail(this);return false;" id="doc' . $r["id_tes"] . '" url="' . $urlPrintDoc . '&dest=E" href="#" title="mailto: ' . $r["e_mail"] . '"
-                mail="' . $r["e_mail"] . '" namedoc="DDT n.' . $r["numdoc"] . ' del ' . gaz_format_date($r["datemi"]) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
+                              $gaz_custom_field = gaz_dbi_get_single_value( $gTables['tesdoc'], 'custom_field', 'id_tes = '.$r['id_tes'] );
+                              if (isset($gaz_custom_field) && $gaz_custom_data = json_decode($gaz_custom_field,true)){
+                                if ( !isset($gaz_custom_data['email']['ddt'])) {
+                                    $classe_mail = "btn-default";
+                                    $title= "Mai inviata. Inviala a ".$r["e_mail"];
+                                } else {
+                                    $classe_mail = "btn-success";
+                                    $title="Ultimo invio: ".$gaz_custom_data['email']['ddt'];
+                                }
+                              }else{
+                                $classe_mail = "btn-default";
+                                $title= "Mai inviata. Inviala a ".$r["e_mail"];
+                              }
+                              echo '<a class="btn btn-xs '.$classe_mail.' btn-default btn-mail" onclick="confirMail(this);return false;" id="doc' . $r["id_tes"] . '" url="' . $urlPrintDoc . '&dest=E" href="#" title="' . $title . '"
+                              mail="' . $r["e_mail"] . '" namedoc="DDT n.' . $r["numdoc"] . ' del ' . gaz_format_date($r["datemi"]) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
                             } else {
                                 echo '<a title="' . $script_transl['no_mail'] . '" target="_blank" href="admin_client.php?codice=' . substr($r["clfoco"], 3) . '&Update"><i class="glyphicon glyphicon-edit"></i></a>';
                             }

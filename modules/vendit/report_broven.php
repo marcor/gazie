@@ -514,12 +514,14 @@ $ts->output_navbar();
                 echo '<a class="btn btn-xs btn-default btn-email" onclick="confirMail(this);return false;" id="doc' . $r['id_tes'] . '" url="' . $modulo . '&dest=E" href="#" title="mailto: ' . $r['e_mail'] . '"
         mail="' . $r['e_mail'] . '" namedoc="' . $script_transl['type_value'][$r['tipdoc']] . ' n.' . $r['numdoc'] . ' del ' . gaz_format_date($r['datemi']) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
             } elseif (!empty($r['base_mail'])) { // ho una mail sul cliente
-                if ( !isset($gaz_custom_data['email_inviata'])) {
+                if ( !isset($gaz_custom_data['email']['ord'])) {
                     $classe_mail = "btn-default";
+                    $title= "Mai inviata. Inviala a ".$r["base_mail"];
                 } else {
                     $classe_mail = "btn-success";
+                    $title="Ultimo invio: ".$gaz_custom_data['email']['ord'];
                 }
-                echo '<a class="btn btn-xs '.$classe_mail.' btn-email" onclick="confirMail(this);return false;" id="doc' . $r['id_tes'] . '" url="' . $modulo . '&dest=E" href="#" title="mailto: ' . $r['base_mail'] . '"
+                echo '<a class="btn btn-xs '.$classe_mail.' btn-email" onclick="confirMail(this);return false;" id="doc' . $r['id_tes'] . '" url="' . $modulo . '&dest=E" href="#" title="' . $title . '"
                     mail="' . $r['base_mail'] . '" namedoc="' . $script_transl['type_value'][$r['tipdoc']] . ' n.' . $r['numdoc'] . ' del ' . gaz_format_date($r['datemi']) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
             } else { // non ho mail
                 echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" href="admin_client.php?codice=' . substr($r['clfoco'], 3) . '&Update"><i class="glyphicon glyphicon-edit"></i></a>';

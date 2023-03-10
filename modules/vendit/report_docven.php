@@ -804,13 +804,14 @@ function printPdf(urlPrintDoc){
                 // Colonna "Mail"
                 echo "<td align=\"center\">";
                 if (!empty($r["e_mail"])) {
-
-                  if ( !isset($gaz_custom_data['email_inviata'])) {
+                  if ( !isset($gaz_custom_data['email']['fat'])) {
                       $classe_mail = "btn-default";
+                      $title= "Mai inviata. Inviala a ".$r["e_mail"];
                   } else {
                       $classe_mail = "btn-success";
+                      $title="Ultimo invio: ".$gaz_custom_data['email']['fat'];
                   }
-                  echo '<a class="btn btn-xs '.$classe_mail.' btn-email" onclick="confirMail(this);return false;" id="doc_' . $r["id_tes"] . '" url="' . $modulo . '&dest=E" href="#" title="Mailto: ' . $r["e_mail"] . '" mail="' . $r["e_mail"] . '" namedoc="' . $tipodoc . ' n.' . $r["numfat"] . ' del ' . gaz_format_date($r["datfat"]) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
+                  echo '<a class="btn btn-xs '.$classe_mail.' btn-email" onclick="confirMail(this);return false;" id="doc_' . $r["id_tes"] . '" url="' . $modulo . '&dest=E" href="#" title="' . $title . '" mail="' . $r["e_mail"] . '" namedoc="' . $tipodoc . ' n.' . $r["numfat"] . ' del ' . gaz_format_date($r["datfat"]) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
                 } else {
                   echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" href="admin_client.php?codice=' . substr($r['clfoco'], 3) . '&Update#email"><i class="glyphicon glyphicon-edit"></i></a>';
                 }

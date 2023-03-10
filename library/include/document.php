@@ -709,27 +709,35 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
             switch ( $testata['tipdoc'] ) {
                 case 'VPR':
                     $tabella_da_aggiornare = 'tesbro';
+                    $email_elem='ord';
                     break;
                 case 'VOR':
                     $tabella_da_aggiornare = 'tesbro';
+                    $email_elem='ord';
                     break;
                 case 'FAD':
                     $tabella_da_aggiornare = 'tesdoc';
+                    $email_elem='fat';
                     break;
                 case 'FAI':
                     $tabella_da_aggiornare = 'tesdoc';
+                    $email_elem='fat';
                     break;
                 case 'DDT':
                     $tabella_da_aggiornare = 'tesdoc';
+                    $email_elem='ddt';
                     break;
                 default:
                     break;
             }
+            if ( $templateName == 'DDT' ){
+              $email_elem='ddt';
+            }
             $gaz_custom_field = gaz_dbi_get_single_value( $gTables[$tabella_da_aggiornare], 'custom_field', 'id_tes = '.$testata['id_tes'] );
-            if ($gaz_custom_data = json_decode( $gaz_custom_field, true)){
-              $gaz_custom_data['email_inviata'] = 'true';
+            if ($gaz_custom_field !== NULL && $gaz_custom_data = json_decode( $gaz_custom_field, true)){
+              $gaz_custom_data['email'][$email_elem] = date("d-m-Y h:i:s");
             }else{
-              $gaz_custom_data['email_inviata'] = 'true';
+              $gaz_custom_data['email'][$email_elem] = date("d-m-Y h:i:s");
             }
             $gaz_custom_field = json_encode($gaz_custom_data);
             gaz_dbi_table_update ($tabella_da_aggiornare, array(0=>'id_tes',1=>$testata['id_tes']), array('custom_field'=>$gaz_custom_field));
@@ -840,7 +848,6 @@ function createMultiDocument($results, $templateName, $gTables, $dest = false, $
 }
 
 function createInvoiceFromDDT($result, $gTables, $dest = false, $lang_template=false) {
-
     $templateName = "FatturaDifferita";
 
     $config = new Config;
@@ -861,6 +868,7 @@ function createInvoiceFromDDT($result, $gTables, $dest = false, $lang_template=f
     $ctrlprotoc = 0;
     $n = 0;
     while ($tesdoc = gaz_dbi_fetch_array($result)) {
+        $idtes_arr[]=$tesdoc['id_tes'];
         //se il cliente non e' lo stesso di prima
         if ($tesdoc['protoc'] <> $ctrlprotoc) {
             $n++;
@@ -907,14 +915,26 @@ function createInvoiceFromDDT($result, $gTables, $dest = false, $lang_template=f
         if (!isset($content)) {
             $content = new stdClass;
         }
-		$content->urlfile=false;
+        $content->urlfile=false;
         $content->name = $doc_name;
         $content->string = $pdf->Output($doc_name, $dest);
         $content->encoding = "base64";
         $content->mimeType = "application/pdf";
-		$docVars->azienda['doc_name'] = $doc_name_email;
+        $docVars->azienda['doc_name'] = $doc_name_email;
         $gMail = new GAzieMail();
-        $gMail->sendMail($docVars->azienda, $docVars->user, $content, $docVars->client);
+        if ( $gMail->sendMail($docVars->azienda, $docVars->user, $content, $docVars->client) ) {// se l'invio e-mail è avvenuto con successo
+          // ne memorizzo l'invio in tesdoc
+          foreach ( $idtes_arr as $idtes) {
+            $gaz_custom_field = gaz_dbi_get_single_value( $gTables['tesdoc'], 'custom_field', 'id_tes = '.$idtes );
+            if ($gaz_custom_field !== NULL && $gaz_custom_data = json_decode( $gaz_custom_field, true)){
+              $gaz_custom_data['email']['fat'] = date("d-m-Y h:i:s");
+            }else{
+              $gaz_custom_data['email']['fat'] = date("d-m-Y h:i:s");
+            }
+            $gaz_custom_field = json_encode($gaz_custom_data);
+            gaz_dbi_table_update ('tesdoc', array(0=>'id_tes',1=>$idtes), array('custom_field'=>$gaz_custom_field));
+          }
+        }
     } elseif ($dest && $dest == 'X') { // è stata richiesta una stringa da allegare
         $dest = 'S';     // Genero l'output pdf come stringa binaria
         $content=$pdf->Output($doc_name, $dest);
