@@ -54,6 +54,10 @@ class Login
 	*/
 	private $user_email = "";
 	/**
+	* @var string $company_id the ID of company
+	*/
+	private $company_id = "";
+	/**
 	* @var boolean $user_is_logged_in The user's login status
 	*/
 	private $user_is_logged_in = false;
