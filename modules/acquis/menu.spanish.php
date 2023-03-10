@@ -58,10 +58,11 @@ $transl['acquis'] = array('name' => "Compras",
         15 => array("Stampa lista clienti", "Lista clienti"),
         16 => array("Purchase depreciable asset", "Purchase depreciable asset"),
         17 => array("Pagamento RiBa fornitori", "Paga RiBa a fornitori"),
-		18 => array("Orden automática del vendedor", "Orden automática del vendedor"),
-		19 => array("Acquisisci fattura elettronica", "Acquisisci fattura elettronica"),
+        18 => array("Orden automática del vendedor", "Orden automática del vendedor"),
+        19 => array("Acquisisci fattura elettronica", "Acquisisci fattura elettronica"),
         20 => array("Ricevuto DdT ritorno da lavorazione", "Ricevuto DdT ritorno da lavorazione"),
-        21 => array("Genera XML-CBI bonifico", "Genera XML-CBI bonifico")
+        21 => array("Genera XML-CBI bonifico", "Genera XML-CBI bonifico"),
+        22 => array("Packing invoices for advisors", "Packing invoices for advisors")
     )
 );
 ?>

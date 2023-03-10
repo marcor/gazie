@@ -1,5 +1,4 @@
 <?php
-
 /*
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
@@ -22,14 +21,7 @@
   scriva   alla   Free  Software Foundation, 51 Franklin Street,
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
- */
-$transl['orderman'] = array('name' => "Commesse",
-    'title' => "Gestione commesse",
-    'm2' => array(1 => array("Lista delle commesse", "Lista delle commesse")
-    ),
-    'm3' => array(1 => array("Nuova produzione", "Nuova produzione"),
-				  2 => array("Luoghi produzione", "Luoghi produzione"),
-				  3 => array("Inserimento luogo", "Inserimento luogo")
-    )
+*/
+$strScript = array(
 );
 ?>
