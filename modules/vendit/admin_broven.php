@@ -1352,7 +1352,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $gaz_custom_field = gaz_dbi_get_single_value( $gTables['tesbro'], 'custom_field', 'id_tes = '.$form['id_tes'] );
     if ( isset( $gaz_custom_field ) && $gaz_custom_field!="" ) {
         $gaz_custom_data = json_decode($gaz_custom_field,true);
-        $form['shortdescri'] = $gaz_custom_data['vendit']['shortdescri'];
+        if (isset($gaz_custom_data['vendit'])){// se c'è il custom field vendit
+          $form['shortdescri'] = $gaz_custom_data['vendit']['shortdescri'];
+        }else{
+          $form['shortdescri'] = "";
+        }
     } else {
         $form['shortdescri'] = "";
     }
