@@ -145,9 +145,6 @@ if (isset($_POST['update'])) {
 	}
 	$msg=$msg."Ho aggiornato la nuova tabella con i dati prelevati oggi dal Ministero della salute.<br>";
 	?><script> window.location.assign("update_fitofarmaci.php?msg=<?php echo $msg;?>"); </script><?php
-  require("../../library/include/footer.php");
-}else{
-  require("../../library/include/footer.php");
-
 }
+require("../../library/include/footer.php");
 ?>
