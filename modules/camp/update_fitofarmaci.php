@@ -45,8 +45,6 @@ if (isset($_GET['msg'])){
 }
 $admin_aziend=checkAdmin(); $title="Update tabella fitofarmaci dal database del Ministero della Salute";
 
-require("../../library/include/header.php");
- $script_transl=HeadMain();
 ?>
 <style>
 	#loader {
@@ -75,6 +73,11 @@ require("../../library/include/header.php");
 </style>
 <div id="loader" class="center"></div>
 <?php
+
+
+require("../../library/include/header.php");
+ $script_transl=HeadMain();
+
 
 echo "<form method=\"POST\" name=\"myform\">";
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">$title</div>\n";
@@ -106,7 +109,6 @@ document.onreadystatechange = function() {
 </script>
 
 <?php
-require("../../library/include/footer.php");
 
 if (isset($_POST['update'])) {
 	// creo l'array dal file csv
@@ -143,5 +145,9 @@ if (isset($_POST['update'])) {
 	}
 	$msg=$msg."Ho aggiornato la nuova tabella con i dati prelevati oggi dal Ministero della salute.<br>";
 	?><script> window.location.assign("update_fitofarmaci.php?msg=<?php echo $msg;?>"); </script><?php
+  require("../../library/include/footer.php");
+}else{
+  require("../../library/include/footer.php");
+
 }
 ?>
