@@ -105,7 +105,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
     $rs_ultimo_codice = gaz_dbi_dyn_query("*", $gTables['catmer'], 1 ,'codice desc',0,1);
     $ultimo_codice = gaz_dbi_fetch_array($rs_ultimo_codice);
-    $form['codice'] = $ultimo_codice['codice']+1;
+    $form['codice'] = (isset($ultimo_codice))?$ultimo_codice['codice']+1:1;
     $form['descri'] = '';
     $form['ricarico'] = 0;
     $form['web_url']='';

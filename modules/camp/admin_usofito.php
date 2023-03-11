@@ -64,6 +64,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 		$_POST['id_avv'] = 0;
 		$_POST['nome_avv'] = "";
 		$_POST['dose'] = 0;
+    $_POST['dose_hl'] = 0;
 		$_POST['tempo_sosp'] = 0;
 		$_POST['max_tratt'] = 0;
 	}
@@ -139,7 +140,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 		} else {
 			$msg .= "9+";
 		}
-		if ($form['dose']==0){
+		if ($form['dose']==0 && $form['dose_hl']==0){
 			$msg .= "12+";
 		}
 
@@ -147,7 +148,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 
 			if ($toDo == 'update') { // e' una modifica
 
-			$query="UPDATE " . $gTables['camp_uso_fitofarmaci'] . " SET max_tratt='". $form['max_tratt'] ."', cod_art ='"  .$form['cod_art']. "', id_colt ='" . $form['id_colt'] . "', id_avv = '".$form['id_avv']. "', dose = '".$form['dose']. "', tempo_sosp = '".$form['tempo_sosp']."', NUMERO_REGISTRAZIONE = '".$form['numero_registrazione']."' WHERE id ='". $form['id'] ."'";
+			$query="UPDATE " . $gTables['camp_uso_fitofarmaci'] . " SET max_tratt='". $form['max_tratt'] ."', cod_art ='"  .$form['cod_art']. "', id_colt ='" . $form['id_colt'] . "', id_avv = '".$form['id_avv']. "', dose = '".$form['dose']. "', dose_hl = '".$form['dose_hl']. "', tempo_sosp = '".$form['tempo_sosp']."', NUMERO_REGISTRAZIONE = '".$form['numero_registrazione']."' WHERE id ='". $form['id'] ."'";
 			gaz_dbi_query ($query) ;
 			header("Location: ".$_POST['ritorno']);
 			exit;
@@ -159,6 +160,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 				$form['id_avv'] = 0;
 				$form['nome_avv'] = "";
 				$form['dose'] = 0;
+        $form['dose_hl'] = 0;
 				$form['tempo_sosp'] = 0;
 				$form['max_tratt'] = 0;
 				$warning="inserito";
@@ -184,15 +186,15 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 	if ($checkdbfito -> num_rows ==0) {
 		$warning="NoFito";
 	}
-    $form['ritorno'] = $_SERVER['HTTP_REFERER'];
-
-    $form['id'] = 0;
-    $form['cod_art'] = "";
-    $form['id_colt'] = 0;
+  $form['ritorno'] = $_SERVER['HTTP_REFERER'];
+  $form['id'] = 0;
+  $form['cod_art'] = "";
+  $form['id_colt'] = 0;
 	$form['nome_colt'] = "";
 	$form['id_avv'] = 0;
 	$form['nome_avv'] = "";
 	$form['dose'] = 0;
+  $form['dose_hl'] = 0;
 	$form['tempo_sosp'] = 0;
 	$form['nome_fito'] = "";
 	$form['numero_registrazione'] = 0;
@@ -478,6 +480,21 @@ $(document).ready(function () {
 					echo ($res2)?$res2['uniacq']:'';
 					?>
 					/ha
+				</div>
+			</div>
+		</div> <!-- row -->
+    <div class="row">
+			<div class="col-md-12">
+				<div class="form-group">
+					<label class="col-sm-4 FacetFieldCaptionTD">
+						<?php echo $script_transl[5]; ?>
+					</label>
+					<input class="col-sm-3" type="text" name="dose_hl" value="<?php echo number_format ($form['dose_hl'],$admin_aziend['decimal_price'], ',', ''); ?>" maxlength="8"  tabindex="5"/>
+					<?php
+					$res2 = gaz_dbi_get_row($gTables['artico'], 'codice', $form['cod_art']);
+					echo ($res2)?$res2['uniacq']:'';
+					?>
+					/hl
 				</div>
 			</div>
 		</div> <!-- row -->

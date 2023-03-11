@@ -172,7 +172,18 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 				<span><?php echo $res["nome_avv"]; ?></span>
 			</td>
 			<td>
-				<span><?php echo number_format ($a_row["dose"],$admin_aziend['decimal_price'], ',', '')," ",$unimis,"/ha"; ?></span>
+        <?php
+        if (floatval($a_row["dose"])>0){
+          ?>
+          <span><?php echo number_format ($a_row["dose"],$admin_aziend['decimal_price'], ',', '')," ",$unimis,"/ha"; ?></span>&nbsp;&nbsp;
+          <?php
+        }
+        if (floatval($a_row["dose_hl"])>0){
+          ?>
+          <span><?php echo number_format ($a_row["dose_hl"],$admin_aziend['decimal_price'], ',', '')," ",$unimis,"/hl"; ?></span>
+          <?php
+        }
+        ?>
 			</td>
 			<td>
 				<span><?php echo $a_row["tempo_sosp"]," gg"; ?></span>
