@@ -440,9 +440,9 @@ function executeModulesUpdate(){// Antonio Germani 12/07/2022 - funzione per ese
       include("../../modules/". $module['name'] ."/upgrade_db.php"); // carico l'array
       if (isset($upgrade_db)){ //se c'è
         // prendo l'ultima versione archivio
-        $version = gaz_dbi_get_row($table_prefix.'_config', 'variable', 'archive')['cvalue'];
+        $version = gaz_dbi_get_row($table_prefix.'_config', 'variable', 'archive')['cvalue']+1;
         foreach ($upgrade_db as $k => $v){ //ciclo le istruzioni in base alla chiave
-          if ($k > $version){ // se la chiave è maggiore della versione attuale archivio
+          if ($k == $version){ // se la chiave è maggiore della versione attuale archivio
             foreach ($upgrade_db[$k] as $instruction){ //ciclo le istruzioni e le eseguo per ogni azienda
               if (preg_match("/XXX/",$instruction)) { // query ricorsive sulle tabelle di tutte le aziende
                 foreach ($companies as $i) {
@@ -458,7 +458,7 @@ function executeModulesUpdate(){// Antonio Germani 12/07/2022 - funzione per ese
           }
         }
         foreach ($upgrade_db as $k => $v){ //ciclo nuovamente le istruzioni in base alla chiave
-          if ($k > $version){ // se la chiave è maggiore della versione attuale archivio
+          if ($k == $version){ // se la chiave è maggiore della versione attuale archivio
             foreach ($upgrade_db[$k] as $instruction){ //ciclo le istruzioni e le eseguo per le tabelle comuni
               if (!preg_match("/XXX/",$instruction)) { // query ricorsive sulle tabelle comuni
                 if (!gaz_dbi_query($instruction)) { //se non è stata eseguita l'istruzione lo segnalo
