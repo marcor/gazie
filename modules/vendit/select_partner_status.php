@@ -147,11 +147,11 @@ if (isset($_POST['preview'])) {
         foreach ($paymov->Partners as $p) {
             $ctrl_close_partner = false;
             $prt = $anagrafica->getPartner($p);
-            echo "<tr>";
-            echo "<td class=\"FacetFieldCaptionTD text-center\" colspan='7'>" . $prt['ragso1'] . " " . $prt['ragso2'] .
-            " tel:" . gaz_html_call_tel($prt['telefo']) .
+            echo '<tr>';
+            echo '<td class="bg-info text-info text-center" colspan=7><b>' . $prt['ragso1'] . " " . $prt['ragso2'] .
+            "</b> tel:" . gaz_html_call_tel($prt['telefo']) .
             " fax:" . $prt['fax'] .
-            " mob:" . gaz_html_call_tel($prt['cell']) . "</td>";
+            " mob:" . gaz_html_call_tel($prt['cell']) . '<a class="btn btn-xs btn-info" target="_blank" href="../inform/reconstruction_schedule.php?id_partner='.$prt['codice'].'">Controlla</a></td>';
             echo "</tr>\n";
             $paymov->getPartnerStatus($p, $form['date_ini_Y'] . '-' . $form['date_ini_M'] . '-' . $form['date_ini_D']);
             foreach ($paymov->PartnerStatus as $k => $v) {

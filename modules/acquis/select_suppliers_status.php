@@ -135,7 +135,7 @@ if (isset($_POST['preview'])) {
     echo "	<div class=\"table-responsive\"><table class=\"Tlarge table table-striped table-bordered table-condensed\">";
 	$paymov = new Schedule;
 	if ($form['clfoco']>=100000001){
-		$admin_aziend['masfor']=$form['clfoco'];		
+		$admin_aziend['masfor']=$form['clfoco'];
 	}
 	$paymov->setScheduledPartner($admin_aziend['masfor']);
     if (sizeof($paymov->Partners) > 0) {
@@ -149,11 +149,11 @@ if (isset($_POST['preview'])) {
             $ctrl_close_partner = false;
             $anagrafica = new Anagrafica();
             $prt = $anagrafica->getPartner($p);
-            echo "<tr>";
-            echo "<td class=\"FacetFieldCaptionTD text-center\" colspan='7'>" . $prt['ragso1'] . " " . $prt['ragso2'] .
-            " tel:" . gaz_html_call_tel($prt['telefo']) .
+            echo '<tr>';
+            echo '<td class="bg-info text-info text-center" colspan=7><b>' . $prt['ragso1'] . " " . $prt['ragso2'] .
+            "</b> tel:" . gaz_html_call_tel($prt['telefo']) .
             " fax:" . $prt['fax'] .
-            " mob:" . gaz_html_call_tel($prt['cell']) . "</td>";
+            " mob:" . gaz_html_call_tel($prt['cell']) . '<a class="btn btn-xs btn-info" target="_blank" href="../inform/reconstruction_schedule.php?id_partner='.$prt['codice'].'">Controlla</a></td>';
             echo "</tr>\n";
             $paymov->getPartnerStatus($p, $form['date_ini_Y'] . '-' . $form['date_ini_M'] . '-' . $form['date_ini_D']);
             foreach ($paymov->PartnerStatus as $k => $v) {
@@ -182,7 +182,7 @@ if (isset($_POST['preview'])) {
                     if ($vi['expo_day'] >= 1) {
                         $expo = $vi['expo_day'];
                         if (round($vi['cl_val'],2) == round($vi['op_val'],2)) {
-                            $vi['status'] = 2; // la partita è chiusa ma è esposta a rischio insolvenza 
+                            $vi['status'] = 2; // la partita è chiusa ma è esposta a rischio insolvenza
                             $class_paymov = 'FacetDataTDevidenziaOK';
                         }
                     } else {
