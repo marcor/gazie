@@ -667,17 +667,17 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
         /* inizio controlli sulle righe articoli >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> */
 
         for ($m = 0;$m <= $form['nmov'];++$m) {
-			$itemart = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico'][$m]); // carico i dati dell'articolo del rigo
-            if ($form['quanti2'][$m] >0){
-				$check=gaz_dbi_get_row($gTables['artico'], "codice", $form['artico2'][$m]);
-				if (!$check){ // controllo se esiste l'acqua nel DB
-					$msg.= "44+";
-				}
-			}
-			// Antonio Germani controllo che, se la causale movimento non opera, non ci sia un articolo con magazzino
-			if (isset($itemart)){
-				$service = intval($itemart['good_or_service']);
-			}
+          $itemart = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico'][$m]); // carico i dati dell'articolo del rigo
+          if ($form['quanti2'][$m] >0){
+            $check=gaz_dbi_get_row($gTables['artico'], "codice", $form['artico2'][$m]);
+            if (!$check){ // controllo se esiste l'acqua nel DB
+              $msg.= "44+";
+            }
+          }
+          // Antonio Germani controllo che, se la causale movimento non opera, non ci sia un articolo con magazzino
+          if (isset($itemart)){
+            $service = intval($itemart['good_or_service']);
+          }
             if (isset($form['operat']) AND $service == 0 && $form['operat'] == 0) {
                 $msg.= "36+";
             }
@@ -805,9 +805,9 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 							$msg.= "34+"; // errore dose uso fito superata
 							$instantwarning[]="Dose specifica ad ha superata nel prodotto ". $form['artico'][$m] ." con la coltura ". $form['nome_colt'] .". La quantità massima utilizzabile è ". gaz_format_quantity($dose_usofito * $form['dim_campo'.$n], 1, $admin_aziend['decimal_quantity']) .".";
 						}
-            if ($dose_usofito_hl > 0 && $quanti > $dose_usofito_hl * $form['dim_campo'.$n] && $form['operat'] == - 1 && $form['dim_campo'.$n] > 0) {
+            if ($dose_usofito_hl > 0 && ($quanti/$form['quanti2'][$m])*100 > $dose_usofito_hl && $form['operat'] == - 1) {
 							$msg.= "34+"; // errore dose uso fito superata
-							$instantwarning[]="Dose specifica ad hl superata nel prodotto ". $form['artico'][$m] ." con la coltura ". $form['nome_colt'] .". La quantità massima utilizzabile è ". gaz_format_quantity($dose_usofito_hl * $form['dim_campo'.$n], 1, $admin_aziend['decimal_quantity']) .".";
+							$instantwarning[]="Dose specifica ad hl superata nel prodotto ". $form['artico'][$m] ." con la coltura ". $form['nome_colt'] .". La quantità massima utilizzabile per il quantitativo d'acqua inserito è ". gaz_format_quantity(($dose_usofito_hl /100)*$form['quanti2'][$m], 1, $admin_aziend['decimal_quantity']) .".";
 						}
 					} else {
 						if ($dose_artico > 0 && $quanti > $dose_artico * $form['dim_campo'.$n] && $form['operat'] == - 1 && $form['dim_campo'.$n] > 0) {
