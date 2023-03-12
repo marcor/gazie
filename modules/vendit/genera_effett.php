@@ -300,7 +300,7 @@ if (isset($_POST['preview'])) {
     $errors=false;
     $rs = getDocumentsBill(false,($group_rid_y=='checked'?true:false));
     echo "<br /><div align=\"center\"><b>" . $script_transl['preview'] . "</b></div>";
-    echo "<table class=\"table table-bordered table-responsive\">";
+    echo '<div class=" table-responsive"><table class="Tlarge table">';
     echo "<th class=\"FacetFieldCaptionTD\">" . $script_transl['date_reg'] . "</th>
          <th class=\"FacetFieldCaptionTD\">" . $script_transl['protoc'] . "</th>
          <th class=\"FacetFieldCaptionTD\">" . $script_transl['doc_type'] . "</th>
@@ -334,11 +334,10 @@ if (isset($_POST['preview'])) {
             echo "<tr class=\"".$class_type[$v['tippag']]."\">
                <td align=\"center\">" . gaz_format_date($v['datfat']) . "</td>
                <td title=\"".$v['cigcup']."\" align=\"center\">" . $v['protoc'] . '/' . $v['seziva'] . "</td>
-               <td>" . $script_transl['doc_type_value'][$v['tipdoc']] . "</td>
-               <td>" . $v['numfat'] . '</td>
-               <td><a class="btn btn-sm btn-'.((strlen($e)>10)?"danger":"default").'" href="./admin_client.php?codice='.substr($v['clfoco'],-6).'&Update">'.$v['ragsoc']. "</a></td>
-               <td align=\"right\">" . $admin_aziend['symbol'].' '.gaz_format_number($v['totfat']) . "</td>
-               </tr>\n";
+               <td>" . $script_transl['doc_type_value'][$v['tipdoc']] . ' <a class="btn btn-xs btn-default" title="Visualizza in stile" href="./electronic_invoice.php?id_tes='.$v['id_tes'].'&viewxml" target="_blank"><i class="glyphicon glyphicon-eye-open"></i></a></td>
+               <td>' . $v['numfat'] . '</td>
+               <td><a class="btn btn-xs btn-'.((strlen($e)>10)?"danger":"success").'" target="_blank" href="./admin_client.php?codice='.substr($v['clfoco'],-6).'&Update" title="Anagrafica cliente">'.$v['ragsoc']. "</a></td>
+               <td align=\"right\">" . $admin_aziend['symbol'].' '.gaz_format_number($v['totfat']) . '</td><td></td></tr>';
         }
         echo "<tr>";
         echo '<td align="right" colspan="6"><span class="text-danger">'.$e.'</span> ';
@@ -364,12 +363,13 @@ if (isset($_POST['preview'])) {
         }
     }
     echo "\t<tr>\n";
-    echo "\t </tr></table>\n";
+    echo "\t </tr></table></div>\n";
     echo '<div class="text-center">'.($errors?'<span class="gaz-costi">Attenzione!!! Puoi generare gli effetti ma devi essere consapevole degli errori sopra riportati</span><br/>':'').'<button type="submit" class="btn btn-warning" name="submit">'.$script_transl['submit'].'</button>';
     echo "\t </td>\n";
 
 }
 ?>
+</div>
 </form>
 <?php
 require("../../library/include/footer.php");

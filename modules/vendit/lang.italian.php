@@ -1018,6 +1018,8 @@ $strScript = array("admin_client.php" =>
         'doc_type' => 'Tipo documento',
         'doc_type_value' => array('FAD' => 'FATTURA DIFFERITA A CLIENTE',
             'FAI' => 'FATTURA IMMEDIATA A CLIENTE',
+            'FAP' => 'PARCELLA',
+            'FAA' => 'FATTURA/PARCELLA DI ACCONTO',
             'FND' => 'NOTA DEBITO A CLIENTE'
         ),
         'type' => 'Tipo effetto',
