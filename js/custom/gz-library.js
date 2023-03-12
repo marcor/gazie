@@ -80,7 +80,8 @@ function gzTooltip() {
                 delay: {show: 50},
                 title: function () {
                     var codeDtls = this.getAttribute('data-type');
-                    var maxSize = this.getAttribute('data-maxsize').toString();
+                    var maxSize = this.getAttribute('data-maxsize');
+                    maxSize = maxSize!=null?maxSize.toString():'';
                     if (codeDtls == "product-thumb") {
                         codeDtls = '<span class="label">' + this.getAttribute('data-title') + '</span><img src="../root/view.php?table=artico&value=' + this.getAttribute('data-id') + '&maxsize=' + maxSize + '" onerror="this.src=\'../../library/images/link_break.png\'" alt="' + this.getAttribute('data-title') + '" style="object-fit: cover; max-width: 384px; max-height: 384px;"/>';
                         return codeDtls;
@@ -91,13 +92,13 @@ function gzTooltip() {
                         codeDtls = this.getAttribute('data-title') + '&nbsp;' + this.getAttribute('data-id') + '€';
                         return codeDtls;
                     } else if (codeDtls == "catmer-thumb") {
-                        codeDtls = '<span class="label">' + this.getAttribute('data-title') + '</span><img src="../root/view.php?table=catmer&value=' + this.getAttribute('data-id') + '" onerror="this.src=\'../../library/images/link_break.png\'" alt="' + this.getAttribute('data-title') + '" />';
+                        codeDtls = '<span class="label">' + this.getAttribute('data-title') + '</span><img src="../root/view.php?table=catmer&value=' + this.getAttribute('data-id')+ '&maxsize=' + maxSize + '" onerror="this.src=\'../../library/images/link_break.png\'" alt="' + this.getAttribute('data-title') + '" />';
                         return codeDtls;
                     } else if (codeDtls == "movcon-thumb") {
                         codeDtls = this.getAttribute('data-title');
                         return codeDtls;
                     } else if (codeDtls == "ragstat-thumb") {
-                        codeDtls = '<img src="../root/view.php?table=ragstat&value=' + this.getAttribute('data-id') + '" onerror="this.src=\'../../library/images/link_break.png\'" alt="' + this.getAttribute('data-title') + '" />';
+                        codeDtls = '<img src="../root/view.php?table=ragstat&value=' + this.getAttribute('data-id') +  '&maxsize=' + maxSize + '" onerror="this.src=\'../../library/images/link_break.png\'" alt="' + this.getAttribute('data-title') + '" />';
                         return codeDtls;
                     } else if (codeDtls == "instal-thumb") {
                         codeDtls = '<img src="../root/view.php?table=instal&value=' + this.getAttribute('data-id') + '&field=id" onerror="this.src=\'../../library/images/link_break.png\'" alt="' + this.getAttribute('data-title') + '" />';

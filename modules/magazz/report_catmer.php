@@ -103,7 +103,8 @@ $recordnav -> output();
         <p>Descrizione</p>
         <p class="ui-state-highlight" id="iddescri"></p>
 	</div>
-    <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+  <div class="table-responsive">
+    <table class="Tlarge table table-striped table-bordered table-condensed">
     	<thead>
             <tr>
                 <td></td>
@@ -142,7 +143,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 				</a>
 			</td>
 			<td>
-				<span class="gazie-tooltip" data-type="catmer-thumb" data-id="<?php echo $a_row['codice']; ?>" data-title="<?php echo $a_row['annota']; ?>"><?php echo $a_row["descri"]; ?></span>
+				<span class="gazie-tooltip col-xs-12" data-type="catmer-thumb" data-id="<?php echo $a_row['codice']; ?>" data-title="<?php echo $a_row['annota']; ?>" data-maxsize="360"><?php echo $a_row["descri"]; ?></span>
 			</td>
 			<td align="center"><?php echo $a_row["ricarico"];?></td>
 			<td align="center"><?php echo $a_row["annota"];?></td>
@@ -156,7 +157,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 }
 ?>
     		</tbody>
-        </table>
+        </table></div>
     <?php
 require("../../library/include/footer.php");
 ?>

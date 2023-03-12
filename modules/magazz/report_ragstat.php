@@ -57,7 +57,7 @@ $recordnav -> output();
 ?>
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
 <div class="table-responsive">
-<table class="Tlarge table">
+<table class="Tlarge table table-bordered table-condensed">
     <thead>
         <tr>
         	<td></td>
@@ -97,7 +97,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 					</a>
 				</td>
 				<td>
-					<span class="gazie-tooltip" data-type="ragstat-thumb" data-id="'.$a_row['codice'].'" data-title="'.$a_row['annota'].'">'.$a_row["descri"].'</span>
+					<span class="gazie-tooltip col-xs-12" data-type="ragstat-thumb" data-id="'.$a_row['codice'].'" data-title="'.$a_row['annota'].'" data-maxsize="360">'.$a_row["descri"].'</span>
 				</td>
 				<td class="text-center">'.$a_row["ricarico"].'</td>
 				<td class="text-center">'.$a_row["annota"].'</td>
