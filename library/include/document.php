@@ -623,12 +623,14 @@ class DocContabVars {
 }
 
 function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $dest = false, $lang_template=false) {
+    if ($templateName=='Parcella') {
+      $templateName='FatturaSemplice';
+    }
     $templates = array('Received' => 'received',
         'CartaIntestata' => 'carta_intestata',
         'Lettera' => 'lettera',
         'FatturaAcquisto' => 'fattura_acquisto',
         'FatturaImmediata' => 'fattura_immediata',
-        'Parcella' => 'parcella',
         'PreventivoCliente' => 'preventivo_cliente',
         'OrdineCliente' => 'ordine_cliente',
         'OrdineWeb' => 'ordine_web',
@@ -756,12 +758,14 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
 }
 
 function createMultiDocument($results, $templateName, $gTables, $dest = false, $lang_template=false) {
+    if ($templateName=='Parcella') {
+      $templateName='FatturaSemplice';
+    }
     $templates = array('Received' => 'received',
         'CartaIntestata' => 'carta_intestata',
         'Lettera' => 'lettera',
         'FatturaAcquisto' => 'fattura_acquisto',
         'FatturaImmediata' => 'fattura_immediata',
-        'Parcella' => 'parcella',
         'PreventivoCliente' => 'preventivo_cliente',
         'OrdineCliente' => 'ordine_cliente',
         'OrdineWeb' => 'ordine_web',

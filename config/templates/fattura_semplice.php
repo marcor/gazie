@@ -59,19 +59,21 @@ class FatturaSemplice extends Template {
     $this->virtual_taxstamp = $this->tesdoc['virtual_taxstamp'];
     $this->trasporto = $this->tesdoc['traspo'];
     if ($this->tesdoc['tipdoc'] == 'FAD') {
-        $descri = 'Fattura differita n.';
+      $descri = 'Fattura differita n.';
     } elseif ($this->tesdoc['tipdoc'] == 'FNC') {
-        $descri = 'Nota di credito n.';
+      $descri = 'Nota di credito n.';
     } elseif ($this->tesdoc['tipdoc'] == 'FND') {
-        $descri = 'Nota di debito n.';
+      $descri = 'Nota di debito n.';
     } elseif ($this->tesdoc['tipdoc'] == 'FAA') {
-        $descri = 'Fattura di acconto n.';
+      $descri = 'Fattura di acconto n.';
     } elseif ($this->tesdoc['tipdoc'] == 'FAF') {
-        $descri = 'Autofattura (TD26) n.';
+      $descri = 'Autofattura (TD26) n.';
     } elseif ($this->tesdoc['tipdoc'] == 'FAQ') {
-        $descri = 'Parcella d\'acconto n.';
+      $descri = 'Parcella d\'acconto n.';
+    } elseif ($this->tesdoc['tipdoc'] == 'FAP') {
+      $descri = 'Parcella n.';
     } else {
-        $descri = 'Fattura immediata n.';
+      $descri = 'Fattura immediata n.';
     }
     if (isset($this->tesdoc['fattura_elettronica_original_name']) && strlen($this->tesdoc['fattura_elettronica_original_name'])>10){ // file importato
       $numfat = $this->tesdoc['numfat'];

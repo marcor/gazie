@@ -134,11 +134,9 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
   $form['tipdoc'] = $_POST['tipdoc'];
   $form['id_doc_ritorno'] = intval($_POST['id_doc_ritorno']);
   $form['template'] = $_POST['template'];
-	if (substr($_POST['tipdoc'],0,2) == 'FN' || $_POST['tipdoc']=='FAA' || $_POST['tipdoc']=='FAF') { // forzo i template delle fatture d'acconto, note credito e debito su fattura semplice
+	if (substr($_POST['tipdoc'],0,2) == 'FN' || $_POST['tipdoc']=='FAA' || $_POST['tipdoc']=='FAF' || $_POST['tipdoc']=='FAP'||$_POST['tipdoc']=='FAQ') { // forzo i template delle fatture d'acconto, note credito e debito, parcelle su fattura semplice
     $form['template'] = "FatturaSemplice";
-  } elseif($_POST['tipdoc']=='FAP'||$_POST['tipdoc']=='FAQ') { // forzo i template delle parcelle
-    $form['template'] = "Parcella";
-	}
+  }
 	$form['datemi'] = substr($_POST['datemi'],0,10);
 	$form['initra'] = substr($_POST['initra'],0,10);
   $form['oratra'] = $_POST['oratra'];
@@ -2125,19 +2123,17 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
   $rs_ultimo_template = gaz_dbi_dyn_query($gTables['tesdoc'] . ".template", $gTables['tesdoc'], "tipdoc = '" . $form['tipdoc'] . "' AND ddt_type!='R' AND seziva = " .$form['seziva'], 'datfat desc, protoc desc', 0, 1);
   $ultimo_template = gaz_dbi_fetch_array($rs_ultimo_template);
   if (isset($ultimo_template['template']) && $ultimo_template['template'] == 'FatturaImmediata') {
-      $form['template'] = "FatturaImmediata";
+    $form['template'] = "FatturaImmediata";
   } elseif (!empty($ultimo_template['template'])) {
-      $form['template'] = $ultimo_template['template'];
+    $form['template'] = $ultimo_template['template'];
   } elseif ($form['tipdoc'] == 'FAA') {
-      $form['template'] = "FatturaSemplice";
-  } elseif ($form['tipdoc'] == 'FAF') {
-      $form['template'] = "FatturaSemplice";
-  } elseif ($form['tipdoc'] == 'FAP' || $form['tipdoc'] == 'FAQ') {  //se e' una parcella
-      $form['template'] = 'Parcella';
+    $form['template'] = "FatturaSemplice";
+  } elseif ($form['tipdoc'] == 'FAF' || $form['tipdoc'] == 'FAP' || $form['tipdoc'] == 'FAQ') {
+    $form['template'] = "FatturaSemplice";
   } elseif ($form['tipdoc'] == 'VRI') {  //se e' una ricevuta
-      $form['template'] = 'Received';
+    $form['template'] = 'Received';
   } else {
-      $form['template'] = "FatturaSemplice";
+    $form['template'] = "FatturaSemplice";
   }
   $form['protoc'] = "";
   $form['numdoc'] = "";
