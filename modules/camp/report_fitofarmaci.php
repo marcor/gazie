@@ -159,29 +159,37 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			</td>
 			<?php
 			$res2 = gaz_dbi_get_row($gTables['artico'], 'codice', $a_row['cod_art']);
-      $unimis=$res2['uniacq'];
-			$res = gaz_dbi_get_row($gTables['camp_colture'], 'id_colt', $a_row['id_colt']);
-			?>
-			<td>
-				<span><?php echo $res["nome_colt"]; ?></span>
-			</td>
-			<?php
-			$res = gaz_dbi_get_row($gTables['camp_avversita'], 'id_avv', $a_row['id_avv']);
-			?>
-			<td>
-				<span><?php echo $res["nome_avv"]; ?></span>
-			</td>
-			<td>
+      if (!isset($res2)){
+        ?>
+        <td>
+          <span>ERRORE: questo prodotto non è presente fra le merci di magazzino</span>
+
         <?php
-        if (floatval($a_row["dose"])>0){
-          ?>
-          <span><?php echo number_format ($a_row["dose"],$admin_aziend['decimal_price'], ',', '')," ",$unimis,"/ha"; ?></span>&nbsp;&nbsp;
+      }else{
+        $unimis=$res2['uniacq'];
+        $res = gaz_dbi_get_row($gTables['camp_colture'], 'id_colt', $a_row['id_colt']);
+        ?>
+        <td>
+          <span><?php echo $res["nome_colt"]; ?></span>
+        </td>
+        <?php
+        $res = gaz_dbi_get_row($gTables['camp_avversita'], 'id_avv', $a_row['id_avv']);
+        ?>
+        <td>
+          <span><?php echo $res["nome_avv"]; ?></span>
+        </td>
+        <td>
           <?php
-        }
-        if (floatval($a_row["dose_hl"])>0){
-          ?>
-          <span><?php echo number_format ($a_row["dose_hl"],$admin_aziend['decimal_price'], ',', '')," ",$unimis,"/hl"; ?></span>
-          <?php
+          if (floatval($a_row["dose"])>0){
+            ?>
+            <span><?php echo number_format ($a_row["dose"],$admin_aziend['decimal_price'], ',', '')," ",$unimis,"/ha"; ?></span>&nbsp;&nbsp;
+            <?php
+          }
+          if (floatval($a_row["dose_hl"])>0){
+            ?>
+            <span><?php echo number_format ($a_row["dose_hl"],$admin_aziend['decimal_price'], ',', '')," ",$unimis,"/hl"; ?></span>
+            <?php
+          }
         }
         ?>
 			</td>
