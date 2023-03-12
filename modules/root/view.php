@@ -53,28 +53,61 @@ $img1px= pack("c*",0xFF,0xD8,0xFF,0xE0,0x00,0x10,0x4A,0x46,0x49,0x46,0x00,0x01,0
               0xDA,0x00,0x0C,0x03,0x01,0x00,0x02,0x11,0x03,0x11,0x00,0x3F,0x00,
               0xA6,0x00,0x1F,0xFF,0xD9);
 if (isset($_GET['table']) && isset($_GET['value'])){
-    if (isset($_GET['field'])){
-      if ( defined('FILTER_SANITIZE_ADD_SLASHES') ) {
-        $f=filter_var(substr($_GET['field'],0,30),FILTER_SANITIZE_ADD_SLASHES);
-      } else {
-        $f=addslashes(substr($_GET['field'],0,30));
-      }
-    } else if (isset($_GET['group'])){
-      $f='id_artico_group';
+  if (isset($_GET['field'])){
+    if ( defined('FILTER_SANITIZE_ADD_SLASHES') ) {
+      $f=filter_var(substr($_GET['field'],0,30),FILTER_SANITIZE_ADD_SLASHES);
     } else {
-      $f='codice';
+      $f=addslashes(substr($_GET['field'],0,30));
     }
+  } else if (isset($_GET['group'])){
+    $f='id_artico_group';
+  } else {
+    $f='codice';
+  }
 	if ( defined('FILTER_SANITIZE_ADD_SLASHES') ) {
 		$t=filter_var(substr($_GET['table'],0,30),FILTER_SANITIZE_ADD_SLASHES);
 	} else {
 		$t=addslashes(substr($_GET['table'],0,30));
 	}
-    $col = gaz_dbi_get_row($gTables[$t], $f, substr($_GET['value'],0,30));
-    header ('Content-type: image/pjpeg');
-    if (empty($col['image'])) {
-        echo $img1px;
-    } else {
-        echo $col['image'];
+  $col = gaz_dbi_get_row($gTables[$t], $f, substr($_GET['value'],0,30));
+  header ('Content-type: image/pjpeg');
+  if (empty($col['image'])) {
+    echo $img1px;
+  } else {
+    $maxsize=360;
+    $gdImage = imagecreatefromstring($col['image']);
+    list($width, $height) = getimagesizefromstring($col['image']);
+    $ratio=round($width/$height,2);
+    $resize=FALSE;
+    if ($width>$maxsize && $ratio >= 1) {
+      $toWidth=$maxsize;
+      $wdiff=$width-$maxsize;
+      $toHeight=intval($height-$wdiff/$ratio);
+      $resize=TRUE;
+    } elseif ($height>$maxsize && $ratio <= 1) {
+      $toHeight=$maxsize;
+      $ediff=$height-$maxsize;
+      $toWidth=intval($height-$ediff*$ratio);
+      $resize=TRUE;
     }
+    if ($resize) {
+      $gdRender = imagecreatetruecolor($toWidth, $toHeight);
+      $colorBgAlpha = imagecolorallocatealpha($gdRender, 0, 0, 0, 127);
+      imagecolortransparent($gdRender, $colorBgAlpha);
+      imagefill($gdRender, 0, 0, $colorBgAlpha);
+      imagecopyresampled($gdRender, $gdImage, 0, 0, 0, 0, $toWidth, $toHeight, $width, $height);
+      imagetruecolortopalette($gdRender, false, 255);
+      imagesavealpha($gdRender, true);
+      ob_start();
+      imagepng($gdRender);
+      $imageContents = ob_get_contents();
+      ob_end_clean();
+      imagedestroy($gdRender);
+      imagedestroy($gdImage);
+      echo $imageContents;
+    } else {
+      echo $col['image'];
+    }
+  }
 }
 ?>
