@@ -80,8 +80,9 @@ function gzTooltip() {
                 delay: {show: 50},
                 title: function () {
                     var codeDtls = this.getAttribute('data-type');
+                    var maxSize = this.getAttribute('data-maxsize').toString();
                     if (codeDtls == "product-thumb") {
-                        codeDtls = '<span class="label">' + this.getAttribute('data-title') + '</span><img src="../root/view.php?table=artico&value=' + this.getAttribute('data-id') + '" onerror="this.src=\'../../library/images/link_break.png\'" alt="' + this.getAttribute('data-title') + '" style="object-fit: cover; max-width: 384px; max-height: 384px;"/>';
+                        codeDtls = '<span class="label">' + this.getAttribute('data-title') + '</span><img src="../root/view.php?table=artico&value=' + this.getAttribute('data-id') + '&maxsize=' + maxSize + '" onerror="this.src=\'../../library/images/link_break.png\'" alt="' + this.getAttribute('data-title') + '" style="object-fit: cover; max-width: 384px; max-height: 384px;"/>';
                         return codeDtls;
                     } else if (codeDtls == "weight") {
                         codeDtls = this.getAttribute('data-title') + '&nbsp;' + this.getAttribute('data-id') + 'kg';

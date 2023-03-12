@@ -389,7 +389,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     }
 	echo "<i ".$ecomGlobe." ></i>";// globo per e-commerce
     echo '</td>';
-    echo '<td><span class="gazie-tooltip" data-type="product-thumb" data-id="'. $r['codice'] .'" data-title="'. $r['annota'].'" >'.$r['descri'].'</span>';
+    echo '<td><span class="gazie-tooltip" data-type="product-thumb" data-id="'. $r['codice'] .'" data-title="'. $r['annota'].'" data-maxsize="360" >'.$r['descri'].'</span>';
     echo "</td>\n";
     echo '<td class="text-center">'.$r['catmer'].'-'.$r['descat'];
     echo "</td>\n";

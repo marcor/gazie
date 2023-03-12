@@ -70,11 +70,15 @@ if (isset($_GET['table']) && isset($_GET['value'])){
 		$t=addslashes(substr($_GET['table'],0,30));
 	}
   $col = gaz_dbi_get_row($gTables[$t], $f, substr($_GET['value'],0,30));
-  header ('Content-type: image/pjpeg');
+  header ('Content-type: image/jpg');
   if (empty($col['image'])) {
+    header ('Content-type: image/jpg');
     echo $img1px;
   } else {
-    $maxsize=360;
+    $maxsize=1200;
+    if (isset($_GET['maxsize']) && intval($_GET['maxsize'])>10){
+      $maxsize=intval($_GET['maxsize']);
+    }
     $gdImage = imagecreatefromstring($col['image']);
     list($width, $height) = getimagesizefromstring($col['image']);
     $ratio=round($width/$height,2);
@@ -106,6 +110,7 @@ if (isset($_GET['table']) && isset($_GET['value'])){
       imagedestroy($gdImage);
       echo $imageContents;
     } else {
+      header ('Content-type: image/jpg');
       echo $col['image'];
     }
   }
