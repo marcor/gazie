@@ -111,5 +111,25 @@ if (isset($_GET['table']) && isset($_GET['value'])){
       echo $col['image'];
     }
   }
+} elseif(isset($_GET['clfoco']))  { // crea immagine da testo per evitare i copia/incolla del testo
+  $anagra = new Anagrafica;
+  $i=intval($_GET['clfoco']);
+  $data = $anagra->getPartner($i);
+  $img = imagecreate(360, 150);
+  $textbgcolor = imagecolorallocate($img,0,0,0);
+  $textcolor = imagecolorallocate($img,255,255,255);
+  imagestring($img, 4, 5, 5, $data['indspe'], $textcolor);
+  imagestring($img, 4, 5, 25, $data['capspe'].' '.$data['citspe'].' ('.$data['prospe'].')', $textcolor);
+  imagestring($img, 4, 5, 45, 'TEL: '.$data['telefo'].' '.$data['cell'], $textcolor);
+  imagestring($img, 4, 5, 65, 'CF: '.$data['codfis'].' '.$data['pariva'], $textcolor);
+  imagestring($img, 4, 5, 85, 'mail: '.$data['e_mail'], $textcolor);
+  imagestring($img, 4, 5, 105, 'PEC:  '.$data['pec_email'], $textcolor);
+  ob_start();
+  imagepng($img);
+  $imageContents = ob_get_contents();
+  ob_end_clean();
+  imagedestroy($img);
+  header ('Content-type: image/jpeg');
+  echo $imageContents;
 }
 ?>

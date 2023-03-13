@@ -189,7 +189,8 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "<tr class=\"FacetDataTD\">";
 	 //colonna codice
     echo "<td align=\"center\"><a class=\"btn btn-xs btn-edit\" href=\"admin_fornit.php?codice=".substr($a_row["codice"],3)."&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".intval(substr($a_row["codice"],3))."</a></td>";
-    echo "<td title=\"".$a_row["ragso2"]."\">".$a_row["ragso1"]." &nbsp;</td>";
+    // Colonna ragione sociale
+    echo '<td><span class="gazie-tooltip col-xs-12" data-type="anagra-thumb" data-id="'. $a_row['codice'] .'" data-title="'. $a_row["ragso1"].' '.$a_row["ragso2"].'">' . $a_row["ragso1"] . " </span></td>";
     echo "<td align=\"center\">".$a_row["sexper"]."</td>";
 	 $google_string = str_replace(" ","+",$a_row["indspe"]).",".str_replace(" ","+",$a_row["capspe"]).",".str_replace(" ","+",$a_row["citspe"]).",".str_replace(" ","+",$a_row["prospe"]);
 		echo "<td title=\"".$a_row["capspe"]." ".$a_row["indspe"]."\">";

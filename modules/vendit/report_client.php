@@ -177,7 +177,7 @@ function clipandgo(pi,url) {
             // Colonna codice cliente
             echo "<td align=\"center\"><a class=\"btn btn-xs btn-edit\" href=\"admin_client.php?codice=" . substr($a_row["codice"], 3) . "&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" .intval(substr($a_row["codice"],3)) . "</a> &nbsp</td>";
             // Colonna ragione sociale
-            echo "<td title=\"" . $a_row["ragso2"] . "\">" . $a_row["ragso1"] . " &nbsp;</td>";
+            echo '<td><span class="gazie-tooltip col-xs-12" data-type="anagra-thumb" data-id="'. $a_row['codice'] .'" data-title="'. $a_row["ragso1"].' '.$a_row["ragso2"].'">' . $a_row["ragso1"] . " </span></td>";
             // colonna sesso
             echo "<td align=\"center\">" . $a_row["sexper"] . "</td>";
             // colonna indirizzo
