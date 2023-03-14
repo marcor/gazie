@@ -76,9 +76,15 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
     }
 
     $lang = get_template_lang($testata['clfoco']);
-    if (isset($_GET['dest']) && $_GET['dest'] == 'E') { // se l'utente vuole inviare una mail
+    if (isset($_GET['dest'])) { // se l'utente vuole inviare una mail
+      if ($_GET['dest'] == 'E'){
         createDocument($testata, $template, $gTables, 'rigdoc', 'E', $lang);
-	require("../../library/include/footer.php");
+      }else{
+        createDocument($testata, $template, $gTables, 'rigdoc', $_GET['dest'], $lang);
+        $email=filter_var($_GET['dest'], FILTER_VALIDATE_EMAIL);
+        $r=gaz_dbi_put_row($gTables['tesdoc'], 'id_tes', $testata['id_tes'], 'email',$email);
+      }
+      require("../../library/include/footer.php");
     } else {
         createDocument($testata, $template, $gTables, 'rigdoc', false, $lang);
     }
@@ -153,14 +159,23 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
 //    $testate = gaz_dbi_dyn_query("A.*", $from, $where, $orderby);
     $clientiRS = gaz_dbi_dyn_query("distinct(A.clfoco) as clfoco", $from, $where);
     $numRecord = $clientiRS->num_rows;
+
     if ($numRecord > 0) {
-        if ($invioPerEmail || (isset($_GET['dest']) && $_GET['dest'] == 'E')) {
+        if ($invioPerEmail || isset($_GET['dest'])) {
             $arrayClienti = gaz_dbi_fetch_all($clientiRS);
+
             foreach ($arrayClienti as $cliente) {
                 $clfoco = $cliente['clfoco'];
                 $testate = gaz_dbi_dyn_query("A.*", $from, $where . " and A.clfoco=$clfoco", $orderby);
                 $lang = get_template_lang($clfoco);
-                createInvoiceFromDDT($testate, $gTables, 'E', $lang);
+                createInvoiceFromDDT($testate, $gTables, $_GET['dest'], $lang);
+                if ($_GET['dest'] !== 'E'){// se ho inviato ad indirizzo diverso da quello di default
+                  $testate = gaz_dbi_dyn_query("A.*", $from, $where . " and A.clfoco=$clfoco", $orderby);
+                  while ($tesdoc = gaz_dbi_fetch_array($testate)) {// memorizzo in ogni documento l'indirizzo email a cui ho inviato
+                    $email=filter_var($_GET['dest'], FILTER_VALIDATE_EMAIL);
+                    $r=gaz_dbi_put_row($gTables['tesdoc'], 'id_tes', $tesdoc['id_tes'], 'email',$email);
+                  }
+                }die;
             }
         } else {
             $testate = gaz_dbi_dyn_query("A.*", $from, $where, $orderby);
@@ -276,7 +291,7 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
             . "' AND $num_name BETWEEN " . intval($_GET['ni']) . " AND " . intval($_GET['nf'])
             . " AND protoc BETWEEN " . intval($_GET['pi']) . " AND " . intval($_GET['pf'])
             . $cliente . $agente . $fattEmail;
-    $from = $gTables['tesdoc'] . " A left join " . $gTables['clfoco'] . " B on A.clfoco=B.codice 
+    $from = $gTables['tesdoc'] . " A left join " . $gTables['clfoco'] . " B on A.clfoco=B.codice
                                      left join " . $gTables['anagra'] . " C on B.id_anagra=C.id  ";
     //recupero i documenti da stampare
     $testate = gaz_dbi_dyn_query("A.*", $from, $where, $orderby);

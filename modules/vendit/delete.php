@@ -278,6 +278,10 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 			$i=intval($_POST['ref']);
 			gaz_dbi_del_row($gTables['customer_group'], "id", $i);
 		break;
+    case "email":
+    $i=filter_var($_POST['ref'], FILTER_VALIDATE_EMAIL);
+    gaz_dbi_put_query($gTables['tesdoc'], " email LIKE '%".$i."%'",'email','');
+    break;
 	}
 }
 ?>

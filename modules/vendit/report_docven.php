@@ -116,7 +116,7 @@ $(function() {
    });
 
 });
-function confirMail(link){
+function OLDconfirMail(link){
    tes_id = link.id.replace("doc_", "");
    $.fx.speeds._default = 500;
    targetUrl = $("#doc_"+tes_id).attr("url");
@@ -236,6 +236,92 @@ function confirFae(link){
 </script>';
 ?>
 <script>
+function confirMail(link,cod_partner,id_tes,genorder=false) {
+  tes_id = link.id.replace("doc_", "");
+  $.fx.speeds._default = 500;
+  targetUrl = $("#doc_"+tes_id).attr("url");
+
+	var namedoc=$("#doc_"+tes_id).attr("namedoc");
+
+	$("#confirm_email").attr('title', 'Invia '+namedoc);
+
+	$.get("search_email_address.php",
+		  {clfoco: cod_partner},
+		  function (data) {
+        var size = Object.keys(data).length;
+        var j=0;
+        var c=0
+        const mails = [];
+        $.each(data, function (i, value) {
+
+          if (size>1 && !mails.includes(value.email)){
+            if (j==0){
+              $("#mailbutt").append("<div>Indirizzi archiviati:</div>");
+            }
+            $("#mailbutt").append("<div id='rowmail_"+j+"' align='center'><button id='fillmail_" + j+"'>" + value.email + "</button></div>");
+            $("#fillmail_" + j).click(function () {
+              $("#mailaddress").val(value.email);
+            });
+            c=j+1;
+            if (c < size){// non faccio rimuovere l'email del fornitore (che è sempre l'ultima) anche perché non la toglierebbe
+              $("#rowmail_"+j).append(" <button id='deletemail_" + j+"' class='btn-elimina' title='rimuovi indirizzo'> <i class='glyphicon glyphicon-remove'></i> </button>");
+              $("#deletemail_" + j).click(function () { // se clicco sulla X elimino da tesdoc l'email che non si vuole più utilizzare
+                // richiamo il delete.php per eliminare la email dalle tesdoc
+                $.ajax({
+                  data: {'type':'email',ref:value.email},
+                  type: 'POST',
+                  url: '../vendit/delete.php',
+                  success: function(output){
+                    window.location.replace("./report_docven.php");
+                  }
+                });
+              });
+            }
+            mails[j]=value.email;
+            j++;
+          }else{// se non ci sono indirizzi da scegliere valorizzo di default
+            $("#mailaddress").val(value.email);
+          }
+
+        });
+
+		  }, "json"
+  );
+
+	$( function() {
+    var dialog
+	,
+    emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
+	dialog = $("#confirm_email").dialog({
+		modal: true,
+		show: "blind",
+		hide: "explode",
+    minWidth: 200,
+		buttons: {
+			Annulla: function() {
+				$(this).dialog('close');
+			},
+			Conferma: function() {
+				if ( !( emailRegex.test( $("#mailaddress").val() ) ) && !genorder ) {
+					alert('Mail formalmente errata');
+				} else {
+					$("#mailbutt div").remove();
+          var dest=$("#mailaddress").val();
+					window.location.href = targetUrl+"&dest="+dest;
+				}
+			}
+		},
+		close: function(){
+				$("#mailbutt div").remove();
+        $("#mailaddress").val('');
+				$(this).dialog('destroy');
+		}
+	});
+	});
+}
+
+
+
 $(function() {
 	$("#dialog_delete").dialog({ autoOpen: false });
 	$('.dialog_delete').click(function() {
@@ -343,6 +429,16 @@ function printPdf(urlPrintDoc){
         <p class="ui-state-highlight" id="mail_adrs"></p>
         <p id="mail_alert2"><?php echo $script_transl['mail_alert2']; ?></p>
         <p class="ui-state-highlight" id="mail_attc"></p>
+    </div>
+    <div class="modal" id="confirm_email" title="Invia mail...">
+      <fieldset>
+          <div>
+              <label id="maillabel" for="mailaddress">all'indirizzo:</label>
+              <input type="text"  placeholder="seleziona sotto oppure digita" value="" id="mailaddress" name="mailaddress" maxlength="100" size="30" />
+          </div>
+          <div id="mailbutt">
+      </div>
+      </fieldset>
     </div>
 
     <div style="display:none" id="dialog_fae">
@@ -811,7 +907,7 @@ function printPdf(urlPrintDoc){
                       $classe_mail = "btn-success";
                       $title="Ultimo invio: ".$gaz_custom_data['email']['fat'];
                   }
-                  echo '<a class="btn btn-xs '.$classe_mail.' btn-email" onclick="confirMail(this);return false;" id="doc_' . $r["id_tes"] . '" url="' . $modulo . '&dest=E" href="#" title="' . $title . '" mail="' . $r["e_mail"] . '" namedoc="' . $tipodoc . ' n.' . $r["numfat"] . ' del ' . gaz_format_date($r["datfat"]) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
+                  echo '<a class="btn btn-xs '.$classe_mail.' btn-email" onclick="confirMail(this,' . $r["clfoco"] . ',' . $r["id_tes"] . ',false);return false;" id="doc_' . $r["id_tes"] . '" url="' . $modulo . '" href="#" title="' . $title . '" mail="' . $r["e_mail"] . '" namedoc="' . $tipodoc . ' n.' . $r["numfat"] . ' del ' . gaz_format_date($r["datfat"]) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
                 } else {
                   echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" href="admin_client.php?codice=' . substr($r['clfoco'], 3) . '&Update#email"><i class="glyphicon glyphicon-edit"></i></a>';
                 }

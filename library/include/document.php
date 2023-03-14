@@ -696,7 +696,10 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
     // aggiungo all'array con indice 'azienda' altri dati
     $docVars->azienda['cliente1']=$docVars->cliente1;
     $docVars->azienda['doc_name']=$pdf->tipdoc.'.pdf';
-    if ($dest && $dest == 'E') { // è stata richiesta una e-mail
+    if ($dest) { // è stata richiesta una e-mail
+      if ($dest!=='E'){// se ho un indirizzo e-mail
+        $docVars->client['e_mail']=$dest;// lo impongo per l'invio
+      }
       $dest = 'S';     // Genero l'output pdf come stringa binaria
       // Costruisco oggetto con tutti i dati del file pdf da allegare
       $content = new StdClass;
@@ -829,7 +832,10 @@ function createMultiDocument($results, $templateName, $gTables, $dest = false, $
         $pdf->compose();
     }
     $pdf->pageFooter();
-    if ($dest && $dest == 'E') { // è stata richiesta una e-mail
+    if ($dest) { // è stata richiesta una e-mail
+        if ($dest!=='E'){// se ho un indirizzo e-mail
+          $docVars->client['e_mail']=$dest;// lo impongo per l'invio
+        }
         $dest = 'S';     // Genero l'output pdf come stringa binaria
         // Costruisco oggetto con tutti i dati del file pdf da allegare
         $content = new stdClass();
@@ -912,7 +918,10 @@ function createInvoiceFromDDT($result, $gTables, $dest = false, $lang_template=f
 		$doc_name_email = $pdf->tipdoc . '.pdf';
     }
     $pdf->pageFooter();
-    if ($dest && $dest == 'E') { // è stata richiesta una e-mail
+    if ($dest) { // è stata richiesta una e-mail
+        if ($dest!=='E'){// se ho un indirizzo e-mail
+          $docVars->client['e_mail']=$dest;// lo impongo per l'invio
+        }
         $dest = 'S';     // Genero l'output pdf come stringa binaria
         // Costruisco oggetto con tutti i dati del file pdf da allegare
         if (!isset($content)) {
@@ -1009,18 +1018,21 @@ function createInvoiceACQFromDDT($result, $gTables, $dest = false, $lang_templat
 		$doc_name_email = $pdf->tipdoc . '.pdf';
     }
     $pdf->pageFooter();
-    if ($dest && $dest == 'E') { // è stata richiesta una e-mail
+    if ($dest) { // è stata richiesta una e-mail
+        if ($dest!=='E'){// se ho un indirizzo e-mail
+          $docVars->client['e_mail']=$dest;// lo impongo per l'invio
+        }
         $dest = 'S';     // Genero l'output pdf come stringa binaria
         // Costruisco oggetto con tutti i dati del file pdf da allegare
         if (!isset($content)) {
             $content = new stdClass;
         }
-		$content->urlfile=false;
+        $content->urlfile=false;
         $content->name = $doc_name;
         $content->string = $pdf->Output($doc_name, $dest);
         $content->encoding = "base64";
         $content->mimeType = "application/pdf";
-		$docVars->azienda['doc_name'] = $doc_name_email;
+        $docVars->azienda['doc_name'] = $doc_name_email;
         $gMail = new GAzieMail();
         $gMail->sendMail($docVars->azienda, $docVars->user, $content, $docVars->client);
     } elseif ($dest && $dest == 'X') { // è stata richiesta una stringa da allegare

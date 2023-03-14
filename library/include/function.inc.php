@@ -1443,7 +1443,6 @@ class GAzieMail {
       global $gTables, $debug_active;
       require_once "../../library/phpmailer/class.phpmailer.php";
       require_once "../../library/phpmailer/class.smtp.php";
-
       if (isset ($receiver['mod_fae']) && strpos($receiver['mod_fae'], 'pec')===0){// se c'è il modulo per invio fae che inizia il suo nome con 'pec' definisco il server smtp con la pec
         $config_port = gaz_dbi_get_row($gTables['company_config'], 'var', 'pec_smtp_port');
         $config_secure = gaz_dbi_get_row($gTables['company_config'], 'var', 'pec_smtp_secure');
