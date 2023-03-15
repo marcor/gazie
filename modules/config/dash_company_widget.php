@@ -42,7 +42,6 @@ function selectCompany($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg=
         /** ENRICO FEDELE */
     }
 }
-
 ?>
 <div class="panel panel-success col-md-12" >
     <div class="box-header company-color">
@@ -59,12 +58,22 @@ function selectCompany($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg=
             <p><?php echo $admin_aziend['indspe']; ?></p>
             <p><?php echo $admin_aziend['citspe'].' ('.$admin_aziend['prospe'].')'; ?></p>
             <p><?php echo 'P. IVA: '.$admin_aziend['pariva']; ?></p></div></a>
+            <input type="hidden" name="prev" value="<?php echo $form['company_id']; ?>">
             </div>
         </div>
     </div>
     <div>
     <?php
 		$student = false;
+
+    if (isset ($_POST['company_id'])&& isset ($_POST['prev']) && $_POST['company_id']==$form['company_id'] && $form['company_id']>0){
+      // ricarico la pagina dopo aver cambiato azienda
+      ?>
+        <meta http-equiv="refresh" content="0;">
+      <?php
+
+    }
+
 		if (preg_match("/([a-z0-9]{1,9})[0-9]{4}$/", $table_prefix, $tp)) {
 			$rs_student = gaz_dbi_dyn_query("*", $tp[1] . '_students', "student_name = '" . trim($admin_aziend["user_name"]) . "'");
 			$student = gaz_dbi_fetch_array($rs_student);
