@@ -12,6 +12,9 @@ function selectCompany($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg=
         echo "\t<input type=\"submit\" value=\"" . $co['ragso1'] . "\" name=\"change\" onclick=\"this.form.$name.value='0'; this.form.hidden_req.value='change';\" title=\"$mesg[2]\">\n";
     } else {
         if (strlen($strSearch) >= 2) { //sto ricercando un nuovo partner
+		?>
+		<input type="hidden" name="prev" value="999">
+		<?php
             echo "\t<select name=\"$name\" class=\"FacetSelect\" onchange=\"this.form.hidden_req.value='$name'; this.form.submit();\">\n";
             $co_rs = gaz_dbi_dyn_query("*", $table, "ragso1 LIKE '" . addslashes($strSearch) . "%' AND " . $where, "ragso1 ASC");
             if ($co_rs) {
@@ -42,6 +45,7 @@ function selectCompany($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg=
         /** ENRICO FEDELE */
     }
 }
+
 ?>
 <div class="panel panel-success col-md-12" >
     <div class="box-header company-color">
@@ -58,29 +62,38 @@ function selectCompany($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg=
             <p><?php echo $admin_aziend['indspe']; ?></p>
             <p><?php echo $admin_aziend['citspe'].' ('.$admin_aziend['prospe'].')'; ?></p>
             <p><?php echo 'P. IVA: '.$admin_aziend['pariva']; ?></p></div></a>
-            <input type="hidden" name="prev" value="<?php echo $form['company_id']; ?>">
             </div>
         </div>
     </div>
     <div>
     <?php
-		$student = false;
+	$student = false;
+	if (!isset($_POST['prev'])){// primo accesso
+		$form['prev']=''; 
+	}else{
+		$form['prev']=$form['company_id'];
+	}
 
-    if (isset ($_POST['company_id'])&& isset ($_POST['prev']) && $_POST['company_id']==$form['company_id'] && $form['company_id']>0){
+    if (isset ($_POST['company_id'])&& isset ($_POST['prev']) && $_POST['company_id']==$form['company_id'] && $form['company_id']>0 && strlen($form['prev'])>0){
       // ricarico la pagina dopo aver cambiato azienda
       ?>
-        <meta http-equiv="refresh" content="0;">
+		<script>
+		//alert('Ricarico pagina');
+		</script>	  
+        <meta http-equiv="refresh" content="0; url=admin.php">
       <?php
-
     }
 
-		if (preg_match("/([a-z0-9]{1,9})[0-9]{4}$/", $table_prefix, $tp)) {
-			$rs_student = gaz_dbi_dyn_query("*", $tp[1] . '_students', "student_name = '" . trim($admin_aziend["user_name"]) . "'");
-			$student = gaz_dbi_fetch_array($rs_student);
-		}
-		if ($company_choice==1 || $admin_aziend['Abilit'] >= 8 || $student ){
-			echo $script_transl['mesg_co'][2] . '<input class="btn btn-xs" type="submit" value="&rArr;" />  ';
-			selectCompany('company_id', $form['company_id'], $form['search']['company_id'], $form['hidden_req'], $script_transl['mesg_co']);
+	if (preg_match("/([a-z0-9]{1,9})[0-9]{4}$/", $table_prefix, $tp)) {
+		$rs_student = gaz_dbi_dyn_query("*", $tp[1] . '_students', "student_name = '" . trim($admin_aziend["user_name"]) . "'");
+		$student = gaz_dbi_fetch_array($rs_student);
+	}
+	if ($company_choice==1 || $admin_aziend['Abilit'] >= 8 || $student ){
+		?>
+
+		<?php
+		echo $script_transl['mesg_co'][2] . '<input class="btn btn-xs" type="submit" value="&rArr;" />  ';
+		selectCompany('company_id', $form['company_id'], $form['search']['company_id'], $form['hidden_req'], $script_transl['mesg_co']);
     }else{
 			echo '<input type="hidden" name="company_id" value="'.$form['company_id'].'" >	';
 		}
