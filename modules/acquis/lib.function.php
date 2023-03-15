@@ -221,7 +221,7 @@ function CreateZipFAEacq($resultFAE,$email=""){// crea un file .zip contenente i
 	global $gTables, $admin_aziend;
 	if (count($resultFAE) > 0) {
 		$zip = new ZipArchive;
-		$zipname = substr(date("Y-m-d-h-i-s")."_".str_replace(" ","-",$admin_aziend['ragso1']), 0, 39).".zip";// il nome del pacchetto
+		$zipname = substr(date("Y-m-d-h-i-s")."_".str_replace(" ","-",addslashes($admin_aziend['ragso1'])), 0, 39).".zip";// il nome del pacchetto
 		$zipnameurl=DATA_DIR."files/tmp/".$zipname;
 		$res = $zip->open($zipnameurl, ZipArchive::CREATE);
 		if ($res === TRUE) {
