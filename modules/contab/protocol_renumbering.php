@@ -71,6 +71,7 @@ function getMovements($vat_section, $vat_reg, $anno) {
         $r['err_t'] = 'ERROR';
       }
       if ($c_sr != ($r['ctrl_sr'])) { // devo azzerare tutto perché cambiato l'anno
+        $numero_atteso_posizione = $r['protoc'];
         $c_sr = 0;
         $c_id = 0;
         $c_p = 0;
@@ -80,7 +81,11 @@ function getMovements($vat_section, $vat_reg, $anno) {
         }
       } else {
         $ex = $c_p + 1;
-        if ($r['protoc'] <> $ex && $r['id_tes'] <> $c_id) {  // errore: il protocollo non � consecutivo
+        if ($r['id_tes'] <> $c_id) {
+          $numero_atteso_posizione++;
+          if ($r['protoc'] <> $numero_atteso_posizione) {  // errore: il protocollo non è consecutivo
+            $r['err_p'] = $numero_atteso_posizione;
+          }
         }
       }
       if ($r['regiva'] < 4 && $vat_section <> $admin_aziend['reverse_charge_sez']) { // il controllo sul numero solo per i registri delle fatture di vendita e non reverse charge
@@ -114,6 +119,8 @@ function getMovements($vat_section, $vat_reg, $anno) {
     return $m;
 }
 
+
+
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
   $form['hidden_req'] = '';
   $form['ritorno'] = $_SERVER['HTTP_REFERER'];
@@ -132,14 +139,20 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
   }
 }
 
-//controllo i campi
-
-// fine controlli
-
-if (isset($_POST['print']) && $msg == '') {
-  var_dump($_POST);
-  //header("Location: sent_print.php");
-  exit;
+if (isset($_POST['renum'])) {
+  $m = getMovements($form['vat_section'], $form['vat_reg'], $form['anno']);
+  if (sizeof($m) > 0) {
+    foreach ($m AS $key => $mv) {
+      if (isset($mv['err_p'])) {
+        // un errore modifico tesmov
+        gaz_dbi_query("UPDATE ".$gTables['tesmov']." SET protoc = ".$mv['err_p']." WHERE id_tes = ".$mv['id_tes']);
+        // modifico anche il riferimento in paymov
+        $old_id_tesdoc_ref = substr($mv['datreg'], 0, 4) . $form['vat_reg'] . $form['vat_section'] . str_pad($mv['protoc'], 9, 0, STR_PAD_LEFT);
+        $new_id_tesdoc_ref = substr($mv['datreg'], 0, 4) . $form['vat_reg'] . $form['vat_section'] . str_pad($mv['err_p'], 9, 0, STR_PAD_LEFT);
+        gaz_dbi_query("UPDATE ".$gTables['paymov']." SET id_tesdoc_ref = '".$new_id_tesdoc_ref."' WHERE id_tesdoc_ref = '".$old_id_tesdoc_ref."'");
+      }
+    }
+  }
 }
 
 require("../../library/include/header.php");
@@ -175,7 +188,7 @@ $(function () {
 echo "<table class=\"Tmiddle table-striped\">\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['vat_reg'] . "</td><td  class=\"FacetDataTD\">\n";
-$gForm->variousSelect('vat_reg', $script_transl['vat_reg_value'], $form['vat_reg'], 'FacetSelect', false, 'vat_reg');
+$gForm->variousSelect('vat_reg', $script_transl['vat_reg_value'], $form['vat_reg'], 'FacetSelect', true, 'vat_reg');
 echo "</td>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['vat_section'] . "</td><td class=\"FacetDataTD\">\n";
 $gForm->selectNumber('vat_section', $form['vat_section'], false, 1, 9, 'FacetSelect', 'vat_section');
@@ -190,8 +203,8 @@ echo "</table>\n";
 
 $m = getMovements($form['vat_section'], $form['vat_reg'], $form['anno']);
 echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
+$err = 0;
 if (sizeof($m) > 0) {
-  $err = 0;
   echo "<tr>";
   $linkHeaders = new linkHeaders($script_transl['header']);
   $linkHeaders->output();
@@ -232,7 +245,7 @@ if (sizeof($m) > 0) {
         $red_p = 'red';
         $err++;
         echo "<tr>";
-        echo "<td colspan=\"8\" class=\"FacetDataTDred\">" . $script_transl['errors']['P'] . ":&nbsp;</td>";
+        echo "<td colspan=\"8\" class=\"FacetDataTDred\">" . $script_transl['errors']['P'] . ": era atteso ".$mv['err_p']."</td>";
         echo "</tr>";
     }
     $red_d = '';
@@ -240,7 +253,7 @@ if (sizeof($m) > 0) {
         $red_d = 'red';
         $err++;
         echo "<tr>";
-        echo "<td colspan=\"8\" class=\"FacetDataTDred\">" . $script_transl['errors']['N'] . ":&nbsp;</td>";
+        echo "<td colspan=\"8\" class=\"FacetDataTDred\">" . $script_transl['errors']['N'] . ": </td>";
         echo "</tr>";
     }
     $red_t = '';
@@ -248,23 +261,33 @@ if (sizeof($m) > 0) {
         $red_t = 'red';
         $err++;
         echo "<tr>";
-        echo "<td colspan=\"8\" class=\"FacetDataTDred\">" . $script_transl['errors']['T'] . ":&nbsp;</td>";
+        echo "<td colspan=\"8\" class=\"FacetDataTDred\">" . $script_transl['errors']['T'] . ": </td>";
         echo "</tr>";
     }
     echo '<tr class="'.$class_m.'">';
-    echo "<td align=\"right\" class=\"FacetDataTD$red_p\">" . $mv['protoc'] . " &nbsp;</td>";
+    echo "<td align=\"right\" class=\"FacetDataTD\">" . $mv['protoc'] . "  </td>";
     echo "<td align=\"center\"><a href=\"admin_movcon.php?id_tes=" . $mv['id_tes'] . "&Update\" title=\"Modifica il movimento contabile\">id " . $mv['id_tes'] . "</a><br />" . gaz_format_date($mv['datreg']). "</td>";
-    echo "<td>" . $mv['descri'] . " n." . $mv['numdoc'] . $script_transl['of'] . gaz_format_date($mv['datdoc']) . " &nbsp;</td>";
+    echo "<td>" . $mv['descri'] . " n." . $mv['numdoc'] . $script_transl['of'] . gaz_format_date($mv['datdoc']) . "  </td>";
     echo "<td>" . substr($mv['ragsoc'].'', 0, 30) . " </td>";
-    echo "<td align=\"right\">" . gaz_format_number($imponi) . " &nbsp;</td>";
-    echo "<td align=\"center\">" . $mv['periva'] . " &nbsp;</td>";
-    echo "<td align=\"right\">" . gaz_format_number($impost) . " &nbsp;</td>";
-    echo "<td align=\"center\">" . substr(gaz_format_date($mv['datliq']),3) . $liq_val." &nbsp;</td>";
+    echo "<td align=\"right\">" . gaz_format_number($imponi) . "  </td>";
+    echo "<td align=\"center\">" . $mv['periva'] . "  </td>";
+    echo "<td align=\"right\">" . gaz_format_number($impost) . "  </td>";
+    echo "<td align=\"center\">" . substr(gaz_format_date($mv['datliq']),3) . $liq_val."  </td>";
     echo "</tr>";
   }
 }
 echo "</table>\n";
-
+if ($err>=1 && sizeof($m) > 0) {
+  ?>
+  <div class="bg-warning text-center"><input type="submit" class="btn btn-danger" name="renum" value="Sequenza errata sei sicuro e consideri che verranno rinumerati solo i movimenti contabili: PROCEDI" >
+  </div>
+  <?php
+} elseif (sizeof($m) > 0 && !isset($_POST['renum'])) {
+  ?>
+  <div class="bg-success text-center"><input type="submit" class="btn btn-success" name="okseq" value="Ottimo lavoro, la sequenza è giusta, rinumerazione non necessaria!" >
+  </div>
+  <?php
+}
 ?>
 </form>
 <?php

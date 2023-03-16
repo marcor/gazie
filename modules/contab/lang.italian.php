@@ -563,7 +563,7 @@ $strScript = array("select_liqiva.php" =>
         'anno' => 'Anno ',
         'header' => array('Protocollo'=>'','ID-Data Reg.'=>'','Descrizione documento'=>'','Cliente/Fornitore'=>'','Imponibile'=>'','Aliquota'=>'','Imposta'=> '','Liquidazione'=>''),
         'err' => ['noold'=>'Codice attuale dell\'articolo non selezionato','nonew'=>'Nuovo codice non selezionato','codexist'=>'Il nuovo codice esiste già se si tratta dello stesso prodotti clicca su: <input type="submit" class="btn btn-xs btn-default" name="mergecodart" value="Unisci in codice esistente">'],
-        'war' => ['alert'=>' La rinumerazione dei protocolli potrebbe causare una  '
+        'war' => ['alert'=>' La rinumerazione dei protocolli agisce solo sui movimenti contabili di prima nota e non sui documenti di acquisto/vendita! ATTENZIONE!!!'
         ]
 	)
 );
