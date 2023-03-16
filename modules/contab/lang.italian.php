@@ -547,6 +547,24 @@ $strScript = array("select_liqiva.php" =>
         'operation_type' => 'Tipo oper.',
         'conto' => 'Conto',
 		'new_acconcile'=>'Cambia conti sui righi con:'
+	),
+  "protocol_renumbering.php" =>
+    array('title' => 'Rinumerazione protocolli IVA',
+        'errors' => array('La data  non &egrave; corretta!',
+            'La data di inizio non pu&ograve; essere successiva alla data di fine !',
+            'P' => 'La sequenza dei numeri di protocollo non &egrave; corretta',
+            'N' => 'La sequenza dei numeri dei documenti non &egrave; corretta',
+            'T' => 'C\'&egrave; un movimento IVA non tipizzata',
+            'err' => 'Ci sono degli errori che non giustificano la stampa del registro'
+        ),
+        'vat_reg' => 'Registro IVA:',
+        'vat_reg_value' => array(0=>'',2 => 'Fatture di Vendita',4 =>'Corrispettivi',6=>'Fatture d\'Acquisto'),
+        'vat_section' => 'Sezione IVA ',
+        'anno' => 'Anno ',
+        'header' => array('Protocollo'=>'','ID-Data Reg.'=>'','Descrizione documento'=>'','Cliente/Fornitore'=>'','Imponibile'=>'','Aliquota'=>'','Imposta'=> '','Liquidazione'=>''),
+        'err' => ['noold'=>'Codice attuale dell\'articolo non selezionato','nonew'=>'Nuovo codice non selezionato','codexist'=>'Il nuovo codice esiste già se si tratta dello stesso prodotti clicca su: <input type="submit" class="btn btn-xs btn-default" name="mergecodart" value="Unisci in codice esistente">'],
+        'war' => ['alert'=>' La rinumerazione dei protocolli potrebbe causare una  '
+        ]
 	)
 );
 ?>

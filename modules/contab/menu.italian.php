@@ -46,7 +46,8 @@ $transl['contab'] = array('name' => "Contabilit&agrave;",
         12 => array("File XML per Comunicazioni dati fatture", "Lista File Comunicazioni dati fatture"),
         13 => array( "Visualizza registro corrispettivi giornalieri", "Registro Corrispettivi"),
         14 => array( "Files XML per Comunicazioni dati fatture da e verso stranieri", "Esterometro"),
-        15 => array( "Riconciliazione E/C bancario", "Riconciliazione E/C")
+        15 => array( "Riconciliazione E/C bancario", "Riconciliazione E/C"),
+        16 => array( "Rinumerazione protocolli", "Rinumerazione protocolli")
     )
 );
 ?>
