@@ -45,7 +45,7 @@ function getMovements($vat_section, $vat_reg, $anno) {
     $num_nc_nd = gaz_dbi_get_row($gTables['company_config'], 'var', 'num_note_separate')['val'];
     // END fromthestone
     $m = array();
-    $where = "(datreg BETWEEN ".$anno."0101 AND ".$anno."1231 OR datliq BETWEEN ".$anno."0101 AND ".$anno."1231) AND seziva = ".$vat_section." AND regiva =". $vat_reg;
+    $where = "(datreg BETWEEN ".$anno."0101 AND ".$anno."1231) AND seziva = ".$vat_section." AND regiva =". $vat_reg;
     $orderby = "datreg, protoc";
     $rs = gaz_dbi_dyn_query("YEAR(datreg) AS ctrl_sr,
 					  DATE_FORMAT(datliq,'%Y%m%d') AS dl,
