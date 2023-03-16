@@ -60,6 +60,12 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 			$zip = new ZipArchive;
 			$res = $zip->open(DATA_DIR.'files/'.$admin_aziend['codice'].'/'.$form['filename'], ZipArchive::CREATE);
 			if ($res === TRUE) {
+				$faename_base = 62;
+				$faename_maxsez = 9;
+				if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+					$faename_base = 36;
+					$faename_maxsez = 5;
+				}
 				// ho creato l'archivio e adesso lo riempio con i file xml delle singole fatture
 				foreach ($invoices['data'] as $k => $v) {
 					if ($v['tes']['protoc']>$form['packable'][$v['tes']['seziva']][$v['tes']['ctrlreg']]['max']) { // non impacchetto i protocolli che superano i limiti scelti dall'utente
@@ -99,21 +105,21 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 							  | $data[sezione]  |   $data[anno] $data[fae_reinvii]  $data[protocollo]     |
 							  -------------------------------------------------------------------------------------------------------------------
 							 */
-							$enc_data['sezione']=5;
-							$enc_data['anno']=2009; // la funzione considererà solo "9"
-							$enc_data['fae_reinvii']=substr($v['tes']['datfat'],3,1);
+							$enc_data['sezione']=min($faename_maxsez, $v['tes']['seziva']);
+							$enc_data['anno']='200'.$v['tes']['seziva'];
+							$enc_data['fae_reinvii']=substr($v['tes']['datreg'],3,1);
 							$enc_data['protocollo']= intval($v['tes']['fattura_elettronica_reinvii']*10000+$v['tes']['protoc']);
 						}
 					}
-          // aggiorno il flusso SdI
-          $fn_ori = 'IT'.$admin_aziend['codfis'].'_'.encodeSendingNumber($enc_data,36).'.xml';
-          gaz_dbi_query("UPDATE " . $gTables['fae_flux'] . " SET filename_zip_package = '".$form['filename']."' WHERE filename_ori = '".$fn_ori."'");
-          if ($v['tes']['flux_status']=='PI'){ // se è un file verso PA firmato lo riprendo dalla dir come tale
-            $file_content=file_get_contents(DATA_DIR . 'files/' . $admin_aziend['codice'] . '/' . $v['tes']['filename_ret'], true);
-          } else { // ... per gli altri prendo quelli che ho ricreati al volo da DB
-            $file_content=create_XML_invoice($testate,$gTables,'rigdoc',false,$form['filename']);
-          }
-          $zip->addFromString($fn_ori, $file_content);
+					// aggiorno il flusso SdI
+					$fn_ori = 'IT'.$admin_aziend['codfis'].'_'.encodeSendingNumber($enc_data,$faename_base).'.xml';
+					gaz_dbi_query("UPDATE " . $gTables['fae_flux'] . " SET filename_zip_package = '".$form['filename']."' WHERE filename_ori = '".$fn_ori."'");
+					if ($v['tes']['flux_status']=='PI'){ // se è un file verso PA firmato lo riprendo dalla dir come tale
+					$file_content=file_get_contents(DATA_DIR . 'files/' . $admin_aziend['codice'] . '/' . $v['tes']['filename_ret'], true);
+					} else { // ... per gli altri prendo quelli che ho ricreati al volo da DB
+					$file_content=create_XML_invoice($testate,$gTables,'rigdoc',false,$form['filename']);
+					}
+					$zip->addFromString($fn_ori, $file_content);
 				}
 				$zip->close();
         header("Location: " . $form['ritorno']);
@@ -170,6 +176,12 @@ foreach($form['packable'] as $k1=>$v1){
     <th class="FacetFieldCaptionTD"><?php echo $script_transl['tot']; ?> </th>
 <?php
 $ctrlimit='';
+$faename_base = 62;
+$faename_maxsez = 9;
+if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+	$faename_base = 36;
+	$faename_maxsez = 5;
+}
 foreach ($invoices['data'] as $k => $v) {
 	$numpacket=$form['packable'][$v['tes']['seziva']][$v['tes']['ctrlreg']]['max']-$inipackable[$v['tes']['seziva']][$v['tes']['ctrlreg']]['min']+1;
 	$label=($v['tes']['ctrlreg']=='X')?'Fatture di acquisto (reverse charge)':'Fatture di vendita';
@@ -227,12 +239,11 @@ foreach ($invoices['data'] as $k => $v) {
 		  | $data[sezione]  |   $data[anno] $data[fae_reinvii]  $data[protocollo]     |
 		  -------------------------------------------------------------------------------------------------------------------
 		 */
-		$enc_data['sezione']=5;
-		$enc_data['anno']=2009; // la funzione considererà solo "9"
-		$enc_data['fae_reinvii']=substr($v['tes']['datfat'],3,1);
+		$enc_data['sezione']=min($faename_maxsez, $v['tes']['seziva']);
+		$enc_data['anno']='200'.$v['tes']['seziva'];
+		$enc_data['fae_reinvii']=substr($v['tes']['datreg'],3,1);
 		$enc_data['protocollo']= intval($v['tes']['fattura_elettronica_reinvii']*10000+$v['tes']['protoc']);
 	}
-
 // INIZIO VIEW RIGHI
   // distingo se sto impacchettando un file firmato destinato alla PA (flux_status=PI)
   if ($v['tes']['flux_status']=='PI'){
@@ -272,7 +283,7 @@ foreach ($invoices['data'] as $k => $v) {
 	}
 	if (empty($nopackclass)){
 		echo '<tr>
-			   <td colspan="5" align="right">produrrà il file IT'.$admin_aziend['codfis'].'_'.encodeSendingNumber($enc_data,36).'.xml che dovrà essere inviato tramite SdI </td>
+			   <td colspan="5" align="right">produrrà il file IT'.$admin_aziend['codfis'].'_'.encodeSendingNumber($enc_data,$faename_base).'.xml che dovrà essere inviato tramite SdI </td>
 			   <td colspan="3" class="'.$cl_sdi.'">'.$v['tes']['pec_email'] . '</td>
 			   </tr>';
 	} else {
