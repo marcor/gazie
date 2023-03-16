@@ -263,7 +263,7 @@ div.table-responsive table.Tlarge tbody tr:hover,
 div.table-responsive table.dataTable tbody tr:hover,
 div.box-body table.dataTable tbody tr:hover {
 	background: linear-gradient(180deg, #00000017,#fff,#00000017);
-  font-weight: 600;
+  text-shadow: 0px 0px 10px #0000FFB0;
 }
 .nav-pills > li {
 	border-top: 1px solid #222d32;
