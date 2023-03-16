@@ -131,6 +131,7 @@ class invoiceXMLvars {
   public $ritenute;
   public $descrifae_vat;
   public $descrifae_natura;
+  public $reverse_charge_sez;
 
   function setXMLvars($gTables, $tesdoc, $testat, $tableName, $ecr = false) {
     $this->gTables = $gTables;
