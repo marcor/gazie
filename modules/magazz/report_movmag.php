@@ -188,6 +188,7 @@ QUESTA E' LA MATRICE ORIGINALE (PERSONALIZZABILE) DELLA RIGA 'report_movmag_ref_
 "FND":"vendit",
 "DDV":"vendit",
 "RDV":"vendit",
+"RPL":"vendit",
 "DDY":"vendit",
 "DDS":"vendit",
 "DDX":"vendit",

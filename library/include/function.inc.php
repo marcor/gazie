@@ -1154,7 +1154,8 @@ class selectPosition extends SelectBox
 {
   public $selected;
   public $name;
-  function output($cerca, $field = 'C', $class = 'FacetSelect', $sele = 1) {
+
+  function output($cerca, $field = 'C', $class = 'FacetSelect', $sele = 1, $name='cosepos') {
       global $gTables, $script_transl, $script_transl;
       $msg = "";
       $tabula = ' tabindex="4" ';
@@ -1192,7 +1193,7 @@ class selectPosition extends SelectBox
         $msg = $script_transl['minins'] . ' 2 ' . $script_transl['charat'] . '!';
         echo '<input type="hidden" name="' . $this->name . '" value="" />';
       }
-      echo '&nbsp;<input type="text" class="' . $class . '" name="cosepos" id="search_position" value="' . $cerca . '" ' . $tabula . ' maxlength="32" placeholder="'.$msg.'" />';
+      echo '&nbsp;<input type="text" class="' . $class . '" name="'.$name.'" id="search_position" value="' . $cerca . '" ' . $tabula . ' maxlength="32" placeholder="'.$msg.'" />';
     }
 
 }

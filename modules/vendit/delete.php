@@ -47,6 +47,8 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 						$rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "id_tes = " . intval($_POST['id_tes']));
 					} elseif ($row['tipdoc'] == 'VCO') {
 						$rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "datemi = '" . $row['datemi'] . "' AND tipdoc = 'VCO' AND seziva = " . $row['seziva'], "datemi DESC, numdoc DESC", 0, 1);
+					} elseif ($row['tipdoc'] == 'RPL') {
+						$rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "id_tes = " . intval($_POST['id_tes']));
 					} else {
 						$rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = '" . substr($row['datemi'], 0, 4) . "' AND tipdoc LIKE '" . substr($row['tipdoc'], 0, 1) . "%' AND seziva = " . $row['seziva'] . " ", "protoc DESC, numdoc DESC", 0, 1);
 					}
@@ -61,15 +63,15 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 				$ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
 				if ($ultimo_documento) {
 					if (($ultimo_documento['tipdoc'] == 'VRI' || $ultimo_documento['tipdoc'] == 'VCO'
-						|| substr($ultimo_documento['tipdoc'], 0, 2) == 'DD' || $ultimo_documento['tipdoc'] == 'RDV' || $ultimo_documento['tipdoc'] == 'CMR' )
+						|| substr($ultimo_documento['tipdoc'], 0, 2) == 'DD' || $ultimo_documento['tipdoc'] == 'RPL' || $ultimo_documento['tipdoc'] == 'RDV' || $ultimo_documento['tipdoc'] == 'CMR' )
 						&& $ultimo_documento['numdoc'] == $row['numdoc']) {
 						gaz_dbi_del_row($gTables['tesdoc'], 'id_tes', $row['id_tes']);
 						gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $row['id_con']);
-                        // prima di eliminare i righi contabili devo eliminare le eventuali partite aperte ad essi collegati
-                        $rs_rmocdel = gaz_dbi_dyn_query("*", $gTables['rigmoc'], "id_tes = ".$row['id_con'],"id_tes");
-                        while ($rd = gaz_dbi_fetch_array($rs_rmocdel)) {
-                            gaz_dbi_del_row($gTables['paymov'], "id_rigmoc_doc", $rd['id_rig']);
-                        }
+            // prima di eliminare i righi contabili devo eliminare le eventuali partite aperte ad essi collegati
+            $rs_rmocdel = gaz_dbi_dyn_query("*", $gTables['rigmoc'], "id_tes = ".$row['id_con'],"id_tes");
+            while ($rd = gaz_dbi_fetch_array($rs_rmocdel)) {
+                gaz_dbi_del_row($gTables['paymov'], "id_rigmoc_doc", $rd['id_rig']);
+            }
 						gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $row['id_con']);
 						gaz_dbi_del_row($gTables['rigmoi'], 'id_tes', $row['id_con']);
 						gaz_dbi_put_query($gTables['rigbro'], 'id_doc = ' . $row["id_tes"], "id_doc", "");

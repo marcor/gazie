@@ -211,6 +211,7 @@ $strScript = array("admin_client.php" =>
             "DDV" => "D.d.T. per Cessione in Conto Visione",
             "DDY" => "D.d.T. da non fatturare automaticamente",
             "DDS" => "Notula Servizio (no fat.15 mese succ.)",
+            "RPL" => "Accettazione per lavorazione",
             "RDV" => "Ricevuto DdT di Reso da C/Visione",
             "VRI" => "Ricevuta",
             "CMR" => "Contratto di trasporto internazionale",
@@ -1272,9 +1273,10 @@ $strScript = array("admin_client.php" =>
             "M" => "montaggio",
             "O" => "reso conto lavoro",
             "DDR" => "reso a fornitore",
-
+            "L" => "Lavorazione",
             "DDL" => "c/lavorazione",
-            'R'=> "CMR"
+            'R'=> "CMR",
+            "" => ""
         ),
         'header' => array(
             "ID" => 'id_tes',

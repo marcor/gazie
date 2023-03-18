@@ -172,7 +172,7 @@ class magazzForm extends GAzieForm {
     function getOperators() {  // Creo l'array associativo degli operatori dei documenti
         return array("VCO" => -1, "VRI" => -1, "DDT" => -1, "FAD" => -1, "FAI" => -1, "FAA" => -1, "FAF" => -1, "FAQ" => -1, "FAP" => -1, "FNC" => 1, "FND" => -1,
             "DDR" => -1, "DDL" => -1, "DDV" => -1, "RDV" => 1, "DDY" => -1, "DDS" => -1, "AFA" => 1, "AFT" => 1, "ADT" => 1, "AFC" => -1, "AFD" => 1, "VPR" => -1,
-            "VOR" => -1, "VOW" => -1, "VOG" => -1, "CMR" => -1, "RDL" => 1, "INV" => 1, "XFA" => 0, "DDX" => -1, "DDZ" => -1, "DDW" => -1, "DDD" => -1, "DDJ" => -1,
+            "VOR" => -1, "VOW" => -1, "VOG" => -1, "CMR" => -1, "RPL" => 1,"RDL" => 1, "INV" => 1, "XFA" => 0, "DDX" => -1, "DDZ" => -1, "DDW" => -1, "DDD" => -1, "DDJ" => -1,
             "DDC" => -1, "DDM" => -1, "DDO" => -1, "PRL"=>-1);
     }
 
@@ -749,7 +749,7 @@ class magazzForm extends GAzieForm {
         return $return_val;
     }
 
-  function uploadMag($id_rigo_doc = '0', $tipdoc='', $numdoc=0, $seziva='', $datdoc='', $clfoco=0, $sconto_chiusura=0, $caumag='', $codart='', $quantita=0, $prezzo=0, $sconto_rigo=0, $id_movmag = 0, $stock_eval_method = null, $data_from_admin_mov = false, $protoc = '',$id_lotmag=0,$id_orderman=0,$campo_impianto=0,$custom_field='',$id_warehouse=0) {  // su id_rigo_doc 0 per inserire 1 o + per fare l'upload 'DEL' per eliminare il movimento
+  function uploadMag($id_rigo_doc = '0', $tipdoc='', $numdoc=0, $seziva='', $datdoc='', $clfoco=0, $sconto_chiusura=0, $caumag='', $codart='', $quantita=0, $prezzo=0, $sconto_rigo=0, $id_movmag = 0, $stock_eval_method = null, $data_from_admin_mov = false, $protoc = '',$id_lotmag=0,$id_orderman=0,$campo_impianto=0,$custom_field='',$id_warehouse=0,$id_artico_position='') {  // su id_rigo_doc 0 per inserire 1 o + per fare l'upload 'DEL' per eliminare il movimento
     // in $data_from_admin_mov  ci sono i dati in più provenienti da admin_movmag (desdoc,operat, datreg)
     global $gTables, $admin_aziend;
 		$synccommerce=explode(',',$admin_aziend['gazSynchro'])[0];
@@ -820,6 +820,7 @@ class magazzForm extends GAzieForm {
       'id_rif' => $id_rigo_doc,
       'artico' => $codart,
       'id_warehouse' => $id_warehouse,
+      'id_artico_position' => intval($id_artico_position),
       'quanti' => $quantita,
       'prezzo' => $prezzo,
       'scorig' => $sconto_rigo,

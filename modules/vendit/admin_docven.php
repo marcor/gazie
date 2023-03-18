@@ -234,6 +234,8 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
   $form['in_provvigione'] = $_POST['in_provvigione']; // in caso tiprig=4 questo campo è utilizzato per indicare l'aliquota della cassa previdenziale
   $form['in_id_mag'] = $_POST['in_id_mag'];
   $form['in_id_warehouse'] = intval($_POST['in_id_warehouse']);
+  $form['in_id_position'] = intval($_POST['in_id_position']);
+  $form['cosepos'] = intval($_POST['cosepos']);
   $form['in_annota'] = $_POST['in_annota'];
   $form['in_scorta'] = $_POST['in_scorta'];
   $form['in_quamag'] = $_POST['in_quamag'];
@@ -256,7 +258,9 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
 	$fae_id_documento_exist=array();
 	$fae_other_el_exist=array();
   if (isset($_POST['rows'])) {
+    //echo "<pre>",print_r($_POST['rows'])."</pre>";
     foreach ($_POST['rows'] as $next_row => $v) {
+
       $v['ritenuta']=floatval($v['ritenuta']);
       switch($v['tiprig']){
         case'0':
@@ -310,6 +314,8 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
       }
       $form['rows'][$next_row]['id_mag'] = intval($v['id_mag']);
       $form['rows'][$next_row]['id_warehouse'] = intval($v['id_warehouse']);
+      $form['rows'][$next_row]['id_position'] = (isset($v['id_position']))?intval($v['id_position']):'';
+      $form['rows'][$next_row]['row_cosepos'] = (isset($v['row_cosepos']))?intval($v['row_cosepos']):'';
       $form['rows'][$next_row]['annota'] = substr($v['annota'], 0, 50);
       $form['rows'][$next_row]['scorta'] = floatval($v['scorta']);
       $form['rows'][$next_row]['quamag'] = floatval($v['quamag']);
@@ -370,6 +376,8 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
           $form['in_provvigione'] = $form['rows'][$k_row]['provvigione'];// in caso tiprig=4 questo campo è utilizzato per indicare l'aliquota della cassa previdenziale
           $form['in_id_mag'] = $form['rows'][$k_row]['id_mag'];
           $form['in_id_warehouse'] = $form['rows'][$k_row]['id_warehouse'];
+          $form['in_id_position'] = $form['rows'][$k_row]['id_position'];
+          $form['cosepos'] = $form['rows'][$k_row]['row_cosepos'];
           $form['in_annota'] = $form['rows'][$k_row]['annota'];
           $form['in_scorta'] = $form['rows'][$k_row]['scorta'];
           $form['in_quamag'] = $form['rows'][$k_row]['quamag'];
@@ -669,6 +677,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
         $msg['err'][] = "63";
     }
     if (count($msg['err']) < 1) { // nessun errore, procedo con l'upsert
+      //echo "<pre>",print_r($form),"</pre>";die;
       $initra .= " " . $form['oratra'] . ":" . $form['mintra'] . ":00";
       if (preg_match("/^id_([0-9]+)$/", $form['clfoco'], $match)) {
         $new_clfoco = $anagrafica->getPartnerData($match[1], 1);
@@ -700,7 +709,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
             }
             // riscrivo mov mag
             if ( ($tipo_composti['val']=="STD" || $form['rows'][($i+1)]['tiprig']!=210) && !empty($form['rows'][$i]['codart'])) {
-              $id_mag=$magazz->uploadMag((int)$val_old_row['id_rig'], $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag'],0,0,'',$form['rows'][$i]['id_warehouse']);
+              $id_mag=$magazz->uploadMag((int)$val_old_row['id_rig'], $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag'],0,0,'',$form['rows'][$i]['id_warehouse'],$form['rows'][$i]['id_position']);
               gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $val_old_row['id_rig'], 'id_mag', $id_mag); // inserisco il riferimento movmag nel rigo doc
               if ($form['rows'][$i]['SIAN'] > 0 && $form['rows'][$i]['SIAN']<6) { // se l'articolo deve movimentare il SIAN creo anche il movimento
                 $value_sian['cod_operazione']= $form['rows'][$i]['cod_operazione'];
@@ -728,7 +737,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$i]['gooser'] != 1 &&
             !empty($form['rows'][$i]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
             if ( $tipo_composti['val']=="STD" || $form['rows'][($i+1)]['tiprig']!=210 ) {
-              $id_mag=$magazz->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag'],0,0,'',$form['rows'][$i]['id_warehouse']);
+              $id_mag=$magazz->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag'],0,0,'',$form['rows'][$i]['id_warehouse'],$form['rows'][$i]['id_position']);
               gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $last_rigdoc_id, 'id_mag', $id_mag); // inserisco il riferimento mov mag nel rigo doc
               if ($form['rows'][$i]['SIAN']>0 && $form['rows'][$i]['SIAN']<6) { // se l'articolo deve movimentare il SIAN creo anche il movimento
                 $value_sian['cod_operazione']= $form['rows'][$i]['cod_operazione'];
@@ -741,7 +750,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
             }
           }
           if ($admin_aziend['conmag'] == 2 && $form['rows'][$i]['tiprig'] == 210 && !empty($form['rows'][$i]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
-            $magazz->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag'],0,0,'',$form['rows'][$i]['id_warehouse']);
+            $magazz->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag'],0,0,'',$form['rows'][$i]['id_warehouse'],$form['rows'][$i]['id_position']);
             if ($form['rows'][$i]['SIAN']>0 && $form['rows'][$i]['SIAN']<6) { // se l'articolo deve movimentare il SIAN creo anche il movimento
               $value_sian['cod_operazione']= $form['rows'][$i]['cod_operazione'];
               $value_sian['recip_stocc']= $form['rows'][$i]['recip_stocc'];
@@ -830,6 +839,11 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
             $where = "numdoc DESC";
             $sql_protocollo = " 0";
             break;
+          case "RPL": // Accettazione per lavorazione
+            $sql_documento = "YEAR(datemi) = " . substr($datemi,0,4) . " AND  tipdoc = 'RPL' AND seziva = $sezione";
+            $where = "numdoc DESC";
+            $sql_protocollo = " 0";
+            break;
           case "VRI": // Vendita con ricevuta
             $sql_documento = "YEAR(datemi) = " . substr($datemi,0,4) . " AND  tipdoc = 'VRI' AND seziva = $sezione";
             $where = "numdoc DESC";
@@ -859,7 +873,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
         } else {
           $form['protoc'] = 1;
         }
-        if (substr($form['tipdoc'], 0, 2) == 'DD' || $form['tipdoc']=='CMR') {  //ma se e' un ddt il protocollo è 0 cosè come il numero e data fattura
+        if (substr($form['tipdoc'], 0, 2) == 'DD' || $form['tipdoc']=='CMR' || $form['tipdoc']=='RPL') {  //ma se e' un ddt il protocollo è 0 cosè come il numero e data fattura
           $form['protoc'] = 0;
           $form['numfat'] = 0;
           $form['datfat'] = 0;
@@ -869,6 +883,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
           $form['numdoc'] = $form['numfat'];
           $form['datfat'] = $datemi;
           $form['status'] = 'DA CONTAB';
+          $form['ddt_type'] = substr($form['tipdoc'], -1);
         }
         //inserisco la testata
         $form['initra'] = $initra;
@@ -888,7 +903,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$i]['gooser'] != 1 &&
             !empty($form['rows'][$i]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
             if ( $tipo_composti['val']=="STD" || $form['rows'][($i+1)]['tiprig']!=210 ) {
-              $id_mag=$magazz->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag'],0,0,'',$form['rows'][$i]['id_warehouse']);
+              $id_mag=$magazz->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag'],0,0,'',$form['rows'][$i]['id_warehouse'],$form['rows'][$i]['id_position']);
               gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $last_rigdoc_id, 'id_mag', $id_mag); // inserisco il riferimento mov mag nel rigo doc
               if ($form['rows'][$i]['SIAN']>0 && $form['rows'][$i]['SIAN']<6) {// se l'articolo movimenta il SIAN creo il movimento SIAN
                 $value_sian['cod_operazione']= $form['rows'][$i]['cod_operazione'];
@@ -904,7 +919,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
           if ($admin_aziend['conmag'] == 2 &&
             $form['rows'][$i]['tiprig'] == 210 &&
             !empty($form['rows'][$i]['codart'])) {
-            $magazz->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag'],0,0,'',$form['rows'][$i]['id_warehouse']);
+            $magazz->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag'],0,0,'',$form['rows'][$i]['id_warehouse'],$form['rows'][$i]['id_position']);
           }
           //se è un'articolo di magazzino controllo se la sua anagrafica aveva l'unità di misura, altrimenti uso questa
           if ($v['tiprig'] == 0 && !empty($v['codart'])) {
@@ -951,7 +966,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
       }
     }
   }
-  // Se viene cambiata la tipologia di documento e la nuova è una fattura immediata ricontrollo la modalitè di assegnazione della sezione IVA
+  // Se viene cambiata la tipologia di documento e la nuova è una fattura immediata ricontrollo la modalità di assegnazione della sezione IVA
   if ($_POST['hidden_req'] == 'tipdoc') {
     $form['seziva'] = getFAIseziva($form['tipdoc']);
     $form['hidden_req'] = '';
@@ -1107,6 +1122,8 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
     $form['rows'][$next_row]['quamag'] = 0;
     $form['rows'][$next_row]['tiprig'] = 2;
     $form['rows'][$next_row]['id_warehouse'] = 0;
+    $form['rows'][$next_row]['id_position'] = 0;
+    $form['rows'][$next_row]['row_cosepos'] = 0;
     $next_row++;
   } else if (isset($_POST['in_submit_text'])) { //rigo Testo rapido
     $form["row_$next_row"] = '';
@@ -1138,6 +1155,8 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
     $form['rows'][$next_row]['quamag'] = 0;
     $form['rows'][$next_row]['tiprig'] = 6;
     $form['rows'][$next_row]['id_warehouse'] = 0;
+    $form['rows'][$next_row]['id_position'] = 0;
+    $form['rows'][$next_row]['row_cosepos'] = 0;
     $next_row++;
 	} else if (isset($_POST['in_submit_cig'])) { //rigo CIG rapido
     $form['rows'][$next_row]['codart'] = '';
@@ -1168,6 +1187,8 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
     $form['rows'][$next_row]['quamag'] = 0;
     $form['rows'][$next_row]['tiprig'] = 11;
     $form['rows'][$next_row]['id_warehouse'] = 0;
+    $form['rows'][$next_row]['id_position'] = 0;
+    $form['rows'][$next_row]['row_cosepos'] = 0;
     $next_row++;
   } else if (isset($_POST['in_submit'])) {
     $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['in_codart']);
@@ -1200,6 +1221,8 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
 			$form['rows'][$old_key]['recip_stocc_destin'] = $form['in_recip_stocc_destin'];
       $form['rows'][$old_key]['id_mag'] = $form['in_id_mag'];
 			$form['rows'][$old_key]['id_warehouse'] = $form['in_id_warehouse'];
+      $form['rows'][$old_key]['id_position'] = $form['in_id_position'];
+      $form['rows'][$old_key]['row_cosepos'] = $form['cosepos'];
       $form['rows'][$old_key]['status'] = "UPDATE";
       $form['rows'][$old_key]['unimis'] = $form['in_unimis'];
       $form['rows'][$old_key]['quanti'] = $form['in_quanti'];
@@ -1374,6 +1397,8 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
       $form['rows'][$next_row]['descri'] = $form['in_descri'];
       $form['rows'][$next_row]['id_mag'] = $form['in_id_mag'];
       $form['rows'][$next_row]['id_warehouse'] = $form['in_id_warehouse'];
+      $form['rows'][$next_row]['id_position'] = $form['in_id_position'];
+      $form['rows'][$next_row]['row_cosepos'] = $form['cosepos'];
       $form['rows'][$next_row]['status'] = "INSERT";
       $form['rows'][$next_row]['scorta'] = 0;
       $form['rows'][$next_row]['quamag'] = 0;
@@ -1880,6 +1905,8 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
 	$magadmin_module = gaz_dbi_get_row($gTables['admin_module'], "moduleid",$magmodule['id']," AND adminid='{$admin_aziend['user_name']}' AND company_id=" . $admin_aziend['company_id']);
 	$magcustom_field=json_decode($magadmin_module['custom_field']);
 	$form["in_id_warehouse"] = (isset($magcustom_field->user_id_warehouse))?$magcustom_field->user_id_warehouse:0;
+  $form["in_id_position"] = 0;
+  $form["cosepos"] = 0;
   $form['in_annota'] = "";
   $form['in_scorta'] = 0;
   $form['in_quamag'] = 0;
@@ -1998,10 +2025,20 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
       $form['rows'][$next_row]['provvigione'] = $rigo['provvigione'];// in caso tiprig=4 questo campo è utilizzato per indicare l'aliquota della cassa previdenziale
       $form['rows'][$next_row]['id_mag'] = (isset($_GET['Duplicate']) ? 0 : $rigo['id_mag']);
       $form['rows'][$next_row]['id_warehouse'] = 0;
+      $form['rows'][$next_row]['id_position'] = 0;
       if ($rigo['id_mag']>0){ // dovrò riprendere l'id del magazzino dal relativo movmag
         $movmag = gaz_dbi_get_row($gTables['movmag'], "id_mov", $rigo['id_mag']);
         if ($movmag&&$movmag['id_warehouse']>0){
           $form['rows'][$next_row]['id_warehouse'] = $movmag['id_warehouse'];
+        }
+        if ($movmag&&$movmag['id_artico_position']>0){
+          $form['rows'][$next_row]['id_position'] = $movmag['id_artico_position'];
+          $resultposition = gaz_dbi_get_row($gTables['artico_position'], 'id_position', $movmag['id_artico_position']);
+          if ($form['id_position'] > 0) {
+            $form['row_cosepos']=$resultposition['id_position'];
+          } else {
+            $form['row_cosepos']=0;
+          }
         }
       }
       $form['rows'][$next_row]['annota'] = $articolo['annota'];
@@ -2101,6 +2138,8 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
 	$magadmin_module = gaz_dbi_get_row($gTables['admin_module'], "moduleid",$magmodule['id']," AND adminid='{$admin_aziend['user_name']}' AND company_id=" . $admin_aziend['company_id']);
 	$magcustom_field=json_decode($magadmin_module['custom_field']);
 	$form["in_id_warehouse"] = (isset($magcustom_field->user_id_warehouse))?$magcustom_field->user_id_warehouse:0;
+  $form["in_id_position"] = 0;
+  $form["cosepos"] = 0;
   $form['in_annota'] = "";
   $form['in_scorta'] = 0;
   $form['in_quamag'] = 0;
@@ -2276,7 +2315,7 @@ if ($form['id_tes'] > 0) { // è una modifica
     echo "<input type=\"hidden\" value=\"" . $form['tipdoc'] . "\" name=\"tipdoc\">\n";
     echo "<div align=\"center\" class=\"FacetFormHeaderFont\">$title ";
 } else { // è un inserimento
-    $tidoc_selectable = array_intersect_key($script_transl['doc_name'], array('DDT'=>'','FAI'=>'','FAP'=>'','FAQ'=>'','FAA'=>'','FAF'=>'','FNC'=>'','FND'=>'','DDV'=>'','RDV'=>'','DDY'=>'','DDS'=>'','VRI'=>'','CMR'=>'','XFA'=>'','DDX' =>'','DDZ' =>'','DDW' =>'','DDD' =>'','DDJ' =>'','DDC' =>'','DDM' =>'','DDO' =>'' ));
+    $tidoc_selectable = array_intersect_key($script_transl['doc_name'], array('DDT'=>'','FAI'=>'','FAP'=>'','FAQ'=>'','FAA'=>'','FAF'=>'','FNC'=>'','FND'=>'','DDV'=>'','RPL'=>'','RDV'=>'','DDY'=>'','DDS'=>'','VRI'=>'','CMR'=>'','XFA'=>'','DDX' =>'','DDZ' =>'','DDW' =>'','DDD' =>'','DDJ' =>'','DDC' =>'','DDM' =>'','DDO' =>'' ));
     echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . ucfirst($script_transl[$toDo]) . $script_transl['tipdoc'];
     $gForm->variousSelect('tipdoc', $tidoc_selectable, $form['tipdoc'], 'FacetFormHeaderFont', true, 'tipdoc');
 }
@@ -2370,7 +2409,11 @@ $sel_expensevat->output();
 echo "</td>\n";
 echo "<td align=\"left\" class=\"FacetFieldCaptionTD\">" . $script_transl[51] . "</td><td class=\"FacetDataTD\">\n";
 echo "<select name=\"caumag\" class=\"FacetSelect\" width=\"20\">\n";
-$result = gaz_dbi_dyn_query("*", $gTables['caumag'], " clifor = -1 AND operat = " . $docOperat[$form['tipdoc']], "codice asc, descri asc");
+if ($form['tipdoc']=='RPL'){// se è una accettazione per lavorazione
+  $result = gaz_dbi_dyn_query("*", $gTables['caumag'], " codice = 85");// forzo la causale a 85 CARICO PER LAVORAZIONE C/TERZI
+}else{
+  $result = gaz_dbi_dyn_query("*", $gTables['caumag'], " clifor = -1 AND operat = " . $docOperat[$form['tipdoc']], "codice asc, descri asc");
+}
 while ($row = gaz_dbi_fetch_array($result)) {
     $selected = "";
     if ($form["caumag"] == $row['codice']) {
@@ -2513,6 +2556,10 @@ foreach ($form['rows'] as $k => $v) {
         $totimp_body += $imprig;
         $castle[$v['codvat']]['impcast'] += $v_for_castle;
     }
+    $v['id_warehouse']=(isset($v['id_warehouse']))?$v['id_warehouse']:0;
+    $v['id_position']=(isset($v['id_position']))?$v['id_position']:0;
+    $v['row_cosepos']=(isset($v['row_cosepos']))?$v['row_cosepos']:0;
+
     $descrizione = htmlentities($v['descri'], ENT_QUOTES);
     echo "<input type=\"hidden\" value=\"" . $v['codart'] . "\" name=\"rows[$k][codart]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['status'] . "\" name=\"rows[$k][status]\">\n";
@@ -2524,10 +2571,12 @@ foreach ($form['rows'] as $k => $v) {
     echo "<input type=\"hidden\" value=\"" . $v['codric'] . "\" name=\"rows[$k][codric]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['id_mag'] . "\" name=\"rows[$k][id_mag]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['id_warehouse'] . "\" name=\"rows[$k][id_warehouse]\">\n";
+    //echo "<input type=\"hidden\" value=\"" . $v['id_position'] . "\" name=\"rows[$k][id_position]\">\n";
+    //echo "<input type=\"hidden\" value=\"" . $v['row_cosepos'] . "\" name=\"rows[$k][row_cosepos]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['annota'] . "\" name=\"rows[$k][annota]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['scorta'] . "\" name=\"rows[$k][scorta]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['quamag'] . "\" name=\"rows[$k][quamag]\">\n";
-	echo "<input type=\"hidden\" value=\"" . $v['quality'] . "\" name=\"rows[$k][quality]\">\n";
+    echo "<input type=\"hidden\" value=\"" . $v['quality'] . "\" name=\"rows[$k][quality]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['pesosp'] . "\" name=\"rows[$k][pesosp]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['gooser'] . "\" name=\"rows[$k][gooser]\">" .
     '<input type="hidden" value="' . $v['lot_or_serial'] . '" name="rows[' . $k . '][lot_or_serial]" />' .
@@ -2577,45 +2626,53 @@ foreach ($form['rows'] as $k => $v) {
 							<i class="glyphicon glyphicon-refresh"></i>&nbsp;' . $v['codart'] . '
 						</button>
 			 		</td>';
-echo '<td><small>'.$magazz->selectIdWarehouse('rows[' . $k . '][id_warehouse]',$v["id_warehouse"],true,'col-xs-12',$v['codart'],gaz_format_date($form['datemi'],true),($docOperat[$form['tipdoc']]*$v['quanti']*-1)).'</small></td>';
-echo '<td><input class="gazie-tooltip" data-type="product-thumb" data-id="' . $v["codart"] . '" data-title="' . $v['annota'] . '" type="text" name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="100" />
-					';
-            if ($v['lot_or_serial'] >= 1) { // se l'articolo prevede lotti
-                $lm->getAvailableLots($v['codart'], $v['id_mag']);
-				// Antonio Germani - calcolo delle giacenze per ogni singolo lotto
-				$count=array();
-				foreach ($lm->available as $v_lm) { // calcolo la disponbilità per ogni lotto raggruppato
-					$key=$v_lm['identifier']; // chiave per il conteggio dei totali raggruppati per lotto
-					if( !array_key_exists($key, $count) ){ // se la chiave ancora non c'è nell'array
-						// Aggiungo la chiave con il rispettivo valore iniziale
-						$count[$key] = $v_lm['rest'];
-					} else {
-						// Altrimenti, aggiorno il valore della chiave
-						$count[$key] += $v_lm['rest'];
-					}
-				}
-                $selected_lot = $lm->getLot($v['id_lotmag']);
-				$disp= $lm -> dispLotID ($v['codart'], $v['id_lotmag'], $v['id_mag']);
-				if (is_array($selected_lot)){
-				if (!isset($count[$selected_lot['identifier']])){
-					$count[$selected_lot['identifier']]="";
-				}
-				if ($count[$selected_lot['identifier']]>=$v['quanti']){
-					echo '<div><button class="btn btn-xs btn-success" title="Clicca per cambiare lotto" ';
-				} else {
-					echo '<div><button class="btn btn-xs btn-danger" title="Disponibilità non sufficiente" ';
-				}
-				echo 'type="image" data-toggle="collapse" href="#lm_dialog' . $k . '">'. 'ID:'.$selected_lot['id']
-                . '- lotto: ' . $selected_lot['identifier'];
-				if (intval ($selected_lot['expiry'])>0) {
-					echo ' scad:' . gaz_format_date($selected_lot['expiry']);
-				}
-				echo ' - disp.ID: '. gaz_format_quantity($disp)
-				. ' <i class="glyphicon glyphicon-tag"></i>'
-				. ' rif:' . $selected_lot['desdoc']
-                . ' - ' . gaz_format_date($selected_lot['datdoc']) .
-				'</button>';
-				}
+        echo '<td><small>'.$magazz->selectIdWarehouse('rows[' . $k . '][id_warehouse]',$v["id_warehouse"],true,'col-xs-12',$v['codart'],gaz_format_date($form['datemi'],true),($docOperat[$form['tipdoc']]*$v['quanti']*-1)).'</small></td>';
+        echo '<td><input class="gazie-tooltip" data-type="product-thumb" data-id="' . $v["codart"] . '" data-title="' . $v['annota'] . '" type="text" name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="100" />';
+        if (gaz_dbi_get_single_value($gTables['shelves'],'id_shelf','id_shelf > 0 LIMIT 1')){
+        echo 'Ubicazione:';
+          $select_position = new selectPosition("rows[$k][id_position]");
+          $select_position->addSelected($v['id_position']);
+          $select_position->output($v['row_cosepos'],'C','FacetSelect','1',"rows[$k][row_cosepos]");
+        }else{
+          echo "<input type=\"hidden\" value=\"\" name=\"rows[$k][id_position]\">\n";
+          echo "<input type=\"hidden\" value=\"\" name=\"rows[$k][row_cosepos]\">\n";
+        }
+        if ($v['lot_or_serial'] >= 1) { // se l'articolo prevede lotti
+            $lm->getAvailableLots($v['codart'], $v['id_mag']);
+            // Antonio Germani - calcolo delle giacenze per ogni singolo lotto
+            $count=array();
+            foreach ($lm->available as $v_lm) { // calcolo la disponbilità per ogni lotto raggruppato
+              $key=$v_lm['identifier']; // chiave per il conteggio dei totali raggruppati per lotto
+              if( !array_key_exists($key, $count) ){ // se la chiave ancora non c'è nell'array
+                // Aggiungo la chiave con il rispettivo valore iniziale
+                $count[$key] = $v_lm['rest'];
+              } else {
+                // Altrimenti, aggiorno il valore della chiave
+                $count[$key] += $v_lm['rest'];
+              }
+            }
+                    $selected_lot = $lm->getLot($v['id_lotmag']);
+            $disp= $lm -> dispLotID ($v['codart'], $v['id_lotmag'], $v['id_mag']);
+            if (is_array($selected_lot)){
+            if (!isset($count[$selected_lot['identifier']])){
+              $count[$selected_lot['identifier']]="";
+            }
+            if ($count[$selected_lot['identifier']]>=$v['quanti']){
+              echo '<div><button class="btn btn-xs btn-success" title="Clicca per cambiare lotto" ';
+            } else {
+              echo '<div><button class="btn btn-xs btn-danger" title="Disponibilità non sufficiente" ';
+            }
+            echo 'type="image" data-toggle="collapse" href="#lm_dialog' . $k . '">'. 'ID:'.$selected_lot['id']
+                    . '- lotto: ' . $selected_lot['identifier'];
+            if (intval ($selected_lot['expiry'])>0) {
+              echo ' scad:' . gaz_format_date($selected_lot['expiry']);
+            }
+            echo ' - disp.ID: '. gaz_format_quantity($disp)
+            . ' <i class="glyphicon glyphicon-tag"></i>'
+            . ' rif:' . $selected_lot['desdoc']
+                    . ' - ' . gaz_format_date($selected_lot['datdoc']) .
+            '</button>';
+            }
                 if ($v['id_mag'] > 0) {
                     echo ' <a class="btn btn-xs btn-default" href="lotmag_print_cert.php?id_movmag=' . $v['id_mag'] . '" target="_blank"><i class="glyphicon glyphicon-print"></i></a>';
                 }
@@ -2646,7 +2703,7 @@ echo '<td><input class="gazie-tooltip" data-type="product-thumb" data-id="' . $v
                 }
                 echo '</div>'
                 . "</div>\n";
-            } elseif ($v['lot_or_serial'] == 1){ // se prevede lotti ma non ci sono proprio
+        } elseif ($v['lot_or_serial'] == 1){ // se prevede lotti ma non ci sono proprio
 				echo '<div><button class="btn btn-xs btn-danger">Impossibile selezionare i lotti! <br>NB: se si conferma si creeranno errori che dovranno essere corretti manualmente.</button></div>';
 			}
 			if (isset($plck) && $plck == $k && is_array($selected_lot)){
@@ -2692,7 +2749,7 @@ echo '<td><input class="gazie-tooltip" data-type="product-thumb" data-id="' . $v
 
             echo '</td>';
 
-echo '<td>
+          echo '<td>
 						<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][unimis]" value="' . $v['unimis'] . '" maxlength="3" />
 					</td>
 					<td>
@@ -3312,20 +3369,20 @@ if ($toDo == "insert"){
         </div>
         <div class="row">
 
-<?php
-$class_conf_row='btn-success';
-$descributton = $script_transl['insert'];
-$nurig = count($form['rows'])+1;
-$expsts = explode('UPDROW',$form['in_status']);
-if (isset($expsts[1])){
-  $nurig = (int)$expsts[1]+1;
-  $class_conf_row = 'btn-warning';
-  $descributton = $script_transl['update'];
-}
-$descributton .= ' il rigo '.$nurig;
+          <?php
+          $class_conf_row='btn-success';
+          $descributton = $script_transl['insert'];
+          $nurig = count($form['rows'])+1;
+          $expsts = explode('UPDROW',$form['in_status']);
+          if (isset($expsts[1])){
+            $nurig = (int)$expsts[1]+1;
+            $class_conf_row = 'btn-warning';
+            $descributton = $script_transl['update'];
+          }
+          $descributton .= ' il rigo '.$nurig;
 
-if (substr($form['in_status'], 0, 6) != "UPDROW") { //se non è un rigo da modificare
-?>
+          if (substr($form['in_status'], 0, 6) != "UPDROW") { //se non è un rigo da modificare
+            ?>
             <div class="col-sm-6 col-md-3 col-lg-7">
             <!--<div class="form-group col-xs-12 col-sm-6 col-md-3">-->
                 <a id="addmodal" href="#myModal" data-toggle="modal" data-target="#edit-modal" class="btn btn-sm btn-default"><i class="glyphicon glyphicon-export"></i><?php //echo $script_transl['add_article']; ?></a>
@@ -3336,22 +3393,45 @@ if (substr($form['in_status'], 0, 6) != "UPDROW") { //se non è un rigo da modif
                 <button type="submit" class="btn btn-default btn-sm" name="in_submit_text" title="Aggiungi rigo Testo"><i class="glyphicon glyphicon-list"></i></button>
                 <button type="submit" class="btn btn-default btn-sm" name="in_submit_cig" title="Aggiungi rigo CIG">CIG</button>
             </div>
-<?php
-}else{
-?>
+            <?php
+          }else{
+            ?>
             <div class="col-sm-6 col-md-3 col-lg-7"></div>
-<?php
-}
-?>
-			<div class="col-xs-12 col-sm-6 col-lg-3"><small>Magazzino</small><br/>
-<?php
-$magazz->selectIdWarehouse('in_id_warehouse',$form["in_id_warehouse"],false,'col-xs-12');
-?>
-			</div>
-            <div class="form-group col-sm-6 col-md-3 col-lg-2 text-right">
-                <button type="submit" class="btn <?php echo $class_conf_row; ?>" name="in_submit" tabindex="6"><?php echo $descributton; ?><i class="glyphicon glyphicon-ok"></i></button>
-            </div>
+            <?php
+          }
+
+          ?>
+
+</div>
+      <div class="row">
+        <div class="col-xs-12 col-sm-4 col-lg-4"><small>Magazzino</small><br/>
+          <?php
+          $magazz->selectIdWarehouse('in_id_warehouse',$form["in_id_warehouse"],false,'col-xs-12');
+          ?>
+        </div>
+        <div class="col-xs-12 col-sm-5 col-lg-6"><br/>
+          <?php
+          if (gaz_dbi_get_single_value($gTables['shelves'],'id_shelf','id_shelf > 0 LIMIT 1')){
+            echo "<small>Ubicazione</small>";
+            $select_position = new selectPosition("in_id_position");
+            $select_position->addSelected($form['in_id_position']);
+            $select_position->output($form['cosepos']);
+          }else{
+            ?>
+            <input type="hidden" value="" name="in_id_position">
+            <input type="hidden" value="" name="cosepos">
+            <?php
+          }
+
+          ?>
+        </div>
+
+      <div class="col-xs-12 col-sm-3 col-lg-2 text-right">
+          <button type="submit" class="btn <?php echo $class_conf_row; ?>" name="in_submit" tabindex="6"><?php echo $descributton; ?><i class="glyphicon glyphicon-ok"></i></button>
+      </div>
+      </div>
 		</div>
+
 	</div><!-- chiude container-fuid -->
   </div>
 </div><!-- chiude panel -->

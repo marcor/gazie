@@ -44,7 +44,7 @@ $search_fields = [
     'tipoddt'
     => " tipdoc = '%s' ",
     'tipo'
-    => " ( tipdoc LIKE '%s' OR tipdoc = 'FAD') ",
+    => " ( tipdoc LIKE '%s' OR tipdoc = 'FAD' OR tipdoc = 'RPL') ",
     'numero'
     => "numdoc LIKE '%%%s%%'",
     'anno'
@@ -92,7 +92,7 @@ $ts = new TableSorter(
 );
 
 # le <select> spaziano solo tra i documenti di vendita del sezionale corrente
-$where_select = sprintf(" (tipdoc = 'FAD' OR tipdoc LIKE 'DD_') AND seziva = %d", $sezione);
+$where_select = sprintf(" (tipdoc = 'RPL' OR tipdoc = 'FAD' OR tipdoc LIKE 'DD_') AND seziva = %d", $sezione);
 
 echo '<script>
 $(function() {
@@ -281,6 +281,7 @@ if (isset($_SESSION['print_request']) && intval($_SESSION['print_request'])>0){
                 $destina = gaz_dbi_get_row($gTables['destina'], 'codice', $r['id_des_same_company']);
                 if(!$destina) $destina=['codice'=>'','unita_locale1'=>''];
                     switch ($r['tipdoc']) {
+                        case "RPL":
                         case "DDT":
                         case "DDV":
                         case "DDY":
@@ -299,6 +300,7 @@ if (isset($_SESSION['print_request']) && intval($_SESSION['print_request'])>0){
                             // Colonna protocollo
                             echo "<td class=\"text-center\"><a href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\">" . $r["numdoc"] . "</a> </td>";
                             // Colonna type
+
                             echo "<td><div class=\"btn btn-xs btn-primary btn-primary\" style=\"cursor: default;\"> " . $script_transl['ddt_type'][$r["ddt_type"]] . "</div> </td>";
                             // Colonna data emissione
                             echo "<td>" . gaz_format_date($r["datemi"]). "  </td>";

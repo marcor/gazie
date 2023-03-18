@@ -75,6 +75,8 @@ class DDT extends Template_con_scheda
           $descri='Completamento';
       } elseif ($this->tesdoc['ddt_type'] == 'M') {
           $descri='Montaggio';
+      } elseif ($this->tesdoc['ddt_type'] == 'L') {
+          $descri='Lavorazione';
       } elseif ($this->tesdoc['ddt_type'] == 'O') {
           $descri='Reso da conto lavoro';
       } elseif (substr($this->tesdoc['clfoco'],0,1) == '2') { // DdT ricevuto da fornitore
