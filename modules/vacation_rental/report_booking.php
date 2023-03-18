@@ -126,8 +126,8 @@ $sortable_headers = array(
     $script_transl['number'] => "numdoc",
     $script_transl[key($terzo)] => current($terzo),
     "Codice alloggio" => "house_code",
-    "Check-in" => "",
-    "Check-out" => "",
+    "Check-in" => "start",
+    "Check-out" => "end",
     "Tour op." => "id_agente",
     "Cliente" => "clfoco",
     "Località" => "",
@@ -1010,7 +1010,6 @@ $ts->output_navbar();
               echo "<td>" . $r['house_code'] . " &nbsp;</td>";
               echo "<td>" . gaz_format_date($r['start']) . " &nbsp;</td>";
               echo "<td>" . gaz_format_date($r['end']) . " &nbsp;</td>";
-
 
               echo "<td>" . $r['tour_descri'] . "</td>";
 
