@@ -658,6 +658,7 @@ function printPdf(urlPrintDoc){
 $ts->output_navbar();
 ?>
 <form method="GET" id="report_form" >
+<!-- inizio div per dialog -->
 <div style="display:none" id="dialog_payment" title="Pagamenti">
   <p class="ui-state-highlight" id="payment_des"></p>
     <p><b>Inserisci pagamento manuale:</b></p>
@@ -698,7 +699,6 @@ $ts->output_navbar();
         <button type="button" class="btn-primary" id="delete_data"><i class="glyphicon glyphicon-fire" style="color: #ff9c9c;"></i> Distruggi dati</button>
 
 	</div>
-
   <div style="display:none" id="dialog_stato_lavorazione" title="Cambia lo stato">
         <p><b>prenotazione:</b></p>
         <p class="ui-state-highlight" id="id_status"></p>
@@ -747,8 +747,10 @@ $ts->output_navbar();
       <p id="mail_alert2"><?php echo $script_transl['mail_alert2']; ?></p>
       <p class="ui-state-highlight" id="mail_attc"></p>
   </div>
+<!-- fine div dialog -->
+
     <div class="box-primary table-responsive">
-    <table class="Tlarge table table-striped table-bordered table-condensed">
+    <table class="Tlarge table-striped table-bordered table-condensed table-responsive">
         <tr>
             <td class="FacetFieldCaptionTD">
                 <?php gaz_flt_disp_int("id_doc", "Numero Prot."); ?>
