@@ -124,10 +124,11 @@ $terzo = (isset($_GET['auxil']) && $_GET['auxil'] == 'VOG') ? ['weekday_repeat' 
 $sortable_headers = array(
     "ID" => "id_tes",
     $script_transl['number'] => "numdoc",
+    $script_transl[key($terzo)] => current($terzo),
     "Codice alloggio" => "house_code",
     "Check-in" => "",
     "Check-out" => "",
-    $script_transl[key($terzo)] => current($terzo),
+    "Tour op." => "id_agente",
     "Cliente" => "clfoco",
     "Località" => "",
     "Importo imponib." => "",
@@ -756,14 +757,6 @@ $ts->output_navbar();
                 <?php gaz_flt_disp_int("numero", "Numero Doc."); ?>
             </td>
             <td class="FacetFieldCaptionTD">
-              <?php
-              gaz_flt_disp_select("house_code", "house_code", $gTables["rental_events"]," type = 'ALLOGGIO' ", "house_code DESC");
-              ?>
-            </td>
-            <td class="FacetFieldCaptionTD">
-
-            </td>
-            <td class="FacetFieldCaptionTD">
                 <?php
                     if ( $tipo=="VOG" ) {
                         ?>
@@ -786,7 +779,20 @@ $ts->output_navbar();
                     }
                 ?>
             </td>
+
             <td class="FacetFieldCaptionTD">
+              <?php
+              gaz_flt_disp_select("house_code", "house_code", $gTables["rental_events"]," type = 'ALLOGGIO' ", "house_code DESC");
+              ?>
+            </td>
+            <td class="FacetFieldCaptionTD">
+              &nbsp;
+            </td>
+            <td class="FacetFieldCaptionTD">
+              &nbsp;
+            </td>
+            <td class="FacetFieldCaptionTD">
+              &nbsp;
             </td>
             <td class="FacetFieldCaptionTD">
 
@@ -806,7 +812,10 @@ $ts->output_navbar();
                 //gaz_flt_disp_select("destinaz","unita_locale1 AS destinaz",$tesbro_e_destina, $where_select . " AND unita_locale1 IS NOT NULL", "destinaz DESC",  "destinaz");
                 ?>
             </td>
-            <td class=FacetFieldCaptionTD style="text-align: center;">
+            <td class=FacetFieldCaptionTD>
+                &nbsp;
+            </td>
+             <td class=FacetFieldCaptionTD style="text-align: center;">
               <?php
               if ($form['swStatus']=="" OR $form['swStatus']=="Tutti"){
                 ?>
@@ -819,9 +828,6 @@ $ts->output_navbar();
               }
               ?>
               <input type="hidden" name="swStatus" id="preventDuplicate" value="<?php echo $form['swStatus']; ?>">
-            </td>
-            <td class=FacetFieldCaptionTD>
-                &nbsp;
             </td>
             <td class="FacetFieldCaptionTD">
                 <input type="submit" class="btn btn-sm btn-default" name="search" value="<?php echo $script_transl['search']; ?>" tabindex="1">
@@ -863,9 +869,17 @@ $ts->output_navbar();
                 $agent = $datahouse['vacation_rental']['agent'];
                 if (intval($agent)>0){// se c'è un proprietario/agente
                   $clfoco_agent=gaz_dbi_get_row($gTables['agenti'], 'id_agente', $agent)['id_fornitore'];
-                  $r['id_agent']=gaz_dbi_get_row($gTables['clfoco'], 'codice', $clfoco_agent)['id_anagra'];
+                  $res_agent=gaz_dbi_get_row($gTables['clfoco'], 'codice', $clfoco_agent);
+                  $r['id_agent']=$res_agent['id_anagra'];
                 }
               }
+            }
+            if (intval($r['id_agente'])>0){// se c'è un tour operator
+              $clfoco_agent=gaz_dbi_get_row($gTables['agenti'], 'id_agente', $r['id_agente'])['id_fornitore'];
+              $res_tour=gaz_dbi_get_row($gTables['clfoco'], 'codice', $clfoco_agent);
+              $r['tour_descri']=$res_tour['descri'];
+            }else{
+              $r['tour_descri']='';
             }
             $ccoff=0;
             if (isset ($r['anagra_custom_field']) && $data = json_decode($r['anagra_custom_field'], TRUE)) { // se esiste un json nel custom field anagra
@@ -878,11 +892,11 @@ $ts->output_navbar();
               $check_inout="OUT";
               $check_icon="log-out";
               $ckdate=date ('d-m-Y H:i', strtotime($r['checked_out_date']));
-			  if (isset($r['checked_in_date'])){
-				$title = "Checked-in ".date ('d-m-Y H:i', strtotime($r['checked_in_date']))." - Checked-out ".date ('d-m-Y H:i', strtotime($r['checked_out_date']));
-			  }else{
-				 $title = "" ;
-			  }
+              if (isset($r['checked_in_date'])){
+                $title = "Checked-in ".date ('d-m-Y H:i', strtotime($r['checked_in_date']))." - Checked-out ".date ('d-m-Y H:i', strtotime($r['checked_out_date']));
+              }else{
+               $title = "" ;
+              }
             }elseif (isset($r['checked_in_date']) && strtotime($r['checked_in_date'])){
               $check_inout="IN";
               $check_icon="log-in";
@@ -988,15 +1002,18 @@ $ts->output_navbar();
                   echo "<td><button class=\"btn btn-xs btn-default disabled\">&nbsp;" . substr($r['tipdoc'], 1, 2) . "&nbsp;" . $r['id_tes'] . " </button></td>";
               }
               echo "<td>" . $r['numdoc'] . " &nbsp;</td>";
-              echo "<td>" . $r['house_code'] . " &nbsp;</td>";
-              echo "<td>" . gaz_format_date($r['start']) . " &nbsp;</td>";
-              echo "<td>" . gaz_format_date($r['end']) . " &nbsp;</td>";
-
               if ( $tipo=="VOG" ) {
                   echo "<td>". getDayNameFromDayNumber($r['weekday_repeat']). " &nbsp;</td>";
               } else {
                   echo "<td>" . gaz_format_date($r['datemi']) . " &nbsp;</td>";
               }
+              echo "<td>" . $r['house_code'] . " &nbsp;</td>";
+              echo "<td>" . gaz_format_date($r['start']) . " &nbsp;</td>";
+              echo "<td>" . gaz_format_date($r['end']) . " &nbsp;</td>";
+
+
+              echo "<td>" . $r['tour_descri'] . "</td>";
+
               echo "<td><a title=\"Dettagli cliente\" href=\"../vendit/report_client.php?nome=" . $r['ragso1'] . "\">". $r['ragso1'] ." ".  $r['ragso2'] ."</a> &nbsp;</td>";
               echo "<td>".$r['citspe']."</td>";
 
