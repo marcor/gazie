@@ -277,7 +277,7 @@ $ts->output_navbar();
 		</div>
 	</div>
 	<div class="table-responsive">
-	<table class="Tlarge table table-striped table-bordered table-condensed">
+	<table class="Tlarge table-responsive table-striped table-bordered table-condensed">
 	<tr>
 		<td class="FacetFieldCaptionTD">
 			<input type="text" name="sea_codice" placeholder="codice" id="suggest_codice_artico" class="input-sm form-control" value="<?php echo (isset($sea_codice))? htmlentities($sea_codice, ENT_QUOTES) : ""; ?>" maxlength="15">
