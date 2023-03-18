@@ -321,7 +321,7 @@ if (isset($_SESSION['print_request']) && intval($_SESSION['print_request'])>0){
                                 if ($r["id_con"] > 0) {
                                     echo "<a title=\"" . $script_transl['acc_entry'] . "\" href=\"../contab/admin_movcon.php?id_tes=" . $r["id_con"] . "&Update\">cont. n." . $r["id_con"] . "</a>";
                                 }
-                            } else if ($r['tipdoc'] == 'DDX' || $r['tipdoc'] == 'DDZ' || $r['tipdoc'] == 'DDW' || $r['tipdoc'] == 'DDJ' || $r['tipdoc'] == 'DDD' || $r['tipdoc'] == 'DDC' ) {
+                            } else if ($r['tipdoc'] == 'DDX' || $r['tipdoc'] == 'DDZ' || $r['tipdoc'] == 'DDW' || $r['tipdoc'] == 'DDJ' || $r['tipdoc'] == 'DDD' || $r['tipdoc'] == 'DDC' || $r['tipdoc'] == 'RPL') {
                                echo '<td><a class="btn btn-xs btn-default" style="cursor: none;">da non fatturare</a></td>';
                             } else {
                                 if ($r['tipdoc'] == 'DDV' && $r['id_doc_ritorno'] > 0) {
@@ -539,9 +539,9 @@ if (isset($_SESSION['print_request']) && intval($_SESSION['print_request'])>0){
                                     if($rigdoc['id_order']>0){
                                         $tesbro_result = gaz_dbi_dyn_query('*', $gTables['tesbro'], "id_tes = " . $rigdoc['id_order'], 'id_tes');
                                         $t_r = gaz_dbi_fetch_array($tesbro_result);
-										if ($t_r) {
-										 echo "<a title=\"" . $script_transl['view_ord'] . "\" href=\"stampa_ordcli.php?id_tes=" . $rigdoc['id_order'] . "\" style=\"font-size:10px;\">Ord." . $t_r['numdoc'] . "</a>\n";
-										}
+                                        if ($t_r) {
+                                         echo "<a title=\"" . $script_transl['view_ord'] . "\" href=\"stampa_ordcli.php?id_tes=" . $rigdoc['id_order'] . "\" style=\"font-size:10px;\">Ord." . $t_r['numdoc'] . "</a>\n";
+                                        }
                                     }
                                 }
                             }
