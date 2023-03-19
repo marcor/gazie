@@ -65,6 +65,7 @@ if (isset($_GET['e-test']) && $_GET['e-test']==TRUE){
       switch ($config_mailer['val']) {
         case "smtp":
           // Invio tramite protocollo SMTP
+          $mail->Timeout =   8;
           $mail->SMTPDebug = FALSE;                           // Attivo il debug
           $mail->IsSMTP();                                // Modalita' SMTP
           if (!empty($config_secure['val'])) {
