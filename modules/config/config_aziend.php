@@ -25,7 +25,7 @@
 
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin(9);
-
+//print_r($admin_aziend);
 $modal_ok_insert = false;
 $modal = false;
 if (isset($_POST['mode']) || isset($_GET['mode'])) {
@@ -35,6 +35,66 @@ if (isset($_POST['mode']) || isset($_GET['mode'])) {
     if (isset($_GET['ok_insert'])) {
         $modal_ok_insert = true;
     }
+}
+
+// e-mail TESTER
+if (isset($_GET['e-test']) && $_GET['e-test']==TRUE){
+  $user = array('user_name'=>$admin_aziend['user_name'],'user_firstname'=>$admin_aziend['user_firstname'],'user_lastname'=>$admin_aziend['user_lastname'],'user_email'=>'pippo');
+  $admin_data = ['codice'=>$admin_aziend['codice'],'web_url'=>$admin_aziend['web_url'],'ragso1'=>$admin_aziend['ragso1'],'ragso2'=>$admin_aziend['ragso2'],'colore'=>$admin_aziend['colore'],'e_mail'=>$admin_aziend['e_mail'],'country'=>$admin_aziend['country']];
+  $receiver['e_mail']="info@gmonamour.it";
+  // Inizializzo PHPMailer
+      //
+      $rspsw=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = 'smtp_password'");
+      $rpsw=gaz_dbi_fetch_row($rspsw);
+      $config_pass = $rpsw?$rpsw[0]:'';
+      $config_mailer = gaz_dbi_get_row($gTables['company_config'], 'var', 'mailer');
+      $config_port = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_port');
+      $config_secure = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_secure');
+      $config_user = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_user');
+      $config_host = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_server');
+      require_once "../../library/phpmailer/class.phpmailer.php";
+      require_once "../../library/phpmailer/class.smtp.php";
+      $mail = new PHPMailer();
+      $mail->Host = $config_host['val'];
+      $mail->IsHTML();                                // Modalita' HTML
+      $mail->CharSet = 'UTF-8';
+      // Imposto il server SMTP
+      if (!empty($config_port['val'])) {
+          $mail->Port = $config_port['val'];             // Imposto la porta del servizio SMTP
+      }
+      switch ($config_mailer['val']) {
+        case "smtp":
+          // Invio tramite protocollo SMTP
+          $mail->SMTPDebug = FALSE;                           // Attivo il debug
+          $mail->IsSMTP();                                // Modalita' SMTP
+          if (!empty($config_secure['val'])) {
+            $mail->SMTPSecure = $config_secure['val']; // Invio tramite protocollo criptato
+          } else {
+            $mail->SMTPOptions = ['ssl' => ['verify_peer' => false, 'verify_peer_name' => false, 'allow_self_signed' => true]];
+          }
+          $mail->SMTPAuth = (!empty($config_user['val']) && $config_mailer['val'] == 'smtp' ? TRUE : FALSE );
+          if ($mail->SMTPAuth) {
+            $mail->Username = $config_user['val'];     // Imposto username per autenticazione SMTP
+            $mail->Password = $config_pass;     // Imposto password per autenticazione SMTP
+          }
+
+          $mail->SetFrom($admin_data['e_mail'], $admin_data['ragso1'] . " " . $admin_data['ragso2']);
+          $mail->AddAddress($admin_data['e_mail']);// destinatario
+          // Imposto l'oggetto dell'email
+          $subject = $admin_data['ragso1'] . " " . $admin_data['ragso2'] . " - TEST INVIO "; //subject
+          $mail->Subject = $subject;
+          // Imposto il testo HTML dell'email
+          $body_text = "<div><b>Questo è un test di invio. Se leggi questo messaggio è tutto OK! ;)</b></div>\n";
+          $mail->MsgHTML($body_text);
+        break;
+      }
+  if ( $mail->Send() ) {
+    $data = ["send" => "SUCCESS","sender" => $admin_data['e_mail']];
+  echo json_encode($data);exit;
+  }else{
+  $data = ["error" =>  $mail->ErrorInfo];
+  echo json_encode($data);exit;
+  }
 }
 
 if (count($_POST) > 10) {
@@ -165,9 +225,14 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
         </form>
     </div><!-- chiude generale  -->
     <div id="email" class="tab-pane fade">
-			<div>Il test di configurazione email ti permette di verificare la configurazione della tua mail. <br><b>Salva</b> la configurazione prima di avviare il test. Verr&aacute; inviata una mail a <i><?php echo $mail_sender; ?></i>
+			<div>Il test di configurazione email ti permette di verificare la configurazione della tua mail. <br>Ricordarsi di inserire l'idirizzo e-mail nelle impostazioni di configurazione azienda<br><b>Salva</b> la configurazione prima di avviare il test.</i>
         </div>
 		</br></br><hr>
+
+    <div id="wait">
+  <span>Please wait...</span>
+</div>
+
 			<div id="btn_send" class="btn btn-default">TEST INVIO MAIL</div>
 			<div id="reply_send"></div>
     </script>
@@ -178,17 +243,24 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
 <script>
 if ($(".head-msg").length) {
 }
-
+$( "#wait" ).hide();
 $("#btn_send").click( function() {
 	$.ajax({
-		url: "?e-test=true",
+		url: "config_aziend.php?e-test=true",
 		type: "GET",
 		data: { 'e-test': true },
+     beforeSend: function () {
+      // ... your initialization code here (so show loader) ...
+      $( "#wait" ).show();
+    },
+    complete: function () {
+      // ... your finalization code here (hide loader) ...
+      $( "#wait" ).hide();
+    },
 		success: function(json) {
 			result = JSON.parse(json);
-			alert(result.send);
-			if (  result.send ) {
-		  		$("#reply_send").html( "<strong>Invio riuscito</strong><br><div>Controlla se ti è arrivata una email in <i><?php echo $mail_sender; ?></i>!</div>");
+			if (  result.send == 'SUCCESS') {
+		  		$("#reply_send").html( "<strong>Invio riuscito</strong><br><div>Controlla se ti è arrivata una email in <i>"+result.sender+"</i></div>");
 			} else {
 				$("#reply_send").html("<strong>Invio FALLITO!</strong><br><div>Errore: "+result.error+"!</div>");
 			}
