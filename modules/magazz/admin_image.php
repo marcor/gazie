@@ -44,28 +44,32 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 			} else {
 				$form['title']=$_POST['title'];
 			}
-			$form['extension']=$matches[1];
-			//print $_FILES['userfile']['type'];
-			if ( $_FILES['userfile']['type'] == "image/png" ||
-				$_FILES['userfile']['type'] == "image/x-png" ||
-				$_FILES['userfile']['type'] == "application/pdf" ||
-				$_FILES['userfile']['type'] == "image/pjpeg" ||
-				$_FILES['userfile']['type'] == "image/jpeg" ||
-				$_FILES['userfile']['type'] == "text/richtext" ||
-				$_FILES['userfile']['type'] == "text/plain" ||
-				$_FILES['userfile']['type'] == "application/vnd.oasis.opendocument.text" ||
-				$_FILES['userfile']['type'] == "application/msword" ||
-				$_FILES['userfile']['type'] == "image/tiff" ||
-				$_FILES['userfile']['type'] == "application/doc" ||
-				$_FILES['userfile']['type'] == "application/rtf" || (
-				substr($_FILES['userfile']['type'],0,11) == "application" && ($form['extension']=='odt' ||
-                                                                           $form['extension']=='doc' ||
-                                                                           $form['extension']=='docx'||
-                                                                           $form['extension']=='pdf'))) {
-           // vado avanti...
-			} else {
-				$msg .= "0+";
-			}
+      if (isset($matches[1])){
+        $form['extension']=$matches[1];
+        //print $_FILES['userfile']['type'];
+        if ( $_FILES['userfile']['type'] == "image/png" ||
+          $_FILES['userfile']['type'] == "image/x-png" ||
+          $_FILES['userfile']['type'] == "application/pdf" ||
+          $_FILES['userfile']['type'] == "image/pjpeg" ||
+          $_FILES['userfile']['type'] == "image/jpeg" ||
+          $_FILES['userfile']['type'] == "text/richtext" ||
+          $_FILES['userfile']['type'] == "text/plain" ||
+          $_FILES['userfile']['type'] == "application/vnd.oasis.opendocument.text" ||
+          $_FILES['userfile']['type'] == "application/msword" ||
+          $_FILES['userfile']['type'] == "image/tiff" ||
+          $_FILES['userfile']['type'] == "application/doc" ||
+          $_FILES['userfile']['type'] == "application/rtf" || (
+          substr($_FILES['userfile']['type'],0,11) == "application" && ($form['extension']=='odt' ||
+                                                                             $form['extension']=='doc' ||
+                                                                             $form['extension']=='docx'||
+                                                                             $form['extension']=='pdf'))) {
+             // vado avanti...
+        } else {
+          $msg .= "0+";
+        }
+      }else{
+        $msg .= "3+";
+      }
 			// controllo che il file non sia piu' grande di 10Mb
 			if ( $_FILES['userfile']['size'] > 10485760 ){
 				$msg .= "1+";
