@@ -376,25 +376,25 @@ if (isset($_POST['conferma'])) { // se confermato
 if (!isset($_GET['success'])){
 // Apro il form per la selezione degli articoli
 		?>
-		<script>
-    function selectCheckbox() {
-        var inputs = document.getElementsByTagName('input');
-        var checkboxes = [];
-        for (var i = 0; i < inputs.length; i++){
-            var input = inputs[i];
-            if (input.getAttribute('type') == 'checkbox'){
-                checkboxes.push(input);
-            }
-        }
-        return checkboxes;
-    }
-    function check(checks){
-      var checkboxes = selectCheckbox();
-      for(var i=0; i < checkboxes.length; i++){
-        checkboxes[i].checked = checks.checked;
-      }
-    }
-</script>
+	<script>
+	function selectCheckbox() {
+		var inputs = document.getElementsByTagName('input');
+		var checkboxes = [];
+		for (var i = 0; i < inputs.length; i++){
+			var input = inputs[i];
+			if (input.getAttribute('type') == 'checkbox'){
+				checkboxes.push(input);
+			}
+		}
+		return checkboxes;
+	}
+	function check(checks){
+	  var checkboxes = selectCheckbox();
+	  for(var i=0; i < checkboxes.length; i++){
+		checkboxes[i].checked = checks.checked;
+	  }
+	}
+	</script>
 		<form method="POST" name="download" enctype="multipart/form-data">
 			<input type="hidden" name="ritorno" value="<?php echo $_POST['ritorno'];?>" >
 			<div class="container-fluid" style="max-width:90%;">
@@ -452,7 +452,7 @@ if (!isset($_GET['success'])){
 						<h4>Seleziona</h4>
 					</div>
 					<div class="col-sm-1">
-						TUTTI <input type="checkbox" onClick="check(this)">
+						TUTTI <input class="select_all" type="checkbox" onClick="check(this)">
 					</div>
 				</div>
 				<?php
@@ -546,11 +546,10 @@ if (!isset($_GET['success'])){
 								}
 								?>
 							</div>
-							<div class="col-sm-1" align="right">
-								<input type="checkbox" name="download<?php echo $n; ?>" value="download">
+							<div class="col-sm-1 check" align="right">
+								<input class="single_checkbox" type="checkbox" name="download<?php echo $n; ?>" value="download">
 								<input type="hidden" name="num_products" value="<?php echo $n; ?>">
-							</div>
-
+							</div>		
 					</div>
 				<?php
 				$n++;
@@ -713,4 +712,20 @@ if (!isset($_GET['success'])){
 <?php
 }
 require("../../library/include/footer.php");
+
+if ($_GET['img']=='updimg'){
+echo "pippo",$_GET['img'];	
+	?>
+	<script>
+	$('.select_all').hide();
+	var limit = 10;
+	$('input.single_checkbox').on('click', function (evt) {
+		if ($('.single_checkbox:checked').length > limit) {
+			this.checked = false;
+			alert('Se si aggiornano le immagini, il limite massimo selezionabile è 10 prodotti');
+		}
+	});
+	</script>
+	<?php
+}
 ?>
