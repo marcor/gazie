@@ -101,7 +101,7 @@ class Template extends TCPDI {
       $this->Line(0, 143, 3, 143); //questa marca la linea d'aiuto per la foratura del documento
 
 
-      $this->Cell(130, 5, $this->tipdoc." di locazione turistica", 1, 1, 'L', 1, '', 1);
+      $this->Cell(130, 5, " Tourist lease ".$this->tipdoc, 1, 1, 'L', 1, '', 1);
       $this->SetFont('helvetica', '', 8);
 
       $this->Cell(30, 5, 'Pag. ' . $this->getGroupPageNo() . ' di ' . $this->getPageGroupAlias(), 0, 0, 'L');

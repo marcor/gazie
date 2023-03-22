@@ -1139,7 +1139,7 @@ $ts->output_navbar();
     </div>
 	<div class="modal" id="confirm_print" title="Scegli la carta dove stampare"></div>
 </form>
-<a href="https://programmisitiweb.lacasettabio.it/gazie/vacation-rental-il-gestionale-per-case-vacanza-residence-bb-e-agriturismi/" target="_blank" class="navbar-fixed-bottom" style="max-width:350px; left:20%; z-index:2000;"> Vacation rental è un modulo di Antonio Germani</a>
+<a href="https://programmisitiweb.lacasettabio.it/gazie/vacation-rental-il-gestionale-per-case-vacanza-residence-bb-e-agriturismi/" target="_blank" class="navbar-fixed-bottom" style="max-width:350px; left:10%; bottom:15px; z-index:2000;"> Vacation rental è un modulo di Antonio Germani</a>
 <script>
 $(document).ready(function(){
 <?php

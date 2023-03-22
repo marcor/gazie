@@ -102,7 +102,7 @@ class Lease extends Template
                 $checkout='8 - 10';
               }
 
-              $html .= "<li>".$accomodation_type." called ".get_string_lang($rigo['desart'], $lang).", ".$rigo['annota'];
+              $html .= "<li>".$accomodation_type." called "." ".$rigo['codart'].', '.get_string_lang($rigo['desart'], $lang).", ".$rigo['annota'];
               if (strlen($rigo['web_url'])>5){
                 $html .= "<br>".$script_transl['body3'].": ".$rigo['web_url'].". ".$script_transl['body4'];
               }
@@ -172,8 +172,8 @@ class Lease extends Template
 
       $html .= "<dl>";
       if (strlen($this->ip)>6){// firme digitali
-		$html .= "<br><p><b>Firmato digitalmente on-line</b></p><span>Il locatore ".$this->intesta1."</span>";
-        $html .= "<br><span style=\" letter-spacing: 70px;\">&nbsp; &nbsp;</span><span> Il conduttore ".$this->cliente1." ".$this->cliente2." firmato on-line da IP:".$this->ip."</span>";
+		$html .= "<br><p><b>Digitally signed online</b></p><span>The landlord ".$this->intesta1."</span>";
+        $html .= "<br><span style=\" letter-spacing: 70px;\">&nbsp; &nbsp;</span><span> The tenant ".$this->cliente1." ".$this->cliente2." signed online from IP:".$this->ip."</span>";
 	  }else{// firme fisiche
         $html .= "<br><p><b>".$script_transl['sign']." </b></p><span>".$script_transl['locatore']." ".$this->intesta1."</span><span style=\" letter-spacing: 30px;\">&nbsp; &nbsp;</span><span> ".$script_transl['conduttore']." ".$this->cliente1." ".$this->cliente2."</span>";
       }
