@@ -81,7 +81,8 @@ function openframe(url,codice){
         <div class="box-header company-color">
           <h4 class="box-title"><i class="glyphicon glyphicon-blackboard"></i> Riepilogo Vacation rental</h4>
           <a class="pull-left" style="cursor:pointer;" onclick="openframe('../../modules/vacation_rental/total_availability_it.php','<h3>Calendario generale</h3>')" data-toggle="modal" data-target="#iframe"> <i class="glyphicon glyphicon-calendar" title="Calendario della disponibilità"></i></a>
-          <a class="pull-right dialog_grid" id_bread="<?php echo $grr['id_bread']; ?>" style="cursor:pointer;"><i class="glyphicon glyphicon-cog"></i></a>
+          <a class="pull-center" href="../vacation_rental/report_booking.php" style="cursor:pointer;"><i class="glyphicon glyphicon-tasks" title="vai alle prenotazioni"></i></a>
+		  <a class="pull-right dialog_grid" id_bread="<?php echo $grr['id_bread']; ?>" style="cursor:pointer;"><i class="glyphicon glyphicon-cog"></i></a>
         </div>
         <div class="box-body">
           <table class="Tlarge table table-striped table-bordered table-condensed">
