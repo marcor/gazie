@@ -442,35 +442,35 @@ class shopsynchronizegazSynchro {
 			// "articoli-gazie.php" è il nome del file interfaccia presente nella root dell'e-commerce. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
 			// il percorso per raggiungere questo file va impostato in configurazione avanzata azienda alla voce "Website root directory"
 
-      // carico tutti i dati dell'articolo
-      $id = gaz_dbi_get_row($gTables['artico'],"codice",$d['codice']);
-      if (!isset($id)){
-        $rawres['title'] = "Prodotto non correttamente sincronizzato. Controllare le sue impostazioni e ID di riferimento all e-commerce!";
-        $rawres['button'] = 'Avviso eCommerce';
-        $rawres['label'] = "Aggiornare i dati di: ". $d['codice'];
-        $rawres['link'] = '../shop-synchronize/synchronize.php';
-        $rawres['style'] = 'danger';
-        $_SESSION['menu_alerts']['shop-synchronize']=$rawres;
-        $this->rawres=$rawres;
-        return;
-      }
+			// carico tutti i dati dell'articolo
+			$id = gaz_dbi_get_row($gTables['artico'],"codice",$d['codice']);
+			if (!isset($id)){
+			$rawres['title'] = "Prodotto non correttamente sincronizzato. Controllare le sue impostazioni e ID di riferimento all e-commerce!";
+			$rawres['button'] = 'Avviso eCommerce';
+			$rawres['label'] = "Aggiornare i dati di: ". $d['codice'];
+			$rawres['link'] = '../shop-synchronize/synchronize.php';
+			$rawres['style'] = 'danger';
+			$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+			$this->rawres=$rawres;
+			return;
+			}
 
-      if ($d['good_or_service']==1){// se non movimenta il magazzino
-        $avqty=NULL;
-      }else{
-        // calcolo la disponibilità in magazzino
-        $gForm = new magazzForm();
-        $mv = $gForm->getStockValue(false, $d['codice']);
-        $magval = array_pop($mv);
+			if ($d['good_or_service']==1){// se non movimenta il magazzino
+				$avqty=NULL;
+			}else{
+				// calcolo la disponibilità in magazzino
+				$gForm = new magazzForm();
+				$mv = $gForm->getStockValue(false, $d['codice']);
+				$magval = array_pop($mv);
 
-        $fields = array ('product_id' => $id['ref_ecommerce_id_product'],'quantity'=>intval((isset($magval['q_g']))?$magval['q_g']:0));
-        $ordinati = $gForm->get_magazz_ordinati($d['codice'], "VOR");
-        $ordinati = $ordinati + $gForm->get_magazz_ordinati($d['codice'], "VOW");
-        $avqty=$fields['quantity']-$ordinati;
-        if ($avqty<0 or $avqty==""){ // per l'e-commerce la disponibilità non può essere nulla o negativa
-          $avqty="0";
-        }
-      }
+				$fields = array ('product_id' => $id['ref_ecommerce_id_product'],'quantity'=>intval((isset($magval['q_g']))?$magval['q_g']:0));
+				$ordinati = $gForm->get_magazz_ordinati($d['codice'], "VOR");
+				$ordinati = $ordinati + $gForm->get_magazz_ordinati($d['codice'], "VOW");
+				$avqty=$fields['quantity']-$ordinati;
+				if ($avqty<0 or $avqty==""){ // per l'e-commerce la disponibilità non può essere nulla o negativa
+				  $avqty="0";
+				}
+			}
 
 			$ecomm_catmer = gaz_dbi_get_row($gTables['catmer'],"codice",$d['catmer'])['ref_ecommerce_id_category'];
 			if (intval($d['barcode'])==0) {// se non c'è barcode allora è nullo
@@ -542,7 +542,7 @@ class shopsynchronizegazSynchro {
 			<GAzieDocuments AppVersion="1" Creator="Antonio Germani 2018-2019" CreatorUrl="https://www.lacasettabio.it">';
 			$xml_output .= "\n<Products>\n";
 				$xml_output .= "\t<Product>\n";
-        $xml_output .= "\t<ToDo>".$toDo."</ToDo>\n";
+				$xml_output .= "\t<ToDo>".$toDo."</ToDo>\n";
 				$xml_output .= "\t<Id>".$d['ref_ecommerce_id_product']."</Id>\n";
 				if ($id['id_artico_group']>0){
 					$xml_output .= "\t<Type>variant</Type>\n";
@@ -557,11 +557,11 @@ class shopsynchronizegazSynchro {
 				}
 				$xml_output .= "\t<Code>".$d['codice']."</Code>\n";
 				$xml_output .= "\t<BarCode>".$d['barcode']."</BarCode>\n";
-        $xml_output .= "\t<Peso>".$d['peso_specifico']."</Peso>\n";
+				$xml_output .= "\t<Peso>".$d['peso_specifico']."</Peso>\n";
 				$xml_output .= "\t<Largmm>".$d['larghezza']."</Largmm>\n";
 				$xml_output .= "\t<Lungmm>".$d['lunghezza']."</Lungmm>\n";
-        $xml_output .= "\t<Spessmm>".$d['spessore']."</Spessmm>\n";
-				$xml_output .= "\t<Name>".$d['descri']."</Name>\n";
+				$xml_output .= "\t<Spessmm>".$d['spessore']."</Spessmm>\n";
+				$xml_output .= "\t<Name>".preg_replace('/[\x00-\x1f]/','',htmlspecialchars($d['descri'], ENT_QUOTES, 'UTF-8'))."</Name>\n";
 				$xml_output .= "\t<Description>".preg_replace('/[\x00-\x1f]/','',htmlspecialchars($d['body_text'], ENT_QUOTES, 'UTF-8'))."</Description>\n";
 				$xml_output .= "\t<Price>".$d['web_price']."</Price>\n";
 				$xml_output .= "\t<PriceVATincl>".$web_price_vat_incl."</PriceVATincl>\n";
@@ -813,8 +813,8 @@ class shopsynchronizegazSynchro {
 		global $gTables,$admin_aziend;
         $rawres=[];
 		$urlinterf = gaz_dbi_get_row($gTables['company_config'], 'var', 'path')['val']."ordini-gazie.php";
-		$accpassrow = gaz_dbi_get_row($gTables['company_config'], "var", "accpass");
-    $accpass = (isset($accpassrow['val']))?$accpassrow['val']:'';
+		$accpass = gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val'];
+
 		$access=base64_encode($accpass);
 		// avvio il file di interfaccia presente nel sito web remoto
 		$headers = @get_headers($urlinterf.'?access='.$access);
@@ -848,7 +848,6 @@ class shopsynchronizegazSynchro {
 							$year=substr($order->DateOrder,0,4);
 						}elseif(intval(substr($order->DateOrder,0,4))> intval($year)) {// se è cambiato l'anno durante il ciclo degli ordini e sono nel nuovo anno
 							$numdoc = 1;// ricomincio la numerazione
-              $year=substr($order->DateOrder,0,4);
 						}
 						$query = "SHOW TABLE STATUS LIKE '" . $gTables['anagra'] . "'";
 						$result = gaz_dbi_query($query);
