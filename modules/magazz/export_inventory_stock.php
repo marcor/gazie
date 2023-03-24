@@ -35,7 +35,7 @@ if ( !isset($_POST['this_date_Y']) )
 	$form['this_date_Y'] = date("Y") - 1;
 	$form['this_date_M'] = 12;
 	$form['this_date_D'] = 31;
-} else 
+} else
 {
 	$form['this_date_Y'] = intval($_POST['this_date_Y']);
 	$form['this_date_M'] = intval($_POST['this_date_M']);
@@ -44,10 +44,8 @@ if ( !isset($_POST['this_date_Y']) )
 
 if (isset($_POST['catmer']))
     $form['catmer'] = intval($_POST['catmer']);
-else 
+else
 	$form['catmer'] = 100;
-
-
 if ( !isset($_POST['this_date_Y']) )
 {
 	require("../../library/include/header.php");
@@ -120,11 +118,10 @@ if ($form['catmer'] == 100) {
       	 $tot_val_giac = 0;
          while ($r = gaz_dbi_fetch_array($result)) {
            if ($r['catmer']<>$ctrl_cm ){
-             gaz_set_time_limit (30);
              $ctrl_cm=$r['catmer'];
            }
-           
-          $mv=$gForm->getStockValue(false,$r['codice'],$date,null,$admin_aziend['decimal_price']); 
+
+          $mv=$gForm->getStockValue(false,$r['codice'],$date,null,$admin_aziend['decimal_price']);
           $magval=array_pop($mv);
           $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
            if ( $magval['q_g'] > 0 )
@@ -156,25 +153,25 @@ if ($form['catmer'] == 100) {
          }
       }
 
-      
+
 $exporter = new ExportDataExcel('browser', $name_file);
 
 if (isset($form['a'])) {
 	$exporter->initialize();
 	$exporter->addRow( array( "Categoria", "Codice", "Descrizione","Valore Unitario", "Quantita", "Giac.", "Val Totale", "Alla Data: ". $date ) );
 	$elem_n=0;
-	
+
 	foreach($form['a'] as $k=>$v) {
 		if ($ctrl_cm <> $v['i_g']) {
 			$ctrl_cm = $v['i_g'];
 		}
 
 		//echo "<br>".$v['g_d']." ".$k . " ". $v['i_d']." ".gaz_format_quantity($v['v_a'],0,$admin_aziend['decimal_price'] )." ".gaz_format_quantity($v['g_a'],0,$admin_aziend['decimal_quantity'] )." ". gaz_format_quantity($v['v_g'],0,$admin_aziend['decimal_price'] );
-        
+
 		$exporter->addRow(
 				array(
 						$v['g_d'],
-						"-$k-",
+						$k,
 						$v['i_d'],
 						gaz_format_quantity($v['v_a'],0,$admin_aziend['decimal_price'] ),
 						gaz_format_quantity($v['g_a'],0,$admin_aziend['decimal_quantity'] ),

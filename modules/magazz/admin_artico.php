@@ -164,6 +164,12 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             if ($rs) {
                 $msg['err'][] = 'movmag';
             }
+            // controllo che il precedente non faccia parte di una distinta base
+            $rs_distintabase = gaz_dbi_dyn_query('id', $gTables['distinta_base'], "codice_artico_base = '" . $form['ref_code'] . "'", "id", 0, 1);
+            $rs = gaz_dbi_fetch_array($rs_distintabase);
+            if ($rs) {
+                $msg['err'][] = 'disbas';
+            }
         }
     } else {
         // controllo che l'articolo ci sia gia'
