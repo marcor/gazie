@@ -670,7 +670,7 @@ class lotmag {
 // riparto la quantità tra i vari lotti presenti se questi non sono sufficienti
 // ritorno il resto non assegnato
       $acc = array();
-      $rest = $quantity;
+      $rest = floatval($quantity);
       foreach ($this->available as $v) {
          if ($v['rest'] >= $rest) { // c'è capienza
             $acc[$v['id_lotmag']] = $v + array('qua' => $rest);
