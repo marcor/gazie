@@ -106,32 +106,35 @@ if (isset($_POST['conferma']) && isset($_POST['num_orders'])) { // se confermato
 				}
 			}
 			// provo a ricongiungere i pagamenti
-			if(intval($_POST['idpagame'.$ord])>0){//se l'e-commerce ha inviato il suo id di riferimento lo inserisco nella testata
-				//lo ricongiungo con GAzie
+			if(strlen($_POST['idpagame'.$ord])>0){//se l'e-commerce ha inviato il suo id di riferimento lo inserisco nella testata
+				//provo a ricongiungerlo con GAzie
 				$pag = gaz_dbi_get_row($gTables['pagame'], "web_payment_ref", intval($_POST['idpagame'.$ord]));
 				$idpagame=(isset($pag['codice']))?$pag['codice']:0;
-			}elseif(intval($_POST['pagame'.$ord])>0){// se l'e-commerce mi ha inviato un codice al  posto del nome
-				$idpagame=intval($_POST['pagame'.$ord]);
 			}else{// altrimenti non iserisco alcun pagamento
 				$idpagame=0;
 			}
+
 			if ($esiste==0) { //registro cliente se non esiste
 				if ($_POST['country'.$ord]=="IT"){ // se la nazione è IT
 					$lang="1";
-				if (substr_compare($_POST['pariva'.$ord], "IT", 0, 2, true)==0){// se c'è IT davanti alla partita iva
-				  $_POST['pariva'.$ord]=substr($_POST['pariva'.$ord],2);// tolgo IT
-				}
-				} else {// se non è italiano imposto il codice univoco con x e se non c'è imposto il codice fiscale con il codice cliente
+          if (substr_compare($_POST['pariva'.$ord], "IT", 0, 2, true)==0){// se c'è IT davanti alla partita iva
+            $_POST['pariva'.$ord]=substr($_POST['pariva'.$ord],2);// tolgo IT
+          }
+          if (strlen($_POST['pariva'.$ord])<>11 && intval($_POST['pariva'.$ord])==0){// se non è una partita iva allora è un privato
+              $_POST['pariva'.$ord]=""; // deve essere vuoto
+              $_POST['fe_cod_univoco'.$ord] = "0000000";// il codice univoco deve essere 7 volte zero
+          }
+				} else {// se non è italiano imposto il codice univoco con 7 X maiuscolo e se non c'è imposto il codice fiscale con il codice cliente
 					$lang="0";
 					$_POST['fe_cod_univoco'.$ord]="XXXXXXX";
-					if (strlen($_POST['codfis'.$ord])==0){
-						$_POST['codfis'.$ord] = $_POST['ref_ecommerce_id_customer'.$ord]."privato";// riempio il campo codice fiscale con un numero di almeno 7 cifre
+					if (strlen($_POST['codfis'.$ord])==0 || strlen($_POST['codfis'.$ord])<7){
+						$_POST['codfis'.$ord] = sprintf("%07d", $clfoco);// riempio il campo codice fiscale con clfoco di almeno 7 cifre
 					}
-					if (strlen($_POST['pariva'.$ord])==0){
-						$_POST['pariva'.$ord]= sprintf("%07d", $_POST['ref_ecommerce_id_customer'.$ord]);// riempio il campo partita iva con un numero di almeno 7 cifre
+					if (strlen($_POST['pariva'.$ord])==0 || strlen($_POST['pariva'.$ord])<7){
+						$_POST['pariva'.$ord]= sprintf("%07d", $clfoco);// riempio il campo piva con il codice clfoco di almeno 7 cifre
 					}
 				}
-				if (strlen ($_POST['codfis'.$ord])>1 AND intval ($_POST['codfis'.$ord])==0){ // se il codice fiscale non è numerico
+				if (strlen ($_POST['codfis'.$ord])==13 && intval ($_POST['codfis'.$ord])==0){ // se il codice fiscale non è numerico
 						if (substr($_POST['codfis'.$ord],9,2)>40){ // deduco il sesso
 							$sexper="F";
 						} else {
@@ -139,6 +142,10 @@ if (isset($_POST['conferma']) && isset($_POST['num_orders'])) { // se confermato
 						}
 				} else {
 					$sexper="G";
+          if (strlen ($_POST['codfis'.$ord])==0){// se non è stato passato il codice fiscale
+            $_POST['codfis'.$ord]="00000000000";// GAzie vuole 11 zeri
+          }
+
 				}
 				gaz_dbi_query("INSERT INTO " . $gTables['anagra'] . "(ragso1,ragso2,sexper,indspe,capspe,citspe,prospe,country,id_currency,id_language,telefo,codfis,pariva,fe_cod_univoco,e_mail,pec_email) VALUES ('" . addslashes(substr($_POST['ragso1'.$ord], 0, 50)) . "', '" . addslashes(substr($_POST['ragso2'.$ord], 0, 50)) . "', '". $sexper. "', '". addslashes(substr($_POST['indspe'.$ord], 0, 60)) ."', '".substr($_POST['capspe'.$ord], 0, 10)."', '". addslashes(substr($_POST['citspe'.$ord], 0, 60)) ."', '". substr($_POST['prospe'.$ord], 0, 2) ."', '" . substr($_POST['country'.$ord], 0, 3). "', '1', '".$lang."', '". substr($_POST['telefo'.$ord], 0, 50) ."', '". substr(strtoupper($_POST['codfis'.$ord]), 0, 16) ."', '" . substr($_POST['pariva'.$ord], 0, 12) . "', '" . substr($_POST['fe_cod_univoco'.$ord], 0, 7) . "', '". substr($_POST['email'.$ord], 0, 60) . "', '". substr($_POST['pec_email'.$ord], 0, 60) . "')");
 
