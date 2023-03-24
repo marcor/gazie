@@ -895,7 +895,7 @@ class shopsynchronizegazSynchro {
 									$order->CustomerVatCode= sprintf("%07d", $clfoco);// riempio il campo piva con il codice clfoco di almeno 7 cifre
 								}
 							}
-							if (strlen ($order->CustomerFiscalCode)==13 AND intval ($order->CustomerFiscalCode)==0){ // se il codice fiscale non è numerico
+							if (strlen ($order->CustomerFiscalCode)==16 AND intval ($order->CustomerFiscalCode)==0){ // se il codice fiscale non è numerico
 								if (substr($order->CustomerFiscalCode,9,2)>40){ // deduco il sesso
 									$sexper="F";
 								} else {

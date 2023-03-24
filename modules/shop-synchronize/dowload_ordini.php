@@ -134,7 +134,7 @@ if (isset($_POST['conferma']) && isset($_POST['num_orders'])) { // se confermato
 						$_POST['pariva'.$ord]= sprintf("%07d", $clfoco);// riempio il campo piva con il codice clfoco di almeno 7 cifre
 					}
 				}
-				if (strlen ($_POST['codfis'.$ord])==13 && intval ($_POST['codfis'.$ord])==0){ // se il codice fiscale non è numerico
+				if (strlen ($_POST['codfis'.$ord])==16 && intval ($_POST['codfis'.$ord])==0){ // se il codice fiscale non è numerico
 						if (substr($_POST['codfis'.$ord],9,2)>40){ // deduco il sesso
 							$sexper="F";
 						} else {
