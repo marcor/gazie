@@ -869,7 +869,7 @@ class shopsynchronizegazSynchro {
 						// provo a ricongiungere i pagamenti
 						if(strlen($order->PaymentId)>0){//se l'e-commerce ha inviato il suo id di riferimento lo inserisco nella testata
 							//provo a ricongiungerlo con GAzie
-							$pag = gaz_dbi_get_row($gTables['pagame'], "web_payment_ref", intval($order->PaymentId));
+							$pag = gaz_dbi_get_row($gTables['pagame'], "web_payment_ref", $order->PaymentId);
 							$idpagame=(isset($pag['codice']))?$pag['codice']:0;
 						}else{// altrimenti non iserisco alcun pagamento
 							$idpagame=0;

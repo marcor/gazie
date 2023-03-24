@@ -108,7 +108,7 @@ if (isset($_POST['conferma']) && isset($_POST['num_orders'])) { // se confermato
 			// provo a ricongiungere i pagamenti
 			if(strlen($_POST['idpagame'.$ord])>0){//se l'e-commerce ha inviato il suo id di riferimento lo inserisco nella testata
 				//provo a ricongiungerlo con GAzie
-				$pag = gaz_dbi_get_row($gTables['pagame'], "web_payment_ref", intval($_POST['idpagame'.$ord]));
+				$pag = gaz_dbi_get_row($gTables['pagame'], "web_payment_ref", $_POST['idpagame'.$ord]);
 				$idpagame=(isset($pag['codice']))?$pag['codice']:0;
 			}else{// altrimenti non iserisco alcun pagamento
 				$idpagame=0;
