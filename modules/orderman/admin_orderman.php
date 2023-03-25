@@ -218,7 +218,6 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ // se NON è il pri
     }
     $form['id_movmag'] = $_POST['id_movmag'];
     $form['id_lotmag'] = (isset($_POST['id_lotmag']))?$_POST['id_lotmag']:'';
-
     if (isset($_POST['numcomp'])) {
       $form['numcomp'] = $_POST['numcomp'];
       if ($form['numcomp'] > 0) {
@@ -1117,6 +1116,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
         while ($row = $rescompo->fetch_assoc()) { // creo gli input dei componenti visualizzandone anche disponibilità di magazzino
           $nmix=$nc;$mix="";$passrecstoc="";$ko="";
           if ($form['quantip'] > 0) {
+            ?><div class="container-fluid" style="border: 1px solid green;"><?php
 
             if ($row['SIAN']==1 & isset($form['recip_stocc_comp'][$nc]) && strlen($form['recip_stocc_comp'][$nc])>0){// se c'è un recipiente di stoccaggio del componente
               // il contenuto potrebbe essere una miscela di articoli diversi con lotti e/o senza lotti
@@ -1312,7 +1312,6 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
               if ($rescampbase['confezione']==0){ // se è sfuso apro la richiesta contenitore
 
                 ?>
-                <div class="container-fluid">
                 <div class="row">
                 <label for="camp_recip_stocc_comp" class="col-sm-5"><?php echo "Recipiente stoccaggio del componente"; ?></label>
                 <?php
@@ -1347,16 +1346,19 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
                   $excluded_movmag=0;
                 } else {
                   // creo array con ID lotti da escludere
-                  $excluded_movmag=array();
-                  foreach ($form['lot_idmov'][$nc] as $excl_lot){
+                    $excluded_movmag=0;
+                    if (isset($form['lot_idmov'][$nc])){
+                      $excluded_movmag=array();
+                      foreach ($form['lot_idmov'][$nc] as $excl_lot){
 
-                    $excluded_movmag[]=$excl_lot;
-                  }
+                        $excluded_movmag[]=$excl_lot;
+                      }
+                    }
+
                 }
-
                 $lm->getAvailableLots($row['codice_artico_base'],$excluded_movmag);
                 $ld = $lm->divideLots(str_replace(",","",$row['quantita_artico_base']));
-                if ((!isset($_POST['Update'])) and (isset($_GET['Update']))){// se è il primo accesso per update devo impostare le scelte vecchie scelte
+                if ((!isset($_POST['Update'])) and (isset($_GET['Update']))){// se è il primo accesso per update devo impostare le vecchie scelte
 
                   //echo "<pre>",print_r($form['id_lot_comp'][$nc]);die;
 
@@ -1401,6 +1403,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
                     // ripartisco la quantità introdotta tra i vari lotti disponibili per l'articolo
                     foreach ($lm->divided as $k => $v) { // ciclo i lotti scelti da divideLots
                       if ($v['qua'] >= 0.00001) {
+                        ?><div class="row"><?php
                         //$form['id_lot_comp'][$nc][$l]="";
                         //$form['lot_quanti'][$nc][$l]="";
 
@@ -1413,7 +1416,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
                           }
                           $selected_lot = $lm->getLot($form['id_lot_comp'][$nc][$l]);
                           $disp= $lm -> dispLotID ($artico['codice'], $selected_lot['id'],(isset($form['lot_idmov'][$nc][$l]))?$form['lot_idmov'][$nc][$l]:0);
-                          echo '<div><button class="btn btn-xs btn-success"  title="Lotto selezionato automaticamente" data-toggle="collapse" href="#lm_dialog' . $nc . $l.'">' . $selected_lot['id'] . ' Lotto n.: ' . $selected_lot['identifier'];
+                          echo '<button class="btn btn-xs btn-success"  title="Lotto selezionato automaticamente" data-toggle="collapse" href="#lm_dialog' . $nc . $l.'">' . $selected_lot['id'] . ' Lotto n.: ' . $selected_lot['identifier'];
                           if (intval($selected_lot['expiry'])>0){
                             echo ' Scadenza: ' . gaz_format_date($selected_lot['expiry']);
                           }
@@ -1426,6 +1429,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
                         Quantità<input type="text" name="lot_quanti<?php echo $nc, $l; ?>" value="<?php echo $form['lot_quanti'][$nc][$l]; ?>" onchange="this.form.submit();">
                         <?php
                         $l++;
+                        ?></div><?php
                       }
                     }
 
@@ -1434,6 +1438,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
                     <?php
                   } elseif ($form['amLot'. $nc] == "manuale"){	// se selezione manuale
                     for ($l = 0;$l < $form['q_lot_comp'][$nc];++$l) {
+                      ?><div class="row"><?php
                       if (!isset($form['id_lot_comp'][$nc][$l]) or (intval($form['id_lot_comp'][$nc][$l])==0)) {
                         $form['id_lot_comp'][$nc][$l] = 0; // appena aggiunto rigo lotto ciclo setto il lotto a zero
                         $form['lot_quanti'][$nc][$l] = 0;
@@ -1441,7 +1446,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
                         $selected_lot = $lm->getLot($form['id_lot_comp'][$nc][$l]);
                       }
                       $disp= $lm -> dispLotID ($artico['codice'], $selected_lot['id'],(isset($form['lot_idmov'][$nc][$l]))?$form['lot_idmov'][$nc][$l]:0);
-                      echo '<div><button class="btn btn-xs btn-success"  title="Lotto selezionato automaticamente" data-toggle="collapse" href="#lm_dialog' . $nc . $l.'">' . $selected_lot['id'] . ' Lotto n.: ' . $selected_lot['identifier'];
+                      echo '<button class="btn btn-xs btn-success"  title="Lotto selezionato automaticamente" data-toggle="collapse" href="#lm_dialog' . $nc . $l.'">' . $selected_lot['id'] . ' Lotto n.: ' . $selected_lot['identifier'];
                       if (intval($selected_lot['expiry'])>0){
                         echo ' Scadenza: ' . gaz_format_date($selected_lot['expiry']);
                       }
@@ -1451,13 +1456,14 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
                       <input type="hidden" name="lot_idmov<?php echo $nc, $l; ?>" value="<?php echo $form['lot_idmov'][$nc][$l]; ?>">
                       <input type="hidden" name="id_lot_comp<?php echo $nc, $l; ?>" value="<?php echo $form['id_lot_comp'][$nc][$l]; ?>">
                       Quantità<input type="text" name="lot_quanti<?php echo $nc, $l; ?>" value="<?php echo $form['lot_quanti'][$nc][$l]; ?>" onchange="this.form.submit();">
+                      </div>
                       <?php
                     }
                     ?>
-                    Passa a <input type="submit" class="btn glyphicon glyphicon-remove-circle" name="autoLot<?php echo $nc; ?>" id="preventDuplicate" onClick="chkSubmit();" value="autoLot">&#128187;
                     <div>
                     <button type="submit" name="addLot<?php echo $nc; ?>" title="Aggiungi rigo lotto" class="btn btn-default"  style="border-radius= 85px; "> <i class="glyphicon glyphicon-plus-sign"></i></button>
                     <button type="submit" name="subtLot<?php echo $nc; ?>" title="Togli rigo lotto" class="btn btn-default"  style="border-radius= 85px; "> <i class="glyphicon glyphicon-minus-sign"></i></button>
+                    &nbsp; &nbsp; Passa a <input type="submit" class="btn " name="autoLot<?php echo $nc; ?>" id="preventDuplicate" onClick="chkSubmit();" value="autoLot">&#128187;
                     </div>
                     <?php
                   }
@@ -1493,7 +1499,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
                   }
                 }
                 ?>
-                </div>
+
                 <input type="hidden" name="id_mov<?php echo $nc; ?>" value="<?php echo $form['id_mov'][$nc]; ?>">
                 <?php
 
@@ -1512,15 +1518,15 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
               }
             }
             ?>
-						</div> <!-- chiude articolo composto  -->
             <?php
             $nc++;
+         ?>
+		</div>	<!-- chiude container  -->
+		<?php
 					}
 				}
 				echo '<input type="hidden" name="numcomp" value="' . $nc . '">'; // Antonio Germani - Nota bene: numcomp ha sempre una unità in più! Non l'ho tolta per distinguere se c'è un solo componente o nessuno.
-		?>
-		</div>	<!-- chiude container  -->
-		<?php
+
 	}
 	?>
 	</td>
