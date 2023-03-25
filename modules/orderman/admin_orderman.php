@@ -177,7 +177,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ // se NON è il pri
         $form['quantipord'] = $res2['quanti'];
         $form['id_tesbro'] = $res['id_tes'];
         $form['id_rigbro'] = $res2['id_rig'];
-  // prendo tutte le produzioni/orderman in cui c'è questo rigbro per conteggiare la quantità eventualmente già prodotta
+    // prendo tutte le produzioni/orderman in cui c'è questo rigbro per conteggiare la quantità eventualmente già prodotta
         $query = "SELECT id FROM " . $gTables['orderman'] . " WHERE id_rigbro = '" . $res2['id_rig'] . "'";
         $resor = gaz_dbi_query($query);
 
@@ -1109,13 +1109,13 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 					if(($key = array_search('0', $excluded_movmag)) !== false){
 						 unset($excluded_movmag[$key]);// tolgo eventuali id zero
 					}
-                }else{ // se non è update non escludo nulla
+        }else{ // se non è update non escludo nulla
 					$excluded_movmag=0;
 				}
 
-		while ($row = $rescompo->fetch_assoc()) { // creo gli input dei componenti visualizzandone anche disponibilità di magazzino
-			$nmix=$nc;$mix="";$passrecstoc="";$ko="";
-			if ($form['quantip'] > 0) {
+        while ($row = $rescompo->fetch_assoc()) { // creo gli input dei componenti visualizzandone anche disponibilità di magazzino
+          $nmix=$nc;$mix="";$passrecstoc="";$ko="";
+          if ($form['quantip'] > 0) {
 
             if ($row['SIAN']==1 & isset($form['recip_stocc_comp'][$nc]) && strlen($form['recip_stocc_comp'][$nc])>0){// se c'è un recipiente di stoccaggio del componente
               // il contenuto potrebbe essere una miscela di articoli diversi con lotti e/o senza lotti
@@ -1128,7 +1128,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
                   $content=$campsilos->getCont($form['recip_stocc_comp'][$nc],'',$excluded_movmag);// la quantita totale disponibile nel silos
                   $row['quantita_artico_base'] = number_format ((floatval($row['quantita_artico_base']) * floatval($form['quantip'])),6);// la quantità necessaria per la produzione
 
-				  if ($content >= $row['quantita_artico_base']){//controllo disponibilità
+                  if ($content >= $row['quantita_artico_base']){//controllo disponibilità
                     $perc_util=number_format((($row['quantita_artico_base']/$content)*100),8);// percentuale di utilizzo con 8 cifre decimali max
                     ?><div class="col-sm-3 "  style="background-color:lightcyan;"><?php echo $row['unimis']," ","Necessari: ", number_format(str_replace(",","",$row['quantita_artico_base']),5,",","."); ?>
                     </div>
@@ -1295,6 +1295,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
                   <div class="col-sm-1" style="background-color:lightgreen;"> OK</div>
                   <?php
                 } else { // giacenza insufficiente
+                  $ko="KO";
                   ?>
                   <input type="hidden" name="quanti_comp<?php echo $nc; ?>" value="ERRORE"> <!-- quantità 	insufficiente componente, ERRORE -->
                   <div class="col-sm-1" style="background-color:red;"> KO</div>
@@ -1809,11 +1810,16 @@ if ($form['order_type'] <> "AGR") { // input esclusi se NON produzione agricola
   echo "<input type=\"hidden\" name=\"lot_or_serial\" value=\"\"></td></tr>";
 }
 echo '<tr><td colspan=2 class="FacetFooterTD text-center" >';
+$disabled="";
+if ($ko=="KO"){
+  $disabled="disabled";
+  $title="c'è un componente KO non puoi procedere";
+}
 
 if ($toDo == 'update') {
-    echo '<input type="submit" accesskey="m" class="btn btn-warning" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="' . ucfirst($script_transl['update']) . $addvalue . '">';
+    echo '<input type="submit" accesskey="m" title="'.$title.'" class="btn btn-warning" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="' . ucfirst($script_transl['update']) . $addvalue . '" '.$disabled.'>';
 } else {
-    echo '<input type="submit" accesskey="i" class="btn btn-warning" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="' . ucfirst($script_transl['insert']) . $addvalue . '">';
+    echo '<input type="submit" accesskey="i" title="'.$title.'" class="btn btn-warning" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="' . ucfirst($script_transl['insert']) . $addvalue . '" '.$disabled.'>';
 }
 echo "</td></tr></table>\n";
 ?>
