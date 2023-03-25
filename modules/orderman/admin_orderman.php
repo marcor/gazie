@@ -548,7 +548,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ // se NON è il pri
             }
             if ($form['cod_operazione']==5){ // se è una movimentazione interna SIAN creo un movimento di magazzino in uscita per far riportare la giacenza
               // inserisco il movimento di magazzino dell'articolo in uscita
-              $id_movmag=$magazz->uploadMag('0', 'MAG', '', '', $form['datemi'], '', '', '81', $form['codart'], $form['quantip'], $form['preacq'], '', 0, $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => '-1', 'desdoc' => 'Movimentazione interna'), 0, $idlotrecip[0], $id_orderman, $form['campo_impianto']);
+              $id_movmag=$magazz->uploadMag('0', 'PRO', '', '', $form['datemi'], '', '', '81', $form['codart'], $form['quantip'], $form['preacq'], '', 0, $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => '-1', 'desdoc' => 'Movimentazione interna'), 0, $idlotrecip[0], $id_orderman, $form['campo_impianto']);
 
               // e creo anche il relativo movimento SIAN
               $form['id_movmag']=$id_movmag;
@@ -584,7 +584,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ // se NON è il pri
                   for ($n = 0;$n < $form['q_lot_comp'][$nc];++$n) { //faccio un ciclo con i lotti di ogni singolo componente
                     if ($form['lot_quanti'][$nc][$n]>0){ // questo evita che, se è stato forzato un lotto a quantità zero, venga generato un  movimento di magazzino
                       // Scarico dal magazzino il componente usato e i suoi lotti
-                      $id_mag=$magazz->uploadMag('0', 'MAG', '', '', $form['datemi'], '', '', '81', $form['artcomp'][$nc], $form['lot_quanti'][$nc][$n], $form['prezzo_comp'][$nc], '', 0, $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => '-1', 'desdoc' => 'Scarico per Produzione con lotto'), 0, $form['id_lot_comp'][$nc][$n], $id_orderman, $form['campo_impianto']);
+                      $id_mag=$magazz->uploadMag('0', 'PRO', '', '', $form['datemi'], '', '', '81', $form['artcomp'][$nc], $form['lot_quanti'][$nc][$n], $form['prezzo_comp'][$nc], '', 0, $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => '-1', 'desdoc' => 'Scarico per Produzione con lotto'), 0, $form['id_lot_comp'][$nc][$n], $id_orderman, $form['campo_impianto']);
 
                       if ($form['SIAN_comp'][$nc]>0){ // imposto l'id movmag e creo il movimento SIAN del componente usato, se previsto
                         $form['id_movmag']=$id_mag;
@@ -606,7 +606,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ // se NON è il pri
                   }
                 } else { // se il componente non ha lotti scarico semplicemente il componente dal magazzino
                   // Scarico il magazzino con l'articolo usato
-                  $id_mag=$magazz->uploadMag('0', 'MAG', '', '', $form['datemi'], '', '', '81', $form['artcomp'][$nc], $form['quanti_comp'][$nc], $form['prezzo_comp'][$nc], '', 0, $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => '-1', 'desdoc' => 'Scarico per Produzione senza lotto'), 0, '', $id_orderman, $form['campo_impianto']);
+                  $id_mag=$magazz->uploadMag('0', 'PRO', '', '', $form['datemi'], '', '', '81', $form['artcomp'][$nc], $form['quanti_comp'][$nc], $form['prezzo_comp'][$nc], '', 0, $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => '-1', 'desdoc' => 'Scarico per Produzione senza lotto'), 0, '', $id_orderman, $form['campo_impianto']);
 
                   if ($form['SIAN_comp'][$nc]>0){ // imposto l'id movmag e salvo il movimento SIAN del componente usato, se previsto
                     $form['id_movmag']=$id_mag;
