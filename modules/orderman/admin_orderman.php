@@ -1278,7 +1278,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
               <input type="hidden" name="artcomp<?php echo $nc; ?>" value="<?php echo $row['codice_artico_base']; ?>">
               <input type="hidden" name="prezzo_comp<?php echo $nc; ?>" value="<?php echo $price_comp; ?>">
               <input type="hidden" name="quality_comp<?php echo $nc; ?>" value="<?php echo $row['quality']; ?>">
-              <input type="hidden" name="old_quanti_comp<?php echo $nc; ?>" value="<?php (isset($form['old_quanti_comp'][$nc]))?$form['old_quanti_comp'][$nc]:0?>">
+              <input type="text" name="old_quanti_comp<?php echo $nc; ?>" value="<?php echo ((isset($form['old_quanti_comp'][$nc]))?$form['old_quanti_comp'][$nc]:0); ?>">
               <input type="hidden" name="id_mov<?php echo $nc; ?>" value="<?php (isset($form['id_mov'][$nc]))?$form['id_mov'][$nc]:0 ?>">
               <div class="row" style="margin-left: 0px;">
                 <div class="col-sm-3 "  style="background-color:lightcyan;"><?php echo $row['codice_artico_base']; ?>
@@ -1811,11 +1811,11 @@ if ($form['order_type'] <> "AGR") { // input esclusi se NON produzione agricola
 }
 echo '<tr><td colspan=2 class="FacetFooterTD text-center" >';
 $disabled="";
+
 if ($ko=="KO"){
   $disabled="disabled";
   $title="c'è un componente KO non puoi procedere";
 }
-
 if ($toDo == 'update') {
     echo '<input type="submit" accesskey="m" title="'.$title.'" class="btn btn-warning" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="' . ucfirst($script_transl['update']) . $addvalue . '" '.$disabled.'>';
 } else {
