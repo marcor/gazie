@@ -1355,8 +1355,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
                 }
 
                 $lm->getAvailableLots($row['codice_artico_base'],$excluded_movmag);
-                $ld = $lm->divideLots($row['quantita_artico_base']);
-
+                $ld = $lm->divideLots(str_replace(",","",$row['quantita_artico_base']));
                 if ((!isset($_POST['Update'])) and (isset($_GET['Update']))){// se è il primo accesso per update devo impostare le scelte vecchie scelte
 
                   //echo "<pre>",print_r($form['id_lot_comp'][$nc]);die;
@@ -1411,7 +1410,6 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 
                           if ((isset($_POST['Update'])) || (!isset($_GET['Update']))){ // se non è il primo accesso per update altrimenti uso il riparto presente nel db DI MOVMAG
                             $form['lot_quanti'][$nc][$l] = $v['qua']; // la quantità in base al riparto
-
                           }
                           $selected_lot = $lm->getLot($form['id_lot_comp'][$nc][$l]);
                           $disp= $lm -> dispLotID ($artico['codice'], $selected_lot['id'],(isset($form['lot_idmov'][$nc][$l]))?$form['lot_idmov'][$nc][$l]:0);
