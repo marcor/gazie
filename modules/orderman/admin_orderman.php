@@ -307,9 +307,10 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ // se NON è il pri
                 }
               }
             }
-            if ($tot != $form['quanti_comp'][$nc] && strlen($form['recip_stocc_comp'][$nc])==0){// se c'è un silos la quantità totale viene stabilita da GAzie e, quindi, non si deve controllate
-              echo "Componente:",$form['artcomp'][$nc];
-              $msg.="25+";//La quantità inserita di un lotto, di un componente, è errata
+            if ($tot != $form['quanti_comp'][$nc] && strlen($form['recip_stocc_comp'][$nc])==0){// se c'è un silos la quantità totale viene stabilita da GAzie e, quindi, non si deve controllare
+              //echo "Componente:",$form['artcomp'][$nc];
+              //$msg.="25+";//La quantità inserita di un lotto, di un componente, è errata
+              /* Antonio Germani - permetto di inserire quantità diverse dalla prevista, l'importante è che ci sia disponibilità (può servire per esaurire un lotto senza lasciarne decimali insignificanti)  */
             }
             if (intval($form['SIAN']) > 0 AND $form['SIAN_comp'][$nc] > 0 AND $campsilos -> getCont($form['recip_stocc_comp'][$nc]) < $form['quanti_comp'][$nc] AND intval($form['cod_operazione'])!==3){
               $msg.= "41+"; // il silos di origine non ha sufficiente quantità olio
@@ -1812,7 +1813,7 @@ if ($form['order_type'] <> "AGR") { // input esclusi se NON produzione agricola
 echo '<tr><td colspan=2 class="FacetFooterTD text-center" >';
 $disabled="";
 
-if ($ko=="KO"){
+if (isset($ko) && $ko=="KO"){
   $disabled="disabled";
   $title="c'è un componente KO non puoi procedere";
 }
