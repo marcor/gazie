@@ -217,7 +217,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     require_once("../".$rshref[$r['tipdoc']]."/prepare_ref_doc_movmag.php");
     $funcn=preg_replace('/[0-9]+/', '', $rshref[$r['tipdoc']]);
     $funcn=$funcn.'_prepare_ref_doc';
-    $r['id_rif']=($r['id_rif']==0 && $r['id_orderman']>0 && $r['tipdoc']=="PRO")?$r['id_orderman']:$r['id_rif'];
+    $r['id_rif']=($r['id_orderman']>0 && $r['tipdoc']=="PRO")?$r['id_orderman']:$r['id_rif'];
     $r['id_rif']=($r['id_rif']==0 && $r['tipdoc']=="MAG")?$r['id_mov']:$r['id_rif'];
     $docdata=$funcn($r['tipdoc'],$r['id_rif']);
     $partner = $anagrafica->getPartner($r['clfoco']);
