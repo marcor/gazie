@@ -549,7 +549,7 @@ if (!isset($_GET['success'])){
 							<div class="col-sm-1 check" align="right">
 								<input class="single_checkbox" type="checkbox" name="download<?php echo $n; ?>" value="download">
 								<input type="hidden" name="num_products" value="<?php echo $n; ?>">
-							</div>		
+							</div>
 					</div>
 				<?php
 				$n++;
@@ -713,8 +713,7 @@ if (!isset($_GET['success'])){
 }
 require("../../library/include/footer.php");
 
-if ($_GET['img']=='updimg'){
-echo "pippo",$_GET['img'];	
+if (isset($_GET['img']) && $_GET['img']=='updimg'){
 	?>
 	<script>
 	$('.select_all').hide();
