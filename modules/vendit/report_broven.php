@@ -99,6 +99,8 @@ $search_fields = [
     => "tipdoc LIKE '%s'",
     'destinaz'
     => "unita_locale1 LIKE '%%%s%%'",
+    'reforder'
+    =>"ref_ecommerce_id_order LIKE '%%%s%%'",
     'anno'
     => "YEAR(datemi) = %d",
     'cliente'
@@ -117,6 +119,7 @@ $sortable_headers = array(
     $script_transl['number'] => "numdoc",
     $script_transl[key($terzo)] => current($terzo),
     "Cliente" => "clfoco",
+    "Rif.Ordine"=>"ref_ecommerce_id_order",
     "Destinazione" => "unita_locale1",
     $script_transl['status'] => "status",
     $script_transl['print'] => "",
@@ -342,6 +345,10 @@ $ts->output_navbar();
                     gaz_flt_disp_int("cliente", "Cliente");
                 }?>
             </td>
+             <td class="FacetFieldCaptionTD">
+                <?php gaz_flt_disp_int("reforder", "Rif.ordine cliente"); ?>
+            </td>
+
             <td class=FacetFieldCaptionTD>
                 <?php
 								gaz_flt_disp_select("destinaz","unita_locale1 AS destinaz",$tesbro_e_destina, $where_select . " AND unita_locale1 IS NOT NULL", "destinaz DESC",  "destinaz");
@@ -362,7 +369,7 @@ $ts->output_navbar();
 				<input type="hidden" name="swStatus" id="preventDuplicate" value="<?php echo $form['swStatus']; ?>">
             </td>
             <td class=FacetFieldCaptionTD>
-                &nbsp;
+
             </td>
             <td class="FacetFieldCaptionTD">
                 <input type="submit" class="btn btn-sm btn-default" name="search" value="<?php echo $script_transl['search']; ?>" tabindex="1">
@@ -372,7 +379,7 @@ $ts->output_navbar();
                 <a class="btn btn-sm btn-default" href="?auxil=<?php echo $tipo; ?>">Reset</a>
             </td>
             <td class="FacetFieldCaptionTD">
-                &nbsp;
+
             </td>
         </tr>
         <tr>
@@ -439,17 +446,18 @@ $ts->output_navbar();
             } else {
                 echo "<td><button class=\"btn btn-xs btn-default disabled\">&nbsp;" . substr($r['tipdoc'], 1, 2) . "&nbsp;" . $r['id_tes'] . " </button></td>";
             }
-            echo "<td>" . $r['numdoc'] . " &nbsp;</td>";
+            echo "<td>" . $r['numdoc'] . " </td>";
             if ( $tipo=="VOG" ) {
-                echo "<td>". getDayNameFromDayNumber($r['weekday_repeat']). " &nbsp;</td>";
+                echo "<td>". getDayNameFromDayNumber($r['weekday_repeat']). " </td>";
             } else {
-                echo "<td>" . gaz_format_date($r['datemi']) . " &nbsp;</td>";
+                echo "<td>" . gaz_format_date($r['datemi']) . " </td>";
             }
-            echo "<td><a title=\"Dettagli cliente\" href=\"report_client.php?nome=" . $r['ragso1'] . "\">" . $r['ragso1'] . "</a> &nbsp;</td>";
+            echo "<td><a title=\"Dettagli cliente\" href=\"report_client.php?nome=" . $r['ragso1'] . "\">" . $r['ragso1'] . "</a> </td>";
+            // colonna riferimento ordine cliente/ecommerce
+            echo '<td>'.$r['ref_ecommerce_id_order'].'</td>';
             echo "<td><a href=\"admin_destinazioni.php?codice=".$r['clfoco']."&Update\">".$r['unita_locale1']."</a>";
 						if(strlen($r['destin'])>5){ echo '<small>'.nl2br($r['destin']).'</small>';}
 						echo "</td>";
-
             // colonna stato ordine
 
             //

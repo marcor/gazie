@@ -27,38 +27,40 @@ $admin_aziend=checkAdmin();
 require("../../library/include/header.php");
 // campi ammissibili per la ricerca
 $search_fields = [
-    'sea_codice' => "{$gTables['artico']}.codice LIKE '%%%s%%'",
+  'sea_codice' => "{$gTables['artico']}.codice LIKE '%%%s%%'",
 	'des_artico' => "{$gTables['artico']}.descri LIKE '%%%s%%'",
-    'gos' => "{$gTables['artico']}.good_or_service = %d",
+	'codfor' => "{$gTables['artico']}.codice_fornitore LIKE '%%%s%%'",
+  'gos' => "{$gTables['artico']}.good_or_service = %d",
 	'unimis' => "{$gTables['artico']}.unimis LIKE '%%%s%%'",
-    'asset' => "id_assets = %d",
-    'codcat' => "{$gTables['catmer']}.codice = %d",
+  'asset' => "id_assets = %d",
+  'codcat' => "{$gTables['catmer']}.codice = %d",
 ];
 
 // creo l'array (header => campi) per l'ordinamento dei record
 $sortable_headers = array  (
-            "Codice" => 'codice',
-            "Descrizione"=>'descri',
-            "Categoria" => 'catmer',
-            "Merce<br/>Servizio" => 'good_or_service',
-            'U.M.' => 'unimis',
-            'Prezzo vend.<br/>listino 1' => 'preve1',
-            'Ordini clienti' => '',
-            'Ultimi acquisti' => '',
-            'Giacenza' => '',
-            '% IVA' => 'aliiva',
-            'Lotti' => '',
-            'Duplica' => '',
-            'Elimina' => ''
+  "Codice" => 'codice',
+  "Descrizione"=>'descri',
+  "Categoria" => 'catmer',
+  "Merce<br/>Servizio" => 'good_or_service',
+  'Codice<br/>Fornitore' => 'codice_fornitore',
+  'U.M.' => 'unimis',
+  'Prezzo vend.<br/>listino 1' => 'preve1',
+  'Ordini clienti' => '',
+  'Ultimi acquisti' => '',
+  'Giacenza' => '',
+  '% IVA' => 'aliiva',
+  'Lotti' => '',
+  'Duplica' => '',
+  'Elimina' => ''
 );
 
 $tablejoin = $gTables['artico']. " LEFT JOIN " . $gTables['catmer'] . " ON " . $gTables['artico'] . ".catmer = " . $gTables['catmer'] . ".codice";
 
 $ts = new TableSorter(
-    $tablejoin,
-    $passo,
-    ['last_modified'=>'desc'],
-    ['asset' => 0]);
+  $tablejoin,
+  $passo,
+  ['last_modified'=>'desc'],
+  ['asset' => 0]);
 ?>
 <script>
 $(function() {
@@ -292,6 +294,9 @@ $ts->output_navbar();
         <?php gaz_flt_disp_select("gos", $gTables['artico'].".good_or_service AS gos", $tablejoin, 1,'good_or_service ASC', $script_transl['good_or_service_value']); ?>
         </td>
 		<td class="FacetFieldCaptionTD">
+      <input type="text" name="codfor" placeholder="Codice fornitore"  class="input-sm form-control" value="<?php echo (isset($codfor))? htmlentities($codfor, ENT_QUOTES) : ""; ?>" maxlength="32">
+    </td>
+		<td class="FacetFieldCaptionTD">
 			<input type="text" name="unimis" placeholder="U.M." class="input-sm form-control" value="<?php echo (isset($unimis))? $unimis : ""; ?>" maxlength="3">
         </td>
 		<td class="FacetFieldCaptionTD"></td>
@@ -397,6 +402,8 @@ while ($r = gaz_dbi_fetch_array($result)) {
 	if ($r['id_artico_group']>0){
 		echo '<a class="btn btn-xs btn-default" title="Gruppo varianti"  onclick="getgroup(\''.$r['id_artico_group'].'\');"> <i class="glyphicon glyphicon-level-up"></i> </a> ';
     }
+  // colonna codice fornitore
+	echo '</td><td class="text-center">'.$r['codice_fornitore'].'</td>';
 	echo "</td>\n";
     echo '<td class="text-center">'.$r['unimis'];
 	echo "</td>\n";
