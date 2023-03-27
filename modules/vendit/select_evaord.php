@@ -76,60 +76,58 @@ function caricaCliente(&$form) {
         $ctrl_testate = $testate['id_tes'];
         $rs_righi = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes = " . $testate['id_tes'], "id_rig asc");
         while ($rigo = gaz_dbi_fetch_array($rs_righi)) {
-            $articolo = gaz_dbi_get_row($gTables['artico'], "codice", $rigo['codart']);
-            $form['righi'][$_POST['num_rigo']]['id_rig'] = $rigo['id_rig'];
-            $form['righi'][$_POST['num_rigo']]['tiprig'] = $rigo['tiprig'];
-            $form['righi'][$_POST['num_rigo']]['id_tes'] = $rigo['id_tes'];
-            $form['righi'][$_POST['num_rigo']]['tipdoc'] = $testate['tipdoc'];
-            $form['righi'][$_POST['num_rigo']]['datemi'] = $testate['datemi'];
-            $form['righi'][$_POST['num_rigo']]['numdoc'] = $testate['numdoc'];
-            $form['righi'][$_POST['num_rigo']]['descri'] = $rigo['descri'];
-            $form['righi'][$_POST['num_rigo']]['id_body_text'] = $rigo['id_body_text'];
-            $form['righi'][$_POST['num_rigo']]['codart'] = $rigo['codart'];
-            $form['righi'][$_POST['num_rigo']]['unimis'] = $rigo['unimis'];
-            $form['righi'][$_POST['num_rigo']]['prelis'] = $rigo['prelis'];
-            $form['righi'][$_POST['num_rigo']]['provvigione'] = $rigo['provvigione'];
-            $form['righi'][$_POST['num_rigo']]['ritenuta'] = $rigo['ritenuta'];
-            $form['righi'][$_POST['num_rigo']]['sconto'] = $rigo['sconto'];
-            $form['righi'][$_POST['num_rigo']]['quanti'] = $rigo['quanti'];
-			$form['righi'][$_POST['num_rigo']]['lot_or_serial'] = $articolo['lot_or_serial'];
-			$form['righi'][$_POST['num_rigo']]['cod_operazione'] = 11;
-			$form['righi'][$_POST['num_rigo']]['SIAN'] = $articolo['SIAN'];
-			$form['righi'][$_POST['num_rigo']]['quality'] = $articolo['quality'];
-			$form['righi'][$_POST['num_rigo']]['recip_stocc'] = "";
-			if ($articolo['SIAN']>0){
-				$camp_artico = gaz_dbi_get_row($gTables['camp_artico'], "codice", $rigo['codart']);
-				$form['righi'][$_POST['num_rigo']]['confezione'] = $camp_artico['confezione'];
-			} else {
-				$form['righi'][$_POST['num_rigo']]['confezione'] = 0;
-			}
-
-
-            if (!isset($form['righi'][$_POST['num_rigo']]['evadibile'])) {
-                $totale_evadibile = $rigo['quanti'];
-                $rs_evasi = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_order=" . $rigo['id_tes'] . " AND codart='" . $rigo['codart'] . "'", "id_rig asc");
-                while ($rg_evasi = gaz_dbi_fetch_array($rs_evasi)) {
-                    $totale_evadibile -= $rg_evasi['quanti'];
-                }
-                if ($totale_evadibile == 0) {
-                    $form['righi'][$_POST['num_rigo']]['checkval'] = false;
-                }
-				$upd_mm = new magazzForm;
-				// Antonio Germani - controllo la giacenza in magazzino e gli ordini già ricevuti
-				$mv = $upd_mm->getStockValue(false, $rigo['codart']);
-				$magval = array_pop($mv);
-				$magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
-				$form['righi'][$_POST['num_rigo']]['giac'] = $magval['q_g'];
-				$form['righi'][$_POST['num_rigo']]['ordin'] = $upd_mm->get_magazz_ordinati($rigo['codart'], "VOR");
-
-                $form['righi'][$_POST['num_rigo']]['evaso_in_precedenza'] = $rigo['quanti'] - $totale_evadibile;
-                $form['righi'][$_POST['num_rigo']]['evadibile'] = $totale_evadibile;
+          $articolo = gaz_dbi_get_row($gTables['artico'], "codice", $rigo['codart']);
+          if (!$articolo){ $articolo=['SIAN'=>'','quality'=>'','lot_or_serial'=>'',]; }
+          $form['righi'][$_POST['num_rigo']]['id_rig'] = $rigo['id_rig'];
+          $form['righi'][$_POST['num_rigo']]['tiprig'] = $rigo['tiprig'];
+          $form['righi'][$_POST['num_rigo']]['id_tes'] = $rigo['id_tes'];
+          $form['righi'][$_POST['num_rigo']]['tipdoc'] = $testate['tipdoc'];
+          $form['righi'][$_POST['num_rigo']]['datemi'] = $testate['datemi'];
+          $form['righi'][$_POST['num_rigo']]['numdoc'] = $testate['numdoc'];
+          $form['righi'][$_POST['num_rigo']]['descri'] = $rigo['descri'];
+          $form['righi'][$_POST['num_rigo']]['id_body_text'] = $rigo['id_body_text'];
+          $form['righi'][$_POST['num_rigo']]['codart'] = $rigo['codart'];
+          $form['righi'][$_POST['num_rigo']]['unimis'] = $rigo['unimis'];
+          $form['righi'][$_POST['num_rigo']]['prelis'] = $rigo['prelis'];
+          $form['righi'][$_POST['num_rigo']]['provvigione'] = $rigo['provvigione'];
+          $form['righi'][$_POST['num_rigo']]['ritenuta'] = $rigo['ritenuta'];
+          $form['righi'][$_POST['num_rigo']]['sconto'] = $rigo['sconto'];
+          $form['righi'][$_POST['num_rigo']]['quanti'] = $rigo['quanti'];
+          $form['righi'][$_POST['num_rigo']]['lot_or_serial'] = $articolo['lot_or_serial'];
+          $form['righi'][$_POST['num_rigo']]['cod_operazione'] = 11;
+          $form['righi'][$_POST['num_rigo']]['SIAN'] = $articolo['SIAN'];
+          $form['righi'][$_POST['num_rigo']]['quality'] = $articolo['quality'];
+          $form['righi'][$_POST['num_rigo']]['recip_stocc'] = "";
+          if ($articolo['SIAN']>0){
+            $camp_artico = gaz_dbi_get_row($gTables['camp_artico'], "codice", $rigo['codart']);
+            $form['righi'][$_POST['num_rigo']]['confezione'] = $camp_artico['confezione'];
+          } else {
+            $form['righi'][$_POST['num_rigo']]['confezione'] = 0;
+          }
+          if (!isset($form['righi'][$_POST['num_rigo']]['evadibile'])) {
+            $totale_evadibile = $rigo['quanti'];
+            $rs_evasi = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_order=" . $rigo['id_tes'] . " AND codart='" . $rigo['codart'] . "'", "id_rig asc");
+            while ($rg_evasi = gaz_dbi_fetch_array($rs_evasi)) {
+                $totale_evadibile -= $rg_evasi['quanti'];
             }
-            $form['righi'][$_POST['num_rigo']]['id_doc'] = $rigo['id_doc'];
-            $form['righi'][$_POST['num_rigo']]['codvat'] = $rigo['codvat'];
-            $form['righi'][$_POST['num_rigo']]['pervat'] = $rigo['pervat'];
-            $form['righi'][$_POST['num_rigo']]['codric'] = $rigo['codric'];
-            $_POST['num_rigo'] ++;
+            if ($totale_evadibile == 0) {
+                $form['righi'][$_POST['num_rigo']]['checkval'] = false;
+            }
+            $upd_mm = new magazzForm;
+            // Antonio Germani - controllo la giacenza in magazzino e gli ordini già ricevuti
+            $mv = $upd_mm->getStockValue(false, $rigo['codart']);
+            $magval = array_pop($mv);
+            $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
+            $form['righi'][$_POST['num_rigo']]['giac'] = $magval['q_g'];
+            $form['righi'][$_POST['num_rigo']]['ordin'] = $upd_mm->get_magazz_ordinati($rigo['codart'], "VOR");
+            $form['righi'][$_POST['num_rigo']]['evaso_in_precedenza'] = $rigo['quanti'] - $totale_evadibile;
+            $form['righi'][$_POST['num_rigo']]['evadibile'] = $totale_evadibile;
+          }
+          $form['righi'][$_POST['num_rigo']]['id_doc'] = $rigo['id_doc'];
+          $form['righi'][$_POST['num_rigo']]['codvat'] = $rigo['codvat'];
+          $form['righi'][$_POST['num_rigo']]['pervat'] = $rigo['pervat'];
+          $form['righi'][$_POST['num_rigo']]['codric'] = $rigo['codric'];
+          $_POST['num_rigo'] ++;
         }
     }
 }
