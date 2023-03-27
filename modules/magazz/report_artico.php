@@ -277,7 +277,7 @@ $ts->output_navbar();
 		</div>
 	</div>
 	<div class="table-responsive">
-	<table class="Tlarge table-responsive table-striped table-bordered table-condensed">
+	<table class="table table-responsive table-striped table-bordered table-condensed">
 	<tr>
 		<td class="FacetFieldCaptionTD">
 			<input type="text" name="sea_codice" placeholder="codice" id="suggest_codice_artico" class="input-sm form-control" value="<?php echo (isset($sea_codice))? htmlentities($sea_codice, ENT_QUOTES) : ""; ?>" maxlength="15">
@@ -309,8 +309,8 @@ $result = gaz_dbi_dyn_query ( $gTables['artico']. ".*, ".$gTables['catmer']. ".d
 ?>
 	<tr class="visible-xs hidden-xs">
 		<td colspan="2" class="text-center col-xs-12 text-small" style="padding: 2px;">
-			<input type="submit" class="btn btn-xs btn-default col-xs-4" name="search" value="<?php echo $script_transl['search'];?>" onClick="javascript:document.report.all.value=1;"><div class="col-xs-4"><i class="glyphicon glyphicon-search"></i></div>
-			<a class="btn btn-xs btn-default col-xs-4" href="?">Reset</a>
+			<input type="submit" class="btn btn-xs btn-default col-xs-2" name="search" value="<?php echo $script_transl['search'];?>" style="color: green;" onClick="javascript:document.report.all.value=1;"><div class="col-xs-2 text-warning"><i class="glyphicon glyphicon-search"></i></div>
+			<a class="btn btn-xs btn-default col-xs-2"  style="color: red;" href="?">Reset</a>
 		</td>
 	</tr>
 
