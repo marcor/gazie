@@ -1130,6 +1130,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
                   $row['quantita_artico_base'] = number_format ((floatval($row['quantita_artico_base']) * floatval($form['quantip'])),6);// la quantità necessaria per la produzione
 
                   if ($content >= $row['quantita_artico_base']){//controllo disponibilità
+                  echo "qta art base:",$row['quantita_artico_base']," -cont:",$content;
                     $perc_util=number_format((($row['quantita_artico_base']/$content)*100),8);// percentuale di utilizzo con 8 cifre decimali max
                     ?><div class="col-sm-3 "  style="background-color:lightcyan;"><?php echo $row['unimis']," ","Necessari: ", number_format(str_replace(",","",$row['quantita_artico_base']),5,",","."); ?>
                     </div>
@@ -1174,7 +1175,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
                       <input type="hidden" name="quanti_comp<?php echo $nc; ?>" value="<?php echo floatval(preg_replace('/[^\d.]/', '', number_format((($qta*$perc_util)/100),8))); ?>"> <!-- quantità utilizzata di ogni componente   -->
                       <input type="hidden" name="id_lot_comp<?php echo $nc, $l; ?>" value="<?php echo $idlot; ?>">
                       <input type="hidden" name="q_lot_comp<?php echo $nc; ?>" value=1>
-                      <input type="text" class="FacetSelect" name="lot_quanti<?php echo $nc, $l; ?>" value="<?php echo floatval(preg_replace('/[^\d.]/', '', number_format((($qta*$perc_util)/100),8))); ?>" readonly="readonly">
+                      <input type="text" class="FacetSelect" name="lot_quanti<?php echo $nc, $l; ?>" value="<?php echo floatval(preg_replace('/[^\d.]/', '', number_format((($qta*$perc_util)/100),8))); ?>" readonly="readonly" style="cursor: not-allowed;" title="Valore non modificabile in quanto il componente viene prelevato da un recipiente">
                       <span>su <?php echo gaz_format_number($qta),$row['unimis'];?> disponibili, lotto n: <?php echo $codartlot['identifier'],(intval($codartlot['expiry'])>0)?" scadenza: ".$codartlot['expiry']:''," id: ",$idlot;?></span>
                     </div>
                     <?php
