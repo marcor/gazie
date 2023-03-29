@@ -122,7 +122,17 @@ if (isset($_POST['conferma'])) { // se confermato
 		}
 	} else {
 		// imposto la connessione al server
-		$conn_id = ftp_connect($ftp_host);
+    try {
+    		$conn_id = ftp_connect($ftp_host);
+    } catch (Error $ex) { // Error is the base class for all internal PHP error exceptions.
+      ?>
+			<script>
+			alert("<?php echo "Errore: connessione FTP a " . $ftp_host . ": ". $ex->getMessage() ." Controllare se l'estensione FTP è abilitata in Php!"; ?>");
+			location.replace("<?php echo $_POST['ritorno']; ?>");
+			</script>
+			<?php
+    }
+
 
 		// effettuo login con user e pass
 		$mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
