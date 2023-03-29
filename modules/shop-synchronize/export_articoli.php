@@ -46,6 +46,8 @@ $ftp_pass= $respass['val'];
 $accpass = gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val'];
 $respath = gaz_dbi_get_row($gTables['company_config'], "var", "path");
 $web_site_path= $respath['val'];
+$respath = gaz_dbi_get_row($gTables['company_config'], "var", "img_limit");
+$img_limit= $respath['val'];
 $test = gaz_dbi_query("SHOW COLUMNS FROM `" . $gTables['admin'] . "` LIKE 'enterprise_id'");
 $exists = (gaz_dbi_num_rows($test)) ? TRUE : FALSE;
 if ($exists) {
@@ -713,15 +715,15 @@ if (!isset($_GET['success'])){
 }
 require("../../library/include/footer.php");
 
-if (isset($_GET['img']) && $_GET['img']=='updimg'){
+if (isset($_GET['img']) && $_GET['img']=='updimg' && intval($img_limit)>0){
 	?>
 	<script>
 	$('.select_all').hide();
-	var limit = 10;
+	var limit = <?php echo intval($img_limit); ?>;
 	$('input.single_checkbox').on('click', function (evt) {
 		if ($('.single_checkbox:checked').length > limit) {
 			this.checked = false;
-			alert('Se si aggiornano le immagini, il limite massimo selezionabile è 10 prodotti');
+			alert('Se si aggiornano le immagini, il limite massimo selezionabile è <?php echo intval($img_limit); ?> prodotti');
 		}
 	});
 	</script>
