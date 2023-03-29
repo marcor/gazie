@@ -1130,7 +1130,6 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
                   $row['quantita_artico_base'] = number_format ((floatval($row['quantita_artico_base']) * floatval($form['quantip'])),6);// la quantità necessaria per la produzione
 
                   if ($content >= $row['quantita_artico_base']){//controllo disponibilità
-                  echo "qta art base:",$row['quantita_artico_base']," -cont:",$content;
                     $perc_util=number_format((($row['quantita_artico_base']/$content)*100),8);// percentuale di utilizzo con 8 cifre decimali max
                     ?><div class="col-sm-3 "  style="background-color:lightcyan;"><?php echo $row['unimis']," ","Necessari: ", number_format(str_replace(",","",$row['quantita_artico_base']),5,",","."); ?>
                     </div>
