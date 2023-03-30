@@ -23,7 +23,8 @@
   --------------------------------------------------------------------------
  */
 require("../../library/include/datlib.inc.php");
-
+require ("../../modules/vendit/lib.function.php");
+$lm = new lotmag;
 $admin_aziend = checkAdmin();
 $message = "";
 
@@ -536,20 +537,27 @@ while ($row = gaz_dbi_fetch_array($result)) {
   echo "</td>";
   echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" style=\"cursor:pointer;\" onclick=\"printPdf('".$modulo."')\"><i class=\"glyphicon glyphicon-print\" title=\"Stampa documento PDF\"></i></a></td>";
   echo "<td>";
+
+  $check_lot_exit = $lm -> check_lot_exit("",$row['id_tes']);// controllo se è già uscito qualche prodotto con lo stesso id lotto
+
   // faccio il controllo di eliminazione dell'ultima fattura ricevuta
-  if (isset($year_last_protoc_id_tes[$row['id_tes']])) {
+  if (isset($year_last_protoc_id_tes[$row['id_tes']]) && $check_lot_exit===FALSE) {
 	?>
 	<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Elimina questo documento" ref="<?php echo $row['id_tes'];?>" fornitore="<?php echo $row['ragso1']; ?>">
 		<i class="glyphicon glyphicon-remove"></i>
 	</a>
 	<?php
 
+  }elseif($check_lot_exit===TRUE){
+    ?>
+    <button title="Non puoi eliminare questo DDT perché almeno uno dei suoi articoli ha un ID lotto che è già uscito dal magazzino" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-remove"></i></button>
+    <?php
   } else {
 		?>
 		<button title="Non puoi eliminare un documento diverso dall'ultimo emesso" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-remove"></i></button>
 		<?php
   }
-    echo "</td></tr>";
+  echo "</td></tr>";
 }
 ?>
     </table>

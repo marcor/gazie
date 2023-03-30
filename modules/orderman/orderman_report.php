@@ -26,6 +26,8 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 require("../../library/include/header.php");
 $script_transl = HeadMain();
+require ("../../modules/vendit/lib.function.php");
+$lm = new lotmag;
 
 $stato_lavorazione = array(0 => "aperto", 1 => "in attesa", 2 => "in lavorazione", 3 => "materiale ordinato", 4 => "incontrate difficoltà", 5 => "in attesa di spedizione", 6 => "spedito", 7 => "consegnato", 8 => "non chiuso", 9 => "chiuso");
 
@@ -262,6 +264,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 
 
 			if (isset($f_row) && strlen($f_row['identifier'])>0) {
+        $check_lot_exit = $lm -> check_lot_exit($f_row['id']);// controllo se è già uscito qualche prodotto con lo stesso id lotto
 				echo '<td align="center">'.$f_row['identifier'].' - '.gaz_format_date($f_row['expiry']).'</td>';
 			} else {
 				echo '<td></td>';
@@ -290,9 +293,15 @@ while ($r = gaz_dbi_fetch_array($result)) {
 			} else  {
 				echo '<td></td>';
 			}
+      $disabled="";
+      $title="";
+      if (isset($check_lot_exit) && $check_lot_exit===TRUE){
+        $disabled="disabled";
+        $title="title='Non puoi cancellare questa produzione perché il lotto con id ". $f_row['id'] ." risulta già uscito dal magazzino'";
+      }
 			?>
 			<td align="center">
-				<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $r['id'];?>" ref2="<?php echo $r['id_tesbro'];?>" orddes="<?php echo $r['description']; ?>">
+				<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $r['id'];?>" ref2="<?php echo $r['id_tesbro'];?>" orddes="<?php echo $r['description']; ?>" <?php echo $disabled," ",$title; ?>>
 					<i class="glyphicon glyphicon-remove"></i>
 				</a>
 			</td>

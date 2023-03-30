@@ -698,6 +698,29 @@ class lotmag {
 		return $disp;
    }
 
+  function check_lot_exit ($idlot, $tesdoc='') {// Antonio Germani - restituisce TRUE se un id lotto è uscito dal magazzino almeno uno volta
+  // se viene passato idlot faccio il controllo solo su questo specifico lotto ( non considero un eventuale tesdoc passato )
+  // se viene passato tesdoc e idlot è nullo faccio il controllo su tutti gli articoli con lotto contenuti in quel documento
+		global $gTables;
+    if (intval($idlot)>0){
+      $query="SELECT id_mov FROM ". $gTables['movmag'] . " WHERE ".$gTables['movmag'] . ".operat='-1' AND ".$gTables['movmag'] . ".id_lotmag='" .$idlot. "' LIMIT 1";
+      $check=gaz_dbi_query($query);
+      if ($check->num_rows>0){
+        return TRUE;
+      }
+    }elseif (intval($tesdoc)>0){// prendo tutti i righi del tesdoc con un lotto di carico
+      $query="SELECT id_mag, id_lotmag FROM ". $gTables['rigdoc'] . " LEFT JOIN ". $gTables['movmag'] ." ON ". $gTables['movmag'] .".id_rif = ". $gTables['rigdoc'] .".id_rig WHERE ". $gTables['rigdoc'] . ".id_tes = '". $tesdoc ."' AND ".$gTables['movmag'] . ".operat='1' AND ".$gTables['movmag'] . ".id_lotmag>'0'";
+      $check_rows=gaz_dbi_query($query);
+      while ($row = gaz_dbi_fetch_array($check_rows)){// ciclo i righi con articolo lotto
+        $query="SELECT id_mov FROM ". $gTables['movmag'] . " WHERE ".$gTables['movmag'] . ".operat='-1' AND ".$gTables['movmag'] . ".id_lotmag='" .$row['id_lotmag']. "' LIMIT 1";
+        $check=gaz_dbi_query($query);
+        if ($check->num_rows>0){
+          return TRUE;
+        }
+      }
+    }
+    return FALSE;
+  }
 }
 
 ?>

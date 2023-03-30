@@ -23,6 +23,8 @@
   --------------------------------------------------------------------------
  */
 require("../../library/include/datlib.inc.php");
+require ("../../modules/vendit/lib.function.php");
+$lm = new lotmag;
 $admin_aziend = checkAdmin();
 $pdf_to_modal = gaz_dbi_get_row($gTables['company_config'], 'var', 'pdf_reports_send_to_modal')['val'];
 $tipdoc=array('DDL', 'RDL', 'DDR','ADT', 'AFT');
@@ -273,16 +275,22 @@ function printPdf(urlPrintDoc){
           }
           echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" style=\"cursor:pointer;\" ".($pdf_to_modal==0?'href="stampa_docacq.php?id_tes=' . $r["id_tes"] .'&template=DDT" target="_blank"':"onclick=\"printPdf('stampa_docacq.php?id_tes=" . $r["id_tes"] ."&template=DDT')\"")."><i class=\"glyphicon glyphicon-print\" title=\"Stampa documento PDF\"></i></a></td>";
           echo '<td class="text-center">';
+          $check_lot_exit = $lm -> check_lot_exit("",$r['id_tes']);// controllo se è già uscito qualche articolo lotto con lo stesso id lotto
+
           if (substr($r['tipdoc'], 0, 2)=="AF" ){
-          ?>
-          <button title="Questo Ddt &egrave; stato fatturato. Per eliminarlo devi prima eliminare la relativa fattura" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-remove"></i></button>
-          <?php
+            ?>
+            <button title="Questo Ddt &egrave; stato fatturato. Per eliminarlo devi prima eliminare la relativa fattura" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-remove"></i></button>
+            <?php
+          } elseif($check_lot_exit===TRUE){
+            ?>
+            <button title="Non puoi eliminare questo DDT perché almeno uno dei suoi articoli ha un ID lotto che è già uscito dal magazzino" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-remove"></i></button>
+            <?php
           } else {
-          ?>
-          <a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Elimina questo D.d.T." ref="<?php echo $r['id_tes'];?>" catdes="<?php echo $r['ragso1']; ?>">
-            <i class="glyphicon glyphicon-remove"></i>
-          </a>
-          <?php
+            ?>
+            <a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Elimina questo D.d.T." ref="<?php echo $r['id_tes'];?>" catdes="<?php echo $r['ragso1']; ?>">
+              <i class="glyphicon glyphicon-remove"></i>
+            </a>
+            <?php
           }
           echo "</td></tr>";
         }
