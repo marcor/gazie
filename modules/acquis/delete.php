@@ -89,8 +89,14 @@ if ((isset($_POST['type']) && isset($_POST['ref'])) OR (isset($_POST['type']) &&
         $rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = '".$i."'","id_tes desc");
         while ($a_row = gaz_dbi_fetch_array($rs_righidel)){
           gaz_dbi_del_row($gTables['rigdoc'], "id_rig", $a_row['id_rig']);
-          if (intval($a_row['id_mag']) > 0){  //se c'� stato un movimento di magazzino lo azzero
+          if (intval($a_row['id_mag']) > 0){  //se c'è stato un movimento di magazzino lo azzero
+            $mag=gaz_dbi_get_row($gTables['movmag'], "id_mov", $a_row['id_mag']);// ma prima ne ne prendo i relativi dati
+
             $upd_mm->uploadMag('DEL', '', '', '', '', '', '', '', '', '', '', '', $a_row['id_mag']);
+
+            if (intval($mag['id_lotmag'])>0 && intval($mag['operat'])==1){// se aveva creato un id lotto lo cancello
+               gaz_dbi_del_row($gTables['lotmag'], "id", $mag['id_lotmag']);
+            }
 
             // cancello pure eventuale movimento sian
             gaz_dbi_del_row($gTables['camp_mov_sian'], "id_movmag", $a_row['id_mag']);

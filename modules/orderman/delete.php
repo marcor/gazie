@@ -41,13 +41,16 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 			$res = gaz_dbi_get_row($gTables['tesbro'],"id_tes",$id_tesbro); // prendo il rigo di tesbro interessato
 
 			// prendo tutti i movimenti di magazzino a cui fa riferimento la produzione
-			$what=$gTables['movmag'].".id_mov ";
+			$what=$gTables['movmag'].".id_mov, ".$gTables['movmag'].".id_lotmag, ".$gTables['movmag'].".operat ";
 			$table=$gTables['movmag'];$idord=$i;
 			$where="id_orderman = $idord";
 			$resmov=gaz_dbi_dyn_query ($what,$table,$where);
 			while ($r = gaz_dbi_fetch_array($resmov)) {
 				$upd_mm->uploadMag('DEL', 'PRO', '', '', '', '', '', '', '', '', '', '', $r['id_mov']);//cancello i movimenti di magazzino corrispondenti
 				gaz_dbi_del_row($gTables['camp_mov_sian'], "id_movmag", $r['id_mov']);// cancello i relativi movimenti SIAN
+        if (intval($r['operat'])==1 && intval($r['id_lotmag'])>0){// se aveva creato un lotto lo cancello
+          gaz_dbi_del_row($gTables['lotmag'], "id", $r['id_lotmag']);
+        }
 			}
       if (isset($res)){// se il tipo di produzione prevede un ordine
         if (intval($res['clfoco'])==0) { // se NON è un ordine cliente esistente e quindi fu generato automaticamente da orderman
