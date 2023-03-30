@@ -592,7 +592,7 @@ form table.GazFormDeleteTable {
 html body form section.content form.form-horizontal{
   padding-top: 12px;
 }
-table.xdebug-error{
+table.xdebug-error, pre.xdebug-var-dump {
   z-index: 2000;
   position: relative;
 }
@@ -662,4 +662,7 @@ section.content-header div h1 {
 }
 .ui-button {
   padding: 1px;
+}
+.line-through {
+  text-decoration: line-through;
 }

@@ -807,3 +807,6 @@ div#fattura-container {
 .ui-button {
   padding: 1px;
 }
+.line-through {
+  text-decoration: line-through;
+}

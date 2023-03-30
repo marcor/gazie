@@ -1994,11 +1994,11 @@ class GAzieForm {
     }
 
     function gazResponsiveTable($rows,$id='gaz-responsive-table',$rowshead=[],$rowsfoot=[]) {
-      // in $row ci devono essere i righi con un array cos� formattato:
+      // in $row ci devono essere i righi con un array così formattato:
       // $rows[row][col]=array('title'=>'nome_colonna','value'=>'valore','type'=>'es_input','class'=>'classe_bootstrap',table_id=>'gaz-resposive_table')
       // eventualmente si può valorizzare $rowshead e $rowsfoot per scrivere un rigo prima o dopo di quello di riferimento
       ?>
-      <div class="panel panel-success col-xs-12" >
+      <div class="col-xs-12" style="padding: 0; padding-right: 0" >
         <div id="<?php echo $id; ?>"  class="table-responsive" style="min-height: 80px;">
           <table class="col-xs-12 table-striped table-condensed cf">
             <thead class="cf">
@@ -2007,7 +2007,7 @@ class GAzieForm {
       // attraverso il primo elemento dell'array allo scopo di scrivere il thead
 			$fk=key($rows);
       foreach ($rows[$fk] as $v) {
-        echo '<th class="' . $v['class'] . '">' . $v['head'] . "</th>";
+        echo '<th>' . $v['head'] . "</th>";
       }
       ?>
               </tr>
@@ -2024,7 +2024,7 @@ class GAzieForm {
           if (isset($v['td_content'])) { // se ho un tipo diverso dal semplice
             echo $v['td_content'];
           }
-          echo '>' . $v['value'] . "&nbsp;</td>\n";
+          echo '>' . $v['value'] . " </td>\n";
         }
         echo "</tr>\n";
         if (isset($rowsfoot[$k])){ // ho una intestazione per il rigo
