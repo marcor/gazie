@@ -55,7 +55,7 @@ $strScript = array("browse_document.php" =>
         'payroll_tax' => 'Cassa Prev.',
         'barcode' => 'Cod.Barre',
         'clone' => 'Duplica',
-        'cosear'=>'aggiungi "%" e invia per ricerca, oppure seleziona', 
+        'cosear'=>'aggiungi "%" e invia per ricerca, oppure seleziona',
         'clfoco'=>'Supplier',
     ),
     "report_statis.php" =>
@@ -362,18 +362,20 @@ $strScript = array("browse_document.php" =>
         'ins_this' => 'Add product',
         'upd_this' => 'Update product',
         'err' => array(
-            'codice'=>'The product code already exists',
-            'movmag'=>'You are trying to change the code to a product associated with the movement of stock',
-            'filmim'=>'The file must be in PNG, JPG, GIF',
-            'filsiz'=>'The image of the product should not be larger than 64Kb',
-            'valcod'=>'Enter a valid code',
-            'descri'=>'Enter a description',
-            'unimis'=>'Insert the unit sales',
-            'aliiva'=>'Enter the VAT rate',
-            'lotmag'=>'Per avere la tracciabilità per lotti è necessario attivare la contabilità di magazzino in configurazione azienda',
-           'no_ins' => 'Non sono riuscito ad inserire l\'articolo sul database',
+          'codice'=>'The product code already exists',
+          'movmag'=>'You are trying to change the code to a product associated with the movement of stock',
+          'filmim'=>'The file must be in PNG, JPG, GIF',
+          'filsiz'=>'The image of the product should not be larger than 64Kb',
+          'valcod'=>'Enter a valid code',
+          'descri'=>'Enter a description',
+          'unimis'=>'Insert the unit sales',
+          'aliiva'=>'Enter the VAT rate',
+          'lotmag'=>'Per avere la tracciabilità per lotti è necessario attivare la contabilità di magazzino in configurazione azienda',
+          'no_ins' => 'Non sono riuscito ad inserire l\'articolo sul database',
           'char' => 'Sul codice articolo ho sostituito i caratteri speciali non consentiti con "_" ',
-          'codart_len' => 'Il codice articolo ha una lunghezza diversa da quella stabilita in configurazione avanzata azienda '
+          'codart_len' => 'Il codice articolo ha una lunghezza diversa da quella stabilita in configurazione avanzata azienda ',
+          'no_web' => 'Per attivare l\'articolo nell\'e-commerce è necessario che sia inserito il riferimento ID e-commerce nella scheda magazzino',
+          'no_lot' => 'Un servizio non può avere lotti'
         ),
         'codice' => "Code",
         'descri' => "Description",
@@ -453,9 +455,9 @@ $strScript = array("browse_document.php" =>
         'upd_this' => 'Modifica il gruppo delle varianti',
         'err' => array(
             'codice' => 'Il codice articolo &egrave; gi&agrave; esistente',
-            'empty_var' => 'Deve esserci per forza almeno una variante',			
+            'empty_var' => 'Deve esserci per forza almeno una variante',
             'grcod' => 'Questo articolo appartiene già ad un altro gruppo',
-            'descri' => 'Inserire una descrizione',           
+            'descri' => 'Inserire una descrizione',
             'no_ins' => 'Non sono riuscito ad inserire l\'articolo sul database',
             'char' => 'Sul codice articolo ho sostituito i caratteri speciali non consentiti con "_" ',
             'codart_len' => 'Il codice articolo ha una lunghezza diversa da quella stabilita in configurazione avanzata azienda '
@@ -467,8 +469,8 @@ $strScript = array("browse_document.php" =>
 		'home' => "ID gruppo",
 		'variant' => "Varianti, opzioni, attributi",
 		'codice' => "ID gruppo",
-        'descri' => "Descrizione",        
-		'image' => 'immagine',        
+        'descri' => "Descrizione",
+		'image' => 'immagine',
         'web_public' => 'Pubblica sul sito web',
         'web_public_value' => array(0 => 'No', 1 => 'Si'),
 		'body_text' => 'Descrizione estesa',
@@ -478,6 +480,6 @@ $strScript = array("browse_document.php" =>
         'modal_ok_insert' => 'Articolo inserito con successo clicca sulla X in alto a destra per uscire oppure...',
         'mesg' => array(
         )
-    )    
+    )
 );
 ?>

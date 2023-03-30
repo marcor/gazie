@@ -395,7 +395,8 @@ $strScript = array(
             'no_ins' => 'Non sono riuscito ad inserire l\'articolo sul database',
             'char' => 'Sul codice articolo ho sostituito i caratteri speciali non consentiti con "_" ',
             'codart_len' => 'Il codice articolo ha una lunghezza diversa da quella stabilita in configurazione avanzata azienda ',
-            'no_web' => 'Per attivare l\'articolo nell\'e-commerce è necessario che sia inserito il riferimento ID e-commerce nella scheda magazzino'
+            'no_web' => 'Per attivare l\'articolo nell\'e-commerce è necessario che sia inserito il riferimento ID e-commerce nella scheda magazzino',
+            'no_lot' => 'Un servizio non può avere lotti'
         ),
         'war' => array(
             'ok_ins' => 'Articolo inserito con successo'

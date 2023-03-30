@@ -247,6 +247,9 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
   if ($form['web_public']>0 && intval($form['ref_ecommerce_id_product'])==0 && $toDo=="update"){// in update, senza id riferimento all'e-commerce non si può attivare
     $change_todo = "insert";// vuol dire che si deve inserire nell'e-commerce
   }
+  if (intval($form['lot_or_serial'])>0 && intval($form['good_or_service'])==1){
+    $msg['err'][] = 'no_lot';
+  }
 
   if (count($msg['err']) == 0) { // ***  NESSUN ERRORE  ***
     if (!empty($_FILES['userfile']) && $_FILES['userfile']['size'] > 0) { //se c'e' una nuova immagine nel buffer
