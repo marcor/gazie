@@ -701,6 +701,7 @@ label {
         white-space: nowrap;
         text-align:left;
         font-weight: bold;
+        font-size: small;
     }
 
     #gaz-responsive-table td:before { content: attr(data-title); }
