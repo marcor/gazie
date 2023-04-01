@@ -59,7 +59,7 @@ if (is_array($data)) {
 $folderMissing = controllaEsistenzaCartelle();
 $lastBackup = $checkUpd->testDbBackup();
 
-//Andrea backup automatico
+//andrea backup automatico
 $backupMode = $checkUpd->backupMode();
 if ($backupMode == "automatic") {
     if ($checkUpd->testDbBackup(0) != date("Y-m-d")) {
@@ -68,7 +68,7 @@ if ($backupMode == "automatic") {
         $freespace = gaz_dbi_get_row($gTables['config'], 'variable', 'freespace_backup');
         $percspace = (disk_total_space($sysdisk) / 100) * $freespace["cvalue"];
 
-        $files = glob($gazpath . '*.gz');
+        $files = glob($gazpath . '*.gaz');
         array_multisort(array_map('filemtime', $files), SORT_NUMERIC, SORT_ASC, $files);
 
         $keep = gaz_dbi_get_row($gTables['config'], 'variable', 'keep_backup');

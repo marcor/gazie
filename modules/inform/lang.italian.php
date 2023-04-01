@@ -121,13 +121,13 @@ $strScript = array(
         'addpage' => 'Aggiungi una pagina al sito'
     ),
     "backup.php" =>
-    array('title' => "Download del backup dei dati per mettere in sicurezza il lavoro",
+    array('title' => "Backup dei dati per mettere in sicurezza il lavoro!",
         'errors' => array(),
         'instructions' => 'Aggiungere le istruzioni seguenti',
         'table_selection' => 'Backup di',
         'table_selection_value' => array(0 => ' tutte le tabelle della base di dati ', 1 => ' le sole tabelle con prefisso '),
         'text_encoding' => 'Codifica',
-        'sql_submit' => 'Stai per generare e scaricare un file sql di backup del database di GAzie in formato .gz',
+        'sql_submit' => 'Genera il file sql',
     ),
     "report_backup.php" =>
     array('title' => "Lista dei backup interni ",
@@ -141,7 +141,7 @@ $strScript = array(
         'del' => 'Elimina',
         'config' => 'Configurazione',
         'backup_mode' => 'Modalità di backup',
-        'backup_mode_value' => array('automatic' => 'Automatico', 'manual' => 'Manuale'),
+        'backup_mode_value' => array('automatic' => 'Automatico', 'internal' => 'Locale', 'external' => 'Remoto'),
         'sure' => 'Sei sicuro?',
         'recover' => 'Ripristinare'
     ),
