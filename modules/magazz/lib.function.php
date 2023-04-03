@@ -794,10 +794,11 @@ class magazzForm extends GAzieForm {
     } else {
         $desdoc .= " n." . $numdoc;
         if ($seziva != '')
-            $desdoc .= "/" . $seziva;
-        $desdoc .= " prot." . $protoc;
+          $desdoc .= "/" . $seziva;
+        if ($protoc >= 1)
+          $desdoc .= " prot." . $protoc;
         if ($seziva != '')
-            $desdoc .= "/" . $seziva;
+          $desdoc .= "/" . $seziva;
     }
     $new_caumag = gaz_dbi_get_row($gTables['caumag'], 'codice', $caumag);
     $operat = ($new_caumag)?$new_caumag['operat']:0;
