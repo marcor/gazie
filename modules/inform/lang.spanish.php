@@ -108,13 +108,13 @@ $strScript = array("report_letter.php" =>
         'listin_value' => array(1 => ' de venta 1', 2 => ' de venta 2', 3 => ' de venta 3', 'web' => ' de venta en l&iacute;nea')
     ),
     "backup.php" =>
-    array('title' => "Store up data to avoid losing work!",
+    array('title' => "Backup dwnload of the data to avoid losing work",
         'errors' => array(),
         'instructions' => 'Add the following statements',
         'table_selection' => 'Backup of',
         'table_selection_value' => array(0 => ' all tables of database ', 1 => ' only tables with prefix '),
         'text_encoding' => 'Encoding',
-        'sql_submit' => 'Generate sql file',
+        'sql_submit' => 'Stai per generare e scaricare un file sql di backup del database di GAzie in formato .gz',
     ),
     "report_backup.php" =>
     array('title' => "Lista dei backup interni ",
@@ -126,7 +126,7 @@ $strScript = array("report_letter.php" =>
         'dow' => 'Scarica',
         'del' => 'Elimina',
         'backup_mode' => 'Modalità di backup',
-        'backup_mode_value' => array('automatic' => 'Automatico', 'internal' => 'Interno', 'external' => 'Download')
+        'backup_mode_value' => array('automatic' => 'Automatico', 'manual' => 'Manuale')
     ),
     "report_anagra.php" =>
     array('title' => "Anagrafiche comuni"
