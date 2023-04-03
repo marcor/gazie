@@ -39,12 +39,11 @@ if (isset ($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], 'module
 }
 
 if (isset($_GET['type'])) {
-
 	require("../../library/include/datlib.inc.php");
+  $admin_aziend = checkAdmin(9);
 	switch ($_GET['type']) {
 		case "save":
 			$dump = new MySQLDump($link);
-
 			try {@$dump->save(DATA_DIR.'files/backups/' . $Database . '-' . date("YmdHi") . '-v' . GAZIE_VERSION . '.sql.gz');
 				gaz_dbi_put_row($gTables['config'], 'variable', 'last_backup', 'cvalue', date('Y-m-d'));
 			}
@@ -52,7 +51,6 @@ if (isset($_GET['type'])) {
 			  echo $e->getMessage();
 			}
 			break;
-
 	}
 }
 ?>
