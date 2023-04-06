@@ -248,7 +248,16 @@ while ($r = gaz_dbi_fetch_array($result)) {
 			<td align="center"><?php echo $script_transl['order_type'][$r['order_type']];?></td>
 			<td align="center"><?php echo $r['add_info'];?></td>
 			<?php $d_row = gaz_dbi_get_row($gTables['rigbro'], "id_rig", $r['id_rigbro']);?>
-			<td align="center"><?php echo ($d_row)?$d_row['codart']:'';?></td>
+			<td align="center">
+      <?php
+      if ($d_row){
+       echo $d_row['codart'];
+       if (strlen($d_row['codice_fornitore'])>1){
+        echo '<br/>'.$d_row['codice_fornitore'];
+       }
+      }
+      ?>
+      </td>
 
 			<!-- Colonna quantità prodotta -->
 			<?php
