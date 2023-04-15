@@ -132,6 +132,9 @@ if (isset($_POST['conferma'])) { // se confermato
 			} else {
 				$esiste = gaz_dbi_get_row($gTables['artico'], "ref_ecommerce_id_product", $_POST['product_id'.$ord]);// controllo se esiste in GAzie come id e-commerce
 				$vat = gaz_dbi_get_row($gTables['aliiva'], "aliquo", $product->VAT, " AND tipiva = 'I'"); // prendo il codice IVA
+				if(!isset($vat['codice'])){// se non ho trovato una corrispondenza con l'aliquota passata dall'ecommerce
+					$vat['codice']=1;// di default metto il id 1
+				}
 				$tablefile="artico";
 				$itemref=$_POST['codice'.$ord];
 			}
@@ -434,7 +437,7 @@ if (!isset($_GET['success'])){
 						?>
 						<div class="row <?php echo $rowclass ?>" style="border-bottom: 1px solid;">
 							<div class="col-sm-2">
-								<?php echo $n;?>
+								<?php echo $n," VAT:",$product->VAT;?>
 							</div>
 							<div class="col-sm-3">
 								<?php echo $product->Code;

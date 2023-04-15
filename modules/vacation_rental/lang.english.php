@@ -53,7 +53,7 @@ $strScript = array(
         'instr_sent' => "The summary with all the information has been sent to the e-mail address provided.<br>Attention! The details for accessing the reservation online are shown exclusively in the email sent to the address entered in the form.",
         'not_received' => "If you have not received the email and have checked your spam folder, contact the site administrator.",
         'close'=>'This message will close in ',
-      ),	
+      ),
     "report_facility.php" =>
       array('title' => 'Lista deglle strutture ricettive',
         'codice' => "Codice",
@@ -652,7 +652,7 @@ $strScript = array(
 		'imposta'=>"For price or to book, set check-in and check-out date",
 		'risultato'=>"Availability for the dates requested",
 		'book'=>"Book",
-		'nessun_risultato'=>"There is no availability for your requested dates. Try to modify them or look at the calendar.",
+		'nessun_risultato'=>"There is no availability for your requested dates. Try to modify them or look at the total calendar.",
     'for_night' => 'for night',
     'nights' => 'nights',
     'over_guest' => 'Attention: this accommodation is available but it has a max capability of',
