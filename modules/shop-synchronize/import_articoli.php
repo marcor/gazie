@@ -437,7 +437,7 @@ if (!isset($_GET['success'])){
 						?>
 						<div class="row <?php echo $rowclass ?>" style="border-bottom: 1px solid;">
 							<div class="col-sm-2">
-								<?php echo $n," VAT:",$product->VAT;?>
+								<?php echo $n;?>
 							</div>
 							<div class="col-sm-3">
 								<?php echo $product->Code;
