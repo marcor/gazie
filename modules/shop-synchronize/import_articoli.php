@@ -269,27 +269,39 @@ if (isset($_POST['conferma'])) { // se confermato
 					} else {
 						$updcat="";
 					}
-					
+					$extra_upd="";
+					if (strlen($product->WebUrl)>1){// se è stato mandato un web url lo aggiorno
+						$extra_upd .= "web_url = '".$product->WebUrl."',";
+					}
+					if (strlen($product->Unimis)>0){// se è stata mandata l'unità di misura url lo aggiorno
+						$extra_upd .= "web_mu = '".$product->Unimis."',";
+					}
+					if (strlen($product->Weight)>0){// se è stato mandato un web url lo aggiorno
+						$extra_upd .= "peso_specifico = '".$product->Weight."',";
+					}
+					if (strlen($product->BarCode)==13){// se è stato mandato un barcode lo aggiorno
+						$extra_upd .= "barcode = '".$product->BarCode."',";
+					}
 					if ($_GET['updpre']=="updpre" AND $_GET['updname']=="updnam") { // se devo aggiornare prezzo e nome
 						
 						if ($product->Type=="parent"){ // se è un parent					
 							gaz_dbi_query("UPDATE ". $gTables['artico_group'] . " SET descri = '". htmlspecialchars_decode (addslashes($product->Name)) ."', web_public = '".$web_public."' WHERE ref_ecommerce_id_main_product = '".$_POST['product_id'.$ord]."'");
 						} else {
-							gaz_dbi_query("UPDATE ". $gTables['artico'] . " SET ecomm_option_attribute = '".$arrayvar."', ". $updcat ." peso_specifico = '".$product->Weight."', descri = '".addslashes($product->Name)."', web_price = '".addslashes($product->Price)."' , id_artico_group ='". $id_artico_group ."', web_public = '".$web_public."' WHERE ref_ecommerce_id_product = '". $_POST['product_id'.$ord] ."'");
+							gaz_dbi_query("UPDATE ". $gTables['artico'] . " SET ".$extra_upd." ecomm_option_attribute = '".$arrayvar."', ". $updcat ." peso_specifico = '".$product->Weight."', descri = '".addslashes($product->Name)."', web_price = '".addslashes($product->Price)."' , id_artico_group ='". $id_artico_group ."', web_public = '".$web_public."' WHERE ref_ecommerce_id_product = '". $_POST['product_id'.$ord] ."'");
 						}
 					} elseif ($_GET['updpre']!=="updpre" AND $_GET['updname']=="updnam") { // altrimenti non aggiorno il prezzo ma aggiorno il nome
 						if ($product->Type=="parent"){ // se è un parent					
 							gaz_dbi_query("UPDATE ". $gTables['artico_group'] . " SET descri = '". htmlspecialchars_decode (addslashes($product->Name)) ."', web_public = '".$web_public."' WHERE ref_ecommerce_id_main_product = '".$_POST['product_id'.$ord]."'");
 						} else {
-							gaz_dbi_query("UPDATE ". $gTables['artico'] . " SET ecomm_option_attribute = '".$arrayvar."', ". $updcat ." peso_specifico = '".$product->Weight."', descri = '".addslashes($product->Name)."', id_artico_group ='". $id_artico_group ."', web_public = '".$web_public."' WHERE ref_ecommerce_id_product = '". $_POST['product_id'.$ord] ."'");
+							gaz_dbi_query("UPDATE ". $gTables['artico'] . " SET ".$extra_upd." ecomm_option_attribute = '".$arrayvar."', ". $updcat ." peso_specifico = '".$product->Weight."', descri = '".addslashes($product->Name)."', id_artico_group ='". $id_artico_group ."', web_public = '".$web_public."' WHERE ref_ecommerce_id_product = '". $_POST['product_id'.$ord] ."'");
 						}
 					} elseif ($_GET['updpre']=="updpre" AND $_GET['updname']!=="updnam" AND $product->Type!=="parent") { // altrimenti aggiorno il prezzo ma non aggiorno il nome
-						gaz_dbi_query("UPDATE ". $gTables['artico'] . " SET ecomm_option_attribute = '".$arrayvar."', ". $updcat ." peso_specifico = '".$product->Weight."', web_price = '".addslashes($product->Price)."', id_artico_group ='". $id_artico_group ."', web_public = '".$web_public."' WHERE ref_ecommerce_id_product = '". $_POST['product_id'.$ord] ."'");
+						gaz_dbi_query("UPDATE ". $gTables['artico'] . " SET ".$extra_upd." ecomm_option_attribute = '".$arrayvar."', ". $updcat ." peso_specifico = '".$product->Weight."', web_price = '".addslashes($product->Price)."', id_artico_group ='". $id_artico_group ."', web_public = '".$web_public."' WHERE ref_ecommerce_id_product = '". $_POST['product_id'.$ord] ."'");
 					} else {// oppure aggiorno i dati default ma no nome e no prezzo
 						if ($product->Type=="parent"){ // se è un parent					
 							gaz_dbi_query("UPDATE ". $gTables['artico_group'] . " SET descri = '". htmlspecialchars_decode (addslashes($product->Name)) ."', web_public = '".$web_public."' WHERE ref_ecommerce_id_main_product = '".$_POST['product_id'.$ord]."'");
 						} else {
-							gaz_dbi_query("UPDATE ". $gTables['artico'] . " SET ecomm_option_attribute = '".$arrayvar."', ". $updcat ." peso_specifico = '".$product->Weight."', id_artico_group ='". $id_artico_group ."', web_public = '".$web_public."' WHERE ref_ecommerce_id_product = '". $_POST['product_id'.$ord] ."'");
+							gaz_dbi_query("UPDATE ". $gTables['artico'] . " SET ".$extra_upd." ecomm_option_attribute = '".$arrayvar."', ". $updcat ." peso_specifico = '".$product->Weight."', id_artico_group ='". $id_artico_group ."', web_public = '".$web_public."' WHERE ref_ecommerce_id_product = '". $_POST['product_id'.$ord] ."'");
 						}
 					}
 				
