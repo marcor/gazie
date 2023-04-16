@@ -276,7 +276,7 @@ if (isset($_POST['conferma'])) { // se confermato
 					if (strlen($product->Unimis)>0){// se è stata mandata l'unità di misura url lo aggiorno
 						$extra_upd .= "web_mu = '".$product->Unimis."',";
 					}
-					if (strlen($product->Weight)>0){// se è stato mandato un web url lo aggiorno
+					if (strlen($product->Weight)>0){// se è stato mandato il peso lo aggiorno
 						$extra_upd .= "peso_specifico = '".$product->Weight."',";
 					}
 					if (strlen($product->BarCode)==13){// se è stato mandato un barcode lo aggiorno
