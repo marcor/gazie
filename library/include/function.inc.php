@@ -2558,7 +2558,7 @@ function checkAdmin($Livaut = 0) {
         $synccommerce=explode(',',$admin_aziend['gazSynchro'])[0];
 		if ($synccommerce && file_exists('../'.$synccommerce.'/sync.function.php')) {
 			include_once('../'.$synccommerce.'/sync.function.php');
-            $admin_aziend['synccommerce_classname'] = preg_replace("/[^a-zA-Z]/", "",$synccommerce)."gazSynchro";
+            $admin_aziend['synccommerce_classname'] = preg_replace("/[^a-zA-Z]/", "",$synccommerce);
 		}
     }
     return array_merge($admin_aziend, $currency);
