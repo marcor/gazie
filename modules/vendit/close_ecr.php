@@ -240,6 +240,7 @@ if (isset($_POST['submit'])) {
             //inserisco i righi contabili nel db
             foreach ($v['acc'] as $acc_k => $acc_v) {
                 foreach ($acc_v as $da_k => $da_v) {
+                    if (round($da_v,2) == 0.00) continue; // no inserisco righi a zero
                     $rigmoc_id = rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_k, 'codcon' => $acc_k, 'import' => $da_v));
                     if ($admin_aziend['mascli']==substr($acc_k,0,3) && $v['tes']['incaut'] < 100000000 ) {
                       foreach ($rate['import'] as $k_rate => $v_rate) {
