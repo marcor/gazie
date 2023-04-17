@@ -409,8 +409,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     }
 
     if ($_POST['start'] > $_POST['end']){
-			$msg .= "38+";
-		}
+		$msg .= "38+";
+	}	
+	
 	// Se viene inviata la richiesta di conferma totale ...
     if (isset($_POST['ins'])) {
 
@@ -453,17 +454,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         if (empty($form['clfoco'])&& $toDo == 'insert')
             $msg .= "47+";
         if (empty($form['pagame']))
-            $msg .= "48+";
-
-        $datediff = strtotime($form['end'])-strtotime($form['start']);
-        $night=round($datediff / (60 * 60 * 24));
-        if ($night<intval($min_stay)){
-          $msg .= "65+";
-        }
-
-        if (intval($form['max_booking_days'])>0 && $night > intval($form['max_booking_days'])){// se si supera il numero delle notti prenotabili consentito
-          $msg .= "66+";
-        }
+            $msg .= "48+"; 
+		
+		// controlli sul numero di notti 	
+		$datediff = strtotime($form['end'])-strtotime($form['start']);
+		$night=round($datediff / (60 * 60 * 24));		
+		if (intval($form['max_booking_days'])>0 && $night > intval($form['max_booking_days'])){// se si supera il numero delle notti prenotabili consentito
+		  $msg .= "66+";
+		}
 
         //controllo che i rows non abbiano descrizioni  e unita' di misura vuote in presenza di quantita diverse da 0
         foreach ($form['rows'] as $i => $v) {
@@ -887,6 +885,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         }
         $start="";
         $form['in_prelis']=$total_price;
+		if ($night<intval($min_stay)){// se non si raggiunge il minimo prenotabile
+		  $msg .= "65+";
+		}
       }
       if ($form['in_codart']<>"TASSA-TURISTICA"){
         // calcolo gli sconti
