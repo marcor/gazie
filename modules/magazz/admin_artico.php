@@ -244,7 +244,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
   if ($codart_len > 0 && strlen(trim($form['codice'])) <> $codart_len) {
       $msg['err'][] = 'codart_len';
   }
-  if ($form['web_public']>0 && intval($form['ref_ecommerce_id_product'])==0 && $toDo=="update"){// in update, senza id riferimento all'e-commerce non si può attivare
+  if ($form['web_public']>0 && strlen($form['ref_ecommerce_id_product'])==0 && $toDo=="update"){// in update, senza id riferimento all'e-commerce non si può attivare
     $change_todo = "insert";// vuol dire che si deve inserire nell'e-commerce
   }
   if (intval($form['lot_or_serial'])>0 && intval($form['good_or_service'])==1){
@@ -289,7 +289,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 
     // se esiste un json per l'attributo della variante dell'e-commerce creo il json
     if (isset ($form['var_id']) && isset ($form['var_name'])){
-      $arrayvar= array("var_id" => intval($form['var_id']), "var_name" => strval($form['var_name']));
+      $arrayvar= array("var_id" => strval($form['var_id']), "var_name" => strval($form['var_name']));
       $form['ecomm_option_attribute'] = json_encode ($arrayvar);
     }
 
