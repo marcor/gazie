@@ -292,6 +292,7 @@ class invoiceXMLvars {
         break;
       case "XFA":
       case "XNC":
+        $this->decimal_price = 8; // sicome è un documento proveniente dall'esterno forzo ad un numero maggiore di decimali maggiore rispetto a quelli selezionabili su GAzie
         $this->reverse_charge_sez = $admin_aziend['reverse_charge_sez'];
         $this->TipoDocumento = $this->tesdoc["status"];
         $this->reverse = true;
