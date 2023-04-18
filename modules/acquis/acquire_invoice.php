@@ -1749,9 +1749,9 @@ if ($toDo=='insert' || $toDo=='update' ) {
 								echo '<p>'.$faesync['table_name_ref']." ";
                 if ($first) {
                   echo '<button type="submit" '. $first .' name="fae_from_sync" value="'. $faesync['id_doc'].  '">'.$faesync['title'].' </button>';
+                	echo '<a class="btn btn-default btn-xml" target="_blank" title="Anteprima" onclick="prevXML(\''.$linkxml.'\')"> <i class="glyphicon glyphicon-eye-open" title="Visualizza"></i></a>';
                 } else {
                   echo '<a class="btn btn-default btn-xml" target="_blank" title="Anteprima" onclick="prevXML(\''.$linkxml.'\')">'.$faesync['title'].' <i class="glyphicon glyphicon-eye-open" title="Visualizza"></i></a>';
-
                 }
                 ?>
                 <input type="hidden" name="fae_original_name<?php echo $faesync['id_doc'];?>" value="<?php echo $faesync['title'];?>">
