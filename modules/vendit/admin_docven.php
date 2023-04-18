@@ -3433,7 +3433,6 @@ if ($toDo == "insert"){
 		</div>
 
 	</div><!-- chiude container-fuid -->
-  </div>
 </div><!-- chiude panel -->
 
 <div class="text-center"><b><?php echo $script_transl[2]; ?></b></div>
@@ -3687,6 +3686,7 @@ echo '<div class="text-center col-xs-12 FacetFooterTD"><input name="ins" class="
 	<br /><br />
 	<input type="text" id="cat_prelis" style="text-align: right;" maxlength="11" disabled="disabled" />
 </div>
+
 <script type="text/javascript">
 	function vatPrice(row,pervat) {
 		var prelis = $("[name='rows["+row+"][prelis]']").val();

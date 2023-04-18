@@ -70,6 +70,7 @@ function getBillableContracts($date_ref = false, $vat_section = 1, $customer = 0
                 (" . $gTables['contract'] . ".months_duration - PERIOD_DIFF(DATE_FORMAT('" . $date_ref . "','%Y%m'),
                 EXTRACT(YEAR_MONTH FROM " . $gTables['contract'] . ".start_date))) AS months_at_end,
                 " . $gTables['clfoco'] . ".speban AS speban,
+                " . $gTables['clfoco'] . ".addbol,
                 CONCAT(" . $gTables['anagra'] . ".ragso1,' '," . $gTables['anagra'] . ".ragso2) AS ragsoc,
                 " . $gTables['contract'] . ".id_contract,('Cont. N.') AS txt," . $gTables['contract'] . ".id_contract,
                 " . $gTables['contract'] . ".id_customer," . $gTables['anagra'] . ".ragso1,
@@ -156,6 +157,9 @@ if (!isset($_POST['vat_section'])) { // al primo accesso
                 if (isset($calc->total_exc_with_duty) && $calc->total_exc_with_duty > $admin_aziend['taxstamp_limit'] && $admin_aziend['virtual_taxstamp'] != '0') {
                     $taxstamp = $admin_aziend['taxstamp'];
                     $virtual_taxstamp = $admin_aziend['virtual_taxstamp'];
+                }
+                if ($val['addbol'] == 'N') { // al cliente non vanno addebitati i bolli (che sono comunque da indicare in fattura elettronica)
+                  $virtual_taxstamp = 3;
                 }
                 if ($paym['tippag'] == 'T') { //se il pagamento prevede il bollo
                     $stamp = $admin_aziend['perbol'];
@@ -344,8 +348,8 @@ $gForm->selectNumber('vat_section', $form['vat_section'], 0, 1, 9, 'FacetSelect'
 echo ' ' . $script_transl['on'] . ' ';
 $gForm->CalendarPopup('this_date', $form['this_date_D'], $form['this_date_M'], $form['this_date_Y'], 'FacetSelect', 1);
 echo "</div>\n";
-echo "<center><input type=\"checkbox\" name=\"alsoexpired\" value=\"1\" title=\"spunta per mostrare anche i contratti scaduti\"".((isset($_POST['alsoexpired']) && $_POST['alsoexpired']=='1') ? ' checked="checked"' : '')." onchange=\"this.form.hidden_req.value='1'; this.form.submit();\"> mostra anche i contratti scaduti</center>";
-echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
+echo '<div class="text-center">'."<input type=\"checkbox\" name=\"alsoexpired\" value=\"1\" title=\"spunta per mostrare anche i contratti scaduti\"".((isset($_POST['alsoexpired']) && $_POST['alsoexpired']=='1') ? ' checked="checked"' : '')." onchange=\"this.form.hidden_req.value='1'; this.form.submit();\"> mostra anche i contratti scaduti</div>";
+echo '<div class="table-responsive"><table class="Tlarge table table-striped table-condensed">';
 echo "<tr class=\"text-bold\">\n";
 echo '<td align="center">' . $script_transl['id_contract'] . "</td>\n";
 echo "<td align=\"center\">" . $script_transl['start_date'] . "</td>\n";
@@ -396,7 +400,7 @@ if (count($form['rows']) > 0) {
     echo "\t </td>\n";
     echo "\t </tr>\n";
 }
-echo "</table>\n";
+echo "</table></div>\n";
 ?>
 </form>
 <?php
