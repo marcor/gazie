@@ -129,12 +129,14 @@ if (isset($_POST['conferma'])) { // se confermato
 				$esiste = gaz_dbi_get_row($gTables['artico_group'], "ref_ecommerce_id_main_product", $_POST['product_id'.$ord]);// controllo se esiste in GAzie
 				$tablefile="artico_group";
 				$itemref=($esiste)?$esiste['id_artico_group']:'';
-			} else {
+			} else {// se è variante
 				$esiste = gaz_dbi_get_row($gTables['artico'], "ref_ecommerce_id_product", $_POST['product_id'.$ord]);// controllo se esiste in GAzie come id e-commerce
+				
 				$vat = gaz_dbi_get_row($gTables['aliiva'], "aliquo", $product->VAT, " AND tipiva = 'I'"); // prendo il codice IVA
 				if(!isset($vat['codice'])){// se non ho trovato una corrispondenza con l'aliquota passata dall'ecommerce
-					$vat['codice']=1;// di default metto il id 1
+					$vat['codice']=1;// di default metto id 1
 				}
+				
 				$tablefile="artico";
 				$itemref=$_POST['codice'.$ord];
 			}
@@ -239,16 +241,15 @@ if (isset($_POST['conferma'])) { // se confermato
 			} else {
 				$arrayvar = "";
 			}
-			
 			if ($esiste AND $_GET['upd']=="updval"){ // se esiste l'articolo ed è attivo l'update, aggiorno l'articolo
-				
 					// Body text
 					if (strlen(htmlspecialchars_decode($product->Description))>0 AND $_GET['upddes']=="upddes"){ // se c'è una descrizione estesa body_text ed è selezionata
 						if ($product->Type=="parent"){ // se è un parent					
 							gaz_dbi_query("UPDATE ". $gTables['artico_group'] . " SET large_descri = '". addslashes (htmlspecialchars_decode ($product->Description)) ."' WHERE ref_ecommerce_id_main_product = '".$_POST['product_id'.$ord]."'");
 						} else {					
 							$esist = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", "artico_".$esiste['codice']);
-							$form['body_text'] = htmlspecialchars_decode ($product->Description);// qui addslashes non si deve mettere perché ci pensa ga_dbi-...
+							$form['body_text'] = htmlspecialchars_decode ($product->Description);// qui addslashes non si deve mettere perché ci pensa gaz_dbi-...
+							
 							if($esiste){
 								$form['table_name_ref']="artico_".$esiste['codice'];
 							} else {
@@ -281,6 +282,9 @@ if (isset($_POST['conferma'])) { // se confermato
 					}
 					if (strlen($product->BarCode)==13){// se è stato mandato un barcode lo aggiorno
 						$extra_upd .= "barcode = '".$product->BarCode."',";
+					}
+					if (isset($vat['codice'])){
+						$extra_upd .= "aliiva = '".$vat['codice']."',";
 					}
 					if ($_GET['updpre']=="updpre" AND $_GET['updname']=="updnam") { // se devo aggiornare prezzo e nome
 						
