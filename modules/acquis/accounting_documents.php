@@ -639,7 +639,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                     paymovInsert($paymov_value);
                 }
             }
-    if ( $tot_reverse_charge >= 0.01 ) {
+    if ( abs($tot_reverse_charge) >= 0.01 ) {
       // ho accumulato un reverse charge creo un movimento contabile e IVA per documento di vendita sul sezionale scelto in configurazione azienda, entro il 2023 inserirò da qui anche i dati in gaz_NNNtesdoc e rigdoc per poter generare il relativo XML da trasmette all'AdE
 
       // per prima cosa dovrò controllare se c'è il cliente con la stessa anagrafica
