@@ -76,7 +76,8 @@ function getMovements($vat_section, $vat_reg, $date_ini, $date_fin) {
     $c_sr = 0;
     $c_id = 0;
     $c_p = 0;
-    $c_ndoc = array();
+    $c_nabs = 0; // nemmto il numero documento assoluto, mi serve per controllare se la sequenza dei numeri quando questa comprende tutti i tipi di documenti (fatt, nc, nd, ecc.)
+    $c_ndoc = [];
     while ($r = gaz_dbi_fetch_array($rs)) {
       $r['numdoc']=is_numeric($r['numdoc'])?$r['numdoc']: (int)filter_var($r['numdoc'], FILTER_SANITIZE_NUMBER_INT);;
       // inizio controllo errori di numerazione
@@ -88,13 +89,15 @@ function getMovements($vat_section, $vat_reg, $date_ini, $date_fin) {
         $c_sr = 0;
         $c_id = 0;
         $c_p = 0;
-        $c_ndoc = array();
+        $c_nabs = $r['numdoc'];
+        $c_ndoc = [];
         if ($r['protoc'] <> 1) { // errore: il protocollo non é 1
           // non lo rilevo in quanto i registri IVA non sono annuali
         }
       } else {
         $ex = $c_p + 1;
-        if ($r['protoc'] <> $ex && $r['id_tes'] <> $c_id) {  // errore: il protocollo non � consecutivo
+        $c_nabs++;
+        if ($r['protoc'] <> $ex && $r['id_tes'] <> $c_id) {  // errore: il protocollo non è consecutivo
           if ($date_reg>=$date_ini&&$date_reg<=$date_fin){ // controllo solo i movimenti registrati nel periodo selezionato, gli altri liquidabili no
             $r['err_p'] = $ex;
           }
@@ -110,9 +113,9 @@ function getMovements($vat_section, $vat_reg, $date_ini, $date_fin) {
           // fromthestone: note credito e debito stessa numerazione da fatture
           $r['caucon'] = ($r['caucon'] == 'FAD' || $r['caucon'] == 'FNC' || $r['caucon'] == 'FND') ? 'FAI' : $r['caucon'];
         }
-        if (isset($c_ndoc[$r['caucon']])) { // controllo se il numero precedente � questo-1
+        if (isset($c_ndoc[$r['caucon']])) { // controllo se il numero precedente è questo-1
           $ex = $c_ndoc[$r['caucon']] + 1;
-          if ($r['numdoc'] <> $ex && $c_id <> $r['id_tes']) {  // errore: il numero non � consecutivo
+          if ($r['numdoc'] <> $ex && $r['numdoc'] <> $c_nabs && $c_id <> $r['id_tes']) {  // errore: il numero non è consecutivo
             $r['err_n'] = $ex;
           }
         } else {  // dal primo documento di questo tipo ci si aspetta il n.1
@@ -122,6 +125,7 @@ function getMovements($vat_section, $vat_reg, $date_ini, $date_fin) {
         }
       }
       $c_ndoc[$r['caucon']] = $r['numdoc'];
+      $c_nabs = $r['numdoc'];
       $c_sr = $r['ctrl_sr'];
       $c_id = $r['id_tes'];
       $c_p = $r['protoc'];
