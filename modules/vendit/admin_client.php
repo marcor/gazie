@@ -966,6 +966,14 @@ $gForm->variousSelect('status', $script_transl['status_value'], $form['status'],
                 </div>
             </div>
         </div><!-- chiude row  -->
+        <div class="row">
+          <div class="col-md-12">
+            <div class="form-group">
+              <label for="ref_ecommerce_id_customer" class="col-sm-4 control-label"><?php echo $script_transl['ref_ecommerce_id_customer']; ?> </label>
+              <input class="col-sm-8" type="text" value="<?php echo $form['ref_ecommerce_id_customer']; ?>" name="ref_ecommerce_id_customer" id="ref_ecommerce_id_customer" maxlength="50" />
+            </div>
+          </div>
+        </div><!-- chiude row  -->
   </div>
       <div id="licenses" class="tab-pane fade">
         <div class="row">

@@ -120,7 +120,8 @@ $strScript = array("admin_client.php" =>
         'fe_cod_univoco' => 'Cod.Univoco Ufficio (fatt.elettronica)',
         'fatt_email' => 'Inviare fattura:',
         'fatt_email_value' => array(0 => 'No, solo stampa PDF', 1 => 'In formato PDF su email', 2=>'In formato XML su PEC',3=>'In formato PDF su email + XML su PEC'),
-        'operation_type' => 'Tipo di operazione'
+        'operation_type' => 'Tipo di operazione',
+        'ref_ecommerce_id_customer' => 'Riferimento al codice dell\'e-commerce'
     ),
     "report_docven.php" =>
     array('title' => 'Lista dei documenti di vendita',
