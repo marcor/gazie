@@ -60,14 +60,10 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 			$zip = new ZipArchive;
 			$res = $zip->open(DATA_DIR.'files/'.$admin_aziend['codice'].'/'.$form['filename'], ZipArchive::CREATE);
 			if ($res === TRUE) {
-				$faename_base = 62;
-				$faename_maxsez = 9;
-				if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-					$faename_base = 36;
-					$faename_maxsez = 5;
-				}
 				// ho creato l'archivio e adesso lo riempio con i file xml delle singole fatture
 				foreach ($invoices['data'] as $k => $v) {
+          $faename_base = 36;
+          $faename_maxsez = 5;
 					if ($v['tes']['protoc']>$form['packable'][$v['tes']['seziva']][$v['tes']['ctrlreg']]['max']) { // non impacchetto i protocolli che superano i limiti scelti dall'utente
 						continue;
 					}
@@ -90,6 +86,12 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 						$enc_data['fae_reinvii']=$v['tes']['fattura_elettronica_reinvii'];
 						$enc_data['protocollo']=$v['tes']['protoc'];
 						if($v['tes']['ctrlreg']=='X'){ // è una autofattura reverse charge
+              $faename_base = 62;
+              $faename_maxsez = 9;
+              if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                $faename_base = 36;
+                $faename_maxsez = 5;
+              }
 							/* considerando che la funzione si attiene al seguente specchietto normalmente usato per le fatture di vendita
 							  ------------------------- SCHEMA DEI DATI PER FATTURE NORMALI  ---------------
 							  |   SEZIONE IVA   |  ANNO DOCUMENTO  | N.REINVII |    NUMERO PROTOCOLLO     |
@@ -176,13 +178,10 @@ foreach($form['packable'] as $k1=>$v1){
     <th class="FacetFieldCaptionTD"><?php echo $script_transl['tot']; ?> </th>
 <?php
 $ctrlimit='';
-$faename_base = 62;
-$faename_maxsez = 9;
-if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-	$faename_base = 36;
-	$faename_maxsez = 5;
-}
+$faename_base = 36;
 foreach ($invoices['data'] as $k => $v) {
+  $faename_base = 36;
+  $faename_maxsez = 5;
 	$numpacket=$form['packable'][$v['tes']['seziva']][$v['tes']['ctrlreg']]['max']-$inipackable[$v['tes']['seziva']][$v['tes']['ctrlreg']]['min']+1;
 	$label=($v['tes']['ctrlreg']=='X')?'Fatture di acquisto (reverse charge)':'Fatture di vendita';
 	// se ho cambiato la sezione e/o il registro propongo il limite di protocollo
@@ -224,6 +223,13 @@ foreach ($invoices['data'] as $k => $v) {
 	$enc_data['fae_reinvii']=$v['tes']['fattura_elettronica_reinvii'];
 	$enc_data['protocollo']=$v['tes']['protoc'];
 	if($v['tes']['ctrlreg']=='X'){ // è una autofattura reverse charge
+    $faename_base = 62;
+    $faename_maxsez = 9;
+    if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+      $faename_base = 36;
+      $faename_maxsez = 5;
+    }
+
 		/* considerando che la funzione si attiene al seguente specchietto normalmente usato per le fatture di vendita
 		  ------------------------- SCHEMA DEI DATI PER FATTURE NORMALI  ---------------
 		  |   SEZIONE IVA   |  ANNO DOCUMENTO  | N.REINVII |    NUMERO PROTOCOLLO     |
