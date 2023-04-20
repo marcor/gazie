@@ -810,7 +810,7 @@ function createMultiDocument($results, $templateName, $gTables, $dest = false, $
         if ($ref <> $ctrlprotoc && $ctrlprotoc > 0) {
           $pdf->pageFooter();
           if($dest=='Z'){
-            $doc_name = preg_replace("/[^a-zA-Z0-9]+/", "_", $docVars->intesta1 . '_' . $pdf->tipdoc) . '.pdf';
+            $doc_name = preg_replace("/[^a-zA-Z0-9]+/", "_", $docVars->cliente1 . '_' . $pdf->tipdoc) . '.pdf';
             $pdf->Output(dirname(__DIR__,2).'/data/files/'.$docVars->azienda['codice'].'/'.$doc_name, 'F');
             $acczip[]=$doc_name;
             $pdf = new $templateName();
@@ -856,7 +856,7 @@ function createMultiDocument($results, $templateName, $gTables, $dest = false, $
         $gMail = new GAzieMail();
         $gMail->sendMail($docVars->azienda, $docVars->user, $content, $docVars->client);
     } elseif ($dest=='Z') { // è stato richiesto un pacchetto zip
-        $doc_name = preg_replace("/[^a-zA-Z0-9]+/", "_", $docVars->intesta1 . '_' . $pdf->tipdoc) . '.pdf';
+        $doc_name = preg_replace("/[^a-zA-Z0-9]+/", "_", $docVars->cliente1 . '_' . $pdf->tipdoc) . '.pdf';
         $pdf->Output(dirname(__DIR__,2).'/data/files/'.$docVars->azienda['codice'].'/'.$doc_name, 'F');
         $acczip[]=$doc_name;
         CreateZipDocuments($acczip,$docVars->azienda);
