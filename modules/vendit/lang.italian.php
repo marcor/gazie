@@ -394,7 +394,8 @@ $strScript = array("admin_client.php" =>
         "Non ci sono documenti stampabili negli intervalli selezionati !",
         'id_agente' => 'Agente',
         'tipoSelezione' => 'Seleziona usando',
-        'tipoStampa' => 'Stampa',
+        'tipo_stampa' => 'Tipo di ristampa',
+        'tipo_stampa_value' => [0=>'Un PDF con tutti i documenti',1=>'Invia i PDF su email',3=>'Genera zip di singoli PDF'],
         'caumag' => 'Causale magazzino',
     ),
     "admin_broven.php" =>

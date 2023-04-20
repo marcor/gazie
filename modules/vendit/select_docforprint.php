@@ -281,6 +281,7 @@ if (isset($_POST['Return'])) {
 }
 require("../../library/include/header.php");
 $script_transl = HeadMain();
+$gForm = new venditForm();
 echo "<form method=\"POST\">";
 echo "<input type=\"hidden\" name=\"ritorno\" value=\"" . $form['ritorno'] . "\">\n";
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">Ristampa documenti gi&agrave; emessi " . $script_transl[1];
@@ -443,8 +444,9 @@ $select_agente->addSelected($form["id_agente"]);
 $select_agente->output();
 echo "</td></tr>\n";
 
-echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl['tipoStampa'] . "</td><td class=\"FacetDataTD\">\n<select name=\"tipo_stampa\" class=\"FacetSelect\">\n<option value=\"0\" selected>Tutti i documenti</option><option value=\"1\">Non stampare eMail</option><option value=\"2\">Invia solo eMail</option></tr>\n";
-echo '<tr><td class="FacetFooterTD text-center" colspan=2><input type="submit" class="btn btn-warning" name="Print" value="' . ucfirst($script_transl['print']) . "\"></td></tr>\n";
+echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl['tipo_stampa'] . "</td><td>";
+$gForm->variousSelect('tipo_stampa', $script_transl['tipo_stampa_value'], $form['tipo_stampa'], "col-sm-8", false, '', false, 'style="max-width: 200px;"');
+echo '</td></tr><tr><td class="FacetFooterTD text-center" colspan=2><input type="submit" class="btn btn-warning" name="Print" value="' . ucfirst($script_transl['submit']) . "\"></td></tr>\n";
 ?>
 </table>
 </form>

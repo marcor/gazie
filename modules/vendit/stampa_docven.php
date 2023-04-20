@@ -119,11 +119,10 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
         $agente = ' AND B.id_agente = ' . intval($_GET['ag']);
     }
     $invioPerEmail = 0;
-    if (!isset($_GET['ts']) or ( empty($_GET['ts']))) {
+    if (!isset($_GET['ts']) || empty($_GET['ts']) || $_GET['ts']==3 ) { // se non ho scelto di inviare tramite e-mail
         $fattEmail = '';
     } else {
         $invioPerEmail = ($_GET['ts'] == 1 ? 0 : 1);
-//        $fattEmail = " AND C.fatt_email = $invioPerEmail";
         $tipoInvio = $_GET['ts'];
         switch ($tipoInvio) {
             case 1:
@@ -156,14 +155,12 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
     $from = $gTables['tesdoc'] . " A left join " . $gTables['clfoco'] . " B on A.clfoco=B.codice " .
             "left join " . $gTables['anagra'] . " C on B.id_anagra=C.id ";
     $orderby = "datfat ASC, protoc ASC, id_tes ASC";
-//    $testate = gaz_dbi_dyn_query("A.*", $from, $where, $orderby);
     $clientiRS = gaz_dbi_dyn_query("distinct(A.clfoco) as clfoco", $from, $where);
     $numRecord = $clientiRS->num_rows;
 
     if ($numRecord > 0) {
         if ($invioPerEmail || isset($_GET['dest'])) {
             $arrayClienti = gaz_dbi_fetch_all($clientiRS);
-
             foreach ($arrayClienti as $cliente) {
                 $clfoco = $cliente['clfoco'];
                 $testate = gaz_dbi_dyn_query("A.*", $from, $where . " and A.clfoco=$clfoco", $orderby);
@@ -205,7 +202,6 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
             $num_name = 'numdoc';
             $_GET['pi'] = 0;
             $_GET['pf'] = 999999999;
-//                $where = "(tipdoc = 'DDT' OR tipdoc = 'FAD') ";
             $where = "(tipdoc like 'DD%' OR tipdoc = 'FAD') ";
             $template = 'DDT';
             $orderby = 'datemi ASC, numdoc ASC, id_tes ASC';
@@ -267,13 +263,10 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
         $agente = ' AND B.id_agente = ' . intval($_GET['ag']);
     }
     $invioPerEmail = 0;
-    if (!isset($_GET['ts']) or ( empty($_GET['ts']))) {
+    if (!isset($_GET['ts']) || empty($_GET['ts']) || $_GET['ts']==3 ) { // se non ho scelto di inviare tramite e-mail
         $fattEmail = '';
     } else {
-//        $invioPerEmail = ($_GET['ts'] == 1 ? 0 : 1);
-//        $fattEmail = " AND C.fatt_email = $invioPerEmail";
         $invioPerEmail = ($_GET['ts'] == 1 ? 0 : 1);
-//        $fattEmail = " AND C.fatt_email = $invioPerEmail";
         $tipoInvio = $_GET['ts'];
         switch ($tipoInvio) {
             case 1:
@@ -296,16 +289,16 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
     //recupero i documenti da stampare
     $testate = gaz_dbi_dyn_query("A.*", $from, $where, $orderby);
     if ($testate->num_rows > 0) {
-//   createMultiDocument($testate, $template, $gTables, ($invioPerEmail ? "E" : false)); non funziona, invia tutte le fatture allo stesso destinatario
-        if ($invioPerEmail) {
-            foreach ($testate as $doc) {
-                $testata = gaz_dbi_get_row($gTables['tesdoc'], 'id_tes', $doc['id_tes']);
-                $lang = get_template_lang($testata['clfoco']);
-                createDocument($testata, $template, $gTables, 'rigdoc', 'E', $lang);
-            }
-        } else {
-            createMultiDocument($testate, $template, $gTables);
+      if ($invioPerEmail) {
+        foreach ($testate as $doc) {
+          $testata = gaz_dbi_get_row($gTables['tesdoc'], 'id_tes', $doc['id_tes']);
+          $lang = get_template_lang($testata['clfoco']);
+          createDocument($testata, $template, $gTables, 'rigdoc', 'E', $lang);
         }
+      } else {
+        $dest = ($_GET['ts']==3?'Z':false); // controllo se ho richiesto di zippare in un pacchetto di singoli file
+        createMultiDocument($testate, $template, $gTables, $dest);
+      }
     } else {
         alert("Nessun documento da stampare");
         tornaPaginaPrecedente();

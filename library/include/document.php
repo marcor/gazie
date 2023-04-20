@@ -791,11 +791,11 @@ function createMultiDocument($results, $templateName, $gTables, $dest = false, $
     require("../../config/templates" . ($configTemplate->template ? '.' . $configTemplate->template : '') . '/' . $templates[$templateName] . '.php');
     $pdf = new $templateName();
     $docVars = new DocContabVars();
-    //$pdf->SetPageFormat($config->getValue('page_format'));
     $pdf->SetTitle($templateName);
     $pdf->SetTopMargin(79);
     $pdf->SetHeaderMargin(5);
     $ctrlprotoc = 0;
+    $acczip=[];
     while ($tesdoc = gaz_dbi_fetch_array($results)) {
         //se il cliente non e' lo stesso di prima
         $ref = $tesdoc['protoc'];
@@ -808,7 +808,19 @@ function createMultiDocument($results, $templateName, $gTables, $dest = false, $
             $robj ='rigbro';
         }
         if ($ref <> $ctrlprotoc && $ctrlprotoc > 0) {
-            $pdf->pageFooter();
+          $pdf->pageFooter();
+          if($dest=='Z'){
+            $doc_name = preg_replace("/[^a-zA-Z0-9]+/", "_", $docVars->intesta1 . '_' . $pdf->tipdoc) . '.pdf';
+            $pdf->Output(dirname(__DIR__,2).'/data/files/'.$docVars->azienda['codice'].'/'.$doc_name, 'F');
+            $acczip[]=$doc_name;
+            $pdf = new $templateName();
+            $pdf->SetTitle($templateName);
+            $pdf->SetTopMargin(79);
+            $pdf->SetHeaderMargin(5);
+            $pdf->setCreator('GAzie - ' . $docVars->intesta1);
+            $pdf->setAuthor($docVars->user['user_lastname'] . ' ' . $docVars->user['user_firstname']);
+            $pdf->Open();
+          }
         }
         // Inizio pagina
         $testat = $tesdoc['id_tes'];
@@ -832,10 +844,7 @@ function createMultiDocument($results, $templateName, $gTables, $dest = false, $
         $pdf->compose();
     }
     $pdf->pageFooter();
-    if ($dest) { // è stata richiesta una e-mail
-        if ($dest!=='E'){// se ho un indirizzo e-mail
-          $docVars->client['e_mail']=$dest;// lo impongo per l'invio
-        }
+    if ($dest=='E') { // è stata richiesta una e-mail
         $dest = 'S';     // Genero l'output pdf come stringa binaria
         // Costruisco oggetto con tutti i dati del file pdf da allegare
         $content = new stdClass();
@@ -846,7 +855,12 @@ function createMultiDocument($results, $templateName, $gTables, $dest = false, $
         $content->mimeType = "application/pdf";
         $gMail = new GAzieMail();
         $gMail->sendMail($docVars->azienda, $docVars->user, $content, $docVars->client);
-    } elseif ($dest && $dest == 'X') { // è stata richiesta una stringa da allegare
+    } elseif ($dest=='Z') { // è stato richiesto un pacchetto zip
+        $doc_name = preg_replace("/[^a-zA-Z0-9]+/", "_", $docVars->intesta1 . '_' . $pdf->tipdoc) . '.pdf';
+        $pdf->Output(dirname(__DIR__,2).'/data/files/'.$docVars->azienda['codice'].'/'.$doc_name, 'F');
+        $acczip[]=$doc_name;
+        CreateZipDocuments($acczip,$docVars->azienda);
+    } elseif ($dest == 'X') { // è stata richiesta una stringa da allegare
         $dest = 'S';     // Genero l'output pdf come stringa binaria
         $doc_name = $docVars->intesta1 . '_' . $templateName . '_n.' . $docVars->tesdoc['numfat'] . '/' . $docVars->tesdoc['seziva'] . '_del_' . gaz_format_date($docVars->tesdoc['datfat']) . '.pdf';
         $content=$pdf->Output($doc_name, $dest);
@@ -1042,6 +1056,30 @@ function createInvoiceACQFromDDT($result, $gTables, $dest = false, $lang_templat
     } else { // va all'interno del browser
         $pdf->Output($doc_name);
     }
+}
+
+function CreateZipDocuments($pdfDocs,$admin_aziend) {// crea un file .zip contenente i file che gli vengono passati nell'array $pdfDocs
+	if (count($pdfDocs) > 0) {
+		$zip = new ZipArchive;
+		$zipname = substr(str_replace(" ","-",addslashes($admin_aziend['ragso1'])), 0, 30).'_documenti_del_'.date("Y-m-d_H-i").".zip";// il nome del pacchetto
+		$zipnameurl=dirname(__DIR__,2).'/data/files/tmp/'.$zipname;
+		$res = $zip->open($zipnameurl, ZipArchive::CREATE);
+		if ($res === TRUE) {
+			foreach ($pdfDocs as $doc){
+				$fn_ori = dirname(__DIR__,2).'/data/files/'.$admin_aziend['codice'].'/'.$doc;
+				$zip->addFile($fn_ori,$doc);
+        //unlink($fn_ori);
+			}
+			$zip->close();
+      header('Content-Type:application/zip');
+      header('Content-disposition: attachment; filename='.$zipname);
+      readfile($zipnameurl);
+      // delete file tmp
+      unlink($zipnameurl);
+		} else {
+			echo "Creazione zip fallita";
+		}
+	}
 }
 
 ?>
