@@ -203,7 +203,7 @@ if (isset($_POST['conferma'])) { // se confermato
 					$immagine= addslashes (file_get_contents($url));
 				}
 				unlink ($img);// cancello l'immagine temporanea
-				if ($product->Type=="parent"){ // se è un parent
+				if ($esiste && $product->Type=="parent"){ // se è un parent che esiste già
 					gaz_dbi_query("UPDATE ". $gTables['artico_group'] . " SET image = '".$immagine."' WHERE ref_ecommerce_id_main_product = '".$_POST['product_id'.$ord]."'");	
 					
 				}else {
