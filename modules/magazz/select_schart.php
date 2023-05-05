@@ -352,8 +352,8 @@ if (isset($_POST['preview']) and $msg=='') {
       } else {
         echo "<td></td><td align=\"right\">".number_format($mv['prezzo']*$mv['quanti'],$admin_aziend['decimal_price'],',','')."</td>";
       }
-      echo "<td align=\"right\">".number_format($mval['q_g'],$admin_aziend['decimal_price'],',','.')."</td>";
-      echo "<td align=\"right\">".number_format($mval['v_g'],$admin_aziend['decimal_price'],',','.')."</td>";
+      echo "<td align=\"right\">".($mval?number_format($mval['q_g'],$admin_aziend['decimal_price'],',','.'):'')."</td>";
+      echo "<td align=\"right\">".($mval?number_format($mval['v_g'],$admin_aziend['decimal_price'],',','.'):'')."</td>";
       echo "</tr>";
       $ctr_mv = $mv['artico'];
       $ctr_di = ($mv['caumag']== 99)?$mv['datreg']:'2000-01-01';

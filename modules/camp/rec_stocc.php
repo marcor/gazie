@@ -167,6 +167,51 @@ function ContentSil(silos) {
         });
 	});
 };
+
+function getMovContainer(cod_silos) {
+	$("#idsilos").append("Contenitore: "+cod_silos);
+  $("#dialog_movcontainer").attr("title","Movimenti del contenitore");
+	$.post("ajax_request.php",
+		{term: cod_silos, opt: 'movcontainer'},
+		function (data) {
+			var j=0;
+				$.each(data, function(i, value) {
+				j++;
+        if (parseFloat(value.pro)>=0.000001){
+          clpro = 'bg-success';
+        } else {
+          clpro = 'bg-danger';
+          value.pro ='--- vuoto ---';
+        }
+				$("table.list_movcontainer").append("<tr><td> <button onclick='location.href=\"../magazz/admin_movmag.php?Update&id_mov="+value.id+"\"' target='_blank' type='button'>"+value.id+" </button></td><td class='bg-warning'>"+ value.cod + " </td><td> "+value.des+" </td><td class='bg-info'> "+value.val+ "</td><td> " +value.um+ " </td><td class='text-right "+ clpro +"'> "+value.pro+" </td></tr>");
+				});
+				if (j==0){
+					$(".list_movcontainer").append('<tr><td class="bg-danger">********* Contenitore non movimentato *********</td></tr>');
+				}
+		}, "json"
+	);
+	$( function() {
+    var dialog,
+    dialog = $("#dialog_movcontainer").dialog({
+      position: { my: "center", at: "left top"},
+      modal: true,
+      show: "blind",
+      hide: "explode",
+      width: "auto",
+      buttons: {
+        Chiudi: function() {
+          $(this).dialog('close');
+        }
+      },
+      close: function(){
+          $("p#idsilos").empty();
+          $("table.list_movcontainer tr").remove();
+          $(this).dialog('destroy');
+      }
+    });
+	});
+
+};
 </script>
 <div align="center" class="FacetFormHeaderFont">Recipienti di stoccaggio</div>
 <?php
@@ -188,6 +233,11 @@ $recordnav -> output();
 		<p class="ui-state-highlight" id="idvar"></p>
 		<div class="list_variants">
 		</div>
+	</div>
+	<div style="display:none; min-width:350px; " id="dialog_movcontainer" title="">
+		<p class="ui-state-highlight" id="idsilos"></p>
+		<table class="list_movcontainer">
+		</table>
 	</div>
     <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
     	<thead>
@@ -241,6 +291,7 @@ $recordnav -> output();
 						if ($content > $a_row['capacita']){
 							echo " ERRORE!";
 						}
+            echo ' <a class="btn btn-xs btn-default dialog_content" title="Movimenti nel contenitore" onclick="getMovContainer(\''.$a_row['cod_silos'].'\')" > <i class="glyphicon glyphicon-list"></i></a>';
 					}
 					?>
 					<div class="bar">

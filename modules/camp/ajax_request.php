@@ -50,6 +50,13 @@ if (isset($_POST['term']) && isset($_POST['opt'])) {
       $json = json_encode($result);
     echo $json;
     break;
+    case 'movcontainer':
+      $campsilos = new silos();
+      $codice= strval($_POST['term']);
+      $result = $campsilos->getMovContainer($codice,$date="",$id_mov=0);
+      $json = json_encode($result);
+    echo $json;
+    break;
     default:
       return false;
   }

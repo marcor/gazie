@@ -128,6 +128,40 @@ class silos {
 			return $content ;
 	}
 
+	function getMovContainer($codsil,$codart="", $excluded_movmag = 0){// restituisce la quantità di olio di un recipiente
+		global $gTables,$admin_aziend;
+		$content=[];
+		$q=0;
+		$where="recip_stocc = '".$codsil."'";
+
+		if (is_array($excluded_movmag)){
+		  $add_excl="";
+		  foreach($excluded_movmag as $each){
+			$add_excl.= " AND ".$gTables['movmag'].".id_mov <> ".intval($each);
+		  }
+		  $where=$where.$add_excl;
+		}elseif($excluded_movmag <> 0){
+			$where=$where." AND ".$gTables['movmag'].".id_mov <> ".$excluded_movmag;
+		}
+
+		if (strlen($codart)>0){
+		  $where=$where." AND artico = '". $codart ."'";
+		}
+			$what=	$gTables['movmag'].".operat, ".$gTables['movmag'].".id_mov, ".$gTables['movmag'].".quanti, ".$gTables['movmag'].".id_orderman, ".$gTables['camp_mov_sian'].".*, ".$gTables['camp_artico'].".confezione, ".$gTables['artico'].".codice, ".$gTables['artico'].".descri, ".$gTables['artico'].".unimis";
+			$table=$gTables['camp_mov_sian']." LEFT JOIN ".$gTables['movmag']." ON ".$gTables['camp_mov_sian'].".id_movmag = ".$gTables['movmag'].".id_mov
+											LEFT JOIN ".$gTables['camp_artico']." ON ".$gTables['movmag'].".artico = ".$gTables['camp_artico'].".codice
+											LEFT JOIN ".$gTables['artico']." ON ".$gTables['movmag'].".artico = ".$gTables['artico'].".codice";
+			$ressilos=gaz_dbi_dyn_query ($what,$table,$where,$gTables['movmag'].'.datreg');
+			while ($r = gaz_dbi_fetch_array($ressilos)) {
+				if ($r['confezione']==0 && $r['id_mov']>=1 ){
+          $val=$r['quanti']*$r['operat'];
+					$q = number_format($q + $val,6);
+					$content[]=['val'=>$r['quanti']*$r['operat'],'id'=>$r['id_mov'],'cod'=>$r['codice'],'des'=>$r['descri'],'um'=>$r['unimis'],'pro'=>$q];
+				}
+			}
+			return $content ;
+	}
+
 	function getLotRecip($codsil,$codart=""){// funzione per trovare l'ID dell'ultimo lotto inserito nel recipiente di stoccaggio
 		$id_lotma=false;
 		global $gTables,$admin_aziend;
