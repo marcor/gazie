@@ -190,9 +190,9 @@ class silos {
 		return array($id_lotma,$identifier) ;
 	}
 
-  function getSilosArtico($codsil){// restituisce i codici articoli presenti nel silos
+  function getSilosArtico($codsil, $excluded_movmag=0){// restituisce i codici articoli presenti nel silos
     global $gTables;
-    $latestEmpty= $this -> getLatestEmptySil($codsil);
+    $latestEmpty= $this -> getLatestEmptySil($codsil, $excluded_movmag);
     //echo "<pre>latest:",print_r($latestEmpty);
     $date=(isset($latestEmpty['datdoc']))?$latestEmpty['datdoc']:'';
     $id_mov=(isset($latestEmpty['id_mov']))?$latestEmpty['id_mov']:'';
@@ -213,7 +213,7 @@ class silos {
     return array_unique($result);
   }
 
-	function selectSilos($name, $key, $val, $order = false, $empty = false, $key2 = '', $val_hiddenReq = '', $class = 'FacetSelect', $addOption = null, $style = '', $where = false, $echo=false, $codart="") {
+	function selectSilos($name, $key, $val, $order = false, $empty = false, $key2 = '', $val_hiddenReq = '', $class = 'FacetSelect', $addOption = null, $style = '', $where = false, $echo=false, $codart="", $excluded_movmag=0) {
         global $gTables;
         $campsilos = new silos();
         $acc='';
@@ -238,7 +238,7 @@ class silos {
             $ok="";
             if (strlen($codart)>0){// se è stato inviato un codice articolo, controllo che sia presente nel silos
               // vedo la data dell'ultimo svuotamento totale e il relativo idmovmag
-              $resmovs=$this -> getSilosArtico($r['cod_silos']);
+              $resmovs=$this -> getSilosArtico($r['cod_silos'], $excluded_movmag);
               foreach ($resmovs as $res) {
                 if ($res==$codart){ // se è presente l'articolo nel silos do l'ok
                   $ok="ok";break;
@@ -278,18 +278,29 @@ class silos {
 		}
     }
 
-	function getLatestEmptySil($codsil){// funzione per trovare la data più recente dell'ultimo svuotamento totale del silos/recipiente di stoccaggio
+	function getLatestEmptySil($codsil, $excluded_movmag=0){// funzione per trovare la data più recente dell'ultimo svuotamento totale del silos/recipiente di stoccaggio
 	// se trovato il punto zero, restituisce un array: datdoc (la data dello zero) id_mov (id magazzino del movimento zero) RunningTotal (valore numerico zero)
 		global $gTables,$admin_aziend;
+    $where="";
+    if (is_array($excluded_movmag)){
+		  $add_excl="";
+		  foreach($excluded_movmag as $each){
+			$add_excl.= " AND ".$gTables['movmag'].".id_mov <> ".intval($each);
+		  }
+		  $where .= $add_excl;
+		}elseif($excluded_movmag <> 0){
+			$where .= " AND ".$gTables['movmag'].".id_mov <> ".$excluded_movmag;
+		}
 
 		$query ="
 		SELECT datdoc, id_mov, quanti, operat
 		FROM ".$gTables['movmag']."
 		LEFT JOIN ".$gTables['camp_mov_sian']." ON ".$gTables['camp_mov_sian'].".id_movmag = id_mov
 		LEFT JOIN ".$gTables['camp_artico']." ON ".$gTables['camp_artico'].".codice = artico
-		WHERE ".$gTables['camp_mov_sian'].".recip_stocc = '".$codsil."' AND ".$gTables['camp_artico'].".confezione = 0
-		ORDER BY datdoc ASC, id_mov ASC
+		WHERE ".$gTables['camp_mov_sian'].".recip_stocc = '".$codsil."' AND ".$gTables['camp_artico'].".confezione = 0 ".$where."	ORDER BY datdoc ASC, id_mov ASC
 		";
+
+
 
 		$res = gaz_dbi_query($query);
 
