@@ -183,7 +183,7 @@ function getMovContainer(cod_silos) {
           clpro = 'bg-danger';
           value.pro ='--- vuoto ---';
         }
-				$("table.list_movcontainer").append("<tr><td> <button onclick='location.href=\"../magazz/admin_movmag.php?Update&id_mov="+value.id+"\"' target='_blank' type='button'>"+value.id+" </button></td><td class='bg-warning'>"+ value.cod + " </td><td> "+value.des+" </td><td class='bg-info'> "+value.val+ "</td><td> " +value.um+ " </td><td class='text-right "+ clpro +"'> "+value.pro+" </td></tr>");
+				$("table.list_movcontainer").append("<tr><td> <button onclick='location.href=\"../magazz/admin_movmag.php?Update&id_mov="+value.id+"\"' target='_blank' type='button'>"+value.id+" </button></td><td class='bg-warning'>&nbsp;"+ value.cod + " </td><td>&nbsp; "+value.des+value.id_lot+"&nbsp; </td><td class='bg-info'> "+value.val+ "</td><td> &nbsp;" +value.um+ "&nbsp; </td><td class='text-right "+ clpro +"'> "+value.pro+" </td></tr>");
 				});
 				if (j==0){
 					$(".list_movcontainer").append('<tr><td class="bg-danger">********* Contenitore non movimentato *********</td></tr>');

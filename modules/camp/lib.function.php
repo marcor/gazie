@@ -147,7 +147,7 @@ class silos {
 		if (strlen($codart)>0){
 		  $where=$where." AND artico = '". $codart ."'";
 		}
-			$what=	$gTables['movmag'].".operat, ".$gTables['movmag'].".id_mov, ".$gTables['movmag'].".quanti, ".$gTables['movmag'].".id_orderman, ".$gTables['camp_mov_sian'].".*, ".$gTables['camp_artico'].".confezione, ".$gTables['artico'].".codice, ".$gTables['artico'].".descri, ".$gTables['artico'].".unimis";
+			$what=	$gTables['movmag'].".operat, ".$gTables['movmag'].".id_mov, ".$gTables['movmag'].".id_lotmag, ".$gTables['movmag'].".quanti, ".$gTables['movmag'].".id_orderman, ".$gTables['camp_mov_sian'].".*, ".$gTables['camp_artico'].".confezione, ".$gTables['artico'].".codice, ".$gTables['artico'].".descri, ".$gTables['artico'].".unimis";
 			$table=$gTables['camp_mov_sian']." LEFT JOIN ".$gTables['movmag']." ON ".$gTables['camp_mov_sian'].".id_movmag = ".$gTables['movmag'].".id_mov
 											LEFT JOIN ".$gTables['camp_artico']." ON ".$gTables['movmag'].".artico = ".$gTables['camp_artico'].".codice
 											LEFT JOIN ".$gTables['artico']." ON ".$gTables['movmag'].".artico = ".$gTables['artico'].".codice";
@@ -156,7 +156,7 @@ class silos {
 				if ($r['confezione']==0 && $r['id_mov']>=1 ){
           $val=$r['quanti']*$r['operat'];
 					$q = number_format($q + $val,6);
-					$content[]=['val'=>$r['quanti']*$r['operat'],'id'=>$r['id_mov'],'cod'=>$r['codice'],'des'=>$r['descri'],'um'=>$r['unimis'],'pro'=>$q];
+					$content[]=['val'=>$r['quanti']*$r['operat'],'id'=>$r['id_mov'],'cod'=>$r['codice'],'des'=>$r['descri'],'um'=>$r['unimis'],'pro'=>$q,'id_lot'=>"-id lotto: ".$r['id_lotmag']];
 				}
 			}
 			return $content ;
