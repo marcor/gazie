@@ -128,7 +128,7 @@ class silos {
 			return $content ;
 	}
 
-	function getMovContainer($codsil,$codart="", $excluded_movmag = 0){// restituisce la quantità di olio di un recipiente
+	function getMovContainer($codsil,$codart="", $excluded_movmag = 0){// restituisce i movimenti di olio e lotti di un contenitore olio
 		global $gTables,$admin_aziend;
 		$content=[];
 		$q=0;
