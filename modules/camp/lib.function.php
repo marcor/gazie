@@ -156,7 +156,8 @@ class silos {
 				if ($r['confezione']==0 && $r['id_mov']>=1 ){
           $val=$r['quanti']*$r['operat'];
 					$q = number_format($q + $val,6);
-					$content[]=['val'=>$r['quanti']*$r['operat'],'id'=>$r['id_mov'],'cod'=>$r['codice'],'des'=>$r['descri'],'um'=>$r['unimis'],'pro'=>$q,'id_lot'=>"-id lotto: ".$r['id_lotmag']];
+          $idlot=(intval($r['id_lotmag'])>0)?"-id lotto: ".$r['id_lotmag']:'';
+					$content[]=['val'=>$r['quanti']*$r['operat'],'id'=>$r['id_mov'],'cod'=>$r['codice'],'des'=>$r['descri'],'um'=>$r['unimis'],'pro'=>$q,'id_lot'=>$idlot];
 				}
 			}
 			return $content ;
