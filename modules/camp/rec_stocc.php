@@ -126,12 +126,15 @@ function ContentSil(silos) {
 					var type2 = JSON.stringify(jsondata['varieta']);
 
 					var obj = $.parseJSON(type2);
-					$.each(obj, function(i, value) {
-						$(".list_variants").append("<tr><td> "+i+":  Kg."+value+"&nbsp;</td></tr>");
-					n++;
-					});
+          var n = (Object.keys(obj).length);
+          if (n>1){
+            $.each(obj, function(i, value) {
+              $(".list_variants").append("<tr><td> "+i+":  Kg."+value+"&nbsp;</td></tr>");
+            n++;
+            });
+          }
 					if (n<=1){
-						$(".list_variants").append('<tr><td class="bg-danger">********* Non ci sono varietà o non sono identificabili *********</td></tr>');
+						$(".list_variants").append('<tr><td class="bg-danger">********* Non ci sono varietà o è un mix con oli senza varietà *********</td></tr>');
 					}
 					n=0;
 					var obj = $.parseJSON(type1);
