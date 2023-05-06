@@ -196,7 +196,7 @@ function getMovContainer(cod_silos) {
 	$( function() {
     var dialog,
     dialog = $("#dialog_movcontainer").dialog({
-      position: { my: "center", at: "left top"},
+      position: { my: "center-200 top", at: "center top+80"},
       modal: true,
       show: "blind",
       hide: "explode",
@@ -216,6 +216,7 @@ function getMovContainer(cod_silos) {
 
 };
 </script>
+<style> .ui-dialog { z-index: 1050; } </style>
 <div align="center" class="FacetFormHeaderFont">Recipienti di stoccaggio</div>
 <?php
 $recordnav = new recordnav($gTables['camp_recip_stocc'], $where, $limit, $passo);
