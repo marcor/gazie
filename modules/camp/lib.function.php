@@ -114,8 +114,8 @@ class silos {
 			$what=	$gTables['movmag'].".operat, ".$gTables['movmag'].".quanti, ".$gTables['movmag'].".id_orderman, ".
 					$gTables['camp_mov_sian'].".*, ".$gTables['camp_artico'].".confezione ";
 			$groupby= "";
-			$table=$gTables['camp_mov_sian']." LEFT JOIN ".$gTables['movmag']." ON ".$gTables['movmag'].".id_mov = ".$gTables['camp_mov_sian'].".id_movmag
-												LEFT JOIN ".$gTables['camp_artico']." ON ".$gTables['camp_artico'].".codice = ".$gTables['movmag'].".artico
+			$table=$gTables['camp_mov_sian']." LEFT JOIN ".$gTables['movmag']." ON ".$gTables['camp_mov_sian'].".id_movmag = ".$gTables['movmag'].".id_mov
+      LEFT JOIN ".$gTables['camp_artico']." ON ".$gTables['camp_artico'].".codice = ".$gTables['movmag'].".artico
 			";
 			$ressilos=gaz_dbi_dyn_query ($what,$table,$where,$orderby,$limit,$passo,$groupby);
 			while ($r = gaz_dbi_fetch_array($ressilos)) {
@@ -168,7 +168,7 @@ class silos {
 		global $gTables,$admin_aziend;
 		$sil = new lotmag();
 		$what=$gTables['movmag'].".id_lotmag, ".$gTables['movmag'].".id_mov, ".$gTables['movmag'].".artico ";
-		$table=$gTables['movmag']." LEFT JOIN ".$gTables['camp_mov_sian']." ON ".$gTables['camp_mov_sian'].".id_movmag = ".$gTables['movmag'].".id_mov";
+		$table=$gTables['movmag']." LEFT JOIN ".$gTables['camp_mov_sian']." ON ".$gTables['movmag'].".id_mov = ".$gTables['camp_mov_sian'].".id_movmag";
 		$where="recip_stocc = '".$codsil."'";
 		if (strlen($codart)>0){
 			$where = $where." AND artico = '".$codart."'";
@@ -199,9 +199,7 @@ class silos {
     $id_mov=(isset($latestEmpty['id_mov']))?$latestEmpty['id_mov']:'';
     $select=$gTables['movmag'].".artico";
     $table=$gTables['movmag']."
-    LEFT JOIN ".$gTables['camp_mov_sian']." ON ".$gTables['camp_mov_sian'].".id_movmag = ".$gTables['movmag'].".id_mov
-    LEFT JOIN ".$gTables['camp_artico']." ON ".$gTables['camp_artico'].".codice = artico
-    ";
+    LEFT JOIN ".$gTables['camp_mov_sian']." ON ".$gTables['movmag'].".id_mov = ".$gTables['camp_mov_sian'].".id_movmag LEFT JOIN ".$gTables['camp_artico']." ON ".$gTables['camp_artico'].".codice = artico";
     $where= $gTables['camp_mov_sian'].".recip_stocc = '".$codsil."' AND ".$gTables['camp_artico'].".confezione = 0";
     if (strlen($date)>0){
       $where = $where." AND (datdoc > '".$date."' OR(datdoc = '".$date."' AND id_mov > ".$id_mov."))";
@@ -301,10 +299,7 @@ class silos {
 		WHERE ".$gTables['camp_mov_sian'].".recip_stocc = '".$codsil."' AND ".$gTables['camp_artico'].".confezione = 0 ".$where."	ORDER BY datdoc ASC, id_mov ASC
 		";
 
-
-
 		$res = gaz_dbi_query($query);
-
 		$sum=0;$zeroday=array();
 		foreach ($res as $r){
 			$sum = number_format($sum,8) + ($r['quanti']*$r['operat']);
@@ -329,9 +324,9 @@ class silos {
 		$sil = new lotmag();
 		$select=$gTables['movmag'].".id_lotmag, ".$gTables['artico'].".quality, ".$gTables['movmag'].".artico, ".$gTables['movmag'].".id_mov, ".$gTables['movmag'].".datdoc, ".$gTables['movmag'].".quanti, ".$gTables['movmag'].".operat";
 		$table=$gTables['movmag']."
-		LEFT JOIN ".$gTables['camp_mov_sian']." ON ".$gTables['camp_mov_sian'].".id_movmag = ".$gTables['movmag'].".id_mov
-		LEFT JOIN ".$gTables['artico']." ON ".$gTables['artico'].".codice = ".$gTables['movmag'].".artico
-		LEFT JOIN ".$gTables['camp_artico']." ON ".$gTables['camp_artico'].".codice = ".$gTables['artico'].".codice
+		LEFT JOIN ".$gTables['camp_mov_sian']." ON ".$gTables['movmag'].".id_mov = ".$gTables['camp_mov_sian'].".id_movmag
+    LEFT JOIN ".$gTables['artico']." ON ".$gTables['movmag'].".artico = ".$gTables['artico'].".codice
+    LEFT JOIN ".$gTables['camp_artico']." ON ".$gTables['camp_artico'].".codice = ".$gTables['artico'].".codice
 		";
 		$where= $gTables['camp_mov_sian'].".recip_stocc = '".$codsil."' AND ".$gTables['camp_artico'].".confezione = 0";
 		if (is_array($excluded_movmag)){
