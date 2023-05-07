@@ -687,7 +687,7 @@ function printPdf(urlPrintDoc){
                       $sdilabel = ( !empty($revch['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][0] : 'da inviare';
                       $last_flux_status = (empty($last_flux_status)) ? 'DI' : '';
                       if (is_string($revch['fattura_elettronica_zip_package']) && strlen($revch['fattura_elettronica_zip_package'])>10 && $last_flux_status == 'DI') { // il documento è impacchettato e da inviare
-                        $revch['fae_attuale'] = $revch['fattura_elettronica_zip_package'];
+                        //$revch['fae_attuale'] = $revch['fattura_elettronica_zip_package'];
                         $sdihilight = ( !empty($revch['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][1] : 'default';
                         $sdilabel = ( !empty($revch['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][0] : 'ZIP da inviare';
                         $last_flux_status = 'ZI';
@@ -836,7 +836,7 @@ function printPdf(urlPrintDoc){
                         }
                       }
                       if ( !empty($r['fattura_elettronica_zip_package']) && strlen($r['fattura_elettronica_zip_package'])>10 && ($last_flux_status=='DI' || $last_flux_status=='PI')) { // il documento è impacchettato e da inviare
-                        $r['fae_attuale']=$r['fattura_elettronica_zip_package'];
+                        //$r['fae_attuale']=$r['fattura_elettronica_original_name'];
                         $sdihilight = ( !empty($r['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][1] : 'default';
                         $sdilabel = ( !empty($r['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][0] : (($r['fattura_elettronica_zip_package']!='FAE_ZIP_NOGENERATED') ? 'ZIP da inviare' : '');
                         $last_flux_status = 'ZI';
