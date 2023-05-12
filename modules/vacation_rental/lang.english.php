@@ -718,10 +718,11 @@ $strScript = array(
 		'booking_tot' => 'Total rental price',
 		'which_deposit' => 'Amount to be paid to confirm the reservation (confirmatory deposit)',
 		'select_pay_deposit' => 'Select the type of payment for the confirmation deposit',
+		'select_pay_balance' => 'Select the payment type for your balance',
 		'bank_transfer' => 'Bank transfer',
 		'credit_card_offline' => 'Credit card offline',
 		'payment' => 'Payment',
-		'transfer_instruction' => 'Make the bank transfer to the following coordinates within 6 hours',
+		'transfer_instruction' => '<b>Make the bank transfer to the following coordinates within 6 hours and send a copy of the receipt.</b> Failure to send the receipt will result in the automatic cancellation of the reservation.',
 		'bank_beneficiary' => 'Beneficiary',
 		'amount' => 'Amount',
 		'bank_reason' => 'Payment Reason:',
@@ -796,7 +797,10 @@ $strScript = array(
     'use_access' => 'To log in, use the following access codes',
     'more_info' => 'More info',
     'booking_status' => 'Booking status',
-    'total_paid' => 'Total paid'
+    'total_paid' => 'Total paid',
+    'transfer_instruction2' => '<b>Make the bank transfer to the following coordinates and send a copy of the receipt to the tourist facility.</b>',
+    'add_extra' => 'Add a new extra',
+    'confirm_extra' => 'Confirm add new extra'
     ),
 
   "admin_extra.php" =>

@@ -140,6 +140,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['end'] = $_POST['end'];
     $form['adult'] = $_POST['adult'];
     $form['child'] = $_POST['child'];
+    $form['access_code'] = $_POST['access_code'];
     $gen_iva_perc =  $_POST['gen_iva_perc'];
     $form['extra'] = (isset($_POST['extra']))?$_POST['extra']:array();
     $form['qtaextra'] = (isset($_POST['qtaextra']))?$_POST['qtaextra']:0;
@@ -410,8 +411,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 
     if ($_POST['start'] > $_POST['end']){
 		$msg .= "38+";
-	}	
-	
+	}
+
 	// Se viene inviata la richiesta di conferma totale ...
     if (isset($_POST['ins'])) {
 
@@ -454,11 +455,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         if (empty($form['clfoco'])&& $toDo == 'insert')
             $msg .= "47+";
         if (empty($form['pagame']))
-            $msg .= "48+"; 
-		
-		// controlli sul numero di notti 	
+            $msg .= "48+";
+
+		// controlli sul numero di notti
 		$datediff = strtotime($form['end'])-strtotime($form['start']);
-		$night=round($datediff / (60 * 60 * 24));		
+		$night=round($datediff / (60 * 60 * 24));
 		if (intval($form['max_booking_days'])>0 && $night > intval($form['max_booking_days'])){// se si supera il numero delle notti prenotabili consentito
 		  $msg .= "66+";
 		}
@@ -590,7 +591,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['type']="ALLOGGIO";
                 $form['title']= "Prenotazione ".$accomodation_type." ".$form['rows'][$i]['codart']." - ".$form['search']['clfoco'];
                 $form['house_code']=$form['rows'][$i]['codart'];
-                $columns = array('id', 'title', 'start', 'end', 'house_code', 'id_tesbro', 'id_rigbro', 'adult', 'child', 'type');
+                $columns = array('id', 'title', 'start', 'end', 'house_code', 'id_tesbro', 'id_rigbro', 'adult', 'child', 'type', 'access_code');
                 tableInsert($table, $columns, $form);
                 $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['rows'][$i]['codart']);
                 $data = json_decode($artico['custom_field'], TRUE);
@@ -1596,6 +1597,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['child'] = $event['child'];
     $form['start'] = $event['start'];
     $form['end'] = $event['end'];
+    $form['access_code'] = $event['access_code'];
     //$form['extra'] = "";
     $form['qtaextra'] ="";
     $form['in_sconto'] = '#';
@@ -1803,6 +1805,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['end'] = "";
     $form['adult'] = 0;
     $form['child'] = 0;
+    $form['access_code'] = '';
     $form['minor'] = '12';// di defaul imposto l'età dei minori a 12 anni; si cambierà in automatico qualora impostata nella struttura
     $form['tour_tax_from'] = "";
     $form['tour_tax_to'] = "";
@@ -2822,6 +2825,7 @@ echo '<div class="fissa" ><div class="FacetSeparatorTD" align="center">Inserimen
 			<td class="FacetFieldCaptionTD text-right">Numero minori di anni <?php echo $form['minor']; ?></td>
 			<td class="FacetDataTD">
 				<input type="number" name="child" value="<?php echo $form['child']; ?>" min="0" max="5" class="FacetInput">
+        <input type="hidden" name="access_code" value="<?php echo $form['access_code']; ?>">
 			</td>
 		</tr>
 		</table>

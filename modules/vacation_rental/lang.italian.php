@@ -53,7 +53,7 @@ $strScript = array(
         'instr_sent' => "Il riepilogo con tutte le informazioni è stato inviato all'indirizzo e-mail fornito.<br>Attenzione! I dettagli per accedere online alla prenotazione sono riportati esclusivamente sull'email inviata all'indirizzo inserito nel modulo.",
         'not_received' => "In mancanza di ricevemento dell'e-mail e dopo aver controllato nella cartella di spam, contattare l'amministratore del sito.",
         'close'=>'Questo messaggio si chiuderà fra ',
-      ),	
+      ),
     "report_facility.php" =>
       array('title' => 'Lista deglle strutture ricettive',
         'codice' => "Codice",
@@ -564,7 +564,9 @@ $strScript = array(
 		'use_access' => 'Per accedere usi i seguenti codici di accesso',
 		'more_info' => 'Maggiori info',
 		'booking_status' => 'Stato della prenotazione',
-		'total_paid' => 'Totale pagato'
+		'total_paid' => 'Totale pagato',
+		'transfer_instruction2' => '<b>Effettuare il bonifico bancario alle seguenti coordinate e inviare la copia della ricevuta alla struttura.</b>',
+    'add_extra' => 'Aggiungi un nuovo extra'
     ),
 
   "admin_extra.php" =>
