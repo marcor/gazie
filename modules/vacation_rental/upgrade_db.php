@@ -62,4 +62,5 @@ $upgrade_db[152][]="ALTER TABLE `".$table_prefix."_XXXrental_prices` ADD INDEX(`
 $upgrade_db[153][]="UPDATE `".$table_prefix."_XXXartico` SET `custom_field` = 'vacation_rental TASSA-TURISTICA' WHERE `".$table_prefix."_XXXartico`.`codice` = 'TASSA-TURISTICA';";
 $upgrade_db[153][]="INSERT INTO `".$table_prefix."_menu_module` (`id`, `id_module`, `link`, `icon`, `class`, `translate_key`, `accesskey`, `weight`) VALUES ('".$nextid."', '".$id_mod."', 'report_booking.php?auxil=VPR', '', '', '7', '', '7') ";
 $upgrade_db[153][]="INSERT INTO `".$table_prefix."_menu_script` (`id`, `id_menu`, `link`, `icon`, `class`, `translate_key`, `accesskey`, `weight`) VALUES (NULL, '".$nextid."', 'admin_booking.php?Insert&tipdoc=VPR', '', '', '7', '', '7') ";
+$upgrade_db[154][]="ALTER TABLE `".$table_prefix."_XXXrental_discounts` ADD `last_min` TINYINT(3) NOT NULL DEFAULT '0' COMMENT '0=last min escluso numero=giorni prima del checkin per avere lo sconto' AFTER `reusable`; ";
 ?>

@@ -102,6 +102,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['discount_voucher_code']="";
     $form['is_percent']="";
     $form['min_stay']=0;
+    $form['last_min']=0;
     $form['priority']=0;
     $form['stop_further_processing']=0;
     $form['id_anagra']=0;
@@ -174,6 +175,13 @@ if ($toDo == 'update') {
       </td>
     </tr>
     <tr>
+      <td class="FacetFieldCaptionTD"><?php echo $script_transl['last_min']; ?>
+      </td>
+      <td class="FacetDataTD">
+        <input type="number" name="last_min" value="<?php echo $form['last_min'];?>" maxlength="10"/>
+      </td>
+    </tr>
+    <tr>
       <td class="FacetFieldCaptionTD"><?php echo $script_transl['valid_from']; ?>
       </td>
       <td class="FacetDataTD">
@@ -231,7 +239,7 @@ if ($toDo == 'update') {
       </td>
       </td>
     </tr>
- 
+
     <tr>
       <td class="FacetFieldCaptionTD"><input type="reset" name="Cancel" value="<?php echo $script_transl['cancel'];?>">
       </td>

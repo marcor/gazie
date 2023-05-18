@@ -87,4 +87,5 @@ $update_db[]="ALTER TABLE `".$table_prefix."_XXXrental_events` ADD INDEX(`end`);
 $update_db[]="ALTER TABLE `".$table_prefix."_XXXrental_prices` ADD INDEX(`start`);";
 $update_db[]="ALTER TABLE `".$table_prefix."_XXXrental_prices` ADD INDEX(`end`);";
 $update_db[]="ALTER TABLE `".$table_prefix."_XXXrental_prices` ADD INDEX(`house_code`);";
+$update_db[]="ALTER TABLE `".$table_prefix."_XXXrental_discounts` ADD `last_min` TINYINT(3) NOT NULL DEFAULT '0' COMMENT '0=last min escluso numero=giorni prima del checkin per avere lo sconto' AFTER `reusable`; ";
 ?>
