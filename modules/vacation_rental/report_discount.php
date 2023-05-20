@@ -42,22 +42,23 @@ $search_fields = [
 
 // creo l'array (header => campi) per l'ordinamento dei record
 $sortable_headers = array  (
-"ID" => '',
-            "Titolo" => 'title',
-            "Descrizione"=>'description',
-            "ID struttura" => 'facility_id',
-			"Codice alloggio" => 'accommodation_code',
-            "Tipo di sconto" => '',
-			"Valido a partire da"=>'',
-      "Valido fino a"=>'',
-            'Valore' => '',
-			'Codice buono' => 'discount_voucher_code',
-            'Riservato' => '',
-            'Notti minime' =>'',
-            'Priorità' =>'',
-            'Blocca successivi' =>'',
-            'Stato' =>'',
-            'Cancella' => ''
+  "ID" => '',
+  "Titolo" => 'title',
+  "Descrizione"=>'description',
+  "ID struttura" => 'facility_id',
+  "Codice alloggio" => 'accommodation_code',
+  "Tipo di sconto" => '',
+  "Valido a partire da"=>'',
+  "Valido fino a"=>'',
+  'Valore' => '',
+  'Codice buono' => 'discount_voucher_code',
+  'Riservato' => '',
+  'Notti minime' =>'',
+  'Last min' =>'',
+  'Priorità' =>'',
+  'Blocca successivi' =>'',
+  'Stato' =>'',
+  'Cancella' => ''
 );
 $tablejoin = $gTables['rental_discounts'];
 
@@ -267,6 +268,8 @@ while ($r = gaz_dbi_fetch_array($result)) {
 		<td class="text-center"><?php echo $r['id_anagra'];?>
     </td>
     <td class="text-center"><?php echo $r['min_stay'];?>
+    </td>
+    <td class="text-center"><?php echo $r['last_min'];?>
     </td>
     <td class="text-center"><?php echo $r['priority'];?>
     </td>
