@@ -251,7 +251,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 
 		}
 
-        if (!empty($_FILES['userfile']['name'])) {
+    if (!empty($_FILES['userfile']['name'])) {
 
             if (!( $_FILES['userfile']['type'] == "application/pkcs7-mime" || $_FILES['userfile']['type'] == "application/pkcs7" || $_FILES['userfile']['type'] == "text/xml")) {
 				$msg['err'][] = 'filmim';
@@ -1020,7 +1020,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
               $form['rows'][$nl]['ritenuta'] = '';
               $form['rows'][$nl]['pervat'] = $ctrlaliquo;
               $form['codart_'.($nl-1)] = '';
-              $form['codvat_'.($nl-1)] = $map_pervat[floatval($ctrlaliquo)];
+              $form['codvat_'.($nl-1)] = (isset($map_pervat))?$map_pervat[floatval($ctrlaliquo)]:'';
               $form['codric_'.($nl-1)] = intval($form['codric_'.$post_nl]);
               $form['rows'][$nl]['prelis'] = $diffiva;
               $form['rows'][$nl]['amount'] = $diffiva;
