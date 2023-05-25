@@ -416,8 +416,8 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ // se NON è il pri
         }
 
         if ($msg == "") { // nessun errore
-            // Antonio Germani >>>> inizio SCRITTURA dei database    §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
-            echo"<pre>",print_r($form);die;
+          // Antonio Germani >>>> inizio SCRITTURA dei database    §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
+          //  echo"<pre>",print_r($form);die;
           $start_work = date_format(date_create_from_format('d-m-Y', $form['iniprod']), 'Y-m-d')." ".$form['iniprodtime'];
           $end_work = date_format(date_create_from_format('d-m-Y', $form['fineprod']), 'Y-m-d')." ".$form['fineprodtime'];
             // i dati dell'articolo che non sono nel form li avrò nell' array $resartico
