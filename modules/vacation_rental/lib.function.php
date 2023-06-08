@@ -261,7 +261,7 @@ function tour_tax_daytopay($night,$start,$end,$tour_tax_from,$tour_tax_to,$tour_
 }
 
 // calcolo totale locazione
-function get_totalprice_booking($tesbro){
+function get_totalprice_booking($tesbro,$tourist_tax=TRUE){
   if ($tesbro!==''){
     $tesbro=intval($tesbro);
     global $link, $azTables, $gTables;// posso chiamare la funzione con entrambi i metodi
@@ -273,6 +273,9 @@ function get_totalprice_booking($tesbro){
       $tabletes = $gTables['tesbro'];
     }
     $where = " WHERE id_tes = '".$tesbro."'";
+    if ($tourist_tax<>TRUE){// se richiesto escludo la tassa turistica
+      $where .= "AND codart NOT LIKE 'TASSA-TURISTICA%'";
+    }
     $sql = "SELECT SUM(quanti * prelis) AS totalprice FROM ".$tablerig.$where;
     if ($result = mysqli_query($link, $sql)) {
        $row = mysqli_fetch_assoc($result);
@@ -399,6 +402,54 @@ function get_total_paid($idtesbro){
     $row = mysqli_fetch_assoc($result);
 
     return $row['totalpaid'];
+  }else {
+     echo "Error: " . $sql . "<br>" . mysqli_error($link);
+  }
+}
+
+function get_user_points_level($id_anagra){// determina il livello punti raggiunto dal cliente
+  global $link, $azTables, $gTables, $genTables;// posso chiamare la funzione con entrambi i metodi
+  if ($azTables){
+    $table = $genTables."anagra";
+  }else{
+    $table = $gTables['anagra'];
+  }
+  $where = " WHERE id = '".$id_anagra."'";
+  $sql = "SELECT custom_field FROM ".$table.$where;
+  if ($result = mysqli_query($link, $sql)) {// prendo il customfield in anagra
+    $row = mysqli_fetch_assoc($result);
+    $user_point=0;
+    if ($data = json_decode($row['custom_field'],true)){// se c'è un json in anagra
+      if (is_array($data['vacation_rental'])){ // se c'è il modulo "vacation rental" lo aggiorno
+        if (isset($data['vacation_rental']['points'])){
+          $user_point = intval($data['vacation_rental']['points']);
+        }
+      }
+    }
+    if ($azTables){
+      $table = $azTables."company_config";
+    }else{
+      $table = $gTables['company_config'];
+    }
+    $sql = "SELECT * FROM ". $table ." WHERE var LIKE 'pointlevel%' ORDER BY id ASC";
+    if ($result = mysqli_query($link, $sql)) {// prendo i livelli dalle impostazioni generali
+      $levname="";$user_lev="";
+      while ($rigpoint = mysqli_fetch_array($result)){
+        if (substr($rigpoint['description'],0,12)=="Nome livello"){
+          $lev_number=substr($rigpoint['description'],13);
+        }
+        if (substr($rigpoint['description'],0,13)=="Punti livello"){
+          if ($user_point>=$rigpoint['val']){
+            $user_lev=$lev_number;
+          }
+        }
+      }
+
+      return $user_lev;// restituisco il numero del livello
+
+    }else {
+       echo "Error: " . $sql . "<br>" . mysqli_error($link);
+    }
   }else {
      echo "Error: " . $sql . "<br>" . mysqli_error($link);
   }

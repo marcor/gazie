@@ -107,6 +107,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['stop_further_processing']=0;
     $form['id_anagra']=0;
     $form['reusable']=0;
+    $form['level_points']=0;
 }
 require("../../library/include/header.php");
 $script_transl = HeadMain(5);
@@ -236,6 +237,14 @@ if ($toDo == 'update') {
       </td>
       <td class="FacetDataTD">
       <input type="text" name="reusable" value="<?php echo $form['reusable'];?>" maxlength="3"/>
+      </td>
+      </td>
+    </tr>
+    <tr>
+      <td class="FacetFieldCaptionTD"><?php echo $script_transl['level_points']; ?>
+      </td>
+      <td class="FacetDataTD">
+      <input type="number" name="level_points" value="<?php echo $form['level_points'];?>" max="3"/>
       </td>
       </td>
     </tr>

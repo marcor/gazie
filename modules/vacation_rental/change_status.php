@@ -41,6 +41,7 @@ use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\SMTP;
 require("../../library/include/datlib.inc.php");
 require("../../modules/magazz/lib.function.php");
+
 $admin_aziend = checkAdmin();
 
 if (isset($_POST['type'])&&isset($_POST['ref'])) {
@@ -54,9 +55,9 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
       $language=gaz_dbi_get_row($gTables['languages'], "lang_id", $anagra['id_language']); // carico la lingua
       $langarr = explode(" ",$language['title_native']);
       $lang = strtolower($langarr[0]);
-	  if (file_exists("lang.".$lang.".php")){// se esist
-		include "lang.".$lang.".php";// carico il file traduzione lingua
-	  }else{// altrimenti carico di default la lingua inglese
+      if (file_exists("lang.".$lang.".php")){// se esiste
+        include "lang.".$lang.".php";// carico il file traduzione lingua
+      }else{// altrimenti carico di default la lingua inglese
         include "lang.english.php";
       }
       $script_transl=$strScript['booking_form.php'];
@@ -116,17 +117,18 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 		break;
     case "set_new_status_check":
 			$i=intval($_POST['ref']); // id_tesbro
+      $pointenable = gaz_dbi_get_row($gTables['company_config'], 'var', 'pointenable')['val'];
+      $pointeuro = gaz_dbi_get_row($gTables['company_config'], 'var', 'pointeuro')['val'];
       $datetime  = date ('Y-m-d H:i:s', strtotime($_POST['datetime']));
-      // ricarico il json custom field tesbro e controllo
       $tesbro=gaz_dbi_get_row($gTables['tesbro'], "id_tes", $i); // carico la tesbro
       $clfoco=gaz_dbi_get_row($gTables['clfoco'], "codice", $tesbro['clfoco']);
       $anagra=gaz_dbi_get_row($gTables['anagra'], "id", $clfoco['id_anagra']); // carico la anagra
       $language=gaz_dbi_get_row($gTables['languages'], "lang_id", $anagra['id_language']); // carico la lingua specifica del cliente
       $langarr = explode(" ",$language['title_native']);
       $lang = strtolower($langarr[0]);
-      if (file_exists("lang.".$lang.".php")){// se esist
-		include "lang.".$lang.".php";// carico il file traduzione lingua
-	  }else{// altrimenti carico di default la lingua inglese
+      if (file_exists("lang.".$lang.".php")){// se esiste la lingua richiesta
+        include "lang.".$lang.".php";// carico il file traduzione lingua
+      }else{// altrimenti carico di default la lingua inglese
         include "lang.english.php";
       }
       $script_transl=$strScript['booking_form.php'];
@@ -140,14 +142,12 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
       }else{
         $updt= "checked_in_date = NULL, checked_out_date = NULL";
       }
+      $old_checked_out_date=gaz_dbi_get_row($gTables['rental_events'], "id_tesbro", $i, " AND type = 'ALLOGGIO'")['checked_out_date'];
 
-      gaz_dbi_query ("UPDATE " . $gTables['rental_events'] . " SET ".$updt." WHERE id_tesbro =".$i." AND type= 'ALLOGGIO'") ;
+      gaz_dbi_query ("UPDATE " . $gTables['rental_events'] . " SET ".$updt." WHERE id_tesbro =".$i." AND type= 'ALLOGGIO'");
 
-      if ($_POST['email']=='true' && strlen($_POST['cust_mail'])>4 && strlen($vacation_url_user)>4){// se richiesto invio mail di richiesta recensione
-
-        $event=gaz_dbi_get_row($gTables['rental_events'], "id_tesbro", $i, " AND type = 'ALLOGGIO'"); // carico l'evento prenotazione
-
-        // imposto PHP Mailer per invio email di cambio stato
+      if (intval($pointenable)==1){// se è attivato il sistema punti
+        // imposto PHP Mailer per invio email comunicazione punti
         $host = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_server')['val'];
         $usr = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_user')['val'];
         //$psw = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_password')['val'];
@@ -174,6 +174,100 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
         $mail->addCC($admin_aziend['e_mail']);             //invio copia a mittente
         $mail->isHTML(true);
         $mail->Subject = $script_transl['booking']." ".$tesbro['numdoc'].' '.$script_transl['of'].' '.gaz_format_date($tesbro['datemi']);
+        if (intval($old_checked_out_date)==0 && $_POST['new_status']=="OUT" && floatval($pointeuro)>0){// se è abilitato attribuisco i punti al checkout 
+          $amount=get_totalprice_booking($i,FALSE);
+          $points=intval($amount/$pointeuro);
+          if ($data = json_decode($anagra['custom_field'],true)){// se c'è un json in anagra
+            if (is_array($data['vacation_rental'])){ // se c'è il modulo "vacation rental" lo aggiorno
+              if (isset($data['vacation_rental']['points'])){
+                $data['vacation_rental']['points'] = intval($data['vacation_rental']['points'])+$points;
+              }else{
+                $data['vacation_rental']['points'] = $points;
+              }
+              $custom_json = json_encode($data);
+              gaz_dbi_put_row($gTables['anagra'], 'id', $anagra['id'], 'custom_field', $custom_json);
+              $level=get_user_points_level($anagra['id']);
+              if(intval($level)>0){
+                $sql = "SELECT val FROM ".$gTables['company_config']." WHERE var = 'pointlevel".$level."name' LIMIT 1";
+                if ($result = mysqli_query($link, $sql)) {
+                  $val = mysqli_fetch_assoc($result);
+                  $level_name=$val['val'];
+                }
+              }else{
+                $level_name="nessun livello raggiunto";
+              }
+              $mail->Body    = "<p>".$script_transl['give_point']." ".$data['vacation_rental']['points']." ".$script_transl['give_point1']." ".$level_name."</p><p>".$script_transl['regards']."</p><p><b>".$admin_aziend['ragso1']." ".$admin_aziend['ragso2']."</b></p>";
+              if($mail->send()) {
+              }else {
+                echo "Errore imprevisto nello spedire la mail di notifica attribuzione punti: " . $mail->ErrorInfo;
+              }
+            }
+          }
+        }
+        if (intval($old_checked_out_date)>0 && $_POST['new_status']!=="OUT" && floatval($pointeuro)>0){// se è abilitato e si sta regredendo dal check-out tolgo i punti
+          $amount=get_totalprice_booking($i,FALSE);
+          $points=intval($amount/$pointeuro);
+          if ($data = json_decode($anagra['custom_field'],true)){// se c'è un json in anagra
+            if (is_array($data['vacation_rental'])){ // se c'è il modulo "vacation rental" lo aggiorno
+              if (isset($data['vacation_rental']['points']) && intval($data['vacation_rental']['points'])>0){
+                $data['vacation_rental']['points'] = intval($data['vacation_rental']['points'])-$points;
+                $data['vacation_rental']['points'] = ($data['vacation_rental']['points']>=0)?$data['vacation_rental']['points']:0;
+              }else{
+                $data['vacation_rental']['points'] = 0;
+              }
+              $custom_json = json_encode($data);
+              gaz_dbi_put_row($gTables['anagra'], 'id', $anagra['id'], 'custom_field', $custom_json);
+              $level=get_user_points_level($anagra['id']);
+              if(intval($level)>0){
+                $sql = "SELECT val FROM ".$gTables['company_config']." WHERE var = 'pointlevel".$level."name' LIMIT 1";
+                if ($result = mysqli_query($link, $sql)) {
+                  $val = mysqli_fetch_assoc($result);
+                  $level_name=$val['val'];
+                }
+              }else{
+                $level_name="nessun livello raggiunto";
+              }
+              $mail->Body    = "<p>".$script_transl['delete_point']." ".$points." ".$script_transl['give_point1']." ".$level_name."</p><p>".$script_transl['regards']."</p><p><b>".$admin_aziend['ragso1']." ".$admin_aziend['ragso2']."</b></p>";
+              if($mail->send()) {
+              }else {
+                echo "Errore imprevisto nello spedire la mail di notifica di cancellazione punti: " . $mail->ErrorInfo;
+              }
+            }
+          }
+        }
+      }
+
+      if (isset($_POST['email']) && $_POST['email']=='true' && strlen($_POST['cust_mail'])>4 && strlen($vacation_url_user)>4){// se richiesto invio mail di richiesta recensione
+
+        $event=gaz_dbi_get_row($gTables['rental_events'], "id_tesbro", $i, " AND type = 'ALLOGGIO'"); // carico l'evento prenotazione
+
+        // imposto PHP Mailer per invio email richiesta feedback
+        $host = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_server')['val'];
+        $usr = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_user')['val'];
+        //$psw = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_password')['val'];
+        $rsdec=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = 'smtp_password'");
+        $rdec=gaz_dbi_fetch_row($rsdec);
+        $psw=$rdec?$rdec[0]:'';
+        $port = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_port')['val'];
+        $mail = new PHPMailer(true);
+        $mail->CharSet = 'UTF-8';
+        //Server settings
+        $mail->SMTPDebug  = 0;                           //Enable verbose debug output default: SMTP::DEBUG_SERVER;
+        $mail->isSMTP();                                 //Send using SMTP
+        $mail->Host       = $host;                       //Set the SMTP server to send through
+        $mail->SMTPAuth   = true;                        //Enable SMTP authentication
+        $mail->Username   = $usr;                        //SMTP username
+        $mail->Password   = $psw;                        //SMTP password
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; //Enable implicit TLS encryption
+        $mail->Port       = $port;                       //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+        // creo e invio email di conferma
+        //Recipients
+        $mail->setFrom($admin_aziend['e_mail']); // sender (e-mail dell'account che sta inviando)
+        $mail->addReplyTo($admin_aziend['e_mail']); // reply to sender (e-mail dell'account che sta inviando)
+        $mail->addAddress($_POST['cust_mail']);                  // email destinatario
+        $mail->addCC($admin_aziend['e_mail']);             //invio copia a mittente
+        $mail->isHTML(true);
+        $mail->Subject = $script_transl['feedback_request'].$script_transl['booking']." ".$tesbro['numdoc'].' '.$script_transl['of'].' '.gaz_format_date($tesbro['datemi']);
         $mail->Body    = "<p>".$script_transl['ask_feedback']."</p><p><a href=".$vacation_url_user.">".$vacation_url_user."</a></p>".$script_transl['use_access']."<br>Password: <b>".$event['access_code']."</b><br>ID: <b>".$event['id_tesbro']."</b><br>".$script_transl['booking_number'].": <b>".$tesbro['numdoc']."</b><p>".$script_transl['ask_feedback2']."</p><p><b>".$admin_aziend['ragso1']." ".$admin_aziend['ragso2']."</b></p>";
         if($mail->send()) {
         }else {

@@ -50,7 +50,7 @@ $strScript = array(
       array('title' => 'Pagina di ringraziamento Vacation rental',
         'thanks' => "GRAZIE!",
         'booked' => "La prenotazione è stata effettuata.",
-        'instr_sent' => "Il riepilogo con tutte le informazioni è stato inviato all'indirizzo e-mail fornito.<br>Attenzione! I dettagli per accedere online alla prenotazione sono riportati esclusivamente sull'email inviata all'indirizzo inserito nel modulo.",
+        'instr_sent' => "Il riepilogo con tutte le informazioni è stato inviato all'indirizzo e-mail fornito.<br>Attenzione! I dettagli per accedere online alla prenotazione sono riportati esclusivamente sull'email inviata all'indirizzo email inserito nel modulo.",
         'not_received' => "In mancanza di ricevemento dell'e-mail e dopo aver controllato nella cartella di spam, contattare l'amministratore del sito.",
         'close'=>'Questo messaggio si chiuderà fra ',
       ),
@@ -253,7 +253,7 @@ $strScript = array(
         'Deposito cauzionale da versare in contanti al check-in: EURO ',
         'In assenza di danni il deposito sarà restituito al check-out',
         'Proprietario',
-        'access1' => '<p>Le inviamo, in allegato, una copia della sua prenotazione</p><p>Per accedere alla prenotazione online e controllarne stato e pagamento usi questo link',
+        'access1' => '<p>Le inviamo, in allegato, una copia della sua prenotazione</p><p>Per accedere alla prenotazione online, aggiungere extra, effettuare pagamenti e controllarne lo stato usi questo link',
         'access2' => 'e i seguenti codici di accesso',
         'booking_number' => 'Numero prenotazione',
         'best_regards' => 'Grazie, cordiali saluti',
@@ -522,7 +522,7 @@ $strScript = array(
 		'email_confirm_addbody' => '<p>Entro  6 ore, dovrà effettuare il pagamento della caparra confirmatoria così come segue:</p>',
 		'email_confirm_addbody_warning' => '<p>Nota bene: il mancato pagamento o il mancato invio della ricevuta comporterà automaticamente la cancellazione della prenotazione.</p>',
 		'email_confirm_addbody_receipt' => '<p>Effettuato il pagamento ne dovrà inviare la ricevuta rispondendo a questa e-mail.</p>',
-		'email_confirm_add_access_url' => 'Per accedere alla prenotazione online usi questo link',
+		'email_confirm_add_access_url' => 'Per accedere alla prenotazione online, aggiungere extra, modificare il pagamento e controllarne lo stato usi questo link',
 		'email_confirm_add_access_code' => ' e i seguenti codici di accesso: ',
 		'regards' => 'Cordiali saluti',
 		'of' => 'del',
@@ -566,7 +566,16 @@ $strScript = array(
 		'booking_status' => 'Stato della prenotazione',
 		'total_paid' => 'Totale pagato',
 		'transfer_instruction2' => '<b>Effettuare il bonifico bancario alle seguenti coordinate e inviare la copia della ricevuta alla struttura.</b>',
-    'add_extra' => 'Aggiungi un nuovo extra'
+    'add_extra' => 'Aggiungi un nuovo extra',
+    'confirm_extra' => 'Conferma aggiunta extra',
+    'welcome_back' => 'Bentornato',
+    'point_lev' => 'Il suo livello di fidelizzazione è:',
+    'point_saved' => 'Punti accumulati',
+    'gain_level' => 'Livello fedeltà',
+    'give_point' => 'Nel ringraziarla per aver soggiornato nella ns. struttura le comunichiamo che le sono stati attribuiti',
+    'give_point1' => 'punti e che il suo livello fedeltà è',
+    'delete_point' => 'Le comunichiamo che c\'è stato un aggiornamento e le sono stati tolti',
+	'feedback_request' => 'Richiesta recensione per '
     ),
 
   "admin_extra.php" =>
@@ -653,7 +662,8 @@ $strScript = array(
         'stop_further_processing'=> "Questo sconto blocca tutti gli altri con minore priorità",
         'id_anagra'=> "ID utente a cui è riservato lo sconto",
         'reusable' => "Il buono sconto è utilizzabile più volte (0=infinite; numero=volte)",
-        'last_min' => 'Last minute: 0=NO, numero=notti prima del check-in per avere lo sonto'
+        'last_min' => 'Last minute: 0=NO, numero=notti prima del check-in per avere lo sonto',
+        'level_points' => 'Abilita questo sconto al livello punti (0=disabilitato)'
     ),
     "lease.php" =>
     array('locatore' => 'Il locatore',

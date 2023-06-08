@@ -800,7 +800,15 @@ $strScript = array(
     'total_paid' => 'Total paid',
     'transfer_instruction2' => '<b>Make the bank transfer to the following coordinates and send a copy of the receipt to the tourist facility.</b>',
     'add_extra' => 'Add a new extra',
-    'confirm_extra' => 'Confirm add new extra'
+    'confirm_extra' => 'Confirm add new extra',
+    'welcome_back' => 'Welcome back',
+    'point_lev' => 'Your fidelity level is:',
+    'point_saved' => 'Saved points',
+    'gain_level' => 'Fidelity level',
+    'give_point' => 'In thanking you for having stayed in our structure we inform you that we have been attributed to you',
+    'give_point1' => 'points and that his fidelity level is',
+    'delete_point' => 'We inform you that there has been an update and we have been removed',
+	'feedback_request' => 'Feedback request for '
     ),
 
   "admin_extra.php" =>

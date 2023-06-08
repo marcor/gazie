@@ -33,6 +33,7 @@ $gForm = new GazieForm();
 $genclass="active";
 $feedclass="";
 $remclass="";
+$pointclass="";
 
 if (isset($_POST['addElement'])){// se è stato richiesto di inserire un nuovo elemento feedback
   $genclass="";
@@ -76,6 +77,7 @@ if (isset($_POST['SaveupdElement']) && intval($_POST['SaveupdElement'])>0){// se
 }
 
 if (count($_POST) > 1 && !isset($_POST['addElement']) && !isset($_POST['delElement']) && !isset($_POST['updElement']) && !isset($_POST['SaveupdElement'])) {
+
   $_POST  = filter_input_array(INPUT_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
   foreach ($_POST as $k => $v) {
     $value=filter_var($v, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -93,6 +95,7 @@ $general = gaz_dbi_dyn_query("*", $gTables['company_config'], " var LIKE 'vacati
 $feedbacks = gaz_dbi_query("SELECT * FROM ".$gTables['rental_feedback_elements']." LEFT JOIN " . $gTables['artico_group'] . " ON " . $gTables['rental_feedback_elements'] . ".facility = " . $gTables['artico_group'] . ".id_artico_group ORDER BY id ASC");
 $reminders_in = gaz_dbi_dyn_query("*", $gTables['company_config'], " var LIKE 'reminvacation%'", ' id ASC', 0, 1000);
 $reminders_pay = gaz_dbi_dyn_query("*", $gTables['company_config'], " var LIKE 'rempayvacation%'", ' id ASC', 0, 1000);
+$point = gaz_dbi_dyn_query("*", $gTables['company_config'], " var LIKE 'point%'", ' id ASC', 0, 1000);
 
 ?>
 <div align="center" class="FacetFormHeaderFont">
@@ -105,6 +108,7 @@ $reminders_pay = gaz_dbi_dyn_query("*", $gTables['company_config'], " var LIKE '
   <li class="<?php echo $genclass; ?>"><a data-toggle="pill" href="#generale">Configurazione</a></li>
   <li class="<?php echo $feedclass; ?>"><a data-toggle="pill" href="#feedback"><b>Recensioni</b></a></li>
   <li class="<?php echo $remclass; ?>"><a data-toggle="pill" href="#reminder"><b>Promemoria</b></a></li>
+  <li class="<?php echo $pointclass; ?>"><a data-toggle="pill" href="#point"><b>Punti</b></a></li>
   <li style="float: right;"><div class="btn btn-warning" id="upsave">Salva</div></li>
 </ul>
 <?php
@@ -216,9 +220,31 @@ $reminders_pay = gaz_dbi_dyn_query("*", $gTables['company_config'], " var LIKE '
               </div>
           </div>
 
-        </form>
       </div><!-- chiude reminder  -->
 
+      <div id="point" class="tab-pane fade in <?php echo $pointclass; ?>">
+        <div class="row text-info bg-info">
+          <p>IMPOSTAZIONI PER FIDELIZZAZIONE A PUNTI</p>
+        </div><!-- chiude row  -->
+
+        <?php
+            while ($r = gaz_dbi_fetch_array($point)) {
+                ?>
+                <div class="row">
+                  <div class="form-group" >
+                    <label for="input<?php echo $r["id"]; ?>" class="col-sm-5 control-label"><?php echo $r["description"]; ?></label>
+                    <div class="col-sm-7">
+                        <?php
+                            ?>
+                            <input type="text" class="form-control input-sm" id="input<?php echo $r["id"]; ?>" name="<?php echo $r["var"]; ?>" placeholder="<?php echo $r["var"]; ?>" value="<?php echo $r["val"]; ?>">
+                    </div>
+                  </div>
+                </div><!-- chiude row  -->
+                <?php
+            }
+          ?>
+      </div><!-- chiude point  -->
+    </form>
       <div id="feedback" class="tab-pane fade in <?php echo $feedclass; ?>">
             <form method="post" id="feedback">
             <div class="row text-info bg-info">

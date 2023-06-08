@@ -150,6 +150,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['cosear'] = $_POST['cosear'];
     $form['seziva'] = $_POST['seziva'];
     $form['indspe'] = $_POST['indspe'];
+    $form['user_points'] = $_POST['user_points'];
     $form['tipdoc'] = $_POST['tipdoc'];
     $form['gioemi'] = $_POST['gioemi'];
     $form['mesemi'] = $_POST['mesemi'];
@@ -715,11 +716,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         if ($cliente['cosric'] >= 100000000) {
             $form['in_codric'] = $cliente['cosric'];
         }
-		if ($cliente['sconto_rigo']>=0.01){
-			$form['in_sconto'] = $cliente['sconto_rigo'];
-		} else {
-			$form['in_sconto'] = '#';
-		}
+        if ($cliente['sconto_rigo']>=0.01){
+          $form['in_sconto'] = $cliente['sconto_rigo'];
+        } else {
+          $form['in_sconto'] = '#';
+        }
         $form['expense_vat'] = $admin_aziend['preeminent_vat'];
         if ($cliente['aliiva'] > 0) {
             $form['expense_vat'] = $cliente['aliiva'];
@@ -730,6 +731,18 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['banapp'] = $cliente['banapp'];
         $form['listin'] = $cliente['listin'];
         $form['indspe'] = $cliente['indspe'];
+        $cliente['custom_field']=gaz_dbi_get_row($gTables['anagra'], "id", $cliente['id_anagra'])['custom_field']; // carico il custom field del cliente in quanto la classe Anagrafica non lo carica correttamente
+        if (isset($cliente['custom_field']) && $data = json_decode($cliente['custom_field'],true)){// se c'è un json in anagra
+          if (is_array($data['vacation_rental'])){ // se c'è il modulo "vacation rental" lo aggiorno
+            if (isset($data['vacation_rental']['points'])){
+              $form['user_points'] = intval($data['vacation_rental']['points']);
+            }else{
+              $form['user_points']=0;
+            }
+          }
+        }else{
+          $form['user_points']=0;
+        }
         $pagame = gaz_dbi_get_row($gTables['pagame'], "codice", $form['pagame']);
         if ($pagame && ($pagame['tippag'] == 'B' or $pagame['tippag'] == 'T' or $pagame['tippag'] == 'V') && $cliente['speban'] == 'S') {
             $form['speban'] = $admin_aziend['sperib'];
@@ -895,18 +908,35 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $discounts=searchdiscount($form['in_codart'],$artico['id_artico_group'],$form['start'],$form['end'],$night,$anagra=0,$gTables['rental_discounts']);
         $form['discount']=0;
         $form['descri_discount']="";
+        $total_price_disc=$total_price;
+        $today=date('Y-m-d');
         if (isset($discounts) && $discounts->num_rows >0){// se c'è almeno uno sconto
+          $level=get_user_points_level($cliente['id_anagra']);
           foreach ($discounts as $discount){ // li ciclo e applico lo sconto
-            if ($discount['is_percent']==1){
-            $form['discount']+= (floatval($total_price)*floatval($discount['value']))/100;// aggiungo al totale sconti, lo sconto calcolato in percentuale
-            $form['descri_discount'].=" ".$discount['title']." ".$discount['value']."%";// incremento la descrizione con lo sconto applicato
-            }else{
-				$form['discount']+= floatval($discount['value'])/floatval("1.".$gen_iva_perc);// aggiungo al totale sconti, lo sconto a valore scorporando IVA
-				//$form['descri_discount'].= " ".$discount['title']." a valore".$admin_aziend['symbol']." ".number_format(floatval($discount['value'])/floatval("1.".$gen_iva_perc), $admin_aziend['decimal_price'], '.', '');/// incremento la descrizione con lo sconto applicato
-				$form['descri_discount'].= " ".$discount['title'];/// incremento la descrizione con lo sconto applicato
-			}
-            if ($discount['stop_further_processing']==1){// se questo devo bloccare i successivi eventuali, interrompo il conteggio
-            break;
+            if (intval($discount['last_min'])>0){// se è un lastmin controllo la validità
+              $date=date_create($today);
+              date_add($date,date_interval_create_from_date_string($discount['last_min']." days"));
+              $time=strtotime(date_format($date,"Y-m-d"));
+              if ($time < strtotime($form['start'])){
+                continue; // non è valido, continuo con l'eventuale prossimo sconto
+              }
+            }
+            if ($form['discount']>0){
+              $form['descri_discount'].="+";
+              $total_price_disc = $total_price-$form['discount'];
+            }
+            if ((intval($discount['level_points'])>0 && intval($level)==intval($discount['level_points'])) || intval($discount['level_points'])==0){//calcolo sconti se c'è un livello punti raggiunto dal cliente o se gli sconti sono senza livello punti
+              if ($discount['is_percent']==1){
+                $form['discount']+= (floatval($total_price_disc)*floatval($discount['value']))/100;// aggiungo al totale sconti, lo sconto calcolato in percentuale
+                $form['descri_discount'].=$discount['title']." ".$discount['value']."%";// incremento la descrizione con lo sconto applicato
+              }else{
+                $form['discount']+= floatval($discount['value'])/floatval("1.".$gen_iva_perc);// aggiungo al totale sconti, lo sconto a valore scorporando IVA
+                //$form['descri_discount'].= " ".$discount['title']." a valore".$admin_aziend['symbol']." ".number_format(floatval($discount['value'])/floatval("1.".$gen_iva_perc), $admin_aziend['decimal_price'], '.', '');/// incremento la descrizione con lo sconto applicato
+                $form['descri_discount'].= $discount['title']." ". number_format(floatval($discount['value'])/floatval("1.".$gen_iva_perc),3)."€";/// incremento la descrizione con lo sconto applicato
+              }
+              if ($discount['stop_further_processing']==1){// se questo deve bloccare i successivi eventuali, interrompo il conteggio
+                break;
+              }
             }
           }
         }
@@ -1417,7 +1447,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $next_row++;
                 $form["row_$next_row"] = "";
                 $form['rows'][$next_row]['tiprig'] = 2;
-                $form['rows'][$next_row]['descri'] = 'N.B.: applicato sconto di €'.number_format($form['discount'], $admin_aziend['decimal_price'], '.', '')." ".$form['descri_discount'];
+                $form['rows'][$next_row]['descri'] = 'Applicato sconto di €'.number_format($form['discount'], $admin_aziend['decimal_price'], '.', '').": ".$form['descri_discount'];
                 $form['rows'][$next_row]['id_mag'] = 0;
                 $form['rows'][$next_row]['id_lotmag'] = 0;
                 $form['rows'][$next_row]['identifier'] = '';
@@ -1568,6 +1598,17 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $anagrafica = new Anagrafica();
     $cliente = $anagrafica->getPartner($tesbro['clfoco']);
     $form['indspe'] = $cliente['indspe'];
+    if (isset($cliente['custom_field']) && $data = json_decode($cliente['custom_field'],true)){// se c'è un json in anagra
+      if (is_array($data['vacation_rental'])){ // se c'è il modulo "vacation rental" lo aggiorno
+        if (isset($data['vacation_rental']['points'])){
+          $form['user_points']=$data['vacation_rental']['points'];
+        }else{
+           $form['user_points']=0;
+        }
+      }
+    }else{
+       $form['user_points']=0;
+    }
     $rs_rig = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes = " . intval($_GET['id_tes']), "id_rig asc");
     $id_des = $anagrafica->getPartner($tesbro['id_des']);
     $form['id_tes'] = intval($_GET['id_tes']);
@@ -1912,6 +1953,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['caumag'] = 0;
     $form['sconto'] = 0;
     $form['indspe'] = "";
+    $form['user_points'] = 0;
 	$ultimoprezzo=''; //info sugli ultimi prezzi
 }
 
@@ -2062,6 +2104,7 @@ echo '	<input type="hidden" name="' . ucfirst($toDo) . '" value="" />
 		<input type="hidden" value="' . $form['id_tes'] . '" name="id_tes" />
     <input type="hidden" value="' . $gen_iva_perc . '" name="gen_iva_perc" />
 		<input type="hidden" value="' . $form['indspe'] . '" name="indspe" />
+    <input type="hidden" value="' . $form['user_points'] . '" name="user_points" />
 		<input type="hidden" value="' . $form['tipdoc'] . '" name="tipdoc" />
 		<input type="hidden" value="' . $form['ritorno'] . '" name="ritorno" />
 		<input type="hidden" value="' . $form['change_pag'] . '" name="change_pag" />
