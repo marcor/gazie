@@ -1124,6 +1124,10 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
           $nl = true;
           break;
         case "2": // descrittivo
+          // a volte viene usato un rigo descrittivo solo per lasciare uno spazio, in questi casi per evitare lo scarto lo valorizzo con un punto
+          if (strlen(trim($rigo['descri'])) < 1) {
+            $rigo['descri'] = '.';
+          }
 					$benserv = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
           $el = $domDoc->createElement("DettaglioLinee", "");
           $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
