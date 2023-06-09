@@ -142,6 +142,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['child'] = $_POST['child'];
     $form['access_code'] = $_POST['access_code'];
     $gen_iva_perc =  $_POST['gen_iva_perc'];
+	$gen_iva_code =  $_POST['gen_iva_code'];
     $form['extra'] = (isset($_POST['extra']))?$_POST['extra']:array();
     $form['qtaextra'] = (isset($_POST['qtaextra']))?$_POST['qtaextra']:0;
     $form['print_total'] = intval($_POST['print_total']);
@@ -861,6 +862,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 
         $start=$form['start'];
         $gen_iva_perc = gaz_dbi_get_row($gTables['aliiva'], 'codice', $artico['aliiva'])['aliquo'];
+		$gen_iva_code = $artico['aliiva'];
         $night=0;
         while (strtotime($start) < strtotime($form['end'])) {// ciclo il periodo della locazione giorno per giorno
           // Controllo disponibilità
@@ -1297,6 +1299,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                   if (floatval($gen_iva_perc)==0){// e se l'IVA dell'alloggio è zero, vuol dire che il proprietario è un privato
                     $form['rows'][$next_row]['prelis'] = $form['rows'][$next_row]['prelis'] + (($form['rows'][$next_row]['prelis']*$form['rows'][$next_row]['pervat'])/100);// ci aggiungo l'IVA
                     $form['rows'][$next_row]['pervat']=0;// e forzo la percentuale iva dell'extra a zero
+					$form['rows'][$next_row]['codvat'] = $gen_iva_code;	// forzo anche il codice iva come quello dell'alloggio				
                   }
                 }
                 $mv = $upd_mm->getStockValue(false, $form['in_codart'], $form['annemi'] . '-' . $form['mesemi'] . '-' . $form['gioemi'], $admin_aziend['stock_eval_method']);
@@ -1614,6 +1617,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['id_tes'] = intval($_GET['id_tes']);
     $form['hidden_req'] = '';
     $gen_iva_perc = 0;
+	$gen_iva_code = 0;
     // inizio rigo di input
     $form['in_descri'] = "";
     $form['in_tiprig'] = 0;
@@ -1737,6 +1741,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['pesosp'] = 0;
             $form['rows'][$next_row]['tipiva'] = "";
         }else{
+			$iva_row = gaz_dbi_get_row($gTables['aliiva'], 'codice', $rigo['codvat']);
+
           if (isset ($articolo) && $data = json_decode($articolo['custom_field'], TRUE)) { // se esiste un json nel custom field
             if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['accommodation_type'])){// è un alloggio
               $form['extra'][$ex]="";$ex++;// inizializzo a niente il valore dell'input extra
@@ -1748,6 +1754,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
               $form['tur_tax'] = $data['vacation_rental']['tur_tax'];
               $form['tur_tax_mode'] = $data['vacation_rental']['tur_tax_mode'];
               $form['id_agente'] = $data['vacation_rental']['agent'];// questo è il proprietario
+			  $gen_iva_perc = $iva_row['aliquo'];
+				$gen_iva_code = $rigo['codvat'];
 
               if (intval ($articolo['id_artico_group'])>0){// se l'alloggio fa parte di una struttura
                 $facility = gaz_dbi_get_row($gTables['artico_group'], "id_artico_group", $articolo['id_artico_group']);// leggo la struttura
@@ -1795,7 +1803,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
           $form['rows'][$next_row]['annota'] = (isset($articolo['annota']))?$articolo['annota']:0;
           $form['rows'][$next_row]['scorta'] = (isset($articolo['scorta']))?$articolo['scorta']:'';
           $form['rows'][$next_row]['pesosp'] = (isset($articolo['peso_specifico']))?$articolo['peso_specifico']:0;
-          $iva_row = gaz_dbi_get_row($gTables['aliiva'], 'codice', $rigo['codvat']);
           $form['rows'][$next_row]['tipiva'] = (isset($iva_row['tipiva']))?$iva_row['tipiva']:'';
         }
 
@@ -1841,6 +1848,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['tipdoc'] = $_GET['tipdoc'];
     }
     $gen_iva_perc = 0;
+	$gen_iva_code = 0;
     $form['id_tes'] = "";
     $form['start'] = "";
     $form['end'] = "";
@@ -2103,6 +2111,7 @@ $gForm = new venditForm();
 echo '	<input type="hidden" name="' . ucfirst($toDo) . '" value="" />
 		<input type="hidden" value="' . $form['id_tes'] . '" name="id_tes" />
     <input type="hidden" value="' . $gen_iva_perc . '" name="gen_iva_perc" />
+	    <input type="hidden" value="' . $gen_iva_code . '" name="gen_iva_code" />
 		<input type="hidden" value="' . $form['indspe'] . '" name="indspe" />
     <input type="hidden" value="' . $form['user_points'] . '" name="user_points" />
 		<input type="hidden" value="' . $form['tipdoc'] . '" name="tipdoc" />
