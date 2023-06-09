@@ -142,8 +142,12 @@ function openframe(url,codice){
                     $result = gaz_dbi_dyn_query($what, $table, $where, "start DESC");
                     $row=gaz_dbi_fetch_array($result);
                     if (isset($row)){
+						$style="";
+						if (date("Y-m-d")==$row['start']){
+							$style="style='background-color: #f2caca;'";
+						}
                       ?>
-                      <tr>
+                      <tr <?php echo $style; ?>>
                       <td><?php echo "<b>",gaz_format_date($row['start']),"</b> ",$row['type']," ",$row['house_code'],"<b> -> </b>",$row['ragso1']," ",$row['ragso2']," prenotazione n.",$row['numdoc']," del ",gaz_format_date($row['datemi']); ?></td>
                       </tr>
                       <?php
@@ -164,6 +168,7 @@ function openframe(url,codice){
                     <th class="text-center"><i class="glyphicon glyphicon-log-out"></i>&nbsp;&nbsp;<?php echo "Check-out"; ?></th>
                   </tr>
                   <?php
+				  echo date("Y-m-d");
                   foreach($next_check['out'] as $next_row){
                     $table = $gTables['rental_events'] ." LEFT JOIN ". $gTables['tesbro'] ." ON ". $gTables['tesbro'] .".id_tes = " . $gTables['rental_events'] . ".id_tesbro LEFT JOIN ". $gTables['clfoco'] ." ON ". $gTables['clfoco'] .".codice = " . $gTables['tesbro'] . ".clfoco LEFT JOIN ". $gTables['anagra'] ." ON ". $gTables['anagra'] .".id = " . $gTables['clfoco'] . ".id_anagra";
                     $where = $gTables['rental_events'].".id = '".$next_row['id']."'";
@@ -171,8 +176,12 @@ function openframe(url,codice){
                     $result = gaz_dbi_dyn_query($what, $table, $where, "end DESC");
                     $row=gaz_dbi_fetch_array($result);
                     if (isset($row)){
+						$style="";
+						if (date("Y-m-d")==$row['start']){
+							$style="style='background-color: #f2caca;'";
+						}
                       ?>
-                      <tr>
+                      <tr <?php echo $style; ?>>
                       <td><?php echo "<b>",gaz_format_date($row['end']),"</b> ",$row['type']," ",$row['house_code'],"<b> -> </b>",$row['ragso1']," ",$row['ragso2']," prenotazione n.",$row['numdoc']," del ",gaz_format_date($row['datemi']); ?></td>
                       </tr>
                       <?php
