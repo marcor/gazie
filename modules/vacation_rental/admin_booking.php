@@ -506,7 +506,19 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             }
             if ($toDo == 'update') { // e' una modifica
 
-              // cancello tutto
+              // CANCELLO TUTTO
+
+              $tesbro = gaz_dbi_get_row($gTables['tesbro'], "id_tes", intval($form['id_tes'])); // prima di cancellare prendo il vecchio custom field
+              if (isset($tesbro['custom_field']) && $data = json_decode($tesbro['custom_field'],true)){// se c'è un json in tesbro prendo i reminder
+                if (is_array($data['vacation_rental'])){ // se c'è il modulo "vacation rental"
+                  if (isset($data['vacation_rental']['rem_checkin'])){
+                    $form['rem_checkin']=$data['vacation_rental']['rem_checkin'];
+                  }
+                  if (isset($data['vacation_rental']['rem_pag'])){
+                    $form['rem_pag']=$data['vacation_rental']['rem_pag'];
+                  }
+                }
+              }
               gaz_dbi_del_row($gTables['tesbro'], "id_tes", $form['id_tes']);
 
               $rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes =". intval($form['id_tes']),"id_tes DESC");
@@ -516,6 +528,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 
               }
 
+              $rental_events = gaz_dbi_get_row($gTables['rental_events'], "id_tesbro", intval($form['id_tes']), " AND type = 'ALLOGGIO'"); // prima di cancellare prendo il vecchio rental_events custom field
               gaz_dbi_del_row($gTables['rental_events'], "id_tesbro", $form['id_tes']);
               // dovrò aggiornare tesbro negli eventuali pagamenti effettuati su rental payment ma posso farlo solo dopo aver creato il nuovo tesbro
               $form['status'] = 'UPDATED';
@@ -554,6 +567,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             }else{
               $data= array('vacation_rental'=>array('status' => 'CONFIRMED','ip' => 'diretto'));
             }
+            if (isset($form['rem_checkin'])){
+              $data['vacation_rental']['rem_checkin']=$form['rem_checkin'];
+            }
+            if (isset($form['rem_pag'])){
+              $data['vacation_rental']['rem_pag']=$form['rem_pag'];
+            }
             $form['custom_field'] = json_encode($data);
             tesbroInsert($form);
             //recupero l'id assegnato dall'inserimento
@@ -590,10 +609,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $accomodation_type="Bed & breakfast";
                     break;
                 }
+                $form['checked_in_date']=(isset($rental_events['checked_in_date']))?$rental_events['checked_in_date']:NULL;
+                $form['checked_out_date']=(isset($rental_events['checked_out_date']))?$rental_events['checked_out_date']:NULL;
+                $form['voucher_id']=(isset($rental_events['voucher_id']))?$rental_events['voucher_id']:NULL;
                 $form['type']="ALLOGGIO";
                 $form['title']= "Prenotazione ".$accomodation_type." ".$form['rows'][$i]['codart']." - ".$form['search']['clfoco'];
                 $form['house_code']=$form['rows'][$i]['codart'];
-                $columns = array('id', 'title', 'start', 'end', 'house_code', 'id_tesbro', 'id_rigbro', 'adult', 'child', 'type', 'access_code');
+                $columns = array('id', 'title', 'start', 'end', 'house_code', 'id_tesbro', 'id_rigbro', 'voucher_id', 'checked_in_date', 'checked_out_date', 'adult', 'child', 'type', 'access_code');
                 tableInsert($table, $columns, $form);
                 $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['rows'][$i]['codart']);
                 $data = json_decode($artico['custom_field'], TRUE);
@@ -1299,7 +1321,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                   if (floatval($gen_iva_perc)==0){// e se l'IVA dell'alloggio è zero, vuol dire che il proprietario è un privato
                     $form['rows'][$next_row]['prelis'] = $form['rows'][$next_row]['prelis'] + (($form['rows'][$next_row]['prelis']*$form['rows'][$next_row]['pervat'])/100);// ci aggiungo l'IVA
                     $form['rows'][$next_row]['pervat']=0;// e forzo la percentuale iva dell'extra a zero
-					$form['rows'][$next_row]['codvat'] = $gen_iva_code;	// forzo anche il codice iva come quello dell'alloggio				
+					$form['rows'][$next_row]['codvat'] = $gen_iva_code;	// forzo anche il codice iva come quello dell'alloggio
                   }
                 }
                 $mv = $upd_mm->getStockValue(false, $form['in_codart'], $form['annemi'] . '-' . $form['mesemi'] . '-' . $form['gioemi'], $admin_aziend['stock_eval_method']);

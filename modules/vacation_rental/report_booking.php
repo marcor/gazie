@@ -890,7 +890,7 @@ $ts->output_navbar();
               }
             }
 
-            if (isset($r['checked_out_date']) && strtotime($r['checked_out_date'])){
+            if (isset($r['checked_out_date']) && intval($r['checked_out_date'])>0 && strtotime($r['checked_out_date'])){
               $check_inout="OUT";
               $check_icon="log-out";
               $ckdate=date ('d-m-Y H:i', strtotime($r['checked_out_date']));
@@ -899,7 +899,7 @@ $ts->output_navbar();
               }else{
                $title = "" ;
               }
-            }elseif (isset($r['checked_in_date']) && strtotime($r['checked_in_date'])){
+            }elseif (isset($r['checked_in_date']) && intval($r['checked_in_date'])>0 && strtotime($r['checked_in_date'])){
               $check_inout="IN";
               $check_icon="log-in";
               $ckdate=date ('d-m-Y H:i', strtotime($r['checked_in_date']));
