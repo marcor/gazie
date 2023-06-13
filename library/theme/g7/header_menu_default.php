@@ -67,7 +67,7 @@ function menu_alerts_check(mod,title,button,label,link,style){
 	// questa funzione attiva l'alert sulla barra del menù e viene richiamata sia dalla funzione menu_check_from_modules() dal browser tramite setInterval che alla fine della pagina (lato server) quando il controllo fatto dal php tramite $_SESSION['menu_alerts_lastcheck'] è scaduto
     // faccio append solo se già non esiste
 	style = style || 0;
-    if (style.length >= 2) { // solo se style è valorizzato faccio l'alert sul menu
+    if (style && style.length >= 2) { // solo se style è valorizzato faccio l'alert sul menu
         $("div.blink").html( '<a mod="'+mod+'" class="btn btn-'+style+' dialog_menu_alerts" title="'+title.replace(/(<([^>]+)>)/ig,"")+'" >'+button+'</a>').click(function() {
 			$("p#diatitle").html(title);
 			$( "#dialog_menu_alerts" ).dialog({
@@ -135,18 +135,20 @@ function menu_check_from_modules() {
             data: {},
             dataType: 'json',
             success: function (data) {
-              $.each(data, function(i, v) {
-                // nome modulo
-                title = v['title'];
-                button = v['button'];
-                label = v['label'];
-                link = v['link'];
-                style = v['style'];
-                mod = i;
-                //console.log(mod);
-				j++;
-                menu_alerts_check(mod,title,button,label,link,style);
-              });
+			  if (data) {
+				$.each(data, function(i, v) {
+				  // nome modulo
+				  title = v['title'];
+				  button = v['button'];
+				  label = v['label'];
+				  link = v['link'];
+				  style = v['style'];
+				  mod = i;
+				  //console.log(mod);
+				  j++;
+				  menu_alerts_check(mod,title,button,label,link,style);
+				});
+              }
             }
           });
         }
