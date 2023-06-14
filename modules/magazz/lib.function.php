@@ -590,7 +590,6 @@ class magazzForm extends GAzieForm {
                 // Fine valorizzazione con ultimo inventario
                 $return_val = array(); //azzero l'accumulatore per il ritorno
                 while ($r = gaz_dbi_fetch_array($rs_movmag)) {
-                 // echo"<br>CICLO <pre>",print_r($r),"</pre>";
                     // questo e' il prezzo che usero' solo per gli acquisti
                     $row_val = CalcolaImportoRigo(1, $r['prezzo'], array($r['scorig'], $r['scochi']), $decimal_price);
                     if ($r['operat'] == 1) { //carico
@@ -700,7 +699,7 @@ class magazzForm extends GAzieForm {
                                 'q_g' => $giacenza['q_g'], 'v_g' => $giacenza['v_g']);
                         }
                     } elseif ($r['operat'] == -1) { //scarico
-                       
+
                         $accumulatore = array_reverse($accumulatore);
                         foreach ($accumulatore as $k => $acc_val) {   //attraverso l'accumulatore
                             if ($acc_val['q'] > $r['quanti']) { // la quantita' nell'accumulatore e' sufficiente per coprire lo scarico
