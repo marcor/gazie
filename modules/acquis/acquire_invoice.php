@@ -101,11 +101,6 @@ function removeSignature($s)
 			$s = substr($s, $start_xml);
 		}
 	}
-	preg_match_all('/<\/.+?>/', $s, $matches, PREG_OFFSET_CAPTURE);
-	$lastMatch = end($matches[0]);
-	// trovo l'ultimo carattere del tag di chiusura per eliminare la coda
-	$f_end = $lastMatch[1]+strlen($lastMatch[0]);
-	$s = substr($s, 0, $f_end);
 	// elimino le sequenze di caratteri aggiunti dalla firma (ancora da testare approfonditamente)
 	$s = preg_replace('/[\x{0004}]{1}[\x{0082}]{1}[\x{0001}-\x{001F}]{1}[\s\S]{1}/i', '', $s);
 	$s = preg_replace('/[\x{0004}]{1}[\x{0082}]{1}[\s\S]{1}[\x{0000}]{1}/i', '', $s);
@@ -113,6 +108,11 @@ function removeSignature($s)
 	$s = preg_replace('/[\x{0004}]{1}[\s\S]{1}/i', '', $s);
 	$s = preg_replace('/[\x{0003}]{1}[\s\S]{1}/i', '', $s);
 	//$s = preg_replace('/[\x{0004}]{1}[A-Za-z]{1}/i', '', $s); // per eliminare tag finale
+	preg_match_all('/<\/.+?>/', $s, $matches, PREG_OFFSET_CAPTURE);
+	$lastMatch = end($matches[0]);
+	// trovo l'ultimo carattere del tag di chiusura per eliminare la coda
+	$f_end = $lastMatch[1]+strlen($lastMatch[0]);
+	$s = substr($s, 0, $f_end);
 	return $s;
 }
 
