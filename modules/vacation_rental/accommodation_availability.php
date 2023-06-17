@@ -34,8 +34,8 @@
   <head>
   <meta name='robots' content='noindex,follow' />
     <meta charset='utf-8' />
-    <link href='fullcalendar-5.11.3/lib/main.css' rel='stylesheet' />
-    <script src='fullcalendar-5.11.3/lib/main.js'></script>
+    <link href='fullcalendar-5.11.5/lib/main.css' rel='stylesheet' />
+    <script src='fullcalendar-5.11.5/lib/main.js'></script>
 	<style>
 		.overlay{
 			position: fixed;
@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			alert('Clicked on: ' + info.startStr);
 			alert('Clicked to: ' + info.endStr);
 			*/
-			var title = prompt("Enter Event Title select");
+			var title = prompt("Inserisci descrizione per il blocco");
 			var start = info.startStr;
 			var end = info.endStr;
 			var xhttp = new XMLHttpRequest();

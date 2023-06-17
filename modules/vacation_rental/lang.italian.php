@@ -575,7 +575,8 @@ $strScript = array(
     'give_point' => 'Nel ringraziarla per aver soggiornato nella ns. struttura le comunichiamo che le sono stati attribuiti',
     'give_point1' => 'punti e che il suo livello fedeltà è',
     'delete_point' => 'Le comunichiamo che c\'è stato un aggiornamento e le sono stati tolti',
-	'feedback_request' => 'Richiesta recensione per '
+    'feedback_request' => 'Richiesta recensione per ',
+    'no_level' => 'Nessun livello'
     ),
 
   "admin_extra.php" =>

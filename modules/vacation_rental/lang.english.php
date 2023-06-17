@@ -808,7 +808,8 @@ $strScript = array(
     'give_point' => 'In thanking you for having stayed in our structure we inform you that we have been attributed to you',
     'give_point1' => 'points and that his fidelity level is',
     'delete_point' => 'We inform you that there has been an update and we have been removed',
-	'feedback_request' => 'Feedback request for '
+    'feedback_request' => 'Feedback request for ',
+    'no_level' => 'No level'
     ),
 
   "admin_extra.php" =>

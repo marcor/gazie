@@ -34,8 +34,8 @@ include_once("manual_settings.php");
 <html lang='en'>
   <head>
     <meta charset='utf-8' />
-    <link href='fullcalendar-5.11.3/lib/main.css' rel='stylesheet' />
-    <script src='fullcalendar-5.11.3/lib/main.js'></script>
+    <link href='fullcalendar-5.11.5/lib/main.css' rel='stylesheet' />
+    <script src='fullcalendar-5.11.5/lib/main.js'></script>
 	<style>
 		.overlay{
 			position: fixed;
