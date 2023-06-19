@@ -661,7 +661,9 @@ $strScript = array(
     'avviso2' => 'There are increasing discounts for 12, 21 and 28 nights.',
     'over_max_booking' => 'Some accommodations have the maximum limit of ',
     'over_max_booking2' => 'Try to reduce the nights in the request.',
-    'no_search_house' => 'The requested accommodation is not available, check availability in your calendar. Or there are these alternatives:'
+    'no_search_house' => 'The requested accommodation is not available, check availability in your calendar. Or there are these alternatives:',
+    'msg_minstay' => 'This accommodation would be available but the minimum stay is',
+    'msg_minstay2' => 'nights while you requested only'
     ),
 	"booking_form.php" =>
     array('title' => 'Booking form',

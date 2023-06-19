@@ -89,4 +89,5 @@ $update_db[]="ALTER TABLE `".$table_prefix."_XXXrental_prices` ADD INDEX(`end`);
 $update_db[]="ALTER TABLE `".$table_prefix."_XXXrental_prices` ADD INDEX(`house_code`);";
 $update_db[]="ALTER TABLE `".$table_prefix."_XXXrental_discounts` ADD `last_min` TINYINT(3) NOT NULL DEFAULT '0' COMMENT '0=last min escluso numero=giorni prima del checkin per avere lo sconto' AFTER `reusable`; ";
 $update_db[]="ALTER TABLE `".$table_prefix."_XXXrental_discounts` ADD `level_points` TINYINT(1) NOT NULL DEFAULT '0' COMMENT 'Abilita questo sconto per livello punti' AFTER `last_min`; ";
+$update_db[]="ALTER TABLE `".$table_prefix."_XXXrental_prices` ADD `minstay` INT(3) NULL COMMENT 'Soggiorno minimo: se valorizzato annulla quello generale ' AFTER `price`; ";
 ?>

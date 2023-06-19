@@ -65,4 +65,6 @@ $upgrade_db[153][]="INSERT INTO `".$table_prefix."_menu_script` (`id`, `id_menu`
 $upgrade_db[154][]="ALTER TABLE `".$table_prefix."_XXXrental_discounts` ADD `last_min` TINYINT(3) NOT NULL DEFAULT '0' COMMENT '0=last min escluso numero=giorni prima del checkin per avere lo sconto' AFTER `reusable`; ";
 $upgrade_db[155][]="INSERT INTO ".$table_prefix."_XXXcompany_config (`description`, `var`, `val`) VALUES ('Abilita sistema punti (0=disabilitato; 1=abilitato)', 'pointenable', '0'),('1 punto per Euro', 'pointeuro', '0'),('Nome livello 1', 'pointlevel1name', ''),('Punti livello 1', 'pointlevel1', '0'),('Nome livello 2', 'pointlevel2name', ''),('Punti livello 2', 'pointlevel2', '0'),('Nome livello 3', 'pointlevel3name', ''),('Punti livello 3', 'pointlevel3', '0');";
 $upgrade_db[155][]="ALTER TABLE `".$table_prefix."_XXXrental_discounts` ADD `level_points` TINYINT(1) NOT NULL DEFAULT '0' COMMENT 'Abilita questo sconto per livello punti' AFTER `last_min`; ";
+$upgrade_db[155][]="ALTER TABLE `".$table_prefix."_XXXrental_prices` ADD `minstay` INT(3) NULL COMMENT 'Soggiorno minimo: se valorizzato annulla quello generale ' AFTER `price`; ";
+
 ?>
