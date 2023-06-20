@@ -55,7 +55,7 @@ if ($_GET['token'] == md5($token.date('Y-m-d'))){
       $columns = array('id','title', 'start','end','house_code','price','minstay');
       $_GET['start']=date('Y-m-d', strtotime($_GET['start']. ' + 1 hour'));
       $_GET['end']=date('Y-m-d', strtotime($_GET['end']. ' - 1 hour'));
-      $newValue = array('title'=>substr($_GET['title'],0,128), 'start'=>substr($_GET['start'],0,10),'end'=>substr($_GET['end'],0,10),'house_code'=>substr($_GET['house_code'],0,32),'price'=>substr($_GET['title'],0,14),'minstay'=>intval($_GET['minstay']));
+      $newValue = array('title'=>substr(floatval($_GET['title']),0,128), 'start'=>substr($_GET['start'],0,10),'end'=>substr($_GET['end'],0,10),'house_code'=>substr($_GET['house_code'],0,32),'price'=>substr($_GET['title'],0,14),'minstay'=>intval($_GET['minstay']));
       tableInsert('rental_prices', $columns, $newValue);
     }
   }

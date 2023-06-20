@@ -31,16 +31,32 @@
 include_once("manual_settings.php");
 if ($_GET['token'] == md5($token.date('Y-m-d'))){
   require("../../library/include/datlib.inc.php");
-  if(isset($_GET['id']) && intval($_GET['id'])>0){
-  // a causa di un problema di fuso orario bisogna aggiungere un'ora alle date
-  $_GET['start']=date('Y-m-d', strtotime($_GET['start']. ' + 1 hour'));
-  $_GET['end']=date('Y-m-d', strtotime($_GET['end']. ' + 1 hour'));
-  $columns = array('id','title', 'start','end','house_code');
-  $newValue = array('title'=>substr($_GET['title'],0,128), 'start'=>$_GET['start'],'end'=>$_GET['end'],'house_code'=>substr($_GET['house_code'],0,32));
-  $codice=array();
-  $codice[0]="id";
-  $codice[1]=intval($_GET['id']);
-  tableUpdate('rental_prices', $columns, $codice, $newValue);
+  $start=substr(date('Y-m-d', strtotime($_GET['start']. ' + 1 hour')),0,10);
+    $end=substr(date('Y-m-d', strtotime($_GET['end'])),0,10);
+    $err='';
+    while (strtotime($start) <= strtotime($end)) {// ciclo il periodo giorno per giorno per vedere se c'è già un prezzo
+      $what = "title";
+      $table = $gTables['rental_prices'];
+      $where = "house_code = '".substr($_GET['house_code'],0,32)."' AND start < '". $start ."' AND end >= '". $start."' AND id <> ".intval($_GET['id'])."";
+      $result = gaz_dbi_dyn_query($what, $table, $where);
+      $available = gaz_dbi_fetch_array($result);
+      if (isset($available)){
+        $err="prezzo già inserito";
+        break;
+      }
+      $start = date ("Y-m-d", strtotime("+1 days", strtotime($start)));// aumento di un giorno il ciclo
+    }
+
+  if($err=='' && isset($_GET['id']) && intval($_GET['id'])>0){
+    // a causa di un problema di fuso orario bisogna aggiungere un'ora alle date
+    $_GET['start']=date('Y-m-d', strtotime($_GET['start']. ' + 1 hour'));
+    $_GET['end']=$_GET['end'];
+    $columns = array('id','title', 'start','end','house_code');
+    $newValue = array('title'=>substr($_GET['title'],0,128), 'start'=>$_GET['start'],'end'=>$_GET['end'],'house_code'=>substr($_GET['house_code'],0,32));
+    $codice=array();
+    $codice[0]="id";
+    $codice[1]=intval($_GET['id']);
+    tableUpdate('rental_prices', $columns, $codice, $newValue);
   }
 }
 ?>

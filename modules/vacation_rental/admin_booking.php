@@ -935,7 +935,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $total_price_disc=$total_price;
         $today=date('Y-m-d');
         if (isset($discounts) && $discounts->num_rows >0){// se c'è almeno uno sconto
-          $level=get_user_points_level($cliente['id_anagra']);
+          if (isset($cliente['id_anagra'])){
+            $level=get_user_points_level($cliente['id_anagra']);
+          }else{
+            $level=0;
+          }
           foreach ($discounts as $discount){ // li ciclo e applico lo sconto
             if (intval($discount['last_min'])>0){// se è un lastmin controllo la validità
               $date=date_create($today);
