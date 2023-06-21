@@ -322,12 +322,12 @@ function get_total_promemo($startprom,$endprom){
   $num_all = $resulth->num_rows;// numero alloggi presenti in GAzie
   foreach ($resulth as $resh){ // per ogni alloggio
     // prendo tutti gli eventi dell'alloggio che interessano l'arco di tempo richiesto
-    $sql = "SELECT * FROM ".$tablerent_ev." LEFT JOIN ".$tabletes." ON  ".$tablerent_ev.".id_tesbro = ".$tabletes.".id_tes WHERE  ".$tablerent_ev.".type = 'ALLOGGIO' AND ".$tablerent_ev.".id_tesbro > 0 AND (custom_field IS NULL OR custom_field LIKE '%PENDING%' OR custom_field LIKE '%CONFIRMED%' OR custom_field LIKE '%FROZEN%') AND house_code='".substr($resh['codice'], 0, 32)."' AND (start >= '".$startprom."' OR start <= '".$endprom."' OR end >= '".$startprom."' OR end <= '".$endprom."') ORDER BY id ASC";
+    $sql = "SELECT * FROM ".$tablerent_ev." LEFT JOIN ".$tabletes." ON  ".$tablerent_ev.".id_tesbro = ".$tabletes.".id_tes WHERE  ".$tablerent_ev.".type = 'ALLOGGIO' AND ".$tablerent_ev.".id_tesbro > 0 AND (custom_field IS NULL OR custom_field LIKE '%PENDING%' OR custom_field LIKE '%CONFIRMED%' OR custom_field LIKE '%FROZEN%') AND house_code='".substr($resh['codice'], 0, 32)."' AND ( start <= '".$endprom."' AND(start >= '".$startprom."' OR start <= '".$endprom."') AND (end >= '".$startprom."' OR end <= '".$endprom."') AND end >= '".$startprom."') ORDER BY id ASC";
     //echo $sql;
     $result = mysqli_query($link, $sql);
 
     foreach($result as $row){ // per ogni evento dell'alloggio
-      //echo "<pre>evento alloggio:",print_r($row);
+      //echo "<pre>evento alloggio:",print_r($row),"</pre>";
       $datediff = strtotime($row['end'])-strtotime($row['start']);
       $nights_event = round($datediff / (60 * 60 * 24));// numero notti totali della prenotazione(evento)
       $tot_n_event_in_promemo=0;
@@ -336,7 +336,7 @@ function get_total_promemo($startprom,$endprom){
       // ciclo i giorni dell'evento
       while (strtotime($start) < strtotime($end)) {// per ogni giorno dell'evento
 
-        if ($start >= $startprom AND $start <= $endprom) {// se il giorno è dentro l'arco di tempo richiesto
+        if ($start >= $startprom AND $start <= date ("Y-m-d", strtotime("-1 days", strtotime($endprom)))) {// se il giorno è dentro l'arco di tempo richiesto (tolgo una giorno a endprom perché devo conteggiare le notti)
 		  //echo "<br>",$start," è dentro";
           if (!isset($data[$start])){
             $data[$start]=array();
