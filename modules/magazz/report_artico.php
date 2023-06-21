@@ -339,7 +339,9 @@ while ($r = gaz_dbi_fetch_array($result)) {
 		 $magval['q_g']=0;
 	 }
 	$class = 'success';
-    if (is_numeric($magval)) { // giacenza = 0
+    if ($r['good_or_service']==1) { // è un servizio
+        $class = 'info';
+    } elseif (is_numeric($magval)) { // giacenza = 0
         $class = 'danger';
         $magval=[];
         $magval['q_g']=0;
