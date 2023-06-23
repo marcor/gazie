@@ -74,7 +74,8 @@ if (!checkdate($form['date_ini_M'], $form['date_ini_D'], $form['date_ini_Y'])) {
 
 if (isset($_POST['print']) && $msg == '') {
     $_SESSION['print_request'] = array('script_name' => 'print_partner_status',
-        'date' => $form['date_ini_Y'] . '-' . $form['date_ini_M'] . '-' . $form['date_ini_D']
+        'date' => $form['date_ini_Y'] . '-' . $form['date_ini_M'] . '-' . $form['date_ini_D'],
+        'clfoco' => $form['clfoco']
     );
     header("Location: sent_print.php");
     exit;
