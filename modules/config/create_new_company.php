@@ -95,18 +95,18 @@ if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
             case 0:  // SOLO STRUTTURA
             break;
             default: // POPOLO CON I DATI
-              $sql = " INSERT INTO `" . preg_replace("/$table_prefix\_[0-9]{3}/", $table_prefix . sprintf('_%03d', $form['codice']), $r[0]) . "`  SELECT * FROM `" . $r[0] . "` ;\n\n";
+              $sql = " INSERT INTO `" . preg_replace("/$table_prefix\_[0-9]{3}/", $table_prefix . sprintf('_%03d', $form['codice']), $r[0]) . "`  SELECT * FROM `" . $r[0] . "` ;";
               gaz_dbi_query($sql);
             break;
           }
-        } elseif (preg_match("/[a-zA-Z0-9]*.company_config$/", $r[0])) { // questa tabella di configurazione azienda la popolo ma senza valori della colonna "val"
-          $sql = " INSERT INTO `" . preg_replace("/$table_prefix\_[0-9]{3}/", $table_prefix . sprintf('_%03d', $form['codice']), $r[0]) . "`  SELECT * FROM `" . $r[0] . "` ;\n\n";
+        } elseif (preg_match("/[a-zA-Z0-9]*.company_config$/", $r[0])) { // questa tabella di configurazione azienda la popolo...
+          $sql = " INSERT INTO `" . preg_replace("/$table_prefix\_[0-9]{3}/", $table_prefix . sprintf('_%03d', $form['codice']), $r[0]) . "`  SELECT * FROM `" . $r[0] . "` ;";
           gaz_dbi_query($sql);
-          // svuoto la colonna val
-          $sql = " UPDATE `" . preg_replace("/$table_prefix\_[0-9]{3}/", $table_prefix . sprintf('_%03d', $form['codice']), $r[0]) . "`  SET val ='' ;\n\n";
+          //  ma senza valori della colonna "val" tranne che per il foglio di stile della fattura elettronica e il testo sulla mail di invio documenti
+          $sql = " UPDATE `" . preg_replace("/$table_prefix\_[0-9]{3}/", $table_prefix . sprintf('_%03d', $form['codice']), $r[0]) . "`  SET `val` ='' WHERE ( `var` <> 'fae_style' AND `var` <> 'company_email_text' );";
           gaz_dbi_query($sql);
         } elseif (preg_match("/[a-zA-Z0-9]*.company_data$/", $r[0])) { // questa tabella con altri dati aziendali la popolo ma senza valori della colonna "data"
-          $sql = " INSERT INTO `" . preg_replace("/$table_prefix\_[0-9]{3}/", $table_prefix . sprintf('_%03d', $form['codice']), $r[0]) . "`  SELECT * FROM `" . $r[0] . "` ;\n\n";
+          $sql = " INSERT INTO `" . preg_replace("/$table_prefix\_[0-9]{3}/", $table_prefix . sprintf('_%03d', $form['codice']), $r[0]) . "`  SELECT * FROM `" . $r[0] . "` ;";
           gaz_dbi_query($sql);
           // svuoto la colonna data
           $sql = " UPDATE `" . preg_replace("/$table_prefix\_[0-9]{3}/", $table_prefix . sprintf('_%03d', $form['codice']), $r[0]) . "`  SET data ='' ;\n\n";
@@ -115,7 +115,7 @@ if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
           preg_match("/[a-zA-Z0-9]*.vettor$/", $r[0])) { // per queste tabella mi baso sulla scelta dell'utente
           switch ($form['base_arch']) {
             case 2: // POPOLO CON I DATI
-              $sql = " INSERT INTO `" . preg_replace("/$table_prefix\_[0-9]{3}/", $table_prefix . sprintf('_%03d', $form['codice']), $r[0]) . "`  SELECT * FROM `" . $r[0] . "` ;\n\n";
+              $sql = " INSERT INTO `" . preg_replace("/$table_prefix\_[0-9]{3}/", $table_prefix . sprintf('_%03d', $form['codice']), $r[0]) . "`  SELECT * FROM `" . $r[0] . "` ;";
               gaz_dbi_query($sql);
             break;
             default: // SOLO STRUTTURA
@@ -125,7 +125,7 @@ if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
           preg_match("/[a-zA-Z0-9]*.catmer$/", $r[0])) {
           switch ($form['artico_catmer']) {
             case 1: // POPOLO CON GLI ARTICOLI DI MAGAZZINO
-              $sql = " INSERT INTO `" . preg_replace("/$table_prefix\_[0-9]{3}/", $table_prefix . sprintf('_%03d', $form['codice']), $r[0]) . "` SELECT * FROM `" . $r[0] . "` ;\n\n";
+              $sql = " INSERT INTO `" . preg_replace("/$table_prefix\_[0-9]{3}/", $table_prefix . sprintf('_%03d', $form['codice']), $r[0]) . "` SELECT * FROM `" . $r[0] . "` ;";
               gaz_dbi_query($sql);
             break;
             default:  // SOLO STRUTTURA
@@ -139,11 +139,11 @@ if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
               $sql = " INSERT INTO `" . preg_replace("/$table_prefix\_[0-9]{3}/", $table_prefix . sprintf('_%03d', $form['codice']), $r[0]) . "` SELECT * FROM `" . $r[0] . "`
                    WHERE (codice < " . ($ref_company['mascli'] * 1000000 + 1) . " OR codice > " . ($ref_company['mascli'] * 1000000 + 999999) . ") AND
                          (codice < " . ($ref_company['masfor'] * 1000000 + 1) . " OR codice > " . ($ref_company['masfor'] * 1000000 + 999999) . ") AND
-                         (codice < " . ($ref_company['masban'] * 1000000 + 1) . " OR codice > " . ($ref_company['masban'] * 1000000 + 999999) . ");\n\n";
+                         (codice < " . ($ref_company['masban'] * 1000000 + 1) . " OR codice > " . ($ref_company['masban'] * 1000000 + 999999) . ");";
               gaz_dbi_query($sql);
               break;
             case 2: // POPOLO CON I DATI BANCHE, CLIENTI, FORNITORI
-              $sql = " INSERT INTO  `" . preg_replace("/$table_prefix\_[0-9]{3}/", $table_prefix . sprintf('_%03d', $form['codice']), $r[0]) . "` SELECT * FROM `" . $r[0] . "` ;\n\n";
+              $sql = " INSERT INTO  `" . preg_replace("/$table_prefix\_[0-9]{3}/", $table_prefix . sprintf('_%03d', $form['codice']), $r[0]) . "` SELECT * FROM `" . $r[0] . "` ;";
               gaz_dbi_query($sql);
             break;
           }
