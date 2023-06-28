@@ -161,7 +161,6 @@ if (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo acces
 
 } elseif (isset($_POST['Insert']) or isset($_POST['Update'])) {   //      se non e' il primo accesso
 
-
 	$form['hidden_req'] = htmlentities($_POST['hidden_req']);
 	//ricarico i registri per il form facendo gli eventuali parsing
 	$form['id_mov'] = intval($_POST['id_mov']);
@@ -183,7 +182,7 @@ if (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo acces
 	$form['mesdoc'] = intval($_POST['mesdoc']);
 	$form['anndoc'] = intval($_POST['anndoc']);
 	$form['scochi'] = floatval(preg_replace("/\,/", '.', $_POST['scochi']));
-	$form['id_lotmag'] = $_POST['id_lotmag'];
+	$form['id_lotmag'] = (isset($_POST['id_lotmag_change']))?$_POST['id_lotmag_change']:$_POST['id_lotmag'];
 	$form['cosear'] = $_POST['cosear'];
 	$form['artico'] = $_POST['artico'];
 	$form['lot_or_serial']=$_POST['lot_or_serial'];
@@ -768,13 +767,12 @@ if (($form['artico'] != "" || $form['cosear'] != "") && $form['id_position'] < 1
   }
 }
     // Antonio Germani > Inizio LOTTO in uscita o in entrata o creazione nuovo
-if ($form['artico'] != "" && intval( $item_artico['lot_or_serial'] && $form['caumag']<>99) == 1) { // se l'articolo prevede il lotto e non è un inventario, apro la gestione lotti nel form
+if ($form['artico'] != "" && intval( $item_artico['lot_or_serial'] && $form['caumag']<>99) == 1) { // se l'articolo prevede lotto e non è inventario, apro gestione lotti nel form
 	$form['lot_or_serial']=$item_artico['lot_or_serial'];
 	?>
 		<div class="FacetFieldCaptionTD"><?php echo $script_transl[21]; ?></div>
 		<div class="FacetDataTD" >
 		<input type="hidden" name="filename" value="<?php echo (isset($form['filename']))?$form['filename']:''; ?>">
-		<input type="hidden" name="id_lotmag" value="<?php echo $form['id_lotmag']; ?>">
 
 		</div>
 	<?php
@@ -862,8 +860,9 @@ if ($form['artico'] != "" && intval( $item_artico['lot_or_serial'] && $form['cau
 				} else {
                 echo ' - disponibili: ' . gaz_format_quantity($lm->divided[$form['id_lotmag']]['rest']) . ' <i class="glyphicon glyphicon-tag"></i></button>';
 				}
+        $form['id_lotmag']=$selected_lot['id'];
+
 				?>
-				<input type="hidden" name="id_lotmag" value="<?php echo $selected_lot['id_lotmag']; ?>">
 				<input type="hidden" name="identifier" value="<?php echo $selected_lot['identifier']; ?>">
 				<input type="hidden" name="expiry" value="<?php echo $selected_lot['expiry']; ?>">
 				<?php
@@ -876,7 +875,7 @@ if ($form['artico'] != "" && intval( $item_artico['lot_or_serial'] && $form['cau
 					</div>
 					<?php
 				}
-            } else { // selezione automatica INIZIALE  del lotto disponibile
+      } else { // selezione automatica INIZIALE  del lotto disponibile
 				if (!isset($form['id_lotmag']) or (intval($form['id_lotmag'])==0)) {
 					foreach ($lm->divided as $k => $v) { // ciclo i lotti scelti da getAvailableLots
 						if ($v['rest'] >= 0.00001) {
@@ -889,8 +888,8 @@ if ($form['artico'] != "" && intval( $item_artico['lot_or_serial'] && $form['cau
 								}
 								echo ' disponibili:' . gaz_format_quantity($v['rest']+$prev_qta['quanti']);
 								echo '  <i class="glyphicon glyphicon-tag"></i></button>';
+                $form['id_lotmag']=$selected_lot['id'];
 								?>
-								<input type="hidden" name="id_lotmag" value="<?php echo $selected_lot['id_lotmag']; ?>">
 								<input type="hidden" name="identifier" value="<?php echo $selected_lot['identifier']; ?>">
 								<input type="hidden" name="expiry" value="<?php echo $selected_lot['expiry']; ?>">
 								<?php
@@ -919,7 +918,7 @@ if ($form['artico'] != "" && intval( $item_artico['lot_or_serial'] && $form['cau
 			if ((count($lm->available) >= 1)) {
 				foreach ($lm->available as $v_lm) {
 					if ($v_lm['id'] <> $form['id_lotmag']) {
-						echo '<div>Cambia con:<button class="btn btn-xs btn-warning" type="text" onclick="this.form.submit();" name="id_lotmag" value="'.$v_lm['id'].'">'
+						echo '<div>Cambia con:<button class="btn btn-xs btn-warning" type="text" onclick="this.form.submit();" name="id_lotmag_change" value="'.$v_lm['id'].'">'
 						. $v_lm['id']. ' lotto n.:' . $v_lm['identifier'];
 						if ($v_lm['expiry']>0){
 							echo ' scadenza:' . gaz_format_date($v_lm['expiry']);
@@ -941,7 +940,9 @@ if ($form['artico'] != "" && intval( $item_artico['lot_or_serial'] && $form['cau
 			echo '<input type="hidden" name="expiry" value="">';
 		}
 	}
-
+  ?>
+  <input type="hidden" name="id_lotmag" value="<?php echo $form['id_lotmag']; ?>">
+<?php
 } else {
         echo '<input type="hidden" name="filename" value="">';
         echo '<input type="hidden" name="identifier" value="">';
