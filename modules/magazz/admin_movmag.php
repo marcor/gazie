@@ -141,8 +141,10 @@ if (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo acces
 	if ($toDo == "update") { // se è un update prendo la quantità scritta nel data base per le disponibilità in uscita
 		$prev_qta = gaz_dbi_get_row($gTables['movmag'], "id_mov", intval($_GET['id_mov']));
 		// la qtà è in questa variabile $prev_qta['quanti'];
+		$prev_idmov = intval($_GET['id_mov']);
 	} else {
 		$prev_qta['quanti']=0;
+    $prev_idmov = 0;
 	}
   $form['id_orderman'] = $result['id_orderman'];
   $resultorderman = gaz_dbi_get_row($gTables['orderman'], "id", $form['id_orderman']);
@@ -292,7 +294,6 @@ if (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo acces
 		$prev_qta['quanti']=0;
 		$prev_idmov = 0;
 	}
-
 	// controllo e WARNING su quantità e lotti
 	if (strlen($form['artico'])>0 && $form['quanti']>0 && ($form['operat']==-1 || $form['operat']==0)){
 		$mv = $gForm->getStockValue(false, $form['artico']);
@@ -341,7 +342,7 @@ if (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo acces
         $msg .= "21+"; // manca il lotto
       }else{
 		  $checklot = gaz_dbi_get_row($gTables['lotmag']." LEFT JOIN ".$gTables['movmag']." ON ".$gTables['movmag'].".id_mov = id_movmag", 'id', $form['id_lotmag']);
-		  if (strtotime($form['datdoc']) < strtotime($checklot['datdoc']) && $form['operat']=="-1"){// non può uscire un lotto prima della data della sua creazione
+		  if (isset($checklot['datdoc']) && isset($form['datdoc']) && strtotime($form['datdoc']) < strtotime($checklot['datdoc']) && $form['operat']=="-1"){// non può uscire un lotto prima della data della sua creazione
 			$msg .= "36+";// Il lotto non può uscire in tale data in quanto ancora inesistente
 		  }
 	  }
@@ -403,7 +404,7 @@ if (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo acces
       $msg .="28+";
     }
     if ($form['SIAN']>0 && $form['operat']==-1 && strlen($form['recip_stocc'])>0){
-      $content = $sil -> getCont($form['recip_stocc'],$form['artico']);
+      $content = $sil -> getCont($form['recip_stocc'],$form['artico'],$prev_idmov);
       if ($content < $form['quanti']){ // se non c'è suffiente olio nel silos selezionato
         $msg .="32+";
       }
@@ -833,6 +834,7 @@ if ($form['artico'] != "" && intval( $item_artico['lot_or_serial'] && $form['cau
 			}
 
 			if (intval($form['id_lotmag'])>0 && strlen($form['recip_stocc'])>0){
+
 				$sil_contents = $sil -> getContentSil($form['recip_stocc'],'',0,$prev_idmov);
 				if (!array_key_exists($form['id_lotmag'],$sil_contents['id_lotti'])){// se il lotto selezionato non è dentro al silos selezionato
 					?>

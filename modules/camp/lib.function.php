@@ -314,8 +314,7 @@ class silos {
 	function getContentSil($codsil,$date="",$id_mov=0,$excluded_movmag = 0){// funzione per trovare il contenuto in lotti e varietà dalla data dell'ultimo svuotamento totale di un silos (id_mov è l'ultimo id da escludere nella stessa data)
 
 		if ($date==""){
-			$latestEmpty= $this -> getLatestEmptySil($codsil);
-			//echo "<pre>latest:",print_r($latestEmpty);
+			$latestEmpty= $this -> getLatestEmptySil($codsil,$excluded_movmag);
 			$date=(isset($latestEmpty['datdoc']))?$latestEmpty['datdoc']:'';
 			$id_mov=(isset($latestEmpty['id_mov']))?$latestEmpty['id_mov']:'';
 		}
@@ -347,7 +346,6 @@ class silos {
 		$passo=2000000;
 		$limit=0;
 		$resmovs=gaz_dbi_dyn_query ($select,$table,$where,$orderby,$limit,$passo,$groupby);// ho trovato tutti i movimenti interessati
-
 		$count=array();
 		$var_dichiarabili="";
 		$key="id_lotti"; // chiave per il raggruppamento per lotto
