@@ -1518,20 +1518,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 }
 require("../../library/include/header.php");
 require("./lang." . $admin_aziend['lang'] . ".php");
-$script_transl = $strScript["admin_broven.php"] + HeadMain(0, array(/* 'tiny_mce/tiny_mce', */
-            /* 'boxover/boxover', */
-            'calendarpopup/CalendarPopup',
-            'custom/autocomplete',
-            /* 'jquery/toast/javascript/jquery.toastmessage', */
-            'custom/miojs'
-                /** ENRICO FEDELE */
-                /* 'jquery/jquery-1.7.1.min',
-                  'jquery/ui/jquery.ui.core',
-                  'jquery/ui/jquery.ui.widget',
-                  'jquery/ui/jquery.ui.position',
-                  'jquery/ui/jquery.ui.autocomplete', */
-                /**/
-                /** ENRICO FEDELE */                ));
+$script_transl = $strScript["admin_broven.php"] + HeadMain(0, array('calendarpopup/CalendarPopup','custom/autocomplete','custom/miojs'));
 if ($form['id_tes'] > 0) {
     $title = ucfirst($script_transl[$toDo] . $script_transl[0][$form['tipdoc']]) . " n." . $form['numdoc'];
 } else {
