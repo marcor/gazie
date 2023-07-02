@@ -2026,7 +2026,20 @@ require("../../library/include/header.php");
 </style>
 <?php
 require("./lang." . $admin_aziend['lang'] . ".php");
-$script_transl = $strScript["admin_booking.php"] + HeadMain(0, array('calendarpopup/CalendarPopup','custom/autocomplete','custom/miojs'));
+$script_transl = $strScript["admin_booking.php"] + HeadMain(0, array(/* 'tiny_mce/tiny_mce', */
+            /* 'boxover/boxover', */
+            'calendarpopup/CalendarPopup',
+            'custom/autocomplete',
+            /* 'jquery/toast/javascript/jquery.toastmessage', */
+            'custom/miojs'
+                /** ENRICO FEDELE */
+                /* 'jquery/jquery-1.7.1.min',
+                  'jquery/ui/jquery.ui.core',
+                  'jquery/ui/jquery.ui.widget',
+                  'jquery/ui/jquery.ui.position',
+                  'jquery/ui/jquery.ui.autocomplete', */
+                /**/
+                /** ENRICO FEDELE */                ));
 if ($form['id_tes'] > 0) {
     $title = ucfirst($script_transl[$toDo] . $script_transl[0][$form['tipdoc']]) . " n." . $form['numdoc'];
 } else {

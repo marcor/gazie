@@ -85,40 +85,51 @@ function openframe(url,codice){
 		  <a class="pull-right dialog_grid" id_bread="<?php echo $grr['id_bread']; ?>" style="cursor:pointer;"><i class="glyphicon glyphicon-cog"></i></a>
         </div>
         <div class="box-body">
-          <table class="Tlarge table table-striped table-bordered table-condensed">
-            <tr>
-              <td class="FacetFieldCaptionTD text-right">Periodo</td>
-              <td class="FacetDataTD">
-                dal <input type="date" name="start" value="<?php echo $form['start']; ?>" class="FacetInput" onchange="this.form.submit()">
-              </td>
-              <td class="FacetDataTD">
-                al <input type="date" name="end" value="<?php echo $form['end']; ?>" class="FacetInput" onchange="this.form.submit()">
-                <input type="hidden" value="access" maxlength="6" name="access">
-              </td>
-            </tr>
-          </table>
-          <?php
-          // prendo i dati statistici
-          $tot_promemo = get_total_promemo($form['start'],$form['end']);
-          // prendo i check-in nei prossimi 7 giorni
-          $next_check = get_next_check(date("Y-m-d"),date('Y-m-d', strtotime(date("Y-m-d") . ' + 7 day')));
-          ?>
-          <div class="table-responsive table-bordered table-striped">
-            <table class="col-xs-12">
-                <tr>
-                  <th class="text-center">Importo totale</th>
-                  <th class="text-center">Notti periodo</th>
-                  <th class="text-center">Notti vendute</th>
-                  <th class="text-center">Occupazione</th>
-                </tr>
-                <tr>
-                  <td class="text-center"><?php echo "€ ",number_format($tot_promemo['totalprice_booking'], 2, '.', ''); ?></td>
-                  <td class="text-center"><?php echo $tot_promemo['tot_nights_bookable']; ?></td>
-                  <td class="text-center"><?php echo $tot_promemo['tot_nights_booked']; ?></td>
-                  <td class="text-center"><?php echo number_format($tot_promemo['perc_booked'], 2, '.', ''),"%"; ?></td>
-                </tr>
-            </table>
-          </div>
+			<div class="box-body">
+				<p>Occupazione attuale</p>
+				<?php
+				// prendo gli alloggi
+				
+				
+				?>
+			
+			</div>
+			<div class="box-body">
+				<table class="Tlarge table table-striped table-bordered table-condensed">
+				<tr>
+				  <td class="FacetFieldCaptionTD text-right">Periodo</td>
+				  <td class="FacetDataTD">
+					dal <input type="date" name="start" value="<?php echo $form['start']; ?>" class="FacetInput" onchange="this.form.submit()">
+				  </td>
+				  <td class="FacetDataTD">
+					al <input type="date" name="end" value="<?php echo $form['end']; ?>" class="FacetInput" onchange="this.form.submit()">
+					<input type="hidden" value="access" maxlength="6" name="access">
+				  </td>
+				</tr>
+				</table>
+				<?php
+				// prendo i dati statistici
+				$tot_promemo = get_total_promemo($form['start'],$form['end']);
+				// prendo i check-in nei prossimi 7 giorni
+				$next_check = get_next_check(date("Y-m-d"),date('Y-m-d', strtotime(date("Y-m-d") . ' + 7 day')));
+				?>
+				<div class="table-responsive table-bordered table-striped">
+				<table class="col-xs-12">
+					<tr>
+					  <th class="text-center">Importo totale</th>
+					  <th class="text-center">Notti periodo</th>
+					  <th class="text-center">Notti vendute</th>
+					  <th class="text-center">Occupazione</th>
+					</tr>
+					<tr>
+					  <td class="text-center"><?php echo "€ ",number_format($tot_promemo['totalprice_booking'], 2, '.', ''); ?></td>
+					  <td class="text-center"><?php echo $tot_promemo['tot_nights_bookable']; ?></td>
+					  <td class="text-center"><?php echo $tot_promemo['tot_nights_booked']; ?></td>
+					  <td class="text-center"><?php echo number_format($tot_promemo['perc_booked'], 2, '.', ''),"%"; ?></td>
+					</tr>
+				</table>
+				</div>
+			</div>
           <div class="row">
             <table class="Tlarge table table-striped table-bordered table-condensed">
               <h5 class="box-title"><i class="glyphicon glyphicon-pushpin"></i> Nei prossimi 7 giorni </h5>
@@ -146,11 +157,13 @@ function openframe(url,codice){
                       if (date("Y-m-d")==$row['start']){
                         $style="style='background-color: #f2caca;'";
                       }
-                      ?>
-                      <tr <?php echo $style; ?>>
-                      <td><?php echo "<b>",gaz_format_date($row['start']),"</b> ",$row['type']," ",$row['house_code'],"<b> -> </b>",$row['ragso1']," ",$row['ragso2']," prenotazione n.",$row['numdoc']," del ",gaz_format_date($row['datemi']); ?></td>
-                      </tr>
-                      <?php
+					  if (intval($row['checked_in_date'])==0){
+						  ?>
+						  <tr <?php echo $style; ?>>
+						  <td><?php echo "<b>",gaz_format_date($row['start']),"</b> ",$row['type']," ",$row['house_code'],"<b> -> </b>",$row['ragso1']," ",$row['ragso2']," prenotazione n.",$row['numdoc']," del ",gaz_format_date($row['datemi']); ?></td>
+						  </tr>
+						  <?php
+					  }
                     }
                   }
                   ?>
@@ -179,11 +192,13 @@ function openframe(url,codice){
                       if (date("Y-m-d")==$row['end']){
                         $style="style='background-color: #f2caca;'";
                       }
-                      ?>
-                      <tr <?php echo $style; ?>>
-                      <td><?php echo "<b>",gaz_format_date($row['end']),"</b> ",$row['type']," ",$row['house_code'],"<b> -> </b>",$row['ragso1']," ",$row['ragso2']," prenotazione n.",$row['numdoc']," del ",gaz_format_date($row['datemi']); ?></td>
-                      </tr>
-                      <?php
+					  if (intval($row['checked_out_date'])==0){
+						  ?>
+						  <tr <?php echo $style; ?>>
+						  <td><?php echo "<b>",gaz_format_date($row['end']),"</b> ",$row['type']," ",$row['house_code'],"<b> -> </b>",$row['ragso1']," ",$row['ragso2']," prenotazione n.",$row['numdoc']," del ",gaz_format_date($row['datemi']); ?></td>
+						  </tr>
+						  <?php
+					  }
                     }
                   }
                   ?>

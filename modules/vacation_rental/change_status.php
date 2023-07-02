@@ -177,7 +177,7 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
         $mail->addCC($admin_aziend['e_mail']);             //invio copia a mittente
         $mail->isHTML(true);
         $mail->Subject = $script_transl['booking']." ".$tesbro['numdoc'].' '.$script_transl['of'].' '.gaz_format_date($tesbro['datemi']);
-        if ((!isset($old_checked_out_date) || intval($old_checked_out_date)==0) && $_POST['new_status']=="OUT" && floatval($pointeuro)>0){// se è abilitato attribuisco i punti al checkout 
+        if ((!isset($old_checked_out_date) || intval($old_checked_out_date)==0) && $_POST['new_status']=="OUT" && floatval($pointeuro)>0){// se è abilitato attribuisco i punti al checkout
           $amount=get_totalprice_booking($i,FALSE);
           $points=intval($amount/$pointeuro);
           if ($data = json_decode($anagra['custom_field'],true)){// se c'è un json in anagra
@@ -225,7 +225,7 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 				if($mail->send()) {
 				}else {
 				echo "Errore imprevisto nello spedire la mail di notifica attribuzione punti: " . $mail->ErrorInfo;
-				}				
+				}
 			}
           }else{// se NON c'è un json in anagra
 			$data['vacation_rental']['points'] = $points;
@@ -242,11 +242,11 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 				$level_name="nessun livello raggiunto";
 			}
 			$mail->Body    = "<p>".$script_transl['give_point']." ".$data['vacation_rental']['points']." ".$script_transl['give_point1']." ".$level_name."</p><p>".$script_transl['regards']."</p><p><b>".$admin_aziend['ragso1']." ".$admin_aziend['ragso2']."</b></p>";
-              $mail->Body    .="<p><a href='https://www.gmonamour.it/".$lan."/service/fidelity-mon-amour'>Fidelity Mon Amour</a></p>";
+              $mail->Body    .="<p>Guardi i vantaggi di <a href='https://www.gmonamour.it/".$lan."/service/fidelity-mon-amour'>Fidelity Mon Amour</a></p>";
 			if($mail->send()) {
 			}else {
 			echo "Errore imprevisto nello spedire la mail di notifica attribuzione punti: " . $mail->ErrorInfo;
-			}	 
+			}
 		  }
         }
         if (intval($old_checked_out_date)>0 && $_POST['new_status']!=="OUT" && floatval($pointeuro)>0){// se è abilitato e si sta regredendo dal check-out tolgo i punti
