@@ -176,7 +176,15 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
     $form['indspe'] = '';
     $form['search']['clfoco'] = '';
     $form['id_tes'] = "new";
-    $form['seziva'] = 1;
+    switch ($admin_aziend['fatimm']) {
+      case 1:
+      case 2:
+      case 3:
+        $form['seziva'] = $admin_aziend['fatimm'];
+      break;
+      default:
+      $form['seziva'] = 1;
+    }
     $form['datemi_D'] = date("d");
     $form['datemi_M'] = date("m");
     $form['datemi_Y'] = $anno;
