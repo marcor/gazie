@@ -1476,7 +1476,15 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     if (isset($_GET['seziva'])) {
         $form['seziva'] = intval($_GET['seziva']);
     } else {
+      switch ($admin_aziend['fatimm']) {
+        case 1:
+        case 2:
+        case 3:
+        $form['seziva'] = $admin_aziend['fatimm'];
+        break;
+        default:
         $form['seziva'] = 1;
+      }
     }
     $form['protoc'] = "";
     $form['numdoc'] = "";
