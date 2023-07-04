@@ -271,8 +271,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 				?><td></td><?php
 			}
 
-
-			if (isset($f_row) && strlen($f_row['identifier'])>0) {
+			if (isset($f_row['id']) && strlen($f_row['identifier'])>0) {
         $check_lot_exit = $lm -> check_lot_exit($f_row['id']);// controllo se è già uscito qualche prodotto con lo stesso id lotto
 				echo '<td align="center">'.$f_row['identifier'].' - '.gaz_format_date($f_row['expiry']).'</td>';
 			} else {
@@ -304,7 +303,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 			}
       $disabled="";
       $title="";
-      if (isset($check_lot_exit) && $check_lot_exit===TRUE){
+      if (isset($f_row['id']) && $check_lot_exit===TRUE){
         $disabled="disabled";
         $title="title='Non puoi cancellare questa produzione perché il lotto con id ". $f_row['id'] ." risulta già uscito dal magazzino'";
       }
