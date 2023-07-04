@@ -425,9 +425,11 @@ class invoiceXMLvars {
         }
       } elseif ($rigo['tiprig'] == 6 || $rigo['tiprig'] == 8) { // testo
         $body_text = gaz_dbi_get_row($this->gTables['body_text'], "id_body", $rigo['id_body_text']);
-        $dom->loadHTML($body_text['body_text']);
-        $rigo['descri'] = htmlspecialchars_decode(str_replace('&amp;#xD;','',trim(htmlentities(strip_tags($dom->saveXML())))));
-        $rigo['tiprig'] = 'D';
+        if ($body_text['body_text']!= NULL){
+          $dom->loadHTML($body_text['body_text']);
+          $rigo['descri'] = htmlspecialchars_decode(str_replace('&amp;#xD;','',trim(htmlentities(strip_tags($dom->saveXML())))));
+          $rigo['tiprig'] = 'D';
+        }
       } elseif ($rigo['tiprig'] == 3) {  // var.totale fattura
         $this->riporto += $rigo['prelis'];
       } elseif ($rigo['tiprig']>10 && $rigo['tiprig']<17) {
