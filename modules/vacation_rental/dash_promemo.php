@@ -34,7 +34,7 @@ require("../../modules/vacation_rental/lib.function.php");
 require("../../modules/vacation_rental/lib.data.php");
 if (!isset($_POST['access'])){// primo accesso
   $form['start']=date("Y-m-d");
-  $form['end']=date('Y-m-d', strtotime($form['start'] . ' +90 day'));
+  $form['end']=date('Y-m-d', strtotime($form['start'] . ' +10 day'));
 }else{
   $form['start']=$_POST['start'];
   $form['end']=$_POST['end'];
@@ -111,7 +111,7 @@ function openframe(url,codice){
 				// prendo i dati statistici
 				$tot_promemo = get_total_promemo($form['start'],$form['end']);
 				// prendo i check-in nei prossimi 7 giorni
-				$next_check = get_next_check(date("Y-m-d"),date('Y-m-d', strtotime(date("Y-m-d") . ' + 7 day')));
+				$next_check = get_next_check(date("Y-m-d"),date('Y-m-d', strtotime(date("Y-m-d") . ' + 10 day')));
 				?>
 				<div class="table-responsive table-bordered table-striped">
 				<table class="col-xs-12">
@@ -132,7 +132,7 @@ function openframe(url,codice){
 			</div>
           <div class="row">
             <table class="Tlarge table table-striped table-bordered table-condensed">
-              <h5 class="box-title"><i class="glyphicon glyphicon-pushpin"></i> Nei prossimi 7 giorni </h5>
+              <h5 class="box-title"><i class="glyphicon glyphicon-pushpin"></i> Nei prossimi 10 giorni </h5>
               <?php
               if (count($next_check['in']) >0){
                 $keys = array_column($next_check['in'], 'start');

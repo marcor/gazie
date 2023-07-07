@@ -197,6 +197,11 @@ class DocContabVars {
         $this->cliente1 = $this->client['ragso1'];
         $this->cliente2 = $this->client['ragso2'];
         $this->cliente3 = $this->client['indspe'];
+		if (strlen($this->client['telefo'])>3 || strlen($this->client['cell'])>3){
+			$this->clientetel = $this->client['telefo']." -- ".$this->client['cell'];
+		}else{
+			$this->clientetel="";
+		}
         if (!empty($this->client['citspe'])) {
           if ($this->client['country'] == 'IT') {
             $this->client['capspe'] = sprintf("%05d",$this->client['capspe']);

@@ -61,6 +61,7 @@ class Template extends TCPDI {
         $this->cliente4 = $docVars->cliente4;  // CAP, Città, Provincia
         $this->cliente4b = $docVars->cliente4b; // Nazione
         $this->cliente5 = $docVars->cliente5;  // P.IVA e C.F.
+		$this->clientetel = $docVars->clientetel; // numeri di telefono
         $this->agente = $docVars->name_agente;
         $this->status = $docVars->status;
 		$this->res_events = $docVars->res_events;
@@ -200,23 +201,23 @@ class Template extends TCPDI {
 			
 			$this->SetXY(110, $interlinea +$add_int+ 6);
             $this->SetFont('helvetica', '', 10);
-            if (!empty($this->cliente1)){ // Antonio Germani - se non c'è cliente evito di scrivere (serve per template scontrino)
+            if (!empty($this->cliente1 || !empty($this->cliente2))){ // Antonio Germani - se non c'è cliente evito di scrivere (serve per template scontrino)
                   $this->Cell(15, 5, $this->pers_title.' ', 0, 0, 'R');
-                  $this->Cell(75, 5, $this->cliente1, 0, 1, 'L', 0, '', 1);
+                  $this->Cell(75, 5, $this->cliente1." ".$this->cliente2, 0, 1, 'L', 0, '', 1);
             } else {
               $this->Cell(15, 5,'', 0, 0, 'R');
               $this->Cell(75, 5,'', 0, 1, 'L', 0, '', 1);
             }
-			
-            if (!empty($this->cliente2)) {
-                $this->Cell(115);
-                $this->Cell(75, 5, $this->cliente2, 0, 1, 'L', 0, '', 1);
-            }
+		
             $this->SetFont('helvetica', '', 10);
             $this->Cell(115);
             $this->Cell(75, 5, $this->cliente3, 0, 1, 'L', 0, '', 1);
             $this->Cell(115);
             $this->Cell(75, 5, $this->cliente4, 0, 1, 'L', 0, '', 1);
+			if (!empty($this->clientetel)) {
+                $this->Cell(115);
+                $this->Cell(75, 5, "tel: ".$this->clientetel, 0, 1, 'L', 0, '', 1);
+			}
             $this->SetFont('helvetica', '', 7);
             if (!empty($this->c_Attenzione)) {
                 $this->SetFont('helvetica', '', 10);
