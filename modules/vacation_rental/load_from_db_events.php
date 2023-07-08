@@ -57,13 +57,16 @@ if ($_GET['token'] == md5($token.date('Y-m-d'))){
     $result = mysqli_query($link, $sql);
     if (isset($result)){
     foreach($result as $row){
-      $data[] = array(
-      'id'   => $row["id"],
-      'title'   => addslashes($row["title"]),
-      'start'   => $row["start"],
-      'end'   => $row["end"]
-      );
-    }
+		if ($row["type"]=="PAUSA"){
+			$row["title"]="Pausa";
+		}
+		$data[] = array(
+		'id'   => $row["id"],
+		'title'   => addslashes($row["title"]),
+		'start'   => $row["start"],
+		'end'   => $row["end"]
+		);
+		}
     }
     echo json_encode($data);
   }
