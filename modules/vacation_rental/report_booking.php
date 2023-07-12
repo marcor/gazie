@@ -29,7 +29,6 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
-
 function getDayNameFromDayNumber($day_number) {
     return ucfirst(utf8_encode(strftime('%A', mktime(0, 0, 0, 3, 19+$day_number, 2017))));
 }
@@ -131,7 +130,8 @@ $sortable_headers = array(
     "Tour op." => "id_agente",
     "Cliente" => "clfoco",
     "Località" => "",
-    "Importo imponib." => "",
+    "Importo" => "",
+    "" => "",
     $script_transl['status'] => "status",
     $script_transl['print'] => "",
     "Mail" => "",
@@ -915,7 +915,7 @@ $ts->output_navbar();
             if($check_inout=="IN"){
               $stato_check_btn = 'btn-success';
             }elseif ($check_inout=="OUT"){
-              $stato_check_btn = 'btn-warning';
+              $stato_check_btn = 'btn-info';
             }
 
             $stato_btn = 'btn-default';
@@ -957,7 +957,7 @@ $ts->output_navbar();
             }elseif ($r['status']=='ISSUE'){
               $stato_btn = 'btn-warning';
             }elseif ($r['status']=='PENDING' || $r['status']=='FROZEN'){
-              $stato_btn = 'btn-info';
+              $stato_btn = 'btn-secondary';
             }elseif ($r['status']=='CANCELLED'){
               $stato_btn = 'btn-danger';
               $disabled_del_style="";
@@ -1020,62 +1020,75 @@ $ts->output_navbar();
 
               // Colonna importo
               $amount=get_totalprice_booking($r['id_tes']);
-              echo "<td class='text-right'>","€ ".gaz_format_quantity($amount,1,2),"";
+              $amountvat=get_totalprice_booking($r['id_tes'],TRUE,TRUE,$admin_aziend['preeminent_vat']);
+              echo "<td class='text-right' style='white-space:nowrap;'>","imp. € ".gaz_format_quantity($amount,1,2),"";
+              echo "<br>","iva c. € ".gaz_format_quantity($amountvat,1,2),"";
               $paid=get_total_paid($r['id_tes']);
               $stato_pig_btn = ($paid>0)?'btn-success':'btn-default';
               $addtext=($paid>0)?"&nbsp;Pagato ".gaz_format_quantity($paid,1,2):"";
-              echo "&nbsp;&nbsp;<a id=\"atest",$r['id_tes'],"\" class=\"btn btn-xs btn-default ",$stato_pig_btn,"\"";
+              echo "<br><a id=\"atest",$r['id_tes'],"\" class=\"btn btn-xs btn-default ",$stato_pig_btn,"\"";
               echo " style=\"cursor:pointer;\" onclick=\"payment('". $r['id_tes'] ."')\"";
               echo "><i id=\"test",$r['id_tes'],"\" class=\"glyphicon glyphicon-piggy-bank \" title=\"Pagamenti\">",$addtext,"</i></a></td>";
+
+              // colonna fiscale
+              echo "<td style='text-align: left;'>";
+              if ($remains_atleastone && !$processed_atleastone && $r['status']!=='CANCELLED' && $r['status']!=='ISSUE') {
+                  // L'ordine e'  da evadere.
+                if ( $tipo !== "VOG" && $tipo !== "VPR") {
+                  echo "<a class=\"btn btn-xs btn-warning\" href=\"../../modules/vendit/select_evaord.php?id_tes=" . $r['id_tes'] . "\">Emetti documento fiscale</a>&nbsp;";
+                }
+              }elseif ($remains_atleastone && $r['status']!=='CANCELLED' && $r['status']!=='ISSUE') {
+                    // l'ordine è parzialmente evaso, mostro lista documenti e tasto per evadere rimanenze
+                    $ultimo_documento = 0;
+                    mostra_documenti_associati( $r['id_tes'] );
+                    if ( $tipo == "VOG" ) {
+                        echo "<a class=\"btn btn-xs btn-default\" href=\"../../modules/vendit/select_evaord_gio.php\">evadi il rimanente</a>";
+                    } else {
+                        echo "<a class=\"btn btn-xs btn-warning\" href=\"../../modules/vendit/select_evaord.php?id_tes=" . $r['id_tes'] . "\">evadi il rimanente</a>&nbsp;";
+                        echo "<a class=\"btn btn-xs btn-warning\" href=\"../../modules/vendit/select_evaord.php?clfoco=" . $r['clfoco'] . "\">evadi cliente</a>";
+                    }
+                } else {
+                    // l'ordine è completamente evaso, mostro i riferimenti ai documenti che lo hanno evaso
+                    $ultimo_documento = 0;
+                    mostra_documenti_associati( $r['id_tes'] );
+                }
+               echo "</td>";
 
               // colonna stato ordine
               // Se l'ordine e' da evadere , verifica lo status ed eventualmente lo aggiorna.
               echo "<td style='text-align: left;'>";
-              if ($remains_atleastone && !$processed_atleastone) {
-                  // L'ordine e'  da evadere.
 
                   if ( $tipo == "VOG" ) {
                       echo "<a class=\"btn btn-xs btn-warning\" href=\"select_evaord_gio.php?weekday=".$r['weekday_repeat']."\">evadi</a>";
                   } elseif ( $tipo == "VPR" ) {
                     echo "PREVENTIVO";
                   } else {
-                      echo "<a class=\"btn btn-xs btn-warning\" href=\"../../modules/vendit/select_evaord.php?id_tes=" . $r['id_tes'] . "\">Emetti documento fiscale</a>&nbsp;";
-
                       if ($ccoff==1 ){// se ci sono dati per il pagamento con carta di credito off line
                         echo "&nbsp;&nbsp;<a class=\"btn btn-xs btn-default \"";
                         echo " style=\"cursor:pointer;\" onclick=\"pay('". $r['id'] ."')\"";
                         echo "><i class=\"glyphicon glyphicon-credit-card\" title=\"Carta di credito\"></i></a>";
                       }
-                      ?>&nbsp;&nbsp;<a title="Stato della prenotazione" class="btn btn-xs <?php echo $stato_btn; ?> dialog_stato_lavorazione" refsta="<?php echo $r['id_tes']; ?>" prodes="<?php echo $r['ragso1']," ",$r['ragso2']; ?>" prosta="<?php echo $r['status']; ?>" cust_mail="<?php echo $r['base_mail']; ?>">
+                      ?><br><a style="white-space:nowrap;" title="Stato della prenotazione" class="btn btn-xs <?php echo $stato_btn; ?> dialog_stato_lavorazione" refsta="<?php echo $r['id_tes']; ?>" prodes="<?php echo $r['ragso1']," ",$r['ragso2']; ?>" prosta="<?php echo $r['status']; ?>" cust_mail="<?php echo $r['base_mail']; ?>">
                           <i class="glyphicon glyphicon-modal-window">&nbsp;</i><?php echo $r['status']; ?>
                         </a>
-                        &nbsp;&nbsp;<a title="Accettazione: <?php echo $title; ?>" class="btn btn-xs <?php echo $stato_check_btn; ?> dialog_check_inout" refcheck="<?php echo $r['id_tes']; ?>" prodes="<?php echo $r['ragso1']," ",$r['ragso2']; ?>" prostacheck="<?php echo $check_inout; ?>" cust_mail="<?php echo $r['base_mail']; ?>" ckdate="<?php echo $ckdate; ?>">
-                          <i class="glyphicon glyphicon-<?php echo $check_icon; ?>">&nbsp;</i><?php echo "CHECK ",$check_inout; ?>
-                        </a>
                         <?php
+                        if ($r['status']!=='CANCELLED' && $r['status']!=='ISSUE'){
+                          ?>
+                          <br><a style="white-space:nowrap;" title="Accettazione: <?php echo $title; ?>" class="btn btn-xs <?php echo $stato_check_btn; ?> dialog_check_inout" refcheck="<?php echo $r['id_tes']; ?>" prodes="<?php echo $r['ragso1']," ",$r['ragso2']; ?>" prostacheck="<?php echo $check_inout; ?>" cust_mail="<?php echo $r['base_mail']; ?>" ckdate="<?php echo $ckdate; ?>">
+                            <i class="glyphicon glyphicon-<?php echo $check_icon; ?>">&nbsp;</i><?php echo "CHECK ",$check_inout; ?>
+                          </a>
+                          <?php
+                        }
+
                          if (isset($r['text'])){// se c'è una recensione inserisco icona
                            ?>
-                          &nbsp;&nbsp;<a title="Recensione" class="btn btn-xs <?php echo $feed_stato_btn; ?> dialog_feedback" ref="<?php echo $r['id_feedback']; ?>" feed_text="<?php echo $r['text']; ?>" feed_status="<?php echo $r['feed_status']; ?>">
+                          <a title="Recensione" class="btn btn-xs <?php echo $feed_stato_btn; ?> dialog_feedback" ref="<?php echo $r['id_feedback']; ?>" feed_text="<?php echo $r['text']; ?>" feed_status="<?php echo $r['feed_status']; ?>">
                             <i class="glyphicon glyphicon-comment"></i>
                           </a>
                         <?php
                          }
                   }
-              } elseif ($remains_atleastone) {
-                  // l'ordine è parzialmente evaso, mostro lista documenti e tasto per evadere rimanenze
-                  $ultimo_documento = 0;
-                  mostra_documenti_associati( $r['id_tes'] );
-                  if ( $tipo == "VOG" ) {
-                      echo "<a class=\"btn btn-xs btn-default\" href=\"../../modules/vendit/select_evaord_gio.php\">evadi il rimanente</a>";
-                  } else {
-                      echo "<a class=\"btn btn-xs btn-warning\" href=\"../../modules/vendit/select_evaord.php?id_tes=" . $r['id_tes'] . "\">evadi il rimanente</a>&nbsp;";
-                      echo "<a class=\"btn btn-xs btn-warning\" href=\"../../modules/vendit/select_evaord.php?clfoco=" . $r['clfoco'] . "\">evadi cliente</a>";
-                  }
-              } else {
-                  // l'ordine è completamente evaso, mostro i riferimenti ai documenti che lo hanno evaso
-                  $ultimo_documento = 0;
-                  mostra_documenti_associati( $r['id_tes'] );
-              }
+
               echo "</td>";
 
               // stampa

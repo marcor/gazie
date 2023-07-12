@@ -261,36 +261,71 @@ function tour_tax_daytopay($night,$start,$end,$tour_tax_from,$tour_tax_to,$tour_
 }
 
 // calcolo totale locazione
-function get_totalprice_booking($tesbro,$tourist_tax=TRUE){
+function get_totalprice_booking($tesbro,$tourist_tax=TRUE,$vat=FALSE,$preeminent_vat=""){
   if ($tesbro!==''){
     $tesbro=intval($tesbro);
     global $link, $azTables, $gTables;// posso chiamare la funzione con entrambi i metodi
     if ($azTables){
       $tablerig = $azTables."rigbro";
       $tabletes = $azTables."tesbro";
+      $tableiva = $azTables."aliiva";
+      $tableaz = $azTables."aziend";
     }else{
       $tablerig = $gTables['rigbro'];
       $tabletes = $gTables['tesbro'];
+      $tableiva = $gTables['aliiva'];
+      $tableaz = $gTables['aziend'];
     }
     $where = " WHERE id_tes = '".$tesbro."'";
     if ($tourist_tax<>TRUE){// se richiesto escludo la tassa turistica
       $where .= "AND codart NOT LIKE 'TASSA-TURISTICA%'";
     }
-    $sql = "SELECT SUM(quanti * prelis) AS totalprice FROM ".$tablerig.$where;
-    if ($result = mysqli_query($link, $sql)) {
-       $row = mysqli_fetch_assoc($result);
+    if ($vat==FALSE){// devo restituire l'imponibile
+      $sql = "SELECT SUM(quanti * prelis) AS totalprice FROM ".$tablerig.$where;
+      if ($result = mysqli_query($link, $sql)) {
+         $row = mysqli_fetch_assoc($result);
+          $where = " WHERE id_tes = '".$tesbro."'";
+          $sql = "SELECT speban FROM ".$tabletes.$where." LIMIT 1";
+          if ($result = mysqli_query($link, $sql)) {
+            $rowtes = mysqli_fetch_assoc($result);
+            $rowtes['speban']=(isset($rowtes['speban']))?$rowtes['speban']:0;
+            $totalprice= $row['totalprice']+$rowtes['speban'];// aggiungo eventuali spese bancarie
+             return  $totalprice;
+          }else{
+            echo "Error: " . $sql . "<br>" . mysqli_error($link);
+          }
+      }else {
+         echo "Error: " . $sql . "<br>" . mysqli_error($link);
+      }
+    }elseif (intval($preeminent_vat)>0){// devo restituire iva compresa
+
+      $sql = "SELECT ".$tablerig.".quanti, ".$tablerig.".prelis, ".$tableiva.".aliquo FROM ".$tablerig." LEFT JOIN ".$tableiva." ON ".$tableiva.".codice = ".$tablerig.".codvat ".$where;
+      $totalprice=0;
+      if ($result = mysqli_query($link, $sql)) {
+        foreach ($result as $res){
+          $totalprice += ($res['prelis']*$res['quanti'])+((($res['prelis']*$res['quanti'])*$res['aliquo'])/100);
+        }
+        $sql = "SELECT aliquo FROM ".$tableiva." WHERE ".$tableiva.".codice = ".intval($preeminent_vat);
+        if ($result = mysqli_query($link, $sql)) {
+          $row = mysqli_fetch_assoc($result);
+          $spevat=$row['aliquo'];
+        }else{
+          echo "Error: " . $sql . "<br>" . mysqli_error($link);
+        }
         $where = " WHERE id_tes = '".$tesbro."'";
         $sql = "SELECT speban FROM ".$tabletes.$where." LIMIT 1";
         if ($result = mysqli_query($link, $sql)) {
           $rowtes = mysqli_fetch_assoc($result);
-		  $rowtes['speban']=(isset($rowtes['speban']))?$rowtes['speban']:0;
-          $totalprice= $row['totalprice']+$rowtes['speban'];// aggiungo eventuali spese bancarie
-           return  $totalprice;
+          $rowtes['speban']=(isset($rowtes['speban']))?$rowtes['speban']:0;
+          $rowtes['speban'] = $rowtes['speban']+(($rowtes['speban']*$spevat)/100);
+          $totalprice= $totalprice+$rowtes['speban'];// aggiungo eventuali spese bancarie
+          return  $totalprice;
         }else{
           echo "Error: " . $sql . "<br>" . mysqli_error($link);
         }
-    }else {
-       echo "Error: " . $sql . "<br>" . mysqli_error($link);
+      }else {
+         echo "Error: " . $sql . "<br>" . mysqli_error($link);
+      }
     }
   }else{
     $err="tesbro vuoto";
