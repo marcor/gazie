@@ -587,6 +587,11 @@ $(function() {
     var new_stato_check = $(this).attr("prostacheck");
     var cust_mail = $(this).attr("cust_mail");
     var ckdate = $(this).attr("ckdate");
+	if (ckdate.length>4){
+		$("#datepicker").val(ckdate);
+	}else{
+		$("#datepicker").val('<?php echo date('d-m-Y H:i'); ?>');
+	}
     var d = $("#datepicker").val();
     $("#sel_stato_check").val(new_stato_check);
     $("span#date_stato_check").html($(this).attr("ckdate"));
@@ -598,6 +603,7 @@ $(function() {
     }
     $('#sel_stato_check').on('change', function () {
         //ways to retrieve selected option and text outside handler
+		$("#datepicker").val('<?php echo date('d-m-Y H:i'); ?>');
         var d = $("#datepicker").val();
         //alert (d);
         new_stato_check = this.value;
@@ -723,7 +729,7 @@ $ts->output_navbar();
           <option value="OUT">CHECKED-OUT</option>
       </select>
       <span id="date_stato_check"></span>
-      <p><br>Cambia stato il: <input type="text" id="datepicker" value= "<?php echo date('d-m-Y H:i'); ?>" ></p>
+      <p><br>Cambia stato il: <input type="text" id="datepicker" ></p>
       <?php if (isset($vacation_url_user) && strlen($vacation_url_user)>4){ ?>
       <div style="display:none" id="feedback_email">
       invia email richiesta recensione <input id="checkbox_email_inout"  type="checkbox" name="checkbox_email_inout" value="0" >
