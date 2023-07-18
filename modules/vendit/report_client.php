@@ -70,6 +70,38 @@ $ts = new TableSorter(
 ?>
 <script>
 $(function() {
+	$("#dialog_vies").dialog({ autoOpen: false });
+	$('.dialog_vies').click(function() {
+		$("p#pariva").html($(this).attr("country") + " " + $(this).attr("ref"));
+		var country = $(this).attr('country');
+		var pariva = $(this).attr('ref');
+		$( "#dialog_vies" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{ 
+					text:'Controlla', 
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'client', country:country, pariva:pariva},
+						type: 'POST',
+						url: '../vendit/check_vies.php',
+						success: function(output){
+		                    alert(output);
+						}
+					});
+				}},
+				"X": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		$("#dialog_vies" ).dialog( "open" );
+	});
 	$("#dialog_delete").dialog({ autoOpen: false });
 	$('.dialog_delete').click(function() {
 		$("p#idcodice").html($(this).attr("ref"));
@@ -117,6 +149,10 @@ function clipandgo(pi,url) {
 <div align="center" class="FacetFormHeaderFont">Clienti</div>
 <div align="center"><?php $ts->output_navbar(); ?></div>
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+	<div style="display:none" id="dialog_vies" title="Dati VIES">
+        <p>Partita IVA:</p>
+        <p class="ui-state-highlight" id="pariva"></p>
+	</div>
 	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
         <p><b>cliente:</b></p>
         <p>Codice:</p>
@@ -217,9 +253,9 @@ function clipandgo(pi,url) {
                 echo "<td align=\"center\">" . $a_row['codfis'] . "</td>";
             } elseif ($a_row['pariva'] >= 1 && !empty($a_row['codfis'])) {
                 if ($a_row['pariva'] == $a_row['codfis']) {
-                    echo '<td align="center">'.$a_row['pariva'].'</td>';
+                    echo '<td align="center">'.gaz_html_ae_checkiva($a_row['country'], $a_row['pariva']).'</td>';
                 } else {
-                    echo "<td align=\"center\">" . $a_row['pariva'] . "<br/>" . $a_row['codfis'] . "</td>";
+                    echo "<td align=\"center\">" . gaz_html_ae_checkiva($a_row['country'], $a_row['pariva']) . "<br/>" . $a_row['codfis'] . "</td>";
                 }
             } else {
                 echo "<td class=\"FacetDataTDred\" align=\"center\"> * NO * </td>";

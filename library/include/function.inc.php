@@ -279,6 +279,11 @@ function gaz_html_call_tel($tel_n) {
     return $ret;
 }
 
+function gaz_html_ae_checkiva($paese, $pariva) {
+    $htmlpariva = '<a class="dialog_vies" target="_blank" country="' . $paese . '" ref="' . $pariva . '">' . $paese . ' ' . $pariva . '</a>';
+    return $htmlpariva;
+}
+
 function gaz_format_quantity($number, $comma = false, $decimal = false) {
     $number = sprintf("%.5f", preg_replace("/\,/", '.', $number)); //max 5 decimal
     if (!$decimal) { // decimal is not defined (deprecated in recursive call)
