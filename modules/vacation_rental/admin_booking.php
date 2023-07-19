@@ -369,7 +369,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['in_prelis'] = $form['rows'][$k_row]['prelis'];
                     $form['in_sconto'] = $form['rows'][$k_row]['sconto'];
                     $form['in_quanti'] = $form['rows'][$k_row]['quanti'];
-                    //$form['in_codvat'] = $form['rows'][$k_row]['codvat'];
+                    $form['in_codvat'] = $form['rows'][$k_row]['codvat'];
                     $form['in_codric'] = $form['rows'][$k_row]['codric'];
                     $form['in_provvigione'] = $form['rows'][$k_row]['provvigione'];
                     $form['in_id_mag'] = $form['rows'][$k_row]['id_mag'];
@@ -884,7 +884,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 
         $start=$form['start'];
         $gen_iva_perc = gaz_dbi_get_row($gTables['aliiva'], 'codice', $artico['aliiva'])['aliquo'];
-		$gen_iva_code = $artico['aliiva'];
+        $gen_iva_code = $artico['aliiva'];
         $night=0;
         while (strtotime($start) < strtotime($form['end'])) {// ciclo il periodo della locazione giorno per giorno
           // Controllo disponibilità
@@ -923,9 +923,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         }
         $start="";
         $form['in_prelis']=$total_price;
-		if ($night<intval($min_stay)){// se non si raggiunge il minimo prenotabile
-		  $msg .= "65+";
-		}
+        if ($night<intval($min_stay)){// se non si raggiunge il minimo prenotabile
+          $msg .= "65+";
+        }
       }
       if ($form['in_codart']<>"TASSA-TURISTICA"){
         // calcolo gli sconti
@@ -1305,19 +1305,19 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $iva_azi = gaz_dbi_get_row($gTables['aliiva'], "codice", $admin_aziend['preeminent_vat']);
                 $form['rows'][$next_row]['pervat'] = $iva_azi['aliquo'];
                 $form['rows'][$next_row]['tipiva'] = $iva_azi['tipiva'];
-                if ($artico['aliiva'] > 0) {
+                if (intval($artico['aliiva']) > 0) {
                     $form['rows'][$next_row]['codvat'] = $artico['aliiva'];
-                    $iva_row = gaz_dbi_get_row($gTables['aliiva'], "codice", $artico['aliiva']);
+                    $iva_row = gaz_dbi_get_row($gTables['aliiva'], "codice", intval($artico['aliiva']));
                     $form['rows'][$next_row]['pervat'] = $iva_row['aliquo'];
                     $form['rows'][$next_row]['tipiva'] = $iva_row['tipiva'];
                 }
-                if ($form['in_codvat'] > 0) {
+                if (intval($form['in_codvat']) > 0) {
                     $form['rows'][$next_row]['codvat'] = $form['in_codvat'];
-                    $iva_row = gaz_dbi_get_row($gTables['aliiva'], "codice", $form['in_codvat']);
+                    $iva_row = gaz_dbi_get_row($gTables['aliiva'], "codice", intval($form['in_codvat']));
                     $form['rows'][$next_row]['pervat'] = $iva_row['aliquo'];
                     $form['rows'][$next_row]['tipiva'] = $iva_row['tipiva'];
                 }
-                if ($artico['codcon'] > 0) {
+                if (intval($artico['codcon']) > 0) {
                     $form['rows'][$next_row]['codric'] = $artico['codcon'];
                     $form['in_codric'] = $artico['codcon'];
                 }
@@ -1956,7 +1956,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         break;
         default:
         $form['seziva'] = 1;
-      }       
+      }
     }
     $form['protoc'] = "";
     $form['numdoc'] = "";

@@ -30,23 +30,13 @@ Copyright (C) - Antonio Germani Massignano (AP) https://www.lacasettabio.it - te
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
 */
-/////////////////////////////////////////////////
-
-/*
-Per evitare che durante gli aggiornamenti di GAzie questo file venga sovrascritto perdendo le impostazioni fatte si prega di
-copiare questo stesso file e salvarlo con il nome 'personal_manual_settings.php'
-In questo caso le impostazioni potranno essere fatte solo nel 'personal_manual_settings.php'
-*/
-
-/////////////////////////////////////////////////
 
 if (count(get_included_files()) ==1 OR basename($_SERVER['PHP_SELF']) == basename(__FILE__)){// impedisce accesso diretto
   exit('Restricted Access');
-}elseif (file_exists('personal_manual_settings.php') && basename(__FILE__)<>'personal_manual_settings.php'){
-  include_once("personal_manual_settings.php");
 }else{
-  $idDB="_001";// ID azienda per stabilire a quale ID azienda del data base dovrà accedere il front-end del sito web
+  $idDB="_002";// ID azienda per stabilire a quale ID azienda del data base dovrà accedere il front-end del sito web
   $token="yourtokenword"; // inserisci una parola chiave, che verrà usata dagli script, per bloccare gli accessi diretti.
-  $smtp_pass="password"; // la password e-mail smtp (con la nuova criptazione non posso più prenderla dal DB)
+  $smtp_pass="InRbe1s914"; // la password e-mail smtp (con la nuova criptazione non posso più prenderla dal DB)
+  $seziva="2"; // la sezione iva da inserire nelle nuove prenotazioni
 }
 ?>

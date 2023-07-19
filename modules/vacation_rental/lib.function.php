@@ -402,22 +402,20 @@ function get_next_check($startprom,$endprom){
   $next['out']=[];
   if ($azTables){
     $tableart = $azTables."artico";
-    $tablerent_ev = $azTables."rental_events";
+    $tablerent_ev = $azTables."rental_events". " LEFT JOIN " . $azTables['tesbro'] . " ON " .$azTables['tesbro'] . ".id_tes = " . $azTables['rental_events'] . ".id_tesbro";
     $tabletes = $azTables."tesbro";
   }else{
     $tableart = $gTables['artico'];
-    $tablerent_ev = $gTables['rental_events'];
+    $tablerent_ev = $gTables['rental_events']. " LEFT JOIN " . $gTables['tesbro'] . " ON " .$gTables['tesbro'] . ".id_tes = " . $gTables['rental_events'] . ".id_tesbro";
     $tabletes = $gTables['tesbro'];
   }
-
-  $rs_booking = gaz_dbi_dyn_query("id,start,end", $tablerent_ev, "(start >= ".$startprom." OR start <= ".$endprom." OR end >= ".$startprom." OR end <= ".$endprom.")  AND type = 'ALLOGGIO'", "id asc");
+  $rs_booking = gaz_dbi_dyn_query("id,start,end", $tablerent_ev, "(start >= ".$startprom." OR start <= ".$endprom." OR end >= ".$startprom." OR end <= ".$endprom.")  AND type = 'ALLOGGIO' AND ".$tabletes.".custom_field LIKE '%CONFIRMED%'", "id asc");
 
   while ($booking = gaz_dbi_fetch_assoc($rs_booking)){// ciclo le prenotazioni che interessano arco di tempo richiesto
     if (intval($booking['id'])>0 && $booking['start']>= $startprom && $booking['start'] <= $endprom){//se la data di check-in è dentro
       $next['in'][]=$booking;
     }
     if (intval($booking['id'])>0 && $booking['end']>= $startprom && $booking['end'] <= $endprom){//se la data di check-out è dentro
-
 	  $next['out'][]=$booking;
     }
   }
