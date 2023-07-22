@@ -142,7 +142,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['child'] = $_POST['child'];
     $form['access_code'] = $_POST['access_code'];
     $gen_iva_perc =  $_POST['gen_iva_perc'];
-	$gen_iva_code =  $_POST['gen_iva_code'];
+    $gen_iva_code =  $_POST['gen_iva_code'];
     $form['extra'] = (isset($_POST['extra']))?$_POST['extra']:array();
     $form['qtaextra'] = (isset($_POST['qtaextra']))?$_POST['qtaextra']:0;
     $form['print_total'] = intval($_POST['print_total']);
@@ -300,6 +300,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['adult'] = intval($v['adult']);
             $form['rows'][$next_row]['child'] = intval($v['child']);
             $form['rows'][$next_row]['total_guests'] = intval($v['total_guests']);
+            $form['rows'][$next_row]['fixquote'] = intval($v['fixquote']);
             $form['rows'][$next_row]['facility_id'] = intval($v['facility_id']);
             $form['rows'][$next_row]['pervat'] = preg_replace("/\,/", '.', $v['pervat']);
             $form['rows'][$next_row]['tipiva'] = strtoupper(substr($v['tipiva'], 0, 1));
@@ -361,6 +362,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['in_adult'] = $form['rows'][$k_row]['adult'];
                     $form['in_child'] = $form['rows'][$k_row]['child'];
                     $form['in_total_guests'] = $form['rows'][$k_row]['total_guests'];
+                    $form['in_fixquote'] = $form['rows'][$k_row]['fixquote'];
                     $form['in_facility_id'] = $form['rows'][$k_row]['facility_id'];
                     $form['in_pervat'] = $form['rows'][$k_row]['pervat'];
                     $form['in_tipiva'] = $form['rows'][$k_row]['tipiva'];
@@ -823,6 +825,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$next_row]['adult'] = 0;
         $form['rows'][$next_row]['child'] = 0;
         $form['rows'][$next_row]['total_guests'] = 0;
+        $form['rows'][$next_row]['fixquote'] = 0;
         $form['rows'][$next_row]['facility_id'] = 0;
         $form['rows'][$next_row]['unimis'] = '';
         $form['rows'][$next_row]['quanti'] = 0;
@@ -851,6 +854,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$next_row]['adult'] = 0;
         $form['rows'][$next_row]['child'] = 0;
         $form['rows'][$next_row]['total_guests'] = 0;
+        $form['rows'][$next_row]['fixquote'] = 0;
         $form['rows'][$next_row]['facility_id'] = 0;
         $form['rows'][$next_row]['unimis'] = '';
         $form['rows'][$next_row]['quanti'] = 0;
@@ -881,7 +885,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
       $total_price=0;// inizializzo il prezzo totale della locazione per il successivo calcolo
       $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['in_codart']);
       if (isset($_POST['in_submit']) && strlen($form['in_codart'])>0 && $form['start']!="" && $form['end']!="" && $form['in_codart']<>"TASSA-TURISTICA"){// se è un alloggio e ci sono le date CALCOLO IL PREZZO
-
+        if ($data = json_decode($artico['custom_field'], TRUE)) { // se esiste un json nel custom field
+          if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['accommodation_type'])){// se è un alloggio
+            $form['in_fixquote'] = (isset($data['vacation_rental']['fixquote']))?$data['vacation_rental']['fixquote']:0;
+          }
+        }else{
+          $form['in_fixquote'] = 0;
+        }
         $start=$form['start'];
         $gen_iva_perc = gaz_dbi_get_row($gTables['aliiva'], 'codice', $artico['aliiva'])['aliquo'];
         $gen_iva_code = $artico['aliiva'];
@@ -922,12 +932,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
            $msg .= "63+";// Overbooking
         }
         $start="";
+
         $form['in_prelis']=$total_price;
         if ($night<intval($min_stay)){// se non si raggiunge il minimo prenotabile
           $msg .= "65+";
         }
       }
-      if ($form['in_codart']<>"TASSA-TURISTICA"){
+      if ($form['in_codart']<>"TASSA-TURISTICA"){// se è ALLOGGIO calcolo e applico gli eventuali sconti
         // calcolo gli sconti
         $discounts=searchdiscount($form['in_codart'],$artico['id_artico_group'],$form['start'],$form['end'],$night,$anagra=0,$gTables['rental_discounts']);
         $form['discount']=0;
@@ -968,10 +979,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             }
           }
         }
+
       }else{
         $form['discount']=0;
       }
       $form['in_prelis'] -= $form['discount'];
+      $form['in_prelis'] += $form['in_fixquote'];// se c'è, aggiungo la quota fissa al prezzo
+
       gaz_dbi_query ("UPDATE ".$gTables['artico']." SET `last_used`='".date("Y-m-d")."' WHERE codice='".$form['in_codart']."';");
       // addizione ai totali peso,pezzi,volume
       $form['net_weight'] += $form['in_quanti'] * $artico['peso_specifico'];
@@ -994,6 +1008,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['in_adult'] = $data['vacation_rental']['adult'];
             $form['in_child'] = $data['vacation_rental']['child'];
             $form['in_total_guests'] = $data['vacation_rental']['total_guests'];
+            $form['in_fixquote'] = (isset($data['vacation_rental']['fixquote']))?$data['vacation_rental']['fixquote']:0;
             $form['tur_tax'] = $data['vacation_rental']['tur_tax'];
             $form['tur_tax_mode'] = $data['vacation_rental']['tur_tax_mode'];
             $form['id_agente'] = $data['vacation_rental']['agent'];// questo è il proprietario
@@ -1014,6 +1029,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
           $form['in_adult'] = 0;
           $form['in_child'] = 0;
           $form['in_total_guests'] = 0;
+          $form['in_fixquote'] = 0;
           $form['in_facility_id'] = 0;
           // calcolo il prezzo dell'extra
 
@@ -1041,6 +1057,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
           $form['in_adult'] = 0;
           $form['in_child'] = 0;
           $form['in_total_guests'] = 0;
+          $form['in_fixquote'] = 0;
           $form['in_facility_id'] = 0;
         }
       } elseif ($form['in_codart']=="TASSA-TURISTICA") {//SE E' tassa turistica
@@ -1080,6 +1097,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['in_adult'] = 0;
         $form['in_child'] = 0;
         $form['in_total_guests'] = 0;
+        $form['in_fixquote'] = 0;
         $form['in_facility_id'] = 0;
         $form['in_prelis'] = $tot_turtax;
 
@@ -1088,9 +1106,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['in_adult'] = 0;
         $form['in_child'] = 0;
         $form['in_total_guests'] = 0;
+        $form['in_fixquote'] = 0;
         $form['in_facility_id'] = 0;
         $form['rows'][$next_row]['in_total_guests'] = 0;
         $form['rows'][$next_row]['in_facility_id'] = 0;
+        $form['rows'][$next_row]['in_fixquote'] = 0;
       }
 
         if (substr($form['in_status'], 0, 6) == "UPDROW") { //se e' un rigo da modificare
@@ -1108,6 +1128,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$old_key]['adult'] = $form['in_adult'];
             $form['rows'][$old_key]['child'] = $form['in_child'];
             $form['rows'][$old_key]['total_guests'] = $form['in_total_guests'];
+            $form['rows'][$old_key]['fixquote'] = $form['in_fixquote'];
             $form['rows'][$old_key]['facility_id'] = $form['in_facility_id'];
             $form['rows'][$old_key]['ritenuta'] = $form['in_ritenuta'];
             $form['rows'][$old_key]['provvigione'] = $form['in_provvigione'];
@@ -1162,6 +1183,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$old_key]['adult'] = 0;
                 $form['rows'][$old_key]['child'] = 0;
                 $form['rows'][$old_key]['total_guests'] = 0;
+                $form['rows'][$old_key]['fixquote'] = 0;
                 $form['rows'][$old_key]['facility_id'] = 0;
                 $form['rows'][$old_key]['unimis'] = "";
                 $form['rows'][$old_key]['quanti'] = 0;
@@ -1173,6 +1195,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$old_key]['adult'] = 0;
                 $form['rows'][$old_key]['child'] = 0;
                 $form['rows'][$old_key]['total_guests'] = 0;
+                $form['rows'][$old_key]['fixquote'] = 0;
                 $form['rows'][$old_key]['facility_id'] = 0;
                 $form['rows'][$old_key]['annota'] = "";
                 $form['rows'][$old_key]['pesosp'] = "";
@@ -1192,6 +1215,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$old_key]['adult'] = 0;
                 $form['rows'][$old_key]['child'] = 0;
                 $form['rows'][$old_key]['total_guests'] = 0;
+                $form['rows'][$old_key]['fixquote'] = 0;
                 $form['rows'][$old_key]['facility_id'] = 0;
                 $form['rows'][$old_key]['quanti'] = "";
                 $form['rows'][$old_key]['unimis'] = "";
@@ -1203,6 +1227,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$old_key]['adult'] = 0;
                 $form['rows'][$old_key]['child'] = 0;
                 $form['rows'][$old_key]['total_guests'] = 0;
+                $form['rows'][$old_key]['fixquote'] = 0;
                 $form['rows'][$old_key]['facility_id'] = 0;
                 $form['rows'][$old_key]['annota'] = "";
                 $form['rows'][$old_key]['pesosp'] = "";
@@ -1235,6 +1260,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['adult'] = $form['in_adult'];
                 $form['rows'][$next_row]['child'] = $form['in_child'];
                 $form['rows'][$next_row]['total_guests'] = $form['in_total_guests'];
+                $form['rows'][$next_row]['fixquote'] = $form['in_fixquote'];
                 $form['rows'][$next_row]['facility_id'] = $form['in_facility_id'];
                 $form['rows'][$next_row]['annota'] = $artico['annota'];
                 $form['rows'][$next_row]['pesosp'] = $artico['peso_specifico'];
@@ -1370,6 +1396,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['adult'] = 0;
                 $form['rows'][$next_row]['child'] = 0;
                 $form['rows'][$next_row]['total_guests'] = 0;
+                $form['rows'][$next_row]['fixquote'] = 0;
                 $form['rows'][$next_row]['facility_id'] = 0;
                 $form['rows'][$next_row]['annota'] = "";
                 $form['rows'][$next_row]['pesosp'] = "";
@@ -1396,6 +1423,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['adult'] = 0;
                 $form['rows'][$next_row]['child'] = 0;
                 $form['rows'][$next_row]['total_guests'] = 0;
+                $form['rows'][$next_row]['fixquote'] = 0;
                 $form['rows'][$next_row]['facility_id'] = 0;
                 $form['rows'][$next_row]['annota'] = "";
                 $form['rows'][$next_row]['pesosp'] = "";
@@ -1415,6 +1443,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['adult'] = 0;
                 $form['rows'][$next_row]['child'] = 0;
                 $form['rows'][$next_row]['total_guests'] = 0;
+                $form['rows'][$next_row]['fixquote'] = 0;
                 $form['rows'][$next_row]['facility_id'] = 0;
                 $form['rows'][$next_row]['annota'] = "";
                 $form['rows'][$next_row]['pesosp'] = "";
@@ -1435,6 +1464,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['adult'] = 0;
                 $form['rows'][$next_row]['child'] = 0;
                 $form['rows'][$next_row]['total_guests'] = 0;
+                $form['rows'][$next_row]['fixquote'] = 0;
                 $form['rows'][$next_row]['facility_id'] = 0;
                 $form['rows'][$next_row]['annota'] = "";
                 $form['rows'][$next_row]['pesosp'] = "";
@@ -1454,6 +1484,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['adult'] = 0;
                 $form['rows'][$next_row]['child'] = 0;
                 $form['rows'][$next_row]['total_guests'] = 0;
+                $form['rows'][$next_row]['fixquote'] = 0;
                 $form['rows'][$next_row]['facility_id'] = 0;
                 $form['rows'][$next_row]['annota'] = "";
                 $form['rows'][$next_row]['pesosp'] = "";
@@ -1554,6 +1585,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['in_adult'] = 0;
         $form['in_child'] = 0;
         $form['in_total_guests'] = 0;
+        $form['in_fixquote'] = 0;
         $form['in_facility_id'] = 0;
         $form['in_unimis'] = "";
         $form['in_prelis'] = 0;
@@ -1643,7 +1675,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['id_tes'] = intval($_GET['id_tes']);
     $form['hidden_req'] = '';
     $gen_iva_perc = 0;
-	$gen_iva_code = 0;
+    $gen_iva_code = 0;
     // inizio rigo di input
     $form['in_descri'] = "";
     $form['in_tiprig'] = 0;
@@ -1656,6 +1688,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_adult'] = 0;
     $form['in_child'] = 0;
     $form['in_total_guests'] = 0;
+    $form['in_fixquote'] = 0;
     $form['in_facility_id'] = 0;
     $form['in_pervat'] = 0;
     $form['in_tipiva'] = 0;
@@ -1761,13 +1794,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['adult'] = 0;
             $form['rows'][$next_row]['child'] = 0;
             $form['rows'][$next_row]['total_guests'] = 0;
+            $form['rows'][$next_row]['fixquote'] =0 ;
             $form['rows'][$next_row]['facility_id'] = 0;
             $form['rows'][$next_row]['annota'] = "";
             $form['rows'][$next_row]['scorta'] = 0;
             $form['rows'][$next_row]['pesosp'] = 0;
             $form['rows'][$next_row]['tipiva'] = "";
         }else{
-			$iva_row = gaz_dbi_get_row($gTables['aliiva'], 'codice', $rigo['codvat']);
+          $iva_row = gaz_dbi_get_row($gTables['aliiva'], 'codice', $rigo['codvat']);
 
           if (isset ($articolo) && $data = json_decode($articolo['custom_field'], TRUE)) { // se esiste un json nel custom field
             if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['accommodation_type'])){// è un alloggio
@@ -1776,12 +1810,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
               $form['rows'][$next_row]['adult'] = $data['vacation_rental']['adult'];
               $form['rows'][$next_row]['child'] = $data['vacation_rental']['child'];
               $form['rows'][$next_row]['total_guests'] = $data['vacation_rental']['total_guests'];
+              $form['rows'][$next_row]['fixquote']=(isset($data['vacation_rental']['fixquote']))?$data['vacation_rental']['fixquote']:0;
               $form['codice_fornitore'] = $articolo['codice'];
               $form['tur_tax'] = $data['vacation_rental']['tur_tax'];
               $form['tur_tax_mode'] = $data['vacation_rental']['tur_tax_mode'];
               $form['id_agente'] = $data['vacation_rental']['agent'];// questo è il proprietario
-			  $gen_iva_perc = $iva_row['aliquo'];
-				$gen_iva_code = $rigo['codvat'];
+              $gen_iva_perc = $iva_row['aliquo'];
+              $gen_iva_code = $rigo['codvat'];
 
               if (intval ($articolo['id_artico_group'])>0){// se l'alloggio fa parte di una struttura
                 $facility = gaz_dbi_get_row($gTables['artico_group'], "id_artico_group", $articolo['id_artico_group']);// leggo la struttura
@@ -1809,12 +1844,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
               $form['rows'][$next_row]['adult'] = 0;
               $form['rows'][$next_row]['child'] = 0;
               $form['rows'][$next_row]['total_guests'] = 0;
+              $form['rows'][$next_row]['fixquote'] = 0;
               $form['rows'][$next_row]['facility_id'] = 0;
             } else {
               $form['rows'][$next_row]['accommodation_type'] = 0;
               $form['rows'][$next_row]['adult'] = 0;
               $form['rows'][$next_row]['child'] = 0;
               $form['rows'][$next_row]['total_guests'] = 0;
+              $form['rows'][$next_row]['fixquote'] = 0;
               $form['rows'][$next_row]['facility_id'] = 0;
             }
           } else {
@@ -1822,6 +1859,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['adult'] = 0;
             $form['rows'][$next_row]['child'] = 0;
             $form['rows'][$next_row]['total_guests'] = 0;
+            $form['rows'][$next_row]['fixquote'] = 0;
             $form['rows'][$next_row]['facility_id'] = 0;
           }
 
@@ -1913,6 +1951,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_adult'] = 0;
     $form['in_child'] = 0;
     $form['in_total_guests'] = 0;
+    $form['in_fixquote'] = 0;
     $form['in_facility_id'] = 0;
     $form['in_pervat'] = "";
     $form['in_tipiva'] = "";
@@ -2372,6 +2411,7 @@ foreach ($form['rows'] as $k => $v) {
     echo "<input type=\"hidden\" value=\"" . ((isset($v['adult'])) ? $v['adult'] : '') . "\" name=\"rows[$k][adult]\">\n";
     echo "<input type=\"hidden\" value=\"" . ((isset($v['child'])) ? $v['child'] : '') . "\" name=\"rows[$k][child]\">\n";
     echo "<input type=\"hidden\" value=\"" . ((isset($v['total_guests'])) ? $v['total_guests'] : '') . "\" name=\"rows[$k][total_guests]\">\n";
+    echo "<input type=\"hidden\" value=\"" . ((isset($v['fixquote'])) ? $v['fixquote'] : '') . "\" name=\"rows[$k][fixquote]\">\n";
     echo "<input type=\"hidden\" value=\"" . ((isset($v['codice_fornitore'])) ? $v['codice_fornitore'] : '') . "\" name=\"rows[$k][codice_fornitore]\">\n";
     echo "<input type=\"hidden\" value=\"" . ((isset($v['facility_id'])) ? $v['facility_id'] : '') . "\" name=\"rows[$k][facility_id]\">\n";
     echo "<input type=\"hidden\" value=\"" . ((isset($v['good_or_service'])) ? $v['good_or_service'] : '') . "\" name=\"rows[$k][good_or_service]\">\n";

@@ -34,9 +34,9 @@ Copyright (C) - Antonio Germani Massignano (AP) https://www.lacasettabio.it - te
 if (count(get_included_files()) ==1 OR basename($_SERVER['PHP_SELF']) == basename(__FILE__)){// impedisce accesso diretto
   exit('Restricted Access');
 }else{
-  $idDB="_002";// ID azienda per stabilire a quale ID azienda del data base dovrà accedere il front-end del sito web
+  $idDB="_001";// ID azienda per stabilire a quale ID azienda del data base dovrà accedere il front-end del sito web
   $token="yourtokenword"; // inserisci una parola chiave, che verrà usata dagli script, per bloccare gli accessi diretti.
-  $smtp_pass="InRbe1s914"; // la password e-mail smtp (con la nuova criptazione non posso più prenderla dal DB)
-  $seziva="2"; // la sezione iva da inserire nelle nuove prenotazioni
+  $smtp_pass="xxxxxxxx"; // la password e-mail smtp (con la nuova criptazione non posso più prenderla dal DB)
+  $seziva="1"; // la sezione iva da inserire nelle nuove prenotazioni
 }
 ?>
