@@ -934,11 +934,15 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $start="";
 
         $form['in_prelis']=$total_price;
+
         if ($night<intval($min_stay)){// se non si raggiunge il minimo prenotabile
           $msg .= "65+";
         }
       }
       if ($form['in_codart']<>"TASSA-TURISTICA"){// se è ALLOGGIO calcolo e applico gli eventuali sconti
+        $form['in_prelis'] += $form['in_fixquote'];// se c'è, aggiungo la quota fissa al prezzo
+        $total_price += $form['in_fixquote'];// se c'è, aggiungo la quota fissa al prezzo
+
         // calcolo gli sconti
         $discounts=searchdiscount($form['in_codart'],$artico['id_artico_group'],$form['start'],$form['end'],$night,$anagra=0,$gTables['rental_discounts']);
         $form['discount']=0;
@@ -984,7 +988,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['discount']=0;
       }
       $form['in_prelis'] -= $form['discount'];
-      $form['in_prelis'] += $form['in_fixquote'];// se c'è, aggiungo la quota fissa al prezzo
 
       gaz_dbi_query ("UPDATE ".$gTables['artico']." SET `last_used`='".date("Y-m-d")."' WHERE codice='".$form['in_codart']."';");
       // addizione ai totali peso,pezzi,volume
