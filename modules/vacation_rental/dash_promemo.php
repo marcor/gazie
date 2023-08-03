@@ -149,7 +149,7 @@ function openframe(url,codice){
 
                     $table = $gTables['rental_events'] ." LEFT JOIN ". $gTables['tesbro'] ." ON ". $gTables['tesbro'] .".id_tes = " . $gTables['rental_events'] . ".id_tesbro LEFT JOIN ". $gTables['clfoco'] ." ON ". $gTables['clfoco'] .".codice = " . $gTables['tesbro'] . ".clfoco LEFT JOIN ". $gTables['anagra'] ." ON ". $gTables['anagra'] .".id = " . $gTables['clfoco'] . ".id_anagra";
                     $where = $gTables['rental_events'].".id = '".$next_row['id']."'";
-                    $what = $gTables['rental_events'] .".*, ". $gTables['anagra'] . ".ragso1, ".	$gTables['anagra'] .".ragso2, ". 	$gTables['tesbro'] . ".numdoc, ".	$gTables['tesbro'] . ".datemi ";
+                    $what = $gTables['rental_events'] .".*, ". $gTables['anagra'] . ".ragso1, ".	$gTables['anagra'] .".ragso2, ". 	$gTables['tesbro'] . ".numdoc, ".	$gTables['tesbro'] . ".datemi, ". $gTables['tesbro'] .".id_tes";
                     $result = gaz_dbi_dyn_query($what, $table, $where, "start DESC");
                     $row=gaz_dbi_fetch_array($result);
                     if (isset($row)){
@@ -160,7 +160,8 @@ function openframe(url,codice){
 					  if (intval($row['checked_in_date'])==0){
 						  ?>
 						  <tr <?php echo $style; ?>>
-						  <td><?php echo "<b>",gaz_format_date($row['start']),"</b> ",$row['type']," ",$row['house_code'],"<b> -> </b>",$row['ragso1']," ",$row['ragso2']," prenotazione n.",$row['numdoc']," del ",gaz_format_date($row['datemi']); ?></td>
+						  <td><?php echo "<b>",gaz_format_date($row['start']),"</b> ",$row['type']," ",$row['house_code'],"<b> -> </b>",$row['ragso1']," ",$row['ragso2']; ?>
+						  <a href="../vacation_rental/report_booking.php?info=none&id_doc=<?php echo $row['id_tes']; ?>&inevasi=Inevasi"> prenotazione n. <?php echo $row['numdoc']; ?> del <?php echo gaz_format_date($row['datemi']); ?></a></td>
 						  </tr>
 						  <?php
 					  }
@@ -184,7 +185,7 @@ function openframe(url,codice){
                   foreach($next_check['out'] as $next_row){
                     $table = $gTables['rental_events'] ." LEFT JOIN ". $gTables['tesbro'] ." ON ". $gTables['tesbro'] .".id_tes = " . $gTables['rental_events'] . ".id_tesbro LEFT JOIN ". $gTables['clfoco'] ." ON ". $gTables['clfoco'] .".codice = " . $gTables['tesbro'] . ".clfoco LEFT JOIN ". $gTables['anagra'] ." ON ". $gTables['anagra'] .".id = " . $gTables['clfoco'] . ".id_anagra";
                     $where = $gTables['rental_events'].".id = '".$next_row['id']."'";
-                    $what = $gTables['rental_events'] .".*, ". $gTables['anagra'] . ".ragso1, ".	$gTables['anagra'] .".ragso2, ". 	$gTables['tesbro'] . ".numdoc, ".	$gTables['tesbro'] . ".datemi ";
+                    $what = $gTables['rental_events'] .".*, ". $gTables['anagra'] . ".ragso1, ".	$gTables['anagra'] .".ragso2, ". 	$gTables['tesbro'] . ".numdoc, ".	$gTables['tesbro'] . ".datemi, ". $gTables['tesbro'] .".id_tes";
                     $result = gaz_dbi_dyn_query($what, $table, $where, "end DESC");
                     $row=gaz_dbi_fetch_array($result);
                     if (isset($row)){
@@ -195,7 +196,8 @@ function openframe(url,codice){
 					  if (intval($row['checked_out_date'])==0){
 						  ?>
 						  <tr <?php echo $style; ?>>
-						  <td><?php echo "<b>",gaz_format_date($row['end']),"</b> ",$row['type']," ",$row['house_code'],"<b> -> </b>",$row['ragso1']," ",$row['ragso2']," prenotazione n.",$row['numdoc']," del ",gaz_format_date($row['datemi']); ?></td>
+						  <td><?php echo "<b>",gaz_format_date($row['end']),"</b> ",$row['type']," ",$row['house_code'],"<b> -> </b>",$row['ragso1']," ",$row['ragso2']; ?>
+						  <a href="../vacation_rental/report_booking.php?info=none&id_doc=<?php echo $row['id_tes']; ?>&inevasi=Inevasi"> prenotazione n. <?php echo $row['numdoc']; ?> del <?php echo gaz_format_date($row['datemi']); ?></a></td>
 						  </tr>
 						  <?php
 					  }

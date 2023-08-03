@@ -884,13 +884,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 
       $total_price=0;// inizializzo il prezzo totale della locazione per il successivo calcolo
       $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['in_codart']);
+	  $form['in_fixquote'] = 0;
       if (isset($_POST['in_submit']) && strlen($form['in_codart'])>0 && $form['start']!="" && $form['end']!="" && $form['in_codart']<>"TASSA-TURISTICA"){// se è un alloggio e ci sono le date CALCOLO IL PREZZO
         if ($data = json_decode($artico['custom_field'], TRUE)) { // se esiste un json nel custom field
           if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['accommodation_type'])){// se è un alloggio
             $form['in_fixquote'] = (isset($data['vacation_rental']['fixquote']))?$data['vacation_rental']['fixquote']:0;
           }
-        }else{
-          $form['in_fixquote'] = 0;
         }
         $start=$form['start'];
         $gen_iva_perc = gaz_dbi_get_row($gTables['aliiva'], 'codice', $artico['aliiva'])['aliquo'];
