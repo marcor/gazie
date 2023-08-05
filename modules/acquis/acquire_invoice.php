@@ -767,6 +767,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				}
 
         $numddt_tolast=false;
+        $prevdescri="";
 				foreach($nl_NumeroLinea as $nl){ // in questo mi ritrovo i righi non assegnati ai ddt specifici (potrebbero essere anche tutti), alcune fatture malfatte non specificano i righi!
         // in $nl ho l'indice del rigo non assegnato ad alcun DdT
           if ( count($acc_DataDDT) >= 2 ){ // se la fattura contiene più DDT allora obbligo l'utente a riferirli bene
@@ -801,12 +802,15 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
                 $form['rows'][$nl]['DataDDT'] = false;
                 $form['numddt_'.($nl-1)]=$acc_DataDDT[$firstDdT[0]]['Numero'];
               } else { // i righi successivi saranno del primo fino a quando non trovo uno decrittivo ovvero on un amount a zero
-                if ($isdescri&&!$prevdescri) { // è descrittivo e il precedente non lo era
-                  if (!$jumpddt) $jumpddt = true; // e vengo da un non descrittivo allora salto
+                if ($isdescri && $prevdescri=="") { // è descrittivo e il precedente non lo era
+                  if (isset($jumpddt)){
+                  }else{
+                    $jumpddt = true; // e vengo da un non descrittivo allora salto
+                  }
                 } else { // è con importo modifico lo stato di jump per poter fare un nuovo salto
                   $jumpddt = false;
                 }
-                if ( $jumpddt && $ddtpointer < $nddt ) {
+                if ( $jumpddt && isset($ddtpointer) && $ddtpointer < $nddt ) {
                   $ddtpointer++;
                   $form['rows'][$nl]['NumeroDDT'] = false;
                   $form['rows'][$nl]['DataDDT'] = false;
