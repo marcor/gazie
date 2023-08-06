@@ -185,7 +185,11 @@ class Lease extends Template
         $html .= "<br><span style=\" letter-spacing: 70px;\">&nbsp; &nbsp;</span><span> Il conduttore ".$this->cliente1." ".$this->cliente2." firmato on-line da IP:".$this->ip."</span>";
 	 }else{// firme fisiche
         $html .= "<br><p><b>Firmato </b></p><span>Il locatore ".$this->intesta1."</span><span style=\" letter-spacing: 30px;\">&nbsp; &nbsp;</span><span> Il conduttore ".$this->cliente1." ".$this->cliente2."</span>";
-      }
+     }
+	 $html .= "<br><br><br><br><br><br><br><br><br><b>CHECK-IN</b> Il conduttore dichiara di aver controllato l'appartamento, di averlo trovato in buono stato di manutenzione e pulizia con tutte le dotazioni e gli extra concordati e di riceverne le chiavi. <br><span style=\" letter-spacing: 270px;\">&nbsp; &nbsp;</span>___________________________________________________";
+	 $html .= "<br><br><br><br><b>CHECK-IN</b> Il locatore dichiara di ricevere il deposito cauzionale di cui al punto 3. ________________________________________";
+	 $html .= "<br><br><br><br><b>CHECK-OUT</b> Il conduttore dichiara che il deposito cauzionale di cui al punto 3 gli è stato restituito per cessata locazione. <br><span style=\" letter-spacing: 270px;\">&nbsp; &nbsp;</span>___________________________________________________";
+
       // output the HTML content
       $this->writeHTML($html, true, false, true, false, '');
 

@@ -1034,7 +1034,12 @@ $ts->output_navbar();
               $addtext=($paid>0)?"&nbsp;Pagato ".gaz_format_quantity($paid,1,2):"";
               echo "<br><a id=\"atest",$r['id_tes'],"\" class=\"btn btn-xs btn-default ",$stato_pig_btn,"\"";
               echo " style=\"cursor:pointer;\" onclick=\"payment('". $r['id_tes'] ."')\"";
-              echo "><i id=\"test",$r['id_tes'],"\" class=\"glyphicon glyphicon-piggy-bank \" title=\"Pagamenti\">",$addtext,"</i></a></td>";
+			  $balance=gaz_format_quantity(($amountvat-$paid),1,2);
+			  $addtitle="";
+			  if (floatval($balance)>0){
+				  $addtitle="- ancora da pagare € ".$balance;
+			  }
+              echo "><i id=\"test",$r['id_tes'],"\" class=\"glyphicon glyphicon-piggy-bank \" title=\"Pagamenti",$addtitle,"\">",$addtext,"</i></a></td>";
 
               // colonna fiscale
               echo "<td style='text-align: left;'>";

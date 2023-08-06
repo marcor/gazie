@@ -628,13 +628,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                   $realstart=$form['start'];
                   $realend=$form['end'];
                   if (intval($vacation_blockdays)>0){
-                    $form['start']=$date1 = date("Y-m-d", strtotime($realstart.'- '.intval($vacation_blockdays).' days'));
+                    $form['start']=$date1 = date("Y-m-d", strtotime($realstart.'- '.(intval($vacation_blockdays)+intval($data['vacation_rental']['pause'])).' days'));
                     $form['end']=$date1 = date("Y-m-d", strtotime($realstart));
-                    tableInsert($table, $columns, $form);// scrivo il cuscinetto iniziale
+                    tableInsert($table, $columns, $form);// scrivo il cuscinetto iniziale sommando il cuscinetto generale con quello specifico dell'alloggio
                   }
                   $form['start']=date("Y-m-d", strtotime($realend));
                   $form['end']=date("Y-m-d", strtotime($realend.'+ '. (intval($vacation_blockdays)+intval($data['vacation_rental']['pause'])) .' days'));
-                  tableInsert($table, $columns, $form);// scrivo il cuscinetto finale
+                  tableInsert($table, $columns, $form);// scrivo il cuscinetto finale sommando il cuscinetto generale con quello specifico dell'alloggio
                   $form['start'] = $realstart;
                   $form['end'] = $realend;
                 }

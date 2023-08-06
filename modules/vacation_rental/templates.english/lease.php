@@ -177,6 +177,10 @@ class Lease extends Template
 	  }else{// firme fisiche
         $html .= "<br><p><b>".$script_transl['sign']." </b></p><span>".$script_transl['locatore']." ".$this->intesta1."</span><span style=\" letter-spacing: 30px;\">&nbsp; &nbsp;</span><span> ".$script_transl['conduttore']." ".$this->cliente1." ".$this->cliente2."</span>";
       }
+	  $html .= "<br><br><br><br><br><br><br><br><br><b>CHECK-IN</b> The tenant declares to have checked the apartment, to have found it in a good state of maintenance and cleanliness with all the agreed facilities and extras and to receive the keys. <br><span style=\" letter-spacing: 270px;\">&nbsp; &nbsp;</span>___________________________________________________";
+	 $html .= "<br><br><br><br><b>CHECK-IN</b> The landlord declares to receive the security deposit referred to in the point 3. ________________________________________";
+	 $html .= "<br><br><br><br><b>CHECK-OUT</b> The tenant declares that the security deposit referred to in point 3 has been returned to him due to the termination of the lease. <br><span style=\" letter-spacing: 270px;\">&nbsp; &nbsp;</span>___________________________________________________";
+
       // output the HTML content
       $this->writeHTML($html, true, false, true, false, '');
 

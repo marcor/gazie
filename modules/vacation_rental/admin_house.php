@@ -1309,7 +1309,7 @@ if ($modal_ok_insert === true) {
                 <div id="pause" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label for="pause" class="col-sm-4 control-label">Numero notti da bloccare dopo il checkout</label>
+                            <label for="pause" class="col-sm-4 control-label">Notti da bloccare prima del check-in e dopo il checkout (aggiunte a quelle generali)</label>
                             <input class="col-sm-2" type="number" value="<?php echo $form['pause']; ?>" name="pause" maxlength="50"/>
                         </div>
                     </div>
