@@ -547,7 +547,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesbro'], $sql_documento, $where, 0, 1);
             $ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
             if (strlen($form['numdoc'])==0){// se è insert, mi ricavo il numdoc altrimenti ce l'ho già
-              if ($ultimo_documento) {// se non è il primo documentoo dell'anno proseguo la numerazione
+              if ($ultimo_documento) {// se non è il primo documento dell'anno proseguo la numerazione
                   $form['numdoc'] = $ultimo_documento['numdoc'] + 1;
               } else {// se e' il primo documento dell'anno, resetto il contatore
                   $form['numdoc'] = 1;
@@ -576,9 +576,16 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
               $data['vacation_rental']['rem_pag']=$form['rem_pag'];
             }
             $form['custom_field'] = json_encode($data);
-            tesbroInsert($form);
-            //recupero l'id assegnato dall'inserimento
-            $ultimo_id = gaz_dbi_last_id();
+            if ($toDo == 'update') { // e' una modifica riscrivo tesbro con lo stesso vecchio id
+              $table = 'tesbro';
+              $columns = array('id_tes','seziva', 'tipdoc','ref_ecommerce_id_order', 'template', 'email', 'print_total', 'delivery_time', 'day_of_validity', 'datemi', 'protoc', 'numdoc', 'numfat', 'datfat', 'clfoco', 'pagame', 'banapp', 'vettor', 'weekday_repeat', 'listin', 'destin', 'id_des', 'id_des_same_company', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar', 'round_stamp', 'cauven', 'caucon', 'caumag', 'id_agente', 'id_parent_doc', 'sconto', 'expense_vat', 'stamp', 'net_weight', 'gross_weight', 'taxstamp', 'virtual_taxstamp', 'units', 'volume', 'initra', 'geneff', 'id_contract', 'id_con', 'id_orderman', 'status', 'custom_field', 'adminid');
+              tableInsert($table, $columns, $form);
+              $ultimo_id = $form['id_tes'];
+            }else{// è un nuovo inserimento
+              tesbroInsert($form); // scrivo tesbro
+              //recupero l'id_tesbro assegnato dall'inserimento
+              $ultimo_id = gaz_dbi_last_id();
+            }
 
             if ($toDo == 'update') { // se e' una modifica risincronizzo gli eventuali pagamenti con il nuovo id_tesbro
               $table="rental_payments";

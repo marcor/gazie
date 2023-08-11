@@ -85,19 +85,11 @@ function openframe(url,codice){
 		  <a class="pull-right dialog_grid" id_bread="<?php echo $grr['id_bread']; ?>" style="cursor:pointer;"><i class="glyphicon glyphicon-cog"></i></a>
         </div>
         <div class="box-body">
-			<div class="box-body">
-				<p>Occupazione attuale</p>
-				<?php
-				// prendo gli alloggi
-				
-				
-				?>
 			
-			</div>
-			<div class="box-body">
+			<div class="box-body" style="border: solid 3px blue;">
 				<table class="Tlarge table table-striped table-bordered table-condensed">
 				<tr>
-				  <td class="FacetFieldCaptionTD text-right">Periodo</td>
+				  <td class="FacetFieldCaptionTD text-right">Occupazione periodo</td>
 				  <td class="FacetDataTD">
 					dal <input type="date" name="start" value="<?php echo $form['start']; ?>" class="FacetInput" onchange="this.form.submit()">
 				  </td>
@@ -130,7 +122,7 @@ function openframe(url,codice){
 				</table>
 				</div>
 			</div>
-          <div class="row">
+          <div class="box-body">
             <table class="Tlarge table table-striped table-bordered table-condensed">
               <h5 class="box-title"><i class="glyphicon glyphicon-pushpin"></i> Nei prossimi 10 giorni </h5>
               <?php
