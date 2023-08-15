@@ -1049,7 +1049,7 @@ $ts->output_navbar();
                   echo "<a class=\"btn btn-xs btn-warning\" href=\"../../modules/vendit/select_evaord.php?id_tes=" . $r['id_tes'] . "\">Emetti documento fiscale</a>&nbsp;";
                 }
               }elseif ($remains_atleastone && $r['status']!=='CANCELLED' && $r['status']!=='ISSUE') {
-                    // l'ordine è parzialmente evaso, mostro lista documenti e tasto per evadere rimanenze
+                    // l'a prenotazione è parzialmente evaso, mostro lista documenti e tasto per evadere rimanenze
                     $ultimo_documento = 0;
                     mostra_documenti_associati( $r['id_tes'] );
                     if ( $tipo == "VOG" ) {
@@ -1059,14 +1059,14 @@ $ts->output_navbar();
                         echo "<a class=\"btn btn-xs btn-warning\" href=\"../../modules/vendit/select_evaord.php?clfoco=" . $r['clfoco'] . "\">evadi cliente</a>";
                     }
                 } else {
-                    // l'ordine è completamente evaso, mostro i riferimenti ai documenti che lo hanno evaso
+                    // la prenotazione è completamente evasa, mostro i riferimenti ai documenti che l'hanno evasa
                     $ultimo_documento = 0;
                     mostra_documenti_associati( $r['id_tes'] );
                 }
                echo "</td>";
 
-              // colonna stato ordine
-              // Se l'ordine e' da evadere , verifica lo status ed eventualmente lo aggiorna.
+              // colonna stato prenotazione
+              // Se la prenotazione e' da evadere , verifica lo status ed eventualmente lo aggiorna.
               echo "<td style='text-align: left;'>";
 
                   if ( $tipo == "VOG" ) {
@@ -1083,7 +1083,7 @@ $ts->output_navbar();
                           <i class="glyphicon glyphicon-modal-window">&nbsp;</i><?php echo $r['status']; ?>
                         </a>
                         <?php
-                        if ($r['status']!=='CANCELLED' && $r['status']!=='ISSUE'){
+                        if ($r['status']=='CONFIRMED'){
                           ?>
                           <br><a style="white-space:nowrap;" title="Accettazione: <?php echo $title; ?>" class="btn btn-xs <?php echo $stato_check_btn; ?> dialog_check_inout" refcheck="<?php echo $r['id_tes']; ?>" prodes="<?php echo $r['ragso1']," ",$r['ragso2']; ?>" prostacheck="<?php echo $check_inout; ?>" cust_mail="<?php echo $r['base_mail']; ?>" ckdate="<?php echo $ckdate; ?>">
                             <i class="glyphicon glyphicon-<?php echo $check_icon; ?>">&nbsp;</i><?php echo "CHECK ",$check_inout; ?>
