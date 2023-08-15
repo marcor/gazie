@@ -102,7 +102,7 @@ $search_fields = [
     'anno'
     => "YEAR(datemi) = %d",
     'cliente'
-    => $partner_select ? "clfoco = '%s'" : "ragso1 LIKE '%s%%'",
+    => $partner_select ? "clfoco = '%s'" : "ragso1 LIKE '%%%s%%'",
     'giorno'
     => "weekday_repeat = %d"
 ];

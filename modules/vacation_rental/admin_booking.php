@@ -511,15 +511,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
               // CANCELLO TUTTO
 
               $tesbro = gaz_dbi_get_row($gTables['tesbro'], "id_tes", intval($form['id_tes'])); // prima di cancellare prendo il vecchio custom field
-              if (isset($tesbro['custom_field']) && $data = json_decode($tesbro['custom_field'],true)){// se c'è un json in tesbro prendo i reminder
-                if (is_array($data['vacation_rental'])){ // se c'è il modulo "vacation rental"
-                  if (isset($data['vacation_rental']['rem_checkin'])){
-                    $form['rem_checkin']=$data['vacation_rental']['rem_checkin'];
-                  }
-                  if (isset($data['vacation_rental']['rem_pag'])){
-                    $form['rem_pag']=$data['vacation_rental']['rem_pag'];
-                  }
-                }
+              if (isset($tesbro['custom_field']) && $data = json_decode($tesbro['custom_field'],true)){// se c'è un json in tesbro lo acquisisco in $data
+
+              }else{// se non c'è inizializzo l'array per il nuovo custom field
+                $data=[];
               }
               gaz_dbi_del_row($gTables['tesbro'], "id_tes", $form['id_tes']);
 
@@ -537,6 +532,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 
             } else{
               $form['status'] = 'GENERATO';
+              $data=[];//inizializzo l'array per il nuovo custom field
             }
             // INSERIMENTO DATA BASE valido per INSERT e per UPDATE
 
@@ -563,17 +559,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['initra'] = $initra;
             $form['datemi'] = $datemi;
             $form['id_agente'] = $form['id_tourOp'];// scambio perché l'agente è il tour operator mentre in id_agente ho il proprietario
-            $data=[];
-            if ($form['tipdoc']=='VPR'){
-              $data= array('vacation_rental'=>array('status' => 'QUOTE','ip' => 'diretto'));
+            if ($form['tipdoc']=='VPR'){// se è un preventivo
+              $data['vacation_rental']['status']="QUOTE";
+              $data['vacation_rental']['ip']="diretto";
             }else{
-              $data= array('vacation_rental'=>array('status' => 'CONFIRMED','ip' => 'diretto'));
-            }
-            if (isset($form['rem_checkin'])){
-              $data['vacation_rental']['rem_checkin']=$form['rem_checkin'];
-            }
-            if (isset($form['rem_pag'])){
-              $data['vacation_rental']['rem_pag']=$form['rem_pag'];
+              $data['vacation_rental']['status']=(isset($data['vacation_rental']['status']))?$data['vacation_rental']['status']:'CONFIRMED';
+              $data['vacation_rental']['ip']=(isset($data['vacation_rental']['ip']))?$data['vacation_rental']['ip']:'diretto';
             }
             $form['custom_field'] = json_encode($data);
             if ($toDo == 'update') { // e' una modifica riscrivo tesbro con lo stesso vecchio id

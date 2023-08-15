@@ -44,6 +44,11 @@ class Lease extends Template
           } else {
             $this->ip = "";
           }
+          if (array_key_exists('date_ip', $customtes['vacation_rental'])) {// se nel customfield c'è date_ip lo prendo
+            $this->date_ip = $customtes['vacation_rental']['date_ip'];
+          } else {
+            $this->date_ip = "";
+          }
         }
     }
     function newPage() {
@@ -181,15 +186,20 @@ class Lease extends Template
 
       $html .= "<dl>";
       if (strlen($this->ip)>7){// firme digitali
-        $html .= "<br><p><b>Firmato digitalmente on-line</b></p><span>Il locatore ".$this->intesta1."</span>";
-        $html .= "<br><span style=\" letter-spacing: 70px;\">&nbsp; &nbsp;</span><span> Il conduttore ".$this->cliente1." ".$this->cliente2." firmato on-line da IP:".$this->ip."</span>";
-	 }else{// firme fisiche
-        $html .= "<br><p><b>Firmato </b></p><span>Il locatore ".$this->intesta1."</span><span style=\" letter-spacing: 30px;\">&nbsp; &nbsp;</span><span> Il conduttore ".$this->cliente1." ".$this->cliente2."</span>";
-     }
-	 $html .= "<br><br><br><br><br><br><br><br><br><b>CHECK-IN</b> Il conduttore dichiara di aver controllato l'appartamento, di averlo trovato in buono stato di manutenzione e pulizia con tutte le dotazioni e gli extra concordati e di riceverne le chiavi. <br><span style=\" letter-spacing: 270px;\">&nbsp; &nbsp;</span>___________________________________________________";
-	 $html .= "<br><br><br><br><b>CHECK-IN</b> Il locatore dichiara di ricevere il deposito cauzionale di cui al punto 3. ________________________________________";
-	 $html .= "<br><br><br><br><b>CHECK-OUT</b> Il conduttore dichiara che il deposito cauzionale di cui al punto 3 gli è stato restituito per cessata locazione. <br><span style=\" letter-spacing: 270px;\">&nbsp; &nbsp;</span>___________________________________________________";
+        $html .= "<br><p><b>Firmato on-line</b></p>";
+        $html .= "<br><p><span>Il conduttore <b>".$this->cliente1." ".$this->cliente2."</b> - firma registrata con IP:".$this->ip;
+        if (strlen($this->date_ip)>7){
+          $html .= " ".$this->date_ip;
+        }
+        $html .="</span></p>";
+        $html .= "<p>Il locatore <b>".$this->intesta1."</b><br><br><br><br><br><br><br><br><br><br><br><br><br></p>";
 
+      }else{// firme fisiche
+        $html .= "<br><p><b>Firmato </b></p><span>Il locatore ".$this->intesta1."</span><span style=\" letter-spacing: 30px;\">&nbsp; &nbsp;</span><span> Il conduttore ".$this->cliente1." ".$this->cliente2."</span><br><br><br><br><br><br><br><br><br><br><br><br><br>";
+      }
+      $html .= "<p><b>CHECK-IN</b> Il conduttore dichiara di aver controllato l'appartamento, di averlo trovato in buono stato di manutenzione e pulizia con tutte le dotazioni e gli extra concordati e di riceverne le chiavi. </p><br><span style=\" letter-spacing: 270px;\">&nbsp; &nbsp;</span>___________________________________________________";
+      $html .= "<br><br><br><br><b>CHECK-IN</b> Il locatore dichiara di ricevere il deposito cauzionale di cui al punto 3. ________________________________________";
+      $html .= "<br><br><br><br><b>CHECK-OUT</b> Il conduttore dichiara che il deposito cauzionale di cui al punto 3 gli è stato restituito per cessata locazione. <br><span style=\" letter-spacing: 270px;\">&nbsp; &nbsp;</span>___________________________________________________";
       // output the HTML content
       $this->writeHTML($html, true, false, true, false, '');
 
