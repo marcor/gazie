@@ -29,6 +29,8 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
+$pointenable = gaz_dbi_get_row($gTables['company_config'], 'var', 'pointenable')['val'];
+
 function getDayNameFromDayNumber($day_number) {
     return ucfirst(utf8_encode(strftime('%A', mktime(0, 0, 0, 3, 19+$day_number, 2017))));
 }
@@ -440,7 +442,50 @@ function payment(ref) {
 			}
 		});
 		$("#dialog_payment" ).dialog( "open" );
+}
 
+function point(ref,point,name,idtes) {
+
+    $("p#point_amount").append(name+" ha<b> "+point+" punti</b>");// all'apertura del dialog mostro i punti totali
+    	$( "#dialog_point" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{
+					text:'conferma',
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+            var motive = $("#motive").val();// motivazione
+            var points = $("#points").val();// punti attribuiti
+            var email=$('#checkbox_email_point').prop('checked');
+            $.ajax({
+              data: {'term':'point',opt:'point','ref':ref,'motive':motive,'points':points,'email':email,'idtes':idtes},
+              type: 'GET',
+              url: '../vacation_rental/ajax_request.php',
+              dataType: 'text',
+              success: function(response){
+                alert(response);
+                $("#motive").val('');
+                $("#points").val('');
+                $("#point_amount").html('');
+                $("#dialog_point").dialog("close");
+                window.location.reload(true);
+              }
+            });
+				}},
+				"Chiudi": function() {
+          $("#motive").val('');
+          $("#points").val('');
+          $("#point_amount").html('');
+          tot=0;
+					$("#dialog_point").dialog("close");
+				}
+			}
+		});
+		$("#dialog_point").dialog( "open" );
 }
 
 $(function() {
@@ -678,7 +723,22 @@ $ts->output_navbar();
     <label>Importo: </label><?php echo $admin_aziend['curr_name']; ?>
     <input style="float: right;" id="payment_gross" name="payment_gross" type="text">
     </p>
-  </div>
+</div>
+<div style="display:none" id="dialog_point" title="Punti...">
+  <p class="ui-state-highlight" id="point_amount"></p>
+    <p><b>Attribuisci punti manualmente:</b></p>
+    <p>
+    <label>Motivo attribuzione:</label>
+    <input style="float: right;" id="motive" name="motive" type="text">
+    </p>
+    <p>
+    <label>Punti attribuiti: </label>
+    <input style="float: right;" id="points" name="points" type="text">
+    </p>
+    <div id="feedback_email">
+      invia email di notifica <input id="checkbox_email_point"  type="checkbox" name="checkbox_email_point" value="0" >
+    </div>
+</div>
 	<div class="framePdf panel panel-success" style="display: none; position: fixed; left: 5%; top: 10px">
 		<div class="col-lg-12">
 			<div class="col-xs-11"><h4><?php echo $script_transl['print'];; ?></h4></div>
@@ -894,6 +954,9 @@ $ts->output_navbar();
               if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['first_ccn']) && strlen($data['vacation_rental']['first_ccn'])>8){
                 $ccoff=1;// ci sono dati per pagamento carta di credito off line
               }
+              $r['user_points']=(is_array($data['vacation_rental']) && isset($data['vacation_rental']['points']))?intval($data['vacation_rental']['points']):0;
+            }else{
+              $r['user_points']=0;
             }
 
             if (isset($r['checked_out_date']) && intval($r['checked_out_date'])>0 && strtotime($r['checked_out_date'])){
@@ -1020,8 +1083,13 @@ $ts->output_navbar();
               echo "<td>" . gaz_format_date($r['end']) . " &nbsp;</td>";
 
               echo "<td>" . $r['tour_descri'] . "</td>";
-
-              echo "<td><a title=\"Dettagli cliente\" href=\"../vendit/report_client.php?nome=" . $r['ragso1'] . "\">". $r['ragso1'] ." ".  $r['ragso2'] ."</a> &nbsp;</td>";
+              // Colonna cliente
+              echo "<td><a title=\"Dettagli cliente\" href=\"../vendit/report_client.php?nome=" . $r['ragso1'] . "\">". $r['ragso1'] ." ".  $r['ragso2'] ."</a> &nbsp;";
+              if ($r['user_points']>0 && intval($pointenable)==1){
+                echo "&nbsp;&nbsp;<a class=\"btn btn-xs btn-default \"";
+                echo " style=\"cursor:pointer;\" onclick=\"point('". $r['id'] ."','".$r['user_points']."','".$r['ragso1']." ".$r['ragso2']."','".$r['id_tes']."')\"";
+                echo "><i class=\"glyphicon glyphicon-gift\" title=\"Punti ",$r['user_points'],"\"></i></a></td>";
+              }
               echo "<td>".$r['citspe']."</td>";
 
               // Colonna importo

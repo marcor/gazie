@@ -129,6 +129,12 @@ $strScript = array(
 		'cancel' => 'Elimina',
 		'submit' => 'Inserisci',
 		'date' => 'data emissione',
+    'booking' => 'Prenotazione n.',
+    'of' => 'del',
+    'email_give_point' => 'In riferimento alla prenotazione in oggetto le comunichiamo che sono stati attribuiti ulteriori',
+    'email_give_point2' => 'punti con la seguente motivazione:',
+    'email_give_point3' => 'Il suo attuale saldo è',
+    'points' => 'punti',
 		'title_value' => array('VPR' => 'Preventivi a clienti',
             'VOR' => 'Elenco prenotazioni',
             'VOW' => 'Elenco prenotazioni dal web',
@@ -150,7 +156,6 @@ $strScript = array(
         'descri' => "Descrizione",
 
       ),
-
 
 	 "settings.php" =>
       array("impostazioni ",

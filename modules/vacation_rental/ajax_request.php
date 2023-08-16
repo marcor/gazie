@@ -35,11 +35,14 @@ if (!$isAjax) {
     $user_error = 'Access denied - not an AJAX request...';
     trigger_error($user_error, E_USER_ERROR);
 }
+use Ddeboer\Imap\Server;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+use PHPMailer\PHPMailer\SMTP;
 require("../../library/include/datlib.inc.php");
 require("../../modules/magazz/lib.function.php");
 $admin_aziend=checkAdmin();
 $libFunc = new magazzForm();
-
 if (isset($_GET['term'])) {
     if (isset($_GET['opt'])) {
         $opt = $_GET['opt'];
@@ -47,6 +50,75 @@ if (isset($_GET['term'])) {
         $opt = 'orders';
     }
     switch ($opt) {
+      case 'point':
+
+        if (is_numeric($_GET['points']) && intval($_GET['points'])<>0 && strlen($_GET['motive'])>2){
+          $result = gaz_dbi_get_row($gTables['anagra'], "id", intval($_GET['ref']));
+          if (isset($result['custom_field']) && $data = json_decode($result['custom_field'],true)){// se c'è un json in anagra lo acquisisco in $data
+            if (isset($data['vacation_rental']['points'])){
+               $data['vacation_rental']['points']+=intval($_GET['points']);
+            }else{
+              $data['vacation_rental']['points']=intval($_GET['points']);
+            }
+            $custom_field = json_encode($data);
+            gaz_dbi_update_anagra(array('id', intval($_GET['ref'])), array('custom_field'=>$custom_field,));
+            echo "Punti attribuiti correttamente. Totale attuale: ",$data['vacation_rental']['points'];
+            if ($_GET['email']=="true" && (filter_var($result['e_mail'], FILTER_VALIDATE_EMAIL) || filter_var($result['e_mail2'], FILTER_VALIDATE_EMAIL))){
+              $language=gaz_dbi_get_row($gTables['languages'], "lang_id", $result['id_language']); // carico la lingua del cliente
+              $langarr = explode(" ",$language['title_native']);
+              $lang = strtolower($langarr[0]);
+              if (file_exists("lang.".$lang.".php")){// se esiste
+                include "lang.".$lang.".php";// carico il file traduzione lingua
+              }else{// altrimenti carico di default la lingua inglese
+                include "lang.english.php";
+              }
+              $script_transl=$strScript['report_booking.php'];
+              $tesbro = gaz_dbi_get_row($gTables['tesbro'], "id_tes", intval($_GET['idtes']));
+              // imposto PHP Mailer per invio email di cambio stato
+              $host = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_server')['val'];
+              $usr = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_user')['val'];
+              //$psw = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_password')['val'];
+              $rsdec=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = 'smtp_password'");
+              $rdec=gaz_dbi_fetch_row($rsdec);
+              $psw=$rdec?$rdec[0]:'';
+              $port = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_port')['val'];
+              $mail = new PHPMailer(true);
+              $mail->CharSet = 'UTF-8';
+              //Server settings
+              $mail->SMTPDebug  = 0;                           //Enable verbose debug output default: SMTP::DEBUG_SERVER;
+              $mail->isSMTP();                                 //Send using SMTP
+              $mail->Host       = $host;                       //Set the SMTP server to send through
+              $mail->SMTPAuth   = true;                        //Enable SMTP authentication
+              $mail->Username   = $usr;                        //SMTP username
+              $mail->Password   = $psw;                        //SMTP password
+              $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; //Enable implicit TLS encryption
+              $mail->Port       = $port;                       //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+              // creo e invio email di conferma
+              //Recipients
+              $mail->setFrom($admin_aziend['e_mail']); // sender (e-mail dell'account che sta inviando)
+              $mail->addReplyTo($admin_aziend['e_mail']); // reply to sender (e-mail dell'account che sta inviando)
+              if (filter_var($result['e_mail'], FILTER_VALIDATE_EMAIL)){
+                $mail->addAddress($result['e_mail']);                  // se c'è invio all'email destinatario principale
+              } else{
+                $mail->addAddress($result['e_mail2']);                  // altrimenti alla secondaria
+              }
+              $mail->addCC($admin_aziend['e_mail']);             //invio copia a mittente
+              $mail->isHTML(true);
+              $mail->Subject = $script_transl['booking']." ".$tesbro['numdoc'].' '.$script_transl['of'].' '.gaz_format_date($tesbro['datemi']);
+              $mail->Body    = "<p>".$script_transl['email_give_point']." ".$_GET['points']." ".$script_transl['email_give_point2']." ".$_GET['motive']."</p><p>".$script_transl['email_give_point3']." ".$data['vacation_rental']['points']." ".$script_transl['points']."</p><p><b>".$admin_aziend['ragso1']." ".$admin_aziend['ragso2']."</b></p>";
+              if($mail->send()) {
+                echo ". E-mail inviata";
+              }else {
+                echo "Errore imprevisto nello spedire la mail di attribuzione punti: " . $mail->ErrorInfo;
+              }
+            }else{
+              echo ". Impossibile inviare e-mail: indirizzo mancante o non corretto";
+            }
+          }
+        }else{
+          echo "No data passed!"," points:",$_GET['points']," - motive:",$_GET['motive'];
+        }
+      break;
       case 'orders':
         $codice= substr($_GET['term'],0,15);
         $orders= $libFunc->getorders($codice);
