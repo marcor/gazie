@@ -2308,7 +2308,7 @@ class TableSorter {
                 $$field = $def_GET[$field];
                 if (isset($pruned_GET[$field]))  # escludiamo dall'url i valori default applicati ed anche i valori esattamente 'All'
                     $url_search_query_parts[] = "$field=" . urlencode($$field);
-                $where_parts[] = sprintf($sql_expr, gaz_dbi_real_escape_string($$field));
+                $where_parts[] = sprintf($sql_expr, gaz_dbi_real_escape_string($$field), gaz_dbi_real_escape_string($$field));
                 $$field = htmlspecialchars($$field, ENT_QUOTES);
             }
         }

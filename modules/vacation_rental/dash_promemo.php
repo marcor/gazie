@@ -85,7 +85,7 @@ function openframe(url,codice){
 		  <a class="pull-right dialog_grid" id_bread="<?php echo $grr['id_bread']; ?>" style="cursor:pointer;"><i class="glyphicon glyphicon-cog"></i></a>
         </div>
         <div class="box-body">
-			
+
 			<div class="box-body" style="border: solid 3px blue;">
 				<table class="Tlarge table table-striped table-bordered table-condensed">
 				<tr>
@@ -108,7 +108,7 @@ function openframe(url,codice){
 				<div class="table-responsive table-bordered table-striped">
 				<table class="col-xs-12">
 					<tr>
-					  <th class="text-center">Importo totale</th>
+					  <th class="text-center">Importo totale imponibile</th>
 					  <th class="text-center">Notti periodo</th>
 					  <th class="text-center">Notti vendute</th>
 					  <th class="text-center">Occupazione</th>

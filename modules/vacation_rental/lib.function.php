@@ -385,8 +385,8 @@ function get_total_promemo($startprom,$endprom){
         }
         $start = date ("Y-m-d", strtotime("+1 days", strtotime($start)));// aumento di un giorno il ciclo
       }
-      $ret['totalprice_booking'] += ((get_totalprice_booking($row['id_tesbro']))/$nights_event)*$tot_n_event_in_promemo;// aggiungo il costo medio della locazione(evento) calcolata sui giorni che rientrano nell'arco di tempo richiesto
-	  //echo "<br>totale:",$ret['totalprice_booking']," prezzo prenotazione:",((get_totalprice_booking($row['id_tesbro']))/$nights_event)*$tot_n_event_in_promemo;
+      $ret['totalprice_booking'] += ((get_totalprice_booking($row['id_tesbro'],FALSE))/$nights_event)*$tot_n_event_in_promemo;// aggiungo il costo medio della locazione(evento) calcolata sui giorni che rientrano nell'arco di tempo richiesto
+	  //il prezzo è imponibile e senza tassa turistica
 	}
   }
   $ret['tot_nights_bookable']= $num_all * $night_promemo;
