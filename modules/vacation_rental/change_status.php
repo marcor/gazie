@@ -177,16 +177,23 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
         $mail->addCC($admin_aziend['e_mail']);             //invio copia a mittente
         $mail->isHTML(true);
         $mail->Subject = $script_transl['booking']." ".$tesbro['numdoc'].' '.$script_transl['of'].' '.gaz_format_date($tesbro['datemi']);
-        if ((!isset($old_checked_out_date) || intval($old_checked_out_date)==0) && $_POST['new_status']=="OUT" && floatval($pointeuro)>0){// se è abilitato attribuisco i punti al checkout 
+        if ((!isset($old_checked_out_date) || intval($old_checked_out_date)==0) && $_POST['new_status']=="OUT" && floatval($pointeuro)>0){// se è abilitato attribuisco i punti al checkout
           $amount=get_totalprice_booking($i,FALSE);
           $points=intval($amount/$pointeuro);
           if ($data = json_decode($anagra['custom_field'],true)){// se c'è un json in anagra
             if (is_array($data['vacation_rental'])){ // se c'è il modulo "vacation rental" nel custom field lo aggiorno
-			  if (isset($data['vacation_rental']['points'])){
-                $data['vacation_rental']['points'] = intval($data['vacation_rental']['points'])+$points;
+              if (isset($data['vacation_rental']['points'])){// se ci sono già punti accumulati
+                $date=(isset($data['vacation_rental']['points_date']))?date_create($data['vacation_rental']['points_date']):date_create("2023-09-01");
+                date_add($date,date_interval_create_from_date_string("1095 days"));// aggiungo 3 anni
+                if (strtotime(date_format($date,"Y-m-d")) < strtotime(date("Y-m-d"))){// se i punti sono scaduti
+                  $data['vacation_rental']['points'] = $points;// cancello i vecchi e inserisco i nuovi
+                }else{// i punti accumulati sono validi
+                  $data['vacation_rental']['points'] = intval($data['vacation_rental']['points'])+$points;// aggiungo i nuovi ai vecchi
+                }
               }else{
                 $data['vacation_rental']['points'] = $points;
               }
+              $data['vacation_rental']['points_date']=date("Y-m-d");
               $custom_json = json_encode($data);
               gaz_dbi_put_row($gTables['anagra'], 'id', $anagra['id'], 'custom_field', $custom_json);
               $level=get_user_points_level($anagra['id']);
@@ -202,52 +209,52 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
               $mail->Body    = "<p>".$script_transl['give_point']." ".$data['vacation_rental']['points']." ".$script_transl['give_point1']." ".$level_name."</p><p>".$script_transl['regards']."</p><p><b>".$admin_aziend['ragso1']." ".$admin_aziend['ragso2']."</b></p>";
               $mail->Body    .="<p><a href='https://www.gmonamour.it/".$lan."/service/fidelity-mon-amour'>Fidelity Mon Amour</a></p>";
 
-			  if($mail->send()) {
+              if($mail->send()) {
               }else {
                 echo "Errore imprevisto nello spedire la mail di notifica attribuzione punti: " . $mail->ErrorInfo;
               }
             }else{// altrimenti lo creo
-				$data['vacation_rental']['points'] = $points;
-				$custom_json = json_encode($data);
-				gaz_dbi_put_row($gTables['anagra'], 'id', $anagra['id'], 'custom_field', $custom_json);
-				$level=get_user_points_level($anagra['id']);
-				if(intval($level)>0){
-				$sql = "SELECT val FROM ".$gTables['company_config']." WHERE var = 'pointlevel".$level."name' LIMIT 1";
-				if ($result = mysqli_query($link, $sql)) {
-				  $val = mysqli_fetch_assoc($result);
-				  $level_name=$val['val'];
-				}
-				}else{
-					$level_name="nessun livello raggiunto";
-				}
-				$mail->Body    = "<p>".$script_transl['give_point']." ".$data['vacation_rental']['points']." ".$script_transl['give_point1']." ".$level_name."</p><p>".$script_transl['regards']."</p><p><b>".$admin_aziend['ragso1']." ".$admin_aziend['ragso2']."</b></p>";
-				$mail->Body    .="<p><a href='https://www.gmonamour.it/".$lan."/service/fidelity-mon-amour'>Fidelity Mon Amour</a></p>";
-				if($mail->send()) {
-				}else {
-				echo "Errore imprevisto nello spedire la mail di notifica attribuzione punti: " . $mail->ErrorInfo;
-				}				
-			}
+              $data['vacation_rental']['points'] = $points;
+              $custom_json = json_encode($data);
+              gaz_dbi_put_row($gTables['anagra'], 'id', $anagra['id'], 'custom_field', $custom_json);
+              $level=get_user_points_level($anagra['id']);
+              if(intval($level)>0){
+              $sql = "SELECT val FROM ".$gTables['company_config']." WHERE var = 'pointlevel".$level."name' LIMIT 1";
+              if ($result = mysqli_query($link, $sql)) {
+                $val = mysqli_fetch_assoc($result);
+                $level_name=$val['val'];
+              }
+              }else{
+                $level_name="nessun livello raggiunto";
+              }
+              $mail->Body    = "<p>".$script_transl['give_point']." ".$data['vacation_rental']['points']." ".$script_transl['give_point1']." ".$level_name."</p><p>".$script_transl['regards']."</p><p><b>".$admin_aziend['ragso1']." ".$admin_aziend['ragso2']."</b></p>";
+              $mail->Body    .="<p><a href='https://www.gmonamour.it/".$lan."/service/fidelity-mon-amour'>Fidelity Mon Amour</a></p>";
+              if($mail->send()) {
+              }else {
+              echo "Errore imprevisto nello spedire la mail di notifica attribuzione punti: " . $mail->ErrorInfo;
+              }
+            }
           }else{// se NON c'è un json in anagra
-			$data['vacation_rental']['points'] = $points;
-			$custom_json = json_encode($data);
-			gaz_dbi_put_row($gTables['anagra'], 'id', $anagra['id'], 'custom_field', $custom_json);
-			$level=get_user_points_level($anagra['id']);
-			if(intval($level)>0){
-			$sql = "SELECT val FROM ".$gTables['company_config']." WHERE var = 'pointlevel".$level."name' LIMIT 1";
-			if ($result = mysqli_query($link, $sql)) {
-			  $val = mysqli_fetch_assoc($result);
-			  $level_name=$val['val'];
-			}
-			}else{
-				$level_name="nessun livello raggiunto";
-			}
-			$mail->Body    = "<p>".$script_transl['give_point']." ".$data['vacation_rental']['points']." ".$script_transl['give_point1']." ".$level_name."</p><p>".$script_transl['regards']."</p><p><b>".$admin_aziend['ragso1']." ".$admin_aziend['ragso2']."</b></p>";
-              $mail->Body    .="<p><a href='https://www.gmonamour.it/".$lan."/service/fidelity-mon-amour'>Scopri i vantaggi del programma <b>Fidelity Mon Amour</b></a></p>";
-			if($mail->send()) {
-			}else {
-			echo "Errore imprevisto nello spedire la mail di notifica attribuzione punti: " . $mail->ErrorInfo;
-			}	 
-		  }
+            $data['vacation_rental']['points'] = $points;
+            $custom_json = json_encode($data);
+            gaz_dbi_put_row($gTables['anagra'], 'id', $anagra['id'], 'custom_field', $custom_json);
+            $level=get_user_points_level($anagra['id']);
+            if(intval($level)>0){
+            $sql = "SELECT val FROM ".$gTables['company_config']." WHERE var = 'pointlevel".$level."name' LIMIT 1";
+            if ($result = mysqli_query($link, $sql)) {
+              $val = mysqli_fetch_assoc($result);
+              $level_name=$val['val'];
+            }
+            }else{
+              $level_name="nessun livello raggiunto";
+            }
+            $mail->Body    = "<p>".$script_transl['give_point']." ".$data['vacation_rental']['points']." ".$script_transl['give_point1']." ".$level_name."</p><p>".$script_transl['regards']."</p><p><b>".$admin_aziend['ragso1']." ".$admin_aziend['ragso2']."</b></p>";
+                    $mail->Body    .="<p><a href='https://www.gmonamour.it/".$lan."/service/fidelity-mon-amour'>Scopri i vantaggi del programma <b>Fidelity Mon Amour</b></a></p>";
+            if($mail->send()) {
+            }else {
+            echo "Errore imprevisto nello spedire la mail di notifica attribuzione punti: " . $mail->ErrorInfo;
+            }
+          }
         }
         if (intval($old_checked_out_date)>0 && $_POST['new_status']!=="OUT" && floatval($pointeuro)>0){// se è abilitato e si sta regredendo dal check-out tolgo i punti
           $amount=get_totalprice_booking($i,FALSE);

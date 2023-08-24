@@ -658,6 +658,7 @@ $(function() {
           $("#feedback_email").hide();
         }
     });
+	
 		$( "#dialog_check_inout" ).dialog({
 			minHeight: 1,
 			width: "auto",
@@ -735,7 +736,7 @@ $ts->output_navbar();
     <label>Punti attribuiti: </label>
     <input style="float: right;" id="points" name="points" type="text">
     </p>
-    <div id="feedback_email">
+    <div id="feedback_email_point">
       invia email di notifica <input id="checkbox_email_point"  type="checkbox" name="checkbox_email_point" value="0" >
     </div>
 </div>
@@ -791,7 +792,7 @@ $ts->output_navbar();
       <span id="date_stato_check"></span>
       <p><br>Cambia stato il: <input type="text" id="datepicker" ></p>
       <?php if (isset($vacation_url_user) && strlen($vacation_url_user)>4){ ?>
-      <div style="display:none" id="feedback_email">
+      <div  id="feedback_email">
       invia email richiesta recensione <input id="checkbox_email_inout"  type="checkbox" name="checkbox_email_inout" value="0" >
       </div>
       <?php } ?>
