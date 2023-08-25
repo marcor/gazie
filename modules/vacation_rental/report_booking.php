@@ -30,6 +30,7 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $pointenable = gaz_dbi_get_row($gTables['company_config'], 'var', 'pointenable')['val'];
+$points_expiry = gaz_dbi_get_row($gTables['company_config'], 'var', 'points_expiry')['val'];
 
 function getDayNameFromDayNumber($day_number) {
     return ucfirst(utf8_encode(strftime('%A', mktime(0, 0, 0, 3, 19+$day_number, 2017))));
@@ -444,9 +445,12 @@ function payment(ref) {
 		$("#dialog_payment" ).dialog( "open" );
 }
 
-function point(ref,point,name,idtes) {
+function point(ref,point,name,idtes,expired,expiry_points_date) {
 
-    $("p#point_amount").append(name+" ha<b> "+point+" punti</b>");// all'apertura del dialog mostro i punti totali
+    $("p#point_amount").append(name+" ha<b> "+point+" punti</b> con scadenza "+expiry_points_date);// all'apertura del dialog mostro i punti totali
+    if(expired==1){
+      $("p#point_exp").append("Attenzione: i punti sono scaduti e saranno cancellati");// all'apertura del dialog se scaduti avviso cancellazione
+    }
     	$( "#dialog_point" ).dialog({
 			minHeight: 1,
 			width: "auto",
@@ -471,6 +475,7 @@ function point(ref,point,name,idtes) {
                 $("#motive").val('');
                 $("#points").val('');
                 $("#point_amount").html('');
+                $("#point_exp").html('');
                 $("#dialog_point").dialog("close");
                 window.location.reload(true);
               }
@@ -480,6 +485,7 @@ function point(ref,point,name,idtes) {
           $("#motive").val('');
           $("#points").val('');
           $("#point_amount").html('');
+          $("#point_exp").html('');
           tot=0;
 					$("#dialog_point").dialog("close");
 				}
@@ -658,7 +664,7 @@ $(function() {
           $("#feedback_email").hide();
         }
     });
-	
+
 		$( "#dialog_check_inout" ).dialog({
 			minHeight: 1,
 			width: "auto",
@@ -727,6 +733,8 @@ $ts->output_navbar();
 </div>
 <div style="display:none" id="dialog_point" title="Punti...">
   <p class="ui-state-highlight" id="point_amount"></p>
+  <p class="ui-state-highlight" style="border-color: red;" id="point_exp"></p>
+
     <p><b>Attribuisci punti manualmente:</b></p>
     <p>
     <label>Motivo attribuzione:</label>
@@ -956,6 +964,13 @@ $ts->output_navbar();
                 $ccoff=1;// ci sono dati per pagamento carta di credito off line
               }
               $r['user_points']=(is_array($data['vacation_rental']) && isset($data['vacation_rental']['points']))?intval($data['vacation_rental']['points']):0;
+              $date=(isset($data['vacation_rental']['points_date']))?date_create($data['vacation_rental']['points_date']):date_create("2023-09-01");
+              date_add($date,date_interval_create_from_date_string(intval($points_expiry)." days"));// aggiungo la durata dei punti
+              $r['expiry_points_date']=date_format($date,"d-m-Y");// questa è la data di scadenza
+              $r['expired']=0;
+              if (strtotime(date_format($date,"Y-m-d")) < strtotime(date("Y-m-d"))){// se i punti sono scaduti
+                $r['expired']=1;
+              }
             }else{
               $r['user_points']=0;
             }
@@ -1087,9 +1102,11 @@ $ts->output_navbar();
               // Colonna cliente
               echo "<td><a title=\"Dettagli cliente\" href=\"../vendit/report_client.php?nome=" . $r['ragso1'] . "\">". $r['ragso1'] ." ".  $r['ragso2'] ."</a> &nbsp;";
               if ($r['user_points']>0 && intval($pointenable)==1){
-                echo "&nbsp;&nbsp;<a class=\"btn btn-xs btn-default \"";
-                echo " style=\"cursor:pointer;\" onclick=\"point('". $r['id'] ."','".$r['user_points']."','".$r['ragso1']." ".$r['ragso2']."','".$r['id_tes']."')\"";
-                echo "><i class=\"glyphicon glyphicon-gift\" title=\"Punti ",$r['user_points'],"\"></i></a></td>";
+                $stato_gift_btn = ($r['expired']==1)?'btn-danger':'btn-default';
+
+                echo "&nbsp;&nbsp;<a class=\"btn btn-xs ",$stato_gift_btn," \"";
+                echo " style=\"cursor:pointer;\" onclick=\"point('". $r['id'] ."','".$r['user_points']."','".$r['ragso1']." ".$r['ragso2']."','".$r['id_tes']."','".$r['expired']."','".$r['expiry_points_date']."')\"";
+                echo "><i class=\"glyphicon glyphicon-gift\" title=\"Punti: ".$r['user_points']." - Scadenza: ".$r['expiry_points_date']."\"></i></a></td>";
               }
               echo "<td>".$r['citspe']."</td>";
 

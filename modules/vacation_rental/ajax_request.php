@@ -52,14 +52,30 @@ if (isset($_GET['term'])) {
     switch ($opt) {
       case 'point':
 
+        $points_expiry = gaz_dbi_get_row($gTables['company_config'], 'var', 'points_expiry')['val'];
         if (is_numeric($_GET['points']) && intval($_GET['points'])<>0 && strlen($_GET['motive'])>2){
           $result = gaz_dbi_get_row($gTables['anagra'], "id", intval($_GET['ref']));
           if (isset($result['custom_field']) && $data = json_decode($result['custom_field'],true)){// se c'è un json in anagra lo acquisisco in $data
             if (isset($data['vacation_rental']['points'])){
-               $data['vacation_rental']['points']+=intval($_GET['points']);
-            }else{
+
+              if (intval($points_expiry)>0){// se i punti hanno una scadenza
+                $date=(isset($data['vacation_rental']['points_date']))?date_create($data['vacation_rental']['points_date']):date_create("2023-09-01");
+                date_add($date,date_interval_create_from_date_string(intval($points_expiry)." days"));// aggiungo la durata dei punti
+                if (strtotime(date_format($date,"Y-m-d")) < strtotime(date("Y-m-d"))){// se i punti sono scaduti
+                  echo "I vecchi punti scaduti sono stati cancellati. ";
+                  $data['vacation_rental']['points'] = intval($_GET['points']);// cancello i vecchi e inserisco i nuovi
+                }else{// i punti accumulati sono validi
+                  $data['vacation_rental']['points'] = intval($data['vacation_rental']['points'])+intval($_GET['points']);// aggiungo i nuovi ai vecchi
+                }
+              }else{// i punti non hano scadenza
+                $data['vacation_rental']['points'] = intval($data['vacation_rental']['points'])+intval($_GET['points']);// aggiungo i nuovi ai vecchi
+              }
+
+            }else{// se non ci sono mai stati punti
               $data['vacation_rental']['points']=intval($_GET['points']);
             }
+            $data['vacation_rental']['points_date']=date("Y-m-d");
+            $data['vacation_rental']['points']=(intval($data['vacation_rental']['points'])<0)?0:$data['vacation_rental']['points'];// evito di mandare i punti in negativo
             $custom_field = json_encode($data);
             gaz_dbi_update_anagra(array('id', intval($_GET['ref'])), array('custom_field'=>$custom_field,));
             echo "Punti attribuiti correttamente. Totale attuale: ",$data['vacation_rental']['points'];

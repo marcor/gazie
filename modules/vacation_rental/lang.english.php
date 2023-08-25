@@ -817,7 +817,8 @@ $strScript = array(
     'give_point1' => 'points and that his fidelity level is',
     'delete_point' => 'We inform you that there has been an update and we have been removed',
     'feedback_request' => 'Feedback request for ',
-    'no_level' => 'No level'
+    'no_level' => 'No level',
+    'exp_lev' => 'but the points are expired and your level is going to delete.'
     ),
 
   "admin_extra.php" =>

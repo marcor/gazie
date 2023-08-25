@@ -584,7 +584,8 @@ $strScript = array(
     'give_point1' => 'punti e che il suo livello fedeltà è',
     'delete_point' => 'Le comunichiamo che c\'è stato un aggiornamento e le sono stati tolti',
     'feedback_request' => 'Richiesta recensione per ',
-    'no_level' => 'Nessun livello'
+    'no_level' => 'Nessun livello',
+    'exp_lev' => 'ma i punti sono scaduti e il suo livello sarà azzerato.'
     ),
 
   "admin_extra.php" =>

@@ -123,7 +123,7 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
       $tesbro=gaz_dbi_get_row($gTables['tesbro'], "id_tes", $i); // carico la tesbro
       $clfoco=gaz_dbi_get_row($gTables['clfoco'], "codice", $tesbro['clfoco']);
       $anagra=gaz_dbi_get_row($gTables['anagra'], "id", $clfoco['id_anagra']); // carico la anagra
-	  $lan="it";
+      $lan="it";
       $language=gaz_dbi_get_row($gTables['languages'], "lang_id", $anagra['id_language']); // carico la lingua specifica del cliente
       $langarr = explode(" ",$language['title_native']);
       $lang = strtolower($langarr[0]);
@@ -150,6 +150,7 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
       gaz_dbi_query ("UPDATE " . $gTables['rental_events'] . " SET ".$updt." WHERE id_tesbro =".$i." AND type= 'ALLOGGIO'");
 
       if (intval($pointenable)==1 && filter_var($_POST['cust_mail'], FILTER_VALIDATE_EMAIL)){// se è attivato il sistema punti e il destinatario ha un e-mail valida
+        $points_expiry = gaz_dbi_get_row($gTables['company_config'], 'var', 'points_expiry')['val'];
         // imposto PHP Mailer per invio email comunicazione punti
         $host = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_server')['val'];
         $usr = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_user')['val'];
@@ -183,11 +184,15 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
           if ($data = json_decode($anagra['custom_field'],true)){// se c'è un json in anagra
             if (is_array($data['vacation_rental'])){ // se c'è il modulo "vacation rental" nel custom field lo aggiorno
               if (isset($data['vacation_rental']['points'])){// se ci sono già punti accumulati
-                $date=(isset($data['vacation_rental']['points_date']))?date_create($data['vacation_rental']['points_date']):date_create("2023-09-01");
-                date_add($date,date_interval_create_from_date_string("1095 days"));// aggiungo 3 anni
-                if (strtotime(date_format($date,"Y-m-d")) < strtotime(date("Y-m-d"))){// se i punti sono scaduti
-                  $data['vacation_rental']['points'] = $points;// cancello i vecchi e inserisco i nuovi
-                }else{// i punti accumulati sono validi
+                if (intval($points_expiry)>0){// se i punti hanno una scadenza
+                  $date=(isset($data['vacation_rental']['points_date']))?date_create($data['vacation_rental']['points_date']):date_create("2023-09-01");
+                  date_add($date,date_interval_create_from_date_string(intval($points_expiry)." days"));// aggiungo la durata dei punti
+                  if (strtotime(date_format($date,"Y-m-d")) < strtotime(date("Y-m-d"))){// se i punti sono scaduti
+                    $data['vacation_rental']['points'] = $points;// cancello i vecchi e inserisco i nuovi
+                  }else{// i punti accumulati sono validi
+                    $data['vacation_rental']['points'] = intval($data['vacation_rental']['points'])+$points;// aggiungo i nuovi ai vecchi
+                  }
+                }else{// i punti non hano scadenza
                   $data['vacation_rental']['points'] = intval($data['vacation_rental']['points'])+$points;// aggiungo i nuovi ai vecchi
                 }
               }else{
@@ -215,6 +220,7 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
               }
             }else{// altrimenti lo creo
               $data['vacation_rental']['points'] = $points;
+              $data['vacation_rental']['points_date']=date("Y-m-d");
               $custom_json = json_encode($data);
               gaz_dbi_put_row($gTables['anagra'], 'id', $anagra['id'], 'custom_field', $custom_json);
               $level=get_user_points_level($anagra['id']);
@@ -236,6 +242,7 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
             }
           }else{// se NON c'è un json in anagra
             $data['vacation_rental']['points'] = $points;
+            $data['vacation_rental']['points_date']=date("Y-m-d");
             $custom_json = json_encode($data);
             gaz_dbi_put_row($gTables['anagra'], 'id', $anagra['id'], 'custom_field', $custom_json);
             $level=get_user_points_level($anagra['id']);
