@@ -572,7 +572,8 @@ $(function() {
 			buttons: {
         "Chiudi": function() {
           $("#feedback_vote").html('');
-          $("#sel_stato_feedback").val('')
+          $("#sel_stato_feedback").val('');
+          $(this).dialog("close");
 					$(this).dialog("destroy");
 				}
       }
@@ -616,9 +617,9 @@ $(function() {
               }
             });
           }},
-          "Non cambiare": function() {
+        "Non cambiare": function() {
+          $(this).dialog("close");
           $(this).dialog("destroy");
-					$(this).dialog("close");
 				}
 			}
 		});
@@ -690,9 +691,9 @@ $(function() {
               }
             });
           }},
-          "Non cambiare": function() {
+        "Non cambiare": function() {
+          $(this).dialog("close");
           $(this).dialog("destroy");
-					$(this).dialog("close");
 				}
 			}
 		});

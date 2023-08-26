@@ -45,6 +45,9 @@ $msgtoast = "";
 $msg = "";
 $show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
 $tipo_composti = gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti');
+$pointenable = gaz_dbi_get_row($gTables['company_config'], 'var', 'pointenable')['val'];
+$points_expiry = gaz_dbi_get_row($gTables['company_config'], 'var', 'points_expiry')['val'];
+
 function getDayNameFromDayNumber($day_number) {
   global $gazTimeFormatter;
   $gazTimeFormatter->setPattern('eeee');
@@ -759,8 +762,16 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
           if (is_array($data['vacation_rental'])){ // se c'è il modulo "vacation rental" lo aggiorno
             if (isset($data['vacation_rental']['points'])){
               $form['user_points'] = intval($data['vacation_rental']['points']);
+              $date=(isset($data['vacation_rental']['points_date']))?date_create($data['vacation_rental']['points_date']):date_create("2023-09-01");
+              date_add($date,date_interval_create_from_date_string(intval($points_expiry)." days"));// aggiungo la durata dei punti
+              $expiry_points_date=date_format($date,"d-m-Y");// questa è la data di scadenza
+              $expired=0;
+              if (strtotime(date_format($date,"Y-m-d")) < strtotime(date("Y-m-d"))){// se i punti sono scaduti
+                $expired=1;
+              }
             }else{
               $form['user_points']=0;
+              $expired=0;
             }
           }
         }else{
@@ -949,8 +960,22 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         if (isset($discounts) && $discounts->num_rows >0){// se c'è almeno uno sconto
           if (isset($cliente['id_anagra'])){
             $level=get_user_points_level($cliente['id_anagra']);
+            $cliente['custom_field']=gaz_dbi_get_row($gTables['anagra'], "id", $cliente['id_anagra'])['custom_field']; // carico il custom field del cliente in quanto la classe Anagrafica non lo carica correttamente
           }else{
             $level=0;
+          }
+          $expired=0;
+          if (isset($cliente['custom_field']) && $data = json_decode($cliente['custom_field'],true)){// se c'è un json in anagra
+            if (is_array($data['vacation_rental'])){ // se c'è il modulo "vacation rental"
+              if (isset($data['vacation_rental']['points'])){// se ci sono punti, ne vedo la scadenza
+                $date=(isset($data['vacation_rental']['points_date']))?date_create($data['vacation_rental']['points_date']):date_create("2023-09-01");
+                date_add($date,date_interval_create_from_date_string(intval($points_expiry)." days"));// aggiungo la durata dei punti
+                $expiry_points_date=date_format($date,"d-m-Y");// questa è la data di scadenza
+                if (strtotime(date_format($date,"Y-m-d")) < strtotime(date("Y-m-d"))){// se i punti sono scaduti
+                  $expired=1;
+                }
+              }
+            }
           }
           foreach ($discounts as $discount){ // li ciclo e applico lo sconto
             if (intval($discount['last_min'])>0){// se è un lastmin controllo la validità
@@ -965,7 +990,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
               $form['descri_discount'].="+";
               $total_price_disc = $total_price-$form['discount'];
             }
-            if ((intval($discount['level_points'])>0 && intval($level)==intval($discount['level_points'])) || intval($discount['level_points'])==0){//calcolo sconti se c'è un livello punti raggiunto dal cliente o se gli sconti sono senza livello punti
+            if ($expired==0 && $pointenable==1 && (intval($discount['level_points'])>0 && intval($level)==intval($discount['level_points'])) || intval($discount['level_points'])==0){//calcolo sconti se c'è un livello punti raggiunto dal cliente o se gli sconti sono senza livello punti
               if ($discount['is_percent']==1){
                 $form['discount']+= (floatval($total_price_disc)*floatval($discount['value']))/100;// aggiungo al totale sconti, lo sconto calcolato in percentuale
                 $form['descri_discount'].=$discount['title']." ".$discount['value']."%";// incremento la descrizione con lo sconto applicato
