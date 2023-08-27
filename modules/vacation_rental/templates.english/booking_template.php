@@ -142,7 +142,7 @@ class Template extends TCPDI {
             //*+ DC - 16/01/2018
             //$this->Image('@' . $this->logo, 130, 5, $x, $y, '', $this->link);
             if ($this->layout_pos_logo_on_doc=='LEFT') {
-              $this->Image('@' . $this->logo, 10, 7, 0, 20, '', '');
+              $this->Image('@' . $this->logo, 10, 7,  $x, $y, '', $this->link);
             } else {
               $this->Image('@' . $this->logo, 130, 5, $x, $y, '', $this->link);
             }
@@ -191,7 +191,7 @@ class Template extends TCPDI {
             if ($this->codice_partner > 0){
               $this->SetXY(35, $interlinea +$add_int - 5);
               $this->Cell(13, 4, $this->descri_partner, 'LT', 0, 'R', 1, '', 1);
-              $this->Cell(62, 4, ': ' . $this->cliente5, 'TR', 1, 0, '', 1);//cod.fisc. cliente
+              $this->Cell(62, 4, ': ' . $this->cliente5, 'TR', 1, 0, '', 1,1);//cod.fisc. cliente
               $this->Cell(25);
               $this->Cell(20, 4, ' cod.: ' . $this->codice_partner, 'LB', 0, 'L');// id codice cliente
               $to='';
