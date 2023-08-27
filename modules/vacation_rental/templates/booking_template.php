@@ -40,6 +40,7 @@ class Template extends TCPDI {
         $this->banapp = $docVars->banapp;
         $this->banacc = $docVars->banacc;
         $this->logo = $docVars->logo;
+        $this->logo_level = $docVars->logo_level;
         $this->link = $docVars->link;
         $this->intesta1 = $docVars->intesta1;
         $this->intesta1bis = $docVars->intesta1bis;
@@ -135,6 +136,9 @@ class Template extends TCPDI {
             $ratio = round(imagesx($im)/imagesy($im),2);
             $x=60; $y=0;
             if ($ratio<1.71){ $x=0; $y=35; }
+            if (imagesy($im)>150){
+              $y=20;
+            }
             //*+ DC - 16/01/2018
             //$this->Image('@' . $this->logo, 130, 5, $x, $y, '', $this->link);
             if ($this->layout_pos_logo_on_doc=='LEFT') {
@@ -166,13 +170,13 @@ class Template extends TCPDI {
 			$this->SetY($interlinea - 11);
 			$add_int=0;$extras="";
 			while ($row_event = gaz_dbi_fetch_array($this->res_events)){
-				
+
 				if ($row_event['type']=='ALLOGGIO'){
 					$this->SetX(110);$this->Cell(88, 5, " ".$row_event['house_code']." check-in:".date_format(date_create($row_event['start']),"d-m-Y")." check-out:".date_format(date_create($row_event['end']),"d-m-Y"), 1, 1, 'C', 0, '', 1);
 					$add_int+=2;
 				}else{// se non è alloggio allora è extra
-					$extras .= " ".$row_event['house_code']." -";// aggiungo l'extra al rigo che verrà stampato dopo il while							
-				}			
+					$extras .= " ".$row_event['house_code']." -";// aggiungo l'extra al rigo che verrà stampato dopo il while
+				}
 			}
 			$add_int = ($add_int>2)?$add_int:0;
 			if (!empty($extras)){
@@ -197,18 +201,22 @@ class Template extends TCPDI {
                 $to.=' Pec: '.$this->pec_cliente;
               }
               $this->Cell(55, 4,$to.' ' , 'BR', 0, 'L', 0, '', 1);
-            }           
-			
-			$this->SetXY(110, $interlinea +$add_int+ 6);
+            }
+
+            $this->SetXY(110, $interlinea +$add_int+ 6);
             $this->SetFont('helvetica', '', 10);
             if (!empty($this->cliente1 || !empty($this->cliente2))){ // Antonio Germani - se non c'è cliente evito di scrivere (serve per template scontrino)
                   $this->Cell(15, 5, $this->pers_title.' ', 0, 0, 'R');
                   $this->Cell(75, 5, $this->cliente1." ".$this->cliente2, 0, 1, 'L', 0, '', 1);
+                  if (strlen($this->logo_level)>5){
+                    $x=0;$y=15;
+                    $this->Image('@' .$this->logo_level, 190, 45, $x, $y, 'png');
+                  }
             } else {
               $this->Cell(15, 5,'', 0, 0, 'R');
               $this->Cell(75, 5,'', 0, 1, 'L', 0, '', 1);
             }
-		
+
             $this->SetFont('helvetica', '', 10);
             $this->Cell(115);
             $this->Cell(75, 5, $this->cliente3, 0, 1, 'L', 0, '', 1);
@@ -224,7 +232,7 @@ class Template extends TCPDI {
                 $this->Cell(115, 8, 'alla C.A.', 0, 0, 'R');
                 $this->Cell(75, 8, $this->c_Attenzione, 0, 1, 'L', 0, '', 1);
             }
-			
+
             if (!empty($this->status)) {
               switch ($this->status) {
                 case "GENERATO":

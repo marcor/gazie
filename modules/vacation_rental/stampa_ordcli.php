@@ -47,6 +47,7 @@ if ($stato AND $stato['id_language'] == 1 or $stato['id_language'] == 0){// se Ã
 }elseif ($stato AND $stato['id_language'] == 3 ) {// se Ã¨ spagnolo
   $lang_template = 'spanish';$lang="es";
 }
+$user_level=get_user_points_level($id_anagra['id_anagra']);
 
 if ($tesbro['tipdoc']=='VOR' || $tesbro['tipdoc']=='VOG') {
 	$type=false;
@@ -60,7 +61,7 @@ if ($tesbro['tipdoc']=='VOR' || $tesbro['tipdoc']=='VOG') {
 	if ($tesbro['template']=='Ticket'){
 		$template='Ticket';
 	}
-    createDocument($tesbro,$template,$gTables,'rigbro',$type,$lang_template,$genTables,$azTables,"","","",$lang);
+    createDocument($tesbro,$template,$gTables,'rigbro',$type,$lang_template,$genTables,$azTables,"","","",$lang,$user_level);
 } elseif ($tesbro['tipdoc']=='VOW'){
 	$type=false;
     createDocument($tesbro, 'OrdineWeb',$gTables,'rigbro',$type,$lang_template);

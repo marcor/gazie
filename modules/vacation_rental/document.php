@@ -32,8 +32,7 @@
 
 class DocContabVars {
 
-  function setData($gTables, $tesdoc, $testat, $tableName, $ecr = false, $genTables="", $azTables="", $lang="it") {
-
+  function setData($gTables, $tesdoc, $testat, $tableName, $ecr = false, $genTables="", $azTables="", $lang="it",$user_level="") {
 
         $link=$GLOBALS['link'];
         global $gazie_locale;
@@ -44,7 +43,11 @@ class DocContabVars {
         $sql = "SELECT * FROM ".$genTables."aziend"." WHERE codice = '".$IDaz."' LIMIT 1";
         if ($result = mysqli_query($link, $sql)) {
           $admin_aziend = mysqli_fetch_assoc($result);
-
+          if(intval($user_level)>0){
+            $img_level = file_get_contents("images/level".$user_level.".png");
+          }else{
+            $img_level="";
+          }
         } else {
           echo "Error: " . $sql . "<br>" . mysqli_error($link);
         }
@@ -155,6 +158,7 @@ class DocContabVars {
         $this->decimal_quantity = $admin_aziend['decimal_quantity'];
         $this->decimal_price = $admin_aziend['decimal_price'];
         $this->logo = $admin_aziend['image'];
+        $this->logo_level = $img_level;
         $this->link = $admin_aziend['web_url'];
         // leggo la sede legale dell'azienda
         $this->sedelegale = $admin_aziend['sedleg'];
@@ -682,7 +686,7 @@ class DocContabVars {
 
 }
 
-function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $dest = false, $lang_template=false,$genTables='',$azTables='',$IDaz='',$link='',$id_ag=0,$lang='it') {
+function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $dest = false, $lang_template=false,$genTables='',$azTables='',$IDaz='',$link='',$id_ag=0,$lang='it',$user_level="") {
 
     global $azTables;
 		$azTables=$GLOBALS['azTables'];
@@ -769,7 +773,7 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
     $pdf = new $templateName();
     $docVars = new DocContabVars();
 
-    $docVars->setData($gTables, $testata, $testata['id_tes'], $rows, false, $genTables, $azTables, $lang);
+    $docVars->setData($gTables, $testata, $testata['id_tes'], $rows, false, $genTables, $azTables, $lang, $user_level);
     $docVars->initializeTotals();
 
 	 // se il template è lease e c'è un proprietario devo intestare il contratto al proprietario
@@ -780,7 +784,6 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
 		$docVars->intesta3= "tel.: ".$ag_anagra['telefo']." ";
 		$docVars->intesta4= "e-mail: ".$ag_anagra['e_mail'];
 	}
-
     $pdf->setVars($docVars, $templateName);
     $pdf->setTesDoc();
     $pdf->setCreator('GAzie - ' . $docVars->intesta1);
