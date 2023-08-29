@@ -125,7 +125,7 @@ class Template extends TCPDI {
             //*+ DC - 26/01/2019
             //$this->Image('@' . $this->logo, 130, 5, $x, $y, '', $this->link);
             if ($this->layout_pos_logo_on_doc=='LEFT') {
-              $this->Image('@' . $this->logo, 10, 7, 0, 20, '', '');
+              $this->Image('@' . $this->logo, 10, 7, $x, $y, '', '');
             } else {
               $this->Image('@' . $this->logo, 130, 5, $x, $y, '', $this->link);
             }

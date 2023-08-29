@@ -185,17 +185,18 @@ class Template extends TCPDI {
 			$ratio = round(imagesx($im)/imagesy($im),2);
 			$x=60; $y=0;
 			if ($ratio<1.71){ $x=0; $y=35; }
-            //*+ DC - 16/01/2018
-            //$this->Image('@' . $this->logo, 130, 5, $x, $y, '', $this->link);
-            if ($this->layout_pos_logo_on_doc=='LEFT') {
-              $this->Image('@' . $this->logo, 10, 7, 0, 20, '', '');
-            } else {
-              $this->Image('@' . $this->logo, 130, 5, $x, $y, '', $this->link);
-            }
-            //*- DC - 16/01/2018
-            $this->Line(0, 93, 3, 93); //questa marca la linea d'aiuto per la piegatura del documento
-            $this->Line(0, 143, 3, 143); //questa marca la linea d'aiuto per la foratura del documento
-            $this->Ln($interlinea);
+
+      //*+ DC - 16/01/2018
+      //$this->Image('@' . $this->logo, 130, 5, $x, $y, '', $this->link);
+      if ($this->layout_pos_logo_on_doc=='LEFT') {
+        $this->Image('@' . $this->logo, 10, 7, $x, $y, '', '');
+      } else {
+        $this->Image('@' . $this->logo, 130, 5, $x, $y, '', $this->link);
+      }
+      //*- DC - 16/01/2018
+      $this->Line(0, 93, 3, 93); //questa marca la linea d'aiuto per la piegatura del documento
+      $this->Line(0, 143, 3, 143); //questa marca la linea d'aiuto per la foratura del documento
+      $this->Ln($interlinea);
 			if (!empty($this->efattura)){
 				$this->SetFont('helvetica','B',9);
 				$this->SetTextColor(255,0,0);
