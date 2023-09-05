@@ -146,6 +146,9 @@ function printPdf(urlPrintDoc){
         ?>
       </select>
     </div>
+	<?php
+        $ts->output_navbar();
+	?>
 	<div class="table-responsive">
     <table class="Tlarge table table-striped table-bordered table-condensed">
         <tr>
