@@ -81,9 +81,8 @@ $ts = new TableSorter(
 $(function() {
   $("#dialog_duplicate").dialog({ autoOpen: false });
 	$('.dialog_duplicate').click(function() {
-		$("p#idcodice").html($(this).attr("ref"));
-		$("p#iddescri").html($(this).attr("artico"));
-		var id = $(this).attr('ref');
+		$("p#idcodice").append($(this).attr("ref"));
+    var ref = $(this).attr('ref');
 		$( "#dialog_duplicate" ).dialog({
 			minHeight: 1,
 			width: "auto",
@@ -92,20 +91,22 @@ $(function() {
 			hide: "explode",
 			buttons: {
 				delete:{
-					text:'Elimina',
+					text:'Clona',
 					'class':'btn btn-danger delete-button',
 					click:function (event, ui) {
-					$.ajax({
-						data: {'type':'artico',ref:id},
-						type: 'POST',
-						url: '../vacation_rental/delete.php',
-						success: function(output){
-		                    //alert(output);
-							window.location.replace("./report_accommodation.php");
-						}
-					});
+            	var parent_year = $("#parent_year").val(); // The value of the selected option parent
+            	var child_year = $("#child_year").val(); // The value of the selected option child
+              $.ajax({
+                data: {'parent_year':parent_year,'child_year':child_year,'term':ref,'opt':'clone'},
+                type: 'GET',
+                url: '../vacation_rental/ajax_request.php',
+                success: function(output){
+                  alert(output);
+                  window.location.replace("./report_accommodation.php");
+                }
+              });
 				}},
-				"Non eliminare": function() {
+				"Non clonare": function() {
 					$(this).dialog("close");
 				}
 			}
@@ -395,35 +396,23 @@ $ts->output_navbar();
         <p>Descrizione</p>
         <p class="ui-state-highlight" id="iddescri"></p>
 	</div>
+
   <div style="display:none" id="dialog_duplicate" title="Clona i prezzi">
-        <p><b>alloggio:</b></p>
-        <p>codice:</p>
-        <p class="ui-state-highlight" id="idcodice"></p>
-
+        <p class="ui-state-highlight" id="idcodice"><b>alloggio: </b></p>
         <?php
-        echo '<label>Admission Year:</label><br><select name="admission_year" data-component="date">';
-    for ($year = date('Y'); $year >= 1900; $year--) {
-      echo '<option value="'.$year.'">' . $year . '</option>';
-    }
-    echo '</select>';
-    ?>
-    <?php
-        echo '<label>Admission Year:</label><br><select name="admission_year" data-component="date">';
-    for ($year = date('Y'); $year >= 1900; $year--) {
-      echo '<option value="'.$year.'">' . $year . '</option>';
-    }
-    echo '</select>';
-    ?>
-
-    <p>Clona i prezzi dell'anno </p>
-        <div class="parent_year">
-        <input type="date" name="parent_year" class="FacetInput">
-        </div>
-        <p>nell'anno </p>
-        <div class="child_year">
-        <input type="date" name="child_year"  class="FacetInput">
-        </div>
+        echo '<label>Clona i prezzi dell\'anno:</label><br><select id="parent_year" name="parent_year" data-component="date">';
+        for ($year = date('Y'); $year >= 2020; $year--) {
+          echo '<option value="'.$year.'">' . $year . '</option>';
+        }
+        echo '</select><br>';
+        echo '<br><label>nell\'anno:</label><br><select id="child_year" name="child_year" data-component="date">';
+        for ($year = (intval(date('Y'))+1); $year <= (intval(date('Y'))+10); $year++) {
+          echo '<option value="'.$year.'">' . $year . '</option>';
+        }
+        echo '</select>';
+        ?>
 	</div>
+
 	<div class="framePdf panel panel-success" style="display: none; position: fixed; left: 5%; top: 5px">
 			<div class="col-lg-12">
 				<div class="col-xs-11" id="titolo" ></div>
