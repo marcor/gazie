@@ -130,6 +130,7 @@ $sortable_headers = array(
     "Codice alloggio" => "house_code",
     "Check-in" => "start",
     "Check-out" => "end",
+    "Notti" => "",
     "Tour op." => "id_agente",
     "Cliente" => "clfoco",
     "Località" => "",
@@ -1004,6 +1005,9 @@ $ts->output_navbar();
               $stato_check_btn = 'btn-info';
             }
 
+            //calcolo il numero di notti
+            $interval = date_diff(date_create($r['start']), date_create($r['end']));
+
             $stato_btn = 'btn-default';
             if ($data = json_decode($r['custom_field'], TRUE)) { // se esiste un json nel custom field della testata
               if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['status'])){
@@ -1098,6 +1102,7 @@ $ts->output_navbar();
               echo "<td>" . $r['house_code'] . " &nbsp;</td>";
               echo "<td>" . gaz_format_date($r['start']) . " &nbsp;</td>";
               echo "<td>" . gaz_format_date($r['end']) . " &nbsp;</td>";
+              echo "<td>" . $interval->days . "</td>";
 
               echo "<td>" . $r['tour_descri'] . "</td>";
               // Colonna cliente
@@ -1121,11 +1126,11 @@ $ts->output_navbar();
               $addtext=($paid>0)?"&nbsp;Pagato ".gaz_format_quantity($paid,1,2):"";
               echo "<br><a id=\"atest",$r['id_tes'],"\" class=\"btn btn-xs btn-default ",$stato_pig_btn,"\"";
               echo " style=\"cursor:pointer;\" onclick=\"payment('". $r['id_tes'] ."')\"";
-			  $balance=gaz_format_quantity(($amountvat-$paid),1,2);
-			  $addtitle="";
-			  if (floatval($balance)>0){
-				  $addtitle="- ancora da pagare € ".$balance;
-			  }
+              $balance=gaz_format_quantity(($amountvat-$paid),1,2);
+              $addtitle="";
+              if (floatval($balance)>0){
+                $addtitle="- ancora da pagare € ".$balance;
+              }
               echo "><i id=\"test",$r['id_tes'],"\" class=\"glyphicon glyphicon-piggy-bank \" title=\"Pagamenti",$addtitle,"\">",$addtext,"</i></a></td>";
 
               // colonna fiscale

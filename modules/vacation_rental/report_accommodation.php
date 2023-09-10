@@ -79,6 +79,40 @@ $ts = new TableSorter(
 ?>
 <script>
 $(function() {
+  $("#dialog_duplicate").dialog({ autoOpen: false });
+	$('.dialog_duplicate').click(function() {
+		$("p#idcodice").html($(this).attr("ref"));
+		$("p#iddescri").html($(this).attr("artico"));
+		var id = $(this).attr('ref');
+		$( "#dialog_duplicate" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{
+					text:'Elimina',
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'artico',ref:id},
+						type: 'POST',
+						url: '../vacation_rental/delete.php',
+						success: function(output){
+		                    //alert(output);
+							window.location.replace("./report_accommodation.php");
+						}
+					});
+				}},
+				"Non eliminare": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		$("#dialog_duplicate" ).dialog( "open" );
+	});
+
 	$("#dialog_delete").dialog({ autoOpen: false });
 	$('.dialog_delete').click(function() {
 		$("p#idcodice").html($(this).attr("ref"));
@@ -361,6 +395,35 @@ $ts->output_navbar();
         <p>Descrizione</p>
         <p class="ui-state-highlight" id="iddescri"></p>
 	</div>
+  <div style="display:none" id="dialog_duplicate" title="Clona i prezzi">
+        <p><b>alloggio:</b></p>
+        <p>codice:</p>
+        <p class="ui-state-highlight" id="idcodice"></p>
+
+        <?php
+        echo '<label>Admission Year:</label><br><select name="admission_year" data-component="date">';
+    for ($year = date('Y'); $year >= 1900; $year--) {
+      echo '<option value="'.$year.'">' . $year . '</option>';
+    }
+    echo '</select>';
+    ?>
+    <?php
+        echo '<label>Admission Year:</label><br><select name="admission_year" data-component="date">';
+    for ($year = date('Y'); $year >= 1900; $year--) {
+      echo '<option value="'.$year.'">' . $year . '</option>';
+    }
+    echo '</select>';
+    ?>
+
+    <p>Clona i prezzi dell'anno </p>
+        <div class="parent_year">
+        <input type="date" name="parent_year" class="FacetInput">
+        </div>
+        <p>nell'anno </p>
+        <div class="child_year">
+        <input type="date" name="child_year"  class="FacetInput">
+        </div>
+	</div>
 	<div class="framePdf panel panel-success" style="display: none; position: fixed; left: 5%; top: 5px">
 			<div class="col-lg-12">
 				<div class="col-xs-11" id="titolo" ></div>
@@ -528,6 +591,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
       echo '<td class="text-center">'.$admin_aziend['symbol']," ",gaz_format_quantity($r['web_price'],1,$admin_aziend['decimal_price']);
 			echo "</td>\n";
 			echo '<td class="text-center"><a class="btn btn-xs btn-default" style="cursor:pointer;" onclick="openframe(\'accommodation_price.php?house_code='.$r["codice"].'\',\'Prezzi '.$ivac.' <b>'.$r["codice"].'</b>\')" data-toggle="modal" data-target="#iframe"> <i class="glyphicon glyphicon-eur" title="Calendario dei prezzi"></i></a>';
+      echo '&nbsp; &nbsp; <a class="btn btn-xs btn-default dialog_duplicate" ref="'. $r['codice'].'"> <i class="glyphicon glyphicon-duplicate" title="Duplica prezzi"></i></a>';
 			echo "</td>\n";
 			echo '<td class="text-center"><a class="btn btn-xs btn-default" style="cursor:pointer;" onclick="openframe(\'accommodation_availability.php?house_code='.$r["codice"].'\',\'Calendario <b>'.$r["codice"].'</b>\')" data-toggle="modal" data-target="#iframe"> <i class="glyphicon glyphicon-calendar" title="Calendario della disponibilità"></i></a>';
 			echo '&nbsp; &nbsp; <a class="btn btn-xs btn-default dialog_limit" ref="'. $r['codice'].'"> <i class="glyphicon glyphicon-tasks" title="Limita lungo periodo""></i></a>';
