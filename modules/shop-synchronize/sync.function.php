@@ -428,6 +428,7 @@ class shopsynchronize {
 		}
 	}
 	function UpsertProduct($d,$toDo="") { // Aggiorna o inserisce articol da GAzie a e-commerce
+				
 		if ($d['web_public'] > 0){ // se pubblicato su web aggiorno l'articolo di magazzino (product)
 			@session_start();
 			global $gTables,$admin_aziend;
