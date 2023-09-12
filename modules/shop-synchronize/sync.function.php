@@ -82,6 +82,10 @@ class shopsynchronize {
 	function SetupStore() {
 		// aggiorno i dati comuni a tutto lo store: Anagrafica Azienda, Aliquote IVA, dati richiesti ai nuovi clienti (CF,PI,indirizzo,ecc) in custom_field e tutto ciò che necessita per evitare di digitarlo a mano su ecommerce-admin
 	}
+  function UpsertFeedback() {
+		// aggiorno i dati feedback
+
+	}
 	function UpsertCategory($d,$toDo="") {
 		// usando il token precedentemente avuto si dovranno eseguire tutte le operazioni necessarie ad aggiornare la categorie merceologica quindi:
 		// in base alle API messe a disposizione dallo specifico store (Opencart,Prestashop,Magento,ecc) si passeranno i dati in maniera opportuna...
@@ -428,7 +432,7 @@ class shopsynchronize {
 		}
 	}
 	function UpsertProduct($d,$toDo="") { // Aggiorna o inserisce articol da GAzie a e-commerce
-				
+
 		if ($d['web_public'] > 0){ // se pubblicato su web aggiorno l'articolo di magazzino (product)
 			@session_start();
 			global $gTables,$admin_aziend;

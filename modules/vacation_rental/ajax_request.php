@@ -178,8 +178,38 @@ if (isset($_GET['term'])) {
       break;
       case'change_feed_status':
         $codice= intval($_GET['term']);
+        // prendo il vecchio feedback (punteggi e stato)
+        $query = "SELECT score, element FROM ". $gTables['rental_feedback_scores'] ." LEFT JOIN ". $gTables['rental_feedback_elements'] ." ON ". $gTables['rental_feedback_elements'] .".id =  ". $gTables['rental_feedback_scores'] .".element_id WHERE feedback_id ='". $codice ."' ORDER BY ". $gTables['rental_feedback_scores'] .".id ASC";
+        $result = gaz_dbi_query($query);
+        $n=0;
+        while ($res = $result->fetch_assoc()){
+          $feedback['scores'][$n]=$res;
+          $n++;
+        }
+        $feedback['old_status'] = gaz_dbi_get_row($gTables['rental_feedbacks'], 'id', $codice)['status'];
+        $feedback['new_status'] = intval($_GET['status']);
+
+        $toDo="NONE";
+        if (($feedback['old_status']==0 || $feedback['old_status']==2) && intval($_GET['status'])==1){// se il cambio stato comporta una aggiunta al punteggio generale alloggio
+          $toDo="ADD";
+        }
+        if ($feedback['old_status']==1 && (intval($_GET['status'])==0 || intval($_GET['status'])==2)){// se il cambio stato comporta una sottrazione al punteggio generale alloggio
+          $toDo="SUBTRACT";
+        }
+
+        // cambio stato al feedback
         $query = "UPDATE ".$gTables['rental_feedbacks']." SET status = ". intval($_GET['status']) ." WHERE id = ".$codice;
         gaz_dbi_query($query);
+
+        if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
+              // aggiorno l'e-commerce ove presente
+              $gs=$admin_aziend['synccommerce_classname'];
+              $gSync = new $gs();
+          if($gSync->api_token){
+            $gSync->UpsertFeedback($feedback,$toDo);
+            //print_r($feedback);echo" - TODO:",$toDo;
+          }
+        }
       break;
       case'clone':
         $res = gaz_dbi_dyn_query("*", $gTables['rental_prices'], "year(start) = ". substr($_GET['parent_year'],0,4) ." AND house_code = '".substr($_GET['term'],0,15)."'","id ASC");
