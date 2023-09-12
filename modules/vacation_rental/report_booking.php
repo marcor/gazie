@@ -545,7 +545,7 @@ $(function() {
           url: '../vacation_rental/ajax_request.php',
           dataType: 'text',
           success: function(response){
-            alert(response);
+            //alert(response);
             window.location.replace("./report_booking.php");
           }
         });
