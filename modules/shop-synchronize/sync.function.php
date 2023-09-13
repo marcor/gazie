@@ -82,8 +82,185 @@ class shopsynchronize {
 	function SetupStore() {
 		// aggiorno i dati comuni a tutto lo store: Anagrafica Azienda, Aliquote IVA, dati richiesti ai nuovi clienti (CF,PI,indirizzo,ecc) in custom_field e tutto ciò che necessita per evitare di digitarlo a mano su ecommerce-admin
 	}
-  function UpsertFeedback() {
-		// aggiorno i dati feedback
+
+  function UpsertFeedback($feedback,$toDo,$ref="") {// aggiorno i dati feedback
+		// $feedback è un array e mi permette di inviare al sito web qualunque cosa
+    @session_start();
+			global $gTables,$admin_aziend;
+			$rawres=[];
+
+			$ftp_host = gaz_dbi_get_row($gTables['company_config'], "var", "server")['val'];
+			$ftp_path_upload = gaz_dbi_get_row($gTables['company_config'], "var", "ftp_path")['val'];
+			$ftp_user = gaz_dbi_get_row($gTables['company_config'], "var", "user")['val'];
+			$ftp_pass = gaz_dbi_get_row($gTables['company_config'], "var", "pass")['val'];
+      if ($accpass = gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val'] && $urlinterf = gaz_dbi_get_row($gTables['company_config'], 'var', 'path')['val']."upd-feedback.php"){
+      }else{
+        $rawres['title'] = "Problemi con le impostazioni FTP: manca il percorso al file interfaccia e/o la sua password di accesso! AGGIORNARE MANUALMENTE il feedback di ". $ref. " nel sito web";
+        $rawres['button'] = 'Avviso eCommerce';
+        $rawres['label'] = "OK fammi controllare le impostazioni";
+        $rawres['link'] = '../shop-synchronize/config_sync.php';
+        $rawres['style'] = 'danger';
+        $_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+        $this->rawres=$rawres;
+        return;
+      }
+
+			if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){// SFTP login with private key and password
+				$ftp_port = gaz_dbi_get_row($gTables['company_config'], "var", "port")['val'];
+				$ftp_key = gaz_dbi_get_row($gTables['company_config'], "var", "chiave")['val'];
+				if (gaz_dbi_get_row($gTables['company_config'], "var", "keypass")['val']=="key"){ // SFTP log-in con KEY
+					$key = PublicKeyLoader::load(file_get_contents('../../data/files/'.$admin_aziend['codice'].'/secret_key/'. $ftp_key .''),$ftp_pass);
+					$sftp = new SFTP($ftp_host, $ftp_port);
+					if (!$sftp->login($ftp_user, $key)) {
+						// non si connette: key LOG-IN FALSE
+						$rawres['title'] = "Problemi con la connessione Sftp usando il file chiave. AGGIORNARE MANUALMENTE il feedback di ". $ref. " nel sito web";
+						$rawres['button'] = 'Avviso eCommerce';
+						$rawres['label'] = "OK fammi controllare le impostazioni";
+						$rawres['link'] = '../shop-synchronize/config_sync.php';
+						$rawres['style'] = 'danger';
+						$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+						$this->rawres=$rawres;
+						return;
+					}
+				} else { // SFTP log-in con password
+					$sftp = new SFTP($ftp_host, $ftp_port);
+					if (!$sftp->login($ftp_user, $ftp_pass)) {
+						// non si connette: password LOG-IN FALSE
+						$rawres['title'] = "Problemi con la connessione Sftp usando la password. AGGIORNARE MANUALMENTE il feedback di ". $ref. " nel sito web";
+						$rawres['button'] = 'Avviso eCommerce';
+						$rawres['label'] = "OK fammi controllare le impostazioni";
+						$rawres['link'] = '../shop-synchronize/config_sync.php';
+						$rawres['style'] = 'danger';
+						$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+						$this->rawres=$rawres;
+						return;
+					}
+				}
+			} else {
+				// imposto la connessione al server
+				if ($conn_id = @ftp_connect($ftp_host)){
+          // effettuo login con user e pass
+          $mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
+          // controllo se la connessione è OK...
+          if ((!$conn_id) or (!$mylogin)){
+            // non si connette FALSE
+            $rawres['title'] = "Problemi con le impostazioni FTP in configurazione avanzata azienda: nome utente e/o password. AGGIORNARE MANUALMENTE il feedback di ". $ref. " nel sito web";
+            $rawres['button'] = 'Avviso eCommerce';
+            $rawres['label'] = "OK fammi controllare le impostazioni";
+            $rawres['link'] = '../config/admin_aziend.php';
+            $rawres['style'] = 'danger';
+            $_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+            $this->rawres=$rawres;
+            return;
+          }
+        }else{
+          $rawres['title'] = "Problemi con le impostazioni FTP: Non riesco a connettermi con l'host! AGGIORNARE MANUALMENTE il feedback di ". $ref. " nel sito web";
+          $rawres['button'] = 'Avviso eCommerce';
+          $rawres['label'] = "OK fammi controllare le impostazioni";
+          $rawres['link'] = '../config/admin_aziend.php';
+          $rawres['style'] = 'danger';
+          $_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+          $this->rawres=$rawres;
+          return;
+        }
+			}
+
+      $house_row = gaz_dbi_get_row($gTables['artico'], 'codice', $ref);
+      $ref_ecommerce_id_product = $house_row['ref_ecommerce_id_product'];
+      if (strlen($ref_ecommerce_id_product)>0){// se esiste un riferimento del sito web
+        // convert array to xml
+        //function defination to convert array to xml
+        function array_to_xml($array, &$xml) {
+          foreach($array as $key => $value) {
+            if(is_array($value)) {
+              if(!is_numeric($key)){
+                  $subnode = $xml->addChild("$key");
+                  array_to_xml($value, $subnode);
+              }else{
+                  $subnode = $xml->addChild("item$key");
+                  array_to_xml($value, $subnode);
+              }
+            }else {
+              $xml->addChild("$key",htmlspecialchars("$value"));
+            }
+          }
+        }
+        //creating object of SimpleXMLElement
+        $xml = new SimpleXMLElement("<?xml version=\"1.0\" encoding=\"UTF-8\"?><GAzieDocuments AppVersion=\"1\" Creator=\"Antonio Germani 2023\" CreatorUrl=\"https://www.programmisitiweb.lacasettabio.it\"></GAzieDocuments>");
+        //function call to convert array to xml
+        array_to_xml($feedback,$xml);
+        // aggiungo il todo
+        $xml->addChild("toDo",htmlspecialchars("$toDo"));
+        // aggiungo il ref
+        $xml->addChild("ref",htmlspecialchars("$ref_ecommerce_id_product"));
+        //saving generated xml file
+        $xmlFile='feedback.xml';
+        $xml_file = $xml->asXML('feedback.xml');
+        //success and error message based on xml creation
+        if($xml_file){
+          // 'XML file have been generated successfully.';
+          if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){
+            // invio file xml tramite Sftp
+            if ($sftp->put($ftp_path_upload."feedback.xml", $xmlFile, SFTP::SOURCE_LOCAL_FILE)){
+              $sftp->disconnect();
+            }else {
+              // chiudo la connessione SFTP
+              $sftp->disconnect();
+              $rawres['title'] = "Upload tramite Sftp del file xml non riuscito. AGGIORNARE MANUALMENTE il feedback di ". $ref. " nel sito web";
+              $rawres['button'] = 'Avviso eCommerce';
+              $rawres['label'] = "OK, controllerò l'errore di scrittura SFTP";
+              $rawres['link'] = '';
+              $rawres['style'] = 'danger';
+            }
+          } else {
+            //turn passive mode on
+            ftp_pasv($conn_id, true);
+            // upload file xml
+            if (ftp_put($conn_id, $ftp_path_upload."feedback.xml", $xmlFile, FTP_ASCII)){
+            } else{
+              $rawres['title'] = "Upload del file xml non riuscito. AGGIORNARE MANUALMENTE il feedback di ". $ref. " nel sito web";
+              $rawres['button'] = 'Avviso eCommerce';
+              $rawres['label'] = "OK, controllerò l'errore di scrittura ftp";
+              $rawres['link'] = '';
+              $rawres['style'] = 'danger';
+            }
+            // chiudo la connessione FTP
+            ftp_quit($conn_id);
+          }
+          $access=base64_encode($accpass);
+          // avvio il file di interfaccia presente nel sito web remoto
+          $file = fopen ($urlinterf.'?access='.$access, "r");
+          if ($file){ // controllo se il file mi ha dato accesso regolare
+            // se serve, qui posso controllare cosa ha restituito l'interfaccia tramite gli echo
+            while (!feof($file)) { // scorro il file generato dall'interfaccia durante la sua eleborazione
+                $line = fgets($file);
+                // se serve, quì eseguo le operazioni con i dati restituiti
+            }
+            fclose($file);
+          } else { // Riporto il codice di errore
+            $rawres['title'] = "Impossibile connettersi all'interfaccia: ".intval(substr($headers[0], 9, 3)).". AGGIORNARE MANUALMENTE il feedback di ". $ref. " nel sito web";
+            $rawres['button'] = 'Avviso eCommerce';
+            $rawres['label'] = "OK, controllerò perché il file di interfaccia non ha funzionato";
+            $rawres['link'] = '';
+            $rawres['style'] = 'danger';
+          }
+
+          if (isset($rawres)){
+            $_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+            $this->rawres=$rawres;
+          }
+        }else{
+            //'XML file generation error.';
+            $rawres['title'] = "Problemi con la generazione del file xml di UpsertFeedback()! AGGIORNARE MANUALMENTE il feedback di ". $ref. " nel sito web!";
+            $rawres['button'] = 'Avviso eCommerce';
+            $rawres['label'] = "OK farò dei controlli";
+            $rawres['link'] = '';
+            $rawres['style'] = 'danger';
+            $_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+            $this->rawres=$rawres;
+            return;
+        }
+      }
 
 	}
 	function UpsertCategory($d,$toDo="") {
@@ -152,7 +329,7 @@ class shopsynchronize {
 			}
 			// creo il file xml
 			$xml_output = '<?xml version="1.0" encoding="UTF-8"?>
-			<GAzieDocuments AppVersion="1" Creator="Antonio Germani 2018-2021" CreatorUrl="https://www.programmisitiweb.lacasettabio.it">';
+			<GAzieDocuments AppVersion="1" Creator="Antonio Germani" CreatorUrl="https://www.programmisitiweb.lacasettabio.it">';
 			$xml_output .= "\n<Categories>\n";
 			$xml_output .= "\t<Category>\n";
 			$xml_output .= "\t<ToDo>".$toDo."</ToDo>\n";
@@ -321,7 +498,7 @@ class shopsynchronize {
       }
 			// creo il file xml
 			$xml_output = '<?xml version="1.0" encoding="UTF-8"?>
-			<GAzieDocuments AppVersion="1" Creator="Antonio Germani 2018-2021" CreatorUrl="https://www.programmisitiweb.lacasettabio.it">';
+			<GAzieDocuments AppVersion="1" Creator="Antonio Germani 2018" CreatorUrl="https://www.programmisitiweb.lacasettabio.it">';
 			$xml_output .= "\n<Products>\n";
 				$xml_output .= "\t<Product>\n";
         $xml_output .= "\t<ToDo>".$toDo."</ToDo>\n";
@@ -544,7 +721,7 @@ class shopsynchronize {
 			$web_price_vat_incl=number_format($web_price_vat_incl, $admin_aziend['decimal_price'], '.', '');
 	 		// creo il file xml
 			$xml_output = '<?xml version="1.0" encoding="UTF-8"?>
-			<GAzieDocuments AppVersion="1" Creator="Antonio Germani 2018-2019" CreatorUrl="https://www.lacasettabio.it">';
+			<GAzieDocuments AppVersion="1" Creator="Antonio Germani 2018" CreatorUrl="https://www.lacasettabio.it">';
 			$xml_output .= "\n<Products>\n";
 				$xml_output .= "\t<Product>\n";
 				$xml_output .= "\t<ToDo>".$toDo."</ToDo>\n";
@@ -739,7 +916,7 @@ class shopsynchronize {
 
 	 		// creo il file xml
 			$xml_output = '<?xml version="1.0" encoding="ISO-8859-1"?>
-			<GAzieDocuments AppVersion="1" Creator="Antonio Germani 2018-2019" CreatorUrl="https://www.lacasettabio.it">';
+			<GAzieDocuments AppVersion="1" Creator="Antonio Germani 2018" CreatorUrl="https://www.lacasettabio.it">';
 			$xml_output .= "\n<Products>\n";
 				$xml_output .= "\t<Product>\n";
 				$xml_output .= "\t<Id>".$id['ref_ecommerce_id_product']."</Id>\n";

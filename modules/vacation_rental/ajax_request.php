@@ -186,7 +186,9 @@ if (isset($_GET['term'])) {
           $feedback['scores'][$n]=$res;
           $n++;
         }
-        $feedback['old_status'] = gaz_dbi_get_row($gTables['rental_feedbacks'], 'id', $codice)['status'];
+        $feedback_row = gaz_dbi_get_row($gTables['rental_feedbacks'], 'id', $codice);
+        $feedback['old_status'] = $feedback_row['status'];
+        $ref = $feedback_row['house_code'];
         $feedback['new_status'] = intval($_GET['status']);
 
         $toDo="NONE";
@@ -206,7 +208,7 @@ if (isset($_GET['term'])) {
               $gs=$admin_aziend['synccommerce_classname'];
               $gSync = new $gs();
           if($gSync->api_token){
-            $gSync->UpsertFeedback($feedback,$toDo);
+            $gSync->UpsertFeedback($feedback,$toDo,$ref);
             //print_r($feedback);echo" - TODO:",$toDo;
           }
         }
