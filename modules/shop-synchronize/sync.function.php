@@ -85,6 +85,7 @@ class shopsynchronize {
 
   function UpsertFeedback($feedback,$toDo,$ref="") {// aggiorno i dati feedback
 		// $feedback è un array e mi permette di inviare al sito web qualunque cosa
+		
     @session_start();
 			global $gTables,$admin_aziend;
 			$rawres=[];
@@ -92,18 +93,27 @@ class shopsynchronize {
 			$ftp_host = gaz_dbi_get_row($gTables['company_config'], "var", "server")['val'];
 			$ftp_path_upload = gaz_dbi_get_row($gTables['company_config'], "var", "ftp_path")['val'];
 			$ftp_user = gaz_dbi_get_row($gTables['company_config'], "var", "user")['val'];
-			$ftp_pass = gaz_dbi_get_row($gTables['company_config'], "var", "pass")['val'];
-      if ($accpass = gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val'] && $urlinterf = gaz_dbi_get_row($gTables['company_config'], 'var', 'path')['val']."upd-feedback.php"){
-      }else{
-        $rawres['title'] = "Problemi con le impostazioni FTP: manca il percorso al file interfaccia e/o la sua password di accesso! AGGIORNARE MANUALMENTE il feedback di ". $ref. " nel sito web";
-        $rawres['button'] = 'Avviso eCommerce';
-        $rawres['label'] = "OK fammi controllare le impostazioni";
-        $rawres['link'] = '../shop-synchronize/config_sync.php';
-        $rawres['style'] = 'danger';
-        $_SESSION['menu_alerts']['shop-synchronize']=$rawres;
-        $this->rawres=$rawres;
-        return;
-      }
+			$OSftp_pass = gaz_dbi_get_row($gTables['company_config'], "var", "pass")['val'];// vecchio sistema di password non criptata
+			$OSaccpass = gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val'];// vecchio sistema di password non criptata
+			$rsdec=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = 'pass'");
+			$rdec=gaz_dbi_fetch_row($rsdec);
+			$ftp_pass=$rdec?htmlspecialchars_decode($rdec[0]):'';
+			$ftp_pass=(strlen($ftp_pass)>0)?$ftp_pass:$OSftp_pass; // se la password decriptata non ha dato risultati provo a vedere se c'è ancora una password non criptata
+			if ($OSaccpass && $urlinterf = gaz_dbi_get_row($gTables['company_config'], 'var', 'path')['val']."upd-feedback.php"){// se sono state impostate
+				$rsdec=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = 'accpass'");
+				$rdec=gaz_dbi_fetch_row($rsdec);
+				$accpass=$rdec?htmlspecialchars_decode($rdec[0]):'';
+				$accpass=(strlen($accpass)>0)?$accpass:$OSaccpass; // se la password decriptata non ha dato risultati provo a mettere la password non criptata					
+			}else{
+				$rawres['title'] = "Problemi con le impostazioni FTP: manca il percorso al file interfaccia e/o la sua password di accesso! AGGIORNARE MANUALMENTE il feedback di ". $ref. " nel sito web";
+				$rawres['button'] = 'Avviso eCommerce';
+				$rawres['label'] = "OK fammi controllare le impostazioni";
+				$rawres['link'] = '../shop-synchronize/config_sync.php';
+				$rawres['style'] = 'danger';
+				$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+				$this->rawres=$rawres;
+				return;
+			}
 
 			if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){// SFTP login with private key and password
 				$ftp_port = gaz_dbi_get_row($gTables['company_config'], "var", "port")['val'];
@@ -139,52 +149,54 @@ class shopsynchronize {
 			} else {
 				// imposto la connessione al server
 				if ($conn_id = @ftp_connect($ftp_host)){
-          // effettuo login con user e pass
-          $mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
-          // controllo se la connessione è OK...
-          if ((!$conn_id) or (!$mylogin)){
-            // non si connette FALSE
-            $rawres['title'] = "Problemi con le impostazioni FTP in configurazione avanzata azienda: nome utente e/o password. AGGIORNARE MANUALMENTE il feedback di ". $ref. " nel sito web";
-            $rawres['button'] = 'Avviso eCommerce';
-            $rawres['label'] = "OK fammi controllare le impostazioni";
-            $rawres['link'] = '../config/admin_aziend.php';
-            $rawres['style'] = 'danger';
-            $_SESSION['menu_alerts']['shop-synchronize']=$rawres;
-            $this->rawres=$rawres;
-            return;
-          }
-        }else{
-          $rawres['title'] = "Problemi con le impostazioni FTP: Non riesco a connettermi con l'host! AGGIORNARE MANUALMENTE il feedback di ". $ref. " nel sito web";
-          $rawres['button'] = 'Avviso eCommerce';
-          $rawres['label'] = "OK fammi controllare le impostazioni";
-          $rawres['link'] = '../config/admin_aziend.php';
-          $rawres['style'] = 'danger';
-          $_SESSION['menu_alerts']['shop-synchronize']=$rawres;
-          $this->rawres=$rawres;
-          return;
-        }
+				  // effettuo login con user e pass
+				  $mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
+				  // controllo se la connessione è OK...
+				  if ((!$conn_id) or (!$mylogin)){
+					// non si connette FALSE
+					$rawres['title'] = "Problemi con le impostazioni FTP in configurazione avanzata azienda: nome utente e/o password. AGGIORNARE MANUALMENTE il feedback di ". $ref. " nel sito web. - password inserita:".$ftp_pass."...-old:".$OSftp_pass;
+					$rawres['button'] = 'Avviso eCommerce';
+					$rawres['label'] = "OK fammi controllare le impostazioni";
+					$rawres['link'] = '../config/admin_aziend.php';
+					$rawres['style'] = 'danger';
+					$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+					$this->rawres=$rawres;
+					return;
+				  }
+			    
+				}else{
+				  $rawres['title'] = "Problemi con le impostazioni FTP: Non riesco a connettermi con l'host! AGGIORNARE MANUALMENTE il feedback di ". $ref. " nel sito web";
+				  $rawres['button'] = 'Avviso eCommerce';
+				  $rawres['label'] = "OK fammi controllare le impostazioni";
+				  $rawres['link'] = '../config/admin_aziend.php';
+				  $rawres['style'] = 'danger';
+				  $_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+				  $this->rawres=$rawres;
+				  return;
+				}
 			}
 
-      $house_row = gaz_dbi_get_row($gTables['artico'], 'codice', $ref);
-      $ref_ecommerce_id_product = $house_row['ref_ecommerce_id_product'];
-      if (strlen($ref_ecommerce_id_product)>0){// se esiste un riferimento del sito web
-        // convert array to xml
-        //function defination to convert array to xml
-        function array_to_xml($array, &$xml) {
-          foreach($array as $key => $value) {
-            if(is_array($value)) {
-              if(!is_numeric($key)){
-                  $subnode = $xml->addChild("$key");
-                  array_to_xml($value, $subnode);
-              }else{
-                  $subnode = $xml->addChild("item$key");
-                  array_to_xml($value, $subnode);
-              }
-            }else {
-              $xml->addChild("$key",htmlspecialchars("$value"));
-            }
-          }
-        }
+		  $house_row = gaz_dbi_get_row($gTables['artico'], 'codice', $ref);
+		  $ref_ecommerce_id_product = $house_row['ref_ecommerce_id_product'];
+		  if (strlen($ref_ecommerce_id_product)>0){// se esiste un riferimento del sito web
+			// convert array to xml
+			//function to convert array to xml
+			function array_to_xml($array, &$xml) {
+			  foreach($array as $key => $value) {
+				if(is_array($value)) {
+				  if(!is_numeric($key)){
+					  $subnode = $xml->addChild("$key");
+					  array_to_xml($value, $subnode);
+				  }else{
+					  $subnode = $xml->addChild("item$key");
+					  array_to_xml($value, $subnode);
+				  }
+				}else {
+				  $xml->addChild("$key",htmlspecialchars("$value"));
+				}
+			  }
+			}
+		
         //creating object of SimpleXMLElement
         $xml = new SimpleXMLElement("<?xml version=\"1.0\" encoding=\"UTF-8\"?><GAzieDocuments AppVersion=\"1\" Creator=\"Antonio Germani 2023\" CreatorUrl=\"https://www.programmisitiweb.lacasettabio.it\"></GAzieDocuments>");
         //function call to convert array to xml
@@ -211,25 +223,31 @@ class shopsynchronize {
               $rawres['label'] = "OK, controllerò l'errore di scrittura SFTP";
               $rawres['link'] = '';
               $rawres['style'] = 'danger';
+			  $_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+			  $this->rawres=$rawres;
+			  return;
             }
           } else {
             //turn passive mode on
             ftp_pasv($conn_id, true);
             // upload file xml
-            if (ftp_put($conn_id, $ftp_path_upload."feedback.xml", $xmlFile, FTP_ASCII)){
+            if (@ftp_put($conn_id, $ftp_path_upload."feedback.xml", $xmlFile, FTP_ASCII)){
             } else{
               $rawres['title'] = "Upload del file xml non riuscito. AGGIORNARE MANUALMENTE il feedback di ". $ref. " nel sito web";
               $rawres['button'] = 'Avviso eCommerce';
               $rawres['label'] = "OK, controllerò l'errore di scrittura ftp";
               $rawres['link'] = '';
               $rawres['style'] = 'danger';
+			  $_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+				$this->rawres=$rawres;
+				return;
             }
             // chiudo la connessione FTP
             ftp_quit($conn_id);
           }
           $access=base64_encode($accpass);
           // avvio il file di interfaccia presente nel sito web remoto
-          $file = fopen ($urlinterf.'?access='.$access, "r");
+          $file = @fopen ($urlinterf.'?access='.$access, "r");
           if ($file){ // controllo se il file mi ha dato accesso regolare
             // se serve, qui posso controllare cosa ha restituito l'interfaccia tramite gli echo
             while (!feof($file)) { // scorro il file generato dall'interfaccia durante la sua eleborazione
@@ -274,10 +292,27 @@ class shopsynchronize {
 			$ftp_host = gaz_dbi_get_row($gTables['company_config'], "var", "server")['val'];
 			$ftp_path_upload = gaz_dbi_get_row($gTables['company_config'], "var", "ftp_path")['val'];
 			$ftp_user = gaz_dbi_get_row($gTables['company_config'], "var", "user")['val'];
-			$ftp_pass = gaz_dbi_get_row($gTables['company_config'], "var", "pass")['val'];
-			$accpass = gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val'];
-			$urlinterf = gaz_dbi_get_row($gTables['company_config'], 'var', 'path')['val']."upd-category.php";
-
+			$OSftp_pass = gaz_dbi_get_row($gTables['company_config'], "var", "pass")['val'];// vecchio sistema di password non criptata
+			$OSaccpass = gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val'];// vecchio sistema di password non criptata
+			$rsdec=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = 'pass'");
+			$rdec=gaz_dbi_fetch_row($rsdec);
+			$ftp_pass=$rdec?htmlspecialchars_decode($rdec[0]):'';
+			$ftp_pass=(strlen($ftp_pass)>0)?$ftp_pass:$OSftp_pass; // se la password decriptata non ha dato risultati provo a vedere se c'è ancora una password non criptata
+			if ($OSaccpass && $urlinterf = gaz_dbi_get_row($gTables['company_config'], 'var', 'path')['val']."upd-category.php"){// se sono state impostate
+				$rsdec=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = 'accpass'");
+				$rdec=gaz_dbi_fetch_row($rsdec);
+				$accpass=$rdec?htmlspecialchars_decode($rdec[0]):'';
+				$accpass=(strlen($accpass)>0)?$accpass:$OSaccpass; // se la password decriptata non ha dato risultati provo a mettere la password non criptata					
+			}else{
+				$rawres['title'] = "Problemi con le impostazioni FTP: manca il percorso al file interfaccia e/o la sua password di accesso! AGGIORNARE MANUALMENTE la categoria ". $d. " nel sito web ".$toDo;
+				$rawres['button'] = 'Avviso eCommerce';
+				$rawres['label'] = "OK fammi controllare le impostazioni";
+				$rawres['link'] = '../shop-synchronize/config_sync.php';
+				$rawres['style'] = 'danger';
+				$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+				$this->rawres=$rawres;
+				return;
+			}
 			if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){// SFTP login with private key and password
 				$ftp_port = gaz_dbi_get_row($gTables['company_config'], "var", "port")['val'];
 				$ftp_key = gaz_dbi_get_row($gTables['company_config'], "var", "chiave")['val'];
@@ -358,6 +393,9 @@ class shopsynchronize {
 					$rawres['label'] = "Aggiornare i dati della categoria: ". $d['ref_ecommerce_id_category'] ."-". $d['descri'];
 					$rawres['link'] = '../shop-synchronize/synchronize.php';
 					$rawres['style'] = 'danger';
+					$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+					$this->rawres=$rawres;
+					return;
 				}
 			} else {
 				//turn passive mode on
@@ -370,6 +408,9 @@ class shopsynchronize {
 					$rawres['label'] = "Aggiornare i dati della categoria: ". $d['ref_ecommerce_id_category'] ."-". $d['descri'];
 					$rawres['link'] = '../shop-synchronize/synchronize.php';
 					$rawres['style'] = 'danger';
+					$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+					$this->rawres=$rawres;
+					return;
 				}
 				// chiudo la connessione FTP
 				ftp_quit($conn_id);
@@ -379,15 +420,15 @@ class shopsynchronize {
 			$file = fopen ($urlinterf.'?access='.$access, "r");
 			if ($file){ // controllo se il file mi ha dato accesso regolare
 				// se serve, qui posso controllare cosa ha restituito l'interfaccia tramite gli echo
-        while (!feof($file)) { // scorro il file generato dall'interfaccia durante la sua eleborazione
-            $line = fgets($file);
-            if (substr($line,0,7)=="INSERT-"){ // Se l'e-commerce ha restituito l'ID riferito ad un insert
-              $ins_id=intval(substr($line,7));// vado a modificare il riferimento id e-commerce nella categoria di GAzie
-              gaz_dbi_put_row($gTables['catmer'], "codice", $d['codice'], "ref_ecommerce_id_category", $ins_id);
-            }
-        }
-        fclose($file);
-      } else { // Riporto il codice di errore
+				while (!feof($file)) { // scorro il file generato dall'interfaccia durante la sua eleborazione
+					$line = fgets($file);
+					if (substr($line,0,7)=="INSERT-"){ // Se l'e-commerce ha restituito l'ID riferito ad un insert
+					  $ins_id=intval(substr($line,7));// vado a modificare il riferimento id e-commerce nella categoria di GAzie
+					  gaz_dbi_put_row($gTables['catmer'], "codice", $d['codice'], "ref_ecommerce_id_category", $ins_id);
+					}
+				}
+				fclose($file);
+			} else { // Riporto il codice di errore
 				$rawres['title'] = "Impossibile connettersi all'interfaccia: ".intval(substr($headers[0], 9, 3)).". AGGIORNARE L'E-COMMERCE MANUALMENTE!";
 				$rawres['button'] = 'Avviso eCommerce';
 				$rawres['label'] = "Aggiornare i dati della categoria: ". $d['ref_ecommerce_id_category'] ."-". $d['descri'];
@@ -395,10 +436,10 @@ class shopsynchronize {
 				$rawres['style'] = 'danger';
 			}
 
-		if (isset($rawres)){
-      $_SESSION['menu_alerts']['shop-synchronize']=$rawres;
-      $this->rawres=$rawres;
-    }
+			if (isset($rawres)){
+				$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+				$this->rawres=$rawres;
+			}
 	}
 	function UpsertParent($p,$toDo="") {
 		// aggiorno i dati del genitore delle varianti
@@ -410,9 +451,27 @@ class shopsynchronize {
 			$ftp_host = gaz_dbi_get_row($gTables['company_config'], "var", "server")['val'];
 			$ftp_path_upload = gaz_dbi_get_row($gTables['company_config'], "var", "ftp_path")['val'];
 			$ftp_user = gaz_dbi_get_row($gTables['company_config'], "var", "user")['val'];
-			$ftp_pass = gaz_dbi_get_row($gTables['company_config'], "var", "pass")['val'];
-			$accpass = gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val'];
-			$urlinterf = gaz_dbi_get_row($gTables['company_config'], 'var', 'path')['val']."articoli-gazie.php";
+			$OSftp_pass = gaz_dbi_get_row($gTables['company_config'], "var", "pass")['val'];// vecchio sistema di password non criptata
+			$OSaccpass = gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val'];// vecchio sistema di password non criptata
+			$rsdec=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = 'pass'");
+			$rdec=gaz_dbi_fetch_row($rsdec);
+			$ftp_pass=$rdec?htmlspecialchars_decode($rdec[0]):'';
+			$ftp_pass=(strlen($ftp_pass)>0)?$ftp_pass:$OSftp_pass; // se la password decriptata non ha dato risultati provo a vedere se c'è ancora una password non criptata
+			if ($OSaccpass && $urlinterf = gaz_dbi_get_row($gTables['company_config'], 'var', 'path')['val']."articoli-gazie.php"){// se sono state impostate
+				$rsdec=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = 'accpass'");
+				$rdec=gaz_dbi_fetch_row($rsdec);
+				$accpass=$rdec?htmlspecialchars_decode($rdec[0]):'';
+				$accpass=(strlen($accpass)>0)?$accpass:$OSaccpass; // se la password decriptata non ha dato risultati provo a mettere la password non criptata					
+			}else{
+				$rawres['title'] = "Problemi con le impostazioni FTP: manca il percorso al file interfaccia e/o la sua password di accesso! AGGIORNARE MANUALMENTE il genitore ". $p. " nel sito web ".$toDo;
+				$rawres['button'] = 'Avviso eCommerce';
+				$rawres['label'] = "OK fammi controllare le impostazioni";
+				$rawres['link'] = '../shop-synchronize/config_sync.php';
+				$rawres['style'] = 'danger';
+				$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+				$this->rawres=$rawres;
+				return;
+			}
 			$idHome = gaz_dbi_get_row($gTables['company_config'], "var", "home")['val'];
 			// "group-gazie.php" è il nome del file interfaccia presente nella root dell'e-commerce. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
 			// il percorso per raggiungere questo file va impostato in configurazione avanzata azienda alla voce "Website root directory"
@@ -617,9 +676,27 @@ class shopsynchronize {
 			$ftp_host = gaz_dbi_get_row($gTables['company_config'], "var", "server")['val'];
 			$ftp_path_upload = gaz_dbi_get_row($gTables['company_config'], "var", "ftp_path")['val'];
 			$ftp_user = gaz_dbi_get_row($gTables['company_config'], "var", "user")['val'];
-			$ftp_pass = gaz_dbi_get_row($gTables['company_config'], "var", "pass")['val'];
-			$accpass = gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val'];
-			$urlinterf = gaz_dbi_get_row($gTables['company_config'], 'var', 'path')['val']."articoli-gazie.php";
+			$OSftp_pass = gaz_dbi_get_row($gTables['company_config'], "var", "pass")['val'];// vecchio sistema di password non criptata
+			$OSaccpass = gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val'];// vecchio sistema di password non criptata
+			$rsdec=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = 'pass'");
+			$rdec=gaz_dbi_fetch_row($rsdec);
+			$ftp_pass=$rdec?htmlspecialchars_decode($rdec[0]):'';
+			$ftp_pass=(strlen($ftp_pass)>0)?$ftp_pass:$OSftp_pass; // se la password decriptata non ha dato risultati provo a vedere se c'è ancora una password non criptata
+			if ($OSaccpass && $urlinterf = gaz_dbi_get_row($gTables['company_config'], 'var', 'path')['val']."articoli-gazie.php"){// se sono state impostate
+				$rsdec=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = 'accpass'");
+				$rdec=gaz_dbi_fetch_row($rsdec);
+				$accpass=$rdec?htmlspecialchars_decode($rdec[0]):'';
+				$accpass=(strlen($accpass)>0)?$accpass:$OSaccpass; // se la password decriptata non ha dato risultati provo a mettere la password non criptata		
+			}else{
+				$rawres['title'] = "Problemi con le impostazioni FTP: manca il percorso al file interfaccia e/o la sua password di accesso! AGGIORNARE MANUALMENTE il prodotto ".$d." nel sito web ".$toDo;
+				$rawres['button'] = 'Avviso eCommerce';
+				$rawres['label'] = "OK fammi controllare le impostazioni";
+				$rawres['link'] = '../shop-synchronize/config_sync.php';
+				$rawres['style'] = 'danger';
+				$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+				$this->rawres=$rawres;
+				return;
+			}
 			$idHome = gaz_dbi_get_row($gTables['company_config'], "var", "home")['val'];
 			// "articoli-gazie.php" è il nome del file interfaccia presente nella root dell'e-commerce. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
 			// il percorso per raggiungere questo file va impostato in configurazione avanzata azienda alla voce "Website root directory"
@@ -789,6 +866,7 @@ class shopsynchronize {
 				ftp_quit($conn_id);
 			}
 			$access=base64_encode($accpass);
+			
 			// avvio il file di interfaccia presente nel sito web remoto
 			$file = fopen ($urlinterf.'?access='.$access, "r");
 			if ( $file){ // controllo se il file mi ha dato accesso regolare
@@ -825,9 +903,27 @@ class shopsynchronize {
 			$ftp_host = gaz_dbi_get_row($gTables['company_config'], "var", "server")['val'];
 			$ftp_path_upload = gaz_dbi_get_row($gTables['company_config'], "var", "ftp_path")['val'];
 			$ftp_user = gaz_dbi_get_row($gTables['company_config'], "var", "user")['val'];
-			$ftp_pass = gaz_dbi_get_row($gTables['company_config'], "var", "pass")['val'];
-			$accpass = (gaz_dbi_get_row($gTables['company_config'], "var", "accpass"))?gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val']:'';
-			$urlinterf = gaz_dbi_get_row($gTables['company_config'], 'var', 'path')['val']."articoli-gazie.php";
+			$OSftp_pass = gaz_dbi_get_row($gTables['company_config'], "var", "pass")['val'];// vecchio sistema di password non criptata
+			$OSaccpass = gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val'];// vecchio sistema di password non criptata
+			$rsdec=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = 'pass'");
+			$rdec=gaz_dbi_fetch_row($rsdec);
+			$ftp_pass=$rdec?htmlspecialchars_decode($rdec[0]):'';
+			$ftp_pass=(strlen($ftp_pass)>0)?$ftp_pass:$OSftp_pass; // se la password decriptata non ha dato risultati provo a vedere se c'è ancora una password non criptata
+			if ($OSaccpass && $urlinterf = gaz_dbi_get_row($gTables['company_config'], 'var', 'path')['val']."articoli-gazie.php"){// se sono state impostate
+				$rsdec=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = 'accpass'");
+				$rdec=gaz_dbi_fetch_row($rsdec);
+				$accpass=$rdec?htmlspecialchars_decode($rdec[0]):'';
+				$accpass=(strlen($accpass)>0)?$accpass:$OSaccpass; // se la password decriptata non ha dato risultati provo a mettere la password non criptata					
+			}else{
+				$rawres['title'] = "Problemi con le impostazioni FTP: manca il percorso al file interfaccia e/o la sua password di accesso! AGGIORNARE MANUALMENTE la quantità di ". $d. " nel sito web";
+				$rawres['button'] = 'Avviso eCommerce';
+				$rawres['label'] = "OK fammi controllare le impostazioni";
+				$rawres['link'] = '../shop-synchronize/config_sync.php';
+				$rawres['style'] = 'danger';
+				$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+				$this->rawres=$rawres;
+				return;
+			}
 			// "articoli-gazie.php" è il nome del file interfaccia presente nella root del sito e-commerce. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
 			// il percorso per raggiungere questo file va impostato in configurazione avanzata azienda alla voce "Website root directory
 			$gForm = new magazzForm();
@@ -994,8 +1090,25 @@ class shopsynchronize {
 
 		global $gTables,$admin_aziend;
         $rawres=[];
-		$urlinterf = gaz_dbi_get_row($gTables['company_config'], 'var', 'path')['val']."ordini-gazie.php";
-		$accpass = gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val'];
+		$OSftp_pass = gaz_dbi_get_row($gTables['company_config'], "var", "pass")['val'];// vecchio sistema di password non criptata
+			$rsdec=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = 'pass'");
+			$rdec=gaz_dbi_fetch_row($rsdec);	
+			$OSaccpass = gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val'];// vecchio sistema di password non criptata
+			if ($OSaccpass && $urlinterf = gaz_dbi_get_row($gTables['company_config'], 'var', 'path')['val']."ordini-gazie.php"){// se sono state impostate
+				$rsdec=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = 'accpass'");
+				$rdec=gaz_dbi_fetch_row($rsdec);
+				$accpass=$rdec?htmlspecialchars_decode($rdec[0]):'';
+				$accpass=(strlen($accpass)>0)?$accpass:$OSaccpass; // se la password decriptata non ha dato risultati provo a mettere la password non criptata					
+			}else{
+				$rawres['title'] = "Problemi con le impostazioni FTP: manca il percorso al file interfaccia e/o la sua password di accesso! ORDINI NON SCARICATI";
+				$rawres['button'] = 'Avviso eCommerce';
+				$rawres['label'] = "OK fammi controllare le impostazioni";
+				$rawres['link'] = '../shop-synchronize/config_sync.php';
+				$rawres['style'] = 'danger';
+				$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+				$this->rawres=$rawres;
+				return;
+			}
 
 		$access=base64_encode($accpass);
 		// avvio il file di interfaccia presente nel sito web remoto
