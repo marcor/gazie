@@ -144,7 +144,7 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
             </div>
         <?php }
 
-        $ph='Invisibile, digita solo se vuoi cambiarla';
+        $ph='Invisibile, digita solo se vuoi cambiarla (minimo 8 caratteri)';
 
         if (gaz_dbi_num_rows($result) > 0) {
             while ($r = gaz_dbi_fetch_array($result)) {

@@ -41,13 +41,22 @@ $resftp_path = gaz_dbi_get_row($gTables['company_config'], "var", "ftp_path");
 $ftp_path_upload=$resftp_path['val'];
 $resuser = gaz_dbi_get_row($gTables['company_config'], "var", "user");
 $ftp_user = $resuser['val'];
-$respass = gaz_dbi_get_row($gTables['company_config'], "var", "pass");
-$ftp_pass= $respass['val'];
-$accpass = gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val'];
+
+$OSftp_pass = gaz_dbi_get_row($gTables['company_config'], "var", "pass")['val'];// vecchio sistema di password non criptata
+$OSaccpass = gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val'];// vecchio sistema di password non criptata
+$rsdec=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = 'pass'");
+$rdec=gaz_dbi_fetch_row($rsdec);
+$ftp_pass=$rdec?htmlspecialchars_decode($rdec[0]):'';
+$ftp_pass=(strlen($ftp_pass)>0)?$ftp_pass:$OSftp_pass; // se la password decriptata non ha dato risultati provo a vedere se c'è ancora una password non criptata
+$rsdec=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = 'accpass'");
+$rdec=gaz_dbi_fetch_row($rsdec);
+$accpass=$rdec?htmlspecialchars_decode($rdec[0]):'';
+$accpass=(strlen($accpass)>0)?$accpass:$OSaccpass; // se la password decriptata non ha dato risultati provo a mettere la password non criptata
+
 $respath = gaz_dbi_get_row($gTables['company_config'], "var", "path");
 $web_site_path= $respath['val'];
 $respath = gaz_dbi_get_row($gTables['company_config'], "var", "img_limit");
-$img_limit= $respath['val'];
+$img_limit= (isset($respath['val']))?$respath['val']:0;
 $test = gaz_dbi_query("SHOW COLUMNS FROM `" . $gTables['admin'] . "` LIKE 'enterprise_id'");
 $exists = (gaz_dbi_num_rows($test)) ? TRUE : FALSE;
 if ($exists) {
@@ -57,7 +66,7 @@ if ($exists) {
 }
 $admin_aziend = gaz_dbi_get_row($gTables['admin'] . ' LEFT JOIN ' . $gTables['aziend'] . ' ON ' . $gTables['admin'] . '.' . $c_e . '= ' . $gTables['aziend'] . '.codice', "user_name", $_SESSION["user_name"]);
 $path = gaz_dbi_get_row($gTables['company_config'], 'var', 'path');
-$urlinterf = $path['val']."articoli-gazie.php";// nome del file interfaccia presente nella root dell'e-commerce. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
+$urlinterf = $path['val']."articoli-gazie.php";// nome del file interfaccia presente nella root dell'e-commerce. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password ($accpass).
 // il percorso per raggiungere questo file va impostato in configurazione avanzata azienda alla voce "Website root directory
 
 use phpseclib3\Net\SSH2;

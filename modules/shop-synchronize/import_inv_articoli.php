@@ -36,12 +36,15 @@ require ("../../modules/magazz/lib.function.php");
 $admin_aziend = checkAdmin();
 $resserver = gaz_dbi_get_row($gTables['company_config'], "var", "server");
 $ftp_host= $resserver['val'];
-$resuser = gaz_dbi_get_row($gTables['company_config'], "var", "user");
-$accpass = gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val'];
-$respass = gaz_dbi_get_row($gTables['company_config'], "var", "pass");
-$ftp_pass= $respass['val'];
+
+$OSaccpass = gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val'];// vecchio sistema di password non criptata
+$rsdec=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = 'accpass'");
+$rdec=gaz_dbi_fetch_row($rsdec);
+$accpass=$rdec?htmlspecialchars_decode($rdec[0]):'';
+$accpass=(strlen($accpass)>0)?$accpass:$OSaccpass; // se la password decriptata non ha dato risultati provo a mettere la password non criptata
+
 $path = gaz_dbi_get_row($gTables['company_config'], 'var', 'path');
-$urlinterf = $path['val']."dwnlArticoli-gazie.php";//nome del file interfaccia presente nella root del sito e-commerce. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
+$urlinterf = $path['val']."dwnlArticoli-gazie.php";//nome del file interfaccia presente nella root del sito e-commerce. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. 
 // il percorso per raggiungere questo file va impostato in configurazione avanzata azienda alla voce "Website root directory"
 $test = gaz_dbi_query("SHOW COLUMNS FROM `" . $gTables['admin'] . "` LIKE 'enterprise_id'");
 $exists = (gaz_dbi_num_rows($test)) ? TRUE : FALSE;

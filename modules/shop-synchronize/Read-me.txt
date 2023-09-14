@@ -8,8 +8,8 @@
   @Author    Antonio Germani
   @Website   https://www.programmisitiweb.lacasettabio.it
   @Contact   340-5011912
-  @Copyright Copyright (C) 2018 - 2021 Antonio Germani All Rights Reserved.
-  versione 4.1
+  @Copyright Copyright (C) 2018 - 2023 Antonio Germani All Rights Reserved.
+  versione 4.2
   ------------------------------------------------------------------------
 
  Questo è un sistema che, tramite appositi file inseriti nell'e-commerce, permette di interfacciare/sincronizzare GAzie ad un sito internet scambiando i dati da un database ad un altro. Lo scambio dei dati fra i due DataBase avviene tramite file xml salvati via FTP o SFTP.
@@ -42,6 +42,10 @@ Inoltre la sincronizzazione è bidirezionale:
 Sono state sincronizzate le categorie
 Si possono esportare gli articoli da GAzie inserendoli in un nuovo e-commerce vuoto
 Risolti alcuni problemi con i caratteri speciali nelle descrizioni
+
+*Dalla Versione 4.2*
+Adeguato il sistema di criptazione delle password a quello presente in GAzie.
+Aggiunta la possibilità di sincronizzare i feedback del modulo Vacation-rental.
 
 * FILE DI INTERFACCIA DA INSERIRE NEL SITO E-COMMERCE*
  I file di interfaccia da inserire nel sito devono essere creati in base alle esigenze e alle impostazioni dell'applicazione installata nell'e-commerce.
