@@ -1842,7 +1842,7 @@ class GAzieForm {
             if (empty($key2)) {
                 $acc .= substr($r[$key], 0, 43) . "</option>\n";
             } else {
-                $acc .= substr($r[$key], 0, 28) . $bridge . substr($r[$key2], 0, 35) . "</option>\n";
+                $acc .= substr($r[$key], 0, 28) . $bridge . substr($r[$key2], 0, 60) . "</option>\n";
             }
         }
         if ($addOption) {
