@@ -67,15 +67,12 @@ $enable_sync = explode(",",$getenable_sync);
       }
       $value=filter_var($v, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
       $key=filter_var($k, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-      echo "<br>KEY:",$key;
       if ( (strpos($key,"pass")===false && strpos($key,"psw")===false) || $key=="keypass" ){
         gaz_dbi_put_row($gTables['company_config'], 'var', $key, 'val', $value);
       }else{
-            echo "<br>KEY secret:",$key," -value:",$value;
 
         $tripsw=trim($value);
         if ( strlen($tripsw)>=8 ) {
-                    echo "<br>KEY encript secret:",$key;
 
         gaz_dbi_query("UPDATE ".$gTables['company_config']." SET val = TO_BASE64(AES_ENCRYPT('".addslashes($value)."','".$_SESSION['aes_key']."')) WHERE var = '".$key."'");
         }
