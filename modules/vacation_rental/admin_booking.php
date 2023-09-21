@@ -529,6 +529,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
               }
 
               $rental_events = gaz_dbi_get_row($gTables['rental_events'], "id_tesbro", intval($form['id_tes']), " AND type = 'ALLOGGIO'"); // prima di cancellare prendo il vecchio rental_events custom field
+              $access = (strlen($rental_events['access_code']>0))?$rental_events['access_code']:bin2hex(openssl_random_pseudo_bytes(5));// se non c'è un codice accesso lo creo e inserisco;
               gaz_dbi_del_row($gTables['rental_events'], "id_tesbro", $form['id_tes']);
               // dovrò aggiornare tesbro negli eventuali pagamenti effettuati su rental payment ma posso farlo solo dopo aver creato il nuovo tesbro
               $form['status'] = 'UPDATED';
@@ -536,6 +537,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             } else{
               $form['status'] = 'GENERATO';
               $data=[];//inizializzo l'array per il nuovo custom field
+              $access = bin2hex(openssl_random_pseudo_bytes(5));// creo una pseudo-password casuale di 10 caratteri
             }
             // INSERIMENTO DATA BASE valido per INSERT e per UPDATE
 
@@ -616,6 +618,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['checked_out_date']=(isset($rental_events['checked_out_date']))?$rental_events['checked_out_date']:NULL;
                 $form['voucher_id']=(isset($rental_events['voucher_id']))?$rental_events['voucher_id']:NULL;
                 $form['type']="ALLOGGIO";
+                $form['access_code'] = $access;
                 $form['title']= "Prenotazione ".$accomodation_type." ".$form['rows'][$i]['codart']." - ".$form['search']['clfoco'];
                 $form['house_code']=$form['rows'][$i]['codart'];
                 $columns = array('id', 'title', 'start', 'end', 'house_code', 'id_tesbro', 'id_rigbro', 'voucher_id', 'checked_in_date', 'checked_out_date', 'adult', 'child', 'type', 'access_code');
@@ -628,6 +631,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                   $form['id_rigbro'] = 0;
                   $realstart=$form['start'];
                   $realend=$form['end'];
+                  $form['access_code'] = "";
                   if (intval($vacation_blockdays)>0){
                     $form['start']=$date1 = date("Y-m-d", strtotime($realstart.'- '.(intval($vacation_blockdays)+intval($data['vacation_rental']['pause'])).' days'));
                     $form['end']=$date1 = date("Y-m-d", strtotime($realstart));
@@ -648,6 +652,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                   $table = 'rental_events';
                   $form['id_tesbro']=  $form['rows'][$i]['id_tes'];
                   $form['type']="EXTRA";
+                  $form['access_code'] = "";
                   $form['title']= "Prenotazione n.". $form['numdoc'] ." EXTRA ".$form['rows'][$i]['codart'];
                   $form['house_code']=$form['rows'][$i]['codart'];
                   $columns = array('id', 'title', 'start', 'end', 'house_code', 'id_tesbro', 'id_rigbro', 'adult', 'child', 'type');

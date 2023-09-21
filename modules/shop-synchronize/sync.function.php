@@ -188,7 +188,7 @@ class shopsynchronize {
 					  $subnode = $xml->addChild("$key");
 					  array_to_xml($value, $subnode);
 				  }else{
-					  $subnode = $xml->addChild("item$key");
+					  $subnode = $xml->addChild("item");
 					  array_to_xml($value, $subnode);
 				  }
 				}else {
@@ -199,12 +199,13 @@ class shopsynchronize {
 		
         //creating object of SimpleXMLElement
         $xml = new SimpleXMLElement("<?xml version=\"1.0\" encoding=\"UTF-8\"?><GAzieDocuments AppVersion=\"1\" Creator=\"Antonio Germani 2023\" CreatorUrl=\"https://www.programmisitiweb.lacasettabio.it\"></GAzieDocuments>");
+		$parent = $xml->addChild("feedback");
         //function call to convert array to xml
-        array_to_xml($feedback,$xml);
+        array_to_xml($feedback,$parent);
         // aggiungo il todo
-        $xml->addChild("toDo",htmlspecialchars("$toDo"));
+        $parent->addChild("toDo",htmlspecialchars("$toDo"));
         // aggiungo il ref
-        $xml->addChild("ref",htmlspecialchars("$ref_ecommerce_id_product"));
+        $parent->addChild("ref",htmlspecialchars("$ref_ecommerce_id_product"));
         //saving generated xml file
         $xmlFile='feedback.xml';
         $xml_file = $xml->asXML('feedback.xml');
@@ -233,7 +234,7 @@ class shopsynchronize {
             // upload file xml
             if (@ftp_put($conn_id, $ftp_path_upload."feedback.xml", $xmlFile, FTP_ASCII)){
             } else{
-              $rawres['title'] = "Upload del file xml non riuscito. AGGIORNARE MANUALMENTE il feedback di ". $ref. " nel sito web";
+              $rawres['title'] = "Upload del file xml non riuscito. AGGIORNARE MANUALMENTE il feedback di ". $ref. " nel sito web. <br> Ecco come è impostato il percorso per il file feedback.xml = ".$ftp_path_upload;
               $rawres['button'] = 'Avviso eCommerce';
               $rawres['label'] = "OK, controllerò l'errore di scrittura ftp";
               $rawres['link'] = '';
