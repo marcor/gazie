@@ -78,7 +78,7 @@ $contact_link=(isset($contact_link))?$contact_link:'';
 <script src="../../js/custom/tinymce.js"></script>
 <script>
 // setto comunque dei check intervallati dei minuti inseriti in configurazione avanzata azienda 15*60*1000ms perché non è detto che si facciano i refresh, ad es. se il browser rimane fermo sulla stessa pagina per un lungo periodo > $period
-setInterval(menu_check_from_modules,<?php echo intval($period*60000);?>);</script>
+setInterval(menu_check_from_modules,<?php echo intval(intval($period)*60000);?>);</script>
 </div><!-- chiude <div class="container-fluid gaz-body"> presente su header.php -->
 </body>
 </html>
