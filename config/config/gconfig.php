@@ -44,13 +44,14 @@ DELLA CARTELLA "gazie" COMPRESO IL PRESENTE "gconfig.php"
  if (isset($_SERVER['SCRIPT_FILENAME']) && (str_replace('\\', '/', __FILE__) == $_SERVER['SCRIPT_FILENAME'])) {
     exit('Accesso diretto non consentito');
 }
-//versione software
-define('GAZIE_VERSION', '9.05');
 
 $fileConfPers=dirname(__FILE__) . '/gconfig.myconf.php';
 if (file_exists($fileConfPers)) {
 	include_once($fileConfPers);
 }
+
+//versione software
+define( 'GAZIE_VERSION',  (defined('GAZIE_VERSION')) ? GAZIE_VERSION: '9.05');
 
 // abilita il debug delle variabili nel footer della pagina (impostare true/false)
 $debug_active = (defined('debug_active')) ? debug_active : FALSE;

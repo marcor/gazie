@@ -163,4 +163,6 @@ define('modifica_fatture_ddt', FALSE);
 
 // personalizzazione link al fornitore del servizio
 define('contact_link','devincentiis.it', FALSE);
+// versione personalizzata
+//define('GAZIE_VERSION','MYVER');
 ?>
