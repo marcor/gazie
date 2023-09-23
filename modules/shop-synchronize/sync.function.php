@@ -85,7 +85,7 @@ class shopsynchronize {
 
   function UpsertFeedback($feedback,$toDo,$ref="") {// aggiorno i dati feedback
 		// $feedback è un array e mi permette di inviare al sito web qualunque cosa
-		
+
     @session_start();
 			global $gTables,$admin_aziend;
 			$rawres=[];
@@ -103,7 +103,7 @@ class shopsynchronize {
 				$rsdec=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = 'accpass'");
 				$rdec=gaz_dbi_fetch_row($rsdec);
 				$accpass=$rdec?htmlspecialchars_decode($rdec[0]):'';
-				$accpass=(strlen($accpass)>0)?$accpass:$OSaccpass; // se la password decriptata non ha dato risultati provo a mettere la password non criptata					
+				$accpass=(strlen($accpass)>0)?$accpass:$OSaccpass; // se la password decriptata non ha dato risultati provo a mettere la password non criptata
 			}else{
 				$rawres['title'] = "Problemi con le impostazioni FTP: manca il percorso al file interfaccia e/o la sua password di accesso! AGGIORNARE MANUALMENTE il feedback di ". $ref. " nel sito web";
 				$rawres['button'] = 'Avviso eCommerce';
@@ -163,7 +163,7 @@ class shopsynchronize {
 					$this->rawres=$rawres;
 					return;
 				  }
-			    
+
 				}else{
 				  $rawres['title'] = "Problemi con le impostazioni FTP: Non riesco a connettermi con l'host! AGGIORNARE MANUALMENTE il feedback di ". $ref. " nel sito web";
 				  $rawres['button'] = 'Avviso eCommerce';
@@ -196,7 +196,7 @@ class shopsynchronize {
 				}
 			  }
 			}
-		
+
         //creating object of SimpleXMLElement
         $xml = new SimpleXMLElement("<?xml version=\"1.0\" encoding=\"UTF-8\"?><GAzieDocuments AppVersion=\"1\" Creator=\"Antonio Germani 2023\" CreatorUrl=\"https://www.programmisitiweb.lacasettabio.it\"></GAzieDocuments>");
 		$parent = $xml->addChild("feedback");
@@ -303,7 +303,7 @@ class shopsynchronize {
 				$rsdec=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = 'accpass'");
 				$rdec=gaz_dbi_fetch_row($rsdec);
 				$accpass=$rdec?htmlspecialchars_decode($rdec[0]):'';
-				$accpass=(strlen($accpass)>0)?$accpass:$OSaccpass; // se la password decriptata non ha dato risultati provo a mettere la password non criptata					
+				$accpass=(strlen($accpass)>0)?$accpass:$OSaccpass; // se la password decriptata non ha dato risultati provo a mettere la password non criptata
 			}else{
 				$rawres['title'] = "Problemi con le impostazioni FTP: manca il percorso al file interfaccia e/o la sua password di accesso! AGGIORNARE MANUALMENTE la categoria ". $d. " nel sito web ".$toDo;
 				$rawres['button'] = 'Avviso eCommerce';
@@ -462,7 +462,7 @@ class shopsynchronize {
 				$rsdec=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = 'accpass'");
 				$rdec=gaz_dbi_fetch_row($rsdec);
 				$accpass=$rdec?htmlspecialchars_decode($rdec[0]):'';
-				$accpass=(strlen($accpass)>0)?$accpass:$OSaccpass; // se la password decriptata non ha dato risultati provo a mettere la password non criptata					
+				$accpass=(strlen($accpass)>0)?$accpass:$OSaccpass; // se la password decriptata non ha dato risultati provo a mettere la password non criptata
 			}else{
 				$rawres['title'] = "Problemi con le impostazioni FTP: manca il percorso al file interfaccia e/o la sua password di accesso! AGGIORNARE MANUALMENTE il genitore ". $p. " nel sito web ".$toDo;
 				$rawres['button'] = 'Avviso eCommerce';
@@ -687,7 +687,7 @@ class shopsynchronize {
 				$rsdec=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = 'accpass'");
 				$rdec=gaz_dbi_fetch_row($rsdec);
 				$accpass=$rdec?htmlspecialchars_decode($rdec[0]):'';
-				$accpass=(strlen($accpass)>0)?$accpass:$OSaccpass; // se la password decriptata non ha dato risultati provo a mettere la password non criptata		
+				$accpass=(strlen($accpass)>0)?$accpass:$OSaccpass; // se la password decriptata non ha dato risultati provo a mettere la password non criptata
 			}else{
 				$rawres['title'] = "Problemi con le impostazioni FTP: manca il percorso al file interfaccia e/o la sua password di accesso! AGGIORNARE MANUALMENTE il prodotto ".$d." nel sito web ".$toDo;
 				$rawres['button'] = 'Avviso eCommerce';
@@ -867,7 +867,7 @@ class shopsynchronize {
 				ftp_quit($conn_id);
 			}
 			$access=base64_encode($accpass);
-			
+
 			// avvio il file di interfaccia presente nel sito web remoto
 			$file = fopen ($urlinterf.'?access='.$access, "r");
 			if ( $file){ // controllo se il file mi ha dato accesso regolare
@@ -914,7 +914,7 @@ class shopsynchronize {
 				$rsdec=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = 'accpass'");
 				$rdec=gaz_dbi_fetch_row($rsdec);
 				$accpass=$rdec?htmlspecialchars_decode($rdec[0]):'';
-				$accpass=(strlen($accpass)>0)?$accpass:$OSaccpass; // se la password decriptata non ha dato risultati provo a mettere la password non criptata					
+				$accpass=(strlen($accpass)>0)?$accpass:$OSaccpass; // se la password decriptata non ha dato risultati provo a mettere la password non criptata
 			}else{
 				$rawres['title'] = "Problemi con le impostazioni FTP: manca il percorso al file interfaccia e/o la sua password di accesso! AGGIORNARE MANUALMENTE la quantità di ". $d. " nel sito web";
 				$rawres['button'] = 'Avviso eCommerce';
@@ -1093,13 +1093,13 @@ class shopsynchronize {
         $rawres=[];
 		$OSftp_pass = gaz_dbi_get_row($gTables['company_config'], "var", "pass")['val'];// vecchio sistema di password non criptata
 			$rsdec=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = 'pass'");
-			$rdec=gaz_dbi_fetch_row($rsdec);	
+			$rdec=gaz_dbi_fetch_row($rsdec);
 			$OSaccpass = gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val'];// vecchio sistema di password non criptata
 			if ($OSaccpass && $urlinterf = gaz_dbi_get_row($gTables['company_config'], 'var', 'path')['val']."ordini-gazie.php"){// se sono state impostate
 				$rsdec=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = 'accpass'");
 				$rdec=gaz_dbi_fetch_row($rsdec);
 				$accpass=$rdec?htmlspecialchars_decode($rdec[0]):'';
-				$accpass=(strlen($accpass)>0)?$accpass:$OSaccpass; // se la password decriptata non ha dato risultati provo a mettere la password non criptata					
+				$accpass=(strlen($accpass)>0)?$accpass:$OSaccpass; // se la password decriptata non ha dato risultati provo a mettere la password non criptata
 			}else{
 				$rawres['title'] = "Problemi con le impostazioni FTP: manca il percorso al file interfaccia e/o la sua password di accesso! ORDINI NON SCARICATI";
 				$rawres['button'] = 'Avviso eCommerce';

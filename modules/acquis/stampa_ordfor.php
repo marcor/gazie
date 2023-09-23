@@ -61,7 +61,7 @@ if (isset($_GET['dest'])){
 	$tesbro['email']=filter_var($_GET['dest'], FILTER_VALIDATE_EMAIL);
   	$r=gaz_dbi_put_row($gTables['tesbro'], 'id_tes', $testat, 'email',$tesbro['email']);
   }
-  createDocument($tesbro, 'OrdineFornitore',$gTables,'rigbro','E', $lang);
+  createDocument($tesbro, 'OrdineFornitore',$gTables,'rigbro',$tesbro['email'], $lang);
 } elseif (isset($_GET['production'])){
   createDocument($tesbro, 'OrdineAcquistoProduzioni',$gTables,'rigbro', false, $lang);
 } else {
