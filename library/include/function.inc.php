@@ -1481,7 +1481,7 @@ class GAzieMail {
       $az_email = gaz_dbi_get_row($gTables['admin_config'], 'var_name', 'az_email', "AND adminid = '". $user['user_name'] ."' AND company_id = ".$admin_data['codice']);
       $company_text = gaz_dbi_get_row($gTables['company_config'], 'var', 'company_email_text');
       $admin_data['web_url'] = trim($admin_data['web_url']);
-      if (!empty($admin_data['other_email']) && strlen($admin_data['other_email'])>=10){
+      if (!isset($mailto) && !empty($admin_data['other_email']) && strlen($admin_data['other_email'])>=10){
         $mailto = $admin_data['other_email']; //recipient
       }
       $subject = $admin_data['ragso1'] . " " . $admin_data['ragso2'] . " - Trasmissione " . str_lreplace('.pdf', '', (isset($admin_data['doc_name']))?$admin_data['doc_name']:''); //subject
