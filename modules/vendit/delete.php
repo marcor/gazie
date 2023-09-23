@@ -282,7 +282,7 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 		break;
     case "email":
     $i=filter_var($_POST['ref'], FILTER_VALIDATE_EMAIL);
-    gaz_dbi_put_query($gTables['tesdoc'], " email LIKE '%".$i."%'",'email','');
+    gaz_dbi_put_query($gTables['tesdoc'], " email LIKE '%".$i."%' AND id_tes =".intval($_POST['tes_id']),'email','');
     break;
 	}
 }

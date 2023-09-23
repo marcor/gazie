@@ -80,9 +80,9 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
       if ($_GET['dest'] == 'E'){
         createDocument($testata, $template, $gTables, 'rigdoc', 'E', $lang);
       }else{
-        createDocument($testata, $template, $gTables, 'rigdoc', $_GET['dest'], $lang);
-        $email=filter_var($_GET['dest'], FILTER_VALIDATE_EMAIL);
-        $r=gaz_dbi_put_row($gTables['tesdoc'], 'id_tes', $testata['id_tes'], 'email',$email);
+		$email=filter_var($_GET['dest'], FILTER_VALIDATE_EMAIL);
+		$r=gaz_dbi_put_row($gTables['tesdoc'], 'id_tes', $testata['id_tes'], 'email',$email);
+        createDocument($testata, $template, $gTables, 'rigdoc', $email, $lang);
       }
       require("../../library/include/footer.php");
     } else {

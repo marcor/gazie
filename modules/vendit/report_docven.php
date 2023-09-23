@@ -242,7 +242,6 @@ function confirMail(link,cod_partner,id_tes,genorder=false) {
   targetUrl = $("#doc_"+tes_id).attr("url");
 
 	var namedoc=$("#doc_"+tes_id).attr("namedoc");
-
 	$("#confirm_email").attr('title', 'Invia '+namedoc);
 
 	$.get("search_email_address.php",
@@ -268,7 +267,7 @@ function confirMail(link,cod_partner,id_tes,genorder=false) {
               $("#deletemail_" + j).click(function () { // se clicco sulla X elimino da tesdoc l'email che non si vuole più utilizzare
                 // richiamo il delete.php per eliminare la email dalle tesdoc
                 $.ajax({
-                  data: {'type':'email',ref:value.email},
+                  data: {'type':'email',ref:value.email,'tes_id':tes_id},
                   type: 'POST',
                   url: '../vendit/delete.php',
                   success: function(output){
@@ -306,15 +305,16 @@ function confirMail(link,cod_partner,id_tes,genorder=false) {
 					alert('Mail formalmente errata');
 				} else {
 					$("#mailbutt div").remove();
-          var dest=$("#mailaddress").val();
+					var dest=$("#mailaddress").val();
+					$("#mailaddress").val('');
 					window.location.href = targetUrl+"&dest="+dest;
 				}
 			}
 		},
 		close: function(){
-				$("#mailbutt div").remove();
-        $("#mailaddress").val('');
-				$(this).dialog('destroy');
+			$("#mailbutt div").remove();
+			$("#mailaddress").val('');
+			$(this).dialog('destroy');
 		}
 	});
 	});

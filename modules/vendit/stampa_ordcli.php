@@ -30,10 +30,22 @@ $tesbro = gaz_dbi_get_row($gTables['tesbro'],"id_tes", intval($_GET['id_tes']));
 
 $lang = false;
 $id_anagra = gaz_dbi_get_row($gTables['clfoco'], 'codice', $tesbro['clfoco']);
-$stato = gaz_dbi_get_row($gTables['anagra'], 'id', $id_anagra['id_anagra']);
-if ($stato AND $stato['country'] !== "IT"){
-    $lang = 'english';
-	}
+$id_lang = gaz_dbi_get_row($gTables['anagra'], 'id', $id_anagra['id_anagra'])['id_language'];
+$lan_sef = gaz_dbi_get_row($gTables['languages'], 'lang_id', $id_lang)['sef'];
+switch($lan_sef){
+	case 'it':
+		$lang='';
+		break;
+	case 'en':
+		$lang='english';
+		break;
+	case 'es':
+		$lang='espanol';
+		break;
+	default:
+		$lang='';
+		break;
+}
 
 if ($tesbro['tipdoc']=='VOR' || $tesbro['tipdoc']=='VOG') {
 	$type=false;
