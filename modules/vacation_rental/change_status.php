@@ -129,10 +129,10 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
       $lang = strtolower($langarr[0]);
       if (file_exists("lang.".$lang.".php")){// se esiste la lingua richiesta
         include "lang.".$lang.".php";// carico il file traduzione lingua
-		$lan=$language['sef'];
+        $lan=$language['sef'];
       }else{// altrimenti carico di default la lingua inglese
         include "lang.english.php";
-		$lan="en";
+        $lan="en";
       }
       $script_transl=$strScript['booking_form.php'];
       $res=gaz_dbi_get_row($gTables['company_config'], "var", 'vacation_url_user');
