@@ -98,7 +98,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     ?>
     <td align="center">
 		<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella l'imballo" ref="<?php echo $a_row['codice'];?>" ragso="<?php echo $a_row['descri'];?>">
-			<i class="glyphicon glyphicon-remove"></i>
+			<i class="glyphicon glyphicon-trash"></i>
 		</a>
     </td></tr>
 		<?php

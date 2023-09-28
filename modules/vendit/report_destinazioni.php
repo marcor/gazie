@@ -211,7 +211,7 @@ $(function() {
            echo "<td class=\"FacetDataTD\" align=\"center\">";
 		   ?>
 		   <a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $a_row['codice'];?>" anagrafe="<?php echo $a_row['anagrafe']; ?>">
-				<i class="glyphicon glyphicon-remove"></i>
+				<i class="glyphicon glyphicon-trash"></i>
 			</a>
 			<?php
            echo "</td></tr>\n";

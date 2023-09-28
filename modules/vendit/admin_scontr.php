@@ -1351,7 +1351,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                 array('head' => $script_transl["codric"], 'class' => 'text-center',
                     'value' => $v['codric']),
                 array('head' => $script_transl["delete"], 'class' => 'text-center',
-                    'value' => '<button type="submit" class="btn btn-default btn-xs btn-elimina" name="del[' . $k . ']" title="' . $script_transl['delete'] . $script_transl['thisrow'] . '"><i class="glyphicon glyphicon-remove"></i></button>')
+                    'value' => '<button type="submit" class="btn btn-default btn-xs btn-elimina" name="del[' . $k . ']" title="' . $script_transl['delete'] . $script_transl['thisrow'] . '"><i class="glyphicon glyphicon-trash"></i></button>')
             );
 
             switch ($v['tiprig']) {
@@ -1521,7 +1521,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
 								?>
 										<input  type="text" value="<?php echo $form['in_barcode']; ?>" name="in_barcode" onchange="this.form.submit()" />
 										<button type="submit"  name="no_barcode" title="Togli con pistola Barcode" class="btn btn-success btn-xs col-sm-2">
-										<span class="glyphicon glyphicon-remove"> Barcode</span>
+										<span class="glyphicon glyphicon-trash"> Barcode</span>
 										</button>
 								<?php
 								} elseif ($form['in_barcode']=="NOT FOUND") {
@@ -1529,7 +1529,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
 									?>
 										<input style="border: 3px solid red;"  type="text" value="<?php echo $form['in_barcode']; ?>" name="in_barcode" onchange="this.form.submit()" />
 										<button type="submit"  name="no_barcode" title="Togli con pistola Barcode" class="btn btn-success btn-xs col-sm-2">
-										<span class="glyphicon glyphicon-remove"> Barcode</span>
+										<span class="glyphicon glyphicon-trash"> Barcode</span>
 									<?php
 								}
 							}

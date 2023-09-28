@@ -263,7 +263,7 @@ function confirMail(link,cod_partner,id_tes,genorder=false) {
             });
             c=j+1;
             if (c < size){// non faccio rimuovere l'email del fornitore (che è sempre l'ultima) anche perché non la toglierebbe
-              $("#rowmail_"+j).append(" <button id='deletemail_" + j+"' class='btn-elimina' title='rimuovi indirizzo'> <i class='glyphicon glyphicon-remove'></i> </button>");
+              $("#rowmail_"+j).append(" <button id='deletemail_" + j+"' class='btn-elimina' title='rimuovi indirizzo'> <i class='glyphicon glyphicon-trash'></i> </button>");
               $("#deletemail_" + j).click(function () { // se clicco sulla X elimino da tesdoc l'email che non si vuole più utilizzare
                 // richiamo il delete.php per eliminare la email dalle tesdoc
                 $.ajax({
@@ -404,7 +404,7 @@ function printPdf(urlPrintDoc){
 	<div class="framePdf panel panel-success" style="display: none; position: fixed; left: 5%; top: 10px">
 		<div class="col-lg-12">
 			<div class="col-xs-11"><h4><?php echo $script_transl['print'];; ?></h4></div>
-			<div class="col-xs-1"><h4><button type="button" id="closePdf"><i class="glyphicon glyphicon-remove"></i></button></h4></div>
+			<div class="col-xs-1"><h4><button type="button" id="closePdf"><i class="glyphicon glyphicon-trash"></i></button></h4></div>
 		</div>
 		<iframe id="framePdf"  style="height: 100%; width: 100%" src=""></iframe>
 	</div>
@@ -961,18 +961,18 @@ function printPdf(urlPrintDoc){
                   if ($r["id_con"] > 0) {
                   ?>
                     <a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento e la registrazione contabile relativa" ref="<?php echo $r['protoc'];?>" ragso1="<?php echo $r['ragso1']; ?>" seziva="<?php echo $r['seziva']; ?>" anno="<?php echo substr($r["datfat"], 0, 4); ?>">
-                      <i class="glyphicon glyphicon-remove"></i>
+                      <i class="glyphicon glyphicon-trash"></i>
                     </a>
                   <?php
                   } else {
                   ?>
                     <a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento" ref="<?php echo $r['protoc'];?>" ragso1="<?php echo $r['ragso1']; ?>" seziva="<?php echo $r['seziva']; ?>" anno="<?php echo substr($r["datfat"], 0, 4); ?>">
-                      <i class="glyphicon glyphicon-remove"></i>
+                      <i class="glyphicon glyphicon-trash"></i>
                     </a>
                   <?php
                   }
                 } else {
-                  echo "<button title=\"Per garantire la sequenza corretta della numerazione, non &egrave; possibile cancellare un documento diverso dall'ultimo\" class=\"btn btn-xs btn-default btn-elimina disabled\"><i class=\"glyphicon glyphicon-remove\"></i></button>";
+                  echo "<button title=\"Per garantire la sequenza corretta della numerazione, non &egrave; possibile cancellare un documento diverso dall'ultimo\" class=\"btn btn-xs btn-default btn-elimina disabled\"><i class=\"glyphicon glyphicon-trash\"></i></button>";
                 }
                 echo "</td>";
                 echo "</tr>\n";

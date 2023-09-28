@@ -76,7 +76,7 @@ $gForm = new schoolForm();
                         echo "<td>" . $r["sezione"] . " &nbsp;</td>";
                         echo "<td>" . $r["anno_scolastico"] . "/" . substr($r["anno_scolastico"] + 1, 2, 2) . " </td>";
                         echo "<td>" . $te["user_firstname"] . " " . $te["user_lastname"] . " &nbsp;</td>";
-                        echo '<td><a class="btn btn-xs btn-default btn-elimina" href="delete_classroom.php?id=' . $r["id"] . '"><i class="glyphicon glyphicon-remove"></i></a></td>';
+                        echo '<td><a class="btn btn-xs btn-default btn-elimina" href="delete_classroom.php?id=' . $r["id"] . '"><i class="glyphicon glyphicon-trash"></i></a></td>';
                         echo "</tr>";
                     }
                     ?>

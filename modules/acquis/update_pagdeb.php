@@ -301,7 +301,7 @@ if ($_POST['rigbon'] > 0)
 		/** ENRICO FEDELE */
 		/* glyph icon */
 		echo '  <td align="right">
-				  <button type="submit" class="btn btn-default btn-sm" name="del['.$key.']" title="Elimina rigo!"><i class="glyphicon glyphicon-remove"></i></button>
+				  <button type="submit" class="btn btn-default btn-sm" name="del['.$key.']" title="Elimina rigo!"><i class="glyphicon glyphicon-trash"></i></button>
 				</td>
 			  </tr>';
 		/** ENRICO FEDELE */

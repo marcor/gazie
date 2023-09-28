@@ -183,7 +183,7 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
             </td>
             <td class="text-center">
                 <a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $row['codice'];?>" artico="<?php echo $row['descri']; ?>">
-					<i class="glyphicon glyphicon-remove"></i>
+					<i class="glyphicon glyphicon-trash"></i>
 				</a>
             </td>
         </tr>

@@ -191,7 +191,7 @@ if ($handle = opendir(DATA_DIR.'files/'.$admin_aziend['codice'].'/sian/')){
 					<?php if (substr($filetoread,-12) == "OPERREGI.txt"){ ?>
 					<td align="center">
 					<button type="submit" onclick = "this.form.submit();" title="crea file di cancellazione" name="del" value="delsian" class="btn btn-xs btn-default" >
-					<span class="glyphicon glyphicon-remove"></span>
+					<span class="glyphicon glyphicon-trash"></span>
 					</button>
           <input type="hidden" name="first" value="<?php echo $file;?>">
 					</td>

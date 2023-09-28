@@ -120,7 +120,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     echo "<td>".$r["serial_port"]."</td>\n";
     echo "<td>".$r["path_data"]."</td>\n";
 	echo '<td align="center"><a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il Registratore Telematico" ref="'.$r['id_cash'].'" nome="'.$r['id_cash'].'" ecrdescri="'.$r['descri'].'">
-		<i class="glyphicon glyphicon-remove"></i></a></td>';				
+		<i class="glyphicon glyphicon-trash"></i></a></td>';				
     echo "</tr>\n";
 }
 ?>

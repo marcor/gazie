@@ -73,7 +73,7 @@ function openframe(url,codice){
     	<div class="framePdf panel panel-success" style="display: none; position: fixed; left: 5%; top: 5px">
           <div class="col-lg-12">
             <div class="col-xs-11" id="titolo" ></div>
-            <div class="col-xs-1"><span><button type="button" id="closePdf"><i class="glyphicon glyphicon-remove"></i></button></span></div>
+            <div class="col-xs-1"><span><button type="button" id="closePdf"><i class="glyphicon glyphicon-trash"></i></button></span></div>
           </div>
           <iframe id="framePdf"  style="height: 100%; width: 100%" src=""></iframe>
       </div>

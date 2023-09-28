@@ -313,7 +313,7 @@ if (count($msg['err']) > 0) { // ho un errore
                 <div class="col-sm-6 col-md-1 col-lg-1">
                     <div class="form-group">
 					<?php
-					echo '<button type="submit" class="btn-default btn-sm btn-elimina" name="del[' . $k . ']" title="' . $script_transl['delrow'] . '!"><i class="glyphicon glyphicon-remove"></i></button>';
+					echo '<button type="submit" class="btn-default btn-sm btn-elimina" name="del[' . $k . ']" title="' . $script_transl['delrow'] . '!"><i class="glyphicon glyphicon-trash"></i></button>';
 					?>
                     </div>
                 </div>

@@ -267,13 +267,13 @@ function clipandgo(pi,url) {
             echo "<td align=\"center\">";
 			if ($check_mov > 0 or $check_doc > 0 or $check_bro > 0) {
 				?>
-				<button title="Impossibile cancellare perch� ci sono dei movimenti associati" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-remove"></i></button>
+				<button title="Impossibile cancellare perch� ci sono dei movimenti associati" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-trash"></i></button>
 				<?php
 
 			} else {
 				?>
 				<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il cliente" ref="<?php echo $a_row['codice'];?>" ragso="<?php echo $a_row['ragso2']," ",$a_row['ragso1'];?>">
-					<i class="glyphicon glyphicon-remove"></i>
+					<i class="glyphicon glyphicon-trash"></i>
 				</a>
 				<?php
 			}

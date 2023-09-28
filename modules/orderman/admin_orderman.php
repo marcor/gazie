@@ -1488,7 +1488,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
                     }
 
                     ?>
-                    Passa a <input type="submit" class="btn glyphicon glyphicon-remove-circle" name="manLot<?php echo $nc; ?>" id="preventDuplicate" onClick="chkSubmit();" value="manuale">&#128075;
+                    Passa a <input type="submit" class="btn glyphicon glyphicon-trash-circle" name="manLot<?php echo $nc; ?>" id="preventDuplicate" onClick="chkSubmit();" value="manuale">&#128075;
                     <?php
                   } elseif ($form['amLot'. $nc] == "manuale" && $ko=""){	// se selezione manuale
                     for ($l = 0;$l < $form['q_lot_comp'][$nc];++$l) {

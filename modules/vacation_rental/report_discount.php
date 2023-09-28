@@ -277,7 +277,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     </td>
     <td class="text-center"><?php echo $r['STATUS'];?>
     </td>
-    <td class="text-center"><a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $r['id']; ?>" artico="<?php echo $r['title']; ?>"> <i class="glyphicon glyphicon-remove"></i></a>
+    <td class="text-center"><a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $r['id']; ?>" artico="<?php echo $r['title']; ?>"> <i class="glyphicon glyphicon-trash"></i></a>
 		</td>
   </tr>
   <?php

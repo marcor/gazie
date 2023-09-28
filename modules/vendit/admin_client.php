@@ -713,7 +713,7 @@ $gForm->selectFromDB('customer_group', 'id_customer_group', 'id', $form['id_cust
                             }
                             ?>
                             >
-								<i class="glyphicon glyphicon-remove"></i>
+								<i class="glyphicon glyphicon-trash"></i>
 							</a>
 
 <?php } ?>

@@ -2285,7 +2285,7 @@ echo '<form method="POST" name="docven">';
 <div class="framePdf panel panel-success" style="display: none; position: absolute; left: 5%; top: 100px">
 	<div class="col-lg-12">
 		<div class="col-xs-11"><h4><?php echo $script_transl['print'];; ?></h4></div>
-		<div class="col-xs-1"><h4><button type="button" id="closePdf"><i class="glyphicon glyphicon-remove"></i></button></h4></div>
+		<div class="col-xs-1"><h4><button type="button" id="closePdf"><i class="glyphicon glyphicon-trash"></i></button></h4></div>
 	</div>
 	<iframe id="framePdf"  style="height: 100%; width: 100%" src=""></iframe>
 </div>
@@ -3230,7 +3230,7 @@ foreach ($form['rows'] as $k => $v) {
     }
     if ( $v['tiprig']!="210" || $show_artico_composit['val']=="1" && $tipo_composti['val']=="KIT" ) {
         echo '<td align="right">
-		     <button type="submit" class="btn btn-default btn-xs" name="del[' . $k . ']" title="' . $script_transl['delete'] . $script_transl['thisrow'] . '"><i class="glyphicon glyphicon-remove"></i></button>
+		     <button type="submit" class="btn btn-default btn-xs" name="del[' . $k . ']" title="' . $script_transl['delete'] . $script_transl['thisrow'] . '"><i class="glyphicon glyphicon-trash"></i></button>
 		   </td>';
     }
     echo '</tr>';
@@ -3302,7 +3302,7 @@ if ($toDo == "insert"){
 				<label for="no_barcode" ><?php echo "Barcode"; ?></label>
 				<input  type="text" value="<?php echo $form['in_barcode']; ?>" name="in_barcode" class="col-xs-4" onchange="this.form.submit()" />
 				<button type="submit"  name="no_barcode" title="Togli con pistola Barcode">
-                <span class="glyphicon glyphicon-remove"></span>
+                <span class="glyphicon glyphicon-trash"></span>
 				</button>
 		<?php
 		} elseif ($form['in_barcode']=="NOT FOUND") {
@@ -3311,7 +3311,7 @@ if ($toDo == "insert"){
 				<label for="no_barcode" ><?php echo "Barcode"; ?></label>
 				<input style="border: 1px solid red;"  type="text" value="<?php echo $form['in_barcode']; ?>" class="col-xs-4" name="in_barcode" onchange="this.form.submit()" />
 				<button type="submit"  name="no_barcode" title="Togli con pistola Barcode">
-				<span class="glyphicon glyphicon-remove"></span>
+				<span class="glyphicon glyphicon-trash"></span>
 			<?php
 		}
 	}

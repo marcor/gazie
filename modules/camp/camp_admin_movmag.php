@@ -1622,7 +1622,7 @@ if (intval($form['nome_colt']) == 0) {
 					}
 					?>
 					</select>
-					<button type="submit" name="erase2" title="Reset produzione" class="btn btn-default"  style="border-radius= 85px; "> <i class="glyphicon glyphicon-remove-circle"></i></button>
+					<button type="submit" name="erase2" title="Reset produzione" class="btn btn-default"  style="border-radius= 85px; "> <i class="glyphicon glyphicon-trash-circle"></i></button>
 					<br>
 					<a href="javascript:Popup('../../modules/orderman/admin_orderman.php?Insert&popup=1&type=AGR')"> Crea nuova produzione <i class="glyphicon glyphicon-plus-sign" style="color:green" ></i></a>
 					</div>
@@ -1675,7 +1675,7 @@ if (intval($form['nome_colt']) == 0) {
 						<!-- per funzionare autocomplete, id dell'input deve essere autocomplete4 -->
 						<input class="FacetSelect" id="autocomplete4" type="text" value="<?php echo $form['nome_colt']; ?>" name="nome_colt" size="30">
 						<input type="hidden" value="<?php echo intval($form['nome_colt']); ?>" name="id_colture">
-						<button type="submit" name="erase" title="Reset coltura" class="btn btn-default"  style="border-radius= 85px; "> <i class="glyphicon glyphicon-remove-circle">Annulla/Reset</i></button>
+						<button type="submit" name="erase" title="Reset coltura" class="btn btn-default"  style="border-radius= 85px; "> <i class="glyphicon glyphicon-trash-circle">Annulla/Reset</i></button>
 						<?php
 						if (strlen($conf_cambio_colt)>0){ // attivo pulsante di conferma cambio
 							?>

@@ -445,7 +445,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     } else {
       echo ' dialog_delete" ref="'. $r['codice'].'" artico="'. $r['descri'].'"';
     }
-    echo '> <i class="glyphicon glyphicon-remove"></i></a>';
+    echo '> <i class="glyphicon glyphicon-trash"></i></a>';
 	echo "</td>\n";
     echo "</tr>\n";
 }

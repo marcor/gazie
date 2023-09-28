@@ -139,7 +139,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 		</td>
 		<td>
 			<a class="btn btn-xs btn-default btn-elimina" href="delete_assist.php?id=<?php echo $a_row["id"]; ?>&cod=<?php echo $a_row["codice"]; ?>">
-			<i class="glyphicon glyphicon-remove"></i></a>
+			<i class="glyphicon glyphicon-trash"></i></a>
 		</td>
    </tr>
 <?php 

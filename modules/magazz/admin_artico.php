@@ -480,7 +480,7 @@ if ($modal === false) {
       while ($r = gaz_dbi_fetch_array($rs_pos)) {
         $poscodart = gaz_dbi_get_row($gTables['artico_position'], 'id_position', $r['artico_id_position']);
         $accpos .= '<p class"bg-info">'.(empty($r['name'])?'SEDE':$r['name']).' Sca: '.(empty($r['descri'])?'nessun scaffale':$r['descri']).' Ubi: '.$poscodart['position'].
-        ' <a class="btn btn-xs btn-default btn-elimina dialog_posdelete" ref="'.$r['id_position'].'" codart="'.$form['codice'].'" descriposition="'.(empty($r['name'])?'SEDE':$r['name']).' - '.(empty($r['descri'])?'nessun scaffale':$r['descri']).' - '.$poscodart['position'].'" title="Elimina ubicazione"> <i class="glyphicon glyphicon-remove"></i></a></p>';
+        ' <a class="btn btn-xs btn-default btn-elimina dialog_posdelete" ref="'.$r['id_position'].'" codart="'.$form['codice'].'" descriposition="'.(empty($r['name'])?'SEDE':$r['name']).' - '.(empty($r['descri'])?'nessun scaffale':$r['descri']).' - '.$poscodart['position'].'" title="Elimina ubicazione"> <i class="glyphicon glyphicon-trash"></i></a></p>';
       }
     }
 } else {
@@ -863,7 +863,7 @@ if ($modal_ok_insert === true) {
                               $addlabel=" Sostituisci con altra ";
                               ?>
                               <div class="col-sm-8">
-                              <p ><a class="btn btn-xs btn-default btn-elimina dialog_delete_blob" ref="<?php echo $form['codice']; ?>"> <i class="glyphicon glyphicon-remove"></i>&nbsp Elimina imagine</a></p>
+                              <p ><a class="btn btn-xs btn-default btn-elimina dialog_delete_blob" ref="<?php echo $form['codice']; ?>"> <i class="glyphicon glyphicon-trash"></i>&nbsp Elimina imagine</a></p>
                               </div>
                               <div class="col-sm-4">
                               </div>

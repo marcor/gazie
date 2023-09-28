@@ -416,7 +416,7 @@ $ts->output_navbar();
 	<div class="framePdf panel panel-success" style="display: none; position: fixed; left: 5%; top: 5px">
 			<div class="col-lg-12">
 				<div class="col-xs-11" id="titolo" ></div>
-				<div class="col-xs-1"><span><button type="button" id="closePdf"><i class="glyphicon glyphicon-remove"></i></button></span></div>
+				<div class="col-xs-1"><span><button type="button" id="closePdf"><i class="glyphicon glyphicon-trash"></i></button></span></div>
 			</div>
 			<iframe id="framePdf"  style="height: 100%; width: 100%" src=""></iframe>
 	</div>
@@ -587,7 +587,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
       echo "</td>\n";
 			echo '<td class="text-center"><a class="btn btn-xs btn-default" href="clone_house.php?codice='.$r["codice"].'"> <i class="glyphicon glyphicon-export"></i></a>';
 			echo "</td>\n";
-			echo '<td class="text-center"><a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="'. $r['codice'].'" artico="'. $r['descri'].'"> <i class="glyphicon glyphicon-remove"></i></a>';
+			echo '<td class="text-center"><a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="'. $r['codice'].'" artico="'. $r['descri'].'"> <i class="glyphicon glyphicon-trash"></i></a>';
 			echo "</td>\n";
 			echo "</tr>\n";
 		}

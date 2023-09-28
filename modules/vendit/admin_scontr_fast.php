@@ -1100,7 +1100,7 @@ maniglia.form.submit();
                 array('head' => $script_transl["codric"], 'class' => 'text-center',
                     'value' => $v['codric']),
                 array('head' => $script_transl["delete"], 'class' => 'text-center',
-                    'value' => '<button type="submit" class="btn btn-default btn-sm btn-elimina" name="del[' . $k . ']" title="' . $script_transl['delete'] . $script_transl['thisrow'] . '"><i class="glyphicon glyphicon-remove"></i></button>')
+                    'value' => '<button type="submit" class="btn btn-default btn-sm btn-elimina" name="del[' . $k . ']" title="' . $script_transl['delete'] . $script_transl['thisrow'] . '"><i class="glyphicon glyphicon-trash"></i></button>')
             );
 
             switch ($v['tiprig']) {
@@ -1218,7 +1218,7 @@ maniglia.form.submit();
 								<label for="item" class="col-sm-3 control-label"><?php echo "Barcode"; ?></label>
 								<input  class="col-sm-8" type="text" value="<?php echo $form['in_barcode']; ?>" name="in_barcode" onkeypress="submitOnEnter(this, event);" />
 								<button type="submit"  class="btn btn-default btn-sm col-sm-1" name="no_barcode" title="Togli con pistola Barcode">
-                                <span class="glyphicon glyphicon-remove"></span>
+                                <span class="glyphicon glyphicon-trash"></span>
 							</div>
 						</div>
 						<?php
@@ -1230,7 +1230,7 @@ maniglia.form.submit();
 									<label for="item" class="col-sm-3 control-label"><?php echo "Barcode"; ?></label>
 									<input style="border: 1px solid red;" class="col-sm-8" type="text" value="<?php echo $form['in_barcode']; ?>" name="in_barcode" onkeypress="submitOnEnter(this, event);" />
 									<button type="submit"  class="btn btn-default btn-sm col-sm-1" name="no_barcode" title="Togli con pistola Barcode">
-									<span class="glyphicon glyphicon-remove"></span>
+									<span class="glyphicon glyphicon-trash"></span>
 								</div>
 							</div>
 							<?php

@@ -1414,7 +1414,7 @@ foreach ($form['rows'] as $k => $v) {
             break;
     }
     echo '  <td align="right">
-			  <button type="submit" class="btn btn-default btn-sm" name="del[' . $k . ']" title="' . $script_transl['delete'] . $script_transl['thisrow'] . '"><i class="glyphicon glyphicon-remove"></i></button>
+			  <button type="submit" class="btn btn-default btn-sm" name="del[' . $k . ']" title="' . $script_transl['delete'] . $script_transl['thisrow'] . '"><i class="glyphicon glyphicon-trash"></i></button>
 			</td>
 		  </tr>';
 	$ctrl_orderman=$v['id_orderman'];

@@ -262,12 +262,12 @@ while ($r = gaz_dbi_fetch_array($result)) {
 	if (($r['tipdoc'] == "MAG" OR $r['tipdoc'] == "INV") && intval($r['id_orderman'])==0){
 		?>
 		<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Elimina movimento" ref="<?php echo $r['id_mov'];?>" movdes="<?php echo $r['descau']; ?>">
-		<i class="glyphicon glyphicon-remove"></i>
+		<i class="glyphicon glyphicon-trash"></i>
 		</a>
 		<?php
 	} else {
 		?>
-		<button title="Questo movimento puo essere eliminato solo dal documento che lo ha creato" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-remove"></i></button>
+		<button title="Questo movimento puo essere eliminato solo dal documento che lo ha creato" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-trash"></i></button>
 		<?php
 	}
 	echo "</td>";

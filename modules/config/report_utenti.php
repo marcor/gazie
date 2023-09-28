@@ -125,12 +125,12 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
   echo "<td align=\"center\">".$a_row["Access"]." &nbsp;</td><td align=\"center\">";
   if ($admins <=1 && $a_row["Abilit"] == 9 ){
 		?>
-		<button title="Impossibile cancellare perché è l'unico amministratore " class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-remove"></i></button>
+		<button title="Impossibile cancellare perché è l'unico amministratore " class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-trash"></i></button>
 		<?php
 	} else {
 		?>
 		<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella l'utente" ref="<?php echo $a_row['user_name'];?>" ragso="<?php echo $a_row['user_firstname'].' '.$a_row['user_lastname'];?>">
-			<i class="glyphicon glyphicon-remove"></i>
+			<i class="glyphicon glyphicon-trash"></i>
 		</a>
 		<?php
 	}

@@ -75,7 +75,7 @@ if ($admin_aziend['Abilit'] >= 8) {
         switch ($v['status']) {
             case 1:
 				$lnk='title="Pagata">
-					<i class="glyphicon glyphicon-remove delete_supplier_schedule" title="Elimina partita chiusa, rimangono i movimenti contabili" ref="'.$r['id_tesdoc_ref'].'" nome="'.$r['ragso1'].'"> </i';
+					<i class="glyphicon glyphicon-trash delete_supplier_schedule" title="Elimina partita chiusa, rimangono i movimenti contabili" ref="'.$r['id_tesdoc_ref'].'" nome="'.$r['ragso1'].'"> </i';
                 break;
             case 2: // esposta
 				$lnk='href="../acquis/supplier_payment.php?partner='.$r['codcon'].'" title="In scadenza"';

@@ -540,7 +540,7 @@ if ($next_row>0) {
     echo "<td><input type=\"text\" style=\"text-align:right\" name=\"rows[$k][price]\" value=\"".$val['price']."\" maxlength=\"15\" /></td>\n";
     echo "<td><input type=\"text\" style=\"text-align:right\" name=\"rows[$k][discount]\" value=\"".$val['discount']."\" maxlength=\"4\" /></td>\n";
 	  echo '  <td align="right">
-				 <button type="submit" class="btn btn-default btn-sm" name="del['.$k.']" title="'.$script_transl['delete'].$script_transl['thisrow'].'"><i class="glyphicon glyphicon-remove"></i></button>
+				 <button type="submit" class="btn btn-default btn-sm" name="del['.$k.']" title="'.$script_transl['delete'].$script_transl['thisrow'].'"><i class="glyphicon glyphicon-trash"></i></button>
 			   </td>
 			 </tr>';
 		echo "\t </tr>\n";

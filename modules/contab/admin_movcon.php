@@ -1694,7 +1694,7 @@ echo "</script>\n";
               array('head' => $script_transl["tax"], 'class' => 'text-right numeric',
                   'value' => '<input type="number" step="0.01" name="impost_ri[' . $i . ']" value="' . sprintf("%01.2f", preg_replace("/\,/", '.', $form['impost_ri'][$i])) . '" maxlength="13" />'),
               array('head' => $script_transl["delete"], 'class' => 'text-center',
-                  'value' => '<button type="submit" class="btn btn-default btn-sm btn-elimina" name="dei[' . $i . ']" title="' . $script_transl['delrow'] . '"><i class="glyphicon glyphicon-remove"></i></button>')
+                  'value' => '<button type="submit" class="btn btn-default btn-sm btn-elimina" name="dei[' . $i . ']" title="' . $script_transl['delrow'] . '"><i class="glyphicon glyphicon-trash"></i></button>')
           );
         }
         $gForm->gazResponsiveTable($resprow, 'gaz-responsive-table');
@@ -1857,7 +1857,7 @@ if ( $_POST['rigcon']>=1){
           echo '<td></td>'.$acc_darave.$acc_amount;
         }
         echo '  <td>
-			  <button type="submit" class="btn btn-default btn-elimina btn-sm" name="del[' . $i . ']" title="' . $script_transl['delrow'] . '!"><i class="glyphicon glyphicon-remove"></i></button>
+			  <button type="submit" class="btn btn-default btn-elimina btn-sm" name="del[' . $i . ']" title="' . $script_transl['delrow'] . '!"><i class="glyphicon glyphicon-trash"></i></button>
 			</td>
 		  </tr>';
     }

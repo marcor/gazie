@@ -288,7 +288,7 @@ $(function() {
                                 if ($r['tipdoc'] == 'DDV' && $r['id_doc_ritorno'] > 0) {
                                     echo "<td align=\"center\">"
                                     . "<a class=\"btn btn-xs btn-warning\" href=\"admin_docven.php?Update&id_tes=" . $r['id_doc_ritorno'] . "\">" . $script_transl['doc_returned'] . "</a>"
-                                    . "<a class=\"btn btn-xs btn-default btn-elimina\"href=\"delete_docven.php?id_tes=" . $r['id_doc_ritorno'] . "\" title=\"" . $script_transl['delete_returned'] . "\"><i class=\"glyphicon glyphicon-remove\"></i></a>"
+                                    . "<a class=\"btn btn-xs btn-default btn-elimina\"href=\"delete_docven.php?id_tes=" . $r['id_doc_ritorno'] . "\" title=\"" . $script_transl['delete_returned'] . "\"><i class=\"glyphicon glyphicon-trash\"></i></a>"
                                     . "</td>";
                                 } else {
                                     echo "<td align=\"center\"><a class=\"btn btn-xs btn-success\" href=\"emissi_fatdif.php?tipodocumento=CMR\">" . $script_transl['to_invoice'] . "</a></td>";
@@ -337,12 +337,12 @@ $(function() {
                             if($ultimoddt==$r["numdoc"]&&$r['numfat']==0){
 							?>
 							<td class="text-center">
-								<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento" ref="<?php echo $r['id_tes'];?>" ragso1="<?php echo $anagra['ragso1'];?>"><i class="glyphicon glyphicon-remove"></i>
+								<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento" ref="<?php echo $r['id_tes'];?>" ragso1="<?php echo $anagra['ragso1'];?>"><i class="glyphicon glyphicon-trash"></i>
 								</a>
 							</td>
 							<?php
 							}else{
-								echo "<td align=\"center\"><button class=\"btn btn-xs btn-default btn-elimina disabled\"><i class=\"glyphicon glyphicon-remove\"></i></button></td>";
+								echo "<td align=\"center\"><button class=\"btn btn-xs btn-default btn-elimina disabled\"><i class=\"glyphicon glyphicon-trash\"></i></button></td>";
 							}
                             echo "</tr>\n";
                             break;

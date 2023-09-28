@@ -387,7 +387,7 @@ if (count($form['reparti']) > 0) {
     <td>
 	<input class="col-xs-12" type="text" name="<?php echo 'reparti[' . $k . '][descrizione]'; ?>" value="<?php echo $v['descrizione']; ?>"  maxlength="50" minlength="3" placeholder="compreso tra 1 e 50 caratteri" />
     </td>
-	<td class="text-center"><button type="submit" class="btn btn-danger btn-sm" name="<?php echo 'repartidel[' . $k . ']'; ?>" title="<?php echo $script_transl['delete'] . $script_transl['thisrow']; ?>"><i class="glyphicon glyphicon-remove"> </i> </button></td>
+	<td class="text-center"><button type="submit" class="btn btn-danger btn-sm" name="<?php echo 'repartidel[' . $k . ']'; ?>" title="<?php echo $script_transl['delete'] . $script_transl['thisrow']; ?>"><i class="glyphicon glyphicon-trash"> </i> </button></td>
 </tr>
 <?php
   }
@@ -434,7 +434,7 @@ if (count($form['tenders']) > 0) {
     <td>
 	<input class="col-xs-12" type="text" name="<?php echo 'tenders[' . $k . '][descrizione]'; ?>" value="<?php echo $v['descrizione']; ?>"  maxlength="50" minlength="3" placeholder="compreso tra 1 e 50 caratteri" />
     </td>
-	<td class="text-center"><button type="submit" class="btn btn-danger btn-sm" name="<?php echo 'tendersdel[' . $k . ']'; ?>" title="<?php echo $script_transl['delete'] . $script_transl['thisrow']; ?>"><i class="glyphicon glyphicon-remove"> </i> </button></td>
+	<td class="text-center"><button type="submit" class="btn btn-danger btn-sm" name="<?php echo 'tendersdel[' . $k . ']'; ?>" title="<?php echo $script_transl['delete'] . $script_transl['thisrow']; ?>"><i class="glyphicon glyphicon-trash"> </i> </button></td>
 </tr>
 <?php
   }

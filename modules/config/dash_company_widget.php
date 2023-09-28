@@ -69,7 +69,7 @@ function selectCompany($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg=
     <?php
 	$student = false;
 	if (!isset($_POST['prev'])){// primo accesso
-		$form['prev']=''; 
+		$form['prev']='';
 	}else{
 		$form['prev']=$form['company_id'];
 	}
@@ -79,7 +79,7 @@ function selectCompany($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg=
       ?>
 		<script>
 		//alert('Ricarico pagina');
-		</script>	  
+		</script>
         <meta http-equiv="refresh" content="0; url=admin.php">
       <?php
     }
@@ -110,7 +110,6 @@ function selectCompany($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg=
  /* The flip card container - set the width and height to whatever you want. We have added the border property to demonstrate that the flip itself goes out of the box on hover (remove perspective if you don't want the 3D effect */
 .flip-image {
   margin: auto;
-  background-color: #88888888;
   width: 100%;
   height: 150px;
   // border: 1px solid #f1f1f1;

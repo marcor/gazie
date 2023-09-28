@@ -193,7 +193,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
        echo "<td class=\"FacetDataTD\" align=\"center\">";
 			?>
 			<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento" ref="<?php echo $row['id_tes'];?>" datemi="<?php echo $row['datemi']; ?>">
-				<i class="glyphicon glyphicon-remove"></i>
+				<i class="glyphicon glyphicon-trash"></i>
 			</a>
 			</td>
 			<?php

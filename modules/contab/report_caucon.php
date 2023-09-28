@@ -102,7 +102,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
     echo "<td align=\"center\">";
 	?>
 		<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella causale" ref="<?php echo $row['codice'];?>" descri="<?php echo $row['descri'];?>">
-			<i class="glyphicon glyphicon-remove"></i>
+			<i class="glyphicon glyphicon-trash"></i>
 		</a>
 	<?php
     echo "</td></tr>";

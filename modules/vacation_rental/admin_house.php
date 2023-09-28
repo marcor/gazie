@@ -1269,7 +1269,7 @@ if ($modal_ok_insert === true) {
 										</td>
 										<td>
 											<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella l'Ical" ref="<?php echo $rical['id'];?>" nome="<?php echo $rical['ical_descri'];?>">
-												<i class="glyphicon glyphicon-remove"></i>
+												<i class="glyphicon glyphicon-trash"></i>
 											</a>
 										</td>
 									</tr>

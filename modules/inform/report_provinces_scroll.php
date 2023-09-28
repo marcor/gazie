@@ -62,7 +62,7 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
             </td>
             <td class="text-center">
                 <a class="btn btn-xs btn-default btn-elimina" href="delete_provinces.php?id=<?php echo $row["id"]; ?>">
-                    <i class="glyphicon glyphicon-remove"></i>
+                    <i class="glyphicon glyphicon-trash"></i>
                 </a>
             </td>
         </tr>

@@ -156,9 +156,9 @@ if (sizeof($scdl->Entries) > 0) {
 								<td class="text-center">';
         // Permette di cancellare il documento.
         if ($status_del) {
-            echo '					<a class="btn btn-xs btn-default btn-elimina" title="Cancella tutti i movimenti relativi a questa partita oramai chiusa (rimarranno comunque i movimenti contabili)" href="delete_schedule.php?id_tesdoc_ref=' . $paymov . '"><i class="glyphicon glyphicon-remove"></i></a>';
+            echo '					<a class="btn btn-xs btn-default btn-elimina" title="Cancella tutti i movimenti relativi a questa partita oramai chiusa (rimarranno comunque i movimenti contabili)" href="delete_schedule.php?id_tesdoc_ref=' . $paymov . '"><i class="glyphicon glyphicon-trash"></i></a>';
         } else {
-            echo '					<button title="Non &egrave; possibile cancellare una partita ancora aperta" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-remove"></i></button>';
+            echo '					<button title="Non &egrave; possibile cancellare una partita ancora aperta" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-trash"></i></button>';
         }
         echo '				</td>
 							</tr>';

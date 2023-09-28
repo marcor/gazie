@@ -103,21 +103,21 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 	$rs_check_doc = gaz_dbi_dyn_query("COUNT(*) AS nr", $gTables['rigdoc'], "codvat = '{$a_row['codice']}'", "id_rig", 0, 1);
   $check_doc = gaz_dbi_fetch_array($rs_check_doc);
   echo "<tr class=\"FacetDataTD\">";
-  echo "<td align=\"center\"><a class=\"btn btn-xs btn-edit\" href=\"admin_aliiva.php?Update&codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["codice"]."</a> &nbsp</td>";
-  echo "<td>".$a_row["descri"]." &nbsp;</td>";
+  echo "<td align=\"center\"><a class=\"btn btn-xs btn-edit\" href=\"admin_aliiva.php?Update&codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-edit\"></i> ".$a_row["codice"]."</a> &nbsp</td>";
+  echo "<td>".$a_row["descri"]."  </td>";
   echo "<td align=\"center\">".$script_transl['tipiva'][$a_row["tipiva"]]."</td>";
-  echo "<td align=\"center\">".$a_row["operation_type"]." &nbsp;</td>";
-  echo "<td align=\"center\">".$a_row["aliquo"]." &nbsp;</td>";
-  echo "<td align=\"center\">".$script_transl['yn_value'][$a_row["taxstamp"]]." &nbsp;</td>";
-  echo "<td align=\"center\">".$a_row["fae_natura"]." &nbsp;</td><td>";
+  echo "<td align=\"center\">".$a_row["operation_type"]."  </td>";
+  echo "<td align=\"center\">".$a_row["aliquo"]."  </td>";
+  echo "<td align=\"center\">".$script_transl['yn_value'][$a_row["taxstamp"]]."  </td>";
+  echo "<td align=\"center\">".$a_row["fae_natura"]."  </td><td align=\"center\">";
   if ($check_doc['nr'] > 0 || $check_mov['nr'] > 0){
 		?>
-		<button title="Impossibile cancellare perché ci sono  <?php echo ($check_doc['nr']+$check_mov['nr']); ?>  movimenti associati" class="btn btn-xs btn-default btn-elimina disabled"> <i class="glyphicon glyphicon-remove"></i></button>
+		<button title="Impossibile cancellare perché ci sono  <?php echo ($check_doc['nr']+$check_mov['nr']); ?>  movimenti associati" class="btn btn-xs btn-default btn-elimina disabled"> <i class="glyphicon glyphicon-trash"></i></button>
 		<?php
 	} else {
 		?>
 		<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella l'aliquota IVA" ref="<?php echo $a_row['codice'];?>" ragso="<?php echo $a_row['descri'];?>">
-			<i class="glyphicon glyphicon-remove"></i>
+			<i class="glyphicon glyphicon-trash"></i>
 		</a>
 		<?php
 	}

@@ -374,7 +374,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 					$class='btn btn-xs btn-default btn-elimina';
 					$title='Cancella il pacchetto di fatture elettroniche';
 					if ($r['flux_status'] != "@@" && $r['flux_status'] != "@"){ // l'ultimo zip può essere eliminato solo se non è stato inviato
-            echo '<td colspan="2"><a class="'.$class.'" title="'.$title.'" href="delete_zip_package.php?fn='.$r['filename_zip_package'].'">'.$script_transl['delete'].'<i class="glyphicon glyphicon-remove"></i></a></td>';
+            echo '<td colspan="2"><a class="'.$class.'" title="'.$title.'" href="delete_zip_package.php?fn='.$r['filename_zip_package'].'">'.$script_transl['delete'].'<i class="glyphicon glyphicon-trash"></i></a></td>';
 					}
 				} else {
 					echo '<td colspan="2"></td>';

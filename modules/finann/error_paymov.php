@@ -137,7 +137,7 @@ if (sizeof($m) > 0) {
     <td>'.$mv['op_cl'].'</td><td>'.$refdesc.'</td>
     <td class="text-right"> € '.gaz_format_number($mv['amount']).'</td>
     <td><a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il movimento" ref="'.$mv['id'].'" descri="'. $refdesc.'">
-        <i class="glyphicon glyphicon-remove"></i>
+        <i class="glyphicon glyphicon-trash"></i>
         </a>
     </tr>';
   }

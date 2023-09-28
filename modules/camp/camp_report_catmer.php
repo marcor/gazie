@@ -153,7 +153,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			<td align="center"><?php echo $a_row["annota"];?></td>
 			<td align="center">
 				<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $a_row['codice'];?>" catdes="<?php echo $a_row['descri']; ?>">
-					<i class="glyphicon glyphicon-remove"></i>
+					<i class="glyphicon glyphicon-trash"></i>
 				</a>
 			</td>
 		</tr>

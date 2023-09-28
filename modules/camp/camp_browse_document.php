@@ -122,7 +122,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			</td>
 			<td class="FacetDataTD" align="center">
 				<a href="delete_document.php?id_doc='.$a_row["id_doc"].'" title="'.$script_transl['delete'].'!">
-					<i class="glyphicon glyphicon-remove"></i>
+					<i class="glyphicon glyphicon-trash"></i>
 				</a>
 			</td>
 		  </tr>';

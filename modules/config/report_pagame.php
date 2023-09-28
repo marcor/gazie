@@ -107,12 +107,12 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
   echo "<td align=\"center\">".$a_row["fae_mode"]." &nbsp;</td><td align=\"center\">\n";
   if ($check_doc > 0 || $check_cli > 0){
 		?>
-		<button title="Impossibile cancellare perché usata da clienti/fornitori e/o documenti" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-remove"></i></button>
+		<button title="Impossibile cancellare perché usata da clienti/fornitori e/o documenti" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-trash"></i></button>
 		<?php
 	} else {
 		?>
 		<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella la modalità di pagamento" ref="<?php echo $a_row['codice'];?>" ragso="<?php echo $a_row['descri'];?>">
-			<i class="glyphicon glyphicon-remove"></i>
+			<i class="glyphicon glyphicon-trash"></i>
 		</a>
 		<?php
 	}

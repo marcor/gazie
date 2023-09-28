@@ -100,12 +100,12 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
   echo "<td align=\"center\">";
   if ($check_doc > 0 ){
 		?>
-		<button title="Impossibile cancellare perché usato sui documenti" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-remove"></i></button>
+		<button title="Impossibile cancellare perché usato sui documenti" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-trash"></i></button>
 		<?php
 	} else {
 		?>
 		<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il vettore" ref="<?php echo $a_row['codice'];?>" ragso="<?php echo $a_row['ragione_sociale'];?>">
-			<i class="glyphicon glyphicon-remove"></i>
+			<i class="glyphicon glyphicon-trash"></i>
 		</a>
 		<?php
 	}

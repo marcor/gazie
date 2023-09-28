@@ -149,7 +149,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			</td>
 			<td align="center">
 				<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $a_row['id_colt'];?>" coltdes="<?php echo $a_row['nome_colt']; ?>">
-					<i class="glyphicon glyphicon-remove"></i>
+					<i class="glyphicon glyphicon-trash"></i>
 				</a>
 			</td>
 		</tr>

@@ -187,7 +187,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
       <?php }else{ echo "<td></td>"; } ?>
 			<td align="center">
 				<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $a_row['codice'];?>" descamp="<?php echo $a_row['descri']; ?>">
-					<i class="glyphicon glyphicon-remove"></i>
+					<i class="glyphicon glyphicon-trash"></i>
 				</a>
 			</td>
 		</tr>

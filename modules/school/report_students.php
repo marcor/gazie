@@ -112,7 +112,7 @@ function getGravatar($email,$d = 'mm') {
                             echo 'danger';
                         }
                         echo '" >' . $script_transl['active'][$r["student_active"]] . " </td>";
-                        echo '<td><a class="btn btn-xs btn-default btn-elimina" href="delete_student.php?id=' . $r["student_id"] . '"><i class="glyphicon glyphicon-remove"></i></a></td>';
+                        echo '<td><a class="btn btn-xs btn-default btn-elimina" href="delete_student.php?id=' . $r["student_id"] . '"><i class="glyphicon glyphicon-trash"></i></a></td>';
                         echo "</tr>";
                     }
                     ?>

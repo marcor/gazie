@@ -210,12 +210,12 @@ $(function() {
                 echo "<td align=\"center\">";
 				if (intval($r['codcon']) > 0){
 					?>
-					<button title="Collaboratore non cancellabile perché ha movimenti contabili" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-remove"></i></button>
+					<button title="Collaboratore non cancellabile perché ha movimenti contabili" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-trash"></i></button>
 					<?php
 				} else {
 				?>
 				<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $r['id_clfoco'];?>" staffdes="<?php echo $r['ragso1']; ?>">
-					<i class="glyphicon glyphicon-remove"></i>
+					<i class="glyphicon glyphicon-trash"></i>
 				</a>
 				<?php
 				}

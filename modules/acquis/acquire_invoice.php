@@ -1462,7 +1462,7 @@ function prevXML(urlPrintDoc){
 	<div class="xmlpreview panel panel-success" style="display: none; position: absolute; left: 5%; top: 100px">
 		<div class="col-lg-12">
 			<div class="col-xs-11"><h4>Anteprima fattura</h4></div>
-			<div class="col-xs-1"><h4><button type="button" id="closeXML"><i class="glyphicon glyphicon-remove"></i></button></h4></div>
+			<div class="col-xs-1"><h4><button type="button" id="closeXML"><i class="glyphicon glyphicon-trash"></i></button></h4></div>
 		</div>
 		<iframe id="xmlpreview"  style="height: 100%; width: 100%" src=""></iframe>
 	</div>

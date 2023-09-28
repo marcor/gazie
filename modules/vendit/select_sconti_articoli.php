@@ -225,7 +225,7 @@ if (!empty($elencoSconti)) {
       . "\" "
       . "onclick=\"clickAndDisable(this);\" "
       . "target=\"_blank\" >"
-      . "<i class=\"glyphicon glyphicon-remove\"></i></a></td>";
+      . "<i class=\"glyphicon glyphicon-trash\"></i></a></td>";
       echo "</tr>";
    }
 }

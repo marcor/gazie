@@ -107,7 +107,7 @@ function confirmemail(cod_partner,id_tes,genorder=false) {
                 $("#fillmail_" + j).click(function () {
 					$("#mailaddress").val(value.email);
 				});
-				$("#rowmail_"+j).append(" <button id='deletemail_" + j+"' class='btn-elimina' title='rimuovi indirizzo'> <i class='glyphicon glyphicon-remove'></i> </button>");
+				$("#rowmail_"+j).append(" <button id='deletemail_" + j+"' class='btn-elimina' title='rimuovi indirizzo'> <i class='glyphicon glyphicon-trash'></i> </button>");
 				$("#deletemail_" + j).click(function () { // cliccando sulla X elimino da tesbro una email non più utilizzabile
 					// richiamo il delete.php per eliminare la email dalle tesbro
 					$.ajax({
@@ -249,7 +249,7 @@ function printPdf(urlPrintDoc){
 	<div class="framePdf panel panel-success" style="display: none; position: absolute; left: 5%; top: 100px">
 		<div class="col-lg-12">
 			<div class="col-xs-11"><h4><?php echo $script_transl['print'];; ?></h4></div>
-			<div class="col-xs-1"><h4><button type="button" id="closePdf"><i class="glyphicon glyphicon-remove"></i></button></h4></div>
+			<div class="col-xs-1"><h4><button type="button" id="closePdf"><i class="glyphicon glyphicon-trash"></i></button></h4></div>
 		</div>
 		<iframe id="framePdf"  style="height: 100%; width: 100%" src=""></iframe>
 	</div>
@@ -479,7 +479,7 @@ function printPdf(urlPrintDoc){
 				echo "<td align=\"center\">";
 				?>
 				<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $r['id_tes'];?>" catdes="<?php echo $r['ragso1']; ?>">
-					<i class="glyphicon glyphicon-remove"></i>
+					<i class="glyphicon glyphicon-trash"></i>
 				</a>
 				<?php
 				echo "</td></tr>";

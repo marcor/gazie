@@ -216,14 +216,14 @@ if (isset($_POST['preview'])) {
                 if ($ctrl_close_paymov) {
                     $ctrl_close_partner = true; // questo cliente ha almeno una partita chiusa
                     echo "<tr>";
-                    echo '<td class="text-right" colspan="7"> &nbsp;<a title="Cancella tutti i movimenti relativi a questa partita oramai chiusa (rimarranno comunque i movimenti contabili)" class="btn btn-xs btn-default btn-elimina" href="delete_schedule.php?id_tesdoc_ref=' . $k . '">' . $script_transl['delete'] . ' <i class="glyphicon glyphicon-remove"></i></a></td>';
+                    echo '<td class="text-right" colspan="7"> &nbsp;<a title="Cancella tutti i movimenti relativi a questa partita oramai chiusa (rimarranno comunque i movimenti contabili)" class="btn btn-xs btn-default btn-elimina" href="delete_schedule.php?id_tesdoc_ref=' . $k . '">' . $script_transl['delete'] . ' <i class="glyphicon glyphicon-trash"></i></a></td>';
                     echo "</tr>\n";
                     echo '<tr><td colspan="7"></td></tr>';
                 }
             }
             if ($ctrl_close_partner == true) {
                 echo "<tr>";
-                echo "<td class=\"text-right\" colspan='7'> &nbsp;<a title=\"Elimina tutte le partite chiuse di questo fornitore\" class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_schedule.php?partner=" . $p . "\">" . $script_transl['remove'] . $prt['ragso1'] . " " . $prt['ragso2'] . "<i class=\"glyphicon glyphicon-remove\"></i></a></td>";
+                echo "<td class=\"text-right\" colspan='7'> &nbsp;<a title=\"Elimina tutte le partite chiuse di questo fornitore\" class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_schedule.php?partner=" . $p . "\">" . $script_transl['remove'] . $prt['ragso1'] . " " . $prt['ragso2'] . "<i class=\"glyphicon glyphicon-trash\"></i></a></td>";
                 echo "</tr>\n";
                 echo '<tr><td colspan="7"></td></tr>';
             }
@@ -233,7 +233,7 @@ if (isset($_POST['preview'])) {
         echo $script_transl['print'];
         echo '">';
         echo "\t </td>\n";
-        echo "<td class=\"text-right\" colspan='2'><a title=\"Elimina tutte le partite chiuse di tutti i clienti\" class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_schedule.php?all\"><i class=\"glyphicon glyphicon-remove\"></i> &nbsp;" . $script_transl['remove'] . " TUTTI!!!</a></td>";
+        echo "<td class=\"text-right\" colspan='2'><a title=\"Elimina tutte le partite chiuse di tutti i clienti\" class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_schedule.php?all\"><i class=\"glyphicon glyphicon-trash\"></i> &nbsp;" . $script_transl['remove'] . " TUTTI!!!</a></td>";
         echo "\t </tr>\n";
     } else {
         echo "<tr><td class=\"FacetDataTDred\" align=\"center\">" . $script_transl['errors'][1] . "</td></tr>\n";

@@ -76,7 +76,7 @@ while ($a_row = gaz_dbi_fetch_assoc($result)) {
 						</td>
 						<td>
 							<a class="btn btn-xs btn-default" href="delete_docacq.php?id_tes='.$a_row["id_tes"].'" title="Cancella">
-								<i class="glyphicon glyphicon-remove"></i>
+								<i class="glyphicon glyphicon-trash"></i>
 							</a>
 						</td>
 					</tr>';
