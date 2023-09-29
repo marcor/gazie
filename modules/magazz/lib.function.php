@@ -26,42 +26,42 @@
 
 class magazzForm extends GAzieForm {
 
-    function get_magazz_ordinati ( $codice, $tip='AOR' ) {
+  function get_magazz_ordinati ( $codice, $tip='AOR' ) {
     global $gTables;
 
-	$show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
-	$tipo_composti = gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti');
+    $show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
+    $tipo_composti = gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti');
 
-    $column = $gTables['artico'].".codice,
-        ".$gTables['artico'].".good_or_service,
-        ".$gTables['rigbro'].".id_tes,
-        ".$gTables['rigbro'].".codart,
-        ".$gTables['rigbro'].".unimis,
-        ".$gTables['rigbro'].".quanti,
-        ".$gTables['tesbro'].".tipdoc";
-	if ($tipo_composti['val']=="STD") { // Antonio Germani se siamo in modalità composti STD si escludono solo gli articoli servizi
-    $tables = $gTables['artico']."
-        INNER JOIN ".$gTables['rigbro']."
-            ON ".$gTables['artico'].".codice = ".$gTables['rigbro'].".codart
-        INNER JOIN ".$gTables['tesbro']."
-            ON ".$gTables['rigbro'].".id_tes = ".$gTables['tesbro'].".id_tes";
+      $column = $gTables['artico'].".codice,
+          ".$gTables['artico'].".good_or_service,
+          ".$gTables['rigbro'].".id_tes,
+          ".$gTables['rigbro'].".codart,
+          ".$gTables['rigbro'].".unimis,
+          ".$gTables['rigbro'].".quanti,
+          ".$gTables['tesbro'].".tipdoc";
+    if ($tipo_composti['val']=="STD") { // Antonio Germani se siamo in modalità composti STD si escludono solo gli articoli servizi
+      $tables = $gTables['artico']."
+          INNER JOIN ".$gTables['rigbro']."
+              ON ".$gTables['artico'].".codice = ".$gTables['rigbro'].".codart
+          INNER JOIN ".$gTables['tesbro']."
+              ON ".$gTables['rigbro'].".id_tes = ".$gTables['tesbro'].".id_tes";
 
-    $where = $gTables['artico'].".good_or_service != 1
-		AND ".$gTables['rigbro'].".id_doc = 0
-        AND ".$gTables['artico'].".codice = '".$codice."'
-        AND ".$gTables['tesbro'].".tipdoc = '".$tip."'";
-	} else { // se siamo in modalità KIT si prendono solo gli articoli semplici
-		$tables = $gTables['artico']."
-        INNER JOIN ".$gTables['rigbro']."
-            ON ".$gTables['artico'].".codice = ".$gTables['rigbro'].".codart
-        INNER JOIN ".$gTables['tesbro']."
-            ON ".$gTables['rigbro'].".id_tes = ".$gTables['tesbro'].".id_tes";
+      $where = $gTables['artico'].".good_or_service != 1
+      AND ".$gTables['rigbro'].".id_doc = 0
+          AND ".$gTables['artico'].".codice = '".$codice."'
+          AND ".$gTables['tesbro'].".tipdoc = '".$tip."'";
+    } else { // se siamo in modalità KIT si prendono solo gli articoli semplici
+      $tables = $gTables['artico']."
+          INNER JOIN ".$gTables['rigbro']."
+              ON ".$gTables['artico'].".codice = ".$gTables['rigbro'].".codart
+          INNER JOIN ".$gTables['tesbro']."
+              ON ".$gTables['rigbro'].".id_tes = ".$gTables['tesbro'].".id_tes";
 
-		$where = $gTables['artico'].".good_or_service = 0
-		AND ".$gTables['rigbro'].".id_doc = 0
-        AND ".$gTables['artico'].".codice = '".$codice."'
-        AND ".$gTables['tesbro'].".tipdoc = '".$tip."'";
-	}
+      $where = $gTables['artico'].".good_or_service = 0
+      AND ".$gTables['rigbro'].".id_doc = 0
+          AND ".$gTables['artico'].".codice = '".$codice."'
+          AND ".$gTables['tesbro'].".tipdoc = '".$tip."'";
+    }
 
     $orderby = $gTables['artico'].".codice ASC";
     $limit = "0";
@@ -73,32 +73,35 @@ class magazzForm extends GAzieForm {
         $totord += $row['quanti'];
     }
 
-	// Antonio Germani - calcolo evasi
-	$toteva = 0;
-	if ($tip!="AOR" AND $totord>0){
-		$preord=0;
-		$query = "SELECT ".$gTables['rigbro'].".codart, ".$gTables['rigbro'].".id_tes FROM " . $gTables['rigbro'] . " LEFT JOIN ". $gTables['tesbro'] ." ON ".$gTables['rigbro'].".id_tes=".$gTables['tesbro'].".id_tes  WHERE codart ='" . $codice. "' AND tiprig <= '1' AND ". $gTables['tesbro'].".tipdoc ='".$tip."'";
-		$result = gaz_dbi_query($query); // prendo tutti i righi ordine per questo articolo
-		while ($row = $result->fetch_assoc()){
-			$query = "SELECT " . 'quanti'. ",". 'id_rig' . " FROM " . $gTables['rigdoc'] . " WHERE id_order ='" . $row['id_tes']. "' AND tiprig <= '1' AND codart = '".$codice."'";
-			$res = gaz_dbi_query($query); // prendo i righi documento che rappresentano gli evasi
-			$n=0;
-			while ($row2 = $res->fetch_assoc()){
-				// qui devo evitare che, se nello stesso ordine ci sono più righi con lo stesso articolo, vengano conteggiati più volte
-				if ($preord==$row['id_tes']){ // se l'ordine è lo stesso del precedente
-				// non faccio nulla perché già conteggiato nel ciclo precedente
-					} else {
-				$toteva=$toteva+$row2['quanti']; // incremento il totale evaso
-					}
-				$n++;
-			}
-			$preord=$row['id_tes'];
-		}
-	}
-	// fine calcolo evasi
-
-    return $totord-$toteva;
+    // Antonio Germani - calcolo evasi
+    $toteva = 0;
+    if ($tip!="AOR" AND $totord>0){
+      $preord=0;
+      $query = "SELECT ".$gTables['rigbro'].".codart, ".$gTables['rigbro'].".id_tes FROM " . $gTables['rigbro'] . " LEFT JOIN ". $gTables['tesbro'] ." ON ".$gTables['rigbro'].".id_tes=".$gTables['tesbro'].".id_tes  WHERE codart ='" . $codice. "' AND tiprig <= '1' AND ". $gTables['tesbro'].".tipdoc ='".$tip."'";
+      $result = gaz_dbi_query($query); // prendo tutti i righi ordine per questo articolo
+      while ($row = $result->fetch_assoc()){
+        $query = "SELECT " . 'quanti'. ",". 'id_rig' . " FROM " . $gTables['rigdoc'] . " WHERE id_order ='" . $row['id_tes']. "' AND tiprig <= '1' AND codart = '".$codice."'";
+        $res = gaz_dbi_query($query); // prendo i righi documento che rappresentano gli evasi
+        $n=0;
+        while ($row2 = $res->fetch_assoc()){
+          // qui devo evitare che, se nello stesso ordine ci sono più righi con lo stesso articolo, vengano conteggiati più volte
+          if ($preord==$row['id_tes']){ // se l'ordine è lo stesso del precedente
+          // non faccio nulla perché già conteggiato nel ciclo precedente
+            } else {
+          $toteva=$toteva+$row2['quanti']; // incremento il totale evaso
+            }
+          $n++;
+        }
+        $preord=$row['id_tes'];
+      }
     }
+    // fine calcolo evasi
+    if ($totord-$toteva < 0){// il totale ordinati non può essere negativo
+      return 0;
+    }else{
+      return $totord-$toteva;
+    }
+  }
 
     function selItem($name, $val, $strSearch = '', $mesg='', $val_hiddenReq = '', $class = 'FacetSelect') {
         global $gTables, $admin_aziend;
