@@ -218,8 +218,8 @@ function get_string_lang($string, $lang){
   }
 }
 
-// calcolo dei giorni da pagare per la tassa turistica
-function tour_tax_daytopay($night,$start,$end,$tour_tax_from,$tour_tax_to,$tour_tax_day){
+// calcolo dei giorni da pagare per la tassa turistica fra due date specifiche
+function tour_tax_daytopay($night,$start,$end,$tour_tax_from,$tour_tax_to,$tour_tax_day=0){
   $tour_tax_from=$tour_tax_from."-".date("Y", strtotime($start)); // aggiungo l'anno all'inizio pagamento tassa turistica
   $tour_tax_to=$tour_tax_to."-".date("Y", strtotime($start)); // aggiungo l'anno alla fine pagamento tassa turistica
 
@@ -261,7 +261,7 @@ function tour_tax_daytopay($night,$start,$end,$tour_tax_from,$tour_tax_to,$tour_
 }
 
 // calcolo totale locazione
-function get_totalprice_booking($tesbro,$tourist_tax=TRUE,$vat=FALSE,$preeminent_vat=""){
+function get_totalprice_booking($tesbro,$tourist_tax=TRUE,$vat=FALSE,$preeminent_vat="",$add_extra=FALSE){
   if ($tesbro!==''){
     $tesbro=intval($tesbro);
     global $link, $azTables, $gTables;// posso chiamare la funzione con entrambi i metodi
@@ -270,18 +270,23 @@ function get_totalprice_booking($tesbro,$tourist_tax=TRUE,$vat=FALSE,$preeminent
       $tabletes = $azTables."tesbro";
       $tableiva = $azTables."aliiva";
       $tableaz = $azTables."aziend";
+	  $tableart = $azTables."artico";
     }else{
       $tablerig = $gTables['rigbro'];
       $tabletes = $gTables['tesbro'];
       $tableiva = $gTables['aliiva'];
       $tableaz = $gTables['aziend'];
+	  $tableart = $gTables['artico'];
     }
     $where = " WHERE id_tes = '".$tesbro."'";
     if ($tourist_tax<>TRUE){// se richiesto escludo la tassa turistica
-      $where .= "AND codart NOT LIKE 'TASSA-TURISTICA%'";
+      $where .= " AND codart NOT LIKE 'TASSA-TURISTICA%'";
     }
+	if ($add_extra==FALSE){// escludo gli extra ma anche la tassa turistica
+		$where .= "AND (".$tableart.".custom_field REGEXP 'accommodation_type')";
+	}
     if ($vat==FALSE){// devo restituire l'imponibile
-      $sql = "SELECT SUM(quanti * prelis) AS totalprice FROM ".$tablerig.$where;
+      $sql = "SELECT SUM(quanti * prelis) AS totalprice FROM ".$tablerig." LEFT JOIN ".$tableart." ON ".$tablerig.".codart = ".$tableart.".codice ".$where;
       if ($result = mysqli_query($link, $sql)) {
          $row = mysqli_fetch_assoc($result);
           $where = " WHERE id_tes = '".$tesbro."'";
