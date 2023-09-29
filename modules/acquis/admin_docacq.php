@@ -267,7 +267,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_codvat'] = $_POST['in_codvat'];
     $form['in_codric'] = $_POST['in_codric'];
     $form['in_id_mag'] = $_POST['in_id_mag'];
-    $form['in_id_warehouse'] = intval($_POST['in_id_warehouse']);
+    $form['in_id_warehouse'] = (isset($_POST['in_id_warehouse']))?intval($_POST['in_id_warehouse']):0;
     $form['in_id_order'] = intval($_POST['in_id_order']);
     $form['in_id_orderman'] = $_POST['in_id_orderman'];
     $form['in_annota'] = $_POST['in_annota'];
