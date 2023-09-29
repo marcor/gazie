@@ -54,7 +54,7 @@ use phpseclib3\Net\SSH2;
 use phpseclib3\Crypt\PublicKeyLoader;
 use phpseclib3\Net\SFTP;
 
-class shopsynchronize {
+class shopsynchronizegazSynchro {
 
 	function __construct() {
 		// Quando istanzio questa classe prendo il token, sempre.
