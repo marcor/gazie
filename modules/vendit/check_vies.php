@@ -36,6 +36,13 @@ if (isset($_POST['country']) && isset($_POST['pariva'])) {
 	curl_setopt($ch, CURLOPT_URL,$url);
 	$result = curl_exec($ch);
 	curl_close($ch);
-	var_dump(json_decode($result, true));
+	//var_dump(json_decode($result, true)); // restituisce una matrice poco comprensibile
+	// al momento restituiamo solo l'esito del controllo; ma in $result ci sono altri dati da poter restituire in maniera più comprensibile.
+	$arr=json_decode($result, true);
+  if (isset($arr)){
+    echo "VIES ",$arr['userError'];
+  }else{
+    echo "Partita IVA errata";
+  }
 }
 ?>
