@@ -753,7 +753,7 @@ $ts->output_navbar();
 	<div class="framePdf panel panel-success" style="display: none; position: fixed; left: 5%; top: 10px">
 		<div class="col-lg-12">
 			<div class="col-xs-11"><h4><?php echo $script_transl['print'];; ?></h4></div>
-			<div class="col-xs-1"><h4><button type="button" id="closePdf"><i class="glyphicon glyphicon-trash"></i></button></h4></div>
+			<div class="col-xs-1"><h4><button type="button" id="closePdf"><i class="glyphicon glyphicon-remove"></i></button></h4></div>
 		</div>
 		<iframe id="framePdf"  style="height: 100%; width: 100%" src=""></iframe>
 	</div>
@@ -1117,8 +1117,8 @@ $ts->output_navbar();
               echo "<td>".$r['citspe']."</td>";
 
               // Colonna importo
-              $amount=get_totalprice_booking($r['id_tes']);
-              $amountvat=get_totalprice_booking($r['id_tes'],TRUE,TRUE,$admin_aziend['preeminent_vat']);
+              $amount=get_totalprice_booking($r['id_tes'],TRUE,FALSE,"",TRUE);
+              $amountvat=get_totalprice_booking($r['id_tes'],TRUE,TRUE,$admin_aziend['preeminent_vat'],TRUE);
               echo "<td class='text-right' style='white-space:nowrap;'>","imp. € ".gaz_format_quantity($amount,1,2),"";
               echo "<br>","iva c. € ".gaz_format_quantity($amountvat,1,2),"";
               $paid=get_total_paid($r['id_tes']);
@@ -1241,7 +1241,7 @@ $ts->output_navbar();
                   //possono essere cancellati solo gli ordini inevasi o completamente evasi
                 ?>
                 <a class="btn btn-xs btn-default btn-elimina dialog_delete " <?php echo $disabled_del_style; ?> title="Cancella il documento" ref="<?php echo $r['id_tes'];?>" nome="<?php echo $r['ragso1']; ?>">
-                  <i class="glyphicon glyphicon-trash"></i>
+                  <i class="glyphicon glyphicon-remove"></i>
                 </a>
                 <?php
               }
