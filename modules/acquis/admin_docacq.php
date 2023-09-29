@@ -151,22 +151,34 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
             $_POST['in_id_warehouse']=$row['id_warehouse'];
             // dati da anagrafica articolo
 						$artico = gaz_dbi_get_row($gTables['artico'], "codice", substr($row['codart'], 0,32));
-						$_POST['rows'][$i]['quality'] = strval($artico['quality']);
-						$_POST['rows'][$i]['annota'] = substr($artico['annota'], 0, 50);
-						$_POST['rows'][$i]['pesosp'] = floatval($artico['peso_specifico']);
-						$_POST['rows'][$i]['gooser'] = intval($artico['good_or_service']);
-						$_POST['rows'][$i]['quamag'] = floatval($artico['quality']);
-						$_POST['rows'][$i]['scorta'] = floatval($artico['scorta']);
-						$_POST['rows'][$i]['lot_or_serial'] = intval($artico['lot_or_serial']);
-						$_POST['rows'][$i]['SIAN'] = intval($artico['SIAN']);
-						if (intval($artico['lot_or_serial'])>0 AND intval($row['id_rig'])>0){
-							$lotres = gaz_dbi_get_row($gTables['lotmag'], "id_rigdoc", intval($row['id_rig']));
-							$_POST['rows'][$i]['id_lotmag'] = $lotres['id'];
-							$_POST['rows'][$i]['identifier'] = $lotres['identifier'];
-							$_POST['rows'][$i]['expiry'] = $lotres['expiry'];
-						} else{
-							$_POST['rows'][$i]['id_lotmag'] = '';
-						}
+            if ($artico){
+              $_POST['rows'][$i]['quality'] = strval($artico['quality']);
+              $_POST['rows'][$i]['annota'] = substr($artico['annota'], 0, 50);
+              $_POST['rows'][$i]['pesosp'] = floatval($artico['peso_specifico']);
+              $_POST['rows'][$i]['gooser'] = intval($artico['good_or_service']);
+              $_POST['rows'][$i]['quamag'] = floatval($artico['quality']);
+              $_POST['rows'][$i]['scorta'] = floatval($artico['scorta']);
+              $_POST['rows'][$i]['lot_or_serial'] = intval($artico['lot_or_serial']);
+              $_POST['rows'][$i]['SIAN'] = intval($artico['SIAN']);
+              if (intval($artico['lot_or_serial'])>0 AND intval($row['id_rig'])>0){
+                $lotres = gaz_dbi_get_row($gTables['lotmag'], "id_rigdoc", intval($row['id_rig']));
+                $_POST['rows'][$i]['id_lotmag'] = $lotres['id'];
+                $_POST['rows'][$i]['identifier'] = $lotres['identifier'];
+                $_POST['rows'][$i]['expiry'] = $lotres['expiry'];
+              } else{
+                $_POST['rows'][$i]['id_lotmag'] = '';
+              }
+            }else{
+              $_POST['rows'][$i]['quality'] = '';
+              $_POST['rows'][$i]['annota'] = '';
+              $_POST['rows'][$i]['pesosp'] = 0;
+              $_POST['rows'][$i]['gooser'] = 0;
+              $_POST['rows'][$i]['quamag'] = 0;
+              $_POST['rows'][$i]['scorta'] = 0;
+              $_POST['rows'][$i]['lot_or_serial'] = 0;
+              $_POST['rows'][$i]['SIAN'] = 0;
+              $_POST['rows'][$i]['id_lotmag'] = '';
+            }
 						$_POST['rows'][$i]['filename'] ='';
 						$_POST['rows'][$i]['status']='';
 						$i++;
