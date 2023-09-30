@@ -38,7 +38,7 @@ function agentiInsert ($codice, $newValue)
 {
     $table = 'agenti';
     $columns = array('id_agente','id_fornitore','base_percent','tipo_contratto','adminid');
-    $newValue['adminid'] = $_SESSION["user_name"];
+    //$newValue['adminid'] = $_SESSION["user_name"];
     return tableInsert($table, $columns, $newValue);
 }
 
@@ -46,7 +46,7 @@ function agentiUpdate ($codice, $newValue)
 {
     $table = 'agenti';
     $columns = array('id_agente','id_fornitore','base_percent','tipo_contratto','adminid');
-    $newValue['adminid'] = $_SESSION["user_name"];
+    //$newValue['adminid'] = $_SESSION["user_name"];
     tableUpdate($table, $columns, $codice, $newValue);
 }
 

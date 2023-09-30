@@ -1365,7 +1365,7 @@ if (count($msg['err']) > 0) { // ho un errore
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
             <div class="modal-header active">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><div class="btn btn-danger glyphicon glyphicon-trash"></div></button>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><div class="btn btn-danger glyphicon glyphicon-remove"></div></button>
             </div>
             <div class="modal-body edit-content small"></div>
             <!--<div class="modal-footer"></div>-->

@@ -48,55 +48,57 @@ if ((isset($_POST['Update'])) or (isset($_GET['Update']))) {
 }
 
 if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il primo accesso
-    //qui si dovrebbe fare un parsing di quanto arriva dal browser... o altro;-)
-    $form['id_agente'] = intval($_POST['id_agente']);
-    $form['clfoco'] = substr($_POST['clfoco'],0,12);
-    $form['base_percent'] = floatval(preg_replace("/\,/",'.',$_POST['base_percent']));
-    $anagrafica = new Anagrafica();
-    $fornitore = $anagrafica->getPartner($form['clfoco']);
-    // inizio rigo di input
-    $form['in_cod_articolo'] = substr($_POST['in_cod_articolo'],0,15);
-    $form['in_cod_catmer'] = intval($_POST['in_cod_catmer']);
-    $form['in_percentuale'] = floatval(preg_replace("/\,/",'.',$_POST['in_percentuale']));
-    $form['in_status'] = $_POST['in_status'];
-    $form['cosear'] = $_POST['cosear'];
-    foreach ($_POST['search'] as $k => $v) {
-        $form['search'][$k] = $v;
-    }
-    // fine rigo input
-    $form['righi'] = array();
-    $next_row = 0;
-    if (isset($_POST['righi'])) {
-       foreach ($_POST['righi'] as $next_row => $value) {
-            // inizio impedimento della duplicazione dei codici
-            if ( (!empty($value['cod_articolo']) && $value['cod_articolo'] == $form['in_cod_articolo'] ) ||
-                 (!empty($value['cod_catmer']) && $value['cod_catmer'] == $form['in_cod_catmer'] ) ) { //codice esistente
-                   $msg = "7-8-11+";
-                   //unset($_POST['in_submit_x']);
-				   unset($_POST['in_submit']);
-            }
-            // fine controllo impedimento inserimento codici esistenti
-            $form['righi'][$next_row]['id_provvigione'] = intval($value['id_provvigione']);
-            $form['righi'][$next_row]['cod_articolo'] = substr($value['cod_articolo'],0,15);
-            $form['righi'][$next_row]['cod_catmer'] = intval($value['cod_catmer']);
-            $form['righi'][$next_row]['percentuale'] = floatval(preg_replace("/\,/",'.',$value['percentuale']));
-            $form['righi'][$next_row]['status'] = substr($value['status'],0,10);
-            if (isset($_POST['upd_row'])) {
-               $key_up = key($_POST['upd_row']);
-               if ($key_up == $next_row) {
-                  $form['in_cod_articolo'] = $form['righi'][$key_up]['cod_articolo'];
-                  $form['in_cod_catmer'] = $form['righi'][$key_up]['cod_catmer'];
-                  $form['in_percentuale'] = $form['righi'][$key_up]['percentuale'];
-                  $form['in_status'] = "UPDROW".$next_row;
-                  $form['cosear'] = $form['in_cod_articolo'];
-                  array_splice($form['righi'],$key_up,1);
-                  $next_row--;
-               }
-            }
-            $next_row++;
-       }
-    }
-   if (isset($_POST['in_submit'])) {
+  //qui si dovrebbe fare un parsing di quanto arriva dal browser... o altro;-)
+  $form['id_agente'] = intval($_POST['id_agente']);
+  $form['clfoco'] = substr($_POST['clfoco'],0,12);
+  $form['adminid'] = substr($_POST['adminid'],0,20);
+  $form['hidden_req'] = substr($_POST['hidden_req'],0,20);;
+  $form['base_percent'] = floatval(preg_replace("/\,/",'.',$_POST['base_percent']));
+  $anagrafica = new Anagrafica();
+  $fornitore = $anagrafica->getPartner($form['clfoco']);
+  // inizio rigo di input
+  $form['in_cod_articolo'] = substr($_POST['in_cod_articolo'],0,15);
+  $form['in_cod_catmer'] = intval($_POST['in_cod_catmer']);
+  $form['in_percentuale'] = floatval(preg_replace("/\,/",'.',$_POST['in_percentuale']));
+  $form['in_status'] = $_POST['in_status'];
+  $form['cosear'] = $_POST['cosear'];
+  foreach ($_POST['search'] as $k => $v) {
+      $form['search'][$k] = $v;
+  }
+  // fine rigo input
+  $form['righi'] = array();
+  $next_row = 0;
+  if (isset($_POST['righi'])) {
+     foreach ($_POST['righi'] as $next_row => $value) {
+          // inizio impedimento della duplicazione dei codici
+          if ( (!empty($value['cod_articolo']) && $value['cod_articolo'] == $form['in_cod_articolo'] ) ||
+               (!empty($value['cod_catmer']) && $value['cod_catmer'] == $form['in_cod_catmer'] ) ) { //codice esistente
+                 $msg = "7-8-11+";
+                 //unset($_POST['in_submit_x']);
+			   unset($_POST['in_submit']);
+          }
+          // fine controllo impedimento inserimento codici esistenti
+          $form['righi'][$next_row]['id_provvigione'] = intval($value['id_provvigione']);
+          $form['righi'][$next_row]['cod_articolo'] = substr($value['cod_articolo'],0,15);
+          $form['righi'][$next_row]['cod_catmer'] = intval($value['cod_catmer']);
+          $form['righi'][$next_row]['percentuale'] = floatval(preg_replace("/\,/",'.',$value['percentuale']));
+          $form['righi'][$next_row]['status'] = substr($value['status'],0,10);
+          if (isset($_POST['upd_row'])) {
+             $key_up = key($_POST['upd_row']);
+             if ($key_up == $next_row) {
+                $form['in_cod_articolo'] = $form['righi'][$key_up]['cod_articolo'];
+                $form['in_cod_catmer'] = $form['righi'][$key_up]['cod_catmer'];
+                $form['in_percentuale'] = $form['righi'][$key_up]['percentuale'];
+                $form['in_status'] = "UPDROW".$next_row;
+                $form['cosear'] = $form['in_cod_articolo'];
+                array_splice($form['righi'],$key_up,1);
+                $next_row--;
+             }
+          }
+          $next_row++;
+     }
+  }
+  if (isset($_POST['in_submit'])) {
    if ((!empty($form['in_cod_articolo']) || $form['in_cod_catmer'] > 0) && $form['in_percentuale'] >= 0) {
     if (substr($form['in_status'],0,6) == "UPDROW"){ //se � un rigo da modificare
          $old_key = intval(substr($form['in_status'],6));
@@ -211,7 +213,9 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['seach_clfoco'] = substr($fornitore['ragso1'],0,10);
     $form['search']['clfoco'] = '';
     $form['clfoco'] = $agenti['id_fornitore'];
+    $form['adminid'] = $agenti['adminid'];
     $form['base_percent'] = $agenti['base_percent'];
+    $form['hidden_req'] ='';
     $next_row = 0;
     while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
       $form['righi'][$next_row]['id_provvigione'] = $rigo['id_provvigione'];
@@ -234,11 +238,12 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['search']['clfoco'] = '';
     $rs_ultimo_agente = gaz_dbi_dyn_query("id_agente", $gTables['agenti'], 1,"id_agente DESC",0,1);
     $ultimo_agente = gaz_dbi_fetch_array($rs_ultimo_agente);
-    $form['id_agente'] = $ultimo_agente['id_agente']+1;
+    $form['id_agente'] = $ultimo_agente?$ultimo_agente['id_agente']+1:1;
     $form['clfoco'] = '';
+    $form['adminid'] = '';
     $form['base_percent'] = 0;
     $form['seach_clfoco'] = '';
-    $form['change_pag'] = '';
+    $form['hidden_req'] ='';
 }
 
 require("../../library/include/header.php");
@@ -247,7 +252,7 @@ echo "<form method=\"POST\">\n";
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".ucfirst($script_transl[$toDo].$script_transl[1])."</div> ";
 echo "<input type=\"hidden\" name=\"".ucfirst($toDo)."\" value=\"\">\n";
 echo "<input type=\"hidden\" name=\"ritorno\" value=\"".$form['ritorno']."\">\n";
-echo "<input type=\"hidden\" value=\"".$form['id_agente']."\" name=\"id_agente\">\n";
+echo '<input type="hidden" value="'.$form['hidden_req'].'" name="hidden_req" />';
 echo "<table class=\"Tsmall\" align=\"center\">\n";
 if (!empty($msg)) {
     echo "<tr><td colspan=\"2\" class=\"FacetDataTDred\">";
@@ -267,53 +272,30 @@ echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">$script_transl[2] : </td><td class=\"FacetDataTD\">\n";
 if ($toDo == 'update') {
-echo "\t<input type=\"hidden\" name=\"id_agente\" value=\"".$form['id_agente']."\" /><div class=\"FacetDataTD\">".$form['id_agente']."<div>\n";
+  echo "\t<input type=\"hidden\" name=\"id_agente\" value=\"".$form['id_agente']."\" /><div class=\"FacetDataTD\">".$form['id_agente']."<div>\n";
 } else {
-echo "\t<input type=\"text\" name=\"id_agente\" value=\"".$form['id_agente']."\" maxlength=\"3\"  class=\"FacetInput\" />\n";
+  echo "\t<input type=\"text\" name=\"id_agente\" value=\"".$form['id_agente']."\" maxlength=\"3\"  class=\"FacetInput\" />\n";
 }
 echo "</td></tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">$script_transl[3] : </td><td class=\"FacetDataTD\">\n";
 $select_fornitore = new selectPartner('clfoco');
 $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['clfoco'], 'clfoco', $script_transl['search_partner'], $admin_aziend['masfor']);
-/*$messaggio = "";
-$ric_mastro = substr($form['clfoco'],0,3);
-if ($form['clfoco'] == 0) {
-   $tabula =" tabindex=\"1\" ";
-   if (strlen($form['seach_clfoco']) >= 2) {
-      $anagrafica = new Anagrafica();
-      $fornitore = $anagrafica->queryPartners("*", "(codice between '$inifornitori' and '$finfornitori' ) and ragso1 like '".addslashes($form['seach_clfoco'])."%'", "ragso1 asc");
-      if (sizeof($fornitore) > 0) {
-         $tabula="";
-         echo "\t<select name=\"clfoco\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
-         echo "<option value=\"000000000\"> ---------- </option>";
-		 foreach ($fornitore AS $key => $row) {
-           $selected = "";
-           if ($row["codice"] == $form['clfoco']) {
-               $selected = "selected";
-           }
-           echo "\t\t <option value=\"".$row["codice"]."\" $selected >".$row["ragso1"]."&nbsp;".$row["citspe"]."</option>\n";
-         }
-         echo "\t </select>\n";
-      } else {
-      $messaggio = "Non &egrave; stato trovato nulla";
-      echo "\t<input type=\"hidden\" name=\"clfoco\" value=\"".$form['clfoco']."\">\n";
-      }
-   } else {
-      $messaggio = "Inserire min. 2 caratteri";
-      echo "\t<input type=\"hidden\" name=\"clfoco\" value=\"".$form['clfoco']."\">\n";
-   }
-   echo "\t<input type=\"text\" name=\"seach_clfoco\" accesskey=\"e\" value=\"".$form['seach_clfoco']."\" maxlength=\"15\"  class=\"FacetInput\">\n";
-   echo $messaggio;
-   //echo "\t <input type=\"image\" align=\"middle\" accesskey=\"c\" name=\"search\" src=\"../../library/images/cerbut.gif\"></td>\n";
-   echo '&nbsp;<button type="submit" class="btn btn-default btn-sm" name="search" accesskey="c"><i class="glyphicon glyphicon-search"></i></button></td>';
-} else {
-   $anagrafica = new Anagrafica();
-   $fornitore = $anagrafica->getPartner($form['clfoco']);
-   echo "<input type=\"submit\" value=\"".$fornitore['ragso1'].' '.$fornitore['ragso2']."\" name=\"newfornitore\" title=\" Modifica \">\n";
-   echo "\t<input type=\"hidden\" name=\"clfoco\" value=\"".$form['clfoco']."\">\n";
-}*/
 echo "</td></tr>\n";
+$sql = gaz_dbi_dyn_query ("*", $gTables['admin']." LEFT JOIN ".$gTables['anagra']." ON (".$gTables['admin'].".id_anagra = ".$gTables['anagra'].".id)" );
+$accopt='<option value="no_user"> non è un utente</option>';
+$sel=false;
+while ($row = $sql->fetch_assoc()){
+	$selected = "";
+	if ($row['user_name'] == $form['adminid']) {
+		$selected = "selected";
+		$sel=true;
+	}
+	$accopt .= '<option '.$selected.' value="'.$row['user_name'].'">' . $row['ragso1'] .' '.$row['ragso2']. '</option>';
+}
+echo '<tr><td class="text-right" >È anche l\'utente:</td><td><select name="adminid" onchange="this.form.submit()">';
+echo $accopt;
+echo '</select></td></tr>';
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">$script_transl[6] : </td><td class=\"FacetDataTD\">\n";
 echo "<input type=\"text\" name=\"base_percent\" value=\"".$form['base_percent']."\" maxlength=\"5\"  class=\"FacetInput\">";
@@ -332,31 +314,22 @@ $select_artico = new selectartico('in_cod_articolo');
 $select_artico -> addSelected($form['in_cod_articolo']);
 $select_artico -> output($form['cosear'],'C');
 echo "</td><td class=\"FacetColumnTD\">$script_transl[9] : <input type=\"text\" value=\"".$form['in_percentuale']."\" maxlength=\"5\"  name=\"in_percentuale\">\n";
-/*echo "</td><td class=\"FacetColumnTD\" align=\"right\"><input type=\"image\" name=\"in_submit\" src=\"../../library/images/vbut.gif\" tabindex=\"6\" title=\"".$script_transl['submit'].$script_transl['thisrow']."!\">\n";*/
-
-/** ENRICO FEDELE */
-/* glyph-icon */
 echo '  </td>
 		<td class="FacetColumnTD" align="right">
 			<button type="submit" class="btn btn-default btn-sm" name="in_submit" title="'.$script_transl['submit'].$script_transl['thisrow'].'" tabindex="6"><i class="glyphicon glyphicon-ok"></i></button>
 		</td>
 	  </tr>';
-	   /** ENRICO FEDELE */
-
 echo "</td></tr>\n";
+
 // fine rigo inserimento
 echo "<tr><td colspan=\"5\"><hr></td></tr>\n";
-// inizio righi gi� inseriti
+// inizio righi già inseriti
 foreach ($form['righi'] as $key => $value) {
         echo "<input type=\"hidden\" value=\"".$value['status']."\" name=\"righi[$key][status]\">\n";
         echo "<input type=\"hidden\" value=\"".$value['id_provvigione']."\" name=\"righi[$key][id_provvigione]\">\n";
         echo "<tr>\n";
         if  ($value['cod_catmer']>0){
             $catmer = gaz_dbi_get_row($gTables['catmer'],'codice',$value['cod_catmer']);
-            /*echo "<td><input type=\"hidden\" value=\"".$value['cod_catmer']."\" name=\"righi[$key][cod_catmer]\">\n
-                  <input type=\"hidden\" value=\"\" name=\"righi[$key][cod_articolo]\" />\n
-                  <input class=\"FacetDataTD\" type=\"submit\" name=\"upd_row[$key]\" value=\"".$value['cod_catmer']."\" />
-                  ".$catmer['descri']."</td><td></td>\n";*/
             echo '<td>Categoria:</td><td>
 						<input type="hidden" value="'.$value['cod_catmer'].'" name="righi['.$key.'][cod_catmer]">
 						<input type="hidden" value="'.$value['cod_articolo'].'" name="righi['.$key.'][cod_articolo]" />
@@ -375,23 +348,12 @@ foreach ($form['righi'] as $key => $value) {
 							<i class="glyphicon glyphicon-refresh"></i>&nbsp;'.$value['cod_articolo']." - ".$artico["descri"].'
 						</button>
 					  </td>';   //FP: da formattare meglio
-					  /*
-            echo "<td></td><td><input type=\"hidden\" value=\"".$value['cod_articolo']."\" name=\"righi[$key][cod_articolo]\" />\n
-                  <input type=\"hidden\" value=\"\" name=\"righi[$key][cod_catmer]\" />\n
-                  <input class=\"FacetDataTD\" type=\"submit\" name=\"upd_row[$key]\" value=\"".$value['cod_articolo']."\" />
-                  ".$artico['descri']."</td>\n";*/
         }
         echo "<td><input type=\"text\" name=\"righi[$key][percentuale]\" value=\"".$value['percentuale']."\" maxlength=\"5\"  class=\"FacetInput\"></td>\n";
-
-		//echo "<td align=\"right\"><input type=\"image\" name=\"del[$key]\" src=\"../../library/images/xbut.gif\" title=\"".$script_transl['delete'].$script_transl['thisrow']."!\" /></td></tr>\n";
-
-		/** ENRICO FEDELE */
-		/* glyph icon */
 		echo '  <td align="right">
 				  <button type="submit" class="btn btn-default btn-sm" name="del['.$key.']" title="'.$script_transl['delete'].$script_transl['thisrow'].'!"><i class="glyphicon glyphicon-trash"></i></button>
 				</td>
 			  </tr>';
-		/** ENRICO FEDELE */
 
 }
 // fine righi inseriti

@@ -106,7 +106,7 @@ $recordnav -> output();
 <div class="box-primary table-responsive">
 <table class="Tlarge table table-striped table-bordered table-condensed">
 <tr>
-<td colspan="2" class="FacetFieldCaptionTD"><?php echo $script_transl[3].' :'; ?>
+<td colspan="2" class="FacetFieldCaptionTD"><?php echo $script_transl[1].' :'; ?>
 <input type="text" name="ragso1" value="<?php if (isset($ragso1)) echo $ragso1; ?>" maxlength="6" tabindex="1" class="FacetInput">
 </td>
 <td colspan="4" class="FacetFieldCaptionTD">
@@ -123,7 +123,7 @@ $recordnav -> output();
 // creo l'array (header => campi) per l'ordinamento dei record
 $headers_tesdoc = array  (
             'N.' => 'id_agente',
-            $script_transl[3] => 'ragso1',
+            $script_transl[1] => 'ragso1',
             $script_transl[4]=> 'telefo',
             $script_transl[5]=> 'fax',
             $script_transl[20]=> '',

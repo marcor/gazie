@@ -217,11 +217,11 @@ if (isset($_POST['conferma'])) {
 				  // trovo l'ultimo peso assegnato ai moduli esistenti e lo accodo
 				  $rs_last = gaz_dbi_dyn_query("MAX(weight)+1 AS max_we", $gTables['module'], 'id > 1');
 				  $r = gaz_dbi_fetch_array($rs_last);
-				  $modclass=(isset($module_class))?$module_class:'';
 				  if($mod_data){ // il modulo è presente aggiungo solo l'utente in admin_module
 					updateAccessRights($form["user_name"], $mod_data['id'], 3, $id[1]);
 				  } else { // non c'è nulla aggiungo tutto e creo il menù
 					require("../../modules/" . $name . "/menu.creation_data.php");
+				  $modclass=(isset($module_class))?$module_class:'';
 					$mod_id = gaz_dbi_table_insert('module', array('name' => $name, 'link' => $menu_data['m1']['link'], 'icon' => $name . '.png', 'class'=>$modclass, 'weight' => $r['max_we']));
 					updateAccessRights($form["user_name"], $mod_id, 3, $id[1]);
 					// trovo l'ultimo id del sub menu
