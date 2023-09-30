@@ -37,10 +37,9 @@ if (isset($_POST['country']) && isset($_POST['pariva'])) {
 	$result = curl_exec($ch);
 	curl_close($ch);
 	//var_dump(json_decode($result, true)); // restituisce una matrice poco comprensibile
-	// al momento restituiamo solo l'esito del controllo; ma in $result ci sono altri dati da poter restituire in maniera più comprensibile.
 	$arr=json_decode($result, true);
   if (isset($arr)){
-    echo "VIES ",$arr['userError'];
+    echo "Controllo VIES: ",$arr['userError'],"\n Ragione sociale: ",$arr['name'],"\n Indirizzo: ",$arr['address'],"\n Numero partita IVA: ",$arr['vatNumber'];
   }else{
     echo "Partita IVA errata";
   }
