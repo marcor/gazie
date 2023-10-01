@@ -72,36 +72,18 @@ $ts = new TableSorter(
 $(function() {
 	$("#dialog_vies").dialog({ autoOpen: false });
 	$('.dialog_vies').click(function() {
-		$("p#pariva").html($(this).attr("country") + " " + $(this).attr("ref"));
-		var country = $(this).attr('country');
-		var pariva = $(this).attr('ref');
-		$( "#dialog_vies" ).dialog({
-			minHeight: 1,
-			width: "auto",
-			modal: "true",
-			show: "blind",
-			hide: "explode",
-			buttons: {
-				delete:{ 
-					text:'Controlla', 
-					'class':'btn btn-danger delete-button',
-					click:function (event, ui) {
-					$.ajax({
-						data: {'type':'client', country:country, pariva:pariva},
-						type: 'POST',
-						url: '../vendit/check_vies.php',
-						success: function(output){
-		                    alert(output);
-						}
-					});
-				}},
-				"X": function() {
-					$(this).dialog("close");
-				}
-			}
-		});
-		$("#dialog_vies" ).dialog( "open" );
-	});
+    $("p#pariva").html($(this).attr("country") + " " + $(this).attr("ref"));
+    var country = $(this).attr('country');
+    var pariva = $(this).attr('ref');
+    $.ajax({
+      data: {'type':'client', country:country, pariva:pariva},
+      type: 'POST',
+      url: '../vendit/check_vies.php',
+      success: function(output){
+                  alert(output);
+      }
+    });
+  });
 	$("#dialog_delete").dialog({ autoOpen: false });
 	$('.dialog_delete').click(function() {
 		$("p#idcodice").html($(this).attr("ref"));

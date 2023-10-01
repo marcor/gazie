@@ -653,6 +653,9 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
         'Maintenance'=>'maintenance',
         'BookingSummary' => 'booking_summary'
     );
+  if (!array_key_exists($templateName, $templates)){
+    $templates[$templateName] = $templateName;
+  }
 	// Antonio Germani - seleziono quale template utilizzare per le ricevute fiscali in base alla configurazione azienda
 	if ($templateName=='Received'){
 		$stampa_ricevute = gaz_dbi_get_row($gTables['company_config'], 'var', 'received_template');
@@ -675,7 +678,6 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
 		if (empty($ts)){$configTemplate->template=substr($configTemplate->template, 1);}
     }
 	$lh=(($dest && $dest == 'H')?'_lh':''); // eventuale scelta di stampare su carta intestata, aggiungo il suffisso "lh";
-
 	require_once ("../../config/templates" . ($configTemplate->template ? '.' . $configTemplate->template : '') . '/' . $templates[$templateName] .$lh. '.php');
     $pdf = new $templateName();
     $docVars = new DocContabVars();
