@@ -32,6 +32,7 @@ if (!$isAjax) {
 if (isset($_POST['country']) && isset($_POST['pariva'])) {
 	$url = 'https://ec.europa.eu/taxation_customs/vies/rest-api/ms/' . $_POST['country'] . '/vat/' . $_POST['pariva'];
 	$ch = curl_init();
+  curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	curl_setopt($ch, CURLOPT_URL,$url);
 	$result = curl_exec($ch);
