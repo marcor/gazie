@@ -42,7 +42,7 @@ if (isset($_POST['country']) && isset($_POST['pariva'])) {
   if (isset($arr)){
     echo "Controllo VIES: ",$arr['userError'],"\n Ragione sociale: ",$arr['name'],"\n Indirizzo: ",$arr['address'],"\n Numero partita IVA: ",$arr['vatNumber'];
   }else{
-    echo "Partita IVA errata";
+    echo "Controllo VIES non riuscito";
   }
 }
 ?>
