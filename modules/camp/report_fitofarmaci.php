@@ -185,7 +185,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
             <span><?php echo number_format ($a_row["dose"],$admin_aziend['decimal_price'], ',', '')," ",$unimis,"/ha"; ?></span>&nbsp;&nbsp;
             <?php
           }
-          if (floatval($a_row["dose_hl"])>0){
+          if (isset($a_row["dose_hl"]) && floatval($a_row["dose_hl"])>0){
             ?>
             <span><?php echo number_format ($a_row["dose_hl"],$admin_aziend['decimal_price'], ',', '')," ",$unimis,"/hl"; ?></span>
             <?php
