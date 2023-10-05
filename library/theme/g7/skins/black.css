@@ -357,3 +357,9 @@ ul.distintabase,
 .navbar-default .navbar-nav > li > a:hover {
   background-color: #e7e7e7;
 }
+mark.apply-evidenze-e {
+ background: #FFA500;
+}
+mark.apply-evidenze-n {
+ background: #FD3030;
+}

@@ -25,9 +25,6 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 
-//require("../../library/include/header.php");
-//$script_transl=HeadMain('','','report_backup');
-
 $url= DATA_DIR."files/backups/";
     $id_file= $_GET["id"];
     $total=$url.$id_file;

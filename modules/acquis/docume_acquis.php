@@ -26,18 +26,10 @@ require("../../library/include/datlib.inc.php");
 
 $admin_aziend=checkAdmin();
 
-//require("../../library/include/header.php");
-//$script_transl=HeadMain();
-//
-// Se esiste, viene incluso il file "help/italian/docume_acquis_help.php",
-// o l'equivalente di un altro linguaggio.
-//
 echo '<div class="help">';
-if (file_exists("help/".$admin_aziend['lang']."/docume_acquis_help.php")) {
-    include("help/".$admin_aziend['lang']."/docume_acquis_help.php");
-}?>
+if (file_exists(HELPDIR.'/'.$admin_aziend['lang']."/docume_acquis_help.php")) {
+    include(HELPDIR.'/'.$admin_aziend['lang']."/docume_acquis_help.php");
+}
+?>
 </div>
 </table>
-<?php
-//require("../../library/include/footer.php");
-?>

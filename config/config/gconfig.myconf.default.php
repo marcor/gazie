@@ -163,6 +163,10 @@ define('modifica_fatture_ddt', FALSE);
 
 // personalizzazione link al fornitore del servizio
 define('contact_link','devincentiis.it', FALSE);
+
 // versione personalizzata
-//define('GAZIE_VERSION','MYVER');
+//define('MY_GAZIE_VERSION','MYVER');
+
+// directory help personalizzati (normalmente usato dai files modules/nomemodulo/docume_nomemodulo.php
+//define('MY_HELPDIR','myhelpdir');
 ?>

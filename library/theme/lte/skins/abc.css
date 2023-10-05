@@ -301,3 +301,9 @@ td.ui-datepicker-other-month>a.ui-state-default.ui-priority-secondary{
 .ui-selectmenu-button span.ui-selectmenu-text {
 	background-color: #eee;
 }
+mark.apply-evidenze-e {
+ background: #FFA500;
+}
+mark.apply-evidenze-n {
+ background: #FD3030;
+}

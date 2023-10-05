@@ -411,3 +411,9 @@ ul.distintabase,
 .ui-button {
   background: unset;
 }
+mark.apply-evidenze-e {
+ background: #FFA500;
+}
+mark.apply-evidenze-n {
+ background: #FD3030;
+}

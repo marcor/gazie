@@ -223,10 +223,10 @@ function apply_evidenze($evidenza)
 		if (isset($evidenza[$row]["movimentabile"])){
 			switch ($evidenza[$row]["movimentabile"]) {
 			case 'E':
-				$evidenza[$row]["label"] = '<mark style="background-color:#FFA500;">' . $evidenza[$row]["label"] . '</mark>';
+				$evidenza[$row]["label"] = '<mark class="apply-evidenze-e">' . $evidenza[$row]["label"] . '</mark>';
 			break;
 			case 'N':
-				$evidenza[$row]["label"] = '<mark style="background-color:#FD3030;">' . $evidenza[$row]["label"] . '</mark>';
+				$evidenza[$row]["label"] = '<mark class="apply-evidenze-n">' . $evidenza[$row]["label"] . '</mark>';
 			break;
 			}
 		}

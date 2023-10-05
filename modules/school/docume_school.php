@@ -24,14 +24,10 @@
 */
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin(9);
-//require("../../library/include/header.php");
-//$script_transl=HeadMain();
+
 echo '<div class="help">';
-if (file_exists("help/".$admin_aziend['lang']."/docume.php")) {
-    include("help/".$admin_aziend['lang']."/docume.php");
+if (file_exists(HELPDIR.'/'.$admin_aziend['lang']."/docume.php")) {
+  include(HELPDIR.'/'.$admin_aziend['lang']."/docume.php");
 }
 ?>
 </div>
-<?php
-//require("../../library/include/footer.php");
-?>

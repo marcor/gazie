@@ -26,12 +26,6 @@
 require("../../library/include/datlib.inc.php");
 
 $admin_aziend=checkAdmin();
-
-//require("../../library/include/header.php");
-//$script_transl=HeadMain();
 ?>
 <div class="help">
 </div>
-<?php
-//require("../../library/include/footer.php");
-?>

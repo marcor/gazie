@@ -50,8 +50,6 @@ if (file_exists($fileConfPers)) {
 	include_once($fileConfPers);
 }
 
-//versione software
-define( 'GAZIE_VERSION',  (defined('GAZIE_VERSION')) ? GAZIE_VERSION: '9.05');
 
 // abilita il debug delle variabili nel footer della pagina (impostare true/false)
 $debug_active = (defined('debug_active')) ? debug_active : FALSE;
@@ -171,6 +169,13 @@ $update_URI_files = (defined('update_URI_files')) ? update_URI_files : 'https://
 
 // url per comunicare (ping) il mio nuovo IP DINAMICO  all'hosting di appoggio
 define('SET_DYNAMIC_IP', (defined('MY_SET_DYNAMIC_IP')) ? MY_SET_DYNAMIC_IP : '');
+
+// directory help personalizzati (normalmente usato dai files modules/nomemodulo/docume_nomemodulo.php
+define( 'HELPDIR',  (defined('MY_HELPDIR')) ? MY_HELPDIR : 'help');
+
+// versione software
+define( 'GAZIE_VERSION',  (defined('MY_GAZIE_VERSION')) ? MY_GAZIE_VERSION: '9.05');
+
 
 // permetti la modifica dei ddt fatturati, utile se bisogna modificare i prezzi degli articoli
 $modifica_fatture_ddt = (defined('modifica_fatture_ddt')) ? modifica_fatture_ddt : FALSE;
