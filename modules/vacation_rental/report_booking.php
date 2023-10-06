@@ -131,6 +131,7 @@ $sortable_headers = array(
     "Check-in" => "start",
     "Check-out" => "end",
     "Notti" => "",
+    "Persone" => "",
     "Tour op." => "id_agente",
     "Cliente" => "clfoco",
     "Località" => "",
@@ -874,7 +875,12 @@ $ts->output_navbar();
               &nbsp;
             </td>
             <td class="FacetFieldCaptionTD">
-
+              &nbsp;
+            </td>
+            <td class="FacetFieldCaptionTD">
+              &nbsp;
+            </td>
+            <td class="FacetFieldCaptionTD">
                 <?php
                 if ($partner_select) {
                     gaz_flt_disp_select("cliente", "clfoco AS cliente, CONCAT(ragso1,' ',ragso2) AS ragso1",
@@ -935,7 +941,7 @@ $ts->output_navbar();
         cols_from($gTables['anagra'],
             "ragso1","ragso2","citspe","custom_field AS anagra_custom_field",
             "e_mail AS base_mail","id") . ", " .
-        cols_from($gTables["destina"], "unita_locale1").", ".cols_from($gTables["rental_events"], "start","end","house_code","checked_in_date","checked_out_date","id_tesbro"),
+        cols_from($gTables["destina"], "unita_locale1").", ".cols_from($gTables["rental_events"], "adult", "child", "start","end","house_code","checked_in_date","checked_out_date","id_tesbro"),
         $tesbro_e_destina." LEFT JOIN ".$gTables['rental_events']." ON  ".$gTables['rental_events'].".id_tesbro = ".$gTables['tesbro'].".id_tes AND ".$gTables['rental_events'].".type = 'ALLOGGIO' LEFT JOIN ".$gTables['rental_feedbacks']." ON  ".$gTables['rental_feedbacks'].".reservation_id = ".$gTables['rental_events'].".id_tesbro" ,
         $ts->where." AND template = 'booking' ", $ts->orderby,
         $ts->getOffset(), $ts->getLimit(),$gTables['rental_events'].".id_tesbro");
@@ -1102,9 +1108,12 @@ $ts->output_navbar();
               echo "<td>" . $r['house_code'] . " &nbsp;</td>";
               echo "<td>" . gaz_format_date($r['start']) . " &nbsp;</td>";
               echo "<td>" . gaz_format_date($r['end']) . " &nbsp;</td>";
-              echo "<td>" . $interval->days . "</td>";
-
-              echo "<td>" . $r['tour_descri'] . "</td>";
+              echo "<td>" . $interval->days ."</td>";
+              echo "<td> adulti:".$r['adult'];
+              if (intval($r['child'])>0){
+                echo "<br>minori:".$r['child'];
+              }
+              echo "</td><td>" . $r['tour_descri'] . "</td>";
               // Colonna cliente
               echo "<td><a title=\"Dettagli cliente\" href=\"../vendit/report_client.php?nome=" . $r['ragso1'] . "\">". $r['ragso1'] ." ".  $r['ragso2'] ."</a> &nbsp;";
               if ($r['user_points']>0 && intval($pointenable)==1){
