@@ -159,16 +159,17 @@ if (isset($_GET['anteprima']) and $msg == "") {
 
         $month = $fmt->format(new \DateTime(date("Y-m-d",$currentDate)));
         $n=0;
-        foreach ($rows as $row) {// per ogni prenotazione
+		
+        foreach ($rows as $row) {// per ogni locazione
           //echo "<pre>",print_r($row);
-          if (($currentDate > strtotime($row['start'])) && ($currentDate <= strtotime($row['end']))){// se il giorno che sto analizzando è dentro la prenotazione
-            (isset($rows[$n]['dayStat']))?$rows[$n]['dayStat']++:$rows[$n]['dayStat']=1;// contatore giorni prenotazione che sono dentro al periodo selezionato
+          if (($currentDate > strtotime($row['start'])) && ($currentDate <= strtotime($row['end']))){// se il giorno che sto analizzando è dentro la locazione
+            (isset($rows[$n]['dayStat']))?$rows[$n]['dayStat']++:$rows[$n]['dayStat']=1;// contatore giorni di ogni locazione ($n) che sono dentro al periodo selezionato
 
             $facil=$row['id_artico_group'];// Chiave struttura turistica per raggruppamento statistiche
             //conteggio pernottamenti
             if( !array_key_exists($facil, $count) || !array_key_exists($month, $count[$facil])){// se è la prima volta che trovo questa struttura turistica
               // definisco i contatori e/o avvio i conteggi per la prima volta
-              $count[$facil][$month]['pern_tot'] = $row['adult']+$row['child'];
+              $count[$facil][$month]['pern_tot'] = $row['adult']+$row['child'];// pernottamenti totali per struttura e per mese
               $count[$facil][$month]['pern_tot_child'] = $row['child'];
               $count[$facil][$month]['pern_tot_ag'][$row['id_agente']] = $row['adult']+$row['child'];
 			  $count[$facil][$month]['tot_turtax']=0;
@@ -184,23 +185,25 @@ if (isset($_GET['anteprima']) and $msg == "") {
               }
             }
             if (!isset($count[$facil]['pern_tot'])){
-              $count[$facil]['pern_tot'] = $row['adult']+$row['child'];
+              $count[$facil]['pern_tot'] = $row['adult']+$row['child'];// pernottamenti totali per struttura
             }else{
               $count[$facil]['pern_tot'] += $row['adult']+$row['child'];
             }
           }
           $n++;
         }
+		
         $currentDate = strtotime("+1 day", $currentDate);
       }
       //echo "<pre>",print_r($rows);die;
       // eseguo i calcoli
 
-      foreach ($rows as $row) {// per ogni prenotazione
-	  //echo "<pre>prenotazione:",print_r($row),"</pre>";
+      foreach ($rows as $row) {// per ogni locazione
+	  //echo "<pre>locazione:",print_r($row),"</pre>";
+	  
 	  $row['end'] = date('Y-m-d', strtotime($row['end']. ' - 1 days'));// il giorno del check-out non conta per una notte
 
-        if (isset($row['dayStat']) && $row['dayStat']>0){
+        if (isset($row['dayStat']) && $row['dayStat']>0){// totale notti locazione
             //echo "<pre>",print_r($row);
             $facil=$row['id_artico_group'];// Chiave struttura turistica per raggruppamento statistiche
             // prendo dati
@@ -234,11 +237,13 @@ if (isset($_GET['anteprima']) and $msg == "") {
 					$open_to=$datafine;
 				  }
 				  $diff = date_diff(date_create($open_to),date_create($open_from));
-				  $open_nights = $diff->format("%a");
+				  $open_nights = ($diff->format("%a"))+1;
+				  $open_day[$facil]=$open_nights;
 			  }else{
 				$open_from='';
 				$open_to='';
-				$open_nights='';
+				$open_nights='';				  
+				$open_day[$facil]=365;
 			  }
             } else {
               $tour_tax_from='';
@@ -246,9 +251,10 @@ if (isset($_GET['anteprima']) and $msg == "") {
               $tour_tax_day='';
               $open_from='';
               $open_to='';
-              $open_nights='';
+              $open_nights='';			  
             }
-            while ($val_row = gaz_dbi_fetch_array($result)){ // per ogni riga della prenotazione
+
+            while ($val_row = gaz_dbi_fetch_array($result)){ // per ogni riga della locazione
 				//echo "<pre>riga:",print_r($val_row),"</pre>";
 				$tour_tax_day_count=0;
 				unset($tot_turtax_memo);
@@ -260,31 +266,42 @@ if (isset($_GET['anteprima']) and $msg == "") {
 				//echo "<pre>Alloggio:",print_r($val_row),"</pre>";
 
                 $room_type = $custom_field['vacation_rental']['room_type'];// chiave per raggruppamento prezzo medio per tipo di alloggio
-                
-                //tariffa applicata riferita alle notti da conteggiare
-                $tarif_night= (($val_row['prelis']*$val_row['quanti'])-((($val_row['prelis']*$val_row['quanti'])*$val_row['sconto'])/100))/$nights;
 				
+				$conta[$facil][$room_type]=(isset($conta[$facil][$room_type]))?$conta[$facil][$room_type]+1:1;// contatore locazioni per struttura e per tipo alloggio
+                
+                //tariffa applicata a notte
+                $tarif_night= (($val_row['prelis']*$val_row['quanti'])-((($val_row['prelis']*$val_row['quanti'])*$val_row['sconto'])/100))/$nights;
+
                 if( !array_key_exists('tot_tarif_periodo', $count[$facil])){
-                  $count[$facil]['tot_tarif_periodo'] =  $tarif_night*$row['dayStat'];
-                  $count[$facil]['tot_tarif_periodo_ivac'] =  ($tarif_night*$row['dayStat'])+((($tarif_night*$row['dayStat'])*$val_row['aliquo'])/100);
-                  $count[$facil]['tarif_periodo_pers'] =  ($tarif_night*$row['dayStat'])/$count[$facil]['pern_tot'];
-                  $count[$facil]['room_tarif_periodo_pers'][$room_type] =  (($tarif_night*$row['dayStat'])+((($tarif_night*$row['dayStat'])*$val_row['aliquo']))/100)/$count[$facil]['pern_tot'];
+                  $count[$facil]['tot_tarif_periodo'] =  $tarif_night*$row['dayStat'];// totale vendite per la struttura imponibile
+                  $count[$facil]['tot_tarif_periodo_ivac'] =  ($tarif_night*$row['dayStat'])+((($tarif_night*$row['dayStat'])*$val_row['aliquo'])/100);// per B12 andrà diviso per pernottamenti totali
+                  $count[$facil]['tarif_periodo_pers'] =  ($tarif_night*$row['dayStat'])/$count[$facil]['pern_tot'];// Somma delle tariffe media a persona per la struttura imponibile
+                  $count[$facil]['room_tarif_periodo_pers'][$room_type] =  ($tarif_night/($row['adult']+$row['child']))+((($tarif_night/($row['adult']+$row['child']))*$val_row['aliquo'])/100);//Somma delle Tariffe a notte per tipo di alloggio, media a persona IVA compresa
+				  $count[$facil]['MIN_room_tarif_periodo_pers'][$room_type] =  $count[$facil]['room_tarif_periodo_pers'][$room_type]; // questo è il prezzo minimo
+
                 } else {
                   $count[$facil]['tot_tarif_periodo'] +=  $tarif_night*$row['dayStat'];
                   $count[$facil]['tot_tarif_periodo_ivac'] +=  ($tarif_night*$row['dayStat'])+((($tarif_night*$row['dayStat'])*$val_row['aliquo'])/100);
                   $count[$facil]['tarif_periodo_pers'] +=  ($tarif_night*$row['dayStat'])/$count[$facil]['pern_tot'];
                   if (isset($count[$facil]['room_tarif_periodo_pers'][$room_type])){
-                    $count[$facil]['room_tarif_periodo_pers'][$room_type] +=  (($tarif_night*$row['dayStat'])+((($tarif_night*$row['dayStat'])*$val_row['aliquo']))/100)/$count[$facil]['pern_tot'];
+                    $count[$facil]['room_tarif_periodo_pers'][$room_type] +=  ($tarif_night/($row['adult']+$row['child']))+((($tarif_night/($row['adult']+$row['child']))*$val_row['aliquo'])/100);
+					
+					if ((($tarif_night/($row['adult']+$row['child']))+((($tarif_night/($row['adult']+$row['child']))*$val_row['aliquo'])/100))<$count[$facil]['MIN_room_tarif_periodo_pers'][$room_type]){
+						$count[$facil]['MIN_room_tarif_periodo_pers'][$room_type] =  ($tarif_night/($row['adult']+$row['child']))+((($tarif_night/($row['adult']+$row['child']))*$val_row['aliquo'])/100);
+					}
                   }else{
-                    $count[$facil]['room_tarif_periodo_pers'][$room_type] =  (($tarif_night*$row['dayStat'])+((($tarif_night*$row['dayStat'])*$val_row['aliquo']))/100)/$count[$facil]['pern_tot'];
+                    $count[$facil]['room_tarif_periodo_pers'][$room_type] =  ($tarif_night/($row['adult']+$row['child']))+((($tarif_night/($row['adult']+$row['child']))*$val_row['aliquo'])/100);
+					$count[$facil]['MIN_room_tarif_periodo_pers'][$room_type] =  $count[$facil]['room_tarif_periodo_pers'][$room_type];
                   }
                 }
-
+				
                 if ($open_nights!==''){ // se c'è un periodo di apertura della struttura
                   $currentDate = strtotime($open_from);
                   while ($currentDate <= strtotime($open_to)){ // ciclo un giorno alla volta l'intervallo del periodo di apertura
-                    if (($currentDate > strtotime($row['start'])) && ($currentDate <= strtotime($row['end']))){ // se il giorno che sto analizzando è dentro la prenotazione
-                        if (($currentDate > strtotime($open_from.'-'.date("Y",$currentDate)) && ($currentDate <= strtotime($open_to.'-'.date("Y",$currentDate))))){// il giorno fa parte della prenotazione quindi vedo se è dentro il periodo di apertura
+
+                    if (($currentDate >= strtotime($row['start'])) && ($currentDate <= strtotime($row['end']))){ // se il giorno che sto analizzando è dentro la locazione
+
+                        if (($currentDate > strtotime($open_from.'-'.date("Y",$currentDate)) && ($currentDate <= strtotime($open_to.'-'.date("Y",$currentDate))))){// il giorno fa parte della locazione quindi vedo se è dentro il periodo di apertura
                           // conteggio l'occupazione giornaliera della struttura (una sola volta al giorno)
                             if (isset($countDay[$facil]) && (!in_array($currentDate,$countDay[$facil]))){
                               $count[$facil]['count_pres'] = $count[$facil]['count_pres']-1;
@@ -322,7 +339,7 @@ if (isset($_GET['anteprima']) and $msg == "") {
 				  $month = $fmt->format(new \DateTime(date("Y-m-d",$currentDate)));
 				  $tot_turtax_memo[$month] = (isset($tot_turtax_memo[$month]))?$tot_turtax_memo[$month]:0;
 				  $presenze_turtax_memo[$month] = (isset($presenze_turtax_memo[$month]))?$presenze_turtax_memo[$month]:0;
-                  if (($currentDate >= strtotime($row['start'])) && ($currentDate <= strtotime($row['end'])) ){// se il giorno che sto analizzando è dentro la prenotazione 
+                  if (($currentDate >= strtotime($row['start'])) && ($currentDate <= strtotime($row['end'])) ){// se il giorno che sto analizzando è dentro la locazione 
                     if (strlen($tour_tax_from)==0 ){// se la tassa turistica non è limitata ad un periodo di tempo definito, aggiungo un giorno
                       (isset($count[$facil][$month]['daytopay']))?$count[$facil][$month]['daytopay'] +=1:$count[$facil][$month]['daytopay'] =1;
 					  $daytopay=1;					 
@@ -366,7 +383,7 @@ if (isset($_GET['anteprima']) and $msg == "") {
 							  $tot_turtax_memo[$month] += (floatval($data_rif['vacation_rental']['tur_tax'])*(intval($daytopay)))*(intval($row['adult']));
 							  $presenze_turtax_memo[$month] += intval($row['adult']);
 							  (isset($count[$facil][$month]['presenze']))?$count[$facil][$month]['presenze'] += intval($row['adult']):$count[$facil][$month]['presenze'] = intval($row['adult']);
-							  //echo "<br>mese:",$month," - contatore tassa per questa struttura importo:",$count[$facil][$month]['tot_turtax']," - tur tax giornaliera euro:",floatval($data_rif['vacation_rental']['tur_tax'])," - contatore conteggio giorni da pagare per struttura:",intval($count[$facil][$month]['daytopay'])," - adulti che pagano:",intval($row['adult'])," - giorni pagati per questo rigo prenotazione:",$daytopay;
+							  //echo "<br>mese:",$month," - contatore tassa per questa struttura importo:",$count[$facil][$month]['tot_turtax']," - tur tax giornaliera euro:",floatval($data_rif['vacation_rental']['tur_tax'])," - contatore conteggio giorni da pagare per struttura:",intval($count[$facil][$month]['daytopay'])," - adulti che pagano:",intval($row['adult'])," - giorni pagati per questo rigo locazione:",$daytopay;
                           }else{
 							  
                           }
@@ -460,27 +477,45 @@ if (isset($_GET['anteprima']) and $msg == "") {
                         if ($key2=="pern_tot"){
                           $perntot=$count[$key]['pern_tot'];
                         }elseif($key2=="tot_tarif_periodo"){
-                          echo "<br>Totale vendite periodo: € ",gaz_format_number($count[$key]['tot_tarif_periodo'])," (imponibile)";
+                          echo "<br>Totale locazioni: € ",gaz_format_number($count[$key]['tot_tarif_periodo'])," (imponibile, escluso extra, esclusa tassa turistica)";
                         }elseif($key2=="tot_tarif_periodo_ivac"){
-                          echo "<br>B12- Tariffa media per presenza periodo: € ",gaz_format_number(($count[$key]['tot_tarif_periodo_ivac'])/intval($perntot))," (iva compresa)";
+                          echo "<br>B12- Tariffa media per presenza: € ",gaz_format_number(($count[$key]['tot_tarif_periodo_ivac'])/intval($perntot))," (iva compresa)";
                         }elseif($key2=="tarif_periodo_pers"){
-                          echo "<br>Tariffa media a persona periodo: € ",gaz_format_number($count[$key]['tarif_periodo_pers'])," (imponibile)";
+                          echo "<br>Tariffa media a persona: € ",gaz_format_number($count[$key]['tarif_periodo_pers'])," (imponibile)";
                         }elseif($key2=="count_pres"){
+						  echo "<br>B10- Giorni di apertura dell'esercizio nell'anno: ",$open_day[$key];
                           echo "<br>B11- Giorni di apertura senza alcuna presenza: ",$count[$key]['count_pres'];
                         }elseif($key2=="room_tarif_periodo_pers"){
                           foreach ($count[$key]['room_tarif_periodo_pers'] as $key3 => $item3) {
                             switch($key3){
                               case "1":
-                                echo "<br>B20- Tariffa settimanale <b>monolocale</b> media a persona periodo: € ",gaz_format_number(($count[$key]['room_tarif_periodo_pers'][$key3])*7)," (iva compresa)";
+                                echo "<br>B20- Tariffa settimanale <b>monolocale</b> media a persona: € ",gaz_format_number(($count[$key]['room_tarif_periodo_pers'][1]/$conta[$key][1])*7)," (iva compresa)";
                                 break;
                               case "2":
-                                echo "<br>B21- Tariffa settimanale <b>bilocale</b> media a persona periodo: € ",gaz_format_number(($count[$key]['room_tarif_periodo_pers'][$key3])*7)," (iva compresa)";
+                                echo "<br>B21- Tariffa settimanale <b>bilocale</b> media a persona: € ",gaz_format_number(($count[$key]['room_tarif_periodo_pers'][2]/$conta[$key][2])*7)," (iva compresa)";
                                 break;
                               case "3":
-                                echo "<br>B22- Tariffa settimanale <b>trilocale</b> media a persona periodo: € ",gaz_format_number(($count[$key]['room_tarif_periodo_pers'][$key3])*7)," (iva compresa)";
+                                echo "<br>B22- Tariffa settimanale <b>trilocale</b> media a persona: € ",gaz_format_number(($count[$key]['room_tarif_periodo_pers'][3]/$conta[$key][3])*7)," (iva compresa)";
                                 break;
                               case "4":
-                                echo "<br>B23- Tariffa settimanale <b>quadrilocale</b> media a persona periodo: € ",gaz_format_number(($count[$key]['room_tarif_periodo_pers'][$key3])*7)," (iva compresa)";
+                                echo "<br>B23- Tariffa settimanale <b>quadrilocale</b> media a persona: € ",gaz_format_number(($count[$key]['room_tarif_periodo_pers'][4]/$conta[$key][4])*7)," (iva compresa)";
+                                break;
+                            }
+                          }
+                        }elseif($key2=="MIN_room_tarif_periodo_pers"){
+                          foreach ($count[$key]['MIN_room_tarif_periodo_pers'] as $key3 => $item3) {
+                            switch($key3){
+                              case "1":
+                                echo "<br>B20- Tariffa settimanale <b>monolocale</b> minima a persona: € ",gaz_format_number(($count[$key]['MIN_room_tarif_periodo_pers'][1])*7)," (iva compresa)";
+                                break;
+                              case "2":
+                                echo "<br>B21- Tariffa settimanale <b>bilocale</b> minima a persona: € ",gaz_format_number(($count[$key]['MIN_room_tarif_periodo_pers'][2])*7)," (iva compresa)";
+                                break;
+                              case "3":
+                                echo "<br>B22- Tariffa settimanale <b>trilocale</b> minima a persona: € ",gaz_format_number(($count[$key]['MIN_room_tarif_periodo_pers'][3])*7)," (iva compresa)";
+                                break;
+                              case "4":
+                                echo "<br>B23- Tariffa settimanale <b>quadrilocale</b> minima a persona: € ",gaz_format_number(($count[$key]['MIN_room_tarif_periodo_pers'][4])*7)," (iva compresa)";
                                 break;
                             }
                           }
@@ -524,9 +559,9 @@ if (isset($_GET['anteprima']) and $msg == "") {
 
                       }
 					  
-                      echo "<br>B07- Pernottamenti totali periodo: ",$perntot;
-                      echo "<br>C20- Pernottamenti agenzie/tour operator periodo: n ",$perntot_ag," = ",number_format(($perntot_ag/$perntot)*100,2,",","")," % ";
-                      echo "<br>C19- Pernottamenti vendita diretta periodo: n ",$perntot_dir," = ",number_format(($perntot_dir/$perntot)*100,2,",","")," % ";
+                      echo "<br>B07- Pernottamenti totali: ",$perntot;
+                      echo "<br>C20- Pernottamenti agenzie/tour operator: n ",$perntot_ag," = ",number_format(($perntot_ag/$perntot)*100,2,",","")," % ";
+                      echo "<br>C19- Pernottamenti vendita diretta: n ",$perntot_dir," = ",number_format(($perntot_dir/$perntot)*100,2,",","")," % ";
                       echo "<br>Totale extra venduti: € ",gaz_format_number($count[$key]['tot_extra_periodo'])," (imponibile)";
 
 					  ?>
@@ -538,7 +573,7 @@ if (isset($_GET['anteprima']) and $msg == "") {
             }
 
           } else {
-             echo "<tr><td class=\"FacetDataTDred\" align=\"center\">Non ci sono prenotazione nel periodo selezionato</td></tr>";
+             echo "<tr><td class=\"FacetDataTDred\" align=\"center\">Non ci sono locazione nel periodo selezionato</td></tr>";
           }
           ?>
           </div><!-- chiude tab-content  -->
