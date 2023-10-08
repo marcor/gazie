@@ -749,7 +749,7 @@ class shopsynchronizegazSynchro {
 						// non si connette: key LOG-IN FALSE
 						$rawres['title'] = "Problemi con la connessione Sftp usando il file chiave. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
 						$rawres['button'] = 'Avviso eCommerce';
-						$rawres['label'] = "Aggiornare i dati dell'articolo: ". $d;
+						$rawres['label'] = "Aggiornare i dati dell'articolo: ". $d['codice'];
 						$rawres['link'] = '../shop-synchronize/synchronize.php';
 						$rawres['style'] = 'danger';
 						$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
@@ -763,7 +763,7 @@ class shopsynchronizegazSynchro {
 						// non si connette: password LOG-IN FALSE
 						$rawres['title'] = "Problemi con la connessione Sftp usando la password. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
 						$rawres['button'] = 'Avviso eCommerce';
-						$rawres['label'] = "Aggiornare i dati dell'articolo: ". $d;
+						$rawres['label'] = "Aggiornare i dati dell'articolo: ". $d['codice'];
 						$rawres['link'] = '../shop-synchronize/synchronize.php';
 						$rawres['style'] = 'danger';
 						$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
@@ -774,23 +774,34 @@ class shopsynchronizegazSynchro {
 			} else {
 
 				// imposto la connessione al server
-				$conn_id = @ftp_connect($ftp_host)or die("Could not connect to $ftp_host");
+        if ($conn_id = @ftp_connect($ftp_host)){
 
-				// effettuo login con user e pass
-				$mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
+          // effettuo login con user e pass
+          $mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
 
-				// controllo se la connessione è OK...
-				if ((!$conn_id) or (!$mylogin)){
-					// non si connette FALSE
-					$rawres['title'] = "Problemi con le impostazioni FTP in configurazione avanzata azienda. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
-					$rawres['button'] = 'Avviso eCommerce';
-					$rawres['label'] = "Aggiornare i dati dell'articolo: ". $d;
-					$rawres['link'] = '../shop-synchronize/synchronize.php';
-					$rawres['style'] = 'danger';
-					$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
-					$this->rawres=$rawres;
-					return;
-				}
+          // controllo se la connessione è OK...
+          if ((!$conn_id) or (!$mylogin)){
+            // non si connette FALSE
+            $rawres['title'] = "Problemi con le impostazioni FTP in configurazione avanzata azienda. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
+            $rawres['button'] = 'Avviso eCommerce';
+            $rawres['label'] = "Aggiornare i dati dell'articolo: ". $d['codice'];
+            $rawres['link'] = '../shop-synchronize/synchronize.php';
+            $rawres['style'] = 'danger';
+            $_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+            $this->rawres=$rawres;
+            return;
+          }
+        }else{
+          // non si connette al server
+          $rawres['title'] = "Problemi con la connessione al server controllare l'impostazione host. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
+          $rawres['button'] = 'Avviso eCommerce';
+          $rawres['label'] = "Aggiornare i dati dell'articolo: ". $d['codice'];
+          $rawres['link'] = '../shop-synchronize/synchronize.php';
+          $rawres['style'] = 'danger';
+          $_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+          $this->rawres=$rawres;
+          return;
+        }
 			}
 
 			// Calcolo il prezzo IVA compresa
@@ -866,6 +877,7 @@ class shopsynchronizegazSynchro {
 				// chiudo la connessione FTP
 				ftp_quit($conn_id);
 			}
+
 			$access=base64_encode($accpass);
 
 			// avvio il file di interfaccia presente nel sito web remoto
