@@ -319,7 +319,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
       $arrayvar= array("var_id" => intval($form['var_id']), "var_name" => strval($form['var_name']));
       $form['ecomm_option_attribute'] = json_encode ($arrayvar);
     }
-	$form['preve1']=$form['web_price'];// al momento imposto il prezzo 1 uguale al webprice
+    $form['preve1']=$form['web_price'];// al momento imposto il prezzo 1 uguale al webprice
     if ($toDo == 'insert') {
 		$array= array('vacation_rental'=>array('accommodation_type' => $_POST['accommodation_type'],'room_type' => $_POST['room_type'],'total_guests' => $_POST['total_guests'],'adult' => $_POST['adult'],'child' => $_POST['child'],'pause' => $_POST['pause'],'fixquote' => floatval($_POST['fixquote']),'deposit' => $_POST['deposit'],'security_deposit' => $_POST['security_deposit'],'deposit_type' => $_POST['deposit_type'],'tur_tax_mode' => $_POST['tur_tax_mode'],'tur_tax' => $_POST['tur_tax'],'agent' => $_POST['agent']));// creo l'array per il custom field
 		$form['custom_field'] = json_encode($array);// codifico in json  e lo inserisco nel form
@@ -364,10 +364,10 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 		  bodytextInsert(array('table_name_ref' => 'artico_' . $form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
 		}
     }
-    if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
-          // aggiorno l'e-commerce ove presente
-          $gs=$admin_aziend['synccommerce_classname'];
-          $gSync = new $gs();
+    if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname']) && intval($form['web_public'])>0){
+      // aggiorno l'e-commerce ove presente
+      $gs=$admin_aziend['synccommerce_classname'];
+      $gSync = new $gs();
       if($gSync->api_token){
         $form['heximage']=bin2hex($form['image']);
         if($admin_aziend['conmag'] <= 1){ // se non gestisco la contabilità di magazzino ci indico solo la scorta e metto sempre disponibile
@@ -948,8 +948,10 @@ if ($modal_ok_insert === true) {
                     </div>
                 </div><!-- chiude row  -->
                 <!--+ DC - 06/02/2019 div class="row" --->
+
                 <div id="lotOrSerial" class="row IERincludeExcludeRow">
 					<input type="hidden" name="lot_or_serial" value="0" />
+          <input class="col-sm-4" type="hidden" value="<?php echo (isset($_POST['EAN']))? serchEAN():$form["barcode"]; ?>" name="barcode" maxlength="13" />
 
                 </div><!-- chiude row  -->
                 <!--+ DC - 06/02/2019 div class="row" --->
@@ -1073,15 +1075,15 @@ if ($modal_ok_insert === true) {
                     </div>
                 </div><!-- chiude row  -->
                 <!--+ DC - 06/02/2019 div class="row" --->
-<!--
+
                 <div id="webPublic" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="web_public" class="col-sm-4 control-label"><?php echo $script_transl['web_public']; ?></label>
                             <?php
-                            /*
+
                             $gForm->variousSelect('web_public', $script_transl['web_public_value'], $form['web_public'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
-                            */
+
                             ?>
                         </div>
                     </div>
