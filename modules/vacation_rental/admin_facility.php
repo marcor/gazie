@@ -135,19 +135,26 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 				$form['custom_field']=(isset($_POST['custom_field']))?$_POST['custom_field']:''; // riporto il custom field a quello di artico
 				$form['id_artico_group']=gaz_dbi_last_id();
 				gaz_dbi_table_update ("artico", $_POST['codart'], array("id_artico_group"=>$form['id_artico_group']) );
-        if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
+        if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname']) && intval($_POST['web_public'])>0){
           // Aggiornamento parent su e-commerce
           $gs=$admin_aziend['synccommerce_classname'];
           $gSync = new $gs();
           if($gSync->api_token){
             $gSync->UpsertParent($form,$toDo);
-            //exit;
           }
         }
 				// il redirect deve modificare il form in update perché è stato già inserito
 				header("Location: ../vacation_rental/admin_facility.php?Update&id_artico_group=".$form['id_artico_group']."&tab=variant");
 			} elseif (isset($_POST['codart'])){
 				gaz_dbi_table_update ("artico", $_POST['codart'], array("id_artico_group"=>$form['id_artico_group']));
+        if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname']) && intval($_POST['web_public'])>0){
+          // Aggiornamento parent su e-commerce
+          $gs=$admin_aziend['synccommerce_classname'];
+          $gSync = new $gs();
+          if($gSync->api_token){
+            $gSync->UpsertParent($form,$toDo);
+          }
+        }
 				// il redirect deve modificare il form in update perché è stato già inserito
 				header("Location: ../vacation_rental/admin_facility.php?Update&id_artico_group=".$form['id_artico_group']."&tab=variant");
 			}
@@ -275,13 +282,12 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 				gaz_dbi_table_update('artico_group', array( 0 => "id_artico_group", 1 => $form['id_artico_group']), $form);
 			}
 
-			if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
+			if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])&& intval($_POST['web_public'])>0){
 				// Aggiornamento parent su e-commerce
 				$gs=$admin_aziend['synccommerce_classname'];
 				$gSync = new $gs();
 				if($gSync->api_token){
 					$gSync->UpsertParent($form,$toDo);
-					//exit;
 				}
 			}
 			/** ENRICO FEDELE */
