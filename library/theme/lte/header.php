@@ -309,11 +309,11 @@ setInterval(menu_check_from_modules,<?php echo intval((int)$period*60000);?>);
     if ($config->getValue('LTE_Collapsed') == "true")
         $val .= " sidebar-collapse";
     if ($config->getValue('LTE_Onhover') == "true")
-        $val .= " wysihtml5-supported sidebar-collapse";
+        $val .= " wysihtml5-supported sidebar-mini sidebar-collapse";
     if ($config->getValue('LTE_SidebarOpen') == "true")
-        $val .= " control-sidebar-open";
+        $val .= " sidebar-mini sidebar-open control-sidebar-open";
 
-    echo "<body class=\"hold-transition adminlte-gazie sidebar-mini " . $val . "\">";
+    echo "<body class=\"hold-transition adminlte-gazie " . $val . "\">";
     ?>
 
     <form method="POST" name="head_form" action="../../modules/root/admin.php">

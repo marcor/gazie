@@ -48,7 +48,7 @@ include('_header.php');?>
                   <input type="password" autocomplete="off" required style="height: 34px;" id="login-password" class="form-control" name="user_password" placeholder="<?php echo WORDING_PASSWORD; ?>">
               </div>
               <div id="capsWarning" class="alert alert-warning col-sm-12" style="display:none;">Blocco maiuscole attivato! Caps lock on! Bloqueo de mayusculas!</div>
-              <div style="padding-top:10px" class="form-group">
+              <div style="padding-top:10px">
                   <div class="col-lg-10 controls">
                       <a style="float:left;" href="login_password_reset.php"><?php echo WORDING_FORGOT_MY_PASSWORD; ?></a>
                   </div>

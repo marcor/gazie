@@ -132,6 +132,7 @@ class invoiceXMLvars {
   public $descrifae_vat;
   public $descrifae_natura;
   public $reverse_charge_sez;
+  public $transchr = ['“'=>'"','‘'=>'\'','€'=>'&#8364;','©'=>'&#169;','®'=>'&#174;','È'=>'&#200;','É'=>'&#201;','Ì'=>'&#204;','À'=>'&#192;','Ò'=>'&#210;','Ù'=>'&#217;',"ø" => "&#248;", "£" => "&#163;"];
 
   function setXMLvars($gTables, $tesdoc, $testat, $tableName, $ecr = false) {
     $this->gTables = $gTables;
@@ -348,7 +349,7 @@ class invoiceXMLvars {
     $nr_idtes=1;
     while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
       // filtro le descrizioni
-      $rigo['descri'] = htmlspecialchars(htmlspecialchars_decode(trim(html_entity_decode($rigo['descri'], ENT_XML1 | ENT_QUOTES, 'UTF-8'))), ENT_XML1, 'UTF-8');
+      $rigo['descri'] = strtr ( htmlspecialchars(htmlspecialchars_decode(trim(html_entity_decode($rigo['descri'], ENT_XML1 | ENT_QUOTES, 'UTF-8'))), ENT_XML1, 'UTF-8'), $this->transchr);
       if ($ctrl_idtes<>$rigo['id_tes']){ // è cambiata la testata riparto da NumeroLinea 1 e azzero l'array ref
         $nr_idtes=1;
         $id_rig_ref=array();

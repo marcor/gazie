@@ -162,7 +162,7 @@ define('MY_SET_DYNAMIC_IP','');
 define('modifica_fatture_ddt', FALSE);
 
 // personalizzazione link al fornitore del servizio
-define('contact_link','devincentiis.it', FALSE);
+//define('MY_CONTACT_LINK','devincentiis.it', FALSE);
 
 // versione personalizzata
 //define('MY_GAZIE_VERSION','MYVER');

@@ -180,5 +180,5 @@ define( 'GAZIE_VERSION',  (defined('MY_GAZIE_VERSION')) ? MY_GAZIE_VERSION: '9.0
 // permetti la modifica dei ddt fatturati, utile se bisogna modificare i prezzi degli articoli
 $modifica_fatture_ddt = (defined('modifica_fatture_ddt')) ? modifica_fatture_ddt : FALSE;
 
-$contact_link = (defined('contact_link')) ? contact_link : 'devincentiis.it';
+$contact_link = (defined('MY_CONTACT_LINK')) ? MY_CONTACT_LINK : 'devincentiis.it';
 ?>
