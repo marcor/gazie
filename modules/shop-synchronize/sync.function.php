@@ -305,7 +305,7 @@ class shopsynchronizegazSynchro {
 				$accpass=$rdec?htmlspecialchars_decode($rdec[0]):'';
 				$accpass=(strlen($accpass)>0)?$accpass:$OSaccpass; // se la password decriptata non ha dato risultati provo a mettere la password non criptata
 			}else{
-				$rawres['title'] = "Problemi con le impostazioni FTP: manca il percorso al file interfaccia e/o la sua password di accesso! AGGIORNARE MANUALMENTE la categoria ". $d. " nel sito web ".$toDo;
+				$rawres['title'] = "Problemi con le impostazioni FTP: manca il percorso al file interfaccia e/o la sua password di accesso! AGGIORNARE MANUALMENTE la categoria ". $d['codice']."-".$d['descri']. " nel sito web ".$toDo;
 				$rawres['button'] = 'Avviso eCommerce';
 				$rawres['label'] = "OK fammi controllare le impostazioni";
 				$rawres['link'] = '../shop-synchronize/config_sync.php';
@@ -324,7 +324,7 @@ class shopsynchronizegazSynchro {
 						// non si connette: key LOG-IN FALSE
 						$rawres['title'] = "Problemi con la connessione Sftp usando il file chiave. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
 						$rawres['button'] = 'Avviso eCommerce';
-						$rawres['label'] = "Aggiornare i dati del gruppo: ". $p['id_artico_group'] ."-". $p['descri'];
+						$rawres['label'] = "Aggiornare i dati del gruppo: ". $d['codice']."-".$d['descri'];
 						$rawres['link'] = '../shop-synchronize/synchronize.php';
 						$rawres['style'] = 'danger';
 						$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
@@ -337,7 +337,7 @@ class shopsynchronizegazSynchro {
 						// non si connette: password LOG-IN FALSE
 						$rawres['title'] = "Problemi con la connessione Sftp usando la password. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
 						$rawres['button'] = 'Avviso eCommerce';
-						$rawres['label'] = "Aggiornare i dati del gruppo: ". $p['id_artico_group'] ."-". $p['descri'];
+						$rawres['label'] = "Aggiornare la categoria: ". $d['codice']."-".$d['descri'];
 						$rawres['link'] = '../shop-synchronize/synchronize.php';
 						$rawres['style'] = 'danger';
 						$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
@@ -347,21 +347,32 @@ class shopsynchronizegazSynchro {
 				}
 			} else {
 				// imposto la connessione al server
-				$conn_id = @ftp_connect($ftp_host)or die("Could not connect to $ftp_host");
-				// effettuo login con user e pass
-				$mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
-				// controllo se la connessione è OK...
-				if ((!$conn_id) or (!$mylogin)){
-					// non si connette FALSE
-					$rawres['title'] = "Problemi con le impostazioni FTP in configurazione avanzata azienda. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
-					$rawres['button'] = 'Avviso eCommerce';
-					$rawres['label'] = "Aggiornare i dati del gruppo: ". $p['id_artico_group'] ."-". $p['descri'];
-					$rawres['link'] = '../shop-synchronize/synchronize.php';
-					$rawres['style'] = 'danger';
-					$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
-					$this->rawres=$rawres;
-					return;
-				}
+				if ($conn_id = @ftp_connect($ftp_host)){
+          // effettuo login con user e pass
+          $mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
+          // controllo se la connessione è OK...
+          if ((!$conn_id) or (!$mylogin)){
+            // non accede FALSE
+            $rawres['title'] = "Problemi di accesso FTP (utente e/o password). AGGIORNARE ". $d['codice']."-".$d['descri'] ." NELL'E-COMMERCE MANUALMENTE!";
+            $rawres['button'] = 'Avviso eCommerce';
+            $rawres['label'] = "Vai alle impostazioni FTP ";
+            $rawres['link'] = '../shop-synchronize/config_sync.php';
+            $rawres['style'] = 'danger';
+            $_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+            $this->rawres=$rawres;
+            return;
+          }
+        }else{
+          // non si connette FALSE
+            $rawres['title'] = "Problema con la connessione FTP Host=".$ftp_host.". AGGIORNARE ". $d['codice']."-".$d['descri'] ." NELL'E-COMMERCE MANUALMENTE!";
+            $rawres['button'] = 'Avviso eCommerce';
+            $rawres['label'] = "Vai alle impostazioni FTP ";
+            $rawres['link'] = '../shop-synchronize/config_sync.php';
+            $rawres['style'] = 'danger';
+            $_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+            $this->rawres=$rawres;
+            return;
+        }
 			}
 			// creo il file xml
 			$xml_output = '<?xml version="1.0" encoding="UTF-8"?>
@@ -535,23 +546,32 @@ class shopsynchronizegazSynchro {
 			} else {
 
 				// imposto la connessione al server
-				$conn_id = @ftp_connect($ftp_host)or die("Could not connect to $ftp_host");
-
-				// effettuo login con user e pass
-				$mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
-
-				// controllo se la connessione è OK...
-				if ((!$conn_id) or (!$mylogin)){
-					// non si connette FALSE
-					$rawres['title'] = "Problemi con le impostazioni FTP (utente e password) in impostazioni sincronizzazione. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
-					$rawres['button'] = 'Avviso eCommerce';
-					$rawres['label'] = "Aggiornare i dati del gruppo: ". $p['id_artico_group'] ."-". $p['descri'];
-					$rawres['link'] = '../shop-synchronize/synchronize.php';
-					$rawres['style'] = 'danger';
-					$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
-					$this->rawres=$rawres;
-					return;
-				}
+        if ($conn_id = @ftp_connect($ftp_host)){
+          // effettuo login con user e pass
+          $mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
+          // controllo se la connessione è OK...
+          if ((!$conn_id) or (!$mylogin)){
+            // non accede FALSE
+            $rawres['title'] = "Problemi di accesso FTP (utente e password). AGGIORNARE ". $p['id_artico_group'] ."-". $p['descri'] ." NELL'E-COMMERCE MANUALMENTE!";
+            $rawres['button'] = 'Avviso eCommerce';
+            $rawres['label'] = "Vai alle impostazioni FTP ";
+            $rawres['link'] = '../shop-synchronize/config_sync.php';
+            $rawres['style'] = 'danger';
+            $_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+            $this->rawres=$rawres;
+            return;
+          }
+        }else{
+          // non si connette FALSE
+            $rawres['title'] = "Problema con la connessione FTP Host=".$ftp_host.". AGGIORNARE ". $p['id_artico_group'] ."-". $p['descri'] ." NELL'E-COMMERCE MANUALMENTE!";
+            $rawres['button'] = 'Avviso eCommerce';
+            $rawres['label'] = "Vai alle impostazioni FTP ";
+            $rawres['link'] = '../shop-synchronize/config_sync.php';
+            $rawres['style'] = 'danger';
+            $_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+            $this->rawres=$rawres;
+            return;
+        }
 			}
       if($toDo=="insert"){// se è insert la pubblicazione è sempre disattivata su web
         $p['web_public']=5;
