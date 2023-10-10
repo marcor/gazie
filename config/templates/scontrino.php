@@ -187,18 +187,22 @@ class Scontrino extends Template
         }
         //FINE calcolo scadenze
         if (!empty($this->descriptive_last_row) ) { // aggiungo alla fine un eventuale rigo descrittivo dalla configurazione avanzata azienda
-                if (strlen($this->descriptive_last_row)>200){// Antonio Germani - se è troppo lungo lo divido in due righe
-					$descrtoolong=explode(" ",$this->descriptive_last_row);
-					for ($n=0; $n<=count($descrtoolong)/2; $n++){
-						$txt1=$txt1.$descrtoolong[$n]." ";
-						$txt2=$txt2.$descrtoolong[1+$n+count($descrtoolong)/2]." ";
-					}
-					$this->Cell(186,6,$txt1,1,1,'L',0,'',1);
-					$this->Cell(186,6,$txt2,1,1,'L',0,'',1);
-				} else {
-					$this->Cell(186,6,$this->descriptive_last_row,1,1,'L',0,'',1);
-				}
-		}
+          if (strlen($this->descriptive_last_row)>200){// Antonio Germani - se è troppo lungo lo divido in due righe
+            $txt1="";$txt2="";
+            $descrtoolong=explode(" ",$this->descriptive_last_row);
+            for ($n=0; $n<count($descrtoolong); $n++){
+              if ($n<count($descrtoolong)/2){
+                $txt1 .= $descrtoolong[$n]." ";
+              }else{
+                $txt2 .= $descrtoolong[$n]." ";
+              }
+            }
+            $this->Cell(186,6,$txt1,1,1,'L',0,'',1);
+            $this->Cell(186,6,$txt2,1,1,'L',0,'',1);
+          } else {
+            $this->Cell(186,6,$this->descriptive_last_row,1,1,'L',0,'',1);
+          }
+        }
         //stampo i totali
         $y = $this->GetY();
         $this->Rect(10,$y,186,212-$y); //questa marca le linee dx e sx del documento
