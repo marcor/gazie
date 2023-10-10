@@ -1213,8 +1213,26 @@ class shopsynchronizegazSynchro {
                     $order->CustomerCodeFattEl = "0000000";// il codice univoco deve essere 7 volte zero
                 }
 
-							} else { // se non è italiano imposto il codice univoco con 7 X maiuscolo e il codice fiscale con il codice clfoco assegnato da GAzie
-								$lang="0";
+							} elseif ($order->CustomerCountry=="EN"){ // se la nazione è EN // se non è italiano imposto il codice univoco con 7 X maiuscolo e il codice fiscale con il codice clfoco assegnato da GAzie
+								$lang="1";
+								$order->CustomerCodeFattEl = "XXXXXXX";
+								if (strlen($order->CustomerFiscalCode)==0 || strlen($order->CustomerFiscalCode)<7){
+									$order->CustomerFiscalCode =  sprintf("%07d", $clfoco);// riempio il campo codice fiscale con clfoco di almeno 7 cifre
+								}
+								if (strlen($order->CustomerVatCode)==0 || strlen($order->CustomerVatCode)<7){// se non è stato inviato nulla o comunque ha meno di 7 caratteri
+									$order->CustomerVatCode= sprintf("%07d", $clfoco);// riempio il campo piva con il codice clfoco di almeno 7 cifre
+								}
+							}elseif ($order->CustomerCountry=="ES"){ // se la nazione è ES // se non è italiano imposto il codice univoco con 7 X maiuscolo e il codice fiscale con il codice clfoco assegnato da GAzie
+								$lang="2";
+								$order->CustomerCodeFattEl = "XXXXXXX";
+								if (strlen($order->CustomerFiscalCode)==0 || strlen($order->CustomerFiscalCode)<7){
+									$order->CustomerFiscalCode =  sprintf("%07d", $clfoco);// riempio il campo codice fiscale con clfoco di almeno 7 cifre
+								}
+								if (strlen($order->CustomerVatCode)==0 || strlen($order->CustomerVatCode)<7){// se non è stato inviato nulla o comunque ha meno di 7 caratteri
+									$order->CustomerVatCode= sprintf("%07d", $clfoco);// riempio il campo piva con il codice clfoco di almeno 7 cifre
+								}
+							}else{ // altrimenti se non è italiano imposto la lingua EN e il codice univoco con 7 X maiuscolo e il codice fiscale con il codice clfoco assegnato da GAzie
+								$lang="1";
 								$order->CustomerCodeFattEl = "XXXXXXX";
 								if (strlen($order->CustomerFiscalCode)==0 || strlen($order->CustomerFiscalCode)<7){
 									$order->CustomerFiscalCode =  sprintf("%07d", $clfoco);// riempio il campo codice fiscale con clfoco di almeno 7 cifre
