@@ -2356,7 +2356,7 @@ for ($counter = 1; $counter <= 9; $counter++) {
     echo "<option value=\"" . $counter . "\"" . $selected . ">" . $counter . "</option>\n";
 }
 echo "</select></td>\n";
-    echo "<td class=\"FacetFieldCaptionTD\">$script_transl[5]</td><td class=\"FacetDataTD\" colspan=\"1\">" . @$cliente['indspe'] . "<br />";
+    echo "<td class=\"FacetFieldCaptionTD\">$script_transl[5]</td><td class=\"FacetDataTD\" colspan=\"1\">" . @$cliente['indspe'] . " - ".@$cliente['citspe']."<br />";
     echo "</td>\n";
 
     if ( @$cliente['pariva']=="" && @$cliente['codfis']=="" && $form['clfoco']  && (substr($form['clfoco'],0,3)!='id_')) {
