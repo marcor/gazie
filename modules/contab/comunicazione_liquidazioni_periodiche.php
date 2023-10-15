@@ -27,118 +27,116 @@ $admin_aziend = checkAdmin();
 $msg = array('err' => array(), 'war' => array());
 
 function getMovimentiPeriodo($trimestre_liquidabile) {
-    global $gTables, $admin_aziend, $gazTimeFormatter;
-    // ricavo le date dei periodi da liquidare in base all'ultimo trimestre e alle impostazioni aziendali
-    $y = substr($trimestre_liquidabile, 0, 4);
-    $trimestre = substr($trimestre_liquidabile, 4, 1);
-    $m = $trimestre * 3 - 2;
-    $date_ini = new DateTime($y . '-' . $m . '-1');
+  global $gTables, $admin_aziend, $gazTimeFormatter;
+  // ricavo le date dei periodi da liquidare in base all'ultimo trimestre e alle impostazioni aziendali
+  $y = substr($trimestre_liquidabile, 0, 4);
+  $trimestre = substr($trimestre_liquidabile, 4, 1);
+  $m = $trimestre * 3 - 2;
+  $date_ini = new DateTime($y . '-' . $m . '-1');
+  $di = $date_ini->format('Y-m-d');
+  if ($admin_aziend['ivam_t'] == 'T') { // un unico modulo per tutto il TRIMESTRE
+    $date_ini->modify('+2 month');
+    $df = $date_ini->format('Y-m-t');
+    $mod_periodi = array(0 => array('ini' => $di, 'fin' => $df, 'mese_trimestre' => $trimestre, 'cre' => false));
+  } else { // moduli MENSILI
+    // sul primo mese vedo se ho un credito da quello precedente
+    $date_carry = new DateTime($y . '-' . $m . '-1');
+    $date_carry->modify('-1 month');
+    $carry = gaz_dbi_get_row($gTables['liquidazioni_iva'], "mese_trimestre", $date_carry->format('m'), "AND anno = '{$date_carry->format('Y')}'");
+    $saldo = $carry?round($carry['vp4'] - $carry['vp5'] + $carry['vp7'] - $carry['vp8'] - $carry['vp9'] - $carry['vp10'] - $carry['vp11'] + $carry['vp12'] - $carry['vp13'], 2):0;
+    if ($saldo <= -0.01) { // se c'è un credito
+        $cre = $saldo;
+    } else {
+        $cre = false;
+    }
+    // fine ripresa eventuale credito precedente
+    $df = $date_ini->format('Y-m-t');
+    $mod_periodi = array(0 => array('ini' => $di, 'fin' => $df, 'mese_trimestre' => $date_ini->format('m'), 'cre' => $cre));
+    $date_ini->modify('+1 month');
     $di = $date_ini->format('Y-m-d');
-    if ($admin_aziend['ivam_t'] == 'T') { // un unico modulo per tutto il TRIMESTRE
-        $date_ini->modify('+2 month');
-        $df = $date_ini->format('Y-m-t');
-        $mod_periodi = array(0 => array('ini' => $di, 'fin' => $df, 'mese_trimestre' => $trimestre, 'cre' => false));
-    } else { // moduli MENSILI
-        // sul primo mese vedo se ho un credito da quello precedente
-        $date_carry = new DateTime($y . '-' . $m . '-1');
-        $date_carry->modify('-1 month');
-        $carry = gaz_dbi_get_row($gTables['liquidazioni_iva'], "mese_trimestre", $date_carry->format('m'), "AND anno = '{$date_carry->format('Y')}'");
-        $saldo = $carry?round($carry['vp4'] - $carry['vp5'] + $carry['vp7'] - $carry['vp8'] - $carry['vp9'] - $carry['vp10'] - $carry['vp11'] + $carry['vp12'] - $carry['vp13'], 2):0;
-        if ($saldo <= -0.01) { // se c'è un credito
-            $cre = $saldo;
-        } else {
-            $cre = false;
-        }
-        // fine ripresa eventuale credito precedente
-        $df = $date_ini->format('Y-m-t');
-        $mod_periodi = array(0 => array('ini' => $di, 'fin' => $df, 'mese_trimestre' => $date_ini->format('m'), 'cre' => $cre));
-        $date_ini->modify('+1 month');
-        $di = $date_ini->format('Y-m-d');
-        $df = $date_ini->format('Y-m-t');
-        $mod_periodi[] = array('ini' => $di, 'fin' => $df, 'mese_trimestre' => $date_ini->format('m'), 'cre' => false);
-        $date_ini->modify('+1 month');
-        $di = $date_ini->format('Y-m-d');
-        $df = $date_ini->format('Y-m-t');
-        $mod_periodi[] = array('ini' => $di, 'fin' => $df, 'mese_trimestre' => $date_ini->format('m'), 'cre' => false);
+    $df = $date_ini->format('Y-m-t');
+    $mod_periodi[] = array('ini' => $di, 'fin' => $df, 'mese_trimestre' => $date_ini->format('m'), 'cre' => false);
+    $date_ini->modify('+1 month');
+    $di = $date_ini->format('Y-m-d');
+    $df = $date_ini->format('Y-m-t');
+    $mod_periodi[] = array('ini' => $di, 'fin' => $df, 'mese_trimestre' => $date_ini->format('m'), 'cre' => false);
+  }
+  $first = true;
+  $carry_cre = 0.00;
+  $gazTimeFormatter->setPattern('MMMM');
+  foreach ($mod_periodi as $date) {
+    $np = str_pad(" " . $gazTimeFormatter->format(new DateTime("2000-".$date['mese_trimestre']."-01")) . " " . $y . " ", 20, "*", STR_PAD_BOTH);
+    if ($admin_aziend['ivam_t'] == "T") {
+      $np = null;
     }
-    $first = true;
-    $carry_cre = 0.00;
-    $gazTimeFormatter->setPattern('MMMM');
-    foreach ($mod_periodi as $date) {
-        $np = str_pad(" " . $gazTimeFormatter->format(new DateTime("2000-".$date['mese_trimestre']."-01")) . " " . $y . " ", 20, "*", STR_PAD_BOTH);
-        if ($admin_aziend['ivam_t'] == "T") {
-            $np = null;
-        }
-        if ($date['cre']) { // ho un credito dalla precedente liquidazione
-            if ($date['mese_trimestre'] == 1) { //è dell'anno precedente
-                $vp8 = 0;
-                $vp9 = -$date['cre'];
-            } else { // è del periodo precedente
-                $vp8 = -$date['cre'];
-                $vp9 = 0;
-            }
-        } else {
-            $vp8 = 0;
-            $vp9 = 0;
-        }
-        $acc[$date['mese_trimestre']] = array(
-            'periodicita' => $admin_aziend['ivam_t'], 'anno' => $y, 'nome_periodo' => $np,
-            'vp2' => 0, 'vp3' => 0, 'vp4' => 0, 'vp5' => 0, 'vp7' => 0, 'vp8' => $vp8, 'vp9' => $vp9, 'vp10' => 0, 'vp11' => 0, 'vp12' => 0, 'vp13' => 0,'vp13m' => 0
-        );
-        //recupero tutti i movimenti iva dei periodi
-        $sqlquery = "SELECT seziva,regiva,codiva,aliquo," . $gTables['aliiva'] . ".tipiva," . $gTables['aliiva'] . ".descri,
-                SUM(imponi*(operat = 1) - imponi*(operat = 2)) AS imponibile,
-                SUM(impost*(operat = 1) - impost*(operat = 2)) AS iva
-                FROM " . $gTables['rigmoi'] . "
-                LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoi'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes
-                LEFT JOIN " . $gTables['aliiva'] . " ON " . $gTables['rigmoi'] . ".codiva = " . $gTables['aliiva'] . ".codice
-                WHERE datliq BETWEEN '" . $date['ini'] . "' AND '" . $date['fin'] . "' GROUP BY seziva,regiva,codiva ORDER BY seziva,regiva,aliquo DESC";
-        $rs = gaz_dbi_query($sqlquery);
-        while ($r = gaz_dbi_fetch_array($rs)) {
-            if ($r['tipiva'] == 'D') { // iva indetraibile
-                $r['isp'] = 0;
-                $r['ind'] = $r['iva'];
-                $r['iva'] = 0;
-            } elseif ($r['tipiva'] == 'T') { // reverse charge escludo l'imponibile
-                $r['ind'] = 0;
-                $r['isp'] = 0;
-				$r['imponibile'] = 0;
-            } elseif ($r['tipiva'] == 'T') { // iva split payment
-                $r['isp'] = $r['iva'];
-                $r['ind'] = 0;
-                $r['iva'] = 0;
-            } elseif ($r['tipiva'] == 'C' || $r['tipiva'] == 'S') { // ESCLUSO - FUORI CAMPO - NON SOGGETTO
-                $r['isp'] = 0;
-                $r['ind'] = 0;
-                $r['iva'] = 0;
-				$r['imponibile'] = 0;
-			} else { // iva normale
-                $r['ind'] = 0;
-                $r['isp'] = 0;
-            }
-            if ($r['regiva'] == 6) { // acquisti
-                $acc[$date['mese_trimestre']]['vp3'] += $r['imponibile'];
-                $acc[$date['mese_trimestre']]['vp5'] += $r['iva'];
-            } elseif ($r['regiva'] < 6) { // vendite
-                $acc[$date['mese_trimestre']]['vp2'] += $r['imponibile'];
-                $acc[$date['mese_trimestre']]['vp4'] += $r['iva'];
-            }
-        }
-        if ($first) {
-            $first = false;
-        } else { // nei mesi successivi riporto l'eventuale credito
-            if ($carry_cre <= 0.01) {
-                $acc[$date['mese_trimestre']]['vp8'] = -$carry_cre;
-            }
-        }
-        $carry_cre = round($carry_cre + $acc[$date['mese_trimestre']]['vp4'] - $acc[$date['mese_trimestre']]['vp5'] - $vp8 - $vp9, 2);
+    if ($date['cre']) { // ho un credito dalla precedente liquidazione
+      if ($date['mese_trimestre'] == 1) { //è dell'anno precedente
+        $vp8 = 0;
+        $vp9 = -$date['cre'];
+      } else { // è del periodo precedente
+        $vp8 = -$date['cre'];
+        $vp9 = 0;
+      }
+    } else {
+      $vp8 = 0;
+      $vp9 = 0;
     }
-    $totale = $acc[$date['mese_trimestre']]['vp4'] - $acc[$date['mese_trimestre']]['vp5'] - $vp8 - $vp9;
-    if ($totale >= 0.01 && $admin_aziend['ivam_t'] == 'T') { // aggiungo gli interessi se ho un'iva trimestrale
-        $interessi = round($totale * $admin_aziend['interessi'] / 100, 2);
-        $acc[$date['mese_trimestre']]['vp12'] = $interessi;
+    $acc[$date['mese_trimestre']] = ['periodicita' => $admin_aziend['ivam_t'], 'anno' => $y, 'nome_periodo' => $np,
+      'vp2' => 0, 'vp3' => 0, 'vp4' => 0, 'vp5' => 0, 'vp7' => 0, 'vp8' => $vp8, 'vp9' => $vp9, 'vp10' => 0, 'vp11' => 0, 'vp12' => 0, 'vp13' => 0,'vp13m' => 0];
+    //recupero tutti i movimenti iva dei periodi
+    $sqlquery = "SELECT seziva,regiva,codiva,aliquo," . $gTables['aliiva'] . ".tipiva," . $gTables['aliiva'] . ".descri,
+            SUM(imponi*(operat = 1) - imponi*(operat = 2)) AS imponibile,
+            SUM(impost*(operat = 1) - impost*(operat = 2)) AS iva
+            FROM " . $gTables['rigmoi'] . "
+            LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoi'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes
+            LEFT JOIN " . $gTables['aliiva'] . " ON " . $gTables['rigmoi'] . ".codiva = " . $gTables['aliiva'] . ".codice
+            WHERE datliq BETWEEN '" . $date['ini'] . "' AND '" . $date['fin'] . "' GROUP BY seziva,regiva,codiva ORDER BY seziva,regiva,aliquo DESC";
+    $rs = gaz_dbi_query($sqlquery);
+    while ($r = gaz_dbi_fetch_array($rs)) {
+      if ($r['tipiva'] == 'D') { // iva indetraibile
+        $r['isp'] = 0;
+        $r['ind'] = $r['iva'];
+        $r['iva'] = 0;
+      } elseif ($r['tipiva'] == 'R') { // reverse charge escludo l'imponibile
+        $r['ind'] = 0;
+        $r['isp'] = 0;
+        $r['imponibile'] = 0;
+      } elseif ($r['tipiva'] == 'T') { // iva split payment
+        $r['isp'] = $r['iva'];
+        $r['ind'] = 0;
+        $r['iva'] = 0;
+      } elseif ($r['tipiva'] == 'C' || $r['tipiva'] == 'S') { // ESCLUSO - FUORI CAMPO - NON SOGGETTO
+        $r['isp'] = 0;
+        $r['ind'] = 0;
+        $r['iva'] = 0;
+        $r['imponibile'] = 0;
+      } else { // iva normale
+        $r['ind'] = 0;
+        $r['isp'] = 0;
+      }
+      if ($r['regiva'] == 6) { // acquisti
+          $acc[$date['mese_trimestre']]['vp3'] += $r['imponibile'];
+          $acc[$date['mese_trimestre']]['vp5'] += $r['iva'];
+      } elseif ($r['regiva'] < 6) { // vendite
+          $acc[$date['mese_trimestre']]['vp2'] += $r['imponibile'];
+          $acc[$date['mese_trimestre']]['vp4'] += $r['iva'];
+      }
     }
-    return $acc; // nell'accumulatore gli array con i dati per riempire il form
+    if ($first) {
+      $first = false;
+    } else { // nei mesi successivi riporto l'eventuale credito
+      if ($carry_cre <= 0.01) {
+        $acc[$date['mese_trimestre']]['vp8'] = -$carry_cre;
+      }
+    }
+    $carry_cre = round($carry_cre + $acc[$date['mese_trimestre']]['vp4'] - $acc[$date['mese_trimestre']]['vp5'] - $vp8 - $vp9, 2);
+  }
+  $totale = $acc[$date['mese_trimestre']]['vp4'] - $acc[$date['mese_trimestre']]['vp5'] - $vp8 - $vp9;
+  if ($totale >= 0.01 && $admin_aziend['ivam_t'] == 'T') { // aggiungo gli interessi se ho un'iva trimestrale
+    $interessi = round($totale * $admin_aziend['interessi'] / 100, 2);
+    $acc[$date['mese_trimestre']]['vp12'] = $interessi;
+  }
+  return $acc; // nell'accumulatore gli array con i dati per riempire il form
 }
 
 if (isset($_POST['Update']) || isset($_GET['Update'])) {
