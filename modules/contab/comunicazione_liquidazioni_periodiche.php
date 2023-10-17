@@ -97,10 +97,10 @@ function getMovimentiPeriodo($trimestre_liquidabile) {
         $r['isp'] = 0;
         $r['ind'] = $r['iva'];
         $r['iva'] = 0;
-      } elseif ($r['tipiva'] == 'R') { // reverse charge escludo l'imponibile
+      } elseif ($r['tipiva'] == 'R') { // reverse charge escludo l'imponibile ma solo per le vendite, gli acquisti andranno in VP3
         $r['ind'] = 0;
         $r['isp'] = 0;
-        $r['imponibile'] = 0;
+        $r['imponibile'] = ( $r['regiva'] == 6 ) ? $r['imponibile'] : 0;
       } elseif ($r['tipiva'] == 'T') { // iva split payment
         $r['isp'] = $r['iva'];
         $r['ind'] = 0;
