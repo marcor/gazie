@@ -327,7 +327,7 @@ if (isset($_POST['conferma'])) {
         $imap_pwr=openssl_decrypt($encrypted_data, 'aes-128-cbc', $_SESSION['aes_key'], 0, $iv);
         ****/
         $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-128-cbc'));
-        $cripted_pwr=base64_encode(openssl_encrypt($_POST['imap_pwr'], 'aes-128-cbc', $_SESSION['aes_key'], $options=0, $iv).'::'.$iv);
+        $cripted_pwr=base64_encode(openssl_encrypt($_POST['imap_pwr'], 'aes-128-cbc', $_SESSION['aes_key'], 0, $iv).'::'.$iv);
 
         $company_id[$form['company_id']]=array('imap_usr' => $_POST['imap_usr'],'imap_pwr' => $cripted_pwr,'imap_sent_folder' => $_POST['imap_sent_folder']);
         $data['config']= $company_id;
@@ -371,21 +371,21 @@ if (isset($_POST['conferma'])) {
             $imap_pwr=openssl_decrypt($encrypted_data, 'aes-128-cbc', $_SESSION['aes_key'], 0, $iv);
             ****/
             $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-128-cbc'));
-            $cripted_pwr=base64_encode(openssl_encrypt($form['imap_pwr'], 'aes-128-cbc', $_SESSION['aes_key'], $options=0, $iv).'::'.$iv);
+            $cripted_pwr=base64_encode(openssl_encrypt($form['imap_pwr'], 'aes-128-cbc', $_SESSION['aes_key'], 0, $iv).'::'.$iv);
             $data['config'][$form['company_id']]['imap_pwr']=$cripted_pwr;
           }
           $data['config'][$form['company_id']]['imap_sent_folder']=$form['imap_sent_folder'];
           $form['custom_field'] = json_encode($data);
         } else { //se non c'è il modulo "config" con l'attuale azienda lo aggiungo
           $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-128-cbc'));
-          $cripted_pwr=base64_encode(openssl_encrypt($form['imap_pwr'], 'aes-128-cbc', $_SESSION['aes_key'], $options=0, $iv).'::'.$iv);
+          $cripted_pwr=base64_encode(openssl_encrypt($form['imap_pwr'], 'aes-128-cbc', $_SESSION['aes_key'], 0, $iv).'::'.$iv);
           $data['config'][$form['company_id']]= array('imap_usr' => $form['imap_usr'],'imap_pwr' => $cripted_pwr,'imap_sent_folder' => $form['imap_sent_folder']);
           $form['custom_field'] = json_encode($data);
         }
         gaz_dbi_put_row($gTables['anagra'], 'id', $form['id_anagra'], 'custom_field', $form['custom_field']);// aggiorno il DB
       }elseif (strlen($form['imap_usr'])>2 && strlen($form['imap_pwr'])>4){// se è stato inserito l'utente nelle impostazioni imap creo i dati imap nel custom_field
         $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-128-cbc'));
-        $cripted_pwr=base64_encode(openssl_encrypt($form['imap_pwr'], 'aes-128-cbc', $_SESSION['aes_key'], $options=0, $iv).'::'.$iv);
+        $cripted_pwr=base64_encode(openssl_encrypt($form['imap_pwr'], 'aes-128-cbc', $_SESSION['aes_key'], 0, $iv).'::'.$iv);
         $data['config'][$form['company_id']]= array('imap_usr' => $form['imap_usr'],'imap_pwr' => $cripted_pwr,'imap_sent_folder' => $form['imap_sent_folder']);
         $form['custom_field'] = json_encode($data);
         gaz_dbi_put_row($gTables['anagra'], 'id', $form['id_anagra'], 'custom_field', $form['custom_field']);// aggiorno il DB
@@ -439,6 +439,51 @@ if (isset($_POST['conferma'])) {
 		header("Location: " . $_POST['ritorno']);
 		exit;
 	}
+}
+// e-mail TESTER
+if (isset($_GET['e-test']) && $_GET['e-test']==TRUE){
+  $custom_field = gaz_dbi_get_row($gTables['anagra'], 'id', $form['id_anagra'])['custom_field'];
+  if ($data = json_decode($custom_field,true)){// se c'è un json
+    if (is_array($data['config']) && isset($data['config'][$form['company_id']])){ // se c'è il modulo "config" e c'è l'azienda attuale posso procedere
+      $az_email_admin_config = gaz_dbi_get_row($gTables['admin_config'], "adminid", $form['user_name'], "AND company_id = ".intval($form['company_id'])." AND var_name = 'az_email'");
+      $form['user_email']=(isset($az_email_admin_config))?$az_email_admin_config['var_value']:'';
+      if (!filter_var($form['user_email'], FILTER_VALIDATE_EMAIL)) {
+        $data = ["error" =>  "Indirizzo e-mail aziendale utente non corretto o inesistente"];
+        echo json_encode($data);exit;
+      }
+      list($encrypted_data, $iv) = explode('::', base64_decode($data['config'][$form['company_id']]['imap_pwr']), 2);
+      $imap_pwr=openssl_decrypt($encrypted_data, 'aes-128-cbc', $_SESSION['aes_key'], 0, $iv);
+      $imap_usr=$data['config'][$form['company_id']]['imap_usr'];
+      $imap_sent_folder=$data['config'][$form['company_id']]['imap_sent_folder'];
+    }else{
+      $data = ["error" =>  "Non sono impostate le chiavi di accesso utente"];
+      echo json_encode($data);exit;
+    }
+    $imap_server = gaz_dbi_get_row($gTables['company_config'], 'var', 'imap_server')['val'];
+    $imap_port = gaz_dbi_get_row($gTables['company_config'], 'var', 'imap_port')['val'];
+    $imap_secure = gaz_dbi_get_row($gTables['company_config'], 'var', 'imap_secure')['val'];
+    if($imap = @imap_open("{".$imap_server.":".$imap_port."/".$imap_secure."}".$imap_sent_folder, $form['user_email'], $imap_pwr)){
+      if ($append=@imap_append($imap, "{".$imap_server."}".$imap_sent_folder
+                         , "From: ".$form['user_email']."\r\n"
+                         . "To: ".$form['user_email']."\r\n"
+                         . "Subject: TEST test\r\n"
+                         . "\r\n"
+                         . "This is a test message from GAzie, please ignore it!\r\n"
+                         )){
+                          imap_close($imap);
+                          $data = ["send" => "SUCCESS","sender" => $form['user_email']];
+                          echo json_encode($data);exit;
+                         }else{
+                            $errors = @imap_errors();
+                            $data = ["error" =>  $errors];
+                            echo json_encode($data);exit;
+                         }
+    }else{
+      $errors = @imap_errors();
+      $data = ["error" =>  $errors];
+      echo json_encode($data);exit;
+    }
+  }
 }
 require("../../library/include/header.php");
 $script_transl = HeadMain(0,['appendgrid/AppendGrid','capslockstate/src/jquery.capslockstate']);
@@ -852,6 +897,45 @@ echo '</h3></div><div class="col-xs-3"><input name="conferma" id="conferma" clas
               <td colspan="2" class="FacetDataTD"><input title="Password IMAP (lasciare vuoto se non serve)" type="text" name="imap_sent_folder" value="<?php echo $form["imap_sent_folder"] ?>" maxlength="40"  class="FacetInput">&nbsp;</td>
             </tr>
           </table>
+          <div id="email" class="tab-pane">
+            <div>Il test di configurazione ti permette di verificare le impostazioni IMAP inserite. <br><b>Salva</b> la configurazione prima di avviare il test.</i>
+            </div>
+            <div id="wait">
+              <span>Please wait...</span>
+            </div>
+            <div id="btn_send" class="btn btn-default">TEST CONFIGURAZIONE IMAP</div>
+            <div id="reply_send"></div>
+          </div><!-- chiude email  -->
+
+          <script>
+          $( "#wait" ).hide();
+          $("#btn_send").click( function() {
+            $.ajax({
+              url: "admin_utente.php?user_name=<?php echo $form["user_name"] ?>&Update&e-test=true",
+              type: "GET",
+              data: { 'e-test': true },
+               beforeSend: function () {
+                // ... your initialization code here (so show loader) ...
+                $( "#wait" ).show();
+              },
+              complete: function () {
+                // ... your finalization code here (hide loader) ...
+                $( "#wait" ).hide();
+              },
+              success: function(json) {
+                result = JSON.parse(json);
+                if (  result.send == 'SUCCESS') {
+                    $("#reply_send").html( "<strong>Invio riuscito</strong><br><div>Controlla se c'è una email test nella cartella posta inviata che hai impostato in <i>"+result.sender+"</i></div>");
+                } else {
+                  $("#reply_send").html("<strong>Invio FALLITO!</strong><br><div>Errore: "+result.error+"!</div>");
+                }
+              },
+              error: function(richiesta,stato,errori){
+                  $("#reply_send").html("<strong>Invio FALLITO!</strong><br><div>"+errori+"</div>");
+              }
+            })
+          });
+          </script>
           <?php } else{ ?>
           <table class="table-striped" style="width:100%;">
             <tr>
