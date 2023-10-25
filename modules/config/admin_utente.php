@@ -75,6 +75,10 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
 	$form["user_password_new"] = $toDo=='insert'?substr($_POST['user_password_new'], 0, 65):'';
 	$form["user_active"] = intval($_POST['user_active']);
 	$form['body_text'] = filter_input(INPUT_POST, 'body_text');
+  $form['imap_usr'] = filter_input(INPUT_POST,'imap_usr');
+  $form['imap_pwr'] = $_POST['imap_pwr'];// andrà criptata al momento del salvataggio
+  $form['imap_sent_folder'] = filter_input(INPUT_POST,'imap_sent_folder');
+  $form['id_anagra'] = $_POST['id_anagra'];
 	if ($toDo == 'insert') {
 		$rs_utente = gaz_dbi_dyn_query("*", $gTables['admin'], "user_name = '" . $form["user_name"] . "'", "user_name DESC", 0, 1);
 		$risultato = gaz_dbi_fetch_array($rs_utente);
@@ -82,7 +86,8 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
 			$msg['err'][] = 'exlogin';
 		}
 	}
-} elseif ((!isset($_POST['Update'])) && (isset($_GET['Update']))) { // primo accesso
+
+} elseif ((!isset($_POST['Update'])) && (isset($_GET['Update']))) { // primo accesso per update
 	$form = gaz_dbi_get_row($gTables['admin'], "user_name", preg_replace("/[^A-Za-z0-9]/", '',substr($_GET["user_name"], 0, 64)));
 	if (!$form){
 		header("Location: " . $_POST['ritorno']);
@@ -90,7 +95,26 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
 	}
 	// attingo il valore del motore di template dalla tabella configurazione utente
 	$admin_config = gaz_dbi_get_row($gTables['admin_config'], 'var_name', 'theme', "AND adminid = '{$form['user_name']}'");
-	$form = gaz_dbi_get_row($gTables['admin'], "user_name", preg_replace("/[^A-Za-z0-9]/", '',substr($_GET["user_name"], 0, 64)));
+
+	$custom_field = gaz_dbi_get_row($gTables['anagra'], "id", $form['id_anagra'])['custom_field'];
+  if ( isset($custom_field) && $custom_field!="" ) {
+    $data = json_decode($custom_field,true);
+    if (is_array($data['config']) && isset($data['config'][$form['company_id']])){
+      $form['imap_usr']=(isset($data['config'][$form['company_id']]['imap_usr']))?$data['config'][$form['company_id']]['imap_usr']:'';
+      //$form['imap_pwr']=(isset($data['config'][$form['company_id']]['imap_pwr']))?$data['config'][$form['company_id']]['imap_pwr']:'';
+      $form['imap_pwr']='';// non carico la password perché tanto non si può vedere.
+      $form['imap_sent_folder']=(isset($data['config'][$form['company_id']]['imap_sent_folder']))?$data['config'][$form['company_id']]['imap_sent_folder']:'';
+    }else{
+      $form['imap_usr']='';
+      $form['imap_pwr']='';
+      $form['imap_sent_folder']='';
+    }
+  }else{
+    $form['imap_usr']='';
+    $form['imap_pwr']='';
+    $form['imap_sent_folder']='';
+  }
+
 	// dal custom field di admin_module relativo al magazzino trovo il magazzino di default
 	$magmodule = gaz_dbi_get_row($gTables['module'], "name",'magazz');
 	$mod_customfield = gaz_dbi_get_row($gTables['admin_module'], "moduleid",$magmodule['id']," AND adminid='{$form['user_name']}' AND company_id=" . $admin_aziend['company_id']);
@@ -107,7 +131,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
 	$form['body_text'] = ($bodytext)?$bodytext['var_value']:'';
     $form['hidden_req'] = '';
     $form['search']['company_id'] = '';
-} else {
+} else { // primo accesso
 	$form["user_lastname"] = "";
 	$form["user_firstname"] = "";
 	$form['user_email'] = '';
@@ -128,6 +152,10 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
 	$form["user_password_new"] = "";
 	$form["user_active"] = 1;
 	$form['body_text'] = "";
+  $form['imap_usr']='';
+  $form['imap_pwr']='';
+  $form['imap_sent_folder']='';
+  $form['id_anagra']='';
 
 	if (preg_match("/school/", $_SERVER['HTTP_REFERER'])) {
 		// nel caso voglio inserire un nuovo insegnante propongo abilitazione a 9
@@ -277,6 +305,7 @@ if (isset($_POST['conferma'])) {
 				}
 			}
 		}
+
 		if ($toDo == 'insert') {
 			$form['company_id'] = $user_data['company_id'];
 			$form['user_registration_datetime']= date('Y-m-d H:i:s');
@@ -290,6 +319,20 @@ if (isset($_POST['conferma'])) {
       $form["aes_key"] = base64_encode(openssl_encrypt($_SESSION['aes_key'],"AES-128-CBC",$prepared_key,OPENSSL_RAW_DATA, AES_KEY_IV));
 
 			// Antonio Germani - Creo anche una nuova anagrafica nelle anagrafiche comuni
+      if (strlen($form['imap_usr'])>2){// se è stato inserito l'utente nelle impostazioni imap creo i dati imap nel custom_field
+        $data = json_decode($form['custom_field'],true);// aggiungo il custom field di config a quello di user_id_warehouse creato poco sopra
+
+        /**** promemoria per decriptare ****
+        list($encrypted_data, $iv) = explode('::', base64_decode($imap_pwr), 2);
+        $imap_pwr=openssl_decrypt($encrypted_data, 'aes-128-cbc', $_SESSION['aes_key'], 0, $iv);
+        ****/
+        $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-128-cbc'));
+        $cripted_pwr=base64_encode(openssl_encrypt($_POST['imap_pwr'], 'aes-128-cbc', $_SESSION['aes_key'], $options=0, $iv).'::'.$iv);
+
+        $company_id[$form['company_id']]=array('imap_usr' => $_POST['imap_usr'],'imap_pwr' => $cripted_pwr,'imap_sent_folder' => $_POST['imap_sent_folder']);
+        $data['config']= $company_id;
+        $form['custom_field'] = json_encode($data);
+      }
 			$form['ragso1']=$form['user_lastname'];
 			$form['ragso2']=$form['user_firstname'];
 			$form['legrap_pf_nome']="";
@@ -297,7 +340,8 @@ if (isset($_POST['conferma'])) {
 			$form['email']=$form['user_email'];
 			$form['id_anagra']=gaz_dbi_table_insert('anagra', $form);
       $form['datpas'] = date("YmdHis");
-			gaz_dbi_table_insert('admin', $form);
+			gaz_dbi_table_insert('admin', $form);// salvo anagrafica
+
 			$form['adminid'] = $form["user_name"];
 			$form['var_descri'] = 'Menu/header/footer personalizzabile';
 			$form['var_name'] = 'theme';
@@ -317,7 +361,35 @@ if (isset($_POST['conferma'])) {
 			}
 
 		} elseif ($toDo == 'update') {
-
+      $custom_field=gaz_dbi_get_row($gTables['anagra'], "id", $form['id_anagra'])['custom_field']; // carico il json custom_field esistente
+      if ($data = json_decode($custom_field,true)){// se c'è un json
+        if (is_array($data['config']) && isset($data['config'][$form['company_id']])){ // se c'è il modulo "config" e c'è l'azienda attuale aggiorno il custom field
+          $data['config'][$form['company_id']]['imap_usr']=$form['imap_usr'];
+          if (strlen($form['imap_pwr'])>4){// se è stata scritta una password la inserisco o modifico
+            /**** promemoria per decriptare ****
+            list($encrypted_data, $iv) = explode('::', base64_decode($imap_pwr), 2);
+            $imap_pwr=openssl_decrypt($encrypted_data, 'aes-128-cbc', $_SESSION['aes_key'], 0, $iv);
+            ****/
+            $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-128-cbc'));
+            $cripted_pwr=base64_encode(openssl_encrypt($form['imap_pwr'], 'aes-128-cbc', $_SESSION['aes_key'], $options=0, $iv).'::'.$iv);
+            $data['config'][$form['company_id']]['imap_pwr']=$cripted_pwr;
+          }
+          $data['config'][$form['company_id']]['imap_sent_folder']=$form['imap_sent_folder'];
+          $form['custom_field'] = json_encode($data);
+        } else { //se non c'è il modulo "config" con l'attuale azienda lo aggiungo
+          $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-128-cbc'));
+          $cripted_pwr=base64_encode(openssl_encrypt($form['imap_pwr'], 'aes-128-cbc', $_SESSION['aes_key'], $options=0, $iv).'::'.$iv);
+          $data['config'][$form['company_id']]= array('imap_usr' => $form['imap_usr'],'imap_pwr' => $cripted_pwr,'imap_sent_folder' => $form['imap_sent_folder']);
+          $form['custom_field'] = json_encode($data);
+        }
+        gaz_dbi_put_row($gTables['anagra'], 'id', $form['id_anagra'], 'custom_field', $form['custom_field']);// aggiorno il DB
+      }elseif (strlen($form['imap_usr'])>2 && strlen($form['imap_pwr'])>4){// se è stato inserito l'utente nelle impostazioni imap creo i dati imap nel custom_field
+        $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-128-cbc'));
+        $cripted_pwr=base64_encode(openssl_encrypt($form['imap_pwr'], 'aes-128-cbc', $_SESSION['aes_key'], $options=0, $iv).'::'.$iv);
+        $data['config'][$form['company_id']]= array('imap_usr' => $form['imap_usr'],'imap_pwr' => $cripted_pwr,'imap_sent_folder' => $form['imap_sent_folder']);
+        $form['custom_field'] = json_encode($data);
+        gaz_dbi_put_row($gTables['anagra'], 'id', $form['id_anagra'], 'custom_field', $form['custom_field']);// aggiorno il DB
+      }
 			gaz_dbi_table_update('admin', array("user_name", $form["user_name"]), $form);
 			// se esiste aggiorno anche il tema
 			$admin_config_theme = gaz_dbi_get_row($gTables['admin_config'], 'var_name', 'theme', "AND adminid = '{$form['user_name']}'");
@@ -370,6 +442,8 @@ if (isset($_POST['conferma'])) {
 }
 require("../../library/include/header.php");
 $script_transl = HeadMain(0,['appendgrid/AppendGrid','capslockstate/src/jquery.capslockstate']);
+$imap_check = gaz_dbi_get_row($gTables['company_config'], 'var', 'imap_server');
+
 ?>
 <script src='../../js/sha256/forge-sha256.min.js'></script>
 <script>
@@ -524,261 +598,315 @@ if ($toDo == 'insert') {
 	echo '<input type="hidden" value="' . $form["user_name"] . '" name="user_name" />';
 }
 echo '</h3></div><div class="col-xs-3"><input name="conferma" id="conferma" class="btn btn-warning" type="submit" value="'.ucfirst($script_transl[$toDo]).'"></div></div>';
-$gForm = new configForm();
-if (count($msg['err']) > 0) { // ho un errore
-	$gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
-  // svuoto le password
-	$form['user_password_new'] = '';
-}
-echo '<input type="hidden" name="' . ucfirst($toDo) . '" value="">';
 ?>
-<table class="Tmiddle table-striped">
-<tr>
-<td class="FacetFieldCaptionTD"><?php echo $script_transl['user_lastname']; ?>* </td>
-<td colspan="2" class="FacetDataTD"><input title="Cognome" type="text" name="user_lastname" value="<?php print $form["user_lastname"] ?>" maxlength="30"  class="FacetInput">&nbsp;</td>
-</tr>
-<tr>
-<td class="FacetFieldCaptionTD"><?php echo $script_transl['user_firstname']; ?></td>
-<td colspan="2" class="FacetDataTD"><input title="Nome" type="text" name="user_firstname" value="<?php print $form["user_firstname"] ?>" maxlength="30"  class="FacetInput">&nbsp;</td>
-</tr>
-<tr>
-<td class="FacetFieldCaptionTD"><?php echo $script_transl['user_email']; ?></td>
-<td colspan="2" class="FacetDataTD"><input title="Mail" type="email" name="user_email" value="<?php print $form["user_email"] ?>" class="FacetInput" maxlength="50">&nbsp;</td>
-</tr>
-<tr>
-<?php
-if ($toDo == 'insert') {
-?>
-<tr><td class="FacetFieldCaptionTD"><?php echo $script_transl["user_name"]; ?></td>
-<td class="FacetDataTD" colspan="2"><input title="user_name" type="text" name="user_name" value="<?php echo  $form["user_name"]; ?>" maxlength="20" class="FacetInput"></td>
-	</tr>
-<tr>
-<td class="FacetFieldCaptionTD"><?php echo $script_transl['user_password_new']; ?> </td>
-<td colspan="2" class="FacetDataTD"><input title="Prima password" type="password" id="user_password_new" name="user_password_new" value="<?php echo $form["user_password_new"]; ?>" maxlength="40" class="FacetInput" id="cpass" /><div class="FacetDataTDred" id="cmsg"></div></td>
-</tr>
-<?php
-} else {
-echo '<tr><td class="FacetFieldCaptionTD"></td><td colspan="2" class="FacetDataTD text-right"><a href="../root/login_password_change.php?un='.$form["user_name"].'" class="btn btn-warning">'.$script_transl['change'].' password</a></td></tr>';
-}
-?>
-<td class="FacetFieldCaptionTD"><?php echo $script_transl['az_email']; ?></td>
-<td colspan="2" class="FacetDataTD"><input title="Mail" type="email" name="az_email" value="<?php print $form["az_email"] ?>" class="FacetInput" maxlength="50">&nbsp;</td>
-</tr>
-<tr>
-<?php
-print "<td class=\"FacetFieldCaptionTD\"><img src=\"../root/view.php?table=admin&value=" . $form["user_name"] . "&field=user_name\" width=\"100\"></td>";
-print "<td colspan=\"2\" class=\"FacetDataTD\">" . $script_transl['image'] . ":<br /><input name=\"userfile\" type=\"file\" class=\"FacetDataTD\"></td>";
-?>
-</tr>
-<tr>
-<td class="FacetFieldCaptionTD"><?php echo $script_transl['lang']; ?></td>
-<?php
-echo '<td colspan="2" class="FacetDataTD">';
-echo '<select name="lang" class="FacetSelect">';
-$relativePath = '../../language';
-if ($handle = opendir($relativePath)) {
-	while ($file = readdir($handle)) {
-		if (($file == ".") or ( $file == "..") or ( $file == ".svn"))
-		continue;
-		$selected = "";
-		if ($form["lang"] == $file) {
-			$selected = " selected ";
-		}
-		echo "<option value=\"" . $file . "\"" . $selected . ">" . ucfirst($file) . "</option>";
-	}
-	closedir($handle);
-}
-echo "</td></tr>\n";
-?>
-<tr>
-<td class="FacetFieldCaptionTD"><?php echo $script_transl['theme']; ?> </td>
-<td colspan="2" class="FacetDataTD">
-<?php
-$gForm->selThemeDir('theme', $form["theme"]);
-?>
-</td>
-</tr>
-<tr>
-<td class="FacetFieldCaptionTD"><?php echo $script_transl['style']; ?></td>
-<?php
-echo '<td colspan="2" class="FacetDataTD">';
-echo '<select name="style" class="FacetSelect">';
-$relativePath = '../..' . $_SESSION['theme'] . '/scheletons/';
-if ($handle = opendir($relativePath)) {
-	while ($file = readdir($handle)) {
-		// accetto solo i file css
-		if (!preg_match("/^[a-z0-9\s\_\-]+\.css$/", $file)) {
-			continue;
-		}
-		$selected = "";
-		if ($form["style"] == $file) {
-			$selected = " selected ";
-		}
-		echo "<option value=\"" . $file . "\"" . $selected . ">" . $file . "</option>";
-	}
-	closedir($handle);
-}
-echo "</td></tr>\n";
-?>
-<tr>
-<td class="FacetFieldCaptionTD"><?php echo $script_transl['skin']; ?></td>
-<?php
-echo '<td colspan="2" class="FacetDataTD">';
-echo '<select name="skin" class="FacetSelect">';
-$relativePath = '../..' . $_SESSION['theme'] . '/skins/';
-if ($handle = opendir($relativePath)) {
-	while ($file = readdir($handle)) {
-		// accetto solo i file css
-		if (!preg_match("/^[a-z0-9\s\_\-]+\.css$/", $file)) {
-			continue;
-		}
-		$selected = "";
-		if ($form["skin"] == $file) {
-			$selected = " selected ";
-		}
-		echo "<option value=\"" . $file . "\"" . $selected . ">" . $file . "</option>";
-	}
-	closedir($handle);
-}
-echo "</td></tr>\n";
-?>
-<tr>
-<td class="FacetFieldCaptionTD"><?php echo $script_transl['Abilit']; ?></td>
-<td colspan="2" class="FacetDataTD">
-<?php
-    $gForm->variousSelect('Abilit', $script_transl['Abilit_value'], $form['Abilit'], "col-sm-8", true, '', false, 'style="max-width: 300px;"');
-?>
-</tr>
-<tr>
-<td class="FacetFieldCaptionTD"><?php echo $script_transl['mesg_co'][2]; ?></td>
-<td class="FacetDataTD" colspan="2">
-<?php
+<div class="panel panel-default gaz-table-form div-bordered">
+  <div class="container-fluid">
+    <ul class="nav nav-pills">
+      <li class="active"><a data-toggle="pill" href="#generale">Dati utente</a></li>
+      <li><a data-toggle="pill" href="#imap">Impostazioni IMAP</a></li>
+    </ul>
 
+    <div class="tab-content">
+      <?php
+      $gForm = new configForm();
+      if (count($msg['err']) > 0) { // ho un errore
+        $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
+        // svuoto le password
+        $form['user_password_new'] = '';
+      }
+      echo '<input type="hidden" name="' . ucfirst($toDo) . '" value="">';
+      ?>
+      <input type="hidden" name="id_anagra" value="<?php echo $form['id_anagra']; ?>">
+      <div id="generale" class="tab-pane fade in active">
 
-if ($user_data['Abilit'] == 9 || is_array($student)) {
-	$gForm->selectCompany('company_id', $form['company_id'], $form['search']['company_id'], $form['hidden_req'], $script_transl['mesg_co']);
-} else {
-	$company = gaz_dbi_get_row($gTables['aziend'], 'codice', $form['company_id']);
-	echo '<input type="hidden" name="company_id" value="'.$form['company_id'].'">';
-	echo $company['ragso1'].' '.$company['ragso2'];
-}
-?>
-</td>
-</tr>
-<tr>
-<td class="FacetFieldCaptionTD">Magazzino predefinito</td>
-<td class="FacetDataTD" colspan="2">
-<?php
-	$gForm->selectFromDB('warehouse','id_warehouse','id',$form["id_warehouse"],'id',false,' - ','name','0','col-sm-6',['value'=>0,'descri'=>'Sede'],'');
-?>
-</tr>
-<tr>
-<td class="FacetFieldCaptionTD"><?php echo $script_transl['Access']; ?></td>
-<td colspan="2" class="FacetDataTD">
-<?php
-if ($user_data['Abilit'] == 9){
-?>
-<input title="Accessi" type="text" name="Access" value="<?php echo $form["Access"]; ?>" maxlength="7" class="FacetInput">
-<?php
-} else {
-  echo '<input type="hidden" name="Access" value="'.$form["Access"].'">'.$form["Access"];
-}
-?>
-</td>
-</tr>
-<tr>
-<td class="FacetFieldCaptionTD"><?php echo $script_transl['user_active']; ?></td>
-<td colspan="2" class="FacetDataTD">
-<?php
-    $gForm->variousSelect('user_active', $script_transl['user_active_value'], $form['user_active'], "col-sm-8", true, '', false, 'style="max-width: 300px;"');
-?>
-<div class="FacetDataTDred" id="user_active"></div>&nbsp;</td>
-</tr>
-<tr>
-<td class="FacetFieldCaptionTD"><?php echo $script_transl['body_text']; ?></td>
-<td colspan="2" class="FacetDataTD">
-<textarea id="body_text" name="body_text" class="mceClass" style="width:100%;"><?php echo $form['body_text']; ?></textarea>
-</td>
-</tr>
+        <table class="table-striped">
+          <tr>
+          <td class="FacetFieldCaptionTD"><?php echo $script_transl['user_lastname']; ?>* </td>
+          <td colspan="2" class="FacetDataTD"><input title="Cognome" type="text" name="user_lastname" value="<?php print $form["user_lastname"] ?>" maxlength="30"  class="FacetInput">&nbsp;</td>
+          </tr>
+          <tr>
+          <td class="FacetFieldCaptionTD"><?php echo $script_transl['user_firstname']; ?></td>
+          <td colspan="2" class="FacetDataTD"><input title="Nome" type="text" name="user_firstname" value="<?php print $form["user_firstname"] ?>" maxlength="30"  class="FacetInput">&nbsp;</td>
+          </tr>
+          <tr>
+          <td class="FacetFieldCaptionTD"><?php echo $script_transl['user_email']; ?></td>
+          <td colspan="2" class="FacetDataTD"><input title="Mail" type="email" name="user_email" value="<?php print $form["user_email"] ?>" class="FacetInput" maxlength="50">&nbsp;</td>
+          </tr>
 
-<?php
-if ($user_data["Abilit"] == 9) {
-	function getModule($login, $company_id) {
-		global $gTables, $admin_aziend;
-		//trovo i moduli installati
-		$mod_found = [];
-		$relativePath = '../../modules';
-		if ($handle = opendir($relativePath)) {
-			while ($exist_mod = readdir($handle)) {
-				if ($exist_mod == "." || $exist_mod == ".." || $exist_mod == ".svn" || $exist_mod == "root" || !file_exists("../../modules/$exist_mod/menu." . $admin_aziend['lang'] . ".php"))
-				continue;
-				$rs_mod = gaz_dbi_dyn_query("am.access,am.moduleid, am.custom_field, module.name ", $gTables['admin_module'] . ' AS am LEFT JOIN ' . $gTables['module'] .
-				' AS module ON module.id=am.moduleid ', " am.adminid = '" . $login . "' AND module.name = '$exist_mod' AND am.company_id = '$company_id'", "am.adminid", 0, 1);
-				require("../../modules/$exist_mod/menu." . $admin_aziend['lang'] . ".php");
-				$row = gaz_dbi_fetch_array($rs_mod);
-				$row['excluded_script'] = [];
-				if (!isset($row['moduleid'])) {
-					$row['name'] = $exist_mod;
-					$row['moduleid'] = 0;
-					$row['access'] = 0;
-          $row['custom_field'] = '';
-				}
-        $chkes = is_string($row['custom_field'])?json_decode($row['custom_field']):false;
-        if ($chkes && isset($chkes->excluded_script)) {
- 					$row['excluded_script'] = $chkes->excluded_script;
-        }
-				$row['transl_name'] = $transl[$exist_mod]['name'];
-				$mod_found[$exist_mod] = $row;
-			}
-			closedir($handle);
-		}
-		return $mod_found;
-	}
-
-	//richiamo tutte le aziende installate e vedo se l'utente  e' abilitato o no ad essa
-	$table = $gTables['aziend'] . ' AS a';
-	$what = "a.codice AS id, ragso1 AS ragsoc, (SELECT COUNT(*) FROM " . $gTables['admin_module'] . " WHERE a.codice=" . $gTables['admin_module'] . ".company_id AND " . $gTables['admin_module'] . ".adminid='" . $form["user_name"] . "') AS set_co ";
-	$co_rs = gaz_dbi_dyn_query($what, $table, 1, "ragsoc ASC");
-	while ($co = gaz_dbi_fetch_array($co_rs)) {
-		$co_id = sprintf('%03d', $co['id']);
-		echo '</table><br/><div class="text-center"><h3><img src="../../modules/root/view.php?table=aziend&value='.$co['id'].'" alt="Logo" height="30"> ' . $co['ragsoc'] . '  - ID:' . $co['id'] . '</h3></div><table class="Tmiddle table-striped"><tbody>';
-		echo "<tr><td class=\"FacetDataTD\">" .'<input type=hidden name="' . $co_id . 'nusr_root" value="3"><b>'. $script_transl['mod_perm'] . ":</b></td>\n";
-		echo "<td><b>" . $script_transl['all'] . "</b></td>\n";
-		echo '<td align="center"><b> Script esclusi</b></td>';
-		echo "<td><b>" . $script_transl['none'] . "</b></td></tr>\n";
-		$mod_found = getModule($form["user_name"], $co['id']);
-		$mod_admin = getModule($user_data["user_name"], $co['id']);
-		foreach ($mod_found as $mod) {
-			echo "<tr>\n";
-			echo '<td>
-								<img height="16" src="../' . $mod['name'] . '/' . $mod['name'] . '.png" /> ' . $mod['transl_name'] . ' (' . $mod['name'] . ")</td>\n";
-			if ($mod['moduleid'] == 0) { // il modulo non è stato mai attivato
-				if ($form["user_name"] <> $user_data["user_name"]) { // sono un amministratore che sta operando sul profilo di altro utente
-          if ($mod_admin[$mod['name']]['access']==3){ // il modulo è attivo sull'amministratore
-              // per evitare conflitti nemmeno l'amministratore può attivare un modulo se questo non lo è ancora sul suo
-              echo "  <td colspan=2 ><input type=radio name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"3\"></td>";
-              echo "  <td><input type=radio checked name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"0\"></td>";
-          } else { // modulo non attivo sull'amministratore
-              echo '  <td colspan=2 >Non attivato</td>';
-              echo '  <td><input type="hidden"  name="' . $co_id . "nusr_" . $mod['name'] . '" value="0"></td>';
+          <tr>
+          <?php
+          if ($toDo == 'insert') {
+          ?>
+          <tr><td class="FacetFieldCaptionTD"><?php echo $script_transl["user_name"]; ?></td>
+          <td class="FacetDataTD" colspan="2"><input title="user_name" type="text" name="user_name" value="<?php echo  $form["user_name"]; ?>" maxlength="20" class="FacetInput"></td>
+            </tr>
+          <tr>
+          <td class="FacetFieldCaptionTD"><?php echo $script_transl['user_password_new']; ?> </td>
+          <td colspan="2" class="FacetDataTD"><input title="Prima password" type="password" id="user_password_new" name="user_password_new" value="<?php echo $form["user_password_new"]; ?>" maxlength="40" class="FacetInput" id="cpass" /><div class="FacetDataTDred" id="cmsg"></div></td>
+          </tr>
+          <?php
+          } else {
+          echo '<tr><td class="FacetFieldCaptionTD"></td><td colspan="2" class="FacetDataTD text-right"><a href="../root/login_password_change.php?un='.$form["user_name"].'" class="btn btn-warning">'.$script_transl['change'].' password</a></td></tr>';
           }
-				} elseif ($co['set_co'] == 0) { // il modulo mai attivato
-					echo "  <td colspan=2><input type=radio name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"3\"></td>";
-					echo "  <td><input type=radio checked name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"0\"></td>";
-				} else { // se l'amministratore che sta operando sul proprio profilo può attivare un nuovo modulo e creare il relativo menù
-					echo "  <td class=\"FacetDataTDred\" colspan=2><input class=\"btn btn-warning\" type=radio name=\"" . $co_id . "new_" . $mod['name'] . "\" value=\"3\">Modulo attivabile</td>";
-					echo "  <td class=\"FacetDataTDred\"><input type=radio checked name=\"" . $co_id . "new_" . $mod['name'] . "\" value=\"0\"></td>";
-				}
-			} elseif ($mod['access'] == 0) { // il modulo è attivato, quindi propongo i valori precedenti
-				echo "  <td colspan=2><input type=radio name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"3\"></td>";
-				echo "  <td><input type=radio checked name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"0\"></td>";
-			} else {
-				echo '<td><input type=radio checked name="'. $co_id . 'acc_' . $mod['moduleid'] . '" value="3"> </td><td><a class="btn btn-xs dialog_module_card" module="'.$mod['name'].'" adminid="'.$form['user_name'].'" transl_name="'.$mod['transl_name'].'"><i class="glyphicon glyphicon-edit"></i>'.((count($mod['excluded_script'])>=1)?'<p class="text-left">'.implode('.php</p><p class="text-left">',$mod['excluded_script']).'.php</p>':'nessuno</p>').'</a></td>';
-				echo "  <td><input type=radio name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"0\"></td>";
-			}
-			echo "</tr>\n";
-		}
-	}
+          ?>
+          <td class="FacetFieldCaptionTD"><?php echo $script_transl['az_email']; ?></td>
+          <td colspan="2" class="FacetDataTD"><input title="Mail" type="email" name="az_email" value="<?php print $form["az_email"] ?>" class="FacetInput" maxlength="50">&nbsp;</td>
+          </tr>
+          <tr>
+          <?php
+          print "<td class=\"FacetFieldCaptionTD\"><img src=\"../root/view.php?table=admin&value=" . $form["user_name"] . "&field=user_name\" width=\"100\"></td>";
+          print "<td colspan=\"2\" class=\"FacetDataTD\">" . $script_transl['image'] . ":<br /><input name=\"userfile\" type=\"file\" class=\"FacetDataTD\"></td>";
+          ?>
+          </tr>
+          <tr>
+          <td class="FacetFieldCaptionTD"><?php echo $script_transl['lang']; ?></td>
+          <?php
+          echo '<td colspan="2" class="FacetDataTD">';
+          echo '<select name="lang" class="FacetSelect">';
+          $relativePath = '../../language';
+          if ($handle = opendir($relativePath)) {
+            while ($file = readdir($handle)) {
+              if (($file == ".") or ( $file == "..") or ( $file == ".svn"))
+              continue;
+              $selected = "";
+              if ($form["lang"] == $file) {
+                $selected = " selected ";
+              }
+              echo "<option value=\"" . $file . "\"" . $selected . ">" . ucfirst($file) . "</option>";
+            }
+            closedir($handle);
+          }
+          echo "</td></tr>\n";
+          ?>
+          <tr>
+          <td class="FacetFieldCaptionTD"><?php echo $script_transl['theme']; ?> </td>
+          <td colspan="2" class="FacetDataTD">
+          <?php
+          $gForm->selThemeDir('theme', $form["theme"]);
+          ?>
+          </td>
+          </tr>
+          <tr>
+          <td class="FacetFieldCaptionTD"><?php echo $script_transl['style']; ?></td>
+          <?php
+          echo '<td colspan="2" class="FacetDataTD">';
+          echo '<select name="style" class="FacetSelect">';
+          $relativePath = '../..' . $_SESSION['theme'] . '/scheletons/';
+          if ($handle = opendir($relativePath)) {
+            while ($file = readdir($handle)) {
+              // accetto solo i file css
+              if (!preg_match("/^[a-z0-9\s\_\-]+\.css$/", $file)) {
+                continue;
+              }
+              $selected = "";
+              if ($form["style"] == $file) {
+                $selected = " selected ";
+              }
+              echo "<option value=\"" . $file . "\"" . $selected . ">" . $file . "</option>";
+            }
+            closedir($handle);
+          }
+          echo "</td></tr>\n";
+          ?>
+          <tr>
+          <td class="FacetFieldCaptionTD"><?php echo $script_transl['skin']; ?></td>
+          <?php
+          echo '<td colspan="2" class="FacetDataTD">';
+          echo '<select name="skin" class="FacetSelect">';
+          $relativePath = '../..' . $_SESSION['theme'] . '/skins/';
+          if ($handle = opendir($relativePath)) {
+            while ($file = readdir($handle)) {
+              // accetto solo i file css
+              if (!preg_match("/^[a-z0-9\s\_\-]+\.css$/", $file)) {
+                continue;
+              }
+              $selected = "";
+              if ($form["skin"] == $file) {
+                $selected = " selected ";
+              }
+              echo "<option value=\"" . $file . "\"" . $selected . ">" . $file . "</option>";
+            }
+            closedir($handle);
+          }
+          echo "</td></tr>\n";
+          ?>
+          <tr>
+          <td class="FacetFieldCaptionTD"><?php echo $script_transl['Abilit']; ?></td>
+          <td colspan="2" class="FacetDataTD">
+          <?php
+              $gForm->variousSelect('Abilit', $script_transl['Abilit_value'], $form['Abilit'], "col-sm-8", true, '', false, 'style="max-width: 300px;"');
+          ?>
+          </tr>
+          <tr>
+          <td class="FacetFieldCaptionTD"><?php echo $script_transl['mesg_co'][2]; ?></td>
+          <td class="FacetDataTD" colspan="2">
+          <?php
+
+
+          if ($user_data['Abilit'] == 9 || is_array($student)) {
+            $gForm->selectCompany('company_id', $form['company_id'], $form['search']['company_id'], $form['hidden_req'], $script_transl['mesg_co']);
+          } else {
+            $company = gaz_dbi_get_row($gTables['aziend'], 'codice', $form['company_id']);
+            echo '<input type="hidden" name="company_id" value="'.$form['company_id'].'">';
+            echo $company['ragso1'].' '.$company['ragso2'];
+          }
+          ?>
+          </td>
+          </tr>
+          <tr>
+          <td class="FacetFieldCaptionTD">Magazzino predefinito</td>
+          <td class="FacetDataTD" colspan="2">
+          <?php
+            $gForm->selectFromDB('warehouse','id_warehouse','id',$form["id_warehouse"],'id',false,' - ','name','0','col-sm-6',['value'=>0,'descri'=>'Sede'],'');
+          ?>
+          </tr>
+          <tr>
+          <td class="FacetFieldCaptionTD"><?php echo $script_transl['Access']; ?></td>
+          <td colspan="2" class="FacetDataTD">
+          <?php
+          if ($user_data['Abilit'] == 9){
+          ?>
+          <input title="Accessi" type="text" name="Access" value="<?php echo $form["Access"]; ?>" maxlength="7" class="FacetInput">
+          <?php
+          } else {
+            echo '<input type="hidden" name="Access" value="'.$form["Access"].'">'.$form["Access"];
+          }
+          ?>
+          </td>
+          </tr>
+          <tr>
+          <td class="FacetFieldCaptionTD"><?php echo $script_transl['user_active']; ?></td>
+          <td colspan="2" class="FacetDataTD">
+          <?php
+              $gForm->variousSelect('user_active', $script_transl['user_active_value'], $form['user_active'], "col-sm-8", true, '', false, 'style="max-width: 300px;"');
+          ?>
+          <div class="FacetDataTDred" id="user_active"></div>&nbsp;</td>
+          </tr>
+          <tr>
+          <td class="FacetFieldCaptionTD"><?php echo $script_transl['body_text']; ?></td>
+          <td colspan="2" class="FacetDataTD">
+          <textarea id="body_text" name="body_text" class="mceClass" style="width:100%;"><?php echo $form['body_text']; ?></textarea>
+          </td>
+          </tr>
+
+          <?php
+          if ($user_data["Abilit"] == 9) {
+            function getModule($login, $company_id) {
+              global $gTables, $admin_aziend;
+              //trovo i moduli installati
+              $mod_found = [];
+              $relativePath = '../../modules';
+              if ($handle = opendir($relativePath)) {
+                while ($exist_mod = readdir($handle)) {
+                  if ($exist_mod == "." || $exist_mod == ".." || $exist_mod == ".svn" || $exist_mod == "root" || !file_exists("../../modules/$exist_mod/menu." . $admin_aziend['lang'] . ".php"))
+                  continue;
+                  $rs_mod = gaz_dbi_dyn_query("am.access,am.moduleid, am.custom_field, module.name ", $gTables['admin_module'] . ' AS am LEFT JOIN ' . $gTables['module'] .
+                  ' AS module ON module.id=am.moduleid ', " am.adminid = '" . $login . "' AND module.name = '$exist_mod' AND am.company_id = '$company_id'", "am.adminid", 0, 1);
+                  require("../../modules/$exist_mod/menu." . $admin_aziend['lang'] . ".php");
+                  $row = gaz_dbi_fetch_array($rs_mod);
+                  $row['excluded_script'] = [];
+                  if (!isset($row['moduleid'])) {
+                    $row['name'] = $exist_mod;
+                    $row['moduleid'] = 0;
+                    $row['access'] = 0;
+                    $row['custom_field'] = '';
+                  }
+                  $chkes = is_string($row['custom_field'])?json_decode($row['custom_field']):false;
+                  if ($chkes && isset($chkes->excluded_script)) {
+                    $row['excluded_script'] = $chkes->excluded_script;
+                  }
+                  $row['transl_name'] = $transl[$exist_mod]['name'];
+                  $mod_found[$exist_mod] = $row;
+                }
+                closedir($handle);
+              }
+              return $mod_found;
+            }
+
+            //richiamo tutte le aziende installate e vedo se l'utente  e' abilitato o no ad essa
+            $table = $gTables['aziend'] . ' AS a';
+            $what = "a.codice AS id, ragso1 AS ragsoc, (SELECT COUNT(*) FROM " . $gTables['admin_module'] . " WHERE a.codice=" . $gTables['admin_module'] . ".company_id AND " . $gTables['admin_module'] . ".adminid='" . $form["user_name"] . "') AS set_co ";
+            $co_rs = gaz_dbi_dyn_query($what, $table, 1, "ragsoc ASC");
+            while ($co = gaz_dbi_fetch_array($co_rs)) {
+              $co_id = sprintf('%03d', $co['id']);
+              ?>
+          </table>
+        </div> <!-- chiude pill generale -->
+
+        <div id="imap" class="tab-pane fade">
+          <?php if ($imap_check){ ?>
+          <table class="table-striped">
+            <tr>
+              <td colspan="3" class="FacetFieldCaptionTD"><b>Inserire le credenziali di accesso IMAP attiva la possibilità di avere le e-mail inviate da GAzie nella cartella di posta inviata specificata. Questo sistema sostituirà l'invio per conoscenza al proprio indirizzo</b></td>
+            </tr>
+            <tr>
+              <td colspan="1"class="FacetFieldCaptionTD">IMAP user name</td>
+              <td colspan="2" class="FacetDataTD"><input title="Nome utente IMAP (Lasciare vuoto se non serve)" type="text" name="imap_usr" value="<?php echo $form['imap_usr'] ?>" maxlength="40"  class="FacetInput">&nbsp;</td>
+            </tr>
+            <tr>
+              <td class="FacetFieldCaptionTD">IMAP password</td>
+              <td colspan="2" class="FacetDataTD"><input title="Password IMAP (lasciare vuoto se non serve)" type="password" name="imap_pwr" placeholder="Invisibile, digita solo se vuoi inserirla o cambiarla (minimo 4 caratteri)" value="<?php echo $form["imap_pwr"] ?>" maxlength="40"  class="FacetInput">&nbsp;</td>
+            </tr>
+            <tr>
+              <td class="FacetFieldCaptionTD">IMAP percorso cartella utente della posta inviata</td>
+              <td colspan="2" class="FacetDataTD"><input title="Password IMAP (lasciare vuoto se non serve)" type="text" name="imap_sent_folder" value="<?php echo $form["imap_sent_folder"] ?>" maxlength="40"  class="FacetInput">&nbsp;</td>
+            </tr>
+          </table>
+          <?php } else{ ?>
+          <table class="table-striped" style="width:100%;">
+            <tr>
+            <td class="FacetFieldCaptionTD">Prima di inserire le credenziali di accesso IMAP dell'utente bisogna impostare il server IMAP in configurazione azienda, tab 'Avanzata'</td>
+            </tr>
+            <tr>
+            <td class="FacetDataTD text-right"><a href="../config/admin_aziend.php" class="btn btn-warning"> Configura </a></td>
+            </tr>
+          </table>
+          <?php
+          }
+          ?>
+        </div><!-- chiude pill imap -->
+    </div> <!-- chiude tab-content -->
+  </div> <!-- chiude container-fluid -->
+</div> <!-- chiude panel -->
+            <?php
+            echo '<br/><div class="text-center"><h3><img src="../../modules/root/view.php?table=aziend&value='.$co['id'].'" alt="Logo" height="30"> ' . $co['ragsoc'] . '  - ID:' . $co['id'] . '</h3></div><table class="Tmiddle table-striped"><tbody>';
+            echo "<tr><td class=\"FacetDataTD\">" .'<input type=hidden name="' . $co_id . 'nusr_root" value="3"><b>'. $script_transl['mod_perm'] . ":</b></td>\n";
+            echo "<td><b>" . $script_transl['all'] . "</b></td>\n";
+            echo '<td align="center"><b> Script esclusi</b></td>';
+            echo "<td><b>" . $script_transl['none'] . "</b></td></tr>\n";
+            $mod_found = getModule($form["user_name"], $co['id']);
+            $mod_admin = getModule($user_data["user_name"], $co['id']);
+            foreach ($mod_found as $mod) {
+              echo "<tr>\n";
+              echo '<td>
+                        <img height="16" src="../' . $mod['name'] . '/' . $mod['name'] . '.png" /> ' . $mod['transl_name'] . ' (' . $mod['name'] . ")</td>\n";
+              if ($mod['moduleid'] == 0) { // il modulo non è stato mai attivato
+                if ($form["user_name"] <> $user_data["user_name"]) { // sono un amministratore che sta operando sul profilo di altro utente
+                  if ($mod_admin[$mod['name']]['access']==3){ // il modulo è attivo sull'amministratore
+                      // per evitare conflitti nemmeno l'amministratore può attivare un modulo se questo non lo è ancora sul suo
+                      echo "  <td colspan=2 ><input type=radio name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"3\"></td>";
+                      echo "  <td><input type=radio checked name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"0\"></td>";
+                  } else { // modulo non attivo sull'amministratore
+                      echo '  <td colspan=2 >Non attivato</td>';
+                      echo '  <td><input type="hidden"  name="' . $co_id . "nusr_" . $mod['name'] . '" value="0"></td>';
+                  }
+                } elseif ($co['set_co'] == 0) { // il modulo mai attivato
+                  echo "  <td colspan=2><input type=radio name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"3\"></td>";
+                  echo "  <td><input type=radio checked name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"0\"></td>";
+                } else { // se l'amministratore che sta operando sul proprio profilo può attivare un nuovo modulo e creare il relativo menù
+                  echo "  <td class=\"FacetDataTDred\" colspan=2><input class=\"btn btn-warning\" type=radio name=\"" . $co_id . "new_" . $mod['name'] . "\" value=\"3\">Modulo attivabile</td>";
+                  echo "  <td class=\"FacetDataTDred\"><input type=radio checked name=\"" . $co_id . "new_" . $mod['name'] . "\" value=\"0\"></td>";
+                }
+              } elseif ($mod['access'] == 0) { // il modulo è attivato, quindi propongo i valori precedenti
+                echo "  <td colspan=2><input type=radio name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"3\"></td>";
+                echo "  <td><input type=radio checked name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"0\"></td>";
+              } else {
+                echo '<td><input type=radio checked name="'. $co_id . 'acc_' . $mod['moduleid'] . '" value="3"> </td><td><a class="btn btn-xs dialog_module_card" module="'.$mod['name'].'" adminid="'.$form['user_name'].'" transl_name="'.$mod['transl_name'].'"><i class="glyphicon glyphicon-edit"></i>'.((count($mod['excluded_script'])>=1)?'<p class="text-left">'.implode('.php</p><p class="text-left">',$mod['excluded_script']).'.php</p>':'nessuno</p>').'</a></td>';
+                echo "  <td><input type=radio name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"0\"></td>";
+              }
+              echo "</tr>\n";
+            }
+          }
 }
 
 ?>
