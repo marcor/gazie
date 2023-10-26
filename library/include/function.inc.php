@@ -1447,6 +1447,22 @@ class GAzieMail {
     function sendMail($admin_data, $user, $content, $receiver, $mail_message = '') {
       // su $admin_data['other_email'] ci va un eventuale indirizzo mail diverso da quello in anagrafica
       global $gTables, $debug_active;
+
+      // Antonio Germani prendo i dati IMAP utente, se ci sono
+      $custom_field = gaz_dbi_get_row($gTables['anagra'], 'id', $user['id_anagra'])['custom_field'];
+      $imap_usr='';
+      if ($data = json_decode($custom_field,true)){// se c'è un json e c'è una mail aziendale utente
+        if (is_array($data['config']) && isset($data['config'][$admin_data['codice']])){ // se c'è il modulo "config" e c'è l'azienda attuale posso procedere
+          list($encrypted_data, $iv) = explode('::', base64_decode($data['config'][$admin_data['codice']]['imap_pwr']), 2);
+          $imap_pwr=openssl_decrypt($encrypted_data, 'aes-128-cbc', $_SESSION['aes_key'], 0, $iv);
+          $imap_usr=$data['config'][$admin_data['codice']]['imap_usr'];
+          $imap_sent_folder=$data['config'][$admin_data['codice']]['imap_sent_folder'];
+          $imap_server = gaz_dbi_get_row($gTables['company_config'], 'var', 'imap_server')['val'];
+          $imap_port = gaz_dbi_get_row($gTables['company_config'], 'var', 'imap_port')['val'];
+          $imap_secure = gaz_dbi_get_row($gTables['company_config'], 'var', 'imap_secure')['val'];
+        }
+      }
+
       require_once "../../library/phpmailer/class.phpmailer.php";
       require_once "../../library/phpmailer/class.smtp.php";
       if (isset ($receiver['mod_fae']) && strpos($receiver['mod_fae'], 'pec')===0){// se c'è il modulo per invio fae che inizia il suo nome con 'pec' definisco il server smtp con la pec
@@ -1549,9 +1565,9 @@ class GAzieMail {
       // Imposto email del destinatario
       $mail->Hostname = $config_host;
       $mail->AddAddress($mailto);//Destinatario
-      if (isset($az_email) && strlen($az_email['var_value'])>6){ // Antonio Germani: se c'è un indirizzo specifico utente/azienda, invio per cc a questo $az_email['var_value']
+      if (isset($az_email) && strlen($az_email['var_value'])>6 && $imap_usr==''){ // Antonio Germani: se c'è un indirizzo specifico utente/azienda, invio per cc a questo $az_email['var_value']
         $mail->AddCC($az_email['var_value'], $admin_data['ragso1'] . " " . $admin_data['ragso2']); // Aggiungo mittente come destinatario per conoscenza, per avere una copia
-      }elseif (strlen($user['user_email'])>=10) { // altrimenti, quando l'utente che ha inviato la mail ha un suo indirizzo il cc avviene su di lui
+      }elseif (strlen($user['user_email'])>=10 && $imap_usr=='') { // altrimenti, quando l'utente che ha inviato la mail ha un suo indirizzo il cc avviene su di lui
         $usermail = $user['user_email'];
         $mail->AddCC($usermail, $admin_data['ragso1'] . " " . $admin_data['ragso2']); // Aggiungo mittente come destinatario per conoscenza, per avere una copia
       }
@@ -1574,70 +1590,103 @@ class GAzieMail {
 
 	// Invio...
 	if ($debug_active) {
-?>
-		<center>
-		<table class="center">
-			<tr>
-				<td><b>SIMULAZIONE INVIO DEBUG</b></td>
-			</tr>
-			<tr>
-				<td>invio e-mail riuscito... <strong>OK</strong></td>
-			</tr>
-			<tr>
-				<td>mail send has been successful... <strong>OK</strong></td>
-			</tr>
-            <!--<tr><td><button onclick="history.back()">Torna indietro</button></td></tr>-->
-		</table>
-		</center>
-<?php
+    ?>
+        <center>
+        <table class="center">
+          <tr>
+            <td><b>SIMULAZIONE INVIO DEBUG</b></td>
+          </tr>
+          <tr>
+            <td>invio e-mail riuscito... <strong>OK</strong></td>
+          </tr>
+          <tr>
+            <td>mail send has been successful... <strong>OK</strong></td>
+          </tr>
+                <!--<tr><td><button onclick="history.back()">Torna indietro</button></td></tr>-->
+        </table>
+        </center>
+    <?php
 		return true;
 	}
 
 	if ( $mail->Send() ) {
-?>
-		<center>
-                <table class="center">
-                        <tr>
-                                <td><b>INVIO MAIL</b></td>
-                        </tr>
-                        <tr>
-                                <td>invio e-mail riuscito... <strong>OK</strong></td>
-                        </tr>
-                        <tr>
-                                <td>mail send has been successful... <strong>OK</strong></td>
-                        </tr>
-                        <!--<tr><td><button onclick="history.back()">Torna indietro</button></td></tr>-->
-                </table>
-                </center>
-
-<?php
-		    require('../../library/include/footer.php');
-            return true;
-    } else {
-?>
-		<center>
-                <table class="center">
-                        <tr>
-                                <td><b>INVIO MAIL</b></td>
-                        </tr>
-                        <tr>
-                                <td>invio e-mail <strong style="color: #ff0000;">NON riuscito... ERROR!</strong></td>
-                        </tr>
-                        <tr>
-                                <td>mail send has<strong style="color: #ff0000;"> NOT been successful... ERROR!</strong>></td>
-                        </tr>
-                        <tr>
-			<td>Errore: <?php echo $mail->ErrorInfo; ?></td>
-                        </tr>
-                        <!--<tr><td ><button onclick="history.back()">Torna indietro</button></td></tr>-->
-                </table>
-                </center>
-
-<?php
-            require('../../library/include/footer.php');
-            return false;
+    if ($imap_usr!==''){// se ho un utente imap carico la mail nella sua posta inviata
+      if($imap = @imap_open("{".$imap_server.":".$imap_port."/".$imap_secure."}".$imap_sent_folder, $imap_usr, $imap_pwr)){
+        if ($append=@imap_append($imap, "{".$imap_server."}".$imap_sent_folder, $mail->getSentMIMEMessage())){
+                // inserimento avvenuto
+        }else{
+          $errors = @imap_errors();
+          ?>
+          <center>
+            <table class="center">
+              <tr>
+                <td><b>carico mail inviata in 'posta inviata' NON riuscito</b></td>
+              </tr>
+              <tr>
+                <td><?php echo implode ('; ', $errors ); ?></td>
+              </tr>
+            </table>
+          </center>
+          <?php
         }
+      }else{
+        $errors = @imap_errors();
+          ?>
+          <center>
+            <table class="center">
+              <tr>
+                <td><b>carico mail inviata in 'posta inviata' NON riuscito</b></td>
+              </tr>
+              <tr>
+                <td><?php echo implode ('; ', $errors ); ?></td>
+              </tr>
+            </table>
+          </center>
+          <?php
+      }
     }
+  ?>
+		<center>
+      <table class="center">
+        <tr>
+          <td><b>INVIO MAIL</b></td>
+        </tr>
+        <tr>
+          <td>invio e-mail riuscito... <strong>OK</strong></td>
+        </tr>
+        <tr>
+          <td>mail send has been successful... <strong>OK</strong></td>
+        </tr>
+        <!--<tr><td><button onclick="history.back()">Torna indietro</button></td></tr>-->
+      </table>
+    </center>
+  <?php
+    require('../../library/include/footer.php');
+    return true;
+  } else {
+    ?>
+		<center>
+      <table class="center">
+        <tr>
+          <td><b>INVIO MAIL</b></td>
+        </tr>
+        <tr>
+          <td>invio e-mail <strong style="color: #ff0000;">NON riuscito... ERROR!</strong></td>
+        </tr>
+        <tr>
+          <td>mail send has<strong style="color: #ff0000;"> NOT been successful... ERROR!</strong>></td>
+        </tr>
+        <tr>
+          <td>Errore: <?php echo $mail->ErrorInfo; ?></td>
+        </tr>
+        <!--<tr><td ><button onclick="history.back()">Torna indietro</button></td></tr>-->
+      </table>
+    </center>
+    <?php
+      require('../../library/include/footer.php');
+      return false;
+  }
+  }
 
 }
 
