@@ -261,7 +261,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     }
     $imap_check = gaz_dbi_get_row($gTables['company_config'], 'var', 'imap_server');
     if (!$imap_check){// se non esistono i righi del server imap li creo
-      $arr=array('description'=>'IMAP Secure (tls,ssl)','var'=>'imap_secure','val'=>'');
+      $arr=array('description'=>'IMAP Secure: ssl,tls,notls,/novalidate-cert(server con certificati autofirmati),/optional php flags.','var'=>'imap_secure','val'=>'');
       gaz_dbi_table_insert('company_config', $arr);
       $arr=array('description'=>'IMAP port','var'=>'imap_port','val'=>'');
       gaz_dbi_table_insert('company_config', $arr);
