@@ -870,6 +870,53 @@ echo '</h3></div><div class="col-xs-3"><input name="conferma" id="conferma" clas
 
 
               ?>
+
+          <?php
+           //richiamo tutte le aziende installate e vedo se l'utente  e' abilitato o no ad essa
+            $table = $gTables['aziend'] . ' AS a';
+            $what = "a.codice AS id, ragso1 AS ragsoc, (SELECT COUNT(*) FROM " . $gTables['admin_module'] . " WHERE a.codice=" . $gTables['admin_module'] . ".company_id AND " . $gTables['admin_module'] . ".adminid='" . $form["user_name"] . "') AS set_co ";
+            $co_rs = gaz_dbi_dyn_query($what, $table, 1, "ragsoc ASC");
+           while ($co = gaz_dbi_fetch_array($co_rs)) {
+              $co_id = sprintf('%03d', $co['id']);
+            echo '<tr></tr><tr><td colspan="4"><h3><img src="../../modules/root/view.php?table=aziend&value='.$co['id'].'" alt="Logo" height="30"> ' . $co['ragsoc'] . '  - ID:' . $co['id'] . '</h3></td></tr>';
+            echo "<tr><td class=\"FacetDataTD\">" .'<input type=hidden name="' . $co_id . 'nusr_root" value="3"><b>'. $script_transl['mod_perm'] . ":</b></td>\n";
+            echo "<td><b>" . $script_transl['all'] . "</b></td>\n";
+            echo '<td align="center"><b> Script esclusi</b></td>';
+            echo "<td><b>" . $script_transl['none'] . "</b></td></tr>\n";
+            $mod_found = getModule($form["user_name"], $co['id']);
+            $mod_admin = getModule($user_data["user_name"], $co['id']);
+            foreach ($mod_found as $mod) {
+              echo "<tr>\n";
+              echo '<td>
+                        <img height="16" src="../' . $mod['name'] . '/' . $mod['name'] . '.png" /> ' . $mod['transl_name'] . ' (' . $mod['name'] . ")</td>\n";
+              if ($mod['moduleid'] == 0) { // il modulo non è stato mai attivato
+                if ($form["user_name"] <> $user_data["user_name"]) { // sono un amministratore che sta operando sul profilo di altro utente
+                  if ($mod_admin[$mod['name']]['access']==3){ // il modulo è attivo sull'amministratore
+                      // per evitare conflitti nemmeno l'amministratore può attivare un modulo se questo non lo è ancora sul suo
+                      echo "  <td colspan=2 ><input type=radio name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"3\"></td>";
+                      echo "  <td><input type=radio checked name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"0\"></td>";
+                  } else { // modulo non attivo sull'amministratore
+                      echo '  <td colspan=2 >Non attivato</td>';
+                      echo '  <td><input type="hidden"  name="' . $co_id . "nusr_" . $mod['name'] . '" value="0"></td>';
+                  }
+                } elseif ($co['set_co'] == 0) { // il modulo mai attivato
+                  echo "  <td colspan=2><input type=radio name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"3\"></td>";
+                  echo "  <td><input type=radio checked name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"0\"></td>";
+                } else { // se l'amministratore che sta operando sul proprio profilo può attivare un nuovo modulo e creare il relativo menù
+                  echo "  <td class=\"FacetDataTDred\" colspan=2><input class=\"btn btn-warning\" type=radio name=\"" . $co_id . "new_" . $mod['name'] . "\" value=\"3\">Modulo attivabile</td>";
+                  echo "  <td class=\"FacetDataTDred\"><input type=radio checked name=\"" . $co_id . "new_" . $mod['name'] . "\" value=\"0\"></td>";
+                }
+              } elseif ($mod['access'] == 0) { // il modulo è attivato, quindi propongo i valori precedenti
+                echo "  <td colspan=2><input type=radio name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"3\"></td>";
+                echo "  <td><input type=radio checked name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"0\"></td>";
+              } else {
+                echo '<td><input type=radio checked name="'. $co_id . 'acc_' . $mod['moduleid'] . '" value="3"> </td><td><a class="btn btn-xs dialog_module_card" module="'.$mod['name'].'" adminid="'.$form['user_name'].'" transl_name="'.$mod['transl_name'].'"><i class="glyphicon glyphicon-edit"></i>'.((count($mod['excluded_script'])>=1)?'<p class="text-left">'.implode('.php</p><p class="text-left">',$mod['excluded_script']).'.php</p>':'nessuno</p>').'</a></td>';
+                echo "  <td><input type=radio name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"0\"></td>";
+              }
+              echo "</tr>\n";
+            }
+          }
+          ?>
           </table>
       </div> <!-- chiude generale -->
 
@@ -948,50 +995,7 @@ echo '</h3></div><div class="col-xs-3"><input name="conferma" id="conferma" clas
   </div> <!-- chiude container-fluid -->
 </div> <!-- chiude panel -->
             <?php
-             //richiamo tutte le aziende installate e vedo se l'utente  e' abilitato o no ad essa
-            $table = $gTables['aziend'] . ' AS a';
-            $what = "a.codice AS id, ragso1 AS ragsoc, (SELECT COUNT(*) FROM " . $gTables['admin_module'] . " WHERE a.codice=" . $gTables['admin_module'] . ".company_id AND " . $gTables['admin_module'] . ".adminid='" . $form["user_name"] . "') AS set_co ";
-            $co_rs = gaz_dbi_dyn_query($what, $table, 1, "ragsoc ASC");
-            while ($co = gaz_dbi_fetch_array($co_rs)) {
-              $co_id = sprintf('%03d', $co['id']);
-            echo '<br/><div class="text-center"><h3><img src="../../modules/root/view.php?table=aziend&value='.$co['id'].'" alt="Logo" height="30"> ' . $co['ragsoc'] . '  - ID:' . $co['id'] . '</h3></div><table class="Tmiddle table-striped"><tbody>';
-            echo "<tr><td class=\"FacetDataTD\">" .'<input type=hidden name="' . $co_id . 'nusr_root" value="3"><b>'. $script_transl['mod_perm'] . ":</b></td>\n";
-            echo "<td><b>" . $script_transl['all'] . "</b></td>\n";
-            echo '<td align="center"><b> Script esclusi</b></td>';
-            echo "<td><b>" . $script_transl['none'] . "</b></td></tr>\n";
-            $mod_found = getModule($form["user_name"], $co['id']);
-            $mod_admin = getModule($user_data["user_name"], $co['id']);
-            foreach ($mod_found as $mod) {
-              echo "<tr>\n";
-              echo '<td>
-                        <img height="16" src="../' . $mod['name'] . '/' . $mod['name'] . '.png" /> ' . $mod['transl_name'] . ' (' . $mod['name'] . ")</td>\n";
-              if ($mod['moduleid'] == 0) { // il modulo non è stato mai attivato
-                if ($form["user_name"] <> $user_data["user_name"]) { // sono un amministratore che sta operando sul profilo di altro utente
-                  if ($mod_admin[$mod['name']]['access']==3){ // il modulo è attivo sull'amministratore
-                      // per evitare conflitti nemmeno l'amministratore può attivare un modulo se questo non lo è ancora sul suo
-                      echo "  <td colspan=2 ><input type=radio name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"3\"></td>";
-                      echo "  <td><input type=radio checked name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"0\"></td>";
-                  } else { // modulo non attivo sull'amministratore
-                      echo '  <td colspan=2 >Non attivato</td>';
-                      echo '  <td><input type="hidden"  name="' . $co_id . "nusr_" . $mod['name'] . '" value="0"></td>';
-                  }
-                } elseif ($co['set_co'] == 0) { // il modulo mai attivato
-                  echo "  <td colspan=2><input type=radio name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"3\"></td>";
-                  echo "  <td><input type=radio checked name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"0\"></td>";
-                } else { // se l'amministratore che sta operando sul proprio profilo può attivare un nuovo modulo e creare il relativo menù
-                  echo "  <td class=\"FacetDataTDred\" colspan=2><input class=\"btn btn-warning\" type=radio name=\"" . $co_id . "new_" . $mod['name'] . "\" value=\"3\">Modulo attivabile</td>";
-                  echo "  <td class=\"FacetDataTDred\"><input type=radio checked name=\"" . $co_id . "new_" . $mod['name'] . "\" value=\"0\"></td>";
-                }
-              } elseif ($mod['access'] == 0) { // il modulo è attivato, quindi propongo i valori precedenti
-                echo "  <td colspan=2><input type=radio name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"3\"></td>";
-                echo "  <td><input type=radio checked name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"0\"></td>";
-              } else {
-                echo '<td><input type=radio checked name="'. $co_id . 'acc_' . $mod['moduleid'] . '" value="3"> </td><td><a class="btn btn-xs dialog_module_card" module="'.$mod['name'].'" adminid="'.$form['user_name'].'" transl_name="'.$mod['transl_name'].'"><i class="glyphicon glyphicon-edit"></i>'.((count($mod['excluded_script'])>=1)?'<p class="text-left">'.implode('.php</p><p class="text-left">',$mod['excluded_script']).'.php</p>':'nessuno</p>').'</a></td>';
-                echo "  <td><input type=radio name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"0\"></td>";
-              }
-              echo "</tr>\n";
-            }
-          }
+
 }
 
 ?>
