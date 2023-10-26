@@ -99,7 +99,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
 	$custom_field = gaz_dbi_get_row($gTables['anagra'], "id", $form['id_anagra'])['custom_field'];
   if ( isset($custom_field) && $custom_field!="" ) {
     $data = json_decode($custom_field,true);
-    if (is_array($data['config']) && isset($data['config'][$form['company_id']])){
+    if (isset($data['config']) && is_array($data['config']) && isset($data['config'][$form['company_id']])){
       $form['imap_usr']=(isset($data['config'][$form['company_id']]['imap_usr']))?$data['config'][$form['company_id']]['imap_usr']:'';
       //$form['imap_pwr']=(isset($data['config'][$form['company_id']]['imap_pwr']))?$data['config'][$form['company_id']]['imap_pwr']:'';
       $form['imap_pwr']='';// non carico la password perché tanto non si può vedere.
