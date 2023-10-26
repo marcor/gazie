@@ -468,7 +468,7 @@ if (isset($_GET['e-test']) && $_GET['e-test']==TRUE){
                          . "To: ".$form['user_email']."\r\n"
                          . "Subject: TEST test\r\n"
                          . "\r\n"
-                         . "This is a test message from GAzie, please ignore it!\r\n"
+                         . "This is a test message from GAzie, please ignore it!\r\n","\\seen"
                          )){
                           imap_close($imap);
                           $data = ["send" => "SUCCESS","sender" => $form['user_email']];

@@ -1612,7 +1612,7 @@ class GAzieMail {
 	if ( $mail->Send() ) {
     if ($imap_usr!==''){// se ho un utente imap carico la mail nella sua posta inviata
       if($imap = @imap_open("{".$imap_server.":".$imap_port."/".$imap_secure."}".$imap_sent_folder, $imap_usr, $imap_pwr)){
-        if ($append=@imap_append($imap, "{".$imap_server."}".$imap_sent_folder, $mail->getSentMIMEMessage())){
+        if ($append=@imap_append($imap, "{".$imap_server."}".$imap_sent_folder, $mail->getSentMIMEMessage(),"\\seen")){
                 // inserimento avvenuto
         }else{
           $errors = @imap_errors();
