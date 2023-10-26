@@ -363,7 +363,7 @@ if (isset($_POST['conferma'])) {
 		} elseif ($toDo == 'update') {
       $custom_field=gaz_dbi_get_row($gTables['anagra'], "id", $form['id_anagra'])['custom_field']; // carico il json custom_field esistente
       if ($data = json_decode($custom_field,true)){// se c'è un json
-        if (is_array($data['config']) && isset($data['config'][$form['company_id']])){ // se c'è il modulo "config" e c'è l'azienda attuale aggiorno il custom field
+        if (isset($data['config']) && is_array($data['config']) && isset($data['config'][$form['company_id']])){ // se c'è il modulo "config" e c'è l'azienda attuale aggiorno il custom field
           $data['config'][$form['company_id']]['imap_usr']=$form['imap_usr'];
           if (strlen($form['imap_pwr'])>4){// se è stata scritta una password la inserisco o modifico
             /**** promemoria per decriptare ****
@@ -868,24 +868,19 @@ echo '</h3></div><div class="col-xs-3"><input name="conferma" id="conferma" clas
               return $mod_found;
             }
 
-            //richiamo tutte le aziende installate e vedo se l'utente  e' abilitato o no ad essa
-            $table = $gTables['aziend'] . ' AS a';
-            $what = "a.codice AS id, ragso1 AS ragsoc, (SELECT COUNT(*) FROM " . $gTables['admin_module'] . " WHERE a.codice=" . $gTables['admin_module'] . ".company_id AND " . $gTables['admin_module'] . ".adminid='" . $form["user_name"] . "') AS set_co ";
-            $co_rs = gaz_dbi_dyn_query($what, $table, 1, "ragsoc ASC");
-            while ($co = gaz_dbi_fetch_array($co_rs)) {
-              $co_id = sprintf('%03d', $co['id']);
+
               ?>
           </table>
-        </div> <!-- chiude pill generale -->
+      </div> <!-- chiude generale -->
 
-        <div id="imap" class="tab-pane fade">
+      <div id="imap" class="tab-pane fade">
           <?php if ($imap_check){ ?>
           <table class="table-striped">
             <tr>
               <td colspan="3" class="FacetFieldCaptionTD"><b>Inserire le credenziali di accesso IMAP attiva la possibilità di avere le e-mail inviate da GAzie nella cartella di posta inviata specificata. Questo sistema sostituirà l'invio per conoscenza al proprio indirizzo</b></td>
             </tr>
             <tr>
-              <td colspan="1"class="FacetFieldCaptionTD">IMAP user name</td>
+              <td colspan="1" class="FacetFieldCaptionTD">IMAP user name</td>
               <td colspan="2" class="FacetDataTD"><input title="Nome utente IMAP (Lasciare vuoto se non serve)" type="text" name="imap_usr" value="<?php echo $form['imap_usr'] ?>" maxlength="40"  class="FacetInput">&nbsp;</td>
             </tr>
             <tr>
@@ -898,7 +893,7 @@ echo '</h3></div><div class="col-xs-3"><input name="conferma" id="conferma" clas
             </tr>
           </table>
           <div id="email" class="tab-pane">
-            <div>Il test di configurazione ti permette di verificare le impostazioni IMAP inserite. <br><b>Salva</b> la configurazione prima di avviare il test.</i>
+            <div>Il test di configurazione ti permette di verificare le impostazioni IMAP inserite. <br><b>Salva</b> la configurazione prima di avviare il test.
             </div>
             <div id="wait">
               <span>Please wait...</span>
@@ -948,11 +943,17 @@ echo '</h3></div><div class="col-xs-3"><input name="conferma" id="conferma" clas
           <?php
           }
           ?>
-        </div><!-- chiude pill imap -->
+      </div><!-- chiude pill imap -->
     </div> <!-- chiude tab-content -->
   </div> <!-- chiude container-fluid -->
 </div> <!-- chiude panel -->
             <?php
+             //richiamo tutte le aziende installate e vedo se l'utente  e' abilitato o no ad essa
+            $table = $gTables['aziend'] . ' AS a';
+            $what = "a.codice AS id, ragso1 AS ragsoc, (SELECT COUNT(*) FROM " . $gTables['admin_module'] . " WHERE a.codice=" . $gTables['admin_module'] . ".company_id AND " . $gTables['admin_module'] . ".adminid='" . $form["user_name"] . "') AS set_co ";
+            $co_rs = gaz_dbi_dyn_query($what, $table, 1, "ragsoc ASC");
+            while ($co = gaz_dbi_fetch_array($co_rs)) {
+              $co_id = sprintf('%03d', $co['id']);
             echo '<br/><div class="text-center"><h3><img src="../../modules/root/view.php?table=aziend&value='.$co['id'].'" alt="Logo" height="30"> ' . $co['ragsoc'] . '  - ID:' . $co['id'] . '</h3></div><table class="Tmiddle table-striped"><tbody>';
             echo "<tr><td class=\"FacetDataTD\">" .'<input type=hidden name="' . $co_id . 'nusr_root" value="3"><b>'. $script_transl['mod_perm'] . ":</b></td>\n";
             echo "<td><b>" . $script_transl['all'] . "</b></td>\n";
