@@ -706,9 +706,13 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                             $check_lot= gaz_dbi_query("SELECT id FROM " . $gTables['lotmag'] . " WHERE id_movmag = '" . $form['rows'][$i]['id_mag']."'");// controllo se il lotto inserito nel form esiste già
                             $rowc = $check_lot->fetch_assoc();
                             if (isset($rowc['id']) && $rowc['id']>0) {  // se il lotto c'era lo aggiorno
-                              $id_lotmag=$rowc['id']; // ne prendo l'id che andrò a memorizzare nel movimento di magazzino
-                              gaz_dbi_query("UPDATE " . $gTables['lotmag'] . " SET codart = '" . $form['rows'][$i]['codart'] . "' , id_rigdoc = '". $form['rows'][$i]['id_rig'] ."', identifier = '" . $form['rows'][$i]['identifier'] . "', id_movmag = '" . $id_mag . "' , expiry = '". $form['rows'][$i]['expiry'] ."' WHERE id = '" . $id_lotmag . "'");
-                            } else { // se non c'era creo il rigo lotto nella tabella lotmag
+                              $id_lotmag=$rowc['id']; // ne prendo l'id che andrò a memorizzare nel movimento di magazzino ancora da riscrivere
+                              gaz_dbi_query("UPDATE " . $gTables['lotmag'] . " SET codart = '" . $form['rows'][$i]['codart'] . "' , id_rigdoc = '". $form['rows'][$i]['id_rig'] ."', identifier = '" . $form['rows'][$i]['identifier'] . "', expiry = '". $form['rows'][$i]['expiry'] ."' WHERE id = '" . $id_lotmag . "'");
+                            }elseif(intval($val_old_row['id_lotmag'])>0){// se il vecchio rigo aveva gia un id_lotmag, visto che potrebbero esserci stati dei movimenti di questo id lotto, lo lascio modificandolo
+                              $id_lotmag=intval($val_old_row['id_lotmag']); // ne prendo l'id che andrò a memorizzare nel movimento di magazzino ancora da riscrivere
+                              gaz_dbi_query("UPDATE " . $gTables['lotmag'] . " SET codart = '" . $form['rows'][$i]['codart'] . "' , id_rigdoc = '". $form['rows'][$i]['id_rig'] ."', identifier = '" . $form['rows'][$i]['identifier'] . "', expiry = '". $form['rows'][$i]['expiry'] ."' WHERE id = '" . $id_lotmag . "'");
+
+                            }else { // se non c'era creo il rigo lotto nella tabella lotmag
 
                               gaz_dbi_query("INSERT INTO " . $gTables['lotmag'] . "(id_rigdoc,codart,identifier,expiry) VALUES ('" . $form['rows'][$i]['id_rig'] . "','" . $form['rows'][$i]['codart'] . "','" . $form['rows'][$i]['identifier'] . "','" . $form['rows'][$i]['expiry'] . "')");
                               $id_lotmag=gaz_dbi_last_id();
