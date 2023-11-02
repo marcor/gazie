@@ -218,9 +218,9 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
   $form['search']['fiscal_rapresentative_id'] = '';
   $form['ritorno'] = $_SERVER['HTTP_REFERER'];
   $form['hidden_req'] = '';
-  $form['datnas_Y'] = substr($form['datnas'], 0, 4);
-  $form['datnas_M'] = substr($form['datnas'], 5, 2);
-  $form['datnas_D'] = substr($form['datnas'], 8, 2);
+  $form['datnas_Y'] = ($form['datnas'])?substr($form['datnas'], 0, 4):'';
+  $form['datnas_M'] = ($form['datnas'])?substr($form['datnas'], 5, 2):'';
+  $form['datnas_D'] = ($form['datnas'])?substr($form['datnas'], 8, 2):'';
 	$form['external_resp']=$form['external_resp'];
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
   $anagrafica = new Anagrafica();
