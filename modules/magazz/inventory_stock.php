@@ -152,7 +152,9 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
             $form['chk_on' . $r['codice']] = '';
             $form['a'][$r['codice']]['class'] = 'danger';
           }
+          $tot_val_giac+=$magval['v_g'];
         }
+
       }
     } elseif (isset($_POST['preview']) || isset($_POST['insert'])|| $_POST['hidden_req'] == 'refr') {  //in caso di conferma
       $cau99 = gaz_dbi_get_row($gTables['caumag'], 'codice', 99);
