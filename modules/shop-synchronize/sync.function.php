@@ -701,12 +701,12 @@ class shopsynchronizegazSynchro {
 			$OSaccpass = gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val'];// vecchio sistema di password non criptata
 			$rsdec=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = 'pass'");
 			$rdec=gaz_dbi_fetch_row($rsdec);
-			$ftp_pass=$rdec?htmlspecialchars_decode($rdec[0]):'';
+			$ftp_pass=$rdec[0]?htmlspecialchars_decode($rdec[0]):'';
 			$ftp_pass=(strlen($ftp_pass)>0)?$ftp_pass:$OSftp_pass; // se la password decriptata non ha dato risultati provo a vedere se c'è ancora una password non criptata
 			if ($OSaccpass && $urlinterf = gaz_dbi_get_row($gTables['company_config'], 'var', 'path')['val']."articoli-gazie.php"){// se sono state impostate
 				$rsdec=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = 'accpass'");
 				$rdec=gaz_dbi_fetch_row($rsdec);
-				$accpass=$rdec?htmlspecialchars_decode($rdec[0]):'';
+				$accpass=$rdec[0]?htmlspecialchars_decode($rdec[0]):'';
 				$accpass=(strlen($accpass)>0)?$accpass:$OSaccpass; // se la password decriptata non ha dato risultati provo a mettere la password non criptata
 			}else{
 				$rawres['title'] = "Problemi con le impostazioni FTP: manca il percorso al file interfaccia e/o la sua password di accesso! AGGIORNARE MANUALMENTE il prodotto ".$d." nel sito web ".$toDo;
