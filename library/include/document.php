@@ -731,6 +731,10 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
             $tabella_da_aggiornare = 'tesdoc';
             $email_elem='ddt';
             break;
+          case 'XF': // Reverse charge
+            $tabella_da_aggiornare = 'tesdoc';
+            $email_elem='fat';
+            break;
           default: // non rientra nella casistica gestita al momento quindi non aggiorno custom_field
             $tabella_da_aggiornare = FALSE;
             break;
