@@ -909,7 +909,11 @@ function printPdf(urlPrintDoc){
                   }
                   echo '<a class="btn btn-xs '.$classe_mail.' btn-email" onclick="confirMail(this,' . $r["clfoco"] . ',' . $r["id_tes"] . ',false);return false;" id="doc_' . $r["id_tes"] . '" url="' . $modulo . '" href="#" title="' . $title . '" mail="' . $r["e_mail"] . '" namedoc="' . $tipodoc . ' n.' . $r["numfat"] . ' del ' . gaz_format_date($r["datfat"]) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
                 } else {
-                  echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" href="admin_client.php?codice=' . substr($r['clfoco'], 3) . '&Update#email"><i class="glyphicon glyphicon-edit"></i></a>';
+                  if ($r["tipdoc"] == 'XFA'){// se è reverse charge questo è un fornitore
+                    echo '<a title="Non hai memorizzato l\'email per questo fornitore, inseriscila ora" href="../acquis/admin_fornit.php?codice=' . substr($r['clfoco'], 3) . '&Update#email"><i class="glyphicon glyphicon-edit"></i></a>';
+                  }else{
+                    echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" href="admin_client.php?codice=' . substr($r['clfoco'], 3) . '&Update#email"><i class="glyphicon glyphicon-edit"></i></a>';
+                  }
                 }
                 echo "</td>";
                 // Colonna "Origine"
