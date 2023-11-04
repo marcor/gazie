@@ -35,8 +35,8 @@ $direttorio = explode("/", dirname($_SERVER['PHP_SELF']));
 $module = array_pop($direttorio);
 $radixarr = array_diff($direttorio, array('modules', $module, ''));
 $radix = implode('/', $radixarr);
-if (strlen($radix) > 1) {
-    session_name(implode($radixarr));
+if (strlen($radix) > 1) {// session.name cannot contain any of the following '=,;.[ \t\r\n\013\014'
+    session_name(str_replace( array( '=',',',';','.','[','\t','\r','\n','\013','\014' ), '', implode($radixarr)));
 } else {
     session_name(_SESSION_NAME);
 }
