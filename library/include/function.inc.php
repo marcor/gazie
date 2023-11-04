@@ -38,7 +38,7 @@ $radix = implode('/', $radixarr);
 if (strlen($radix) > 1) {// session.name cannot contain any of the following '=,;.[ \t\r\n\013\014'
     session_name(str_replace( array( '=',',',';','.','[','\t','\r','\n','\013','\014' ), '', implode($radixarr)));
 } else {
-    session_name(_SESSION_NAME);
+    session_name(str_replace( array( '=',',',';','.','[','\t','\r','\n','\013','\014' ), '', _SESSION_NAME));
 }
 session_start();
 session_gc();
