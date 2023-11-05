@@ -36,7 +36,7 @@ if (count(get_included_files()) ==1 OR basename($_SERVER['PHP_SELF']) == basenam
 }else{
   $idDB="_001";// ID azienda per stabilire a quale ID azienda del data base dovrà accedere il front-end del sito web
   $token="yourtokenword"; // inserisci una parola chiave, che verrà usata dagli script, per bloccare gli accessi diretti.
-  $smtp_pass="Casetta2000*"; // la password e-mail smtp (con la nuova criptazione non posso più prenderla dal DB)
+  $smtp_pass="********"; // la password e-mail smtp (con la nuova criptazione non posso più prenderla dal DB)
   $seziva="1"; // la sezione iva da inserire nelle nuove prenotazioni
 }
 ?>
