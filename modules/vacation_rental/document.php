@@ -29,7 +29,7 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
-
+#[AllowDynamicProperties]
 class DocContabVars {
 
   function setData($gTables, $tesdoc, $testat, $tableName, $ecr = false, $genTables="", $azTables="", $lang="it",$user_level="") {

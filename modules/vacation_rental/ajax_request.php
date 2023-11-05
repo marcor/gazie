@@ -53,6 +53,20 @@ if (isset($_GET['term'])) {
 
     switch ($opt) {
       case 'point':
+        // Antonio Germani prendo i dati IMAP utente, se ci sono
+        $custom_field = gaz_dbi_get_row($gTables['anagra'], 'id', $admin_aziend['id_anagra'])['custom_field'];
+        $imap_usr='';
+        if ($data = json_decode($custom_field,true)){// se c'è un json
+          if (is_array($data['config']) && isset($data['config'][$admin_aziend['company_id']])){ // se c'è il modulo "config" e c'è l'azienda attuale posso procedere
+            list($encrypted_data, $iv) = explode('::', base64_decode($data['config'][$admin_aziend['company_id']]['imap_pwr']), 2);
+            $imap_pwr=openssl_decrypt($encrypted_data, 'aes-128-cbc', $_SESSION['aes_key'], 0, $iv);
+            $imap_usr=$data['config'][$admin_aziend['company_id']]['imap_usr'];
+            $imap_sent_folder=$data['config'][$admin_aziend['company_id']]['imap_sent_folder'];
+            $imap_server = gaz_dbi_get_row($gTables['company_config'], 'var', 'imap_server')['val'];
+            $imap_port = gaz_dbi_get_row($gTables['company_config'], 'var', 'imap_port')['val'];
+            $imap_secure = gaz_dbi_get_row($gTables['company_config'], 'var', 'imap_secure')['val'];
+          }
+        }
 
         $points_expiry = gaz_dbi_get_row($gTables['company_config'], 'var', 'points_expiry')['val'];
         if (is_numeric($_GET['points']) && intval($_GET['points'])<>0 && strlen($_GET['motive'])>2){
@@ -111,6 +125,7 @@ if (isset($_GET['term'])) {
               $mail->Password   = $psw;                        //SMTP password
               $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; //Enable implicit TLS encryption
               $mail->Port       = $port;                       //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+
               // creo e invio email di conferma
               //Recipients
               $mail->setFrom($admin_aziend['e_mail']); // sender (e-mail dell'account che sta inviando)
@@ -120,12 +135,35 @@ if (isset($_GET['term'])) {
               } else{
                 $mail->addAddress($result['e_mail2']);                  // altrimenti alla secondaria
               }
-              $mail->addCC($admin_aziend['e_mail']);             //invio copia a mittente
+              if ($imap_usr==''){
+                $mail->addCC($admin_aziend['e_mail']); //invio copia a mittente
+              }
               $mail->isHTML(true);
               $mail->Subject = $script_transl['booking']." ".$tesbro['numdoc'].' '.$script_transl['of'].' '.gaz_format_date($tesbro['datemi']);
               $mail->Body    = "<p>".$script_transl['email_give_point']." ".$_GET['points']." ".$script_transl['email_give_point2']." ".$_GET['motive']."</p><p>".$script_transl['email_give_point3']." ".$data['vacation_rental']['points']." ".$script_transl['points']."</p><p><b>".$admin_aziend['ragso1']." ".$admin_aziend['ragso2']."</b></p>";
               if($mail->send()) {
                 echo ". E-mail inviata";
+                if ($imap_usr!==''){// se ho un utente imap carico la mail nella sua posta inviata
+                  if($imap = @imap_open("{".$imap_server.":".$imap_port."/".$imap_secure."}".$imap_sent_folder, $imap_usr, $imap_pwr)){
+                    if ($append=@imap_append($imap, "{".$imap_server."}".$imap_sent_folder, $mail->getSentMIMEMessage(),"\\seen")){
+                            // inserimento avvenuto
+                    }else{
+                      $errors = @imap_errors();
+                      ?>
+                      <script>
+                      alert('carico mail inviata in 'posta inviata' NON riuscito <?php echo implode ('; ', $errors ); ?>');
+                      </script>
+                      <?php
+                    }
+                  }else{
+                    $errors = @imap_errors();
+                      ?>
+                       <script>
+                      alert('carico mail inviata in 'posta inviata' NON riuscito <?php echo implode ('; ', $errors ); ?>');
+                      </script>
+                      <?php
+                  }
+                }
               }else {
                 echo "Errore imprevisto nello spedire la mail di attribuzione punti: " . $mail->ErrorInfo;
               }
