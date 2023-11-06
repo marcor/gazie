@@ -128,7 +128,7 @@ if (isset($_GET['term'])) {
 
               // creo e invio email di conferma
               //Recipients
-              $mail->setFrom($admin_aziend['e_mail']); // sender (e-mail dell'account che sta inviando)
+              $mail->setFrom($admin_aziend['e_mail'],$admin_aziend['ragso1']." ".$admin_aziend['ragso2']); // sender (e-mail dell'account che sta inviando)
               $mail->addReplyTo($admin_aziend['e_mail']); // reply to sender (e-mail dell'account che sta inviando)
               if (filter_var($result['e_mail'], FILTER_VALIDATE_EMAIL)){
                 $mail->addAddress($result['e_mail']);                  // se c'è invio all'email destinatario principale

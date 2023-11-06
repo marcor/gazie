@@ -117,7 +117,7 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 
         // creo e invio email di conferma
         //Recipients
-        $mail->setFrom($admin_aziend['e_mail']); // sender (e-mail dell'account che sta inviando)
+        $mail->setFrom($admin_aziend['e_mail'],$admin_aziend['ragso1']." ".$admin_aziend['ragso2']); // sender (e-mail dell'account che sta inviando)
         $mail->addReplyTo($admin_aziend['e_mail']); // reply to sender (e-mail dell'account che sta inviando)
         $mail->addAddress($_POST['cust_mail']); // email destinatario
         if ($imap_usr==''){
@@ -192,7 +192,7 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 
         // creo e invio email di conferma
         //Recipients
-        $mail->setFrom($admin_aziend['e_mail']); // sender (e-mail dell'account che sta inviando)
+        $mail->setFrom($admin_aziend['e_mail'],$admin_aziend['ragso1']." ".$admin_aziend['ragso2']); // sender (e-mail dell'account che sta inviando)
         $mail->addReplyTo($admin_aziend['e_mail']); // reply to sender (e-mail dell'account che sta inviando)
         $mail->addAddress($_POST['cust_mail']);                  // email destinatario
         if ($imap_usr==''){
@@ -408,7 +408,7 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 
         // creo e invio email di conferma
         //Recipients
-        $mail->setFrom($admin_aziend['e_mail']); // sender (e-mail dell'account che sta inviando)
+        $mail->setFrom($admin_aziend['e_mail'],$admin_aziend['ragso1']." ".$admin_aziend['ragso2']); // sender (e-mail dell'account che sta inviando)
         $mail->addReplyTo($admin_aziend['e_mail']); // reply to sender (e-mail dell'account che sta inviando)
         $mail->addAddress($_POST['cust_mail']);                  // email destinatario
         if ($imap_usr==''){
