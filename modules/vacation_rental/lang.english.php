@@ -475,7 +475,7 @@ $strScript = array(
         "ATTENZIONE OVERBOOKING! Non c'è sufficiente disponibilità di questo extra",
         "ATTENZIONE Il numero di notti sono inferiori al soggiorno minimo delle impostazioni generali",
         "ATTENZIONE il numero di notti supera il massimo consentito",
-		"The tourist tax does not refer to the accommodation. First enter the accommodation and then the tourist tax.",
+        "The tourist tax does not refer to the accommodation. First enter the accommodation and then the tourist tax.",
         'speban' => "Spese incasso",
         'speban_title' => 'Spese incasso non documentate/rate',
         'traspo_title' => 'Spese trasporto non documentate',
@@ -503,7 +503,10 @@ $strScript = array(
         'access2' => 'and the following access codes',
         'booking_number' => 'Booking number',
         'best_regards' => 'Thanks and best regards',
-		'on_behalf' => 'Rental on behalf of '
+        'on_behalf' => 'Rental on behalf of ',
+        'acc_prev' => 'To accept the quote and make your reservation, use this link: ',
+        'book_now' => 'BOOK NOW',
+        'access_prev' => '<p>We are sending you a copy of your quote as an attachment</p>'
     ),
     "admin_house.php" =>
       array('title' => 'Gestione degli alloggi',

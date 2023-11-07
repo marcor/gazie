@@ -262,7 +262,10 @@ $strScript = array(
         'access2' => 'e i seguenti codici di accesso',
         'booking_number' => 'Numero prenotazione',
         'best_regards' => 'Grazie, cordiali saluti',
-		'on_behalf' => 'Locazione effettuata per conto del '
+        'on_behalf' => 'Locazione effettuata per conto del ',
+        'acc_prev' => 'Per accettare il preventivo ed effettuare la prenotazione usi questo link: ',
+        'book_now' => 'PRENOTA ORA',
+        'access_prev' => '<p>Le inviamo, in allegato, una copia del suo preventivo</p>'
     ),
     "admin_house.php" =>
       array('title' => 'Gestione degli alloggi',

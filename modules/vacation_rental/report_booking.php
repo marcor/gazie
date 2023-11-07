@@ -1023,11 +1023,16 @@ $ts->output_navbar();
               }
               $stato_btn_booking ='btn-default';
               $stato_btn_lease ='btn-default';
+              if ($r['tipdoc']=='VPR'){
+                $what="preventivo";
+              }else{
+                $what="prenotazione";
+              }
               if (!empty($r['e_mail'])){
-                $title_booking = 'Invia prenotazione a: ' . $r['e_mail'];
+                $title_booking = 'Invia '.$what.' a: ' . $r['e_mail'];
                 $title_lease = 'Invia contratto a: ' . $r['e_mail'];
               }else{
-                $title_booking = 'Invia prenotazione a: ' . $r['base_mail'];
+                $title_booking = 'Invia '.$what.' a: ' . $r['base_mail'];
                 $title_lease = 'Invia contratto a: ' . $r['base_mail'];
               }
               if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['BookingSummary_email_inviata'])){
@@ -1044,7 +1049,6 @@ $ts->output_navbar();
               $r['status'] = '';
 
             }
-
             $disabled_email_style="style='pointer-events: none;'";
             $disabled_del_style="style='pointer-events: none;'";
             if ($r['status']=='CONFIRMED'){
@@ -1055,6 +1059,9 @@ $ts->output_navbar();
             }elseif ($r['status']=='PENDING' || $r['status']=='FROZEN'){
               $stato_btn = 'btn-secondary';
             }elseif ($r['status']=='CANCELLED'){
+              $stato_btn = 'btn-danger';
+              $disabled_del_style="";
+            }elseif($r['status']=='QUOTE'){
               $stato_btn = 'btn-danger';
               $disabled_del_style="";
             }
@@ -1209,11 +1216,11 @@ $ts->output_navbar();
               echo "<a class=\"btn btn-xs btn-default btn-stampa\"";
               // vedo se è presente un file di template adatto alla stampa su carta già intestata
               if($enable_lh_print_dialog>0 && withoutLetterHeadTemplate($r['tipdoc'])){
-                echo ' onclick="choice_template(\''.$modulo.'\');" title="Stampa prenotazione"';
+                echo ' onclick="choice_template(\''.$modulo.'\');" title="Stampa ".$what."';
               }else{
                 echo " style=\"cursor:pointer;\" onclick=\"printPdf('".$modulo."')\"";
               }
-              echo "><i class=\"glyphicon glyphicon-print\" title=\"Stampa prenotazione PDF\"></i></a>";
+              echo "><i class=\"glyphicon glyphicon-print\" title=\"Stampa ".$what." PDF\"></i></a>";
               if ( $tipo !== "VPR" ) {
                 echo "&nbsp;<a class=\"btn btn-xs btn-default btn-stampa\"";
                 // vedo se è presente un file di template adatto alla stampa su carta già intestata

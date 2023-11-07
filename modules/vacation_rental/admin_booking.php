@@ -33,6 +33,7 @@ require("../../library/include/datlib.inc.php");
 require("../../modules/magazz/lib.function.php");
 require("../../modules/vendit/lib.function.php");
 require("../../modules/acquis/lib.data.php");
+include_once("manual_settings.php");
 
 $admin_aziend = checkAdmin();
 $min_stay = gaz_dbi_get_row($gTables['company_config'], 'var', 'vacation_minnights')['val'];
@@ -567,6 +568,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             if ($form['tipdoc']=='VPR'){// se è un preventivo
               $data['vacation_rental']['status']="QUOTE";
               $data['vacation_rental']['ip']="diretto";
+              /**** promemoria per decriptare ****
+              list($encrypted_data, $iv) = explode('::', base64_decode($imap_pwr), 2);
+              $imap_pwr=openssl_decrypt($encrypted_data, 'aes-128-cbc', $token, 0, $iv);
+              ****/
+              $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-128-cbc'));
+              $cripted_pwr=base64_encode(openssl_encrypt($form['id_tes'], 'aes-128-cbc', $token, 0, $iv).'::'.$iv);
+              $data['vacation_rental']['acc_prev']=(isset($data['vacation_rental']['acc_prev']))?$data['vacation_rental']['acc_prev']:$cripted_pwr;
             }else{
               $data['vacation_rental']['status']=(isset($data['vacation_rental']['status']))?$data['vacation_rental']['status']:'CONFIRMED';
               $data['vacation_rental']['ip']=(isset($data['vacation_rental']['ip']))?$data['vacation_rental']['ip']:'diretto';
@@ -581,6 +589,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
               tesbroInsert($form); // scrivo tesbro
               //recupero l'id_tesbro assegnato dall'inserimento
               $ultimo_id = gaz_dbi_last_id();
+              if ($form['tipdoc']=='VPR'){// se è un preventivo inserisco acc_prev
+                $data = json_decode($form['custom_field'],true);
+                $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-128-cbc'));
+                $cripted_pwr=base64_encode(openssl_encrypt($ultimo_id, 'aes-128-cbc', $token, 0, $iv).'::'.$iv);
+                $data['vacation_rental']['acc_prev']=$cripted_pwr;
+                $form['custom_field'] = json_encode($data);
+                gaz_dbi_put_row($gTables['tesbro'], 'id_tes', $ultimo_id, 'custom_field', $form['custom_field']);
+              }
             }
 
             if ($toDo == 'update') { // se e' una modifica risincronizzo gli eventuali pagamenti con il nuovo id_tesbro
