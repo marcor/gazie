@@ -132,7 +132,7 @@ class invoiceXMLvars {
   public $descrifae_vat;
   public $descrifae_natura;
   public $reverse_charge_sez;
-  public $transchr = ['“'=>'"','‘'=>'\'','€'=>'&#8364;','©'=>'&#169;','®'=>'&#174;','È'=>'&#200;','É'=>'&#201;','Ì'=>'&#204;','À'=>'&#192;','Ò'=>'&#210;','Ù'=>'&#217;',"ø" => "&#248;", "£" => "&#163;"];
+  public $transchr = ['“'=>'"','‘'=>'\'','€'=>'euro','©'=>'&#169;','®'=>'&#174;','È'=>'&#200;','É'=>'&#201;','Ì'=>'&#204;','À'=>'&#192;','Ò'=>'&#210;','Ù'=>'&#217;',"ø" => "&#248;", "£" => "&#163;"];
 
   function setXMLvars($gTables, $tesdoc, $testat, $tableName, $ecr = false) {
     $this->gTables = $gTables;

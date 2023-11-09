@@ -491,7 +491,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
     }
     // --- inizio controllo coerenza date-numerazione
     if ($toDo == 'update') {  // controlli in caso di modifica
-      if ($form['tipdoc'] == 'DDT' || $form['tipdoc'] == 'DDV' || $form['tipdoc'] == 'DDY' || $form['tipdoc'] == 'DDS' || $form['tipdoc'] == 'FAD') {  //se è un DDT vs Fattura differita
+      if ($form['tipdoc'] == 'DDT' || $form['tipdoc'] == 'DDV' || $form['tipdoc'] == 'DDY'|| $form['tipdoc'] == 'DDO' || $form['tipdoc'] == 'DDS' || $form['tipdoc'] == 'FAD') {  //se è un DDT vs Fattura differita
         $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . substr($datemi,0,4) . " AND datemi < '$datemi' AND ( tipdoc like 'DD_' OR tipdoc = 'FAD') AND seziva = $sezione", "numdoc desc", 0, 1);
         $result = gaz_dbi_fetch_array($rs_query); //giorni precedenti
         if ($result && ( $form['numdoc'] < $result['numdoc'])) {
