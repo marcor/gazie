@@ -457,12 +457,14 @@ function get_user_points_level($id_anagra){// determina il livello punti raggiun
   if ($result = mysqli_query($link, $sql)) {// prendo il customfield in anagra
     $row = mysqli_fetch_assoc($result);
     $user_point=0;
-    if ($data = json_decode($row['custom_field'],true)){// se c'è un json in anagra
+    if (isset($row['custom_field']) && ($data = json_decode($row['custom_field'],true))){// se c'è un json in anagra
       if (is_array($data['vacation_rental'])){ // se c'è il modulo "vacation rental" lo aggiorno
         if (isset($data['vacation_rental']['points'])){
           $user_point = intval($data['vacation_rental']['points']);
         }
       }
+    }else{
+      $user_point=0;
     }
     if ($azTables){
       $table = $azTables."company_config";
@@ -491,5 +493,41 @@ function get_user_points_level($id_anagra){// determina il livello punti raggiun
   }else {
      echo "Error: " . $sql . "<br>" . mysqli_error($link);
   }
+}
+
+function check_availability($start,$end,$house_code, $open_from="", $open_to=""){// controllo disponibilità
+  global $link, $azTables, $gTables, $genTables;// posso chiamare la funzione con entrambi i metodi
+  $unavailable=1;
+  if ($azTables){
+    $table = $azTables."rental_events";
+    $table_ts = $azTables."tesbro";
+  }else{
+    $table = $gTables['rental_events'];
+    $table_ts = $gTables['tesbro'];
+  }
+  while (strtotime($start) < strtotime($end)) {// ciclo il periodo della locazione richiesta giorno per giorno
+    if ((intval($open_from)>0 && strtotime($open_from."-".substr($start,0,4))<=strtotime($start) && strtotime($open_to."-".substr($start,0,4))>=strtotime($start)) || intval($open_from)==0){
+      // Controllo disponibilità dopo aver controllato se è aperto qualora è stato passato open from e to
+      $what = "title";
+      $where = "(custom_field IS NULL OR custom_field LIKE '%PENDING%' OR custom_field LIKE '%CONFIRMED%' OR custom_field LIKE '%FROZEN%') AND house_code = '".mysqli_real_escape_string($link,$house_code)."' AND start <= '". $start ."' AND end > '". $start."'";
+      $sql = "SELECT ".$what." FROM ".$table." LEFT JOIN ".$table_ts." ON ".$table.".id_tesbro = ".$table_ts.".id_tes  WHERE ".$where;
+      if ($available = mysqli_query($link, $sql)) {
+        $available = mysqli_fetch_array($available);
+      }else {
+       echo "Error: " . $sql . "<br>" . mysqli_error($link);
+      }
+    }else{
+      $available="chiuso";
+    }
+    //echo "<br>",$sql;
+    if (isset($available)){
+      // NON disponibile
+      $unavailable=0;
+      //echo "<br>NON disponibile...",print_r($available);
+      break;
+    }
+    $start = date ("Y-m-d", strtotime("+1 days", strtotime($start)));// aumento di un giorno il ciclo
+  }
+  return $unavailable;
 }
 ?>

@@ -470,7 +470,10 @@ $strScript = array(
 		'submit'=>'Vai avanti al riepilogo',
 		'return'=>'Indietro',
 		'tur_tax' => 'Tassa turistica',
-		'submitpay'=>'Sottoscrivi la locazione e paga',
+		'submitpay'=>'Firma e procedi con il pagamento',
+    'check_submit' => 'Sì, confermo di aver letto il contratto, di aver avuto la possibilità di stamparlo e di accettarne, senza riserva, tutte le clausole. Il contratto diventerà effettivo solo dopo la conferma del proprietario.',
+    'contractor' => 'Il contraente',
+    'how_sign' => 'Per firmare, spuntare la casella di conferma',
 		'price_for' => 'Prezzo per ',
 		'discount_to' => 'Sconto da applicare ',
 		'select_guest' => 'Seleziona gli ospiti ',
@@ -588,7 +591,8 @@ $strScript = array(
     'delete_point' => 'Le comunichiamo che c\'è stato un aggiornamento e le sono stati tolti',
     'feedback_request' => 'Richiesta recensione per ',
     'no_level' => 'Nessun livello',
-    'exp_lev' => 'ma i punti sono scaduti e il suo livello sarà azzerato.'
+    'exp_lev' => 'ma i punti sono scaduti e il suo livello sarà azzerato.',
+    'upd_data' => 'Modifica dati'
     ),
 
   "admin_extra.php" =>

@@ -23,7 +23,7 @@
  --------------------------------------------------------------------------
 */
 require('booking_template.php');
-
+#[AllowDynamicProperties]
 class BookingSummary extends Template
 {
     function setTesDoc()
@@ -176,7 +176,7 @@ class BookingSummary extends Template
 		} else {
 			$this->Cell(186, 6, '',1);
 		}
-		
+
 		$this->SetY(224);
 		$this->Cell(100, 6, 'Pagamenti effettuati', 'LTR', 0, 'C', 1);
 		$this->Cell(30, 6, 'Importo', 'LTR', 1, 'C', 1);

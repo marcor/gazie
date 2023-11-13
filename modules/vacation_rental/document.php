@@ -819,13 +819,16 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
         if (strlen($vacation_url_user)>3 && $templates[$templateName]!=="booking_quote" && $templateName!=='Lease' && strlen($access)>5){ // se non ivio un contratto ed è impostata la user url ed c'è una password (prenotazione fatta online), comunico url e codici di accesso
           $mail_message = $script_transl['access1']." <a href = '".$vacation_url_user."'> ".$vacation_url_user."</a> ".$script_transl['access2'].":</p><p>.</p><p><em>Password: <b>".$access."</b></p>ID: <b>".$testata['id_tes']."</b></p><p>".$script_transl['booking_number'].": <b>".$testata['numdoc']."</b></p></em><p>.</p><p>".$script_transl['best_regards']."</p>";
         }
+
+
         if (strlen($vacation_url_user)>3 && $templates[$templateName]=="booking_quote"){
           if ($data = json_decode($testata['custom_field'], TRUE)) { // se esiste un json nel custom field della testata
             if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['acc_prev'])){// se c'è una acc_prev per il preventivo
-            $mail_message .= "<p>".$script_transl['access_prev']."</p><p>".$script_transl['acc_prev']." <a href = '".$vacation_url_user."?acc_prev=".$data['vacation_rental']['acc_prev']."'> ".$script_transl['book_now']."</a></p><p>".$script_transl['best_regards']."</p>";
+            $mail_message .= "<p>".$script_transl['access_prev']."</p><p>".$script_transl['acc_prev']." <a href = '".$vacation_url_user."?acc_prev=".str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($data['vacation_rental']['acc_prev']))."'> ".$script_transl['book_now']."</a></p><p>".$script_transl['best_regards']."</p>";
             }
           }
         }
+
         $gMail = new GAzieMail();
         $gMail->sendMail($docVars->azienda, $docVars->user, $content, $docVars->client,$mail_message);
         $gaz_custom_field = gaz_dbi_get_single_value($gTables['tesbro'], 'custom_field', 'id_tes = '.$testata['id_tes'] );

@@ -23,7 +23,7 @@
  --------------------------------------------------------------------------
 */
 require('booking_template.php');
-
+#[AllowDynamicProperties]
 class BookingSummary extends Template
 {
     function setTesDoc()
@@ -110,7 +110,7 @@ class BookingSummary extends Template
                     break;
 				case "7":
                     $this->writeHtmlCell(186,6,10,$this->GetY(),$rigo['descri'],'LR',1);
-                    break;	
+                    break;
                 case "210": // se è un'articolo composto visualizzo la quantità
                     if ( $this->show_artico_composit=="1" ) {
 						$oldy = $this->GetY();

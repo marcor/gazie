@@ -513,13 +513,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             if ($toDo == 'update') { // e' una modifica
 
               // CANCELLO TUTTO
-
               $tesbro = gaz_dbi_get_row($gTables['tesbro'], "id_tes", intval($form['id_tes'])); // prima di cancellare prendo il vecchio custom field
-              if (isset($tesbro['custom_field']) && $data = json_decode($tesbro['custom_field'],true)){// se c'è un json in tesbro lo acquisisco in $data
+              $form['custom_field']=$tesbro['custom_field']; // riprendo il custom_field esistente
 
-              }else{// se non c'è inizializzo l'array per il nuovo custom field
-                $data=[];
-              }
               gaz_dbi_del_row($gTables['tesbro'], "id_tes", $form['id_tes']);
 
               $rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes =". intval($form['id_tes']),"id_tes DESC");
@@ -565,21 +561,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['initra'] = $initra;
             $form['datemi'] = $datemi;
             $form['id_agente'] = $form['id_tourOp'];// scambio perché l'agente è il tour operator mentre in id_agente ho il proprietario
-            if ($form['tipdoc']=='VPR'){// se è un preventivo
-              $data['vacation_rental']['status']="QUOTE";
-              $data['vacation_rental']['ip']="diretto";
-              /**** promemoria per decriptare ****
-              list($encrypted_data, $iv) = explode('::', base64_decode($imap_pwr), 2);
-              $imap_pwr=openssl_decrypt($encrypted_data, 'aes-128-cbc', $token, 0, $iv);
-              ****/
-              $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-128-cbc'));
-              $cripted_pwr=base64_encode(openssl_encrypt($form['id_tes'], 'aes-128-cbc', $token, 0, $iv).'::'.$iv);
-              $data['vacation_rental']['acc_prev']=(isset($data['vacation_rental']['acc_prev']))?$data['vacation_rental']['acc_prev']:$cripted_pwr;
-            }else{
-              $data['vacation_rental']['status']=(isset($data['vacation_rental']['status']))?$data['vacation_rental']['status']:'CONFIRMED';
-              $data['vacation_rental']['ip']=(isset($data['vacation_rental']['ip']))?$data['vacation_rental']['ip']:'diretto';
-            }
-            $form['custom_field'] = json_encode($data);
+
             if ($toDo == 'update') { // e' una modifica riscrivo tesbro con lo stesso vecchio id
               $table = 'tesbro';
               $columns = array('id_tes','seziva', 'tipdoc','ref_ecommerce_id_order', 'template', 'email', 'print_total', 'delivery_time', 'day_of_validity', 'datemi', 'protoc', 'numdoc', 'numfat', 'datfat', 'clfoco', 'pagame', 'banapp', 'vettor', 'weekday_repeat', 'listin', 'destin', 'id_des', 'id_des_same_company', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar', 'round_stamp', 'cauven', 'caucon', 'caumag', 'id_agente', 'id_parent_doc', 'sconto', 'expense_vat', 'stamp', 'net_weight', 'gross_weight', 'taxstamp', 'virtual_taxstamp', 'units', 'volume', 'initra', 'geneff', 'id_contract', 'id_con', 'id_orderman', 'status', 'custom_field', 'adminid');
@@ -589,11 +571,20 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
               tesbroInsert($form); // scrivo tesbro
               //recupero l'id_tesbro assegnato dall'inserimento
               $ultimo_id = gaz_dbi_last_id();
-              if ($form['tipdoc']=='VPR'){// se è un preventivo inserisco acc_prev
-                $data = json_decode($form['custom_field'],true);
-                $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-128-cbc'));
-                $cripted_pwr=base64_encode(openssl_encrypt($ultimo_id, 'aes-128-cbc', $token, 0, $iv).'::'.$iv);
+              if ($form['tipdoc']=='VPR'){// se è un preventivo inserisco acc_prev aggiornando tesbro
+                $data['vacation_rental']['status']="QUOTE";
+                $data['vacation_rental']['ip']="diretto";
+                $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-128-CBC'));
+                $cripted_pwr=base64_encode(openssl_encrypt($ultimo_id, 'aes-128-CBC', $token, 0, $iv).'::'.$iv);
+                list($encrypted_data, $iv) = explode('::', base64_decode($cripted_pwr), 2);
+                $id_tes=intval(openssl_decrypt($encrypted_data, 'aes-128-CBC', $token, 0, $iv));
                 $data['vacation_rental']['acc_prev']=$cripted_pwr;
+                $form['custom_field'] = json_encode($data);
+                gaz_dbi_put_row($gTables['tesbro'], 'id_tes', $ultimo_id, 'custom_field', $form['custom_field']);
+              }else{
+                $data = json_decode($form['custom_field'],true);
+                $data['vacation_rental']['status']=(isset($data['vacation_rental']['status']))?$data['vacation_rental']['status']:'CONFIRMED';
+                $data['vacation_rental']['ip']=(isset($data['vacation_rental']['ip']))?$data['vacation_rental']['ip']:'diretto';
                 $form['custom_field'] = json_encode($data);
                 gaz_dbi_put_row($gTables['tesbro'], 'id_tes', $ultimo_id, 'custom_field', $form['custom_field']);
               }
@@ -3088,7 +3079,7 @@ if ($form['stamp'] > 0) {
 							';
 			}
 			if ($toDo == 'update' and $form['tipdoc'] == 'VPR') {
-				echo '<td colspan="2"> <input type="submit" class="btn btn-default" accesskey="o" name="ord" value="Genera prenotazione" /></td></tr>';
+				echo '<td colspan="2"> <input disabled title="Codice ancora da terminare. manca la generazione dei righi in rental_events" type="submit" class="btn btn-default" accesskey="o" name="ord" value="Genera prenotazione" /></td></tr>';
 			}else{
 				echo '<td colspan="2"></td>';
 			}

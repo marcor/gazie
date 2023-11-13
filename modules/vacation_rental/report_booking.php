@@ -247,7 +247,12 @@ function choice_template(modulo) {
 			text: "Su carta bianca ",
 			"class": 'btn',
 			click: function () {
-				window.location.href = modulo;
+				$('#framePdf').attr('src',modulo);
+        $('#framePdf').css({'height': '100%'});
+        $('.framePdf').css({'display': 'block','width': '90%', 'height': '80%', 'z-index':'2000'});
+        $('#closePdf').on( "click", function() {
+          $('.framePdf').css({'display': 'none'});
+        });
 			},
 		},
 		{
@@ -947,8 +952,12 @@ $ts->output_navbar();
         $ts->getOffset(), $ts->getLimit(),$gTables['rental_events'].".id_tesbro");
         $ctrlprotoc = "";
         while ($r = gaz_dbi_fetch_array($result)) {
+            if ($datatesbro = json_decode($r['custom_field'], TRUE)) { // se esiste un json nel custom field della testata
+
+            }
             $r['id_agent']=0;
-            $artico_custom_field=gaz_dbi_get_row($gTables['artico'], 'codice', $r['house_code'])['custom_field'];
+            $row_artico=gaz_dbi_get_row($gTables['artico'], 'codice', $r['house_code']);
+            $artico_custom_field=$row_artico['custom_field'];
             if ($datahouse = json_decode($artico_custom_field, TRUE)) { // se esiste un json nel custom field dell'alloggio
               if (is_array($datahouse['vacation_rental']) && isset($datahouse['vacation_rental']['agent'])){
                 $agent = $datahouse['vacation_rental']['agent'];
@@ -1045,9 +1054,18 @@ $ts->output_navbar();
                 $stato_btn_lease = 'btn-success';
                 $title_lease = "Ultimo invio: ". $r['Lease_email_inviata'];
               }
+              if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['BookingQuote_email_inviata'])){
+                $r['BookingQuote_email_inviata'] = $data['vacation_rental']['BookingQuote_email_inviata'];
+                $stato_btn_booking = 'btn-success';
+                $title_booking = "Ultimo invio: ". $r['BookingQuote_email_inviata'];
+              }
             } else {
               $r['status'] = '';
-
+              $stato_btn_booking ='btn-default';
+              $title_booking='Errore manca customfield nella testata';
+              $what = 'Errore manca customfield nella testata';
+              $title_lease='Errore manca customfield nella testata';
+              $stato_btn_lease='';
             }
             $disabled_email_style="style='pointer-events: none;'";
             $disabled_del_style="style='pointer-events: none;'";
@@ -1102,7 +1120,7 @@ $ts->output_navbar();
               if ($r['tipdoc']=="VOW"){
                 echo "<td><button title=\"Per modificare un ordine web lo si deve prima cancellare da GAzie, modificarlo nell'e-commerce e poi reimportarlo in GAzie\" class=\"btn btn-xs btn-default disabled\">&nbsp;" . substr($r['tipdoc'], 1, 2) . "&nbsp;" . $r['id_tes'] . " </button></td>";
               }elseif (!empty($modifi)) {
-                  echo "<td><a class=\"btn btn-xs btn-edit\" title=\"" . $script_transl['type_value'][$r['tipdoc']] . "\" href=\"" . $modifi . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . substr($r['tipdoc'], 1, 2) . "&nbsp;" . $r['id_tes'] . "</td>";
+                  echo "<td><a class=\"btn btn-xs btn-edit\" title=\"" . $script_transl['type_value'][$r['tipdoc']] . "\" href=\"" . $modifi . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . substr($r['tipdoc'], 1, 2) . "&nbsp;" . $r['id_tes'] . "</a></td>";
               } else {
                   echo "<td><button class=\"btn btn-xs btn-default disabled\">&nbsp;" . substr($r['tipdoc'], 1, 2) . "&nbsp;" . $r['id_tes'] . " </button></td>";
               }
@@ -1137,6 +1155,7 @@ $ts->output_navbar();
               $amountvat=get_totalprice_booking($r['id_tes'],TRUE,TRUE,$admin_aziend['preeminent_vat'],TRUE);
               echo "<td class='text-right' style='white-space:nowrap;'>","imp. € ".gaz_format_quantity($amount,1,2),"";
               echo "<br>","iva c. € ".gaz_format_quantity($amountvat,1,2),"";
+              if ( $tipo !== "VPR" ) {
               $paid=get_total_paid($r['id_tes']);
               $stato_pig_btn = ($paid>0)?'btn-warning':'btn-default';
               $stato_pig_btn = ($paid>=gaz_format_quantity($amountvat,0,2))?'btn-success':$stato_pig_btn;
@@ -1149,31 +1168,39 @@ $ts->output_navbar();
                 $addtitle="- ancora da pagare € ".$balance;
               }
               echo "><i id=\"test",$r['id_tes'],"\" class=\"glyphicon glyphicon-piggy-bank \" title=\"Pagamenti",$addtitle,"\">",$addtext,"</i></a></td>";
+              }else{
+                echo"</td>";
+              }
 
               // colonna fiscale
-              echo "<td style='text-align: left;'>";
-              if ($remains_atleastone && !$processed_atleastone && $r['status']!=='CANCELLED' && $r['status']!=='ISSUE') {
-                  // L'ordine e'  da evadere.
-                if ( $tipo !== "VOG" && $tipo !== "VPR") {
-                  echo "<a class=\"btn btn-xs btn-warning\" href=\"../../modules/vendit/select_evaord.php?id_tes=" . $r['id_tes'] . "\">Emetti documento fiscale</a>&nbsp;";
-                }
-              }elseif ($remains_atleastone && $r['status']!=='CANCELLED' && $r['status']!=='ISSUE') {
-                    // l'a prenotazione è parzialmente evaso, mostro lista documenti e tasto per evadere rimanenze
-                    $ultimo_documento = 0;
-                    mostra_documenti_associati( $r['id_tes'] );
-                    if ( $tipo == "VOG" ) {
-                        echo "<a class=\"btn btn-xs btn-default\" href=\"../../modules/vendit/select_evaord_gio.php\">evadi il rimanente</a>";
-                    } else {
-                        echo "<a class=\"btn btn-xs btn-warning\" href=\"../../modules/vendit/select_evaord.php?id_tes=" . $r['id_tes'] . "\">evadi il rimanente</a>&nbsp;";
-                        echo "<a class=\"btn btn-xs btn-warning\" href=\"../../modules/vendit/select_evaord.php?clfoco=" . $r['clfoco'] . "\">evadi cliente</a>";
-                    }
-                } else {
-                    // la prenotazione è completamente evasa, mostro i riferimenti ai documenti che l'hanno evasa
-                    $ultimo_documento = 0;
-                    mostra_documenti_associati( $r['id_tes'] );
-                }
-               echo "</td>";
-
+              if ( $tipo !== "VPR" ) {// la visualizzo se non è preventivo
+                echo "<td style='text-align: left;'>";
+                if ($remains_atleastone && !$processed_atleastone && $r['status']!=='CANCELLED' && $r['status']!=='ISSUE') {
+                    // L'ordine e'  da evadere.
+                  if ( $tipo !== "VOG" && $tipo !== "VPR") {
+                    echo "<a class=\"btn btn-xs btn-warning\" href=\"../../modules/vendit/select_evaord.php?id_tes=" . $r['id_tes'] . "\">Emetti documento fiscale</a>&nbsp;";
+                  }
+                }elseif ($remains_atleastone && $r['status']!=='CANCELLED' && $r['status']!=='ISSUE') {
+                      // l'a prenotazione è parzialmente evaso, mostro lista documenti e tasto per evadere rimanenze
+                      $ultimo_documento = 0;
+                      mostra_documenti_associati( $r['id_tes'] );
+                      if ( $tipo == "VOG" ) {
+                          echo "<a class=\"btn btn-xs btn-default\" href=\"../../modules/vendit/select_evaord_gio.php\">evadi il rimanente</a>";
+                      } else {
+                          echo "<a class=\"btn btn-xs btn-warning\" href=\"../../modules/vendit/select_evaord.php?id_tes=" . $r['id_tes'] . "\">evadi il rimanente</a>&nbsp;";
+                          echo "<a class=\"btn btn-xs btn-warning\" href=\"../../modules/vendit/select_evaord.php?clfoco=" . $r['clfoco'] . "\">evadi cliente</a>";
+                      }
+                  } else {
+                      // la prenotazione è completamente evasa, mostro i riferimenti ai documenti che l'hanno evasa
+                      $ultimo_documento = 0;
+                      mostra_documenti_associati( $r['id_tes'] );
+                  }
+                 echo "</td>";
+              }elseif(isset($datatesbro['vacation_rental']['id_booking']) && intval($datatesbro['vacation_rental']['id_booking'])>0){
+                echo "<td><a class=\"btn btn-xs btn-warning\" href=\"../../modules/vacation_rental/report_booking.php?info=none&auxil=VOR&id_doc=" . intval($datatesbro['vacation_rental']['id_booking']) . "\">Prenotazione effettuata</a></td>";
+              }else{
+                echo "<td></td>";
+              }
               // colonna stato prenotazione
               // Se la prenotazione e' da evadere , verifica lo status ed eventualmente lo aggiorna.
               echo "<td style='text-align: left;'>";
@@ -1216,7 +1243,7 @@ $ts->output_navbar();
               echo "<a class=\"btn btn-xs btn-default btn-stampa\"";
               // vedo se è presente un file di template adatto alla stampa su carta già intestata
               if($enable_lh_print_dialog>0 && withoutLetterHeadTemplate($r['tipdoc'])){
-                echo ' onclick="choice_template(\''.$modulo.'\');" title="Stampa ".$what."';
+                echo ' onclick="choice_template(\''.$modulo.'\');" title="Stampa" '.$what;
               }else{
                 echo " style=\"cursor:pointer;\" onclick=\"printPdf('".$modulo."')\"";
               }
@@ -1238,13 +1265,17 @@ $ts->output_navbar();
               if (!empty($r['e_mail'])){ // ho una mail sulla destinazione
                   echo '<a class="btn btn-xs btn-default btn-email '.$stato_btn_booking.'" onclick="confirMail(this);return false;" id="doc' . $r['id_tes'] . '" url="' . $modulo . '&dest=E" href="#" title="' . $title_booking . '"
                   mail="' . $r['e_mail'] . '" namedoc="' . $script_transl['type_value'][$r['tipdoc']] . ' n.' . $r['numdoc'] . ' del ' . gaz_format_date($r['datemi']) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
-                  echo ' <a class="btn btn-xs btn-default btn-emailC '.$stato_btn_lease.'" ',$disabled_email_style,' onclick="confirMailC(this);return false;" id="docC' . $r['id_tes'] . '" urlC="stampa_contratto.php?id_tes='. $r['id_tes']. '&dest=E&id_ag='.$r['id_agent'].'" href="#" title="' . $title_lease . '"
-                  mail="' . $r['e_mail'] . '" namedoc="' . $script_transl['type_value'][$r['tipdoc']] . ' n.' . $r['numdoc'] . ' del ' . gaz_format_date($r['datemi']) . '"><i class="glyphicon glyphicon-send"></i></a>';
+                  if ( $tipo !== "VPR" ) {
+                    echo ' <a class="btn btn-xs btn-default btn-emailC '.$stato_btn_lease.'" ',$disabled_email_style,' onclick="confirMailC(this);return false;" id="docC' . $r['id_tes'] . '" urlC="stampa_contratto.php?id_tes='. $r['id_tes']. '&dest=E&id_ag='.$r['id_agent'].'" href="#" title="' . $title_lease . '"
+                    mail="' . $r['e_mail'] . '" namedoc="' . $script_transl['type_value'][$r['tipdoc']] . ' n.' . $r['numdoc'] . ' del ' . gaz_format_date($r['datemi']) . '"><i class="glyphicon glyphicon-send"></i></a>';
+                  }
               } elseif (!empty($r['base_mail'])) { // ho una mail sul cliente
                   echo ' <a class="btn btn-xs btn-default btn-email '.$stato_btn_booking.'" onclick="confirMail(this);return false;" id="doc' . $r['id_tes'] . '" url="' . $modulo . '&dest=E" href="#" title="' . $title_booking . '"
                   mail="' . $r['base_mail'] . '" namedoc="' . $script_transl['type_value'][$r['tipdoc']] . ' n.' . $r['numdoc'] . ' del ' . gaz_format_date($r['datemi']) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
-                  echo ' <a class="btn btn-xs btn-default btn-emailC '.$stato_btn_lease.'" ',$disabled_email_style,' onclick="confirMailC(this);return false;" id="docC' . $r['id_tes'] . '" urlC="stampa_contratto.php?id_tes='. $r['id_tes']. '&dest=E&id_ag='.$r['id_agent'].'" href="#" title="' . $title_lease . '"
-                  mail="' . $r['base_mail'] . '" namedoc="Contratto n.' . $r['numdoc'] . ' del ' . gaz_format_date($r['datemi']) . '"><i class="glyphicon glyphicon-send"></i></a>';
+                  if ( $tipo !== "VPR" ) {
+                    echo ' <a class="btn btn-xs btn-default btn-emailC '.$stato_btn_lease.'" ',$disabled_email_style,' onclick="confirMailC(this);return false;" id="docC' . $r['id_tes'] . '" urlC="stampa_contratto.php?id_tes='. $r['id_tes']. '&dest=E&id_ag='.$r['id_agent'].'" href="#" title="' . $title_lease . '"
+                    mail="' . $r['base_mail'] . '" namedoc="Contratto n.' . $r['numdoc'] . ' del ' . gaz_format_date($r['datemi']) . '"><i class="glyphicon glyphicon-send"></i></a>';
+                  }
               } else { // non ho mail
                   echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" href="../../modules/vendit/admin_client.php?codice=' . substr($r['clfoco'], 3) . '&Update"><i class="glyphicon glyphicon-edit"></i></a>';
               }

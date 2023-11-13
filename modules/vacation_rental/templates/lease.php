@@ -23,7 +23,7 @@
  --------------------------------------------------------------------------
 */
 require('booking_template_lease.php');
-
+#[AllowDynamicProperties]
 class Lease extends Template
 {
     function setTesDoc()
