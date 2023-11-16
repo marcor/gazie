@@ -660,7 +660,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
           $idmag=$v['id_mag'];
         }
         $checklot = gaz_dbi_get_row($gTables['lotmag']." LEFT JOIN ".$gTables['movmag']." ON ".$gTables['movmag'].".id_mov = id_movmag", 'id', $v['id_lotmag']);
-        if (strtotime($datemi) < strtotime($checklot['datdoc'])){// non si può vendere un lotto prima della data della sua creazione
+        if (isset($checklot['datdoc']) && strtotime($datemi) < strtotime($checklot['datdoc'])){// non si può vendere un lotto prima della data della sua creazione
           $msg['err'][] = "lottoNonVendibile";
         }
       }
