@@ -750,7 +750,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                           $id_lotmag=0;
                       }
 
-                        if ($form['rows'][$i]['tiprig'] <> 2) { // Antonio Germani - se NON è un rigo descrittivo
+                        if ($form['rows'][$i]['tiprig'] <> 2 && $admin_aziend['conmag'] == 2) { // se NON è un rigo descrittivo e se non ho la contabilità automatica di magazzino
                         // reinserisco il movimento magazzino associato e lo aggiorno
                           $id_movmag=$magazz->uploadMag($val_old_row['id_rig'], $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'],$id_lotmag,0,0,'',$form['rows'][$i]['id_warehouse']);
 
@@ -771,7 +771,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                             gaz_dbi_table_insert('camp_mov_sian', $value_sian);
                           }
                         }
-                      if ( strlen($form['rows'][$i]['codart']) >= 1 ) { // se l'articolo è in magazzino (codart è valorizzato) aggiorno l'anagrafica articolo movimentato con l'ultimo costo in anagrafica articolo, presumibilmente questo
+                      if ( strlen($form['rows'][$i]['codart']) >= 1  && $admin_aziend['conmag'] == 2 ) { // se l'articolo è in magazzino (codart è valorizzato) aggiorno l'anagrafica articolo movimentato con l'ultimo costo in anagrafica articolo, presumibilmente questo
                         $rlb = $magazz->getLastBuys($form['rows'][$i]['codart']);
                         $rlbk = key($rlb);
                         gaz_dbi_put_row( $gTables['artico'], 'codice', $form['rows'][$i]['codart'], 'preacq', round($rlb[$rlbk]['prezzo']*(100-$rlb[$rlbk]['scorig'])/100,8) );

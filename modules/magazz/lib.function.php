@@ -449,7 +449,7 @@ class magazzForm extends GAzieForm {
 							if (count($acc[$k0]['dad'][$k1]['dad'][$k2]['dad'][$k3]['dad'][$k4]['dad'])>0){
 							  echo '<ul class="">';
 							  foreach ($acc[$k0]['dad'][$k1]['dad'][$k2]['dad'][$k3]['dad'][$k4]['dad'] as $k5=>$v5){
-							    echo '<li><div<div style="background-color: #'.$c.'">><a class="btn btn-xs btn-default" href="admin_artico.php?Update&amp;codice=' . $v5['codice'] . '">'.$v5['codice'].'</a> - '.$v5['descri'].'<span class="pull-right">  pz: '.floatval($v5['quantita_artico_base']).'</span></div></li>';
+							    echo '<li><div style="background-color: #'.$c.'"><a class="btn btn-xs btn-default" href="admin_artico.php?Update&amp;codice=' . $v5['codice'] . '">'.$v5['codice'].'</a> - '.$v5['descri'].'<span class="pull-right">  pz: '.floatval($v5['quantita_artico_base']).'</span></div></li>';
 								$c=($c=='fcfcfc')?'eeeeee':'fcfcfc';
 							  }
 							  echo '</ul>';
