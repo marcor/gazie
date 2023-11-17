@@ -1507,7 +1507,7 @@ class GAzieMail {
       $body_text .= "<div>" . ( !empty($mail_message) ? $mail_message : $company_text['val']) . "</div>\n";
       $body_text .= ( empty($admin_data['web_url']) ? "" : "<h4><span style=\"color: #000000;\">Web: <a href=\"" . $admin_data['web_url'] . "\">" . $admin_data['web_url'] . "</a></span></h4>" );
       $body_text .= "<h3><span style=\"color: #000000; background-color: #" . $admin_data['colore'] . ";\">" . $admin_data['ragso1'] . " " . $admin_data['ragso2'] . "</span></h3>";
-      $body_text .= "<address><div style=\"color: #" . $admin_data['colore'] . ";\">" . $user['user_firstname'] . " " . $user['user_lastname'] . "</div>\n";
+      $body_text .= "<address><div style=\"color: #000000;\">" . $user['user_firstname'] . " " . $user['user_lastname'] . "</div>\n";
       $body_text .= "<div>" . $user_text['var_value'] . "</div></address>\n";
       $body_text .= "<hr /><small>" . EMAIL_FOOTER . " " . GAZIE_VERSION . "</small>\n";
       //
