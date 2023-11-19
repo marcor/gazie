@@ -530,4 +530,80 @@ function check_availability($start,$end,$house_code, $open_from="", $open_to="")
   }
   return $unavailable;
 }
+
+function set_imap($id_anagra){// restituisce le impostazioni imap tranne la password
+  global $genTables,$azTables,$link,$IDaz;
+  if (intval($id_anagra)>0){
+    $sql = "SELECT custom_field, codice FROM ".$genTables."anagra"." LEFT JOIN ".$azTables."clfoco"." ON ".$azTables."clfoco".".id_anagra = ".$id_anagra." WHERE id = ".$id_anagra." AND codice LIKE '2%' LIMIT 1";
+    if ($result = mysqli_query($link, $sql)) { // prendo il custom field del proprietario
+      $anagra = mysqli_fetch_assoc($result);
+      $custom_field=$anagra['custom_field'];
+    }else {
+       echo "Error: " . $sql . "<br>" . mysqli_error($link);
+    }
+    if ($data = json_decode($custom_field,true)){// se c'è un json e c'è una mail aziendale utente
+      $imap=[]; // imap_pwr me la devo prendere per forza dal manul setting perché la decriptazione di quella di GAzie usa $_SESSION['aes_key'] e qui non ce l'ho
+      if (isset($data['config']) && isset($data['config'][$IDaz])){ // se c'è il modulo "config" e c'è l'azienda attuale posso procedere
+		$imap['imap_usr']=$data['config'][$IDaz]['imap_usr'];
+        $imap['imap_sent_folder']=$data['config'][$IDaz]['imap_sent_folder'];
+        $sql = "SELECT val FROM ".$azTables."company_config"." WHERE var = 'imap_server' LIMIT 1";
+        if ($result = mysqli_query($link, $sql)) {
+          $val = mysqli_fetch_assoc($result);
+          $imap['imap_server']=$val['val'];
+        }
+        $sql = "SELECT val FROM ".$azTables."company_config"." WHERE var = 'imap_port' LIMIT 1";
+        if ($result = mysqli_query($link, $sql)) {
+          $val = mysqli_fetch_assoc($result);
+          $imap['imap_port']=$val['val'];
+        }
+        $sql = "SELECT val FROM ".$azTables."company_config"." WHERE var = 'imap_secure' LIMIT 1";
+        if ($result = mysqli_query($link, $sql)) {
+          $val = mysqli_fetch_assoc($result);
+          $imap['imap_secure']=$val['val'];
+        }
+		return $imap;
+      } else{// provo a vedere se è connesso con un utente amministratore
+		
+		$sql = "SELECT adminid FROM ".$azTables."agenti"." WHERE id_fornitore = '".$anagra['codice']."' LIMIT 1";
+		if ($result = mysqli_query($link, $sql)) {
+		  $val = mysqli_fetch_assoc($result);
+		 if (isset($val) && $val['adminid'] !== "no_user"){// se il proprietario è connesso con un utente admin
+			$sql = "SELECT id_anagra FROM ".$genTables."admin"." WHERE user_name = '".$val['adminid']."' LIMIT 1";
+			if ($result = mysqli_query($link, $sql)) {
+				$val = mysqli_fetch_assoc($result);
+				$sql = "SELECT custom_field FROM ".$genTables."anagra"." WHERE id = '".$val['id_anagra']."' LIMIT 1";
+				if ($result = mysqli_query($link, $sql)) {
+				  $anagra = mysqli_fetch_assoc($result);
+				  $custom_field=$anagra['custom_field'];
+				  if ($data = json_decode($custom_field,true)){// se c'è un json 
+					if (isset($data['config']) && isset($data['config'][$IDaz])){ // se c'è il modulo "config" e c'è l'azienda attuale posso procedere
+						$imap['imap_usr']=$data['config'][$IDaz]['imap_usr'];
+						$imap['imap_sent_folder']=$data['config'][$IDaz]['imap_sent_folder'];
+						$sql = "SELECT val FROM ".$azTables."company_config"." WHERE var = 'imap_server' LIMIT 1";
+						if ($result = mysqli_query($link, $sql)) {
+						  $val = mysqli_fetch_assoc($result);
+						  $imap['imap_server']=$val['val'];
+						}
+						$sql = "SELECT val FROM ".$azTables."company_config"." WHERE var = 'imap_port' LIMIT 1";
+						if ($result = mysqli_query($link, $sql)) {
+						  $val = mysqli_fetch_assoc($result);
+						  $imap['imap_port']=$val['val'];
+						}
+						$sql = "SELECT val FROM ".$azTables."company_config"." WHERE var = 'imap_secure' LIMIT 1";
+						if ($result = mysqli_query($link, $sql)) {
+						  $val = mysqli_fetch_assoc($result);
+						  $imap['imap_secure']=$val['val'];
+						}
+						return $imap;
+					}				  
+				  }				  
+				}
+			}
+		 }
+		}
+	  }      
+    }
+  }
+  return false;
+}
 ?>

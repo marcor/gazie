@@ -50,7 +50,7 @@ $strScript = array(
       array('title' => 'Vacation rental thank you page',
         'thanks' => "THANKS!",
         'booked' => "The reservation has been made.",
-        'instr_sent' => "The summary with all the information has been sent to the e-mail address provided.<br>Attention! The details for accessing the reservation online are shown exclusively in the email sent to the address entered in the form.",
+        'instr_sent' => "The summary with all the information has been sent to the e-mail address provided.<br>Attention! The details for accessing the reservation online are shown exclusively in the booking email already sent.",
         'not_received' => "If you have not received the email and have checked your spam folder, contact the site administrator.",
         'close'=>'This message will close in ',
       ),
@@ -507,7 +507,7 @@ $strScript = array(
         'acc_prev' => 'To accept the quote and make your reservation, use this link: ',
         'book_now' => 'BOOK NOW',
         'access_prev' => '<p>We are sending you a copy of your quote as an attachment</p>',
-        'upd_data' => 'Data updating"
+        'upd_data' => 'Data updating'
     ),
     "admin_house.php" =>
       array('title' => 'Gestione degli alloggi',
@@ -605,7 +605,7 @@ $strScript = array(
         'warranty_days' => 'Giorni di garanzia',
         'id_agent' => 'Proprietario/responsabile',
         'unita_durability' => array('' => '', '>' => '>', '<' => '<', 'H' => 'H', 'D' => 'D', 'M' => 'M'),
-		'deposit_type_value' => array(0 => 'a valore', '1' => 'a percentuale sul totale'),
+        'deposit_type_value' => array(0 => 'a valore', '1' => 'a percentuale sul totale'),
         'mesg' => array('La ricerca non ha dato risultati!',
             'Inserire almeno 1 carattere!',
             'Cambia fornitore'
@@ -825,7 +825,10 @@ $strScript = array(
 		'delete_point' => 'We inform you that there has been an update and we have been removed',
 		'feedback_request' => 'Feedback request for ',
 		'no_level' => 'No level',
-		'exp_lev' => 'but the points are expired and your level is going to delete.'
+		'exp_lev' => 'but the points are expired and your level is going to delete.',
+    'upd_data' => 'Update data',
+    'email_extra_sbj' =>'Added extras on reservation n.',
+    'email_extra_body' =>'<p>Please note that the requested extras have been added to the reservation in question.</p><p>You can view the update on your user page. (The credentials to access your user page are always those reported in the initial booking confirmation email) </p>'
     ),
 
   "admin_extra.php" =>

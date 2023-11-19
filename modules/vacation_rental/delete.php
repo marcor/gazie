@@ -84,14 +84,14 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 		break;
 		case "booking":
 			//procedo all'eliminazione della testata e dei righi...
-			$tipdoc = gaz_dbi_get_row($gTables['tesbro'], "id_tes", intval($_POST['id_tes']))['tipdoc'];
+			$tesbro = gaz_dbi_get_row($gTables['tesbro'], "id_tes", intval($_POST['id_tes']));// la testata che andrò ad eliminare
 			//cancello la testata
 			gaz_dbi_del_row($gTables['tesbro'], "id_tes", intval($_POST['id_tes']));
 			//... e i righi
 			$rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes =". intval($_POST['id_tes']),"id_tes DESC");
 			while ($a_row = gaz_dbi_fetch_array($rs_righidel)) {
 				gaz_dbi_del_row($gTables['rigbro'], "id_rig", $a_row['id_rig']);
-                if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname']) AND $tipdoc!=="VOW"){
+                if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname']) AND $tesbro['tipdoc']!=="VOW"){
                     // aggiorno l'e-commerce ove presente se l'ordine non è web
                     $gs=$admin_aziend['synccommerce_classname'];
                     $gSync = new $gs();
@@ -113,6 +113,18 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 				}
 				// cancello anche tutti i pagamenti relativi
 				gaz_dbi_del_row($gTables['rental_payments'], "id_tesbro", intval($_POST['id_tes']));
+				// vedo se la prenotazione proveniva da un preventivo
+				$prev = gaz_dbi_get_row($gTables['tesbro'], "numfat", intval($_POST['id_tes']), " AND datfat = '".$tesbro['datemi']."' AND tipdoc = 'VPR'");
+				if ($prev){// se c'è il preventivo lo svincolo
+					if ($data = json_decode($prev['custom_field'],true)){// se c'è un json in anagra
+						if (is_array($data['vacation_rental'])){ // se c'è il modulo "vacation rental" lo aggiorno
+						  $data['vacation_rental']['id_booking']='';
+						  $custom_field = json_encode($data);
+						}
+					}
+					$sql = "UPDATE ".$gTables['tesbro']." SET custom_field = '".$custom_field."', datfat = '0000-00-00', numfat = '0' WHERE id_tes = ".intval($prev['id_tes']);
+					$result = gaz_dbi_query($sql);// resetto il preventivo
+				}
 			}
 		break;
 		case "ical":

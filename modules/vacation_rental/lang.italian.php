@@ -50,8 +50,8 @@ $strScript = array(
       array('title' => 'Pagina di ringraziamento Vacation rental',
         'thanks' => "GRAZIE!",
         'booked' => "La prenotazione è stata effettuata.",
-        'instr_sent' => "Il riepilogo con tutte le informazioni è stato inviato all'indirizzo e-mail fornito.<br>Attenzione! I dettagli per accedere online alla prenotazione sono riportati esclusivamente sull'email inviata all'indirizzo email inserito nel modulo.",
-        'not_received' => "In mancanza di ricevemento dell'e-mail e dopo aver controllato nella cartella di spam, contattare l'amministratore del sito.",
+        'instr_sent' => "Il riepilogo con tutte le informazioni è stato inviato all'indirizzo e-mail fornito.<br>Attenzione! I dettagli per accedere online alla prenotazione sono riportati esclusivamente nell'email di conferma prenotazione.",
+        'not_received' => "In mancanza di ricevemento e dopo aver controllato nella cartella di spam, contattare l'amministratore del sito.",
         'close'=>'Questo messaggio si chiuderà fra ',
       ),
     "report_facility.php" =>
@@ -592,7 +592,9 @@ $strScript = array(
     'feedback_request' => 'Richiesta recensione per ',
     'no_level' => 'Nessun livello',
     'exp_lev' => 'ma i punti sono scaduti e il suo livello sarà azzerato.',
-    'upd_data' => 'Modifica dati'
+    'upd_data' => 'Modifica dati',
+    'email_extra_sbj' =>'Aggiunti extra su prenotazione n.',
+    'email_extra_body' =>'<p>Si informa che gli extra richiesti sono stati aggiunti alla prenotazione in oggetto.</p><p>Nella sua pagina utente potrà visionare l\'aggiornamento. (Le credenziali per accedere alla sua pagina utente sono sempre quelle riportate nella mail iniziale di conferma della prenotazione) </p>'
     ),
 
   "admin_extra.php" =>
@@ -728,7 +730,7 @@ $strScript = array(
     'recesso2' => 'Il conduttore può recedere dal presente contratto fra 59 e 31 giorni di anticipo dalla data di arrivo; in tale caso il locatore rimborserà solo la metà della caparra confirmatoria trattenendo la restante metà.',
     'recesso3' => 'Il conduttore può recedere dal presente contratto nei 30 giorni che precedono la data di arrivo; in tale caso il locatore tratterrà tutta la caparra confirmatoria.',
     'recesso4' => 'Il locatore può recedere dal presente contratto con almeno 30 giorni di anticipo dalla data di arrivo; in tale caso restituirà al locatore la caparra confirmatoria.',
-    'recesso5' => 'Il locatore può recedere dal presente contratto nei 29 giorni che precedono la data di arrivo. In tale caso restituirà la caparra confirmatoria ricevuta oltre ad un ulteriore importo di pari importo a titolo di indennizzo e risarcimento.',
+    'recesso5' => 'Il locatore può recedere dal presente contratto nei 29 giorni che precedono la data di arrivo. In tale caso restituirà la caparra confirmatoria ricevuta oltre ad una ulteriore somma pari a quella della caparra confirmatoria a titolo di indennizzo e risarcimento.',
     'recesso6' => 'Effettuato il check-in, il conduttore potrà terminare anticipatamente la locazione ma non avrà diritto ad alcun rimborso per le notti non utilizzate.',
     'recesso7' => 'Qualora a causa di eventi straordinari (a solo titolo di esempio: incendio, terremoto, allagamento etc) il conduttore sarà costretto a terminare anticipatamente la locazione, il locatore restituirà l\'importo delle notti non godute. Nessun altro danno potrà essere richiesto al locatore.',
     'recesso8' => 'Il mancato rispetto, da parte del conduttore, anche di un solo punto del presente contratto così come la mancata presentazione del conduttore, in mancanza di disdetta, alla data di arrivo e nella fascia oraria stabilita comporterà la risoluzione espressa ipso iure del presente contratto ai sensi dell\'art. 1456 del C.C. e l\'obbligo del pagamento del saldo della locazione.',
