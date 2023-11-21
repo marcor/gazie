@@ -444,7 +444,7 @@ if (isset($_POST['conferma'])) {
 if (isset($_GET['e-test']) && $_GET['e-test']==TRUE){
   $custom_field = gaz_dbi_get_row($gTables['anagra'], 'id', $form['id_anagra'])['custom_field'];
   if ($data = json_decode($custom_field,true)){// se c'è un json
-    if (is_array($data['config']) && isset($data['config'][$form['company_id']])){ // se c'è il modulo "config" e c'è l'azienda attuale posso procedere
+    if (isset($data['config'][$form['company_id']]) && is_array($data['config']) ){ // se c'è il modulo "config" e c'è l'azienda attuale posso procedere
       $az_email_admin_config = gaz_dbi_get_row($gTables['admin_config'], "adminid", $form['user_name'], "AND company_id = ".intval($form['company_id'])." AND var_name = 'az_email'");
       $form['user_email']=(isset($az_email_admin_config))?$az_email_admin_config['var_value']:'';
       if (!filter_var($form['user_email'], FILTER_VALIDATE_EMAIL)) {
