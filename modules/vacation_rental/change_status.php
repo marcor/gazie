@@ -68,7 +68,7 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
         $custom_field = gaz_dbi_get_row($gTables['anagra'], 'id', $admin_aziend['id_anagra'])['custom_field'];
         $imap_usr='';
         if ($data = json_decode($custom_field,true)){// se c'è un json e c'è una mail aziendale utente
-          if (is_array($data['config']) && isset($data['config'][$admin_aziend['company_id']])){ // se c'è il modulo "config" e c'è l'azienda attuale posso procedere
+          if (isset($data['config'][$admin_aziend['company_id']]) && is_array($data['config'])){ // se c'è il modulo "config" e c'è l'azienda attuale posso procedere
             list($encrypted_data, $iv) = explode('::', base64_decode($data['config'][$admin_aziend['company_id']]['imap_pwr']), 2);
             $imap_pwr=openssl_decrypt($encrypted_data, 'aes-128-cbc', $_SESSION['aes_key'], 0, $iv);
             $imap_usr=$data['config'][$admin_aziend['company_id']]['imap_usr'];
