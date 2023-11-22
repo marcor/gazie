@@ -1444,7 +1444,7 @@ class selectvettor extends SelectBox {
 // classe per l'invio di documenti allegati ad una e-mail
 class GAzieMail {
 
-    function sendMail($admin_data, $user, $content, $receiver, $mail_message = '') {
+    function sendMail($admin_data, $user, $content, $receiver, $mail_message = '', $template=true) {
       // su $admin_data['other_email'] ci va un eventuale indirizzo mail diverso da quello in anagrafica
       global $gTables, $debug_active;
 
@@ -1582,11 +1582,12 @@ class GAzieMail {
       } else { // altrimenti metto il contenuto del pdf che presumibilmente mi arriva da document.php
         $mail->AddStringAttachment($content->string, $content->name, $content->encoding, $content->mimeType);
       }
-      // Creo una veste grafica
-      //require('../../library/include/datlib.inc.php');
-      $admin_aziend = checkAdmin();
-      require('../../library/include/header.php');
-      $script_transl = HeadMain();
+
+      if ($template){// Creo una veste grafica
+        $admin_aziend = checkAdmin();
+        require('../../library/include/header.php');
+        $script_transl = HeadMain();
+      }
 
 	// Invio...
 	if ($debug_active) {
@@ -1661,7 +1662,9 @@ class GAzieMail {
       </table>
     </center>
   <?php
-    require('../../library/include/footer.php');
+    if ($template){
+      require('../../library/include/footer.php');
+    }
     return true;
   } else {
     ?>
