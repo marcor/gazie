@@ -697,8 +697,15 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 			$status='TD16'; // operazioni interne (italiani)
 			if ($v['tes']['country']<>'IT') {
 				$status='TD17'; // acquisto servizi dall'estero
-        if ($vv['operation_type']<>'SERVIZ') { // non è un servizio distinguo se intra o extra
-          $status=($v['tes']['istat_area']==11)?'TD18':'TD19';
+        if ($vv['operation_type']<>'SERVIZ'&& $v['tes']['istat_area']==11) {
+          $status='TD18';
+        }
+        // se il fornitore ha una partita IVA italiana pur essendo straniero diventa TD19
+        require("../../library/include/check.inc.php");
+        $cf_pi = new check_VATno_TAXcode();
+        $r_pi = $cf_pi->check_VAT_reg_no($partner['pariva'], 'IT');
+        if (empty($r_pi)) {
+          $status='TD19';
         }
 			} else if ($v['tes']['fiscal_reg'] == 'RF34') {
         $status='TD01';

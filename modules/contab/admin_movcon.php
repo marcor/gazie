@@ -650,6 +650,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
         }
 
         if ($msg == "") { // nessun errore
+            require("../../library/include/check.inc.php");
             $calc = new Schedule;
             //se è un update recupero i vecchi righi per trovare quelli da inserire/modificare/cancellare
             //formatto le date
@@ -832,8 +833,14 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                           if ($partnersel['country']<>'IT') {
                             $istat_area = gaz_dbi_get_row($gTables['country'], "iso", $partnersel['country'])['istat_area'];
                             $status='TD17'; // acquisto servizi dall'estero
-                            if ($vv['operation_type']<>'SERVIZ') { // non è un servizio distinguo se intra o extra
-                              $status=($istat_area==11)?'TD18':'TD19';
+                            if ($vv['operation_type']<>'SERVIZ'&& $istat_area==11) {
+                              $status='TD18';
+                            }
+                            // se il fornitore ha una partita IVA italiana pur essendo straniero diventa TD19
+                            $cf_pi = new check_VATno_TAXcode();
+                            $r_pi = $cf_pi->check_VAT_reg_no($partnersel['pariva'], 'IT');
+                            if (empty($r_pi)) {
+                              $status='TD19';
                             }
                           }
                           // adesso faccio l'update di tesdoc con tipdoc XFA portando all'eventuale nuovo valore di status
@@ -966,8 +973,14 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
 							if ($partner['country']<>'IT') {
 								$istat_area = gaz_dbi_get_row($gTables['country'], "iso", $partner['country'])['istat_area'];
 								$status='TD17'; // acquisto servizi dall'estero
-                if ($vv['operation_type']<>'SERVIZ') { // non è un servizio distinguo se intra o extra
-                  $status=($istat_area==11)?'TD18':'TD19';
+                if ($vv['operation_type']<>'SERVIZ' && $istat_area==11 ) { // non è un servizio distinguo se intra o extra
+                  $status='TD18';
+                }
+                // se il fornitore ha una partita IVA italiana pur essendo straniero diventa TD19
+                $cf_pi = new check_VATno_TAXcode();
+                $r_pi = $cf_pi->check_VAT_reg_no($partner['pariva'], 'IT');
+                if (empty($r_pi)) {
+                  $status='TD19';
                 }
 							}
 							$tesdocVal = ['tipdoc' => 'XFA',
