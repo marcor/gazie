@@ -91,4 +91,5 @@ $update_db[]="ALTER TABLE `".$table_prefix."_XXXrental_discounts` ADD `last_min`
 $update_db[]="ALTER TABLE `".$table_prefix."_XXXrental_discounts` ADD `level_points` TINYINT(1) NOT NULL DEFAULT '0' COMMENT 'Abilita questo sconto per livello punti' AFTER `last_min`; ";
 $update_db[]="ALTER TABLE `".$table_prefix."_XXXrental_prices` ADD `minstay` INT(3) NULL COMMENT 'Soggiorno minimo: se valorizzato annulla quello generale ' AFTER `price`; ";
 $update_db[]="INSERT INTO ".$table_prefix."_XXXcompany_config (`description`, `var`, `val`) VALUES ('Scadenza punti gg (0=senza scadenza)', 'points_expiry', '0')";
+$update_db[]="ALTER TABLE `".$table_prefix."_XXXartico` CHANGE `web_url` `web_url` VARCHAR(700) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL;";
 ?>

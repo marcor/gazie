@@ -1028,7 +1028,7 @@ if ($modal_ok_insert === true) {
                 <div id="webUrl" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label for="web_url" class="col-sm-4 control-label"><?php echo $script_transl['web_url']; ?></label>
+                            <label for="web_url" class="col-sm-4 control-label" ><?php echo $script_transl['web_url']; ?>&nbsp;<i class="glyphicon glyphicon-flag" title="accetta tag lingue (<it></it>)"></i></label>
                             <input class="col-sm-8" type="text" value="<?php echo $form['web_url']; ?>" name="web_url" maxlength="255" />
                         </div>
                     </div>
