@@ -180,59 +180,84 @@ if (isset($_GET['house_code'])){// se devo visualizzaro solo un determinato allo
 
 ?>
 <script>
-<?php
-echo '
+
 $(function() {
    $( "#dialog" ).dialog({
       autoOpen: false
    });
 });
 function confirMail(link){
-   tes_id = link.id.replace("doc", "");
-   $.fx.speeds._default = 500;
-   targetUrl = $("#doc"+tes_id).attr("url");
-   //alert (targetUrl);
-   $("p#mail_adrs").html($("#doc"+tes_id).attr("mail"));
-   $("p#mail_attc").html($("#doc"+tes_id).attr("namedoc"));
-   $( "#dialog" ).dialog({
+    tes_id = link.id.replace("doc", "");
+    $.fx.speeds._default = 500;
+    targetUrl = $("#doc"+tes_id).attr("url");
+    //alert (targetUrl);
+    $("p#mail_adrs").html($("#doc"+tes_id).attr("mail"));
+    $("p#mail_attc").html($("#doc"+tes_id).attr("namedoc"));
+    $( "#dialog" ).dialog({
          modal: "true",
       show: "blind",
       hide: "explode",
-         buttons: {
-                      " ' . $script_transl['submit'] . ' ": function() {
-                         window.location.href = targetUrl;
-                      },
-                      " ' . $script_transl['cancel'] . ' ": function() {
-                        $(this).dialog("close");
-                      }
-                  }
-         });
+      buttons: [{
+        text: "<?php echo $script_transl['submit']; ?> ",
+        "class": 'btn',
+        click: function () {
+          $('#frame_email').attr('src',targetUrl);
+          $('#frame_email').css({'height': '100%'});
+          $('.frame_email').css({'display': 'block','width': '40%', 'margin-left': '25%', 'z-index':'2000'});
+          $('#close_email').on( "click", function() {
+          $('#frame_email').attr('src','');
+          $('.frame_email').css({'display': 'none'});
+          });
+          $(this).dialog("close");
+        },
+      },
+      {
+        text: "<?php echo $script_transl['cancel']; ?>",
+        "class": 'btn',
+        click: function () {
+          $(this).dialog("close");
+        },
+      }]
+  });
    $("#dialog" ).dialog( "open" );
 }
 function confirMailC(link){
-   tes_id = link.id.replace("docC", "");
-   $.fx.speeds._default = 500;
-   targetUrl = $("#docC"+tes_id).attr("urlC");
-   //alert (targetUrl);
-   $("p#mail_adrs").html($("#docC"+tes_id).attr("mail"));
-   $("p#mail_attc").html($("#docC"+tes_id).attr("namedoc"));
-   $( "#dialog" ).dialog({
-         modal: "true",
-      show: "blind",
-      hide: "explode",
-         buttons: {
-                      " ' . $script_transl['submit'] . ' ": function() {
-                         window.location.href = targetUrl;
-                      },
-                      " ' . $script_transl['cancel'] . ' ": function() {
-                        $(this).dialog("close");
-                      }
-                  }
-         });
-   $("#dialog" ).dialog( "open" );
+  tes_id = link.id.replace("docC", "");
+  $.fx.speeds._default = 500;
+  targetUrl = $("#docC"+tes_id).attr("urlC");
+  //alert (targetUrl);
+  $("p#mail_adrs").html($("#docC"+tes_id).attr("mail"));
+  $("p#mail_attc").html($("#docC"+tes_id).attr("namedoc"));
+  $( "#dialog" ).dialog({
+    modal: "true",
+    show: "blind",
+    hide: "explode",
+    buttons: [{
+			text: "<?php echo $script_transl['submit']; ?> ",
+			"class": 'btn',
+			click: function () {
+				$('#frame_email').attr('src',targetUrl);
+        $('#frame_email').css({'height': '100%'});
+        $('.frame_email').css({'display': 'block','width': '40%', 'margin-left': '25%', 'z-index':'2000'});
+        $('#close_email').on( "click", function() {
+				$('#frame_email').attr('src','');
+        $('.frame_email').css({'display': 'none'});
+        });
+        $(this).dialog("close");
+			},
+		},
+		{
+			text: "<?php echo $script_transl['cancel']; ?>",
+			"class": 'btn',
+			click: function () {
+				$(this).dialog("close");
+			},
+		}]
+
+  });
+  $("#dialog" ).dialog( "open" );
 }
-';
-?>
+
 
 function choice_template(modulo) {
 	$( function() {
@@ -251,7 +276,7 @@ function choice_template(modulo) {
         $('#framePdf').css({'height': '100%'});
         $('.framePdf').css({'display': 'block','width': '90%', 'height': '80%', 'z-index':'2000'});
         $('#closePdf').on( "click", function() {
-          $('.framePdf').css({'display': 'none'});
+        $('.framePdf').css({'display': 'none'});
         });
 			},
 		},
@@ -709,6 +734,7 @@ $(function() {
 
 });
 function printPdf(urlPrintDoc){
+  //alert(urlPrintDoc);
 	$(function(){
 		$('#framePdf').attr('src',urlPrintDoc);
 		$('#framePdf').css({'height': '100%'});
@@ -756,80 +782,87 @@ $ts->output_navbar();
       invia email di notifica <input id="checkbox_email_point"  type="checkbox" name="checkbox_email_point" value="0" >
     </div>
 </div>
-	<div class="framePdf panel panel-success" style="display: none; position: fixed; left: 5%; top: 10px">
-		<div class="col-lg-12">
-			<div class="col-xs-11"><h4><?php echo $script_transl['print'];; ?></h4></div>
-			<div class="col-xs-1"><h4><button type="button" id="closePdf"><i class="glyphicon glyphicon-remove"></i></button></h4></div>
-		</div>
-		<iframe id="framePdf"  style="height: 100%; width: 100%" src=""></iframe>
-	</div>
-  <input type="hidden" name="info" value="none" />
-	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
-        <p><b>prenotazione:</b></p>
-        <p>Numero ID:</p>
-        <p class="ui-state-highlight" id="idcodice"></p>
-        <p>Cliente:</p>
-        <p class="ui-state-highlight" id="iddescri"></p>
-	</div>
-  <div style="display:none" id="credit_card" title="Pagamento con carta di credito off-line">
-        <p><b>Dati parziali della carta di credito:</b></p>
-        numeri iniziali:<p class="ui-state-highlight" id="cc1"></p>
-        cvv:<p class="ui-state-highlight" id="cc2"></p>
-        intestatario:<p class="ui-state-highlight" id="cc3"></p>
-        importo:<p class="ui-state-highlight" id="cc4"></p>
-        <p>L'altra parte dei dati è stata inviata via e-mail all'amministratore<P>
-        <p><b>I dati memorizzati nel data base devono essere cancellati subito dopo l'utilizzo</b></p>
-        <button type="button" class="btn-primary" id="delete_data"><i class="glyphicon glyphicon-fire" style="color: #ff9c9c;"></i> Distruggi dati</button>
-
-	</div>
-  <div style="display:none" id="dialog_stato_lavorazione" title="Cambia lo stato">
-        <p><b>prenotazione:</b></p>
-        <p class="ui-state-highlight" id="id_status"></p>
-        <p class="ui-state-highlight" id="de_status"></p>
-        <select name="sel_stato_lavorazione" id="sel_stato_lavorazione">
-            <option value="GENERATO">GENERATO</option>
-            <option value="PENDING">In attesa di pagamento</option>
-            <option value="CONFIRMED">Confermato</option>
-            <option value="FROZEN">Sospeso</option>
-            <option value="ISSUE">Incontrate difficoltà</option>
-            <option value="CANCELLED">Annullato</option>
-        </select>
-        invia email al cliente<input id="checkbox_email"  type="checkbox" name="checkbox_email" value="1" checked="">
-	</div>
-  <div style="display:none" id="dialog_check_inout" title="Stato Accettazione">
+<div class="frame_email panel panel-success" style="display: none; position: fixed; left: 5%; top: 15%; margin-left: 30%;">
+  <div class="col-lg-12">
+    <div class="col-xs-11"><h4>e-mail</h4></div>
+    <div class="col-xs-1"><h4><button type="button" id="close_email"><i class="glyphicon glyphicon-remove"></i></button></h4></div>
+  </div>
+  <iframe id="frame_email"  style="height: 90%; width: 100%" src=""></iframe>
+</div>
+<div class="framePdf panel panel-success" style="display: none; position: fixed; left: 5%; top: 10px">
+  <div class="col-lg-12">
+    <div class="col-xs-11"><h4><?php echo $script_transl['print'];; ?></h4></div>
+    <div class="col-xs-1"><h4><button type="button" id="closePdf"><i class="glyphicon glyphicon-remove"></i></button></h4></div>
+  </div>
+  <iframe id="framePdf"  style="height: 100%; width: 100%" src=""></iframe>
+</div>
+<input type="hidden" name="info" value="none" />
+<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
       <p><b>prenotazione:</b></p>
-      <p class="ui-state-highlight" id="id_status_check"></p>
-      <p class="ui-state-highlight" id="de_status_check"></p>
-      <select name="sel_stato_check" id="sel_stato_check">
-          <option value="PENDING">IN ATTESA</option>
-          <option value="IN">CHECKED-IN</option>
-          <option value="OUT">CHECKED-OUT</option>
+      <p>Numero ID:</p>
+      <p class="ui-state-highlight" id="idcodice"></p>
+      <p>Cliente:</p>
+      <p class="ui-state-highlight" id="iddescri"></p>
+</div>
+<div style="display:none" id="credit_card" title="Pagamento con carta di credito off-line">
+      <p><b>Dati parziali della carta di credito:</b></p>
+      numeri iniziali:<p class="ui-state-highlight" id="cc1"></p>
+      cvv:<p class="ui-state-highlight" id="cc2"></p>
+      intestatario:<p class="ui-state-highlight" id="cc3"></p>
+      importo:<p class="ui-state-highlight" id="cc4"></p>
+      <p>L'altra parte dei dati è stata inviata via e-mail all'amministratore<P>
+      <p><b>I dati memorizzati nel data base devono essere cancellati subito dopo l'utilizzo</b></p>
+      <button type="button" class="btn-primary" id="delete_data"><i class="glyphicon glyphicon-fire" style="color: #ff9c9c;"></i> Distruggi dati</button>
+
+</div>
+<div style="display:none" id="dialog_stato_lavorazione" title="Cambia lo stato">
+      <p><b>prenotazione:</b></p>
+      <p class="ui-state-highlight" id="id_status"></p>
+      <p class="ui-state-highlight" id="de_status"></p>
+      <select name="sel_stato_lavorazione" id="sel_stato_lavorazione">
+          <option value="GENERATO">GENERATO</option>
+          <option value="PENDING">In attesa di pagamento</option>
+          <option value="CONFIRMED">Confermato</option>
+          <option value="FROZEN">Sospeso</option>
+          <option value="ISSUE">Incontrate difficoltà</option>
+          <option value="CANCELLED">Annullato</option>
       </select>
-      <span id="date_stato_check"></span>
-      <p><br>Cambia stato il: <input type="text" id="datepicker" ></p>
-      <?php if (isset($vacation_url_user) && strlen($vacation_url_user)>4){ ?>
-      <div  id="feedback_email">
-      invia email richiesta recensione <input id="checkbox_email_inout"  type="checkbox" name="checkbox_email_inout" value="0" >
-      </div>
-      <?php } ?>
-  </div>
-  <div style="display:none" id="dialog_feedback" title="Recensione lasciata dal cliente">
-      <p><b>Recensione:</b></p>
-      <p class="ui-state-highlight" id="feedback_text"></p>
-      <span id="feedback_element"></span><p class="ui-state-highlight" id="feedback_vote"></p>
-      <select name="sel_stato_feedback" id="sel_stato_feedback">
-          <option value="0">IN ATTESA di approvazione</option>
-          <option value="1">APPROVATO</option>
-          <option value="2">BLOCCATO</option>
-      </select>
-  </div>
-  <input type="hidden" name="auxil" value="<?php echo $tipo; ?>">
-  <div style="display:none" id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">
-      <p id="mail_alert1"><?php echo $script_transl['mail_alert1']; ?></p>
-      <p class="ui-state-highlight" id="mail_adrs"></p>
-      <p id="mail_alert2"><?php echo $script_transl['mail_alert2']; ?></p>
-      <p class="ui-state-highlight" id="mail_attc"></p>
-  </div>
+      invia email al cliente<input id="checkbox_email"  type="checkbox" name="checkbox_email" value="1" checked="">
+</div>
+<div style="display:none" id="dialog_check_inout" title="Stato Accettazione">
+    <p><b>prenotazione:</b></p>
+    <p class="ui-state-highlight" id="id_status_check"></p>
+    <p class="ui-state-highlight" id="de_status_check"></p>
+    <select name="sel_stato_check" id="sel_stato_check">
+        <option value="PENDING">IN ATTESA</option>
+        <option value="IN">CHECKED-IN</option>
+        <option value="OUT">CHECKED-OUT</option>
+    </select>
+    <span id="date_stato_check"></span>
+    <p><br>Cambia stato il: <input type="text" id="datepicker" ></p>
+    <?php if (isset($vacation_url_user) && strlen($vacation_url_user)>4){ ?>
+    <div  id="feedback_email">
+    invia email richiesta recensione <input id="checkbox_email_inout"  type="checkbox" name="checkbox_email_inout" value="0" >
+    </div>
+    <?php } ?>
+</div>
+<div style="display:none" id="dialog_feedback" title="Recensione lasciata dal cliente">
+    <p><b>Recensione:</b></p>
+    <p class="ui-state-highlight" id="feedback_text"></p>
+    <span id="feedback_element"></span><p class="ui-state-highlight" id="feedback_vote"></p>
+    <select name="sel_stato_feedback" id="sel_stato_feedback">
+        <option value="0">IN ATTESA di approvazione</option>
+        <option value="1">APPROVATO</option>
+        <option value="2">BLOCCATO</option>
+    </select>
+</div>
+<input type="hidden" name="auxil" value="<?php echo $tipo; ?>">
+<div style="display:none" id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">
+    <p id="mail_alert1"><?php echo $script_transl['mail_alert1']; ?></p>
+    <p class="ui-state-highlight" id="mail_adrs"></p>
+    <p id="mail_alert2"><?php echo $script_transl['mail_alert2']; ?></p>
+    <p class="ui-state-highlight" id="mail_attc"></p>
+</div>
 <!-- fine div dialog -->
 
     <div class="box-primary table-responsive">

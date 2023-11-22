@@ -830,15 +830,15 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
         }
 
         $gMail = new GAzieMail();
-        $gMail->sendMail($docVars->azienda, $docVars->user, $content, $docVars->client,$mail_message);
+        $gMail->sendMail($docVars->azienda, $docVars->user, $content, $docVars->client,$mail_message, false);
         $gaz_custom_field = gaz_dbi_get_single_value($gTables['tesbro'], 'custom_field', 'id_tes = '.$testata['id_tes'] );
         if ($data = json_decode( $gaz_custom_field, true)){
-			if (is_array($data['vacation_rental'])){
-				$data['vacation_rental'][$templateName.'_email_inviata'] = date("d-m-Y h:i:s");
-				$gaz_custom_field = json_encode($data);
-				gaz_dbi_table_update ('tesbro', array(0=>'id_tes',1=>$testata['id_tes']), array('custom_field'=>$gaz_custom_field));
-			}
-		}
+          if (is_array($data['vacation_rental'])){
+            $data['vacation_rental'][$templateName.'_email_inviata'] = date("d-m-Y h:i:s");
+            $gaz_custom_field = json_encode($data);
+            gaz_dbi_table_update ('tesbro', array(0=>'id_tes',1=>$testata['id_tes']), array('custom_field'=>$gaz_custom_field));
+          }
+        }
 
     } elseif ($dest && $dest == 'X') { // è stata richiesta una stringa da allegare
         $dest = 'S';     // Genero l'output pdf come stringa binaria
