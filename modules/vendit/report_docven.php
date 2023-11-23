@@ -116,29 +116,6 @@ $(function() {
    });
 
 });
-function OLDconfirMail(link){
-   tes_id = link.id.replace("doc_", "");
-   $.fx.speeds._default = 500;
-   targetUrl = $("#doc_"+tes_id).attr("url");
-   $("p#mail_adrs").html($("#doc_"+tes_id).attr("mail"));
-   $("p#mail_attc").html($("#doc_"+tes_id).attr("namedoc"));
-   $( "#dialog" ).dialog({
-         modal: "true",
-      show: "blind",
-      hide: "explode",
-         buttons: {'
-         #Apro la pagina di notifica invio mail su una nuova tab e poi chiudo la form di conferma
-    .'                " ' . $script_transl['submit'] . ' ": function() {
-                        window.open ( targetUrl);
-                        $(this).dialog("close");
-                      },
-                      " ' . $script_transl['cancel'] . ' ": function() {
-                        $(this).dialog("close");
-                      }
-                  }
-         });
-   $("#dialog" ).dialog( "open" );
-}
 
 function confirPecSdi(link){
    codice = link.id.replace("doc3_", "");
@@ -290,7 +267,7 @@ function confirMail(link,cod_partner,id_tes,genorder=false) {
 	$( function() {
     var dialog
 	,
-    emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
+  emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
 	dialog = $("#confirm_email").dialog({
 		modal: true,
 		show: "blind",
@@ -307,7 +284,14 @@ function confirMail(link,cod_partner,id_tes,genorder=false) {
 					$("#mailbutt div").remove();
 					var dest=$("#mailaddress").val();
 					$("#mailaddress").val('');
-					window.location.href = targetUrl+"&dest="+dest;
+          $('#frame_email').attr('src',targetUrl+"&dest="+dest);
+          $('#frame_email').css({'height': '100%'});
+          $('.frame_email').css({'display': 'block','width': '40%', 'margin-left': '25%', 'z-index':'2000'});
+          $('#close_email').on( "click", function() {
+          $('#frame_email').attr('src','');
+          $('.frame_email').css({'display': 'none'});
+          });
+          $(this).dialog("close");
 				}
 			}
 		},
@@ -401,6 +385,13 @@ function printPdf(urlPrintDoc){
 };
 </script>
 <form method="GET" >
+  <div class="frame_email panel panel-success" style="display: none; position: fixed; left: 5%; top: 15%; margin-left: 30%;">
+    <div class="col-lg-12">
+      <div class="col-xs-11"><h4>e-mail</h4></div>
+      <div class="col-xs-1"><h4><button type="button" id="close_email"><i class="glyphicon glyphicon-remove"></i></button></h4></div>
+    </div>
+    <iframe id="frame_email"  style="height: 90%; width: 100%" src=""></iframe>
+  </div>
 	<div class="framePdf panel panel-success" style="display: none; position: fixed; left: 5%; top: 10px">
 		<div class="col-lg-12">
 			<div class="col-xs-11"><h4><?php echo $script_transl['print'];; ?></h4></div>

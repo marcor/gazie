@@ -93,8 +93,8 @@ $ts = new TableSorter(
 
 # le <select> spaziano solo tra i documenti di vendita del sezionale corrente
 $where_select = sprintf(" (tipdoc = 'RPL' OR tipdoc = 'FAD' OR tipdoc LIKE 'DD_') AND seziva = %d", $sezione);
-
-echo '<script>
+?>
+<script>
 $(function() {
    $( "#dialog" ).dialog({
       autoOpen: false
@@ -108,23 +108,34 @@ function confirMail(link){
    $("p#mail_adrs").html($("#doc"+tes_id).attr("mail"));
    $("p#mail_attc").html($("#doc"+tes_id).attr("namedoc"));
    $( "#dialog" ).dialog({
-         modal: "true",
+      modal: "true",
       show: "blind",
       hide: "explode",
-         buttons: {
-                      " ' . $script_transl['submit'] . ' ": function() {
-                         window.location.href = targetUrl;
-                      },
-                      " ' . $script_transl['cancel'] . ' ": function() {
-                        $(this).dialog("close");
-                      }
-                  }
-         });
+        buttons: [{
+        text: "<?php echo $script_transl['submit']; ?> ",
+        "class": 'btn',
+        click: function () {
+          $('#frame_email').attr('src',targetUrl);
+          $('#frame_email').css({'height': '100%'});
+          $('.frame_email').css({'display': 'block','width': '40%', 'margin-left': '25%', 'z-index':'2000'});
+          $('#close_email').on( "click", function() {
+          $('#frame_email').attr('src','');
+          $('.frame_email').css({'display': 'none'});
+          });
+          $(this).dialog("close");
+        },
+      },
+      {
+        text: "<?php echo $script_transl['cancel']; ?>",
+        "class": 'btn',
+        click: function () {
+          $(this).dialog("close");
+        },
+      }]
+   });
    $("#dialog" ).dialog( "open" );
 }
-</script>';
-?>
-<script>
+
 $(function() {
 	$("#dialog_delete").dialog({ autoOpen: false });
 	$('.dialog_delete').click(function() {
@@ -190,6 +201,13 @@ if (isset($_SESSION['print_request']) && intval($_SESSION['print_request'])>0){
 ?>
 
 <form method="GET">
+  <div class="frame_email panel panel-success" style="display: none; position: fixed; left: 5%; top: 15%; margin-left: 30%;">
+    <div class="col-lg-12">
+      <div class="col-xs-11"><h4>e-mail</h4></div>
+      <div class="col-xs-1"><h4><button type="button" id="close_email"><i class="glyphicon glyphicon-remove"></i></button></h4></div>
+    </div>
+    <iframe id="frame_email"  style="height: 90%; width: 100%" src=""></iframe>
+  </div>
 	<div class="framePdf panel panel-success" style="display: none; position: fixed; left: 5%; top: 10px">
 			<div class="col-lg-12">
 				<div class="col-xs-11"><h4><?php echo $script_transl['print'];; ?></h4></div>

@@ -78,13 +78,12 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
     $lang = get_template_lang($testata['clfoco']);
     if (isset($_GET['dest'])) { // se l'utente vuole inviare una mail
       if ($_GET['dest'] == 'E'){
-        createDocument($testata, $template, $gTables, 'rigdoc', 'E', $lang);
+        createDocument($testata, $template, $gTables, 'rigdoc', 'E', $lang, false);
       }else{
-		$email=filter_var($_GET['dest'], FILTER_VALIDATE_EMAIL);
-		$r=gaz_dbi_put_row($gTables['tesdoc'], 'id_tes', $testata['id_tes'], 'email',$email);
-        createDocument($testata, $template, $gTables, 'rigdoc', $email, $lang);
+        $email=filter_var($_GET['dest'], FILTER_VALIDATE_EMAIL);
+        $r=gaz_dbi_put_row($gTables['tesdoc'], 'id_tes', $testata['id_tes'], 'email',$email);
+        createDocument($testata, $template, $gTables, 'rigdoc', $email, $lang, false);
       }
-      require("../../library/include/footer.php");
     } else {
         createDocument($testata, $template, $gTables, 'rigdoc', false, $lang);
     }
@@ -293,7 +292,7 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
         foreach ($testate as $doc) {
           $testata = gaz_dbi_get_row($gTables['tesdoc'], 'id_tes', $doc['id_tes']);
           $lang = get_template_lang($testata['clfoco']);
-          createDocument($testata, $template, $gTables, 'rigdoc', 'E', $lang);
+          createDocument($testata, $template, $gTables, 'rigdoc', 'E', $lang, false);
         }
       } else {
         $dest = ($_GET['ts']==3?'Z':false); // controllo se ho richiesto di zippare in un pacchetto di singoli file

@@ -33,7 +33,7 @@ if ($tesbro['tipdoc'] <> 'VPR') {
     exit;
 }
 if (isset($_GET['dest'])&& $_GET['dest']=='E' ){ // se l'utente vuole inviare una mail
-     createDocument($tesbro, 'PreventivoCliente',$gTables,'rigbro','E');
+     createDocument($tesbro, 'PreventivoCliente',$gTables,'rigbro','E', false, false);
 } elseif (isset($_GET['lh'])){ // se l'utente vuole che venga stampata su una carta intestata
      createDocument($tesbro, 'PreventivoCliente',$gTables,'rigbro','H');
 }else {

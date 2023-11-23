@@ -52,17 +52,17 @@ if ($tesbro['tipdoc']=='VOR' || $tesbro['tipdoc']=='VOG') {
 	$template='OrdineCliente';
     if (isset($_GET['dest'])&& $_GET['dest']=='E' ){ // se l'utente vuole inviare una mail
 		$type='E';
-    } 
+    }
 	if (isset($_GET['lh'])){ // se l'utente vuole che venga stampata su una carta intestata
 		$type='H';
 	}
 	if ($tesbro['template']=='Ticket'){
 		$template='Ticket';
 	}
-    createDocument($tesbro,$template,$gTables,'rigbro',$type,$lang);
+    createDocument($tesbro,$template,$gTables,'rigbro',$type,$lang, false);
 } elseif ($tesbro['tipdoc']=='VOW'){
 	$type=false;
-    createDocument($tesbro, 'OrdineWeb',$gTables,'rigbro',$type,$lang);
+    createDocument($tesbro, 'OrdineWeb',$gTables,'rigbro',$type,$lang, false);
 } else {
     header("Location: report_broven.php");
     exit;
