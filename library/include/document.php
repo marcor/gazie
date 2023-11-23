@@ -622,7 +622,7 @@ class DocContabVars {
 
 }
 
-function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $dest = false, $lang_template=false) {
+function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $dest = false, $lang_template=false, $template=true) {
     if ($templateName=='Parcella') {
       $templateName='FatturaSemplice';
     }
@@ -711,7 +711,7 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
       $content->encoding = "base64";
       $content->mimeType = "application/pdf";
       $gMail = new GAzieMail();
-      if ( $gMail->sendMail($docVars->azienda, $docVars->user, $content, $docVars->client) ) {
+      if ( $gMail->sendMail($docVars->azienda, $docVars->user, $content, $docVars->client, '', $template) ) {
         // memorizzo l'invio per questa email
         switch ( substr($testata['tipdoc'],0,2) ) {
           case 'VP': // preventivo cliente
@@ -766,7 +766,7 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
     }
 }
 
-function createMultiDocument($results, $templateName, $gTables, $dest = false, $lang_template=false) {
+function createMultiDocument($results, $templateName, $gTables, $dest = false, $lang_template=false, $template=true) {
     if ($templateName=='Parcella') {
       $templateName='FatturaSemplice';
     }
@@ -860,7 +860,7 @@ function createMultiDocument($results, $templateName, $gTables, $dest = false, $
         $content->encoding = "base64";
         $content->mimeType = "application/pdf";
         $gMail = new GAzieMail();
-        $gMail->sendMail($docVars->azienda, $docVars->user, $content, $docVars->client);
+        $gMail->sendMail($docVars->azienda, $docVars->user, $content, $docVars->client, '', $template);
     } elseif ($dest=='Z') { // è stato richiesto un pacchetto zip
         $doc_name = preg_replace("/[^a-zA-Z0-9]+/", "_", $docVars->cliente1 . '_' . $pdf->tipdoc) . '.pdf';
         $pdf->Output(dirname(__DIR__,2).'/data/files/'.$docVars->azienda['codice'].'/'.$doc_name, 'F');
@@ -876,7 +876,7 @@ function createMultiDocument($results, $templateName, $gTables, $dest = false, $
     }
 }
 
-function createInvoiceFromDDT($result, $gTables, $dest = false, $lang_template=false) {
+function createInvoiceFromDDT($result, $gTables, $dest = false, $lang_template=false, $template=true) {
     $templateName = "FatturaDifferita";
 
     $config = new Config;
@@ -954,7 +954,7 @@ function createInvoiceFromDDT($result, $gTables, $dest = false, $lang_template=f
         $content->mimeType = "application/pdf";
         $docVars->azienda['doc_name'] = $doc_name_email;
         $gMail = new GAzieMail();
-        if ( $gMail->sendMail($docVars->azienda, $docVars->user, $content, $docVars->client) ) {// se l'invio e-mail è avvenuto con successo
+        if ( $gMail->sendMail($docVars->azienda, $docVars->user, $content, $docVars->client, '', $template) ) {// se l'invio e-mail è avvenuto con successo
           // ne memorizzo l'invio in tesdoc
           foreach ( $idtes_arr as $idtes) {
             $gaz_custom_field = gaz_dbi_get_single_value( $gTables['tesdoc'], 'custom_field', 'id_tes = '.$idtes );
@@ -976,7 +976,7 @@ function createInvoiceFromDDT($result, $gTables, $dest = false, $lang_template=f
     }
 }
 
-function createInvoiceACQFromDDT($result, $gTables, $dest = false, $lang_template=false) {
+function createInvoiceACQFromDDT($result, $gTables, $dest = false, $lang_template=false, $template=true) {
 
     $templateName = "FatturaDifferita";
 
@@ -1054,7 +1054,7 @@ function createInvoiceACQFromDDT($result, $gTables, $dest = false, $lang_templat
         $content->mimeType = "application/pdf";
         $docVars->azienda['doc_name'] = $doc_name_email;
         $gMail = new GAzieMail();
-        $gMail->sendMail($docVars->azienda, $docVars->user, $content, $docVars->client);
+        $gMail->sendMail($docVars->azienda, $docVars->user, $content, $docVars->client, '', $template);
     } elseif ($dest && $dest == 'X') { // è stata richiesta una stringa da allegare
         $dest = 'S';     // Genero l'output pdf come stringa binaria
         $content=$pdf->Output($doc_name, $dest);
