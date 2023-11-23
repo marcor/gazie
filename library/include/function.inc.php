@@ -1686,7 +1686,9 @@ class GAzieMail {
       </table>
     </center>
     <?php
-      require('../../library/include/footer.php');
+      if ($template){
+        require('../../library/include/footer.php');
+      }
       return false;
   }
   }
