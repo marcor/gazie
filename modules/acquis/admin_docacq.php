@@ -1735,6 +1735,9 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
         $orderman = gaz_dbi_get_row($gTables['orderman'], "id", $row['id_orderman']);
         $form['coseprod'] =($orderman)?$orderman['description']:'';
         $form['rows'][$i]['id_orderman'] = $row['id_orderman'];
+        $form['rows'][$i]['cod_operazione'] = '';
+        $form['rows'][$i]['recip_stocc'] = '';
+        $form['rows'][$i]['recip_stocc_destin'] ='';
       if ($articolo){
         $form['rows'][$i]['annota'] = $articolo['annota'];
         $mv = $magazz->getStockValue(false, $row['codart'], gaz_format_date($form['datemi'], true), $admin_aziend['stock_eval_method']);
@@ -1749,9 +1752,11 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$i]['quality'] = $articolo['quality'];
         if ($form['rows'][$i]['SIAN']>0){
           $camp_mov_sian = gaz_dbi_get_row($gTables['camp_mov_sian'], "id_movmag", $form['rows'][$i]['id_mag']);
-          $form['rows'][$i]['cod_operazione'] = ($camp_mov_sian['cod_operazione']=="P")?"12":$camp_mov_sian['cod_operazione'];
-          $form['rows'][$i]['recip_stocc'] = $camp_mov_sian['recip_stocc'];
-          $form['rows'][$i]['recip_stocc_destin'] = $camp_mov_sian['recip_stocc_destin'];
+          if ($camp_mov_sian) {
+            $form['rows'][$i]['cod_operazione'] = ($camp_mov_sian['cod_operazione']=="P")?"12":$camp_mov_sian['cod_operazione'];
+            $form['rows'][$i]['recip_stocc'] = $camp_mov_sian['recip_stocc'];
+            $form['rows'][$i]['recip_stocc_destin'] = $camp_mov_sian['recip_stocc_destin'];
+          }
         }
       } else {
         $form['rows'][$i]['codart']='';
@@ -1770,9 +1775,11 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
       $form['rows'][$i]['status'] = "UPDATE";
       if ($form['rows'][$i]['SIAN']>0){
         $camp_mov_sian = gaz_dbi_get_row($gTables['camp_mov_sian'], "id_movmag", $form['rows'][$i]['id_mag']);
-        $form['rows'][$i]['cod_operazione'] = ($camp_mov_sian['cod_operazione']=="P")?"12":$camp_mov_sian['cod_operazione'];
-        $form['rows'][$i]['recip_stocc'] = $camp_mov_sian['recip_stocc'];
-        $form['rows'][$i]['recip_stocc_destin'] = $camp_mov_sian['recip_stocc_destin'];
+        if ($camp_mov_sian) {
+          $form['rows'][$i]['cod_operazione'] = ($camp_mov_sian['cod_operazione']=="P")?"12":$camp_mov_sian['cod_operazione'];
+          $form['rows'][$i]['recip_stocc'] = $camp_mov_sian['recip_stocc'];
+          $form['rows'][$i]['recip_stocc_destin'] = $camp_mov_sian['recip_stocc_destin'];
+        }
       }
       // recupero eventuale movimento di tracciabilità ma solo se non è stata richiesta una duplicazione (di un ddt c/lavorazione)
       if (file_exists( DATA_DIR . 'files/' . $admin_aziend['company_id'] ) > 0) {

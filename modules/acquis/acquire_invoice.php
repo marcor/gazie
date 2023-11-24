@@ -177,14 +177,24 @@ function encondeFornitorePrefix($clfoco,$b=36) {
 
 }
 
-function existDdT($numddt,$dataddt,$clfoco,$codart="%%") {
+function existDdT($numddt,$dataddt,$clfoco) {
 	global $gTables;
 	/* Questa funzione serve per controllare se è già stato registrato in magazzino il rigo dell'eventuale DdT contenuto nella
 		fattura che stiamo acquisendo mi baso su fornitore, numero, data e, se lo passo, il codice articolo, quando passo $codart
 		faccio una ricerca puntuale sull'articolo specifico
 	*/
-    $result=gaz_dbi_dyn_query("*", $gTables['tesdoc']. " LEFT JOIN " . $gTables['rigdoc'] . " ON " . $gTables['tesdoc'] . ".id_tes = " . $gTables['rigdoc'] . ".id_tes", "(tipdoc='ADT' OR tipdoc='RDL') AND clfoco = ".$clfoco." AND datemi='".$dataddt."' AND numdoc='".$numddt."' AND codart LIKE '".$codart."'", "id_rig DESC", 0, 1);
-    return gaz_dbi_fetch_array($result);
+    $result=gaz_dbi_dyn_query("*", $gTables['tesdoc']. " LEFT JOIN " . $gTables['rigdoc'] . " ON " . $gTables['tesdoc'] . ".id_tes = " . $gTables['rigdoc'] . ".id_tes", "(tipdoc='ADT' OR tipdoc='RDL') AND clfoco = ".$clfoco." AND datemi='".$dataddt."' AND numdoc='".$numddt."'", "id_rig ASC");
+    $acc=[];
+    $l=1;
+    while($r=gaz_dbi_fetch_array($result)){
+      if ($l<=1 ) {
+        $acc=$r;
+      }
+      $acc['rigdoc'][$l] = ['codart'=>$r['codart'],'quanti'=>$r['quanti'],'id_rig'=>$r['id_rig'],'id_mag'=>$r['id_mag'],'id_order'=>$r['id_order']];
+      $acc['rig_codart'][$r['codart']] = ['ln'=>$l,'quanti'=>$r['quanti'],'id_rig'=>$r['id_rig'],'id_mag'=>$r['id_mag'],'id_order'=>$r['id_order']];
+      $l++;
+    }
+    return $acc;
 }
 
 
@@ -583,7 +593,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					$sconti_forfait=array();
 					$sconto_maggiorazione=$item->getElementsByTagName("ScontoMaggiorazione");
 					foreach ($sconto_maggiorazione as $sconti) { // potrei avere più elementi 2.2.1.10 <ScontoMaggiorazione>
-						if ($form['rows'][$nl]['prelis'] < 0.00000001) { // se trovo l'elemento 2.2.1.9 <PrezzoUnitario> a zero calcolo lo sconto a forfait
+						if ($form['rows'][$nl]['prelis'] < 0.00000001 && $sconti->getElementsByTagName("Importo")->length >= 1) { // se trovo l'elemento 2.2.1.9 <PrezzoUnitario> a zero calcolo lo sconto a forfait
 							$sconti_forfait[]=($sconti->getElementsByTagName('Tipo')->item(0)->nodeValue == 'SC' ? -$sconti->getElementsByTagName('Importo')->item(0)->nodeValue : $sconti->getElementsByTagName('Importo')->item(0)->nodeValue);
 						} elseif ($sconti->getElementsByTagName("Importo")->length >= 1 && $item->getElementsByTagName('Importo')->item(0)->nodeValue >= 0.00001){
 							// calcolo la percentuale di sconto partendo dall'importo del rigo e da quello dello sconto, il funzionamento di GAzie prevede la percentuale e non l'importo dello sconto
@@ -835,9 +845,23 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				}
         // ricontrollo per segnalare anomalia nel caso in cui non tutti i ddt siano stati utilizzati dai righi
         $ddtused=[];
-        foreach ( $form['rows'] as $vrow){
-          if ($vrow['NumeroDDT'] && !isset($ddtused[$vrow['NumeroDDT']])){
-            $ddtused[$vrow['NumeroDDT']]=$vrow['DataDDT'];
+        $ddt_accln=[];
+        foreach ( $form['rows'] as $kr=>$vrow){
+          if ($vrow['NumeroDDT']) {
+            if (!isset($ddtused[$vrow['NumeroDDT']])) { // al primo rigo di questo DdT lo segno come usato e creo la matrice con tutti i righi
+              $ddtused[$vrow['NumeroDDT']]= $vrow['DataDDT'];
+              $ddt_accln= ['numdoc'=>$vrow['NumeroDDT'],'date'=>$vrow['DataDDT'],'codart'=>$vrow['codart'],'quanti'=>$vrow['quanti'],'rigddt'=>$vrow['exist_ddt']['rig_codart']];
+            }
+            // provo ad attribuire il codice articolo di questo ad uno dei i righi presenti sull'accumulatore del DdT già inserito basandomi sulla quantità
+            if ($vrow['codart']=='') { // non ho trovato il codice articolo tramite codice fornitore oppure il fornitore non li attribuisce univocamente, uso quello sul DdT
+              foreach($ddt_accln['rigddt'] as $krddt => $vrddt) { // percorro la matrice con i righi del DdT fino a trovare quello con la stessa quantità
+                if ($vrow['quanti']==$vrddt['quanti']){
+                  $form['codart_'.($kr-1)]=$krddt;
+                  $form['rows'][$kr]['codart']=$krddt;
+                  unset($ddt_accln['rigddt'][$krddt]); // quello utilizzato lo tolgo dalla matrice
+                }
+              }
+            }
           }
         }
         if ( empty($anomalia) && count($acc_DataDDT) > count($ddtused) && count($acc_DataDDT) <= count($form['rows']) ) {
@@ -1462,7 +1486,7 @@ function prevXML(urlPrintDoc){
 	<div class="xmlpreview panel panel-success" style="display: none; position: absolute; left: 5%; top: 100px">
 		<div class="col-lg-12">
 			<div class="col-xs-11"><h4>Anteprima fattura</h4></div>
-			<div class="col-xs-1"><h4><button type="button" id="closeXML"><i class="glyphicon glyphicon-trash"></i></button></h4></div>
+			<div class="col-xs-1"><h4><button type="button" id="closeXML"><i class="glyphicon glyphicon-remove"></i></button></h4></div>
 		</div>
 		<iframe id="xmlpreview"  style="height: 100%; width: 100%" src=""></iframe>
 	</div>
