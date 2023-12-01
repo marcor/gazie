@@ -361,12 +361,9 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
 
 
     if (isset($_POST['addto'])){// se valorizzato devo aggiungere righi
-
-
        foreach ($_POST['addto'] as $va) {
 // reimposto la quantita del rigo di origine iniziale
         $form['righi'][$va['origine']]['evadibile']=$va['origine_evadibile'];
-
         $temp_id_lotmag=$form['righi'][$va['rigo']]['id_lotmag'];
         $temp_identifier=$form['righi'][$va['rigo']]['identifier'];
         $temp_expiry=$form['righi'][$va['rigo']]['expiry'];
@@ -579,7 +576,6 @@ if (isset($_POST['ddt']) || isset($_POST['ddo']) ||isset($_POST['ddm']) || isset
 	if (isset($_POST['vcoA'])){ // se lo scontrino è anonimo
 		$form['clfoco']=103;
 	}
-
     // ALLERTO SE NON E' STATA ESEGUITA LA CHIUSURA/CONTABILIZZAZIONE DEL GIORNO PRECEDENTE
     $rs_no_accounted = gaz_dbi_dyn_query("datemi", $gTables['tesdoc'], "id_con = 0 AND tipdoc = 'VCO' AND datemi < '$dataemiss' AND tipdoc = 'VCO'", 'id_tes', 0, 1);
     $no_accounted = gaz_dbi_fetch_array($rs_no_accounted);
@@ -594,7 +590,7 @@ if (isset($_POST['ddt']) || isset($_POST['ddo']) ||isset($_POST['ddm']) || isset
         $msg .= "1+";
     } else {
         $inevasi = "";
-        foreach ($_POST['righi'] as $k => $v) {
+        foreach ($form['righi'] as $k => $v) {
 			if (isset($v['checkval']) && $v['SIAN']>0){// Antonio Germani - controllo SIAN su righi
 				if($v['cod_operazione']==11){
 					$msg .= "11+";
@@ -603,8 +599,12 @@ if (isset($_POST['ddt']) || isset($_POST['ddo']) ||isset($_POST['ddm']) || isset
 					$msg .= "12+";
 				}
 			}
-            if (isset($v['checkval']) && $v['id_doc'] == 0 && ( $v['tiprig'] == 0 || $v['tiprig'] == 1))
+			if (floatval($v['evadibile'])>floatval($v['quanti'])){
+				$msg .="13+";
+			}
+            if (isset($v['checkval']) && $v['id_doc'] == 0 && ( $v['tiprig'] == 0 || $v['tiprig'] == 1)){
                 $inevasi = "ok";
+			}
         }
         if (empty($inevasi)) {
             $msg .= "2+";
@@ -677,6 +677,7 @@ if (isset($_POST['ddt']) || isset($_POST['ddo']) ||isset($_POST['ddm']) || isset
         $last_id =tesdocInsert($form);
         $ctrl_tes = 0;
         foreach ($form['righi'] as $k => $v) {
+
             if ($v['id_tes'] != $ctrl_tes) {  //se fa parte di un'ordine diverso dal precedente
                 //inserisco un rigo descrittivo per il riferimento all'ordine sul corrispettivo
                 $row_descri['descri'] = $script_transl['doc_name'][$v['tipdoc']] . " " . substr($v['datemi'], 8, 2) . "-" . substr($v['datemi'], 5, 2) . "-" . substr($v['datemi'], 0, 4);
@@ -1550,6 +1551,7 @@ function choice_ddt_type() {
                 }
 
                 // Antonio Germani - inizio gestione lotti
+				$disabled="";
                 echo "<input type=\"hidden\" value=\"" . $v['lot_or_serial'] . "\" name=\"righi[$k][lot_or_serial]\">\n";
 
                 if ($v['lot_or_serial'] > 0) { // se l'articolo prevede lotti apro gestione lotti
@@ -1586,7 +1588,7 @@ function choice_ddt_type() {
                     }
                     echo ' - disponibili: ' . gaz_format_quantity($count[$selected_lot['identifier']]) . ' <i class="glyphicon glyphicon-tag"></i></button>';
 
-                    echo "<input type=\"hidden\" value=\"" . $selected_lot['id_lotmag'] . "\" name=\"righi[$k][id_lotmag]\">\n";
+                    echo "<input type=\"hidden\" value=\"" . $selected_lot['id'] . "\" name=\"righi[$k][id_lotmag]\">\n";
                     echo "<input type=\"hidden\" value=\"" . $selected_lot['identifier'] . "\" name=\"righi[$k][identifier]\">\n";
                     echo "<input type=\"hidden\" value=\"" . $selected_lot['expiry'] . "\" name=\"righi[$k][expiry]\">\n";
 
@@ -1601,53 +1603,57 @@ function choice_ddt_type() {
                   } else {  // selezione automatica INIZIALE  del lotto disponibile
                     if (!isset($v['id_lotmag']) || (intval($v['id_lotmag'])==0)) {
                       $kk=$k;
-                      foreach ($lm->divided as $x => $vc) { // ciclo i lotti scelti da getAvailableLots
-
+					  foreach ($lm->divided as $x => $vc) { // ciclo i lotti scelti da getAvailableLots
                         if ($vc['qua'] >= 0.00001) {
-                          if ($l>0){// devo inserire nuovi righi delle stesso articolo perché è stato scelto più di un lotto
-                            if ($kk <= (count($form['righi'])-1)){
-                              $kk=(count($form['righi'])-1)+1;
-                            } else {
-                              $kk++;
-                            }
-
-
-                            $_POST['righi'][$kk] = $form['righi'][$k]; // copio il rigo di origine
-
-
-                            echo "<input type=\"hidden\" value=\"" . $kk . "\" name=\"addto[$k][rigo]\">\n";
-                            echo "<input type=\"hidden\" value=\"" . $k . "\" name=\"addto[$k][origine]\">\n";
-                            echo "<input type=\"hidden\" value=\"" . $evadibile[$k] . "\" name=\"addto[$k][origine_evadibile]\">\n";
-
-
-
-                          }
-                            $v['id_lotmag']= $vc['id']; // al primo ciclo, cioè id lotto è zero, setto il lotto
-                            $selected_lot = $lm->getLot($v['id_lotmag']);
-                            if (isset($selected_lot)){
-                              echo '<div><button class="btn btn-xs btn-success"  title="Lotto selezionato automaticamente. Cliccare per cambiare lotto" data-toggle="collapse" href="#lm_dialog' . $k . '">' . $selected_lot['id'] . ' Lotto n.: ' . $selected_lot['identifier'];
-                              if (intval($selected_lot['expiry']) > 0) {
-                                echo ' scadenza:' . gaz_format_date($selected_lot['expiry']);
-                              }
-                              echo ' disponibili:' . gaz_format_quantity($count[$selected_lot['identifier']]);
-                              echo '  <i class="glyphicon glyphicon-tag"></i></button>';
-                              echo "<input type=\"hidden\" value=\"" . $selected_lot['id_lotmag'] . "\" name=\"righi[$kk][id_lotmag]\">\n";
-                              echo "<input type=\"hidden\" value=\"" . $selected_lot['identifier'] . "\" name=\"righi[$kk][identifier]\">\n";
-                              echo "<input type=\"hidden\" value=\"" . $selected_lot['expiry'] . "\" name=\"righi[$kk][expiry]\">\n";
-                              echo "<input type=\"hidden\" value=\"" . $vc['qua'] . "\" name=\"righi[$kk][evadibile]\">\n";
-                              $evadibile[$kk]=$vc['qua'];
-                              $l++;
-                            } else  {
-                               ?>
-                              <div class="alert alert-warning alert-dismissible">
-                              <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                              <strong>ERRORE!</strong> <b>L'articolo ha un lotto associato che però non si trova nel data base dei lotti!</b> </br>Se si conferma si creeranno incongruenze fra quantità e lotti! </br> Si consiglia di controllare la corretta presenza dei lotti riferiti a questo articolo.
-                              </div>
-                              <?php
-                              echo "<input type=\"hidden\" value=\"\" name=\"righi[$kk][id_lotmag]\">\n";
-                              echo "<input type=\"hidden\" value=\"\" name=\"righi[$kk][identifier]\">\n";
-                              echo "<input type=\"hidden\" value=\"\" name=\"righi[$kk][expiry]\">\n";
-                            }
+							$addto="";
+							if ($l>0){// devo inserire nuovi righi dello stesso articolo perché è stato scelto più di un lotto
+							$disabled="disabled";
+							if ($kk <= (count($form['righi'])-1)){
+							  $kk=(count($form['righi'])-1)+1;
+							} else {
+							  $kk++;
+							}
+							//$_POST['righi'][$kk] = $form['righi'][$k]; // copio il rigo di origine
+							foreach($form['righi'][$k] as $key=>$val){
+								if ($key<>"evadibile"){
+									echo "<input type=\"hidden\" value=\"" . $val . "\" name=\"righi[$kk][$key]\">\n";
+									$form['righi'][$kk][$key]=$val;
+								}
+							}
+							
+							echo "<input type=\"hidden\" value=\"" . $kk . "\" name=\"addto[$k][rigo]\">\n";
+							echo "<input type=\"hidden\" value=\"" . $k . "\" name=\"addto[$k][origine]\">\n";
+							echo "<input type=\"text\" value=\"" . $evadibile[$k] . "\" name=\"addto[$k][origine_evadibile]\">\n";
+							$addto="addto";
+							}
+							$v['id_lotmag']= $vc['id']; // al primo ciclo, cioè id lotto è zero, setto il lotto
+							$selected_lot = $lm->getLot($v['id_lotmag']);
+							if (isset($selected_lot)){
+							  echo '<div><button class="btn btn-xs btn-success"  title="Lotto selezionato automaticamente. Cliccare per cambiare lotto" data-toggle="collapse" href="#lm_dialog' . $k . '">' . $selected_lot['id'] . ' Lotto n.: ' . $selected_lot['identifier'];
+							  if (intval($selected_lot['expiry']) > 0) {
+								echo ' scadenza:' . gaz_format_date($selected_lot['expiry']);
+							  }
+							  echo ' disponibili:' . gaz_format_quantity($count[$selected_lot['identifier']]);
+							  echo ' <i class="glyphicon glyphicon-tag"></i></button>';
+							  echo "<input type=\"hidden\" value=\"" . $selected_lot['id'] . "\" name=\"righi[$kk][id_lotmag]\">\n";
+							  echo "<input type=\"hidden\" value=\"" . $selected_lot['identifier'] . "\" name=\"righi[$kk][identifier]\">\n";
+							  echo "<input type=\"hidden\" value=\"" . $selected_lot['expiry'] . "\" name=\"righi[$kk][expiry]\">\n";
+							  if ($addto=="addto"){
+							  echo "<input type=\"text\" value=\"" . $vc['qua'] . "\" name=\"righi[$kk][evadibile]\">\n";
+							  }
+							  $evadibile[$kk]=$vc['qua'];
+							  $l++;
+							} else  {
+							   ?>
+							  <div class="alert alert-warning alert-dismissible">
+							  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+							  <strong>ERRORE!</strong> <b>L'articolo ha un lotto associato che però non si trova nel data base dei lotti!</b> </br>Se si conferma si creeranno incongruenze fra quantità e lotti! </br> Si consiglia di controllare la corretta presenza dei lotti riferiti a questo articolo.
+							  </div>
+							  <?php
+							  echo "<input type=\"hidden\" value=\"\" name=\"righi[$kk][id_lotmag]\">\n";
+							  echo "<input type=\"hidden\" value=\"\" name=\"righi[$kk][identifier]\">\n";
+							  echo "<input type=\"hidden\" value=\"\" name=\"righi[$kk][expiry]\">\n";
+							}
 
                         }
                       }
@@ -1678,7 +1684,6 @@ function choice_ddt_type() {
                   <?php
                 }
 				// fine gestione lotti
-
 				// Antonio Germani - controllo e warning disponibilità
 				$articolo = gaz_dbi_get_row($gTables['artico'], "codice", $v['codart']);
 				if (isset($articolo) && $checkin == " checked" && $articolo['good_or_service']<>1 ){ // solo se da evadere
@@ -1714,7 +1719,7 @@ function choice_ddt_type() {
                     echo "<td align=\"center\">" . $v['unimis'] . "</td>\n";
                     echo "<td align=\"right\">" . $v['quanti'] . "\n";
                     echo "<input type=\"hidden\" value=\"" . $v['evaso_in_precedenza'] . "\" name=\"righi[$k][evaso_in_precedenza]\"></td>\n";
-                    echo "<td align=\"right\" width=\"10%\"><input type=\"text\" value=\"" . $v['evadibile'] . "\" name=\"righi[$k][evadibile]\"></td>\n";
+                    echo "<td align=\"right\" width=\"10%\"><input type=\"text\" value=\"" . $v['evadibile'] . "\" name=\"righi[$k][evadibile]\"".$disabled."></td>\n";
                     echo "<td align=\"right\">" . $v['prelis'] . "</td>\n";
                     echo "<td align=\"right\">" . $v['sconto'] . "</td>\n";
                     echo "<td align=\"right\">" . $v['provvigione'] . "</td>\n";

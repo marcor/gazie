@@ -1448,7 +1448,8 @@ $strScript = array("admin_client.php" =>
             "C'è almeno uno scontrino emesso con data successiva a quella scelta per l'evasione",
             "C'è almeno una fattura già emessa con data successiva a quella scelta per l'evasione",
 			"Selezionare il codice operazione SIAN",
-			"Selezionare il recipiente di stoccaggio"
+			"Selezionare il recipiente di stoccaggio",
+			"Non puoi evadere più di quanto ordinato"
         ),
 		'cod_operaz_value' => array(11=>'',0=>'S0-Vendita olio a consumatore finale',1=>'S1-Vendita olio a ditta italiana',2=>'S2-Vendita olio a ditta comunitaria',3=>'S3-Vendita olio a ditta extracomunitaria',6=>'S6-Cessione omaggio olio confezionato',7=>'S7-Scarico olio destinato ad altri usi',9=>'S9-Trasferimento olio a punti vendita aziendali'),
         'customer' => 'Cliente',
