@@ -290,6 +290,7 @@ function confirMail(link,cod_partner,id_tes,genorder=false) {
           $('#close_email').on( "click", function() {
           $('#frame_email').attr('src','');
           $('.frame_email').css({'display': 'none'});
+          location.reload(true);
           });
           $(this).dialog("close");
 				}
