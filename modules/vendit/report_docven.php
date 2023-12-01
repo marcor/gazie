@@ -385,7 +385,7 @@ function printPdf(urlPrintDoc){
 };
 </script>
 <form method="GET" >
-  <div class="frame_email panel panel-success" style="display: none; position: fixed; left: 5%; top: 15%; margin-left: 30%;">
+  <div class="frame_email panel panel-success" style="display: none; position: fixed; left: 5%; top: 15%; margin-left: 30%; height: 40%">
     <div class="col-lg-12">
       <div class="col-xs-11"><h4>e-mail</h4></div>
       <div class="col-xs-1"><h4><button type="button" id="close_email"><i class="glyphicon glyphicon-remove"></i></button></h4></div>
