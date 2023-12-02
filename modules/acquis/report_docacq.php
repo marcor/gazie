@@ -221,7 +221,6 @@ $(function() {
 	$("#dialog_packet").dialog({ autoOpen: false });
 	$('.dialog_packet').click(function() {
 		$("p#idcodice").html("<a title='scarica il pacchetto' class='btn btn-xs btn-warning ' href='fae_acq_packaging.php?name=" + $(this).attr('ref') + "'><i class='glyphicon glyphicon-compressed'></i>"+ $(this).attr('ref') +"</a>");
-		$("#dialog_fae_email").html("<p class='text-center'><a href='fae_acq_packaging.php?name=" + $(this).attr('ref') + "&email=email' class='btn btn-warning'><b><i class='glyphicon glyphicon-send'></i> Invia il pacchetto </i> </b></a></p><p></p>");
 		var id = $(this).attr('ref');
 		$( "#dialog_packet" ).dialog({
 			minHeight: 1,
@@ -230,6 +229,23 @@ $(function() {
 			show: "blind",
 			hide: "explode",
 			buttons: {
+				"Invia Email":{
+					text:'Invia email al consulente',
+					'class':'btn btn-success',
+					click:function (event, ui) {						
+						$("#mailbutt div").remove();
+						var dest=$("#mailaddress").val();
+						$("#mailaddress").val('');
+						$('#frame_email').attr('src','fae_acq_packaging.php'+'?name='+id+'&email='+'email');
+						$('#frame_email').css({'height': '100%'});
+						$('.frame_email').css({'display': 'block','width': '40%', 'margin-left': '25%', 'z-index':'2000'});
+						$('#close_email').on( "click", function() {
+						$('#frame_email').attr('src','');
+						$('.frame_email').css({'display': 'none'});
+						});
+						$(this).dialog("close");				
+					}
+				},
 				delete:{
 					text:'Elimina il pacchetto',
 					'class':'btn btn-danger',
@@ -243,10 +259,17 @@ $(function() {
 							window.location.replace("./report_docacq.php");
 						}
 					});
-				}},
+					}
+				},
 				"Esci": function() {
 					$(this).dialog("close");
 				}
+				
+			},
+			close: function(){
+				$("#mailbutt div").remove();
+				$("#mailaddress").val('');
+				$(this).dialog('destroy');
 			}
 		});
 		$("#dialog_packet" ).dialog( "open" );
@@ -254,6 +277,13 @@ $(function() {
 });
 </script>
 <form method="GET" >
+	<div class="frame_email panel panel-success" style="display: none; position: fixed; left: 5%; top: 15%; margin-left: 30%; height: 40%">
+		<div class="col-lg-12">
+			<div class="col-xs-11"><h4>e-mail</h4></div>
+			<div class="col-xs-1"><h4><button type="button" id="close_email"><i class="glyphicon glyphicon-remove"></i></button></h4></div>
+		</div>
+		<iframe id="frame_email"  style="height: 90%; width: 100%" src=""></iframe>
+	</div>
 	<div class="framePdf panel panel-success" style="display: none; position: absolute; left: 5%; top: 100px">
 		<div class="col-lg-12">
 			<div class="col-xs-11"><h4><?php echo $script_transl['print'];; ?></h4></div>
@@ -284,7 +314,6 @@ $(function() {
         <p><b>Scarica il pacchetto:</b></p>
         <p class="ui-state-highlight" id="idcodice"></p>
 		<p><b>Invia il pacchetto</b></p>
-        <p class="ui-state-highlight" id="dialog_fae_email"></p>
 	</div>
     <div align="center" class="FacetFormHeaderFont">
         <?php echo $script_transl['title']; ?>

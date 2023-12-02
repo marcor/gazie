@@ -30,7 +30,6 @@ if (!ini_get('safe_mode')) { //se me lo posso permettere...
 }
 $msg = '';
 $gForm = new GAzieForm();
-
 function getFAEunpacked($date=""){// prende tutte le fae di acquisto non impacchettate
 	global $gTables, $admin_aziend;
 	$from = $gTables['tesdoc'];
@@ -83,6 +82,7 @@ if (!isset($_POST['packet']) && !isset($_GET['name'])) { //al primo accesso allo
 	}
 	if (count($resultFAE) > 0 && isset($_GET['email'])){
 		CreateZipFAEacq($resultFAE,$_GET['email']);
+		exit;
 	}
 	if (isset($_GET['email'])){
 		exit;

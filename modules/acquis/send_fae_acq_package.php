@@ -39,7 +39,7 @@ if (isset($_GET['fn'])) {
     $dest_fae_zip_package['e_mail'] = gaz_dbi_get_row($gTables['company_config'], 'var', 'dest_fae_zip_package')['val']; 
 		
     if (strlen($dest_fae_zip_package['e_mail'])>4) {       
-        if ($gMail->sendMail($admin_aziend, $user, $content, $dest_fae_zip_package)){            
+        if ($gMail->sendMail($admin_aziend, $user, $content, $dest_fae_zip_package,'',false)){            
             echo "<p>INVIO FATTURE ELETTRONICHE RIUSCITO!!!</p>";
         }
     } else{
