@@ -113,10 +113,13 @@ if (isset($_POST['close'])){
 				$query="SELECT SUM(quanti) FROM ". $gTables['movmag'] . " WHERE artico='" .$codice. "' AND id_lotmag='" .$v_lm['id']. "' AND operat='1' AND caumag < '99'";
 				$sum_in=gaz_dbi_query($query);
 				$in =gaz_dbi_fetch_array($sum_in);
+        $in['SUM(quanti)']=(isset($in['SUM(quanti)']))?$in['SUM(quanti)']:0;
+
 			// Antonio Germani - vedo quanti sono usciti
 				$query="SELECT SUM(quanti) FROM ". $gTables['movmag'] . " WHERE artico='" .$codice. "' AND id_lotmag='" .$v_lm['id']. "' AND operat='-1' AND caumag < '99'";
 				$sum_out=gaz_dbi_query($query);
 				$out =gaz_dbi_fetch_array($sum_out);
+        $out['SUM(quanti)']=(isset($out['SUM(quanti)']))?$out['SUM(quanti)']:0;
 			if ((intval($v_lm['expiry']))>0){
 				$exp=gaz_format_date($v_lm['expiry']);
 			} else {
@@ -176,10 +179,8 @@ if (isset($_POST['close'])){
 									echo '<i class="glyphicon glyphicon-eye-close"></i>';
 								}
 				}
-				echo '<td>' . gaz_format_quantity($in['SUM(quanti)'], 0, $admin_aziend['decimal_quantity'])
-                .'</td>';
-				echo '<td>' . gaz_format_quantity($out['SUM(quanti)'], 0, $admin_aziend['decimal_quantity'])
-                .'</td>';
+				echo '<td>' . gaz_format_quantity($in['SUM(quanti)'], 0, $admin_aziend['decimal_quantity']) .'</td>';
+				echo '<td>' . gaz_format_quantity($out['SUM(quanti)'], 0, $admin_aziend['decimal_quantity']) .'</td>';
         }
 ?>
 		</table>
