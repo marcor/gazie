@@ -417,7 +417,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ // se NON è il pri
 
         if ($msg == "") { // nessun errore
           // Antonio Germani >>>> inizio SCRITTURA dei database    §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
-          //  echo"<pre>",print_r($form);die;
+          // echo"<pre>",print_r($form);die;
           $start_work = date_format(date_create_from_format('d-m-Y', $form['iniprod']), 'Y-m-d')." ".$form['iniprodtime'];
           $end_work = date_format(date_create_from_format('d-m-Y', $form['fineprod']), 'Y-m-d')." ".$form['fineprodtime'];
             // i dati dell'articolo che non sono nel form li avrò nell' array $resartico
@@ -1441,7 +1441,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
                 }
 
                 $l = 0;
-                //echo "<pre>",print_r($lm->divided);
+                //echo "<pre>divided:",print_r($lm->divided);
                 if ($ld > 0 && ((isset($_POST['Update'])) || (!isset($_GET['Update'])))) { // se NON è il primo accesso per update segnalo preventivamente l'errore Q.ta insufficiente
                   echo "ERRORE ne mancano:", gaz_format_quantity($ld,","), "<br>"; // >>>>> quantità insufficiente - metto come valore ERRORE così potrò ritrovarlo facilmente e annullo quanti lotti sono interessati per questo componente
                   ?>
@@ -1453,7 +1453,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
                   if (!isset($form['amLot'. $nc])){
                     $form['amLot'. $nc]="";
                   }
-                  if (($form['amLot'. $nc] == "autoLot" OR $form['amLot'. $nc]=="")&& $ko=""){ // se selezione lotti automatica
+                  if (($form['amLot'. $nc] == "autoLot" OR $form['amLot'. $nc]=="") && $ko==""){ // se selezione lotti automatica
                     // ripartisco la quantità introdotta tra i vari lotti disponibili per l'articolo
                     foreach ($lm->divided as $k => $v) { // ciclo i lotti scelti da divideLots
                       if ($v['qua'] >= 0.00001) {
