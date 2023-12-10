@@ -148,6 +148,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
   $form['deposit'] = $_POST['deposit'];
   $form['security_deposit'] = $_POST['security_deposit'];
   $form['deposit_type'] = $_POST['deposit_type'];
+  $form['self_checkin'] = $_POST['self_checkin'];
   $form['agent'] = $_POST['agent'];
   $form['tur_tax_mode'] = $_POST['tur_tax_mode'];
   $form['tur_tax']= $_POST['tur_tax'];
@@ -321,48 +322,49 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     }
     $form['preve1']=$form['web_price'];// al momento imposto il prezzo 1 uguale al webprice
     if ($toDo == 'insert') {
-		$array= array('vacation_rental'=>array('accommodation_type' => $_POST['accommodation_type'],'room_type' => $_POST['room_type'],'total_guests' => $_POST['total_guests'],'adult' => $_POST['adult'],'child' => $_POST['child'],'pause' => $_POST['pause'],'fixquote' => floatval($_POST['fixquote']),'deposit' => $_POST['deposit'],'security_deposit' => $_POST['security_deposit'],'deposit_type' => $_POST['deposit_type'],'tur_tax_mode' => $_POST['tur_tax_mode'],'tur_tax' => $_POST['tur_tax'],'agent' => $_POST['agent']));// creo l'array per il custom field
-		$form['custom_field'] = json_encode($array);// codifico in json  e lo inserisco nel form
-		gaz_dbi_table_insert('artico', $form);
-		if (!empty($tbt)) {
-		bodytextInsert(array('table_name_ref' => 'artico_' . $form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
-		}
+      $array= array('vacation_rental'=>array('accommodation_type' => $_POST['accommodation_type'],'room_type' => $_POST['room_type'],'total_guests' => $_POST['total_guests'],'adult' => $_POST['adult'],'child' => $_POST['child'],'pause' => $_POST['pause'],'fixquote' => floatval($_POST['fixquote']),'deposit' => $_POST['deposit'],'security_deposit' => $_POST['security_deposit'],'deposit_type' => $_POST['deposit_type'],'self_checkin' => $_POST['self_checkin'],'tur_tax_mode' => $_POST['tur_tax_mode'],'tur_tax' => $_POST['tur_tax'],'agent' => $_POST['agent']));// creo l'array per il custom field
+      $form['custom_field'] = json_encode($array);// codifico in json  e lo inserisco nel form
+      gaz_dbi_table_insert('artico', $form);
+      if (!empty($tbt)) {
+      bodytextInsert(array('table_name_ref' => 'artico_' . $form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
+      }
     } elseif ($toDo == 'update') {
-		$custom_field=gaz_dbi_get_row($gTables['artico'], "codice", $form['codice'])['custom_field']; // carico il vecchio json custom_field
-		if ($data = json_decode($custom_field,true)){// se c'è un json
-			if (is_array($data['vacation_rental'])){ // se c'è il modulo "vacation rental" lo aggiorno
-				$data['vacation_rental']['accommodation_type']=$_POST['accommodation_type'];
-        $data['vacation_rental']['room_type']=$_POST['room_type'];
-				$data['vacation_rental']['total_guests']=$_POST['total_guests'];
-				$data['vacation_rental']['adult']=$_POST['adult'];
-				$data['vacation_rental']['child']=$_POST['child'];
-        $data['vacation_rental']['pause']=$_POST['pause'];
-        $data['vacation_rental']['fixquote']=floatval($_POST['fixquote']);
-				$data['vacation_rental']['deposit']=$_POST['deposit'];
-        $data['vacation_rental']['security_deposit']=$_POST['security_deposit'];
-				$data['vacation_rental']['deposit_type']=$_POST['deposit_type'];
-				$data['vacation_rental']['tur_tax_mode'] = $_POST['tur_tax_mode'];
-				$data['vacation_rental']['tur_tax']= $_POST['tur_tax'];
-        $data['vacation_rental']['agent']= $_POST['agent'];
-				$form['custom_field'] = json_encode($data);
-			} else { //se non c'è il modulo "vacation_rental" lo aggiungo
-				$data['vacation_rental']= array('accommodation_type' => $_POST['accommodation_type'],'room_type' => $_POST['room_type'],'total_guests' => $_POST['total_guests'],'adult' => $_POST['adult'],'child' => $_POST['child'],'deposit' => $_POST['deposit'],'security_deposit' => $_POST['security_deposit'],'deposit_type' => $_POST['deposit_type'],'tur_tax_mode' => $_POST['tur_tax_mode'],'tur_tax' => $_POST['tur_tax'],'agent' => $_POST['agent']);
-				$form['custom_field'] = json_encode($data);
-			}
-		}
+      $custom_field=gaz_dbi_get_row($gTables['artico'], "codice", $form['codice'])['custom_field']; // carico il vecchio json custom_field
+      if ($data = json_decode($custom_field,true)){// se c'è un json
+        if (is_array($data['vacation_rental'])){ // se c'è il modulo "vacation rental" lo aggiorno
+          $data['vacation_rental']['accommodation_type']=$_POST['accommodation_type'];
+          $data['vacation_rental']['room_type']=$_POST['room_type'];
+          $data['vacation_rental']['total_guests']=$_POST['total_guests'];
+          $data['vacation_rental']['adult']=$_POST['adult'];
+          $data['vacation_rental']['child']=$_POST['child'];
+          $data['vacation_rental']['pause']=$_POST['pause'];
+          $data['vacation_rental']['fixquote']=floatval($_POST['fixquote']);
+          $data['vacation_rental']['deposit']=$_POST['deposit'];
+          $data['vacation_rental']['security_deposit']=$_POST['security_deposit'];
+          $data['vacation_rental']['deposit_type']=$_POST['deposit_type'];
+          $data['vacation_rental']['self_checkin']=$_POST['self_checkin'];
+          $data['vacation_rental']['tur_tax_mode'] = $_POST['tur_tax_mode'];
+          $data['vacation_rental']['tur_tax']= $_POST['tur_tax'];
+          $data['vacation_rental']['agent']= $_POST['agent'];
+          $form['custom_field'] = json_encode($data);
+        } else { //se non c'è il modulo "vacation_rental" lo aggiungo
+          $data['vacation_rental']= array('accommodation_type' => $_POST['accommodation_type'],'room_type' => $_POST['room_type'],'total_guests' => $_POST['total_guests'],'adult' => $_POST['adult'],'child' => $_POST['child'],'deposit' => $_POST['deposit'],'security_deposit' => $_POST['security_deposit'],'deposit_type' => $_POST['deposit_type'],'tur_tax_mode' => $_POST['tur_tax_mode'],'tur_tax' => $_POST['tur_tax'],'agent' => $_POST['agent']);
+          $form['custom_field'] = json_encode($data);
+        }
+      }
 
-		gaz_dbi_table_update('artico', $form['ref_code'], $form);// aggiorno l'artico
-		$bodytext = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", 'artico_' . $form['codice']);
-		if (empty($tbt) && $bodytext) {
-		  // è vuoto il nuovo ma non lo era prima, allora lo cancello
-		  gaz_dbi_del_row($gTables['body_text'], 'id_body', $bodytext['id_body']);
-		} elseif (!empty($tbt) && $bodytext) {
-		  // c'è e c'era quindi faccio l'update
-		  bodytextUpdate(array('id_body', $bodytext['id_body']), array('table_name_ref' => 'artico_' . $form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
-		} elseif (!empty($tbt)) {
-		  // non c'era lo inserisco
-		  bodytextInsert(array('table_name_ref' => 'artico_' . $form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
-		}
+      gaz_dbi_table_update('artico', $form['ref_code'], $form);// aggiorno l'artico
+      $bodytext = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", 'artico_' . $form['codice']);
+      if (empty($tbt) && $bodytext) {
+        // è vuoto il nuovo ma non lo era prima, allora lo cancello
+        gaz_dbi_del_row($gTables['body_text'], 'id_body', $bodytext['id_body']);
+      } elseif (!empty($tbt) && $bodytext) {
+        // c'è e c'era quindi faccio l'update
+        bodytextUpdate(array('id_body', $bodytext['id_body']), array('table_name_ref' => 'artico_' . $form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
+      } elseif (!empty($tbt)) {
+        // non c'era lo inserisco
+        bodytextInsert(array('table_name_ref' => 'artico_' . $form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
+      }
     }
     if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname']) && intval($form['web_public'])>0){
       // aggiorno l'e-commerce ove presente
@@ -433,6 +435,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 				$form['adult'] = $data['vacation_rental']['adult'];
 				$form['child'] = $data['vacation_rental']['child'];
         $form['pause'] = (isset($data['vacation_rental']['pause']))?$data['vacation_rental']['pause']:'';
+        $form['self_checkin'] = (isset($data['vacation_rental']['self_checkin']))?$data['vacation_rental']['self_checkin']:0;
         $form['fixquote'] = (isset($data['vacation_rental']['fixquote']))?$data['vacation_rental']['fixquote']:'';
 				$form['total_guests'] = $data['vacation_rental']['total_guests'];
 				$form['deposit'] = $data['vacation_rental']['deposit'];
@@ -540,6 +543,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['deposit'] = 0;
     $form['security_deposit'] = 0;
     $form['deposit_type'] = 0;
+    $form['self_checkin'] = 0;
     $form['agent'] = 0;
     $form['tur_tax_mode'] =0;
     $form['tur_tax']=0;
@@ -1096,7 +1100,7 @@ if ($modal_ok_insert === true) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="web_price" class="col-sm-4 control-label"><?php echo $script_transl['web_price']; ?></label>
-                            <input id="webprice" class="col-sm-4" type="text"  value="<?php echo $form['web_price']; ?>" name="web_price" maxlength="15" />
+                            <input id="webprice" class="col-sm-4" type="text"  value="<?php echo $form['web_price']; ?>" name="web_price" maxlength="15" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"/>
                         </div>
                         <div class="col-sm-4">
                         </div>
@@ -1112,7 +1116,7 @@ if ($modal_ok_insert === true) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="fixquote" class="col-sm-4 control-label">Importo fisso da aggiungere ad ogni locazione</label>
-                            <input class="col-sm-2" type="text" value="<?php echo $form['fixquote']; ?>" name="fixquote" maxlength="50"/>
+                            <input class="col-sm-2" type="text" value="<?php echo $form['fixquote']; ?>" name="fixquote" maxlength="50" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"/>
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -1141,7 +1145,7 @@ if ($modal_ok_insert === true) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="deposit" class="col-sm-4 control-label">Caparra</label>
-                            <input class="col-sm-4" type="text" value="<?php echo $form['deposit']; ?>" name="deposit" maxlength="15" />
+                            <input class="col-sm-4" type="text" value="<?php echo $form['deposit']; ?>" name="deposit" maxlength="15" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"/>
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -1158,8 +1162,9 @@ if ($modal_ok_insert === true) {
                  <div id="SECdeposit" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label for="SECdeposit" class="col-sm-4 control-label">Deposito cauzionale</label>
-                            <input class="col-sm-4" type="text" value="<?php echo $form['security_deposit']; ?>" name="security_deposit" maxlength="15" />
+                            <label class="col-sm-4 control-label">Deposito cauzionale</label>
+                            <input class="col-sm-4" type="text" value="<?php echo $form['security_deposit']; ?>" name="security_deposit" maxlength="15" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"/>
+
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -1227,6 +1232,21 @@ if ($modal_ok_insert === true) {
                             <?php
                             $g2Form->selectFrom2DB('agenti','clfoco','codice','descri', 'agent','id_agente', $form['agent'], 'id_agente', 1, ' - ','id_fornitore','TRUE','FacetSelect' , null);
                             ?>Se selezionato, i documenti avranno la sua intestazione; le e-mail saranno indirizzate anche a lui; i pagamenti del front-end saranno richiesti per lui.
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+                 <div id="selfchek" class="row IERincludeExcludeRow">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">
+                            <span data-toggle="popover" title="Self check-in"
+                            data-content="Per abilitare il self check-in inserire entro quanti giorni prima si può fare. Lasciare a zero per disabilitarlo."
+                            class="glyphicon glyphicon-info-sign" style="cursor: pointer;">
+                            </span>
+                            Self check-in
+                            </label>
+                            <input class="col-sm-2" type="text" value="<?php echo $form['self_checkin']; ?>" name="self_checkin" maxlength="2" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*?)\..*/g, '$1');"/>&nbsp; giorni prima
+
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -1472,6 +1492,10 @@ $(document).ready(function() {
   var webprice = Number(document.getElementById("webprice").value)
   var webpriceic = webprice + ((webprice * aliquo)/100);
   $("#ivac").html("IVA comp."+webpriceic.toFixed(2).replace('.',','));
+  <!-- script per popover -->
+  $('[data-toggle="popover"]').popover({
+    html: true
+  });
 
 });
 $("#aliiva, #webprice").on("keyup",function(){
@@ -1480,6 +1504,7 @@ $("#aliiva, #webprice").on("keyup",function(){
  var webpriceic = webprice + ((webprice * aliquo)/100);
  $("#ivac").html("IVA comp."+webpriceic.toFixed(2).replace('.',','));
  });
+
 </script>
 <?php
 require("../../library/include/footer.php");

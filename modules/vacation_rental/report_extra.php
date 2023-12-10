@@ -45,6 +45,7 @@ if ($admin_aziend['lang']=="italian"){
 }else{
 	$lang="en";
 }
+echo "pippo session id:",session_id();
 // creo l'array (header => campi) per l'ordinamento dei record
 $sortable_headers = array  (
             "Codice" => 'codice',

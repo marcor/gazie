@@ -43,7 +43,7 @@ $sortable_headers = array  (
 			"Disponibilità" => '',
             'Elimina' => ''
 );
-
+echo "pippo session id:",session_id();
 $tablejoin = $gTables['artico_group'];
 
 $ts = new TableSorter(
