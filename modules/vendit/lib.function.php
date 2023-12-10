@@ -582,7 +582,7 @@ class venditCalc extends Compute {
    }
 
 }
-
+#[\AllowDynamicProperties]
 class lotmag {
 
   public $available;
