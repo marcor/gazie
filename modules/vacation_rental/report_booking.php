@@ -659,11 +659,12 @@ $(function() {
 	});
 
   $.datetimepicker.setLocale('it');
-  $("#dialog_check_inout").dialog({ autoOpen: false });
   $("#datepicker").datetimepicker({
     defaultDate: new Date(),
     format:'d-m-Y H:i'
   });
+
+  $("#dialog_check_inout").dialog({ autoOpen: false });
 	$('.dialog_check_inout').click(function() {
 		$("p#id_status_check").html($(this).attr("refcheck"));
 		$("p#de_status_check").html($(this).attr("prodes"));
@@ -732,7 +733,69 @@ $(function() {
 		$("#dialog_check_inout" ).dialog( "open" );
 	});
 
+  $("#dialog_selfcheck").dialog({ autoOpen: false });
+	$('.dialog_selfcheck').click(function() {
+		$("p#num_status_self").append(" "+$(this).attr("numdoc"));
+		$("p#de_status_self").html($(this).attr("status_now"));
+    var msgself = $(this).attr('msgself');
+    $("#msgself").val(msgself);
+    $("#msgself").prop("disabled", "disabled");// all'inizio disabilito il test messaggio perché è anche disabilitato l'ivio mail
+    var ref = $(this).attr('ref');
+    var id_anagra = $(this).attr('id_anagra');
+    var new_stato_lavorazione = $(this).attr("proself");
+
+    var cust_mail = $(this).attr("cust_mail");
+    $("#sel_stato_self").val(new_stato_lavorazione);
+    $('#sel_stato_self').on('change', function () {
+        //retrieve selected option and text outside handler
+        new_stato_lavorazione = this.value;
+    });
+     $('#checkbox_email_self').on('change', function () {//retrieve click on check box mail
+
+       if(($('#checkbox_email_self').prop('checked'))){// se invio mail posso scrivere il testo
+         $("#msgself").prop("disabled", false);
+       }else{// se non invio mail il testo è bloccato
+          $("#msgself").prop("disabled", "disabled");
+       }
+    });
+		$( "#dialog_selfcheck" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{
+					text:'Modifica',
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+            $("#dialog_selfcheck").css("background", "url("+'spinner.gif'+") center no-repeat");
+            var email=$('#checkbox_email_self').prop('checked');
+            var msgself=$('#msgself').val();
+            var new_text_lavorazione = $(this).find("option:selected").text();
+            $.ajax({
+              data: {'opt':'selfcheck','term':ref,'new_status':new_stato_lavorazione,'new_text':new_text_lavorazione,'email':email,'cust_mail':cust_mail, 'msgself':msgself,'id_anagra':id_anagra},
+              type: 'GET',
+              url: 'ajax_request.php',
+              success: function(output) {
+                 //alert('ho passato questi >> ref:'+ref+' new:'+new_stato_lavorazione+' email:'+email+' cust mail:'+cust_mail+' text:'+msgself);
+                 //alert(output);
+                window.location.replace("./report_booking.php");
+              }
+            });
+          }},
+        "Non cambiare": function() {
+          $(this).dialog("close");
+          $(this).dialog("destroy");
+				}
+			}
+		});
+		$("#dialog_selfcheck" ).dialog( "open" );
+	});
+
 });
+
+
 function printPdf(urlPrintDoc){
   //alert(urlPrintDoc);
 	$(function(){
@@ -862,6 +925,23 @@ $ts->output_navbar();
     <p class="ui-state-highlight" id="mail_adrs"></p>
     <p id="mail_alert2"><?php echo $script_transl['mail_alert2']; ?></p>
     <p class="ui-state-highlight" id="mail_attc"></p>
+</div>
+ <div style="display:none" id="dialog_selfcheck" title="Self Web Check-in">
+    <p class="ui-state-highlight" id="num_status_self"><b>prenotazione</b></p>
+    <p class="ui-state-highlight" id="de_status_self"></p>
+    <select name="sel_stato_self" id="sel_stato_self">
+        <option value="0">Non attivato</option>
+        <option value="1">Da approvare</option>
+        <option value="2">Approvato</option>
+        <option value="3">Rifiutato</option>
+    </select>
+    <span id="date_stato_check"></span>
+    <p><br>Invia messaggio: <input type="text" name="msgself" id="msgself" value=""></p>
+    <?php if (isset($vacation_url_user) && strlen($vacation_url_user)>4){ ?>
+    <div  id="selfcheck_email">
+    invia email <input id="checkbox_email_self"  type="checkbox" name="checkbox_email_self" value="0" >
+    </div>
+    <?php } ?>
 </div>
 <!-- fine div dialog -->
 
@@ -1092,6 +1172,26 @@ $ts->output_navbar();
                 $stato_btn_booking = 'btn-success';
                 $title_booking = "Ultimo invio: ". $r['BookingQuote_email_inviata'];
               }
+              if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['self_checkin_status']) && isset($datahouse['vacation_rental']['self_checkin'])){// status: 0=disabled; 1=processing; 2=enabled; 3=issue
+				$data['vacation_rental']['self_checkin_status_msg']=(isset($data['vacation_rental']['self_checkin_status_msg']))?$data['vacation_rental']['self_checkin_status_msg']:''; // se ancora non ci sono messaggi evito l'undefined
+                if (intval($datahouse['vacation_rental']['self_checkin'])>0){// se è abilitato per l'alloggio
+                  if (intval($data['vacation_rental']['self_checkin_status'])==0){
+                    $stato_btn_selfcheck = 'btn-light';
+                    $title_selfcheck = "self check-in non attivato";
+                  }elseif(intval($data['vacation_rental']['self_checkin_status'])==1){
+                    $stato_btn_selfcheck = 'btn-info';
+                    $title_selfcheck = "self check-in da approvare";
+                  }elseif(intval($data['vacation_rental']['self_checkin_status'])==2){
+                    $stato_btn_selfcheck = 'btn-success';
+                    $title_selfcheck = "self check-in approvato";
+                  }elseif(intval($data['vacation_rental']['self_checkin_status'])==3){
+                    $stato_btn_selfcheck = 'btn-danger';
+                    $title_selfcheck = "self check-in rifiutato";
+                  }
+                }
+              }else{
+                $stato_btn_selfcheck="";
+              }
             } else {
               $r['status'] = '';
               $stato_btn_booking ='btn-default';
@@ -1186,8 +1286,13 @@ $ts->output_navbar();
               // Colonna importo
               $amount=get_totalprice_booking($r['id_tes'],TRUE,FALSE,"",TRUE);
               $amountvat=get_totalprice_booking($r['id_tes'],TRUE,TRUE,$admin_aziend['preeminent_vat'],TRUE);
+              $amountvat_secdep=get_totalprice_booking($r['id_tes'],TRUE,TRUE,$admin_aziend['preeminent_vat'],TRUE,TRUE);
+
               echo "<td class='text-right' style='white-space:nowrap;'>","imp. € ".gaz_format_quantity($amount,1,2),"";
               echo "<br>","iva c. € ".gaz_format_quantity($amountvat,1,2),"";
+              if (($amountvat_secdep-$amountvat)>0){
+                echo "<br>","Dep.cauz. € ".gaz_format_quantity($amountvat_secdep-$amountvat,1,2),"";
+              }
               if ( $tipo !== "VPR" ) {
               $paid=get_total_paid($r['id_tes']);
               $stato_pig_btn = ($paid>0)?'btn-warning':'btn-default';
@@ -1259,14 +1364,21 @@ $ts->output_navbar();
                           </a>
                           <?php
                         }
-
-                         if (isset($r['text'])){// se c'è una recensione inserisco icona
-                           ?>
-                          <a title="Recensione" class="btn btn-xs <?php echo $feed_stato_btn; ?> dialog_feedback" ref="<?php echo $r['id_feedback']; ?>" feed_text="<?php echo $r['text']; ?>" feed_status="<?php echo $r['feed_status']; ?>">
-                            <i class="glyphicon glyphicon-comment"></i>
-                          </a>
+                        if ($stato_btn_selfcheck!==""){// se c'è il self checkin inserisco icona
+                         ?>
+                        <a title="<?php echo $title_selfcheck; ?>" class="btn btn-xs <?php echo $stato_btn_selfcheck; ?> dialog_selfcheck" ref="<?php echo $r['id_tes']; ?>" status_now="<?php echo $title_selfcheck; ?>" proself="<?php echo $data['vacation_rental']['self_checkin_status']; ?>" cust_mail="<?php echo $r['base_mail']; ?>" numdoc="<?php echo $r['numdoc']; ?>" id_anagra="<?php echo $r['id']; ?>" msgself="<?php echo $data['vacation_rental']['self_checkin_status_msg']; ?>">
+                          <i class="glyphicon glyphicon-ok-circle"></i>
+                        </a>
                         <?php
-                         }
+                        }
+
+                        if (isset($r['text'])){// se c'è una recensione inserisco icona
+                         ?>
+                        <a title="Recensione" class="btn btn-xs <?php echo $feed_stato_btn; ?> dialog_feedback" ref="<?php echo $r['id_feedback']; ?>" feed_text="<?php echo $r['text']; ?>" feed_status="<?php echo $r['feed_status']; ?>">
+                          <i class="glyphicon glyphicon-comment"></i>
+                        </a>
+                        <?php
+                        }
                   }
 
               echo "</td>";

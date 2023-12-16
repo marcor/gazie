@@ -147,7 +147,9 @@ $strScript = array(
 		'mail_alert0' => 'Invio documento con email',
         'mail_alert1' => 'Hai scelto di inviare una e-mail all\'indirizzo: ',
         'mail_alert2' => 'con allegato il seguente documento di vendita:',
-		'search' => 'Ricerca'
+		'search' => 'Search',
+    'email_selfchek' => 'In reference to your self check-in we inform you that it is: ',
+    'email_selfchek_msg' => 'More advise: '
        ),
     "admin_movmag.php" =>
       array("movimento di magazzino ",
@@ -829,7 +831,8 @@ $strScript = array(
 		'exp_lev' => 'but the points are expired and your level is going to delete.',
     'upd_data' => 'Update data',
     'email_extra_sbj' =>'Added extras on reservation n.',
-    'email_extra_body' =>'<p>Please note that the requested extras have been added to the reservation in question.</p><p>You can view the update on your user page. (The credentials to access your user page are always those reported in the initial booking confirmation email) </p>'
+    'email_extra_body' =>'<p>Please note that the requested extras have been added to the reservation in question.</p><p>You can view the update on your user page. (The credentials to access your user page are always those reported in the initial booking confirmation email) </p>',
+    'selfcheck_button' => 'Read self check-in rules'
     ),
 
   "admin_extra.php" =>
@@ -949,6 +952,53 @@ $strScript = array(
     'no_review' => 'There are no reviews yet',
     'prev' => ' Previous ',
     'next' => ' Next '
+    ),
+    "self_checkin.php" =>
+    array('title' => 'Self check-in manager',
+        'text1' => 'Perfect, the documents have been uploaded correctly!',
+        'text2' => 'Now, check that you have paid the security deposit and the rental balance. If payment is not made, self check-in cannot be enabled.',
+        'text3' => 'There would still be € to be paid ',
+        'text4' => 'Payments can always be made from your user booking page.',
+        'text5' => '<p>An administrator will review what is sent. If everything is completed you will receive the code and instructions for self check-in.</p><p><br>For any need, do not hesitate to contact the structure.</p>',
+        'instr1' =>'Group leader identification for the check-in of ',
+        'instr2' => 'Take a selfie with an ID in your hand and the check-in sign.',
+        'instr3' => 'The person in this selfie must be: ',
+        'instr4' => '<p>You must take a photo of yourself (selfie) holding both your identity document and a piece of paper with the words "Check-in \'<i>check-in date</i> \'" handwritten on it. The check-in date must be the date of arrival at the accommodation (e.g. 13/06/2023).</p><p>Face the camera and frame yourself only from the shoulders to the top of your head, similar to a passport photo; Use a plain wall as a backdrop if possible.</p><p>Make sure the light is coming from in front of you, not behind you, making sure your face is clearly visible without backlighting; DAYLIGHT IS RECOMMENDED.</p><p>Do not wear sunglasses, hats or anything that covers your face. If you wear glasses in your passport photo, wear them in your selfie photo too. If you are not wearing glasses in your passport photo, remove them when taking the selfie;</p><p>The identity document must also be completely and clearly visible on the selfie: PAY ATTENTION TO REFLECTIONS.</p>',
+        'instr5' => '<p>You must take a photo of yourself (selfie) holding both your identity document and a piece of paper with the words \" Check-in \'<i>check-in date</i >\' \" handwritten on it. The check-in date must be the date of arrival at the accommodation (e.g. 13/06/2023).</p><p>Face the camera and frame yourself only from the shoulders to the top of your head, similar to a passport photo; Use a plain wall as a backdrop if possible.</p><p>Make sure the light is coming from in front of you, not behind you, making sure your face is clearly visible without backlighting; DAYLIGHT IS RECOMMENDED.</p><p>Do not wear sunglasses, hats or anything that covers your face. If you wear glasses in your passport photo, wear them in your selfie photo too. If you are not wearing glasses in your passport photo, remove them when taking the selfie;</p><p>The identity document must also be completely and clearly visible on the selfie: PAY ATTENTION TO REFLECTIONS.</p><p>Use selfie camera (uses less memory).</p>',
+        'webcam_start' => 'Start the webcam',
+        'take_photo' => 'Take Snapshot',
+        'go' => 'Go ahead',
+        'submit' => 'Submit',
+        'selfie_success' =>'Sending selfie successful, thank you!',
+        'text6' => 'Upload your identity cards',
+        'instr6' => '<h2>When uploading your photo ID, be careful to:</h2>
+          <ul>
+          <li>Make sure your document is valid and not expired;</li>
+          <li>Make sure it has no holes or other modifications that prevent it from being read;</li>
+          <li>You must upload both sides of your document (front and back);</li>
+          <li>When photographing the document, avoid cutting corners or sides;</li>
+          <li>Make sure the entire document is completely visible and in focus;</li>
+          <li>Only jpg, jpeg and png formats are accepted.</li>
+          </ul>',
+        'text7' => '<b>group leader/head of family</b>',
+        'text8' => 'the guest',
+        'text9' => 'Insert name and identity document of the',
+        'name' => 'Name',
+        'surname' => 'Surname',
+        'load_doc' => 'Upload the identity document -FRONT',
+        'load_doc_back' => 'Upload the identity document -BACK',
+        'text10' => 'insert name and document of the child',
+        'no_doc' => 'He has not id document',
+        'b_place' => 'Birth place',
+        'b_date' => 'Date of birth',
+        'r_place' => 'Place of residence',
+        'send' => 'Send',
+        'text11' => 'Perfect, the documents have been uploaded correctly!',
+        'text12' => '<p>Now, check that you have paid the security deposit and the rental balance. If payment is not made, self check-in cannot be enabled.</p>',
+        'text13' => 'There would still be to be paid € ',
+        'text14' => 'Payments can always be made from your user booking page.',
+        'text15' => '<p>An administrator will view what you sent. If everything is OK you will receive the code and instructions for self check-in.</p><p><br>For any need, do not hesitate to contact the structure.</p>'
+
     )
 );
 ?>

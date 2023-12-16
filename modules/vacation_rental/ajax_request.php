@@ -50,7 +50,6 @@ if (isset($_GET['term'])) {
     } else {
         $opt = 'orders';
     }
-
     switch ($opt) {
       case 'point':
         // Antonio Germani prendo i dati IMAP utente, se ci sono
@@ -288,6 +287,118 @@ if (isset($_GET['term'])) {
             echo "Non c'è nulla da clonare";
           }
         }
+      break;
+      case 'selfcheck':
+        // Antonio Germani prendo i dati IMAP utente, se ci sono
+        $custom_field = gaz_dbi_get_row($gTables['anagra'], 'id', $admin_aziend['id_anagra'])['custom_field'];
+        $imap_usr='';
+        if ($data = json_decode($custom_field,true)){// se c'è un json
+          if (isset($data['config'][$admin_aziend['company_id']]) && is_array($data['config'])){ // se c'è il modulo "config" e c'è l'azienda attuale posso procedere
+            list($encrypted_data, $iv) = explode('::', base64_decode($data['config'][$admin_aziend['company_id']]['imap_pwr']), 2);
+            $imap_pwr=openssl_decrypt($encrypted_data, 'aes-128-cbc', $_SESSION['aes_key'], 0, $iv);
+            $imap_usr=$data['config'][$admin_aziend['company_id']]['imap_usr'];
+            $imap_sent_folder=$data['config'][$admin_aziend['company_id']]['imap_sent_folder'];
+            $imap_server = gaz_dbi_get_row($gTables['company_config'], 'var', 'imap_server')['val'];
+            $imap_port = gaz_dbi_get_row($gTables['company_config'], 'var', 'imap_port')['val'];
+            $imap_secure = gaz_dbi_get_row($gTables['company_config'], 'var', 'imap_secure')['val'];
+          }
+        }
+
+        $tesbro = gaz_dbi_get_row($gTables['tesbro'], 'id_tes', intval($_GET['term']));
+
+        if (isset($tesbro['custom_field']) && $datatesbro = json_decode($tesbro['custom_field'], TRUE)) { // se esiste un json nel custom field della testata
+          $datatesbro['vacation_rental']['self_checkin_status']=intval($_GET['new_status']);
+          if (isset($_GET['msgself']) && isset($_GET['email']) && $_GET['email']=='true'){// se devo inviare la mail e ho un messaggio, lo memorizzo
+            $datatesbro['vacation_rental']['self_checkin_status_msg']=$_GET['msgself'];
+          }
+          $custom_field = json_encode($datatesbro);
+          $codice=[];
+          $codice[0]='id_tes';
+          $codice[1]=intval($_GET['term']);
+          tesbroUpdate($codice, array('custom_field'=>$custom_field));
+
+        }else{
+          echo "ERRORE: non può esistere una prenotazione senza custom_field";
+          return;
+        }
+        if ($_GET['email']=='true' && filter_var($_GET['cust_mail'], FILTER_VALIDATE_EMAIL)){
+          $result = gaz_dbi_get_row($gTables['anagra'], "id", intval($_GET['id_anagra']));
+          $language=gaz_dbi_get_row($gTables['languages'], "lang_id", $result['id_language']); // carico la lingua del cliente
+          $langarr = explode(" ",$language['title_native']);
+          $lang = strtolower($langarr[0]);
+          if (file_exists("lang.".$lang.".php")){// se esiste
+            include "lang.".$lang.".php";// carico il file traduzione lingua
+          }else{// altrimenti carico di default la lingua inglese
+            include "lang.english.php";
+          }
+          $script_transl=$strScript['report_booking.php'];
+          // imposto PHP Mailer per invio email di cambio stato
+          $host = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_server')['val'];
+          $usr = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_user')['val'];
+          //$psw = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_password')['val'];
+          $rsdec=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = 'smtp_password'");
+          $rdec=gaz_dbi_fetch_row($rsdec);
+          $psw=$rdec?$rdec[0]:'';
+          $port = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_port')['val'];
+          $mail = new PHPMailer(true);
+          $mail->CharSet = 'UTF-8';
+          //Server settings
+          $mail->SMTPDebug  = 0;                           //Enable verbose debug output default: SMTP::DEBUG_SERVER;
+          $mail->isSMTP();                                 //Send using SMTP
+          $mail->Host       = $host;                       //Set the SMTP server to send through
+          $mail->SMTPAuth   = true;                        //Enable SMTP authentication
+          $mail->Username   = $usr;                        //SMTP username
+          $mail->Password   = $psw;                        //SMTP password
+          $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; //Enable implicit TLS encryption
+          $mail->Port       = $port;                       //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+
+          // creo e invio email di conferma
+          //Recipients
+          $mail->setFrom($admin_aziend['e_mail'],$admin_aziend['ragso1']." ".$admin_aziend['ragso2']); // sender (e-mail dell'account che sta inviando)
+          $mail->addReplyTo($admin_aziend['e_mail']); // reply to sender (e-mail dell'account che sta inviando)
+          if (filter_var($result['e_mail'], FILTER_VALIDATE_EMAIL)){
+            $mail->addAddress($result['e_mail']);                  // se c'è invio all'email destinatario principale
+          } else{
+            $mail->addAddress($result['e_mail2']);                  // altrimenti alla secondaria
+          }
+          if ($imap_usr==''){
+            $mail->addCC($admin_aziend['e_mail']); //invio copia a mittente
+          }
+          $mail->isHTML(true);
+          $mail->Subject = "Web self check-in: ".$script_transl['booking']." ".$tesbro['numdoc'].' '.$script_transl['of'].' '.gaz_format_date($tesbro['datemi']);
+          $mail->Body = "<p>".$script_transl['email_selfchek']." ".$_GET['new_text']."</p>";
+          if(strlen($_GET['msgself'])>2){
+             $mail->Body .= "<p>".$script_transl['email_selfchek_msg']." ".$_GET['msgself']."<p>";
+          }
+          $mail->Body .= "<p><b>".$admin_aziend['ragso1']." ".$admin_aziend['ragso2']."</b></p>";
+
+          if($mail->send()) {
+            if ($imap_usr!==''){// se ho un utente imap carico la mail nella sua posta inviata
+              if($imap = @imap_open("{".$imap_server.":".$imap_port."/".$imap_secure."}".$imap_sent_folder, $imap_usr, $imap_pwr)){
+                if ($append=@imap_append($imap, "{".$imap_server."}".$imap_sent_folder, $mail->getSentMIMEMessage(),"\\seen")){
+                        // inserimento avvenuto
+                }else{
+                  $errors = @imap_errors();
+                  ?>
+                  <script>
+                  alert('carico mail inviata in posta inviata NON riuscito <?php echo implode ('; ', $errors ); ?>');
+                  </script>
+                  <?php
+                }
+              }else{
+                $errors = @imap_errors();
+                  ?>
+                   <script>
+                  alert('carico mail inviata in posta inviata NON riuscito <?php echo implode ('; ', $errors ); ?>');
+                  </script>
+                  <?php
+              }
+            }
+          }else {
+            echo "Errore imprevisto nello spedire la mail di self check-in: " . $mail->ErrorInfo;
+          }
+        }
+
       break;
       default:
       return false;

@@ -261,7 +261,7 @@ function tour_tax_daytopay($night,$start,$end,$tour_tax_from,$tour_tax_to,$tour_
 }
 
 // calcolo totale locazione
-function get_totalprice_booking($tesbro,$tourist_tax=TRUE,$vat=FALSE,$preeminent_vat="",$add_extra=FALSE){
+function get_totalprice_booking($tesbro,$tourist_tax=TRUE,$vat=FALSE,$preeminent_vat="",$add_extra=FALSE,$security_deposit=FALSE){// security_deposit viene calcolato, se TRUE, solo se il totale deve essere iva compresa +++ preeminent vat serve solo per calcolare l'iva sulle eventuali spese se è nulla le spese vanno senza iva
   if ($tesbro!==''){
     $tesbro=intval($tesbro);
     global $link, $azTables, $gTables;// posso chiamare la funzione con entrambi i metodi
@@ -302,20 +302,37 @@ function get_totalprice_booking($tesbro,$tourist_tax=TRUE,$vat=FALSE,$preeminent
       }else {
          echo "Error: " . $sql . "<br>" . mysqli_error($link);
       }
-    }elseif (intval($preeminent_vat)>0){// devo restituire iva compresa
+    }else{// devo restituire iva compresa
 
-      $sql = "SELECT ".$tablerig.".quanti, ".$tablerig.".prelis, ".$tableiva.".aliquo FROM ".$tablerig." LEFT JOIN ".$tableiva." ON ".$tableiva.".codice = ".$tablerig.".codvat "." LEFT JOIN ".$tableart." ON ".$tablerig.".codart = ".$tableart.".codice ".$where;
-      $totalprice=0;
+      $sql = "SELECT ".$tablerig.".quanti, ".$tablerig.".prelis, ".$tableiva.".aliquo, ".$tableart.".codice FROM ".$tablerig." LEFT JOIN ".$tableiva." ON ".$tableiva.".codice = ".$tablerig.".codvat "." LEFT JOIN ".$tableart." ON ".$tablerig.".codart = ".$tableart.".codice ".$where;
+      $totalprice=0;$totalsecdep=0;
       if ($result = mysqli_query($link, $sql)) {
         foreach ($result as $res){
           $totalprice += ($res['prelis']*$res['quanti'])+((($res['prelis']*$res['quanti'])*$res['aliquo'])/100);
+          if ($security_deposit==TRUE){
+            $sql = "SELECT custom_field FROM ".$tableart." WHERE ".$tableart.".codice = '".$res['codice']."'";
+            if ($result = mysqli_query($link, $sql)) {
+              $row = mysqli_fetch_assoc($result);
+              if (isset($row['custom_field']) && ($data = json_decode($row['custom_field'],true))){// se c'è un json in codart
+                if (isset($data['vacation_rental']['security_deposit']) && floatval($data['vacation_rental']['security_deposit'])>0){
+                  $totalsecdep += floatval($data['vacation_rental']['security_deposit']);
+                }
+              }
+            }else{
+              echo "Error: " . $sql . "<br>" . mysqli_error($link);
+            }
+          }
         }
-        $sql = "SELECT aliquo FROM ".$tableiva." WHERE ".$tableiva.".codice = ".intval($preeminent_vat);
-        if ($result = mysqli_query($link, $sql)) {
-          $row = mysqli_fetch_assoc($result);
-          $spevat=$row['aliquo'];
+        if (intval($preeminent_vat)>0){
+          $sql = "SELECT aliquo FROM ".$tableiva." WHERE ".$tableiva.".codice = ".intval($preeminent_vat);
+          if ($result = mysqli_query($link, $sql)) {
+            $row = mysqli_fetch_assoc($result);
+            $spevat=$row['aliquo'];
+          }else{
+            echo "Error: " . $sql . "<br>" . mysqli_error($link);
+          }
         }else{
-          echo "Error: " . $sql . "<br>" . mysqli_error($link);
+          $spevat=0;
         }
         $where = " WHERE id_tes = '".$tesbro."'";
         $sql = "SELECT speban FROM ".$tabletes.$where." LIMIT 1";
@@ -324,7 +341,7 @@ function get_totalprice_booking($tesbro,$tourist_tax=TRUE,$vat=FALSE,$preeminent
           $rowtes['speban']=(isset($rowtes['speban']))?$rowtes['speban']:0;
           $rowtes['speban'] = $rowtes['speban']+(($rowtes['speban']*$spevat)/100);
           $totalprice= $totalprice+$rowtes['speban'];// aggiungo eventuali spese bancarie
-          return  $totalprice;
+          return  $totalprice+$totalsecdep;
         }else{
           echo "Error: " . $sql . "<br>" . mysqli_error($link);
         }
@@ -534,17 +551,17 @@ function check_availability($start,$end,$house_code, $open_from="", $open_to="")
 function set_imap($id_anagra){// restituisce le impostazioni imap tranne la password
   global $genTables,$azTables,$link,$IDaz;
   if (intval($id_anagra)>0){
-    $sql = "SELECT custom_field, codice FROM ".$genTables."anagra"." LEFT JOIN ".$azTables."clfoco"." ON ".$azTables."clfoco".".id_anagra = ".$id_anagra." WHERE id = ".$id_anagra." AND codice LIKE '2%' LIMIT 1";
+    $sql = "SELECT ".$genTables."anagra.custom_field, codice FROM ".$genTables."anagra"." LEFT JOIN ".$azTables."clfoco"." ON ".$azTables."clfoco".".id_anagra = ".$id_anagra." WHERE id = ".$id_anagra." AND codice LIKE '2%' LIMIT 1";
     if ($result = mysqli_query($link, $sql)) { // prendo il custom field del proprietario
       $anagra = mysqli_fetch_assoc($result);
       $custom_field=$anagra['custom_field'];
     }else {
        echo "Error: " . $sql . "<br>" . mysqli_error($link);
     }
-    if ($data = json_decode($custom_field,true)){// se c'è un json e c'è una mail aziendale utente
+    if (isset($custom_field) && $data = json_decode($custom_field,true)){// se c'è un json e c'è una mail aziendale utente
       $imap=[]; // imap_pwr me la devo prendere per forza dal manul setting perché la decriptazione di quella di GAzie usa $_SESSION['aes_key'] e qui non ce l'ho
       if (isset($data['config']) && isset($data['config'][$IDaz])){ // se c'è il modulo "config" e c'è l'azienda attuale posso procedere
-		$imap['imap_usr']=$data['config'][$IDaz]['imap_usr'];
+        $imap['imap_usr']=$data['config'][$IDaz]['imap_usr'];
         $imap['imap_sent_folder']=$data['config'][$IDaz]['imap_sent_folder'];
         $sql = "SELECT val FROM ".$azTables."company_config"." WHERE var = 'imap_server' LIMIT 1";
         if ($result = mysqli_query($link, $sql)) {
@@ -561,47 +578,47 @@ function set_imap($id_anagra){// restituisce le impostazioni imap tranne la pass
           $val = mysqli_fetch_assoc($result);
           $imap['imap_secure']=$val['val'];
         }
-		return $imap;
+        return $imap;
       } else{// provo a vedere se è connesso con un utente amministratore
-		
-		$sql = "SELECT adminid FROM ".$azTables."agenti"." WHERE id_fornitore = '".$anagra['codice']."' LIMIT 1";
-		if ($result = mysqli_query($link, $sql)) {
-		  $val = mysqli_fetch_assoc($result);
-		 if (isset($val) && $val['adminid'] !== "no_user"){// se il proprietario è connesso con un utente admin
-			$sql = "SELECT id_anagra FROM ".$genTables."admin"." WHERE user_name = '".$val['adminid']."' LIMIT 1";
-			if ($result = mysqli_query($link, $sql)) {
-				$val = mysqli_fetch_assoc($result);
-				$sql = "SELECT custom_field FROM ".$genTables."anagra"." WHERE id = '".$val['id_anagra']."' LIMIT 1";
-				if ($result = mysqli_query($link, $sql)) {
-				  $anagra = mysqli_fetch_assoc($result);
-				  $custom_field=$anagra['custom_field'];
-				  if ($data = json_decode($custom_field,true)){// se c'è un json 
-					if (isset($data['config']) && isset($data['config'][$IDaz])){ // se c'è il modulo "config" e c'è l'azienda attuale posso procedere
-						$imap['imap_usr']=$data['config'][$IDaz]['imap_usr'];
-						$imap['imap_sent_folder']=$data['config'][$IDaz]['imap_sent_folder'];
-						$sql = "SELECT val FROM ".$azTables."company_config"." WHERE var = 'imap_server' LIMIT 1";
-						if ($result = mysqli_query($link, $sql)) {
-						  $val = mysqli_fetch_assoc($result);
-						  $imap['imap_server']=$val['val'];
-						}
-						$sql = "SELECT val FROM ".$azTables."company_config"." WHERE var = 'imap_port' LIMIT 1";
-						if ($result = mysqli_query($link, $sql)) {
-						  $val = mysqli_fetch_assoc($result);
-						  $imap['imap_port']=$val['val'];
-						}
-						$sql = "SELECT val FROM ".$azTables."company_config"." WHERE var = 'imap_secure' LIMIT 1";
-						if ($result = mysqli_query($link, $sql)) {
-						  $val = mysqli_fetch_assoc($result);
-						  $imap['imap_secure']=$val['val'];
-						}
-						return $imap;
-					}				  
-				  }				  
-				}
-			}
-		 }
-		}
-	  }      
+
+        $sql = "SELECT adminid FROM ".$azTables."agenti"." WHERE id_fornitore = '".$anagra['codice']."' LIMIT 1";
+        if ($result = mysqli_query($link, $sql)) {
+          $val = mysqli_fetch_assoc($result);
+         if (isset($val) && $val['adminid'] !== "no_user"){// se il proprietario è connesso con un utente admin
+          $sql = "SELECT id_anagra FROM ".$genTables."admin"." WHERE user_name = '".$val['adminid']."' LIMIT 1";
+          if ($result = mysqli_query($link, $sql)) {
+            $val = mysqli_fetch_assoc($result);
+            $sql = "SELECT custom_field FROM ".$genTables."anagra"." WHERE id = '".$val['id_anagra']."' LIMIT 1";
+            if ($result = mysqli_query($link, $sql)) {
+              $anagra = mysqli_fetch_assoc($result);
+              $custom_field=$anagra['custom_field'];
+              if ($data = json_decode($custom_field,true)){// se c'è un json
+              if (isset($data['config']) && isset($data['config'][$IDaz])){ // se c'è il modulo "config" e c'è l'azienda attuale posso procedere
+                $imap['imap_usr']=$data['config'][$IDaz]['imap_usr'];
+                $imap['imap_sent_folder']=$data['config'][$IDaz]['imap_sent_folder'];
+                $sql = "SELECT val FROM ".$azTables."company_config"." WHERE var = 'imap_server' LIMIT 1";
+                if ($result = mysqli_query($link, $sql)) {
+                  $val = mysqli_fetch_assoc($result);
+                  $imap['imap_server']=$val['val'];
+                }
+                $sql = "SELECT val FROM ".$azTables."company_config"." WHERE var = 'imap_port' LIMIT 1";
+                if ($result = mysqli_query($link, $sql)) {
+                  $val = mysqli_fetch_assoc($result);
+                  $imap['imap_port']=$val['val'];
+                }
+                $sql = "SELECT val FROM ".$azTables."company_config"." WHERE var = 'imap_secure' LIMIT 1";
+                if ($result = mysqli_query($link, $sql)) {
+                  $val = mysqli_fetch_assoc($result);
+                  $imap['imap_secure']=$val['val'];
+                }
+                return $imap;
+              }
+              }
+            }
+          }
+         }
+        }
+      }
     }
   }
   return false;

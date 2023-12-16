@@ -120,34 +120,36 @@ $strScript = array(
     "report_booking.php" =>
       array("Elenco delle prenotazioni ",
         "codice",
-		'number' => 'Nr. prenotazione',
-		'weekday_repeat' => 'settimanale',
-		'status' => 'Stato',
-		'print' => 'settimanale',
-		'duplicate' => 'Duplica',
-		'delete' => 'Cancella',
-		'cancel' => 'Elimina',
-		'submit' => 'Inserisci',
-		'date' => 'data emissione',
-    'booking' => 'Prenotazione n.',
-    'of' => 'del',
-    'email_give_point' => 'In riferimento alla prenotazione in oggetto le comunichiamo che sono stati attribuiti ulteriori',
-    'email_give_point2' => 'punti con la seguente motivazione:',
-    'email_give_point3' => 'Il suo attuale saldo è',
-    'points' => 'punti',
-		'title_value' => array('VPR' => 'Preventivi a clienti',
-            'VOR' => 'Elenco prenotazioni',
-            'VOW' => 'Elenco prenotazioni dal web',
-            'VOG' => 'Prenotazioni settimanali del giorno'),
-		'type' => 'Tipo',
-        'type_value' => array('VPR' => 'Preventivo',
-            'VOR' => 'Prenotazione',
-            'VOW' => 'Prenotazione web',
-            'VOG' => 'Prenotazione settimanale del giorno'),
-		'mail_alert0' => 'Invio documento con email',
-        'mail_alert1' => 'Hai scelto di inviare una e-mail all\'indirizzo: ',
-        'mail_alert2' => 'con allegato il seguente documento di vendita:',
-		'search' => 'Ricerca'
+        'number' => 'Nr. prenotazione',
+        'weekday_repeat' => 'settimanale',
+        'status' => 'Stato',
+        'print' => 'settimanale',
+        'duplicate' => 'Duplica',
+        'delete' => 'Cancella',
+        'cancel' => 'Elimina',
+        'submit' => 'Inserisci',
+        'date' => 'data emissione',
+        'booking' => 'Prenotazione n.',
+        'of' => 'del',
+        'email_give_point' => 'In riferimento alla prenotazione in oggetto le comunichiamo che sono stati attribuiti ulteriori',
+        'email_give_point2' => 'punti con la seguente motivazione:',
+        'email_give_point3' => 'Il suo attuale saldo è',
+        'points' => 'punti',
+        'title_value' => array('VPR' => 'Preventivi a clienti',
+                'VOR' => 'Elenco prenotazioni',
+                'VOW' => 'Elenco prenotazioni dal web',
+                'VOG' => 'Prenotazioni settimanali del giorno'),
+        'type' => 'Tipo',
+            'type_value' => array('VPR' => 'Preventivo',
+                'VOR' => 'Prenotazione',
+                'VOW' => 'Prenotazione web',
+                'VOG' => 'Prenotazione settimanale del giorno'),
+        'mail_alert0' => 'Invio documento con email',
+            'mail_alert1' => 'Hai scelto di inviare una e-mail all\'indirizzo: ',
+            'mail_alert2' => 'con allegato il seguente documento di vendita:',
+        'search' => 'Ricerca',
+        'email_selfchek' => 'In riferimento al suo self check-in le comunichiamo che è: ',
+        'email_selfchek_msg' => 'Ulteriore comunicazione: '
        ),
 
     "report_discount.php" =>
@@ -595,7 +597,8 @@ $strScript = array(
     'exp_lev' => 'ma i punti sono scaduti e il suo livello sarà azzerato.',
     'upd_data' => 'Modifica dati',
     'email_extra_sbj' =>'Aggiunti extra su prenotazione n.',
-    'email_extra_body' =>'<p>Si informa che gli extra richiesti sono stati aggiunti alla prenotazione in oggetto.</p><p>Nella sua pagina utente potrà visionare l\'aggiornamento. (Le credenziali per accedere alla sua pagina utente sono sempre quelle riportate nella mail iniziale di conferma della prenotazione) </p>'
+    'email_extra_body' =>'<p>Si informa che gli extra richiesti sono stati aggiunti alla prenotazione in oggetto.</p><p>Nella sua pagina utente potrà visionare l\'aggiornamento. (Le credenziali per accedere alla sua pagina utente sono sempre quelle riportate nella mail iniziale di conferma della prenotazione) </p>',
+    'selfcheck_button' => 'Leggi regole self check-in'
     ),
 
   "admin_extra.php" =>
@@ -756,6 +759,82 @@ $strScript = array(
     'no_review' => 'Non ci sono ancora recensioni',
     'prev' => ' Precedente ',
     'next' => ' Successiva '
+    ),
+    "self_checkin.php" =>
+    array('title' => 'Gestione dei self check-in',
+        'text1' => 'Perfetto, i documenti sono stati caricati correttamente!',
+        'text2' => 'Adesso, controlla di aver pagato il deposito cauzionale e il saldo della locazione. Se il pagamento non viene effettuato, il self check-in non potrà essere abilitato.',
+        'text3' => 'Risulterebbero ancora da pagare € ',
+        'text4' => 'I pagamenti possono essere effettuati sempre dalla tua pagina di prenotazione utente.',
+        'text5' => '<p>Un ammistratore visionerà quanto inviato. Se è tutto completato riceverai il codice e le istruzioni per il self check-in.</p>
+            <p><br>Per ogni necessità non esitare a contattare la struttura.</p>',
+        'instr1' =>'Identificazione del capo gruppo per il check-in del ',
+        'instr2' => 'Scattare un selfie con un documento di identità in mano e l\'indicazione del check-in.',
+        'instr3' => 'La persona di questo selfie deve essere: ',
+        'instr4' => '<p>Devi scattare una tua foto (selfie) con in mano, sia il tuo documento d\'identità, sia un pezzo di carta con le parole " Check-in \'<i>data del check-in</i>\' " scritte a mano su di esso.  La data del check-in deve essere la data di arrivo all\'alloggio (es: 13/06/2023).
+              </p>
+              <p>
+              Rivolgiti verso la fotocamera e inquadrati solo dalle spalle alla sommità della testa, in modo simile a una fototessera; Usa una parete semplice come sfondo, se possibile.
+              </p>
+              <p>
+              Assicurati che la luce provenga da davanti a te, non da dietro di te, assicurandoti che il tuo viso sia chiaramente visibile senza retroilluminazione; SI CONSIGLIA LA LUCE DEL GIORNO.
+              </p>
+              <p>
+              Non indossare occhiali da sole, cappelli o qualsiasi cosa che copra il viso. Se indossi gli occhiali nella tua fototessera, indossali anche nella foto del selfie. Se non indossi gli occhiali nella tua fototessera, rimuovili quando scatti il selfie;
+              </p>
+              <p>
+              Il documento d\'identità deve inoltre essere completamente e chiaramente visibile sul selfie: FAI ATTENZIONE AI RIFLESSI.
+              </p>',
+        'instr5' => '<p>Devi scattare una tua foto (selfie) con in mano, sia il tuo documento d\'identità, sia un pezzo di carta con le parole \" Check-in \'<i>data del check-in</i>\' \" scritte a mano su di esso.  La data del check-in deve essere la data di arrivo all\'alloggio (es: 13/06/2023).
+				</p>
+				<p>
+				Rivolgiti verso la fotocamera e inquadrati solo dalle spalle alla sommità della testa, in modo simile a una fototessera; Usa una parete semplice come sfondo, se possibile.
+				</p>
+				<p>
+				Assicurati che la luce provenga da davanti a te, non da dietro di te, assicurandoti che il tuo viso sia chiaramente visibile senza retroilluminazione; SI CONSIGLIA LA LUCE DEL GIORNO.
+				</p>
+				<p>
+				Non indossare occhiali da sole, cappelli o qualsiasi cosa che copra il viso. Se indossi gli occhiali nella tua fototessera, indossali anche nella foto del selfie. Se non indossi gli occhiali nella tua fototessera, rimuovili quando scatti il selfie;
+				</p>
+				<p>
+				Il documento d\'identità deve inoltre essere completamente e chiaramente visibile sul selfie: FAI ATTENZIONE AI RIFLESSI.
+				</p>
+				<p>
+				Usa la telecamera da selfie (utilizza meno memoria).
+				</p>',
+        'webcam_start' => 'Avvia la webcam',
+        'take_photo' => 'Scatta la foto',
+        'go' => 'Vai avanti',
+        'submit' => 'Conferma',
+        'selfie_success' =>'Invio selfie avvenuto con successo, grazie!',
+        'text6' => 'Carica i documenti di identità',
+        'instr6' => '<h2>Quando carichi il tuo documento d\'identità con foto, fai attenzione a:</h2>
+          <ul>
+          <li>Assicurati che il tuo documento sia valido e non scaduto;</li>
+          <li>Assicurati che non abbia fori o altre modifiche che ne impediscano la lettura;</li>
+          <li>Devi caricare entrambi i lati del tuo documento (fronte e retro);</li>
+          <li>Fotografando il documento evita di tagliare angoli o lati;</li>
+          <li>Assicurati che tutto il documento sia completamente visibile e a fuoco;</li>
+          <li>Sono accettati solo i formati jpg, jpeg e png.</li>
+          </ul>',
+        'text7' => '<b>capogruppo/capofamiglia</b>',
+        'text8' => 'l\'ospite',
+        'text9' => 'inserisci nome e documento del',
+        'name' => 'Nome',
+        'surname' => 'Cognome',
+        'load_doc' => 'Carica il documento di identità FRONTE',
+        'load_doc_back' => 'Carica il documento di identità RETRO',
+        'text10' => 'inserisci nome e documento del minore',
+        'no_doc' => 'Non ha documento',
+        'b_place' => 'Luogo di nascita',
+        'b_date' => 'Data di nascita',
+        'r_place' => 'Luogo di residenza',
+        'send' => 'Invia',
+        'text11' => 'Perfetto, i documenti sono stati caricati correttamente!',
+        'text12' => '<p>Adesso, controlla di aver pagato il deposito cauzionale e il saldo della locazione. Se il pagamento non viene effettuato, il self check-in non potrà essere abilitato.</p>',
+        'text13' => 'Risulterebbero ancora da pagare € ',
+        'text14' => 'I pagamenti possono essere effettuati sempre dalla tua pagina di prenotazione utente.',
+        'text15' => '<p>Un ammistratore visionerà quanto inviato. Se è tutto a posto riceverai il codice e le istruzioni per il self check-in.</p><p><br>Per ogni necessità non esitare a contattare la struttura.</p>'
     )
 );
 ?>
