@@ -94,10 +94,13 @@ $(function() {
 					text:'Clona',
 					'class':'btn btn-danger delete-button',
 					click:function (event, ui) {
+            if (confirm("Are you sure?")){
             	var parent_year = $("#parent_year").val(); // The value of the selected option parent
             	var child_year = $("#child_year").val(); // The value of the selected option child
+              var operat = $("#operat").val(); // The value of the selected option child
+            	var percent = $("#percent").val(); // The value of the selected option child
               $.ajax({
-                data: {'parent_year':parent_year,'child_year':child_year,'term':ref,'opt':'clone'},
+                data: {'parent_year':parent_year,'child_year':child_year,'term':ref,'opt':'clone', 'operat':operat, 'percent':percent},
                 type: 'GET',
                 url: '../vacation_rental/ajax_request.php',
                 success: function(output){
@@ -105,6 +108,7 @@ $(function() {
                   window.location.replace("./report_accommodation.php");
                 }
               });
+            }
 				}},
 				"Non clonare": function() {
 					$(this).dialog("close");
@@ -405,6 +409,11 @@ $ts->output_navbar();
           echo '<option value="'.$year.'">' . $year . '</option>';
         }
         echo '</select><br>';
+        ?><div>
+        <input id="operat" class="col-sm-4" type="text"  value="+" name="operat" maxlength="1" size="2" oninput="this.value = this.value.replace(/[^+|-]/g, '');"/>
+        <input id="percent" class="col-sm-4" type="text"  value="" name="percent" maxlength="2" size="5" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"/>%
+        </div>
+        <?php
         echo '<br><label>nell\'anno:</label><br><select id="child_year" name="child_year" data-component="date">';
         for ($year = (intval(date('Y'))+1); $year <= (intval(date('Y'))+10); $year++) {
           echo '<option value="'.$year.'">' . $year . '</option>';

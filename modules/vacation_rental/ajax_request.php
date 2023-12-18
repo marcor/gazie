@@ -253,7 +253,7 @@ if (isset($_GET['term'])) {
       case'clone':
         $res = gaz_dbi_dyn_query("*", $gTables['rental_prices'], "year(start) = ". substr($_GET['parent_year'],0,4) ." AND house_code = '".substr($_GET['term'],0,15)."'","id ASC");
          $table = 'rental_prices';
-        while ($row = gaz_dbi_fetch_array($res)) {// prima controllo se posso clonare
+        while ($row = gaz_dbi_fetch_array($res)) {// prima controllo se posso clonare (il periodo da clonare deve essere vuoto)
           $dif=abs(intval(substr($row['end'],0,4))-intval(substr($row['start'],0,4)));
           $row['start']=substr($_GET['child_year'],0,4).substr($row['start'],4);
           $year_end=strval(intval(substr($_GET['child_year'],0,4))+$dif);
@@ -263,7 +263,7 @@ if (isset($_GET['term'])) {
           while (strtotime($start) < strtotime($end)) {// ciclo il periodo giorno per giorno per controllare se esiste già un prezzo
             $checking = gaz_dbi_get_row($gTables['rental_prices'], "house_code", substr($_GET['term'],0,15), " AND start <= '". $start ."' AND end > '". $start."'");
             if (isset ($checking)){
-              echo "ERRORE clonazione non avvenuta: nell'anno ",$_GET['child_year']," è stato trovato uno o più giorni con il prezzo già impostato";
+              echo "ERRORE clonazione non avvenuta: nell'anno ",$_GET['child_year']," uno o più giorni hanno il prezzo già impostato";
               exit;
             }
             $start = date ("Y-m-d", strtotime("+1 days", strtotime($start)));// aumento di un giorno il ciclo
@@ -278,6 +278,14 @@ if (isset($_GET['term'])) {
               $row['start']=substr($_GET['child_year'],0,4).substr($row['start'],4);
               $year_end=strval(intval(substr($_GET['child_year'],0,4))+$dif);
               $row['end']=$year_end.substr($row['end'],4);
+              if (floatval($_GET['percent'])>0){
+                if ($_GET['operat']=='+'){
+                  $row['price'] = round($row['price']+(($row['price']*$_GET['percent'])/100),0);
+                }
+                if ($_GET['operat']=='-'){
+                  $row['price'] = round($row['price']-(($row['price']*$_GET['percent'])/100),0);
+                }
+              }
               $row['id']="";
               $columns = array('id', 'title', 'start', 'end', 'house_code', 'price', 'minstay');
               tableInsert($table, $columns, $row);// Clono
