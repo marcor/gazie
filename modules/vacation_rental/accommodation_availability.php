@@ -59,6 +59,7 @@
 //require("../../library/include/datlib.inc.php");
 include_once("manual_settings.php");
 $id=substr($_GET['house_code'],0,32);
+$initialDate=(isset($_GET['initialDate']))?$_GET['initialDate']:date('Y-m-d');
 ?>
 
 <script>
@@ -68,6 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
   var calendar = new FullCalendar.Calendar(calendarEl, {
   height: 600,
   initialView: 'dayGridMonth',
+  initialDate: '<?php echo $initialDate; ?>',
   selectable: true, //abilita il controllo del passaggio mouse cliccato sopra i giorni
   headerToolbar:{
   left:'prev,next today,dayGridMonth',
@@ -130,8 +132,10 @@ document.addEventListener('DOMContentLoaded', function() {
 			xhttp.send();
 			xhttp.onload = function(){
 				calendar.refetchEvents();
-				window.location.reload(true);
-			};
+        let url = window.location.href;
+        url += '&initialDate='+start.toISOString().substring(0, 10);
+        window.location.href = url;
+      };
 		},
 
 		eventDrop:function(info){
@@ -154,8 +158,10 @@ document.addEventListener('DOMContentLoaded', function() {
 			*/
 			xhttp.onload = function(){
 				calendar.refetchEvents();
-				window.location.reload(true);
-			};
+          let url = window.location.href;
+          url += '&initialDate='+start.toISOString().substring(0, 10);
+          window.location.href = url;
+        };
 		},
 
 		eventResize:function(info){
@@ -175,7 +181,9 @@ document.addEventListener('DOMContentLoaded', function() {
 			*/
 			xhttp.onload = function(){
 				calendar.refetchEvents();
-				window.location.reload(true);
+				let url = window.location.href;
+        url += '&initialDate='+start.toISOString().substring(0, 10);
+        window.location.href = url;
 			};
 		},
 
@@ -201,7 +209,9 @@ document.addEventListener('DOMContentLoaded', function() {
 				*/
 				xhttp.onload = function(){
 					calendar.refetchEvents();
-					window.location.reload(true);
+					let url = window.location.href;
+          url += '&initialDate='+start.toISOString().substring(0, 10);
+          window.location.href = url;
 				};
 			}
 			/* per fare una modifica bisogna usare un pop up ma c'è il problema che bisogna aggiornare il calendario dopo aver chiuso il popup
