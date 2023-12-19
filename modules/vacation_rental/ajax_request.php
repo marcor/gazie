@@ -253,46 +253,74 @@ if (isset($_GET['term'])) {
       case'clone':
         $res = gaz_dbi_dyn_query("*", $gTables['rental_prices'], "year(start) = ". substr($_GET['parent_year'],0,4) ." AND house_code = '".substr($_GET['term'],0,15)."'","id ASC");
          $table = 'rental_prices';
-        while ($row = gaz_dbi_fetch_array($res)) {// prima controllo se posso clonare (il periodo da clonare deve essere vuoto)
-          $dif=abs(intval(substr($row['end'],0,4))-intval(substr($row['start'],0,4)));
-          $row['start']=substr($_GET['child_year'],0,4).substr($row['start'],4);
-          $year_end=strval(intval(substr($_GET['child_year'],0,4))+$dif);
-          $row['end']=$year_end.substr($row['end'],4);
-          $start=date ("Y-m-d", strtotime($row['start']));
-          $end=date ("Y-m-d", strtotime($row['end']));
-          while (strtotime($start) < strtotime($end)) {// ciclo il periodo giorno per giorno per controllare se esiste già un prezzo
-            $checking = gaz_dbi_get_row($gTables['rental_prices'], "house_code", substr($_GET['term'],0,15), " AND start <= '". $start ."' AND end > '". $start."'");
-            if (isset ($checking)){
-              echo "ERRORE clonazione non avvenuta: nell'anno ",$_GET['child_year']," uno o più giorni hanno il prezzo già impostato";
-              exit;
-            }
-            $start = date ("Y-m-d", strtotime("+1 days", strtotime($start)));// aumento di un giorno il ciclo
-          }
-        }
-        if (!isset ($checking)){// se posso clonare
-          $res = gaz_dbi_dyn_query("*", $gTables['rental_prices'], "year(start) = ". substr($_GET['parent_year'],0,4) ." AND house_code = '".substr($_GET['term'],0,15)."'","id ASC");
+         if (intval($_GET['parent_year'])==intval($_GET['child_year']) && intval($_GET['percent'])>0){// se gli anni sono uguali faccio update
+           $res = gaz_dbi_dyn_query("*", $gTables['rental_prices'], "year(start) = ". substr($_GET['parent_year'],0,4) ." AND house_code = '".substr($_GET['term'],0,15)."'","id ASC");
 
-          if ($res->num_rows >0){
-            while ($row = gaz_dbi_fetch_array($res)) {
-              $dif=abs(intval(substr($row['end'],0,4))-intval(substr($row['start'],0,4)));
-              $row['start']=substr($_GET['child_year'],0,4).substr($row['start'],4);
-              $year_end=strval(intval(substr($_GET['child_year'],0,4))+$dif);
-              $row['end']=$year_end.substr($row['end'],4);
-              if (floatval($_GET['percent'])>0){
-                if ($_GET['operat']=='+'){
-                  $row['price'] = round($row['price']+(($row['price']*$_GET['percent'])/100),0);
+            if ($res->num_rows >0){
+              while ($row = gaz_dbi_fetch_array($res)) {
+                $dif=abs(intval(substr($row['end'],0,4))-intval(substr($row['start'],0,4)));
+                $row['start']=substr($_GET['child_year'],0,4).substr($row['start'],4);
+                $year_end=strval(intval(substr($_GET['child_year'],0,4))+$dif);
+                $row['end']=$year_end.substr($row['end'],4);
+                if (floatval($_GET['percent'])>0){
+                  if ($_GET['operat']=='+'){
+                    $row['price'] = round($row['price']+(($row['price']*$_GET['percent'])/100),0);
+                  }
+                  if ($_GET['operat']=='-'){
+                    $row['price'] = round($row['price']-(($row['price']*$_GET['percent'])/100),0);
+                  }
                 }
-                if ($_GET['operat']=='-'){
-                  $row['price'] = round($row['price']-(($row['price']*$_GET['percent'])/100),0);
-                }
+                $columns = array('price');
+                $codice = array('id', $row['id']);
+                $newValue = array('price' => $row['price']);
+                tableUpdate($table, $columns, $codice, $newValue);// aggiorno solo il prezzo
               }
-              $row['id']="";
-              $columns = array('id', 'title', 'start', 'end', 'house_code', 'price', 'minstay');
-              tableInsert($table, $columns, $row);// Clono
+              echo "Anno correttamente aggiornato";
+            }else{
+              echo "Non c'è nulla da aggiornare";
             }
-            echo "Anno correttamente clonato";
-          }else{
-            echo "Non c'è nulla da clonare";
+         }else{
+          while ($row = gaz_dbi_fetch_array($res)) {// prima controllo se posso clonare (il periodo da clonare deve essere vuoto)
+            $dif=abs(intval(substr($row['end'],0,4))-intval(substr($row['start'],0,4)));
+            $row['start']=substr($_GET['child_year'],0,4).substr($row['start'],4);
+            $year_end=strval(intval(substr($_GET['child_year'],0,4))+$dif);
+            $row['end']=$year_end.substr($row['end'],4);
+            $start=date ("Y-m-d", strtotime($row['start']));
+            $end=date ("Y-m-d", strtotime($row['end']));
+            while (strtotime($start) < strtotime($end)) {// ciclo il periodo giorno per giorno per controllare se esiste già un prezzo
+              $checking = gaz_dbi_get_row($gTables['rental_prices'], "house_code", substr($_GET['term'],0,15), " AND start <= '". $start ."' AND end > '". $start."'");
+              if (isset ($checking)){
+                echo "ERRORE clonazione non avvenuta: nell'anno ",$_GET['child_year']," uno o più giorni hanno il prezzo già impostato";
+                exit;
+              }
+              $start = date ("Y-m-d", strtotime("+1 days", strtotime($start)));// aumento di un giorno il ciclo
+            }
+          }
+          if (!isset ($checking)){// se posso clonare
+            $res = gaz_dbi_dyn_query("*", $gTables['rental_prices'], "year(start) = ". substr($_GET['parent_year'],0,4) ." AND house_code = '".substr($_GET['term'],0,15)."'","id ASC");
+
+            if ($res->num_rows >0){
+              while ($row = gaz_dbi_fetch_array($res)) {
+                $dif=abs(intval(substr($row['end'],0,4))-intval(substr($row['start'],0,4)));
+                $row['start']=substr($_GET['child_year'],0,4).substr($row['start'],4);
+                $year_end=strval(intval(substr($_GET['child_year'],0,4))+$dif);
+                $row['end']=$year_end.substr($row['end'],4);
+                if (floatval($_GET['percent'])>0){
+                  if ($_GET['operat']=='+'){
+                    $row['price'] = round($row['price']+(($row['price']*$_GET['percent'])/100),0);
+                  }
+                  if ($_GET['operat']=='-'){
+                    $row['price'] = round($row['price']-(($row['price']*$_GET['percent'])/100),0);
+                  }
+                }
+                $row['id']="";
+                $columns = array('id', 'title', 'start', 'end', 'house_code', 'price', 'minstay');
+                tableInsert($table, $columns, $row);// Clono
+              }
+              echo "Anno correttamente clonato";
+            }else{
+              echo "Non c'è nulla da clonare";
+            }
           }
         }
       break;

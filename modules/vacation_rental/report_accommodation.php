@@ -414,9 +414,10 @@ $ts->output_navbar();
         <input id="percent" class="col-sm-4" type="text"  value="" name="percent" maxlength="2" size="5" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"/>%
         </div>
         <?php
-        echo '<br><label>nell\'anno:</label><br><select id="child_year" name="child_year" data-component="date">';
-        for ($year = (intval(date('Y'))+1); $year <= (intval(date('Y'))+10); $year++) {
-          echo '<option value="'.$year.'">' . $year . '</option>';
+        echo '<br><label>nell\'anno:</label><br><select id="child_year" name="child_year" data-component="date" >';
+        for ($year = (intval(date('Y'))); $year <= (intval(date('Y'))+10); $year++) {
+          $selected=(intval(date('Y')+1)==$year)?'selected="selected"':'';
+          echo '<option value="'.$year.'" '.$selected.'>' . $year . '</option>';
         }
         echo '</select>';
         ?>
