@@ -405,8 +405,9 @@ $ts->output_navbar();
         <p class="ui-state-highlight" id="idcodice"><b>alloggio: </b></p>
         <?php
         echo '<label>Clona i prezzi dell\'anno:</label><br><select id="parent_year" name="parent_year" data-component="date">';
-        for ($year = date('Y'); $year >= 2020; $year--) {
-          echo '<option value="'.$year.'">' . $year . '</option>';
+        for ($year = date('Y')+1; $year >= 2020; $year--) {
+          $selected=(intval(date('Y'))==$year)?'selected="selected"':'';
+          echo '<option value="'.$year.'" '.$selected.'>' . $year . '</option>';
         }
         echo '</select><br>';
         ?><div>
