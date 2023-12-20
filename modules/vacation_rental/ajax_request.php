@@ -265,14 +265,16 @@ if (isset($_GET['term'])) {
                 if (floatval($_GET['percent'])>0){
                   if ($_GET['operat']=='+'){
                     $row['price'] = round($row['price']+(($row['price']*$_GET['percent'])/100),0);
+                    $row['title'] = $row['price']." € sogg. min.".$row['minstay'];
                   }
                   if ($_GET['operat']=='-'){
                     $row['price'] = round($row['price']-(($row['price']*$_GET['percent'])/100),0);
+                    $row['title'] = $row['price']." € sogg. min.".$row['minstay'];
                   }
                 }
-                $columns = array('price');
-                $codice = array('id', $row['id']);
-                $newValue = array('price' => $row['price']);
+                $columns = array('price', 'title');
+                $codice = array('id', $row['id']);// sarebbe il where
+                $newValue = array('price' => $row['price'], 'title' => $row['title']);
                 tableUpdate($table, $columns, $codice, $newValue);// aggiorno solo il prezzo
               }
               echo "Anno correttamente aggiornato";
@@ -308,9 +310,11 @@ if (isset($_GET['term'])) {
                 if (floatval($_GET['percent'])>0){
                   if ($_GET['operat']=='+'){
                     $row['price'] = round($row['price']+(($row['price']*$_GET['percent'])/100),0);
+                    $row['title'] = $row['price']." € sogg. min.".$row['minstay'];
                   }
                   if ($_GET['operat']=='-'){
                     $row['price'] = round($row['price']-(($row['price']*$_GET['percent'])/100),0);
+                    $row['title'] = $row['price']." € sogg. min.".$row['minstay'];
                   }
                 }
                 $row['id']="";

@@ -1278,7 +1278,7 @@ $ts->output_navbar();
                 $stato_gift_btn = ($r['expired']==1)?'btn-danger':'btn-default';
 
                 echo "&nbsp;&nbsp;<a class=\"btn btn-xs ",$stato_gift_btn," \"";
-                echo " style=\"cursor:pointer;\" onclick=\"point('". $r['id'] ."','".$r['user_points']."','".$r['ragso1']." ".$r['ragso2']."','".$r['id_tes']."','".$r['expired']."','".$r['expiry_points_date']."')\"";
+                echo " style=\"cursor:pointer;\" onclick=\"point('". $r['id'] ."','".$r['user_points']."','".addslashes($r['ragso1'])." ".addslashes($r['ragso2'])."','".$r['id_tes']."','".$r['expired']."','".$r['expiry_points_date']."')\"";
                 echo "><i class=\"glyphicon glyphicon-gift\" title=\"Punti: ".$r['user_points']." - Scadenza: ".$r['expiry_points_date']."\"></i></a></td>";
               }
               echo "<td>".$r['citspe']."</td>";
