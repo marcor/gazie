@@ -35,6 +35,7 @@ if (!$isAjax) {
     $user_error = 'Access denied - not an AJAX request...';
     trigger_error($user_error, E_USER_ERROR);
 }
+
 use Ddeboer\Imap\Server;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -43,6 +44,7 @@ require("../../library/include/datlib.inc.php");
 require("../../modules/magazz/lib.function.php");
 $admin_aziend=checkAdmin();
 $libFunc = new magazzForm();
+
 
 if (isset($_GET['term'])) {
     if (isset($_GET['opt'])) {
@@ -440,6 +442,52 @@ if (isset($_GET['term'])) {
         }
 
       break;
+      case 'export':
+        $year=intval($_GET['term']);
+        $result=gaz_dbi_query("SELECT * FROM ".$gTables['rental_prices']." WHERE (year(start) = ".$year." OR year(end) = ".$year.") AND house_code = '". substr ($_GET['ref'],0,15)."'");
+        $file = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+        $file .="<!--
+        - phpMyAdmin XML Dump
+        - version 5.2.0
+        - Antonio Germani
+        - https://www.programmisitiweb.lacasettabio.it
+        -
+        - Creato il: ". date("d M Y H:i:s")."
+        - Versione del server: ".mysqli_get_server_info($link)."
+        - Web server Versione PHP: ".PHP_VERSION."
+        -->";
+        $file .= "\n<pma_xml_export version=\"1.0\" xmlns:pma=\"https://docs.phpmyadmin.net/et/latest/import_export.html\">\n";
+        $file .= "\t<!--- Database: '".$Database."'-->\n";
+        $file .= "\t<database name=\"".$Database."\">\n";
+        $file .= "\t\t<!-- Tabella ".$gTables['rental_prices']." -->\n";
+
+        if($result->num_rows >0){
+           while($res = $result->fetch_assoc()){
+            $file  .= "\t\t<table name=\"".$gTables['rental_prices']."\">\n";
+              foreach($res as $key => $value){
+                 $file .= "\t\t\t<column name=\"".$key."\">";
+                 $file .= $value;
+                 $file .= "</column>\n";
+              }
+            $file .= "\t\t</table>\n";
+           }
+        }
+        $file .= "\t</database>\n";
+        $file .= "</pma_xml_export>\n";
+        $xmlFileC = "prices_backup/".$_GET['ref']."_prices_table_".$year.".xml";
+          if (!file_exists("prices_backup")) {
+            mkdir("prices_backup", 0777, true);
+          }
+          $xmlHandle = fopen($xmlFileC, "w");
+          if (@fwrite($xmlHandle, $file)){
+            fclose($xmlHandle);
+            echo "File xml correttamente salvato";
+            return;
+          }else{
+            echo "File non salvato, ERRORE:",json_encode(error_get_last());
+          }
+      break;
+
       default:
       return false;
     }

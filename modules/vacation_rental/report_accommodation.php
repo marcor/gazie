@@ -79,6 +79,45 @@ $ts = new TableSorter(
 ?>
 <script>
 $(function() {
+   $("#dialog_export").dialog({ autoOpen: false });
+	$('.dialog_export').click(function() {
+		$("p#idcodice_exp").append($(this).attr("ref"));
+    var ref = $(this).attr('ref');
+		$( "#dialog_export" ).dialog({
+			minHeight: 1,
+			minWidth: 300,
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{
+					text:'Esporta',
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+
+            	var export_year = $("#export_year").val(); // The value of the selected option parent
+            	var child_year = $("#child_year").val(); // The value of the selected option child
+              var operat = $("#operat").val(); // The value of the selected option child
+            	var percent = $("#percent").val(); // The value of the selected option child
+              $.ajax({
+                data: {'term':export_year,'opt':'export', 'ref':ref},
+                type: 'GET',
+                url: '../vacation_rental/ajax_request.php',
+                success: function(output){
+                  alert(output);
+                  window.location.replace("./report_accommodation.php");
+                }
+              });
+
+				}},
+				"Non esportare": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		$("#dialog_export" ).dialog( "open" );
+	});
+
   $("#dialog_duplicate").dialog({ autoOpen: false });
 	$('.dialog_duplicate').click(function() {
 		$("p#idcodice").append($(this).attr("ref"));
@@ -424,6 +463,18 @@ $ts->output_navbar();
         ?>
 	</div>
 
+  <div style="display:none" id="dialog_export" title="Esporta i prezzi SQL formato xml">
+        <p class="ui-state-highlight" id="idcodice_exp"><b>alloggio: </b></p>
+        <?php
+        echo '<label>Esporta i prezzi dell\'anno:</label><br><select id="export_year" name="export_year" data-component="date">';
+        for ($year = (intval(date('Y')-5)); $year <= (intval(date('Y'))+2); $year++) {
+          $selected=(intval(date('Y'))==$year)?'selected="selected"':'';
+          echo '<option value="'.$year.'" '.$selected.'>' . $year . '</option>';
+        }
+        echo '</select><br>';
+        ?>
+	</div>
+
 	<div class="framePdf panel panel-success" style="display: none; position: fixed; left: 5%; top: 5px">
 			<div class="col-lg-12">
 				<div class="col-xs-11" id="titolo" ></div>
@@ -592,7 +643,8 @@ while ($r = gaz_dbi_fetch_array($result)) {
 			echo "</td>\n";
 			echo '<td class="text-center"><a class="btn btn-xs btn-default" style="cursor:pointer;" onclick="openframe(\'accommodation_price.php?house_code='.$r["codice"].'\',\'Prezzi '.$ivac.' <b>'.$r["codice"].'</b>\')" data-toggle="modal" data-target="#iframe"> <i class="glyphicon glyphicon-eur" title="Calendario dei prezzi"></i></a>';
       echo '&nbsp; &nbsp; <a class="btn btn-xs btn-default dialog_duplicate" ref="'. $r['codice'].'"> <i class="glyphicon glyphicon-duplicate" title="Duplica prezzi"></i></a>';
-			echo "</td>\n";
+			echo '&nbsp; &nbsp; <a class="btn btn-xs btn-default dialog_export" ref="'. $r['codice'].'"> <i class="glyphicon glyphicon-export" title="Esporta prezzi sql.xml"></i></a>';
+      echo "</td>\n";
 			echo '<td class="text-center"><a class="btn btn-xs btn-default" style="cursor:pointer;" onclick="openframe(\'accommodation_availability.php?house_code='.$r["codice"].'\',\'Calendario <b>'.$r["codice"].'</b>\')" data-toggle="modal" data-target="#iframe"> <i class="glyphicon glyphicon-calendar" title="Calendario della disponibilità"></i></a>';
 			echo '&nbsp; &nbsp; <a class="btn btn-xs btn-default dialog_limit" ref="'. $r['codice'].'"> <i class="glyphicon glyphicon-tasks" title="Limita lungo periodo""></i></a>';
       echo "</td>\n";

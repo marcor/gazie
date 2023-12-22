@@ -1007,17 +1007,18 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 continue; // non è valido, continuo con l'eventuale prossimo sconto
               }
             }
-            if ($form['discount']>0){
-              $form['descri_discount'].="+";
-              $total_price_disc = $total_price-$form['discount'];
-            }
+          
             if ($expired<>1 && $pointenable==1 && (intval($discount['level_points'])>0 && intval($level)==intval($discount['level_points'])) || intval($discount['level_points'])==0){//calcolo sconti se c'è un livello punti raggiunto dal cliente o se gli sconti sono senza livello punti
+				if ($form['discount']>0){
+					$form['descri_discount'].="+";
+					$total_price_disc = $total_price-$form['discount'];
+				}
               if ($discount['is_percent']==1){
                 $form['discount']+= (floatval($total_price_disc)*floatval($discount['value']))/100;// aggiungo al totale sconti, lo sconto calcolato in percentuale
                 $form['descri_discount'].=$discount['title']." ".$discount['value']."%";// incremento la descrizione con lo sconto applicato
               }else{
                 $form['discount']+= floatval($discount['value'])/floatval("1.".$gen_iva_perc);// aggiungo al totale sconti, lo sconto a valore scorporando IVA
-                //$form['descri_discount'].= " ".$discount['title']." a valore".$admin_aziend['symbol']." ".number_format(floatval($discount['value'])/floatval("1.".$gen_iva_perc), $admin_aziend['decimal_price'], '.', '');/// incremento la descrizione con lo sconto applicato
+                
                 $form['descri_discount'].= $discount['title']." ". number_format(floatval($discount['value'])/floatval("1.".$gen_iva_perc),3)."€";/// incremento la descrizione con lo sconto applicato
               }
               if ($discount['stop_further_processing']==1){// se questo deve bloccare i successivi eventuali, interrompo il conteggio
