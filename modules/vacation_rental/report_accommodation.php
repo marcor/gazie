@@ -79,6 +79,89 @@ $ts = new TableSorter(
 ?>
 <script>
 $(function() {
+
+  $("#dialog_import").dialog({ autoOpen: false });
+	$('.dialog_import').click(function() {
+    $("#dialog_import" ).dialog( "open" );
+		$("p#idcodice_exp").append($(this).attr("ref"));
+    var ref = $(this).attr('ref');
+    $.ajax({
+      data: {'opt':'get_files', 'term':ref},
+      type: 'GET',
+      url: '../vacation_rental/ajax_request.php',
+      success: function(data){
+          try{
+          var as=JSON.parse(data);
+            //alert(data);
+            var size = Object.keys(as).length;
+            var j=0;
+            if (size>0){
+              $.each(as, function (i, value) {
+                $("#filebutt").append("<div id='rowmail_"+j+"' align='center'><button id='fillmail_" + j+"'>" + value + "</button></div>");
+                $("#fillmail_" + j).click(function () {
+                  $("#restorefile").text(value);
+
+                });
+                  $("#rowmail_"+j).append(" <button id='deletefile_" + j+"' class='btn-elimina' title='rimuovi file'> <i class='glyphicon glyphicon-trash'></i> </button>");
+                  $("#deletefile_" + j).click(function () { // se clicco sulla X elimino il file che non si vuole più utilizzare
+                    if (confirm('Sei sicuro di voler cancellare?') == true) {
+                      // richiamo il delete per eliminare il file
+                      $.ajax({
+                        data: {'opt':'del_files','term':value, 'ref':ref},
+                        type: 'GET',
+                        url: '../vacation_rental/ajax_request.php',
+                        success: function(output){
+                          alert(output);
+                          window.location.replace("./report_accommodation.php");
+                        }
+                      });
+                    }
+                  });
+                j++;
+              });
+            }else{// se non ci sono files da scegliere
+              $("#restorefile").text('Non ci sono file da importare');
+            }
+        } catch (error){
+           $("#restorefile").text('Non ci sono file da importare');
+        }
+      }
+    });
+		$( function() {
+      var rest= $("#restorefile").text();
+      var dialog,
+      dialog = $("#dialog_import").dialog({
+        modal: true,
+        show: "blind",
+        hide: "explode",
+        minWidth: 200,
+        buttons: {
+          Annulla: function() {
+            $("#filebutt div").remove();
+
+            $(this).dialog('close');
+          },
+          Conferma: function() {
+              var rest= $("#restorefile").text();
+              $.ajax({
+                data: {'opt':'restore_files', 'term':rest, 'ref':ref},
+                type: 'GET',
+                url: '../vacation_rental/ajax_request.php',
+                success: function(data){
+                  alert(data);
+
+                  $("#dialog_import").dialog("close");
+                }
+
+              });
+            }
+        }
+      });
+    });
+
+
+  });
+
    $("#dialog_export").dialog({ autoOpen: false });
 	$('.dialog_export').click(function() {
 		$("p#idcodice_exp").append($(this).attr("ref"));
@@ -110,7 +193,7 @@ $(function() {
               });
 
 				}},
-				"Non esportare": function() {
+				"Annulla": function() {
 					$(this).dialog("close");
 				}
 			}
@@ -462,6 +545,14 @@ $ts->output_navbar();
         echo '</select>';
         ?>
 	</div>
+  <div class="modal" id="dialog_import" title="Importa prezzi">
+      <fieldset>
+          <div>
+              <div id="restorefile">File da importare</div>
+          </div>
+          <div id="filebutt"> </div>
+      </fieldset>
+    </div>
 
   <div style="display:none" id="dialog_export" title="Esporta i prezzi SQL formato xml">
         <p class="ui-state-highlight" id="idcodice_exp"><b>alloggio: </b></p>
@@ -644,6 +735,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 			echo '<td class="text-center"><a class="btn btn-xs btn-default" style="cursor:pointer;" onclick="openframe(\'accommodation_price.php?house_code='.$r["codice"].'\',\'Prezzi '.$ivac.' <b>'.$r["codice"].'</b>\')" data-toggle="modal" data-target="#iframe"> <i class="glyphicon glyphicon-eur" title="Calendario dei prezzi"></i></a>';
       echo '&nbsp; &nbsp; <a class="btn btn-xs btn-default dialog_duplicate" ref="'. $r['codice'].'"> <i class="glyphicon glyphicon-duplicate" title="Duplica prezzi"></i></a>';
 			echo '&nbsp; &nbsp; <a class="btn btn-xs btn-default dialog_export" ref="'. $r['codice'].'"> <i class="glyphicon glyphicon-export" title="Esporta prezzi sql.xml"></i></a>';
+      echo '&nbsp; &nbsp; <a class="btn btn-xs btn-default dialog_import" ref="'. $r['codice'].'"> <i class="glyphicon glyphicon-import" title="Importa prezzi sql.xml"></i></a>';
       echo "</td>\n";
 			echo '<td class="text-center"><a class="btn btn-xs btn-default" style="cursor:pointer;" onclick="openframe(\'accommodation_availability.php?house_code='.$r["codice"].'\',\'Calendario <b>'.$r["codice"].'</b>\')" data-toggle="modal" data-target="#iframe"> <i class="glyphicon glyphicon-calendar" title="Calendario della disponibilità"></i></a>';
 			echo '&nbsp; &nbsp; <a class="btn btn-xs btn-default dialog_limit" ref="'. $r['codice'].'"> <i class="glyphicon glyphicon-tasks" title="Limita lungo periodo""></i></a>';

@@ -45,7 +45,6 @@ require("../../modules/magazz/lib.function.php");
 $admin_aziend=checkAdmin();
 $libFunc = new magazzForm();
 
-
 if (isset($_GET['term'])) {
     if (isset($_GET['opt'])) {
         $opt = $_GET['opt'];
@@ -443,6 +442,7 @@ if (isset($_GET['term'])) {
 
       break;
       case 'export':
+        $err=0;$ver="";
         $year=intval($_GET['term']);
         $result=gaz_dbi_query("SELECT * FROM ".$gTables['rental_prices']." WHERE (year(start) = ".$year." OR year(end) = ".$year.") AND house_code = '". substr ($_GET['ref'],0,15)."'");
         $file = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
@@ -474,18 +474,99 @@ if (isset($_GET['term'])) {
         }
         $file .= "\t</database>\n";
         $file .= "</pma_xml_export>\n";
-        $xmlFileC = "prices_backup/".$_GET['ref']."_prices_table_".$year.".xml";
+        $xmlFileC = "prices_backup/".$_GET['ref']."/".$_GET['ref']."_prices_table_".$year.".xml";
           if (!file_exists("prices_backup")) {
             mkdir("prices_backup", 0777, true);
           }
-          $xmlHandle = fopen($xmlFileC, "w");
-          if (@fwrite($xmlHandle, $file)){
-            fclose($xmlHandle);
-            echo "File xml correttamente salvato";
-            return;
-          }else{
-            echo "File non salvato, ERRORE:",json_encode(error_get_last());
+          if (!file_exists("prices_backup/".$_GET['ref'])) {// se non esiste la cartella alloggio, la creo
+            mkdir("prices_backup/".$_GET['ref'], 0777, true);
           }
+          if (file_exists($xmlFileC)) {// se esiste già un file di backup dello stesso anno, creo una versione (al massimo 10 versioni)
+            $err=1;
+            for($x = 1; $x <= 10; $x++){// cerco se c'è spazio per una nuova versione
+               if (!file_exists("prices_backup/".$_GET['ref']."/".$_GET['ref']."_prices_table_".$year."(".$x.").xml")) {// se trovo spazio cambio nome al nuovo file aggiungendo la versione
+                 $xmlFileC = "prices_backup/".$_GET['ref']."/".$_GET['ref']."_prices_table_".$year."(".$x.").xml";
+                 $err=0;
+                 $ver="- versione (".$x.")";
+                 break;
+               }
+            }
+          }
+          if ($err==0){// se posso salvare
+            $xmlHandle = fopen($xmlFileC, "w");
+            if (@fwrite($xmlHandle, $file)){
+              fclose($xmlHandle);
+              echo "File xml correttamente salvato ",$ver;
+              return;
+            }else{
+              echo "File non salvato, ERRORE:",json_encode(error_get_last());
+            }
+          }else{
+            echo "Lo spazio per ulteriori copie è pieno; cancellarne almeno una prima di procedere.";
+          }
+      break;
+
+      case 'get_files':
+        $directory = "prices_backup/".$_GET['term'];
+        if (file_exists($directory)){
+          $files = scandir($directory);
+          $ret=json_encode (array_slice($files,2));// rimuovo i primi due elementi (.,..)
+          echo $ret;
+        }else{
+          echo "Non ci sono file da importare in:",$directory;
+        }
+        return;
+      break;
+
+      case 'del_files':
+        $directory = "prices_backup/".$_GET['ref']."/".$_GET['term'];
+        if (file_exists($directory)){
+          if (unlink($directory)){
+            echo "File eliminato";
+          }else{
+            echo "File non eliminato, ERRORE:",json_encode(error_get_last());
+          }
+        }else{
+          echo "Non esiste questo file:",$directory;
+        }
+        return;
+      break;
+
+      case 'restore_files':
+      $err=0;
+        $directory = "prices_backup/".$_GET['ref']."/".$_GET['term'];
+        if (file_exists($directory)){
+          $xml = simplexml_load_file($directory);
+          //echo "<pre>",print_r($xml);
+          foreach($xml->database->table as $column){
+            $cols="";
+            $values="";
+            $first='';
+            $table=(string) $column['name'];
+            foreach ($column->column as $col){
+              if (((string) $col['name'])=="id"){
+                continue;
+              }
+               $cols .=$first.((string) $col['name']);
+               $values .= $first."'".$col[0]."'";
+               $first=', ';
+            }
+
+            $query = "INSERT INTO ".$table." (".$cols.") VALUES (".$values.")";
+             if (!gaz_dbi_query($query)){
+               echo "ERRORE scrittura data base:",json_encode(error_get_last());
+               $err=1;
+               break;
+             }
+          }
+        }else{
+          echo "Non hai selezionato il file da importare";
+          $err=1;
+        }
+        if ($err==0){
+          echo "Prezzi ripristinati nel DB";
+        }
+        return;
       break;
 
       default:
