@@ -155,8 +155,7 @@ if (count($_GET)<=1){
 		$default_where=['sezione' => $last['seziva'], 'tipo' => 'F%', 'anno'=>$last['yearde']];
         $_GET['anno']=$last['yearde'];
 	} else {
-		$default_where= ['auxil' => 'VOR', 'anno'=>date("Y")];
-        $_GET['anno']=date("Y");
+		$default_where= ['auxil' => 'VOR'];	
 	}
 
 } else {
@@ -170,11 +169,10 @@ $ts = new TableSorter(
     $default_where
 );
 $tipo = $auxil;
-
 # le <select> spaziano tra i documenti di un solo tipo (VPR, VOR o VOG)
 $where_select = sprintf("tipdoc LIKE '%s'", gaz_dbi_real_escape_string($tipo));
 
-if (isset($_GET['house_code'])){// se devo visualizzaro solo un determinato alloggio
+if (isset($_GET['house_code'])){// se devo visualizzare solo un determinato alloggio
   $ts->where .= " AND ".$gTables['rental_events'].".house_code ='".$_GET['house_code']."'";
 }
 

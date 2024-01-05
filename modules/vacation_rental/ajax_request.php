@@ -564,7 +564,7 @@ if (isset($_GET['term'])) {
           $err=1;
         }
         if ($err==0){
-          echo "Prezzi ripristinati nel DB";
+          echo "Prezzi importati nel DB";
         }
         return;
       break;

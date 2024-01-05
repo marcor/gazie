@@ -149,7 +149,7 @@ $(function() {
                 url: '../vacation_rental/ajax_request.php',
                 success: function(data){
                   alert(data);
-
+                  $("#filebutt div").remove();
                   $("#dialog_import").dialog("close");
                 }
 
