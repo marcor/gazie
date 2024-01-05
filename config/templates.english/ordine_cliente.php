@@ -26,15 +26,29 @@ require('template.php');
 
 class OrdineCliente extends Template
 {
+    public $giorno;
+    public $mese;
+    public $anno;
+    public $nomemese;
+    public $sconto;
+    public $trasporto;
+    public $tipdoc;
+    public $show_artico_composit;
+    public $extdoc_acc;
+    public $numPages;
+    public $_tplIdx;
+
     function setTesDoc()
     {
         $this->tesdoc = $this->docVars->tesdoc;
         $this->giorno = substr($this->tesdoc['datemi'],8,2);
         $this->mese = substr($this->tesdoc['datemi'],5,2);
         $this->anno = substr($this->tesdoc['datemi'],0,4);
-        $this->nomemese = ucwords(strftime("%B", mktime (0,0,0,substr($this->tesdoc['datemi'],5,2),1,0)));
+        $this->docVars->gazTimeFormatter->setPattern('MMMM');
+        $this->nomemese = ucwords($this->docVars->gazTimeFormatter->format(new DateTime($this->tesdoc['datemi'])));
         $this->sconto = $this->tesdoc['sconto'];
         $this->trasporto = $this->tesdoc['traspo'];
+        $this->show_artico_composit = $this->docVars->show_artico_composit;
         $this->tipdoc = 'Order confirmation from customer n.'.$this->tesdoc['numdoc'].'/'.$this->tesdoc['seziva'].' of '.$this->giorno.'/'.$this->mese.'/'.$this->anno;
     }
     function newPage() {
