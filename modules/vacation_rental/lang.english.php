@@ -692,7 +692,8 @@ $strScript = array(
 			'too_many_error' => 'Too many errors. Your access is blocked. Please, try later',
 			'text_missing' => 'Feedback text is missing or too short',
 			'err_codfis' => 'Tax code error: correct it and try again',
-			'coupon_error' => 'Discount code not applied because it is invalid'
+			'coupon_error' => 'Discount code not applied because it is invalid',
+			'cliente_anonimo' => 'This quote is for an anonymous user, you cannot use it to book. Request a quote with your details or make a reservation on the website'
         ),
         'war' => array(
             'ok' => 'ok riempitura array'
@@ -832,7 +833,8 @@ $strScript = array(
     'upd_data' => 'Update data',
     'email_extra_sbj' =>'Added extras on reservation n.',
     'email_extra_body' =>'<p>Please note that the requested extras have been added to the reservation in question.</p><p>You can view the update on your user page. (The credentials to access your user page are always those reported in the initial booking confirmation email) </p>',
-    'selfcheck_button' => 'Read self check-in rules'
+    'selfcheck_button' => 'Read self check-in rules',
+	'ins_yourData' => 'Input your data'
     ),
 
   "admin_extra.php" =>

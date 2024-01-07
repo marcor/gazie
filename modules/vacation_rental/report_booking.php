@@ -184,7 +184,7 @@ $(function() {
       autoOpen: false
    });
 });
-function confirMail(link,cod_partner){
+function confirMail(link, cod_partner, dest=''){
     $.get("search_email_address.php",
 		  {clfoco: cod_partner},
 		  function (data) {
@@ -193,7 +193,6 @@ function confirMail(link,cod_partner){
         var c=0
         const mails = [];
         $.each(data, function (i, value) {
-
           if (size>1 && !mails.includes(value.email)){
             if (j==0){
               $("#mailbutt").append("<div>Indirizzi archiviati:</div>");
@@ -207,7 +206,7 @@ function confirMail(link,cod_partner){
             mails[j]=value.email;
             j++;
           }else{// se non ci sono indirizzi da scegliere valorizzo di default
-            $("#mailaddress").val(value.email);
+            $("#mailaddress").val(dest);
           }
 
         });
@@ -250,7 +249,9 @@ function confirMail(link,cod_partner){
         text: "<?php echo $script_transl['cancel']; ?>",
         "class": 'btn',
         click: function () {
-          $(this).dialog("close");
+          $("#mailbutt div").remove();
+          $("#mailaddress").val('');
+          $(this).dialog('destroy');
         },
       }]
   });
@@ -1447,15 +1448,16 @@ $ts->output_navbar();
 
               // Colonna "Mail"
               echo "<td align=\"center\">";
+			  //print_r($r);
               if (!empty($r['e_mail'])){ // ho una mail sulla destinazione
-                  echo '<a class="btn btn-xs btn-default btn-email '.$stato_btn_booking.'" onclick="confirMail(this, '. $r['clfoco'] .');return false;" id="doc' . $r['id_tes'] . '" url="' . $modulo . '" href="#" title="' . $r['email']."-".$title_booking . '"
+                  echo '<a class="btn btn-xs btn-default btn-email '.$stato_btn_booking.'" onclick="confirMail(this, '. $r['clfoco'] .', '. $r['e_mail'] .');return false;" id="doc' . $r['id_tes'] . '" url="' . $modulo . '" href="#" title="' . $r['email']."-".$title_booking . '"
                   mail="' . $r['e_mail'] . '" namedoc="' . $script_transl['type_value'][$r['tipdoc']] . ' n.' . $r['numdoc'] . ' del ' . gaz_format_date($r['datemi']) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
                   if ( $tipo !== "VPR" ) {
                     echo ' <a class="btn btn-xs btn-default btn-emailC '.$stato_btn_lease.'" ',$disabled_email_style,' onclick="confirMailC(this);return false;" id="docC' . $r['id_tes'] . '" urlC="stampa_contratto.php?id_tes='. $r['id_tes']. '&dest=E&id_ag='.$r['id_agent'].'" href="#" title="' . $title_lease . '"
                     mail="' . $r['e_mail'] . '" namedoc="' . $script_transl['type_value'][$r['tipdoc']] . ' n.' . $r['numdoc'] . ' del ' . gaz_format_date($r['datemi']) . '"><i class="glyphicon glyphicon-send"></i></a>';
                   }
               } elseif (!empty($r['base_mail'])) { // ho una mail sul cliente
-                  echo ' <a class="btn btn-xs btn-default btn-email '.$stato_btn_booking.'" onclick="confirMail(this, '. $r['clfoco'] .');return false;" id="doc' . $r['id_tes'] . '" url="' . $modulo . '" href="#" title="' . $r['email']."-".$title_booking . '"
+                  echo ' <a class="btn btn-xs btn-default btn-email '.$stato_btn_booking.'" onclick="confirMail(this, '. $r['clfoco'] .', \''. $r['base_mail'] .'\');return false;" id="doc' . $r['id_tes'] . '" url="' . $modulo . '" href="#" title="' . $r['email']."-".$title_booking . '"
                   mail="' . $r['base_mail'] . '" namedoc="' . $script_transl['type_value'][$r['tipdoc']] . ' n.' . $r['numdoc'] . ' del ' . gaz_format_date($r['datemi']) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
                   if ( $tipo !== "VPR" ) {
                     echo ' <a class="btn btn-xs btn-default btn-emailC '.$stato_btn_lease.'" ',$disabled_email_style,' onclick="confirMailC(this);return false;" id="docC' . $r['id_tes'] . '" urlC="stampa_contratto.php?id_tes='. $r['id_tes']. '&dest=E&id_ag='.$r['id_agent'].'" href="#" title="' . $title_lease . '"

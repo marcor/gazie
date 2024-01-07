@@ -458,7 +458,8 @@ $strScript = array(
 			'too_many_error' => 'Accesso BLOCCATO per troppi errori. Riprovare più tardi',
 			'text_missing' => 'Il testo della recensione è mancante o troppo corto',
 			'err_codfis' => 'Errore nel codice fiscale, correggere e riprovare',
-			'coupon_error' => 'Codice sconto non applicato perché non valido'
+			'coupon_error' => 'Codice sconto non applicato perché non valido',
+			'cliente_anonimo' => 'Questo preventivo è per un utente anonimo, non puoi usarlo per prenotare. Chiedi un preventivo con i tuoi dati oppure fai una prenotazione nel sito internet'
         ),
         'war' => array(
             'ok' => 'ok riempitura array'
@@ -598,7 +599,8 @@ $strScript = array(
     'upd_data' => 'Modifica dati',
     'email_extra_sbj' =>'Aggiunti extra su prenotazione n.',
     'email_extra_body' =>'<p>Si informa che gli extra richiesti sono stati aggiunti alla prenotazione in oggetto.</p><p>Nella sua pagina utente potrà visionare l\'aggiornamento. (Le credenziali per accedere alla sua pagina utente sono sempre quelle riportate nella mail iniziale di conferma della prenotazione) </p>',
-    'selfcheck_button' => 'Leggi regole self check-in'
+    'selfcheck_button' => 'Leggi regole self check-in',
+	'ins_yourData' => 'Inserisci i tuoi dati'
     ),
 
   "admin_extra.php" =>
