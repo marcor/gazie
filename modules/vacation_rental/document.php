@@ -806,7 +806,10 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
     // aggiungo all'array con indice 'azienda' altri dati
     $docVars->azienda['cliente1']=$docVars->cliente1;
     $docVars->azienda['doc_name']=$pdf->tipdoc.'.pdf';
-    if ($dest && $dest == 'E') { // è stata richiesta una e-mail
+    if ($dest && $dest !== 'H' && $dest !== 'X') { // è stata richiesta una e-mail
+        if ($dest!=='E'){// se ho un indirizzo e-mail
+          $docVars->client['e_mail']=$dest;// lo impongo per l'invio
+        }
         $dest = 'S';     // Genero l'output pdf come stringa binaria
         // Costruisco oggetto con tutti i dati del file pdf da allegare
         $content = new StdClass;

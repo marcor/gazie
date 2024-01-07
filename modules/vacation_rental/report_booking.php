@@ -155,7 +155,7 @@ if (count($_GET)<=1){
 		$default_where=['sezione' => $last['seziva'], 'tipo' => 'F%', 'anno'=>$last['yearde']];
         $_GET['anno']=$last['yearde'];
 	} else {
-		$default_where= ['auxil' => 'VOR'];	
+		$default_where= ['auxil' => 'VOR'];
 	}
 
 } else {
@@ -184,12 +184,41 @@ $(function() {
       autoOpen: false
    });
 });
-function confirMail(link){
+function confirMail(link,cod_partner){
+    $.get("search_email_address.php",
+		  {clfoco: cod_partner},
+		  function (data) {
+        var size = Object.keys(data).length;
+        var j=0;
+        var c=0
+        const mails = [];
+        $.each(data, function (i, value) {
+
+          if (size>1 && !mails.includes(value.email)){
+            if (j==0){
+              $("#mailbutt").append("<div>Indirizzi archiviati:</div>");
+            }
+            $("#mailbutt").append("<div id='rowmail_"+j+"' align='center'><button id='fillmail_" + j+"'>" + value.email + "</button></div>");
+            $("#fillmail_" + j).click(function () {
+              $("#mailaddress").val(value.email);
+            });
+            c=j+1;
+
+            mails[j]=value.email;
+            j++;
+          }else{// se non ci sono indirizzi da scegliere valorizzo di default
+            $("#mailaddress").val(value.email);
+          }
+
+        });
+
+		  }, "json"
+    );
+
     tes_id = link.id.replace("doc", "");
     $.fx.speeds._default = 500;
     targetUrl = $("#doc"+tes_id).attr("url");
-    //alert (targetUrl);
-    $("p#mail_adrs").html($("#doc"+tes_id).attr("mail"));
+    //$("p#mail_adrs").html($("#doc"+tes_id).attr("mail"));
     $("p#mail_attc").html($("#doc"+tes_id).attr("namedoc"));
     $( "#dialog" ).dialog({
          modal: "true",
@@ -199,14 +228,24 @@ function confirMail(link){
         text: "<?php echo $script_transl['submit']; ?> ",
         "class": 'btn',
         click: function () {
-          $('#frame_email').attr('src',targetUrl);
-          $('#frame_email').css({'height': '100%'});
-          $('.frame_email').css({'display': 'block','width': '40%', 'margin-left': '25%', 'z-index':'2000'});
-          $('#close_email').on( "click", function() {
-          $('#frame_email').attr('src','');
-          $('.frame_email').css({'display': 'none'});
-          });
-          $(this).dialog("close");
+          if ( !$("#mailaddress").val() ) {
+            alert('Mail formalmente errata');
+          } else {
+            $("#mailbutt div").remove();
+            var dest=$("#mailaddress").val();
+            $("#mailaddress").val('');
+                alert (targetUrl+"&dest="+dest);
+
+            $('#frame_email').attr('src',targetUrl+"&dest="+dest);
+            $('#frame_email').css({'height': '100%'});
+            $('.frame_email').css({'display': 'block','width': '40%', 'margin-left': '25%', 'z-index':'2000'});
+            $('#close_email').on( "click", function() {
+            $('#frame_email').attr('src','');
+            $('.frame_email').css({'display': 'none'});
+            });
+            $(this).dialog("close");
+          }
+
         },
       },
       {
@@ -848,7 +887,7 @@ $ts->output_navbar();
     <div class="col-xs-11"><h4>e-mail</h4></div>
     <div class="col-xs-1"><h4><button type="button" id="close_email"><i class="glyphicon glyphicon-remove"></i></button></h4></div>
   </div>
-  <iframe id="frame_email"  style="height: 90%; width: 100%" src=""></iframe>
+  <iframe id="frame_email"  style="height: 90%; width: 100%" src=""> </iframe>
 </div>
 <div class="framePdf panel panel-success" style="display: none; position: fixed; left: 5%; top: 10px">
   <div class="col-lg-12">
@@ -920,6 +959,11 @@ $ts->output_navbar();
 <input type="hidden" name="auxil" value="<?php echo $tipo; ?>">
 <div style="display:none" id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">
     <p id="mail_alert1"><?php echo $script_transl['mail_alert1']; ?></p>
+    <div>
+        <label id="maillabel" for="mailaddress">all'indirizzo:</label>
+        <input type="text"  placeholder="seleziona sotto oppure digita" value="" id="mailaddress" name="mailaddress" maxlength="100" size="30" />
+    </div>
+    <div id="mailbutt"></div>
     <p class="ui-state-highlight" id="mail_adrs"></p>
     <p id="mail_alert2"><?php echo $script_transl['mail_alert2']; ?></p>
     <p class="ui-state-highlight" id="mail_attc"></p>
@@ -1406,14 +1450,14 @@ $ts->output_navbar();
               // Colonna "Mail"
               echo "<td align=\"center\">";
               if (!empty($r['e_mail'])){ // ho una mail sulla destinazione
-                  echo '<a class="btn btn-xs btn-default btn-email '.$stato_btn_booking.'" onclick="confirMail(this);return false;" id="doc' . $r['id_tes'] . '" url="' . $modulo . '&dest=E" href="#" title="' . $title_booking . '"
+                  echo '<a class="btn btn-xs btn-default btn-email '.$stato_btn_booking.'" onclick="confirMail(this, '. $r['clfoco'] .');return false;" id="doc' . $r['id_tes'] . '" url="' . $modulo . '" href="#" title="' . $r['e_mail']."-".$title_booking . '"
                   mail="' . $r['e_mail'] . '" namedoc="' . $script_transl['type_value'][$r['tipdoc']] . ' n.' . $r['numdoc'] . ' del ' . gaz_format_date($r['datemi']) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
                   if ( $tipo !== "VPR" ) {
                     echo ' <a class="btn btn-xs btn-default btn-emailC '.$stato_btn_lease.'" ',$disabled_email_style,' onclick="confirMailC(this);return false;" id="docC' . $r['id_tes'] . '" urlC="stampa_contratto.php?id_tes='. $r['id_tes']. '&dest=E&id_ag='.$r['id_agent'].'" href="#" title="' . $title_lease . '"
                     mail="' . $r['e_mail'] . '" namedoc="' . $script_transl['type_value'][$r['tipdoc']] . ' n.' . $r['numdoc'] . ' del ' . gaz_format_date($r['datemi']) . '"><i class="glyphicon glyphicon-send"></i></a>';
                   }
               } elseif (!empty($r['base_mail'])) { // ho una mail sul cliente
-                  echo ' <a class="btn btn-xs btn-default btn-email '.$stato_btn_booking.'" onclick="confirMail(this);return false;" id="doc' . $r['id_tes'] . '" url="' . $modulo . '&dest=E" href="#" title="' . $title_booking . '"
+                  echo ' <a class="btn btn-xs btn-default btn-email '.$stato_btn_booking.'" onclick="confirMail(this, '. $r['clfoco'] .');return false;" id="doc' . $r['id_tes'] . '" url="' . $modulo . '" href="#" title="' . $r['base_mail']."-".$title_booking . '"
                   mail="' . $r['base_mail'] . '" namedoc="' . $script_transl['type_value'][$r['tipdoc']] . ' n.' . $r['numdoc'] . ' del ' . gaz_format_date($r['datemi']) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
                   if ( $tipo !== "VPR" ) {
                     echo ' <a class="btn btn-xs btn-default btn-emailC '.$stato_btn_lease.'" ',$disabled_email_style,' onclick="confirMailC(this);return false;" id="docC' . $r['id_tes'] . '" urlC="stampa_contratto.php?id_tes='. $r['id_tes']. '&dest=E&id_ag='.$r['id_agent'].'" href="#" title="' . $title_lease . '"

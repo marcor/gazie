@@ -49,18 +49,22 @@ if ($stato AND $stato['id_language'] == 1 or $stato['id_language'] == 0){// se Ã
 }
 
 if ($tesbro['tipdoc']=='VPR') {
-	$type=false;
+	$dest=false;
 	$template='BookingQuote';
-    if (isset($_GET['dest'])&& $_GET['dest']=='E' ){ // se l'utente vuole inviare una mail
-		$type='E';
-    }
+  if (isset($_GET['dest'])&& $_GET['dest']=='E' ){ // se l'utente vuole inviare una mail
+    $dest='E';
+  }elseif (isset($_GET['dest'])){
+    $email=filter_var($_GET['dest'], FILTER_VALIDATE_EMAIL);
+    $dest=$email;
+    $r=gaz_dbi_put_row($gTables['tesbro'], 'id_tes', $tesbro['id_tes'], 'email',$email);
+  }
 	if (isset($_GET['lh'])){ // se l'utente vuole che venga stampata su una carta intestata
-		$type='H';
+		$dest='H';
 	}
 	if ($tesbro['template']=='Ticket'){
 		$template='Ticket';
 	}
-    createDocument($tesbro,$template,$gTables,'rigbro',$type,$lang_template,$genTables,$azTables,"","","",$lang);
+  createDocument($tesbro,$template,$gTables,'rigbro',$dest,$lang_template,$genTables,$azTables,"","","",$lang);
 } else {
     header("Location: report_booking?auxil=VPR.php");
     exit;
