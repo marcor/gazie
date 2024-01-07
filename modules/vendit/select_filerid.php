@@ -2,7 +2,7 @@
 /*
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
-  Copyright (C) 2004-2023 - Antonio De Vincentiis Montesilvano (PE)
+  Copyright (C) 2004-2024 - Antonio De Vincentiis Montesilvano (PE)
   (http://www.devincentiis.it)
   <http://gazie.sourceforge.net>
   --------------------------------------------------------------------------
@@ -63,7 +63,7 @@ function getLimit() {
 
 function getData($date_ini, $date_fin, $num_ini, $num_fin, $bank) {
     global $gTables, $admin_aziend;
-    $m = array();
+    $m = [];
     $where = " (".$gTables['effett'] . ".id_distinta = 0 OR id_distinta IS NULL) AND tipeff = 'I' AND scaden BETWEEN $date_ini AND $date_fin AND progre BETWEEN $num_ini AND $num_fin";
     $orderby = "tipeff, scaden, progre";
     $rs = gaz_dbi_dyn_query($gTables['effett'] . ".*," .
@@ -84,7 +84,7 @@ function getData($date_ini, $date_fin, $num_ini, $num_fin, $bank) {
         }
         $m[] = $r;
     }
-    return array('data' => $m, 'tot' => $total);
+    return ['data' => $m, 'tot' => $total];
 }
 
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
@@ -200,13 +200,13 @@ echo "<input type=\"hidden\" value=\"" . $form['ritorno'] . "\" name=\"ritorno\"
 $gForm = new venditForm();
 echo '<div align="center" class="FacetFormHeaderFont">Generazione file XML per distinta dei RID in formato SEPA </div>';
 echo "<div align=\"center\">\n";
-echo '<table class="table-striped table-bordered table-condensed">';
+echo '<table class="table-striped table-bordered Tmiddle">';
 if (!empty($msg)) {
     echo '<tr><td class="FacetDataTDred">' . $gForm->outputErrors($msg, $script_transl['errors']) . "</td></tr>\n";
 }
 echo "<tr>\n";
-echo "<td>" . $script_transl['date_emi'] . "</td><td>\n";
-$gForm->CalendarPopup('date_emi', $form['date_emi_D'], $form['date_emi_M'], $form['date_emi_Y'], 'FacetSelect', 1);
+echo '<td class="col-xs-6">' . $script_transl['date_emi'] . '</td><td class="col-xs-6">';
+$gForm->CalendarPopup('date_emi', $form['date_emi_D'], $form['date_emi_M'], $form['date_emi_Y'], 'col-xs-3', 1);
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
@@ -223,13 +223,13 @@ echo "\t<td>" . $script_transl['num_fin'] . "</td>\n";
 echo "\t<td><input type=\"text\" name=\"num_fin\" value=\"" . $form['num_fin'] . "\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td>" . $script_transl['date_ini'] . "</td><td>\n";
-$gForm->CalendarPopup('date_ini', $form['date_ini_D'], $form['date_ini_M'], $form['date_ini_Y'], 'FacetSelect', 1);
+echo '<td>' . $script_transl['date_ini'] . "</td><td>\n";
+$gForm->CalendarPopup('date_ini', $form['date_ini_D'], $form['date_ini_M'], $form['date_ini_Y'], 'col-xs-3', 1);
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "<td>" . $script_transl['date_fin'] . "</td><td>\n";
-$gForm->CalendarPopup('date_fin', $form['date_fin_D'], $form['date_fin_M'], $form['date_fin_Y'], 'FacetSelect', 1);
+$gForm->CalendarPopup('date_fin', $form['date_fin_D'], $form['date_fin_M'], $form['date_fin_Y'], 'col-xs-3', 1);
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
@@ -253,28 +253,34 @@ if (isset($_POST['preview']) and $msg == '') {
     $r = getData($date_ini, $date_fin, $form['num_ini'], $form['num_fin'], $form['bank']);
     echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
     if (sizeof($r['data']) > 0) {
-        echo "<tr>";
-        echo '<td colspan="7" align="center" ><b>ANTEPRIMA DEL CONTENUTO DEL FILE XML FORMATO CBI-SEPA<b></td>';
-        echo "</tr>";
-        echo "<tr>";
-        $linkHeaders = new linkHeaders($script_transl['header']);
-        $linkHeaders->output();
-        echo "</tr>\n";
+        echo '<tr>';
+        echo '<td colspan=7 align="center"><b>ANTEPRIMA DEL CONTENUTO DEL FILE XML FORMATO CBI-SEPA<b></td>';
+        echo '</tr>';
+        echo '<tr>';
+        echo '<th>Num.</th>';
+        echo '<th class="text-center">Scadenza</th>';
+        echo '<th class="text-center">Importo</th>';
+        echo '<th class="text-center">Cliente</th>';
+        echo '<th class="text-center">Fattura</th>';
+        echo '<th class="text-center">IBAN</th>';
+        echo '</tr>';
         foreach ($r['data'] as $v) {
-            echo "<tr>";
-            echo "<td><a href=\"./admin_effett.php?Update&id_tes=" . $v['id_tes'] . "\">" . $v["progre"] . "</a>". (($v['status']=='RAGGRUPPA')?' <span class="text-danger">[raggruppato] </span>':'')."</td>";
-            echo "<td> RID</td>";
-            echo "<td>" . gaz_format_date($v["scaden"]) . "</td>";
-            echo "<td  align=\"right\">" . $admin_aziend['html_symbol'] . ' ' . gaz_format_number($v["impeff"]) . " </td>";
-            echo "<td>" . $v["customer"] . " </td>";
-            echo "<td>n." . $v["numfat"] . "/" . $v["seziva"] . " - " . gaz_format_date($v["datfat"]) . "</td>";
-            echo "<td>" . $v["desban"] . " </td>";
-            echo "</tr>\n";
-            echo "<tr>";
+            echo '<tr class="'.($v['status']=='MODAMOUNT'?'text-danger':'').'">';
+            echo "<td><a href=\"./admin_effett.php?Update&id_tes=" . $v['id_tes'] . "\">" . $v["progre"] . "</a>";
+            if ($v['status']=='RAGGRUPPA'){
+              echo '<span class="text-danger">[raggruppato] </span>';
+            }
             echo "</td>";
-            echo "<td>" .((strlen($v["pariva"])>4)?$v["pariva"]:$v["codfis"]). "</td>";
-            echo "<td align=\"right\">" . gaz_format_number($v["totfat"]) . "</td>";
-            echo "<td align=\"center\">" . $v["coordi"] . " </td>";
+            echo "<td>" . gaz_format_date($v["scaden"]) . "</td>";
+            echo "<td  align=\"right\">". $admin_aziend['html_symbol'] . ' ' . gaz_format_number($v["impeff"]);
+            if ($v['status']=='MODAMOUNT') {
+              echo '<br /><span class="text-danger">[modificato]</span>';
+            }
+            echo " </td>";
+            echo "<td>" . $v["customer"] . " </td>";
+            echo '<td class="text-center">n.' . $v["numfat"] . "/" . $v["seziva"] . " - " . gaz_format_date($v["datfat"]) . ' € '.gaz_format_number($v["totfat"]) . "</td>";
+            echo "</td>";
+            echo '<td class="text-center">' . $v["iban"] ." </td>";
             echo "</tr>\n";
         }
         echo '<td colspan="4" >' .

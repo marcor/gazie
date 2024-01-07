@@ -2,7 +2,7 @@
 /*
  --------------------------------------------------------------------------
                             GAzie - Gestione Azienda
-    Copyright (C) 2004-2023 - Antonio De Vincentiis Montesilvano (PE)
+    Copyright (C) 2004-2024 - Antonio De Vincentiis Montesilvano (PE)
          (http://www.devincentiis.it)
            <http://gazie.sourceforge.net>
  --------------------------------------------------------------------------
@@ -86,14 +86,8 @@ if (isset($_GET['Return'])) {
         exit;
 }
 
-// garvin: Measure query time. TODO-Item http://sourceforge.net/tracker/index.php?func=detail&aid=571934&group_id=23067&atid=377411
-list($usec, $sec) = explode(' ',microtime());
-$querytime_before = ((float)$usec + (float)$sec);
 $sqlquery= "SELECT COUNT(DISTINCT ".$gTables['rigmoc'].".id_tes) as nummov,codcon, ragso1, e_mail, telefo,".$gTables['clfoco'].".codice, sum(import*(darave='D')) as dare,sum(import*(darave='A')) as avere, sum(import*(darave='D') - import*(darave='A')) as saldo, darave FROM ".$gTables['rigmoc']." LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['rigmoc'].".codcon = ".$gTables['clfoco'].".codice LEFT JOIN ".$gTables['anagra']." ON ".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra WHERE datreg between ".$annini.$mesini.$giornini." and ".$annfin.$mesfin.$giornfin." and codcon like '".$admin_aziend['mascli']."%' and caucon <> 'CHI' and caucon <> 'APE' or (caucon = 'APE' and codcon like '".$admin_aziend['mascli']."%' and datreg like '".$annini."%') GROUP BY codcon ORDER BY ragso1, darave";
 $rs_castel = gaz_dbi_query($sqlquery);
-list($usec, $sec) = explode(' ',microtime());
-$querytime_after = ((float)$usec + (float)$sec);
-$querytime = $querytime_after - $querytime_before;
 require("../../library/include/header.php");
 $script_transl=HeadMain(0,array('custom/modal_form'));
 
@@ -121,7 +115,7 @@ $(function() {
                      }
             });
       $("#dialog" ).dialog( "open" );
-    });   
+    });
 });
 </script>
 <div style="display:none" id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">
@@ -231,7 +225,6 @@ echo "<input type=\"submit\" name=\"partaperte\" value=\" ! PARTITE APERTE !\"><
 <div class="box-primary table-responsive">
 <table class="Tlarge table table-striped table-bordered table-condensed">
 <?php
-echo '<tr><td colspan=11>La query ha impiegato '.number_format($querytime,4,'.','').' sec.</td></tr><tr>';
 // creo l'array (header => campi) per l'ordinamento dei record
 $headers_tesmov = array  (
           "Codice" => "",
@@ -276,7 +269,7 @@ while ($r = gaz_dbi_fetch_array($rs_castel)) {
 		 	mail="'.$r["e_mail"].'" namedoc="Partite aperte al '.$giornfin.'-'.$mesfin.'-'.$annfin.'"><i class="glyphicon glyphicon-envelope"></i></a>';
 		 } else {
 			echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" href="admin_client.php?codice='.substr($r["codice"],3).'&Update"><i class="glyphicon glyphicon-edit"></i></a>';
-		 } 
+		 }
 		 echo "</tr>";
          $tot += $r['saldo'];
       }

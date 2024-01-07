@@ -2,7 +2,7 @@
 /*
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
-  Copyright (C) 2004-2023 - Antonio De Vincentiis Montesilvano (PE)
+  Copyright (C) 2004-2024 - Antonio De Vincentiis Montesilvano (PE)
   (http://www.devincentiis.it)
   <http://gazie.sourceforge.net>
   --------------------------------------------------------------------------
@@ -34,7 +34,19 @@ if (isset($_POST['group_rid']) && $_POST['group_rid']=='no'){
   $group_rid_n='';
 };
 
-function getDocumentsBill($upd = false,$group_rid=false) {
+function getSaldo($gTables,$clfoco,$id_con){
+    $saldo = 0.00;
+    if ($clfoco >100000000) {
+      $sqlquery= "SELECT SUM(import*(darave='D') - import*(darave='A')) AS saldo FROM ".$gTables['rigmoc']." WHERE id_tes <> ".$id_con." AND codcon = ".$clfoco." GROUP BY codcon";
+      $rs = gaz_dbi_query($sqlquery);
+      $r = gaz_dbi_fetch_array($rs);
+      return ( $r && $r['saldo'] && $r['saldo'] <> 0.00) ? $r['saldo'] : false;
+    } else {
+      return false;
+    }
+}
+
+function getDocumentsBill($upd = false,$group_rid=false,$modamount=[]) {
     global $gTables, $admin_aziend;
     $calc = new Compute;
     $from = $gTables['tesdoc'] . ' AS tesdoc
@@ -48,7 +60,7 @@ function getDocumentsBill($upd = false,$group_rid=false) {
              ON tesdoc.clfoco=( SELECT files.id_ref FROM ". $gTables['files'] . "  WHERE files.table_name_ref='clfoco' AND files.item_ref='mndtritdinf' ORDER BY id_tes DESC LIMIT 1 )";
     $where = "(tippag = 'B' OR tippag = 'T' OR tippag = 'V' OR tippag = 'I') AND geneff = '' AND tipdoc LIKE 'FA_'";
     $orderby = "datfat ASC, protoc ASC, id_tes ASC";
-    $result = gaz_dbi_dyn_query('tesdoc.*,
+    $result = gaz_dbi_dyn_query('tesdoc.*, tesdoc.id_con AS last_id_movcon,
                         pay.tippag,pay.numrat,pay.tipdec,pay.giodec,pay.tiprat,pay.mesesc,pay.giosuc,customer.codice, customer.speban AS addebitospese, customer.iban,
                         CONCAT(anagraf.ragso1,\' \',anagraf.ragso2) AS ragsoc,CONCAT(anagraf.citspe,\' (\',anagraf.prospe,\')\') AS citta,
                         files.id_doc AS mndtritdinf, files.custom_field AS files_data ', $from, $where, $orderby);
@@ -133,7 +145,7 @@ function getDocumentsBill($upd = false,$group_rid=false) {
         $doc[$ctrlp]['vat'] = $calc->castle;
         // quando confermo segno l'effetto come generato e se un RID valorizzo con l'ultimo mandato del cliente
         if ($upd) {
-            gaz_dbi_query("UPDATE " . $gTables['tesdoc'] . " SET geneff = 'S' WHERE id_tes = " . $tes['id_tes'] . ";");
+          gaz_dbi_query("UPDATE " . $gTables['tesdoc'] . " SET geneff = 'S' WHERE id_tes = " . $tes['id_tes'] . ";");
         }
     }
     if (count($doc)>0 && ($doc[$ctrlp]['tes']['stamp'] >= 0.01 || $taxstamp >= 0.01)) { // a chiusura dei cicli faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
@@ -169,7 +181,7 @@ function getDocumentsBill($upd = false,$group_rid=false) {
         //fine calcolo totali
         $rate = CalcolaScadenze($tot['tot'], substr($v['tes']['datfat'], 8, 2), substr($v['tes']['datfat'], 5, 2), substr($v['tes']['datfat'], 0, 4), $v['tes']['tipdec'], $v['tes']['giodec'], $v['tes']['numrat'], $v['tes']['tiprat'], $v['tes']['mesesc'], $v['tes']['giosuc']);
         $tot_doc = $tot['tot'];
-        if ($tot['tot'] > 0) {
+        if ($tot['tot'] >= 0.01) {
             foreach ($rate['import'] as $k_r => $v_r) {
                 $ke++;
                 $v['tes']['tipeff'] = $v['tes']['tippag'];
@@ -210,9 +222,13 @@ function getDocumentsBill($upd = false,$group_rid=false) {
     }
     // FINE ciclo fatture con effetti con o senza progressivi raggruppati, pronti per essere visualizzati o inseriti sul db in base alla scelta
 
-    if ($upd) { // ho scelto di generarle
+    if ($upd) { // ho scelto di generare
         foreach ($effetti as $k=>$v) {
-            effettInsert($v);
+          if (isset($modamount[$k])) { // è stato modificato l'importo del RID
+            $v['status'] = 'MODAMOUNT'; // serve per creare una descrizione diversa sul tracciato XML
+            $v['impeff'] = floatval($modamount[$k]);
+          }
+          effettInsert($v);
         }
     } else {
         return $effetti;
@@ -255,23 +271,106 @@ function computeTot($data, $carry) {
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['hidden_req'] = '';
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
+    $form['modamount'] = '';
 } else {    // accessi successivi
     $form['hidden_req'] = htmlentities($_POST['hidden_req']);
     $form['ritorno'] = $_POST['ritorno'];
+    $form['modamount'] = $_POST['modamount'];
     if (isset($_POST['submit']) && empty($msg)) {   //confermo la generazione
-        $rs = getDocumentsBill(true,($group_rid_y=='checked'?true:false));
-        header("Location: report_effett.php");
-        exit;
+      $rs = getDocumentsBill(true,($group_rid_y=='checked'?true:false),json_decode($_POST['modamount'], true));
+      header("Location: report_effett.php");
+      exit;
     }
 }
 
 require("../../library/include/header.php");
 $script_transl = HeadMain(0);
+?>
+<script>
+$(function() {
+	$("#dialog_modamount").dialog({ autoOpen: false });
+	$('.dialog_modamount').click(function() {
+		$("p#desfattura").html('fatt.' + $(this).attr("numfat") + ' del ' + $(this).attr("datfat") + ' scadenza ' + $(this).attr("scaden"));
+		$("p#descliente").html($(this).attr("ragsoc"));
+    var oriamount = $(this).attr("totfat");
+    var conamount = $(this).attr("saldo");
+    $("#oriamount").html("Originale € " + oriamount);
+    $("#conamount").html("Contabile € " + conamount);
+		var refdoc = $(this).attr('refdoc');
+    var objmodamount = $.parseJSON($('#modamount').val());
+    if(refdoc in objmodamount) {
+      $("#newamount").val(objmodamount[refdoc]);
+    } else {
+      $("#newamount").val($(this).attr("totfat"));
+    }
+		$( "#dialog_modamount" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+   			close: {
+					text:'Annulla e chiudi',
+					'class':'btn btn-default',
+          click:function() {
+            $(this).dialog("close");
+          }
+        },
+				confirm:{
+					text:'Modifica',
+					'class':'btn btn-warning',
+					click:function (event, ui) {
+            objmodamount[refdoc]=$("#newamount").val();
+            $.each( objmodamount, function( key, value ) {
+              if ( key == refdoc ) {
+                if (value != oriamount) {
+                  $('[refamo="'+key+'"]').html('€ ' + value + ' <del>' + oriamount + '</del>');
+                  $('[refdoc="'+key+'"]').addClass('btn-danger').removeClass('btn-warning');
+                } else {
+                  delete objmodamount[key];
+                  $('[refamo="'+key+'"]').html('€' + oriamount);
+                  $('[refdoc="'+key+'"]').addClass('btn-warning').removeClass('btn-danger');
+                }
+              }
+            });
+            $('#modamount').val(JSON.stringify(objmodamount));
+            alert($('#modamount').val());
+            $(this).dialog("close");
+				}}
+			}
+		});
+	$('#conamount').click(function() {
+		$("#newamount").val(conamount);
+  });
+	$('#oriamount').click(function() {
+		$("#newamount").val(oriamount);
+  });
+  $("#dialog_modamount" ).dialog( "open" );
+	});
+});
+</script>
+<?php
 echo "<form method=\"POST\" name=\"create\">\n";
 echo "<input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />\n";
+echo '<input type="hidden" value=\'{}\' name="modamount" id="modamount" />'; //' . $form['modamount'] . '
 echo "<input type=\"hidden\" value=\"" . $form['ritorno'] . "\" name=\"ritorno\" />\n";
 $gForm = new GAzieForm();
 ?>
+<div style="display:none" id="dialog_modamount" title="Cambio importo RID">
+  <p>Cliente:</p>
+  <p class="ui-state-highlight" id="descliente"></p>
+  <p>Fattura:</p>
+  <p class="ui-state-highlight" id="desfattura"></p>
+  <div>
+    <label>Importo attuale</label>
+    <input type="text" value="" id="newamount" name="newamount" maxlength="12" />
+  </div>
+  <div class="row">
+    <div class="btn btn-xs col-xs-12 col-sm-6 btn-default" id="oriamount" style="border: solid thin;" ></div>
+    <div class="btn btn-xs col-xs-12 col-sm-6 btn-default" id="conamount" style="border: solid thin;"></div>
+  </div>
+</div>
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['title'];?></div>
 <div class="panel panel-info div-bordered">
  <div class="panel-body">
@@ -306,12 +405,13 @@ if (isset($_POST['preview'])) {
          <th class=\"FacetFieldCaptionTD\">" . $script_transl['doc_type'] . "</th>
          <th class=\"FacetFieldCaptionTD\">N.</th>
          <th class=\"FacetFieldCaptionTD\">" . $script_transl['customer'] . "</th>
-         <th class=\"FacetFieldCaptionTD\">" . $script_transl['tot'] . "fattura</th>\n
+         <th class=\"FacetFieldCaptionTD\">" . $script_transl['tot'] . " fattura</th>\n
          <th class=\"FacetFieldCaptionTD\"> Importo effetto</th>\n";
     $ctrl_date = '';
     $tot_type = ['B'=>0,'I'=>0,'T'=>0,'V'=>0];
     $class_type = ['B'=>'bg-success','I'=>'bg-info','T'=>'bg-warning','V'=>'bg-default'];
     $ctrldoc=0;
+    $ctrlclfoco=0;
     foreach ($rs as $k => $v) {
         $tot_type[$v['tippag']]+=$v['impeff'];
         $e='';
@@ -330,22 +430,30 @@ if (isset($_POST['preview'])) {
             $errors=true;
             $e=$script_transl['errors']['nobanapp'];
         }
+
         if ($ctrldoc<>$v['protoc']){
-            echo "<tr class=\"".$class_type[$v['tippag']]."\">
-               <td align=\"center\">" . gaz_format_date($v['datfat']) . "</td>
-               <td title=\"".$v['cigcup']."\" align=\"center\">" . $v['protoc'] . '/' . $v['seziva'] . "</td>
-               <td>" . $script_transl['doc_type_value'][$v['tipdoc']] . ' <a class="btn btn-xs btn-default" title="Visualizza in stile" href="./electronic_invoice.php?id_tes='.$v['id_tes'].'&viewxml" target="_blank"><i class="glyphicon glyphicon-eye-open"></i></a></td>
-               <td>' . $v['numfat'] . '</td>
-               <td><a class="btn btn-xs btn-'.((strlen($e)>10)?"danger":"success").'" target="_blank" href="./admin_client.php?codice='.substr($v['clfoco'],-6).'&Update" title="Anagrafica cliente">'.$v['ragsoc']. "</a></td>
-               <td align=\"right\">" . $admin_aziend['symbol'].' '.gaz_format_number($v['totfat']) . '</td><td></td></tr>';
+          $saldo=false;
+          if ($v['tippag']=='I') {
+            $saldo=getSaldo($gTables,$v['clfoco'],$v['last_id_movcon']);
+          }
+          echo "<tr class=\"".$class_type[$v['tippag']]."\">
+             <td align=\"center\">" . gaz_format_date($v['datfat']) . "</td>
+             <td title=\"".$v['cigcup']."\" align=\"center\">" . $v['protoc'] . '/' . $v['seziva'] . "</td>
+             <td>" . $script_transl['doc_type_value'][$v['tipdoc']] . ' <a class="btn btn-xs btn-default" title="Visualizza in stile" href="./electronic_invoice.php?id_tes='.$v['id_tes'].'&viewxml" target="_blank"><i class="glyphicon glyphicon-eye-open"></i></a></td>
+             <td>' . $v['numfat'] . '</td>
+             <td><a class="btn btn-xs btn-'.((strlen($e)>10)?"danger":"success").'" target="_blank" href="./admin_client.php?codice='.substr($v['clfoco'],-6).'&Update" title="Anagrafica cliente">'.$v['ragsoc']. "</a></td>
+             <td align=\"right\">" . $admin_aziend['symbol'].' '.gaz_format_number($v['totfat']) . '</td><td class="text-right">';
+            if ($saldo){
+              echo '<small>Saldo contabile € '.$saldo.'</small> <div class="btn btn-warning btn-xs dialog_modamount" title="modifica importo RID" ragsoc="'.$v['ragsoc'].'" refdoc="'.$k.'" scaden="'.gaz_format_date($v['scaden']).'" numfat="'.$v['numfat'].'" datfat="'.gaz_format_date($v['datfat']).'" totfat="'.number_format($v['totfat'], 2, '.', '' ).'" saldo="'.$saldo.'"><i class="glyphicon glyphicon-edit" ></i></div>';
+            }
+            echo '</td></tr>';
         }
         echo "<tr>";
         echo '<td align="right" colspan="6"><span class="text-danger">'.$e.'</span> ';
         echo $script_transl['gen'] .'<b>' .$script_transl['type_value'][$v['tippag']] .
         ' n.' . $v['progre'] .(($v['raggru']==1)?' <span class="text-danger">[raggruppato] </span>':'').'</b> ' . $script_transl['end'] . gaz_format_date($v['scaden']);
-        echo "</td>
-                   <td align=\"right\">";
-        echo  $admin_aziend['symbol'].' '.gaz_format_number($v['impeff']);
+        echo '</td><td align="right" refamo="'.$k.'">';
+        echo  '€ '.gaz_format_number($v['impeff']);
         echo "</td></tr>\n";
         $ctrldoc=$v['protoc'];
     }
