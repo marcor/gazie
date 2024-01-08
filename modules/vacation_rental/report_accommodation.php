@@ -488,6 +488,28 @@ function openframe(url,codice){
 		$('.framePdf').css({'display': 'none'});
 	});
 };
+function openframesync(url){
+  var response = jQuery.ajax({
+		url: url,
+		type: 'HEAD',
+		async: false
+	}).status;
+	if(response == "200") {
+    $(function(){
+      $('#framePdf').attr('src',url);
+      $('#framePdf').css({'height': '100%'});
+      $('.framePdf').css({'display': 'block','width': '90%', 'height': '100%', 'z-index':'2000'});
+      $("html, body").delay(100).animate({scrollTop: $('#framePdf').offset().top},'slow', function() {
+          $("#framePdf").focus();
+      });
+    });
+  }else{
+    alert('Il file richiesto fa parte della versione PRO di questo modulo: contattare lo sviluppatore');
+  };
+	$('#closePdf').on( "click", function() {
+		$('.framePdf').css({'display': 'none'});
+	});
+};
 
 
 function Copy(id) {
@@ -618,6 +640,9 @@ $ts->output_navbar();
 		<td class="FacetFieldCaptionTD" colspan="7">
 			<input type="submit" class="btn btn-sm btn-default" name="search" value="<?php echo $script_transl['search'];?>" onClick="javascript:document.report.all.value=1;">
 			<a class="btn btn-sm btn-default" href="?">Reset</a>
+			<?php  $ts->output_order_form(); ?>
+
+			<a class="btn btn-sm btn-default glyphicon glyphicon-refresh" href="?" style="float:right;" onclick="openframesync('sync_event_ical.php')" data-toggle="modal" data-target="#iframe">Sincronizza ICal</a>
 			<?php  $ts->output_order_form(); ?>
 		</td>
 	</tr>
