@@ -582,7 +582,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['custom_field'] = json_encode($data);
                 gaz_dbi_put_row($gTables['tesbro'], 'id_tes', $ultimo_id, 'custom_field', $form['custom_field']);
               }else{
-                $data = json_decode($form['custom_field'],true);
+                if (isset($form['custom_field'])){
+                  $data = json_decode($form['custom_field'],true);
+                }else{
+                  $data=array();
+                }
                 $data['vacation_rental']['status']=(isset($data['vacation_rental']['status']))?$data['vacation_rental']['status']:'CONFIRMED';
                 $data['vacation_rental']['ip']=(isset($data['vacation_rental']['ip']))?$data['vacation_rental']['ip']:'diretto';
                 $form['custom_field'] = json_encode($data);

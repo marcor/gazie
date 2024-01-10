@@ -120,6 +120,9 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
         $mail->setFrom($admin_aziend['e_mail'],$admin_aziend['ragso1']." ".$admin_aziend['ragso2']); // sender (e-mail dell'account che sta inviando)
         $mail->addReplyTo($admin_aziend['e_mail']); // reply to sender (e-mail dell'account che sta inviando)
         $mail->addAddress($_POST['cust_mail']); // email destinatario
+        if (filter_var($_POST['cust_mail2'], FILTER_VALIDATE_EMAIL)){ // se c'è una seconda mail destinatario gliela mando per conoscenza
+           $mail->addCC($_POST['cust_mail2']);
+        }
         if ($imap_usr==''){
           $mail->addCC($admin_aziend['e_mail']); //invio copia a mittente
         }
@@ -195,6 +198,9 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
         $mail->setFrom($admin_aziend['e_mail'],$admin_aziend['ragso1']." ".$admin_aziend['ragso2']); // sender (e-mail dell'account che sta inviando)
         $mail->addReplyTo($admin_aziend['e_mail']); // reply to sender (e-mail dell'account che sta inviando)
         $mail->addAddress($_POST['cust_mail']);                  // email destinatario
+        if (filter_var($_POST['cust_mail2'], FILTER_VALIDATE_EMAIL)){ // se c'è una seconda mail destinatario gliela mando per conoscenza
+           $mail->addCC($_POST['cust_mail2']);
+        }
         if ($imap_usr==''){
           $mail->addCC($admin_aziend['e_mail']);             //invio copia a mittente
         }
@@ -411,6 +417,9 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
         $mail->setFrom($admin_aziend['e_mail'],$admin_aziend['ragso1']." ".$admin_aziend['ragso2']); // sender (e-mail dell'account che sta inviando)
         $mail->addReplyTo($admin_aziend['e_mail']); // reply to sender (e-mail dell'account che sta inviando)
         $mail->addAddress($_POST['cust_mail']);                  // email destinatario
+        if (filter_var($_POST['cust_mail2'], FILTER_VALIDATE_EMAIL)){ // se c'è una seconda mail destinatario gliela mando per conoscenza
+           $mail->addCC($_POST['cust_mail2']);
+        }
         if ($imap_usr==''){
           $mail->addCC($admin_aziend['e_mail']);             //invio copia a mittente
         }

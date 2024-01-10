@@ -52,9 +52,13 @@ $user_level=get_user_points_level($id_anagra['id_anagra']);
 if ($tesbro['tipdoc']=='VOR' || $tesbro['tipdoc']=='VOG') {
 	$type=false;
 	$template='BookingSummary';
-    if (isset($_GET['dest'])&& $_GET['dest']=='E' ){ // se l'utente vuole inviare una mail
-		$type='E';
-    }
+  if (isset($_GET['dest'])&& $_GET['dest']=='E' ){ // se l'utente vuole inviare una mail
+    $type='E';
+  }elseif (isset($_GET['dest'])){
+    $email=filter_var($_GET['dest'], FILTER_VALIDATE_EMAIL);
+    $type=$email;
+    $r=gaz_dbi_put_row($gTables['tesbro'], 'id_tes', $tesbro['id_tes'], 'email',$email);
+  }
 	if (isset($_GET['lh'])){ // se l'utente vuole che venga stampata su una carta intestata
 		$type='H';
 	}

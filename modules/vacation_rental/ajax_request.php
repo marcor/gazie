@@ -132,8 +132,17 @@ if (isset($_GET['term'])) {
               $mail->addReplyTo($admin_aziend['e_mail']); // reply to sender (e-mail dell'account che sta inviando)
               if (filter_var($result['e_mail'], FILTER_VALIDATE_EMAIL)){
                 $mail->addAddress($result['e_mail']);                  // se c'è invio all'email destinatario principale
-              } else{
+                if (filter_var($result['e_mail2'], FILTER_VALIDATE_EMAIL)){
+                  $mail->addCC($result['e_mail2']); //invio per conoscenza al secondo indirizzo
+                }
+              } elseif (filter_var($result['e_mail2'], FILTER_VALIDATE_EMAIL)){
                 $mail->addAddress($result['e_mail2']);                  // altrimenti alla secondaria
+              }else{
+                ?>
+                <script>
+                alert('ERRORE, impossibile inviare: non ci sono indirizzi mail validi a cui inviare');
+                </script>
+                <?php
               }
               if ($imap_usr==''){
                 $mail->addCC($admin_aziend['e_mail']); //invio copia a mittente
@@ -399,8 +408,17 @@ if (isset($_GET['term'])) {
           $mail->addReplyTo($admin_aziend['e_mail']); // reply to sender (e-mail dell'account che sta inviando)
           if (filter_var($result['e_mail'], FILTER_VALIDATE_EMAIL)){
             $mail->addAddress($result['e_mail']);                  // se c'è invio all'email destinatario principale
-          } else{
+            if (filter_var($result['e_mail2'], FILTER_VALIDATE_EMAIL)){
+              $mail->addCC($result['e_mail2']); //invio per conoscenza al secondo indirizzo
+            }
+          } elseif (filter_var($result['e_mail2'], FILTER_VALIDATE_EMAIL)){
             $mail->addAddress($result['e_mail2']);                  // altrimenti alla secondaria
+          }else{
+            ?>
+            <script>
+            alert('ERRORE, impossibile inviare: non ci sono indirizzi mail validi a cui inviare');
+            </script>
+            <?php
           }
           if ($imap_usr==''){
             $mail->addCC($admin_aziend['e_mail']); //invio copia a mittente

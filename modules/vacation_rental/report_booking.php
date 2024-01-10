@@ -656,6 +656,7 @@ $(function() {
 		var refsta = $(this).attr('refsta');
     var new_stato_lavorazione = $(this).attr("prosta");
     var cust_mail = $(this).attr("cust_mail");
+    var cust_mail2 = $(this).attr("cust_mail2");
     $("#sel_stato_lavorazione").val(new_stato_lavorazione);
     $('#sel_stato_lavorazione').on('change', function () {
         //ways to retrieve selected option and text outside handler
@@ -675,7 +676,7 @@ $(function() {
             $("#dialog_stato_lavorazione").css("background", "url("+'spinner.gif'+") center no-repeat");
             var email=$('#checkbox_email').prop('checked');
             $.ajax({
-              data: {'type':'set_new_stato_lavorazione','ref':refsta,'new_status':new_stato_lavorazione,email:email,cust_mail:cust_mail},
+              data: {'type':'set_new_stato_lavorazione','ref':refsta,'new_status':new_stato_lavorazione,email:email,cust_mail:cust_mail,cust_mail2:cust_mail2},
               type: 'POST',
               url: 'change_status.php',
               success: function(output) {
@@ -707,6 +708,7 @@ $(function() {
 		var refcheck = $(this).attr('refcheck');
     var new_stato_check = $(this).attr("prostacheck");
     var cust_mail = $(this).attr("cust_mail");
+    var cust_mail2 = $(this).attr("cust_mail2");
     var ckdate = $(this).attr("ckdate");
 	if (ckdate.length>4){
 		$("#datepicker").val(ckdate);
@@ -750,7 +752,7 @@ $(function() {
             var d = $("#datepicker").val();
             var email=$('#checkbox_email_inout').prop('checked');
             $.ajax({
-              data: {'type':'set_new_status_check','ref':refcheck,'new_status':new_stato_check,email:email,cust_mail:cust_mail,datetime:d},
+              data: {'type':'set_new_status_check','ref':refcheck,'new_status':new_stato_check,email:email,cust_mail:cust_mail,cust_mail2:cust_mail2,datetime:d},
               type: 'POST',
               url: 'change_status.php',
               success: function(output) {
@@ -1099,7 +1101,7 @@ $ts->output_navbar();
         $result = gaz_dbi_dyn_query(cols_from($gTables['tesbro'], "*") . ", " .cols_from($gTables['rental_feedbacks'], "id AS id_feedback","text","status AS feed_status") . ", " .
         cols_from($gTables['anagra'],
             "ragso1","ragso2","citspe","custom_field AS anagra_custom_field",
-            "e_mail AS base_mail","id") . ", " .
+            "e_mail AS base_mail","id","e_mail2 AS base_mail2") . ", " .
         cols_from($gTables["destina"], "unita_locale1").", ".cols_from($gTables["rental_events"], "adult", "child", "start","end","house_code","checked_in_date","checked_out_date","id_tesbro"),
         $tesbro_e_destina." LEFT JOIN ".$gTables['rental_events']." ON  ".$gTables['rental_events'].".id_tesbro = ".$gTables['tesbro'].".id_tes AND ".$gTables['rental_events'].".type = 'ALLOGGIO' LEFT JOIN ".$gTables['rental_feedbacks']." ON  ".$gTables['rental_feedbacks'].".reservation_id = ".$gTables['rental_events'].".id_tesbro" ,
         $ts->where." AND template = 'booking' ", $ts->orderby,
@@ -1394,13 +1396,13 @@ $ts->output_navbar();
                         echo " style=\"cursor:pointer;\" onclick=\"pay('". $r['id'] ."')\"";
                         echo "><i class=\"glyphicon glyphicon-credit-card\" title=\"Carta di credito\"></i></a>";
                       }
-                      ?><br><a style="white-space:nowrap;" title="Stato della prenotazione" class="btn btn-xs <?php echo $stato_btn; ?> dialog_stato_lavorazione" refsta="<?php echo $r['id_tes']; ?>" prodes="<?php echo $r['ragso1']," ",$r['ragso2']; ?>" prosta="<?php echo $r['status']; ?>" cust_mail="<?php echo $r['base_mail']; ?>">
+                      ?><br><a style="white-space:nowrap;" title="Stato della prenotazione" class="btn btn-xs <?php echo $stato_btn; ?> dialog_stato_lavorazione" refsta="<?php echo $r['id_tes']; ?>" prodes="<?php echo $r['ragso1']," ",$r['ragso2']; ?>" prosta="<?php echo $r['status']; ?>" cust_mail="<?php echo $r['base_mail']; ?>" cust_mail2="<?php echo $r['base_mail2']; ?>">
                           <i class="glyphicon glyphicon-modal-window">&nbsp;</i><?php echo $r['status']; ?>
                         </a>
                         <?php
                         if ($r['status']=='CONFIRMED'){
                           ?>
-                          <br><a style="white-space:nowrap;" title="Accettazione: <?php echo $title; ?>" class="btn btn-xs <?php echo $stato_check_btn; ?> dialog_check_inout" refcheck="<?php echo $r['id_tes']; ?>" prodes="<?php echo $r['ragso1']," ",$r['ragso2']; ?>" prostacheck="<?php echo $check_inout; ?>" cust_mail="<?php echo $r['base_mail']; ?>" ckdate="<?php echo $ckdate; ?>">
+                          <br><a style="white-space:nowrap;" title="Accettazione: <?php echo $title; ?>" class="btn btn-xs <?php echo $stato_check_btn; ?> dialog_check_inout" refcheck="<?php echo $r['id_tes']; ?>" prodes="<?php echo $r['ragso1']," ",$r['ragso2']; ?>" prostacheck="<?php echo $check_inout; ?>" cust_mail="<?php echo $r['base_mail']; ?>" cust_mail2="<?php echo $r['base_mail2']; ?>" ckdate="<?php echo $ckdate; ?>">
                             <i class="glyphicon glyphicon-<?php echo $check_icon; ?>">&nbsp;</i><?php echo "CHECK ",$check_inout; ?>
                           </a>
                           <?php
