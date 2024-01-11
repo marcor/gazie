@@ -335,7 +335,7 @@ $(function() {
               }
             });
             $('#modamount').val(JSON.stringify(objmodamount));
-            alert($('#modamount').val());
+            //alert($('#modamount').val());
             $(this).dialog("close");
 				}}
 			}
