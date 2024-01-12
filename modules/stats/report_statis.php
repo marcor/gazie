@@ -47,7 +47,7 @@ if ($form['acqven'] == 0 ) {
 } else {
      $where = " tipdoc like 'A__' ";
 }
-$sqlquery = 'SELECT datemi,'.$gTables['tesdoc'].'.clfoco,tiprig,codart,'.$gTables['rigdoc'].'.descri,'.$gTables['rigdoc'].'.unimis,catmer,quanti,prelis,'
+$sqlquery = 'SELECT datemi,'.$gTables['tesdoc'].'.clfoco,tipdoc,tiprig,codart,'.$gTables['rigdoc'].'.descri,'.$gTables['rigdoc'].'.unimis,catmer,quanti,prelis,'
             .$gTables['tesdoc'].'.sconto as scotes, '.$gTables['rigdoc'].'.sconto as scorig,'.
             $gTables['clfoco'].'.codice,'.$gTables['tesdoc'].'. id_tes, ragso1, ragso2 FROM '.$gTables['rigdoc'].' LEFT JOIN '.
             $gTables['tesdoc'].' ON '.$gTables['rigdoc'].'.id_tes = '.$gTables['tesdoc'].
@@ -74,6 +74,9 @@ while ($rigo_documenti = gaz_dbi_fetch_array($rs_documenti)) {
         $rigo_documenti['codart'] = '(nessun codice: forfait)';
         $rigo_documenti['descri'] = '--- Aggregato righi Forfait ---';
         $rigo_documenti['quanti'] = 1;
+      }
+      if ($rigo_documenti['tipdoc'] == 'FNC') {
+        $rigo_documenti['quanti'] = -$rigo_documenti['quanti'];
       }
       if ($rigo_documenti['scotes'] > 0){
          if ($rigo_documenti['tiprig'] == 0){
@@ -288,7 +291,7 @@ Chart.defaults.global.defaultFontColor = '#999';
 // Populate bar chart datasets (sold/cost)
 var numOfValuesInDataset=0;
 var barChartData=[];
-		
+
 <?php
 foreach ($castelletto_articoli as $key=>$value) {
 ?>
@@ -318,7 +321,7 @@ var chartHeight = chartAreaHeight + 80;
 
 var rightHeight=chartHeight + "px";
 document.getElementById("chart_horizontal_bar_div").style.height = rightHeight;
-	  
+
 // Get the 2d context for horizontal bar chart container (canvas)
 let myChartHorizontalBar = document.getElementById('myChartHorizontalBar').getContext('2d');
 
@@ -387,11 +390,11 @@ let chartHorizontalBar = new Chart(myChartHorizontalBar, {
 
 	tooltips: {
 				callbacks: {
-					
+
 					title: function(tooltipItem, data) {
 						return '';
 					},
-					
+
 					label: function(tooltipItem, data) {
 						var label = data.datasets[tooltipItem.datasetIndex].label || '';
 

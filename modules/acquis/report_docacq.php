@@ -232,7 +232,7 @@ $(function() {
 				"Invia Email":{
 					text:'Invia email al consulente',
 					'class':'btn btn-success',
-					click:function (event, ui) {						
+					click:function (event, ui) {
 						$("#mailbutt div").remove();
 						var dest=$("#mailaddress").val();
 						$("#mailaddress").val('');
@@ -243,7 +243,7 @@ $(function() {
 						$('#frame_email').attr('src','');
 						$('.frame_email').css({'display': 'none'});
 						});
-						$(this).dialog("close");				
+						$(this).dialog("close");
 					}
 				},
 				delete:{
@@ -264,7 +264,7 @@ $(function() {
 				"Esci": function() {
 					$(this).dialog("close");
 				}
-				
+
 			},
 			close: function(){
 				$("#mailbutt div").remove();
@@ -549,7 +549,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
       echo "<a class=\"btn btn-xs btn-danger\" href=\"\">Contabilizzazione persa!</a>";
     }
   } else {
-    echo "<a class=\"btn btn-xs btn-default btn-cont\" href=\"accounting_documents.php?type=AF&last=" . $row["protoc"] . "\">Contabilizza</a>";
+    echo "<a class=\"btn btn-xs btn-default btn-cont\" href=\"accounting_documents.php?type=AF&datreg=".gaz_format_date($row["datreg"],false,3)."&last=" . $row["protoc"] . "\">Contabilizza</a>";
   }
   if ($row['fattura_elettronica_zip_package'] != '' && strlen($row['fattura_elettronica_zip_package']) > 4){// se è stato creato un pacchetto .zip
 	//echo "<a title=\"scarica il pacchetto\" class=\"btn btn-xs btn-warning \" href=\"fae_acq_packaging.php?name=" . $row['fattura_elettronica_zip_package'] . "\"><i class=\"glyphicon glyphicon-compressed\"></i> ".substr($row['fattura_elettronica_zip_package'],0,19)."</a>";

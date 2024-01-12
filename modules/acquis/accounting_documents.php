@@ -322,25 +322,24 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     }
     $extreme = getExtremeDocs($form['type'], $form['vat_section']);
     if ($extreme['ini']['proini'] > 0) {
-        $form['this_date_Y'] = substr($extreme['fin']['date'], 0, 4);
-        $form['this_date_M'] = substr($extreme['fin']['date'], 5, 2);
-        $form['this_date_D'] = substr($extreme['fin']['date'], 8, 2);
-    } else {
-        $form['this_date_Y'] = date("Y");
-        $form['this_date_M'] = date("m");
-        $form['this_date_D'] = date("d");
+      $form['this_date_Y'] = substr($extreme['fin']['date'], 0, 4);
+      $form['this_date_M'] = substr($extreme['fin']['date'], 5, 2);
+      $form['this_date_D'] = substr($extreme['fin']['date'], 8, 2);
+    } else if (isset($_GET['datreg'])) {
+      $form['this_date_Y'] = substr($_GET['datreg'], 0, 4);
+      $form['this_date_M'] = substr($_GET['datreg'], 4, 2);
+      $form['this_date_D'] = substr($_GET['datreg'], 6, 2);
+    }  else {
+      $form['this_date_Y'] = date("Y");
+      $form['this_date_M'] = date("m");
+      $form['this_date_D'] = date("d");
     }
     $form['proini'] = $extreme['ini']['proini'];
-    $form['profin'] = $extreme['fin']['profin'];
-    if (isset($_GET['last'])) {
-        $form['profin'] = intval($_GET['last']);
-    }
+    $form['profin'] = (isset($_GET['last'])) ? intval($_GET['last']) : $extreme['fin']['profin'];
     $form['year_ini'] = substr($extreme['ini']['date'], 0, 4);
     $form['year_fin'] = substr($extreme['fin']['date'], 0, 4);
     $form['hidden_req'] = '';
-    $now = new DateTime();
-    $datref = $now->modify('next month');
-    $rs = getDocumentsAccounts($form['type'], $form['vat_section'], $datref->format('Ymd') , $form['profin']);
+    $rs = getDocumentsAccounts($form['type'], $form['vat_section'], $form['this_date_Y'].$form['this_date_M'].$form['this_date_D'] , $form['profin']);
 } else {    // accessi successivi
   $form['type'] = substr($_POST['type'], 0, 2);
   $form['vat_section'] = intval($_POST['vat_section']);

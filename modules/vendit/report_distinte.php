@@ -149,8 +149,8 @@ echo '</tr>';
 while ($r = gaz_dbi_fetch_array($rs)) {
     // controllo possibile cancellazione distinta solo se la prima scadenza è maggiore di oggi
     $expire = strtotime($r['minsca']);
-    $disabled=($expire < $today)?'disabled':'';
-    $dialogdel=($expire < $today)?'':'dialog_delete';
+    $disabled='';
+    $dialogdel='dialog_delete';
 ?>
 <tr>
     <td class="text-center"><?php echo $r["id_doc"]; ?></td>

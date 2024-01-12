@@ -262,11 +262,31 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		}
 
     if (!empty($_FILES['userfile']['name'])) {
-
-            if (!( $_FILES['userfile']['type'] == "application/pkcs7-mime" || $_FILES['userfile']['type'] == "application/pkcs7" || $_FILES['userfile']['type'] == "text/xml")) {
+      if ( $_FILES['userfile']['type'] == "application/x-zip-compressed") {
+        $filepath= DATA_DIR . 'files/' . $admin_aziend['codice'] . '/tmp/'.$send_fae_zip_package['val'] .'_' . $_FILES['userfile']['name'];
+        if (move_uploaded_file($_FILES['userfile']['tmp_name'],$filepath)) { // nessun errore
+				} else { // no upload
+					$msg['err'][] = 'no_upload';
+				}
+        $zip = new ZipArchive;
+        if ($zip->open($filepath) === TRUE) {
+          for($i = 0; $i < $zip->numFiles; $i++) {
+            $filename = $zip->getNameIndex($i);
+            $fileinfo = pathinfo($filename);
+            $zip->extractTo(DATA_DIR .'files/' .$admin_aziend['codice'].'/tmp/',$filename);
+   					$file_id=gaz_dbi_table_insert('files', ["table_name_ref"=>date('Y-m-d H:i:s'), "item_ref"=>"faesync","extension"=>$fileinfo['extension'],"title"=>$filename]);
+            copy(DATA_DIR . 'files/' . $admin_aziend['codice'] . '/tmp/'.$filename, DATA_DIR . 'files/' . $admin_aziend['codice'] . '/doc/'.$file_id.'.'.$fileinfo['extension']);
+          }
+          $zip->close();
+          header("Location: acquire_invoice.php");
+          exit;
+        } else {
+          $msg['err'][] = 'filmim';
+        }
+			} else if (!( $_FILES['userfile']['type'] == "application/pkcs7-mime" || $_FILES['userfile']['type'] == "application/pkcs7" || $_FILES['userfile']['type'] == "text/xml")) {
 				$msg['err'][] = 'filmim';
 			} else {
-                if (move_uploaded_file($_FILES['userfile']['tmp_name'], DATA_DIR . 'files/' . $admin_aziend['codice'] . '/' . $_FILES['userfile']['name'])) { // nessun errore
+        if (move_uploaded_file($_FILES['userfile']['tmp_name'], DATA_DIR . 'files/' . $admin_aziend['codice'] . '/' . $_FILES['userfile']['name'])) { // nessun errore
 					$form['fattura_elettronica_original_name'] = $_FILES['userfile']['name'];
 				} else { // no upload
 					$msg['err'][] = 'no_upload';
@@ -1768,7 +1788,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
 				<div class="row">
 					<div class="col-md-12">
 						<div class="form-group">
-							<label for="image" class="col-sm-4 control-label">Queste fatture, arrivate via PEC, sono ancora da acquisire</label>
+							<label for="image" class="col-sm-4 control-label">Queste fatture sono arrivate ma ancora da acquisire:</label>
 							<div class="col-sm-8">
 							<?php
               $first='class="btn btn-success" title="Acquisisci"';
@@ -1801,8 +1821,8 @@ if ($toDo=='insert' || $toDo=='update' ) {
        <div class="row">
            <div class="col-md-12">
                <div class="form-group">
-                   <label for="image" class="col-sm-4 control-label">Seleziona il file xml o p7m</label>
-                   <div class="col-sm-8">File: <input type="file" accept=".xml,.p7m" name="userfile" />
+                   <label for="image" class="col-sm-4 control-label">Seleziona il file xml, p7m <br/><small>(o pacchetto zip se configurato)</small></label>
+                   <div class="col-sm-8">File: <input type="file" accept=".xml,.p7m,.zip" name="userfile" />
 				   </div>
                </div>
            </div>
