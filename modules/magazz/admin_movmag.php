@@ -107,6 +107,7 @@ if (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo acces
 		$camp_artico = gaz_dbi_get_row($gTables['camp_artico'], "codice", $form['cosear']);
 	}
 	$resultsian = gaz_dbi_get_row($gTables['camp_mov_sian'], "id_movmag", intval($_GET['id_mov']));
+  $form['recip_stocc'] = '';
 	if ($resultsian){
 		$form['cod_operazione'] = $resultsian['cod_operazione'];
 		$form['recip_stocc'] = $resultsian['recip_stocc'];

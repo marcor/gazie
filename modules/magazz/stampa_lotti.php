@@ -43,7 +43,7 @@ $codice = filter_input(INPUT_GET, 'codice');
 $des = gaz_dbi_get_row($gTables['artico'], 'codice', $codice);
 $title = "       Movimenti lotti disponibili per articolo ".$codice." - ".$des['descri'];
 
-$lm -> getAvailableLots($codice,0);
+$lm->getAvailableLots($codice,0,'',1,true);
 
 $pdf = new Report_template();
 $filename = $title.'_'.date("Ymd").'.pdf';

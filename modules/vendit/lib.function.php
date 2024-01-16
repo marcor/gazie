@@ -603,7 +603,7 @@ class lotmag {
       return $this->lot;
    }
 
-   function getAvailableLots($codart, $excluded_movmag = 0, $date="", $negative=0) {
+   function getAvailableLots($codart, $excluded_movmag = 0, $date="", $negative=0, $all=false) {
 // restituisce tutti i lotti non completamente venduti ordinandoli in base alla configurazione aziendale (FIFO o LIFO)
 // e propone una ripartizione, se viene passato un movimento di magazzino questo verrà escluso perché si suppone sia lo stesso
 // che si sta modificando
@@ -630,41 +630,41 @@ class lotmag {
 	  if (intval($date)>0){
 		$add_where=$gTables['movmag'] . ".datreg < '". $date ."' AND ";
 	  }
-	// Antonio Germani - la data di creazione del primo lotto per il dato articolo
-	$first_lot_date=gaz_dbi_get_row($gTables['movmag'], "artico", $codart, " AND id_lotmag > '1' AND caumag <> '99' AND operat = '1'", "MIN(datdoc)");
-	if (!isset($first_lot_date)){
-		$first_lot_date="1970-01-01";// imposto una data fittizia se non esiste una data reale
-	}
-      $sqlquery = "SELECT *, SUM(CASE WHEN caumag < 98 THEN (quanti*operat) ELSE 0 END)AS rest FROM " . $gTables['movmag'] . "
-            LEFT JOIN " . $gTables['lotmag'] . " ON " . $gTables['movmag'] . ".id_lotmag =" . $gTables['lotmag'] . ".id
-            WHERE ". $add_where . "artico = '" . $codart . "' AND id_mov <> " . $excluded_movmag . " AND datdoc >= '". $first_lot_date ."'
-			GROUP BY " . $gTables['movmag'] . ".id_lotmag
-			ORDER BY " . $gTables['lotmag'] .".expiry" . $ob .", ". $gTables['lotmag'] . ".identifier" . $ob;
-      $result = gaz_dbi_query($sqlquery);
-      $acc = array();
-      $rs = false;
-      while ($row = gaz_dbi_fetch_array($result)) {
-         if ($row['rest'] >= 0.00001 || ($negative>0 && $row['rest'] <0) ) { // l'articolo ha almeno un lotto caricato
-            $rs = true;
-            $acc[] = $row;
-         }
+    // Antonio Germani - la data di creazione del primo lotto per il dato articolo
+    $first_lot_date=gaz_dbi_get_row($gTables['movmag'], "artico", $codart, " AND id_lotmag > '1' AND caumag <> '99' AND operat = '1'", "MIN(datdoc)");
+    if (!isset($first_lot_date)){
+      $first_lot_date="1970-01-01";// imposto una data fittizia se non esiste una data reale
+    }
+    $sqlquery = "SELECT *, SUM(CASE WHEN caumag < 98 THEN (quanti*operat) ELSE 0 END)AS rest FROM " . $gTables['movmag'] . "
+          LEFT JOIN " . $gTables['lotmag'] . " ON " . $gTables['movmag'] . ".id_lotmag =" . $gTables['lotmag'] . ".id
+          WHERE ". $add_where . "artico = '" . $codart . "' AND id_mov <> " . $excluded_movmag . " AND datdoc >= '". $first_lot_date ."'
+    GROUP BY " . $gTables['movmag'] . ".id_lotmag
+    ORDER BY " . $gTables['lotmag'] .".expiry" . $ob .", ". $gTables['lotmag'] . ".identifier" . $ob;
+    $result = gaz_dbi_query($sqlquery);
+    $acc = [];
+    $rs = false;
+    while ($row = gaz_dbi_fetch_array($result)) {
+      if ($row['rest'] >= 0.00001 || ($negative>0 && $row['rest'] <0) || $all) { // l'articolo ha almeno un lotto caricato
+        $rs = true;
+        $acc[] = $row;
       }
-      $this->available = $acc;
-      return $rs;
-   }
+    }
+    $this->available = $acc;
+    return $rs;
+  }
 
-   function getLotQty($id, $excluded_movmag = 0) {
-// Antonio Germani - restituisce la quantità disponibile di uno specifico lotto
-      global $gTables;
-      $sqlquery = "SELECT operat, quanti FROM " . $gTables['movmag'] . " WHERE id_lotmag = '" . $id . "' AND id_mov <> " . $excluded_movmag;
-      $result = gaz_dbi_query($sqlquery);
-	  $lotqty=0;
-      while ($row = gaz_dbi_fetch_array($result)) {
-		  if ($row['operat']>0){$lotqty=$lotqty+$row['quanti'];}
-		  if ($row['operat']<0){$lotqty=$lotqty-$row['quanti'];}
-	  }
-      return $lotqty;
-   }
+  function getLotQty($id, $excluded_movmag = 0) {
+    // Antonio Germani - restituisce la quantità disponibile di uno specifico lotto
+    global $gTables;
+    $sqlquery = "SELECT operat, quanti FROM " . $gTables['movmag'] . " WHERE id_lotmag = '" . $id . "' AND id_mov <> " . $excluded_movmag;
+    $result = gaz_dbi_query($sqlquery);
+    $lotqty=0;
+    while ($row = gaz_dbi_fetch_array($result)) {
+      if ($row['operat']>0){$lotqty=$lotqty+$row['quanti'];}
+      if ($row['operat']<0){$lotqty=$lotqty-$row['quanti'];}
+    }
+    return $lotqty;
+  }
 
    function divideLots($quantity) {
 // riparto la quantità tra i vari lotti presenti se questi non sono sufficienti

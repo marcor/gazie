@@ -29,7 +29,7 @@ $lm = new lotmag;
 $gForm = new magazzForm;
 $admin_aziend=checkAdmin();
 $codice = filter_input(INPUT_GET, 'codice');
-$lm -> getAvailableLots($codice,0,"",1);
+$lm->getAvailableLots($codice,0,'',1,true);
 $date = date("Y-m-d");
 $artico = gaz_dbi_get_row($gTables['artico'], "codice", $codice);
 
