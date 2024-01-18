@@ -54,7 +54,7 @@ $resorf = gaz_dbi_dyn_query($gTables['movmag'] . ".artico,".
  $gTables['tesdoc'] . ".protoc ",
  $gTables['movmag'] . " LEFT JOIN " . $gTables['rigdoc'] . " ON ". $gTables['movmag'] . ".id_rif = " . $gTables['rigdoc'] . ".id_rig ". " LEFT JOIN " . $gTables['tesdoc'] . " ON ". $gTables['rigdoc'] . ".id_tes = " . $gTables['tesdoc'] . ".id_tes ",$where, "datdoc ASC");
 }
-require("../../library/include/header.php");
+include "../../library/theme/g7/header.php";
 //$script_transl = HeadMain();
 
 ?>
@@ -300,8 +300,8 @@ require("../../library/include/header.php");
     }
 	?>
 	<form method="post" name="closewindow">
-	<div>
-	<a class="btn btn-info btn-md" title="Stampa tutti i movimenti per ciascun lotto" href="../../modules/magazz/stampa_lotti.php?codice=<?php echo $codice;?>" style="float:left"><span class="glyphicon glyphicon-print"></span></a>
+	<div class="text-center">
+	<a class="btn btn-warning btn-md" title="Stampa tutti i movimenti per ciascun lotto" href="../../modules/magazz/stampa_lotti.php?codice=<?php echo $codice;?>" >Stampa <span class="glyphicon glyphicon-print"></span></a>
 
 	</div>
 	</form>
