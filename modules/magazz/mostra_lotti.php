@@ -55,14 +55,7 @@ $resorf = gaz_dbi_dyn_query($gTables['movmag'] . ".artico,".
  $gTables['movmag'] . " LEFT JOIN " . $gTables['rigdoc'] . " ON ". $gTables['movmag'] . ".id_rif = " . $gTables['rigdoc'] . ".id_rig ". " LEFT JOIN " . $gTables['tesdoc'] . " ON ". $gTables['rigdoc'] . ".id_tes = " . $gTables['tesdoc'] . ".id_tes ",$where, "datdoc ASC");
 }
 require("../../library/include/header.php");
-$script_transl = HeadMain();
-
-if (isset($_POST['close'])){
-	foreach (glob("../../modules/camp/tmp/*") as $fn) {// prima cancello eventuali precedenti file temporanei
-             unlink($fn);
-    } // poi chiudo la finestra e esco
-	echo "<script>window.close();</script>";exit;
-}
+//$script_transl = HeadMain();
 
 ?>
 <!-- Visto che il tema LTE non funziona senza header (HeadMain) spengo i menù perché questo è un popup e i menù occuperebbero spazio -->
@@ -309,7 +302,6 @@ if (isset($_POST['close'])){
 	<form method="post" name="closewindow">
 	<div>
 	<a class="btn btn-info btn-md" title="Stampa tutti i movimenti per ciascun lotto" href="../../modules/magazz/stampa_lotti.php?codice=<?php echo $codice;?>" style="float:left"><span class="glyphicon glyphicon-print"></span></a>
-	<button class="btn btn-info btn-md" type="submit" title="Elimina file temporanei e chiudi finestra" name="close" style="float:right"><span class="glyphicon glyphicon-trash"></span>
-	</button>
+
 	</div>
 	</form>

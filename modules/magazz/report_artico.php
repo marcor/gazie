@@ -24,6 +24,7 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
+$pdf_to_modal = gaz_dbi_get_row($gTables['company_config'], 'var', 'pdf_reports_send_to_modal')['val'];
 require("../../library/include/header.php");
 // campi ammissibili per la ricerca
 $search_fields = [
@@ -247,7 +248,19 @@ function getlastbuys(artico) {
 	});
 	});
 };
-
+function printPdf(urlPrintDoc){
+	$(function(){
+		$('#framePdf').attr('src',urlPrintDoc);
+		$('#framePdf').css({'height': '100%'});
+		$('.framePdf').css({'display': 'block','width': '90%', 'height': '80%', 'z-index':'2000'});
+    $("html, body").delay(100).animate({scrollTop: $('#framePdf').offset().top},'slow', function() {
+        $("#framePdf").focus();
+    });
+		$('#closePdf').on( "click", function() {
+			$('.framePdf').css({'display': 'none'});
+		});
+	});
+};
 </script>
 <?php
 $script_transl = HeadMain(0, array('custom/autocomplete'));
@@ -258,6 +271,13 @@ $ts->output_navbar();
 
 ?>
 <form method="GET">
+  <div class="framePdf panel panel-success" style="display: none; position: absolute; left: 5%; top: 150px">
+		<div class="col-lg-12">
+    <div class="col-xs-11"><h4></h4></div>
+		<div class="col-xs-1"><h4><button type="button" title="chiudi" id="closePdf"><i class="glyphicon glyphicon-remove"></i></button></h4></div>
+		</div>
+		<iframe id="framePdf"  style="height: 100%; width: 100%" src=""></iframe>
+	</div>
 	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
         <p><b>articolo:</b></p>
         <p>codice:</p>
@@ -432,10 +452,10 @@ while ($r = gaz_dbi_fetch_array($result)) {
 	if (intval($r['lot_or_serial'])>0) {
 		$classcol=(intval($r['lot_or_serial'])==1)?'btn-info':'btn-success';
 		$lor=(intval($r['lot_or_serial'])==1)?'Lot':'Ser';
-	?>
-	<a class="btn <?php echo $classcol; ?> btn-xs" href="javascript:;" onclick="window.open('<?php echo "../../modules/magazz/mostra_lotti.php?codice=".$r['codice'];?>', 'titolo', 'menubar=no, toolbar=no, width=800, height=400, left=80%, top=80%, resizable, status, scrollbars=1, location');"><?php echo $lor; ?> <i class="glyphicon glyphicon-tag"></i></a>
-	<?php
-    }
+    ?>
+    <a class="btn <?php echo $classcol; ?> btn-xs" href="javascript:;" onclick = printPdf('../../modules/magazz/mostra_lotti.php?codice=<?php echo $r["codice"];?>')> <i class="glyphicon glyphicon-tag"></i></a>
+    <?php
+   }
     echo "</td>\n";
     echo '<td class="text-center"><a class="btn btn-xs btn-default" href="clone_artico.php?codice='.$r["codice"].'"> <i class="glyphicon glyphicon-export"></i></a>';
 	echo "</td>\n";

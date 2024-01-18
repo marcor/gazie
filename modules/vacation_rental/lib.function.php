@@ -554,7 +554,7 @@ function set_imap($id_anagra){// restituisce le impostazioni imap tranne la pass
     $sql = "SELECT ".$genTables."anagra.custom_field, codice FROM ".$genTables."anagra"." LEFT JOIN ".$azTables."clfoco"." ON ".$azTables."clfoco".".id_anagra = ".$id_anagra." WHERE id = ".$id_anagra." AND codice LIKE '2%' LIMIT 1";
     if ($result = mysqli_query($link, $sql)) { // prendo il custom field del proprietario
       $anagra = mysqli_fetch_assoc($result);
-      $custom_field=$anagra['custom_field'];
+      $custom_field=(isset($anagra['custom_field']))?$anagra['custom_field']:'';
     }else {
        echo "Error: " . $sql . "<br>" . mysqli_error($link);
     }

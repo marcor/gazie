@@ -62,10 +62,11 @@ class Template extends TCPDI {
         $this->cliente4 = $docVars->cliente4;  // CAP, Città, Provincia
         $this->cliente4b = $docVars->cliente4b; // Nazione
         $this->cliente5 = $docVars->cliente5;  // P.IVA e C.F.
-		$this->clientetel = $docVars->clientetel; // numeri di telefono
+        $this->clientetel = $docVars->clientetel; // numeri di telefono
         $this->agente = $docVars->name_agente;
-		$this->status = $docVars->status;
-		$this->res_events = $docVars->res_events;
+        $this->status = $docVars->status;
+        $this->alloggio = $docVars->alloggio;
+        $this->extras = $docVars->extras;
         /*
         if ( $docVars->destinazione == "" && isset($docVars->client['destin'])) {
             $this->destinazione = $docVars->client['destin'];
@@ -74,7 +75,7 @@ class Template extends TCPDI {
         }
         */
         $this->clientSedeLegale = '';
-		$this->pers_title = $docVars->pers_title;
+        $this->pers_title = $docVars->pers_title;
         if (!empty($docVars->clientSedeLegale)) {
             foreach ($docVars->clientSedeLegale as $value) {
                 $this->clientSedeLegale .= $value . ' ';
@@ -167,26 +168,23 @@ class Template extends TCPDI {
             $interlinea = $this->GetY();
             $this->Ln(6);
             $this->SetFont('helvetica', '', 9);
-			$this->SetY($interlinea - 11);
-			$add_int=0;$extras="";
-			while ($row_event = gaz_dbi_fetch_array($this->res_events))
-			{
+            $this->SetY($interlinea - 11);
+            $add_int=0;$extras="";
 
-				if ($row_event['type']=='ALLOGGIO'){
-					$this->SetX(110);$this->Cell(88, 5, " ".$row_event['house_code']." check-in:".date_format(date_create($row_event['start']),"d-m-Y")." check-out:".date_format(date_create($row_event['end']),"d-m-Y"), 1, 1, 'C', 0, '', 1);
-					$add_int+=2;
-				}else{// se non è alloggio allora è extra
-					$extras .= " ".$row_event['house_code']." -";// aggiungo l'extra al rigo che verrà stampato dopo il while
-				}
-			}
-			$add_int = ($add_int>2)?$add_int:0;
-			if (!empty($extras)){
-				$this->SetX(110);
-				$this->Cell(88, 4, "Extra:".$extras, 1, 1, 'L', 0, '', 1);
-			}
-			if (!empty($this->agente)) {
-				$this->SetXY(10, $interlinea +$add_int +5 );
-				$this->Cell(75, 6, "TOUR OPERATOR: ".$this->agente, 1, 1, 'C', 0, '', 1);
+            $this->SetX(110);$this->Cell(88, 5, $this->alloggio, 1, 1, 'C', 0, '', 1);
+            $extraDes='';
+            foreach ($this->extras as $extra){
+              $extraDes .=$extra;
+            }
+
+            $add_int = ($add_int>2)?$add_int:0;
+            if (strlen($extraDes)>2){
+                $this->SetX(110);
+                $this->Cell(88, 4, "Extra:".$extraDes, 1, 1, 'L', 0, '', 1);
+              }
+            if (!empty($this->agente)) {
+              $this->SetXY(10, $interlinea +$add_int +5 );
+              $this->Cell(75, 6, "TOUR OPERATOR: ".$this->agente, 1, 1, 'C', 0, '', 1);
             }
             if ($this->codice_partner > 0){
               $this->SetXY(35, $interlinea +$add_int - 5);

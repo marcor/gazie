@@ -240,6 +240,7 @@ function confirMail(link, cod_partner, dest=''){
             $('#frame_email').attr('src','');
             $('.frame_email').css({'display': 'none'});
             });
+            $('#'+link.id).addClass("btn-success");
             $(this).dialog("close");
           }
 
@@ -264,6 +265,7 @@ function confirMailC(link){
   //alert (targetUrl);
   $("p#mail_adrs").html($("#docC"+tes_id).attr("mail"));
   $("p#mail_attc").html($("#docC"+tes_id).attr("namedoc"));
+  $( 'a#c'+tes_id ).css( "display", "none" );
   $( "#dialog" ).dialog({
     modal: "true",
     show: "blind",
@@ -279,6 +281,7 @@ function confirMailC(link){
 				$('#frame_email').attr('src','');
         $('.frame_email').css({'display': 'none'});
         });
+        $('#'+link.id).addClass("btn-success");
         $(this).dialog("close");
 			},
 		},
@@ -1452,17 +1455,17 @@ $ts->output_navbar();
               echo "<td align=\"center\">";
 			  //print_r($r);
               if (!empty($r['e_mail'])){ // ho una mail sulla destinazione
-                  echo '<a class="btn btn-xs btn-default btn-email '.$stato_btn_booking.'" onclick="confirMail(this, '. $r['clfoco'] .', '. $r['e_mail'] .');return false;" id="doc' . $r['id_tes'] . '" url="' . $modulo . '" href="#" title="' . $r['email']."-".$title_booking . '"
+                  echo '<a class="btn btn-xs btn-email '.$stato_btn_booking.'" onclick="confirMail(this, '. $r['clfoco'] .', '. $r['e_mail'] .');return false;" id="doc' . $r['id_tes'] . '" url="' . $modulo . '" href="#" title="' . $r['email']."-".$title_booking . '"
                   mail="' . $r['e_mail'] . '" namedoc="' . $script_transl['type_value'][$r['tipdoc']] . ' n.' . $r['numdoc'] . ' del ' . gaz_format_date($r['datemi']) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
                   if ( $tipo !== "VPR" ) {
-                    echo ' <a class="btn btn-xs btn-default btn-emailC '.$stato_btn_lease.'" ',$disabled_email_style,' onclick="confirMailC(this);return false;" id="docC' . $r['id_tes'] . '" urlC="stampa_contratto.php?id_tes='. $r['id_tes']. '&dest=E&id_ag='.$r['id_agent'].'" href="#" title="' . $title_lease . '"
+                    echo ' <a class="btn btn-xs btn-emailC '.$stato_btn_lease.'" ',$disabled_email_style,' onclick="confirMailC(this);return false;" id="docC' . $r['id_tes'] . '" urlC="stampa_contratto.php?id_tes='. $r['id_tes']. '&dest=E&id_ag='.$r['id_agent'].'" href="#" title="' . $title_lease . '"
                     mail="' . $r['e_mail'] . '" namedoc="' . $script_transl['type_value'][$r['tipdoc']] . ' n.' . $r['numdoc'] . ' del ' . gaz_format_date($r['datemi']) . '"><i class="glyphicon glyphicon-send"></i></a>';
                   }
               } elseif (!empty($r['base_mail'])) { // ho una mail sul cliente
-                  echo ' <a class="btn btn-xs btn-default btn-email '.$stato_btn_booking.'" onclick="confirMail(this, '. $r['clfoco'] .', \''. $r['base_mail'] .'\');return false;" id="doc' . $r['id_tes'] . '" url="' . $modulo . '" href="#" title="' . $r['email']."-".$title_booking . '"
+                  echo ' <a class="btn btn-xs btn-email '.$stato_btn_booking.'" onclick="confirMail(this, '. $r['clfoco'] .', \''. $r['base_mail'] .'\');return false;" id="doc' . $r['id_tes'] . '" url="' . $modulo . '" href="#" title="' . $r['email']."-".$title_booking . '"
                   mail="' . $r['base_mail'] . '" namedoc="' . $script_transl['type_value'][$r['tipdoc']] . ' n.' . $r['numdoc'] . ' del ' . gaz_format_date($r['datemi']) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
                   if ( $tipo !== "VPR" ) {
-                    echo ' <a class="btn btn-xs btn-default btn-emailC '.$stato_btn_lease.'" ',$disabled_email_style,' onclick="confirMailC(this);return false;" id="docC' . $r['id_tes'] . '" urlC="stampa_contratto.php?id_tes='. $r['id_tes']. '&dest=E&id_ag='.$r['id_agent'].'" href="#" title="' . $title_lease . '"
+                    echo ' <a class="btn btn-xs btn-emailC '.$stato_btn_lease.'" ',$disabled_email_style,' onclick="confirMailC(this);return false;" id="docC' . $r['id_tes'] . '" urlC="stampa_contratto.php?id_tes='. $r['id_tes']. '&dest=E&id_ag='.$r['id_agent'].'" href="#" title="' . $title_lease . '"
                     mail="' . $r['base_mail'] . '" namedoc="Contratto n.' . $r['numdoc'] . ' del ' . gaz_format_date($r['datemi']) . '"><i class="glyphicon glyphicon-send"></i></a>';
                   }
               } else { // non ho mail

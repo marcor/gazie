@@ -2,7 +2,7 @@
 /*
  --------------------------------------------------------------------------
                             GAzie - Gestione Azienda
-    Copyright (C) 2004-2024 - Antonio De Vincentiis Montesilvano (PE)
+    Copyright (C) 2004-2023 - Antonio De Vincentiis Montesilvano (PE)
          (http://www.devincentiis.it)
            <http://gazie.sourceforge.net>
  --------------------------------------------------------------------------
@@ -23,9 +23,21 @@
  --------------------------------------------------------------------------
 */
 require('booking_template_lease.php');
+
 #[AllowDynamicProperties]
-class Lease extends Template
-{
+class Lease extends Template{
+	function get_string_lang($string, $lang){
+		$string = " ".$string;
+		$ini = strpos($string,"<".$lang.">");
+		if ($ini == 0) return $string;
+		$ini += strlen("<".$lang.">");
+		$len = strpos($string,"</".$lang.">",$ini) - $ini;
+	  if (intval($len)>0){// se è stato trovato il tag lingua restituisco filtrato
+		return substr($string,$ini,$len);
+	  }else{// altrimenti restituisco come era
+		return $string;
+	  }
+	}
     function setTesDoc()
     {
         $this->tesdoc = $this->docVars->tesdoc;
@@ -116,7 +128,8 @@ class Lease extends Template
               }
 
               $html .= "<li>".$accomodation_type." ".$rigo['codart'].', '.get_string_lang($rigo['desart'], $lang).", ".$rigo['annota'];
-              if (strlen($rigo['web_url'])>5){
+              $rigo['web_url']=get_string_lang($rigo['web_url'], $lang);
+			  if (strlen($rigo['web_url'])>5){
                 $html .= "<br>".$script_transl['body3'].": ".$rigo['web_url'].". ".$script_transl['body4'];
               }
               $html .= "</li>";

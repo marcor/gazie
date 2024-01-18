@@ -416,7 +416,15 @@ class DocContabVars {
         }
 		$sql = "SELECT * FROM ".$azTables."rental_events"." WHERE id_tesbro = '".$tesdoc['id_tes']."' AND (type ='ALLOGGIO' OR type='EXTRA') ORDER BY id";
 		if ($result = mysqli_query($link, $sql)) {
-		  $this->res_events = $result;
+      $extras=array();
+      while ($row_event = gaz_dbi_fetch_array($result)){
+        if ($row_event['type']=='ALLOGGIO'){
+          $this->alloggio = " ".$row_event['house_code']." check-in:".date_format(date_create($row_event['start']),"d-m-Y")." check-out:".date_format(date_create($row_event['end']),"d-m-Y");
+        }else{// se non è alloggio allora è extra
+          $extras[] = " ".$row_event['house_code']." -";// aggiungo l'extra all'array
+        }
+      }
+      $this->extras = $extras;
 		}else{
 		  echo "Error: " . $sql . "<br>" . mysqli_error($link);
 		}
