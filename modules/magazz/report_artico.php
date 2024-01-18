@@ -453,7 +453,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 		$classcol=(intval($r['lot_or_serial'])==1)?'btn-info':'btn-success';
 		$lor=(intval($r['lot_or_serial'])==1)?'Lot':'Ser';
     ?>
-    <a class="btn <?php echo $classcol; ?> btn-xs" href="javascript:;" onclick = printPdf('../../modules/magazz/mostra_lotti.php?codice=<?php echo $r["codice"];?>')> <i class="glyphicon glyphicon-tag"></i></a>
+    <a class="btn <?php echo $classcol; ?> btn-xs" href="javascript:;" onclick ="printPdf('../../modules/magazz/mostra_lotti.php?codice=<?php echo $r["codice"];?>')"> <i class="glyphicon glyphicon-tag"></i></a>
     <?php
    }
     echo "</td>\n";
