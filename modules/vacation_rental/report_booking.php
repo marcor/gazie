@@ -30,6 +30,10 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $pointenable = gaz_dbi_get_row($gTables['company_config'], 'var', 'pointenable')['val'];
+for($xl=1; $xl<=3; $xl++){
+  $pointlevel[$xl] = gaz_dbi_get_row($gTables['company_config'], 'var', 'pointlevel'.$xl)['val'];
+  $pointlevelname[$xl] = gaz_dbi_get_row($gTables['company_config'], 'var', 'pointlevel'.$xl.'name')['val'];
+}
 $points_expiry = gaz_dbi_get_row($gTables['company_config'], 'var', 'points_expiry')['val'];
 
 function getDayNameFromDayNumber($day_number) {
@@ -1322,10 +1326,15 @@ $ts->output_navbar();
               echo "<td><a title=\"Dettagli cliente\" href=\"../vendit/report_client.php?nome=" . $r['ragso1'] . "\">". $r['ragso1'] ." ".  $r['ragso2'] ."</a> &nbsp;";
               if ($r['user_points']>0 && intval($pointenable)==1){
                 $stato_gift_btn = ($r['expired']==1)?'btn-danger':'btn-default';
-
+                $pointlevelname[0]="Nessuno";$lev=0;
+                for($xl=1; $xl<=3; $xl++){
+                 if ($r['user_points']>=$pointlevel[$xl]){
+                   $lev=$xl;
+                 }
+                }
                 echo "&nbsp;&nbsp;<a class=\"btn btn-xs ",$stato_gift_btn," \"";
                 echo " style=\"cursor:pointer;\" onclick=\"point('". $r['id'] ."','".$r['user_points']."','".addslashes($r['ragso1'])." ".addslashes($r['ragso2'])."','".$r['id_tes']."','".$r['expired']."','".$r['expiry_points_date']."')\"";
-                echo "><i class=\"glyphicon glyphicon-gift\" title=\"Punti: ".$r['user_points']." - Scadenza: ".$r['expiry_points_date']."\"></i></a></td>";
+                echo ">".$pointlevelname[$lev]." <i class=\"glyphicon glyphicon-gift\" title=\"Punti: ".$r['user_points']." - Scadenza: ".$r['expiry_points_date']."\"></i></a></td>";
               }
               echo "<td>".$r['citspe']."</td>";
 
