@@ -223,8 +223,8 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
         } else {
           $cast_acc[$r['codric']]['import'] += $importo;
         }
-        if ($r['tiprig'] == 90) { // se è una vendita cespite lo indico sull'array dei conti
-            $cast_acc[$r['codric']]['asset'] = 1;
+        if ($r['status'] == 'ASS10') { // se è un rigo di incremento vendita cespite lo indico sull'array dei conti, ASS10 in status l'ho indicato con acquire_invoice quando ho chiesto di incrementare il valore del bene
+          $cast_acc[$r['codric']]['type_mov'] = 10;
         }
         $rit += round($importo * $r['ritenuta'] / 100, 2);
         // aggiungo all'accumulatore l'eventuale iva non esigibile (split payment)
@@ -514,56 +514,33 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
           }
           foreach ($v['acc'] as $acc_k => $acc_v) {
               if ($acc_v['import'] != 0) {
-                if (isset($acc_v['asset'])) { // qui eseguo tutte le registrazioni relative alla vendita del cespite con relativa rilevazione della eventuale plus/minusvalenza
-                  $asset = gaz_dbi_get_row($gTables['assets'], 'acc_fixed_assets', $acc_k, "AND type_mov = '1'"); // riprendo l'asset
-                  // calcolo il costo storico
-                  $rs = gaz_dbi_dyn_query($gTables['rigmoc'] . ".*, import*(darave='D') AS dare,import*(darave='A') AS avere", $gTables['rigmoc'], " codcon = " . $acc_k);
-                  $saldo_costo_storico = 0;
-                  while ($r = gaz_dbi_fetch_array($rs)) {
-                      $saldo_costo_storico += $r['dare'];
-                      $saldo_costo_storico -= $r['avere'];
-                  }
-                  // calcolo il fondo ammortamento
-                  $rs = gaz_dbi_dyn_query($gTables['rigmoc'] . ".*, import*(darave='D') AS dare,import*(darave='A') AS avere", $gTables['rigmoc'], " codcon = " . $asset['acc_found_assets']);
-                  $saldo_fondo_ammortamento = 0;
-                  while ($r = gaz_dbi_fetch_array($rs)) {
-                      $saldo_fondo_ammortamento += $r['dare'];
-                      $saldo_fondo_ammortamento -= $r['avere'];
-                  }
-                  // calcolo il residuo che dovrebbe essere in dare (+)
-                  $rest = $saldo_costo_storico + $saldo_fondo_ammortamento;
-                  $plus_minus = round($acc_v['import'] - $rest, 2);
-                  // intanto storno il costo storico ed il fondo ammortamento
-                  rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'A', 'codcon' => $acc_k, 'import' => $saldo_costo_storico));
-                  rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'D', 'codcon' => $asset['acc_found_assets'], 'import' => abs($saldo_fondo_ammortamento)));
-                  // quindi si possono verificare due condizioni: vendita ad un prezzo inferiore al residuo (minusvalenza) oppure  superiore (plusvalenza)
-                  if ($plus_minus >= 0.01) { // c'è una plusvalenza
-                      rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'A', 'codcon' => $admin_aziend['capital_gains_account'], 'import' => $plus_minus));
-                  } elseif ($plus_minus <= -0.01) { // è una minusvalenza
-                      rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'D', 'codcon' => $admin_aziend['capital_loss_account'], 'import' => abs($plus_minus)));
-                  } else { // è pari non plusvalenza ne minusvalenza
-                  }
-                  // infine inserisco il rigo sulla tabella degli assets
-                  unset($asset['id']);
-                  $asset['id_movcon'] = $tes_id;
-                  $asset['type_mov'] = 90;
-                  $asset['descri'] = 'ALIENAZIONE DEL BENE';
-                  $asset['pagame'] = $v['tes']['pagame'];
-                  $asset['a_value'] = $acc_v['import'];
-                  gaz_dbi_table_insert('assets', $asset);
-                } else {
-                  $dacost=$da_c;
-                  if($acc_v['import']<0.00) {
-                      $dacost = ($da_c=='A')?'D':'A';
-                      $acc_v['import']=abs($acc_v['import']);
-                  }
-                  rigmocInsert(array('id_tes' => $tes_id, 'darave' => $dacost, 'codcon' => $acc_k, 'import' => $acc_v['import']));
-                  if ($acc_v['accneg']<0.00){ // ho dei righi negativi riferiti allo stesso conto
-                    rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_p, 'codcon' => $acc_k, 'import' => -$acc_v['accneg']));
+                if (isset($acc_v['type_mov'])) { // qui eseguo le registrazioni relative all'acquisto per incremento del valore del cespite inserendo anche i righi sulla tabella gaz_001azzets type_mov = 10
+                  $asset = gaz_dbi_get_row($gTables['assets'], 'acc_fixed_assets', $acc_k, "AND type_mov = 1"); // riprendo l'asset
+                  if ($asset) {
+                    unset($asset['id']);
+                    $asset['id_movcon'] = $tes_id;
+                    $asset['type_mov'] = 10;
+                    $asset['descri'] = 'FATTURA DI ACQUISTO '. $v['tes']['numfat'] . ' del ' . gaz_format_date($v['tes']['datfat']);
+                    $asset['quantity'] = 1;
+                    $asset['unimis'] = ''; // non lo conosco
+                    $asset['pagame'] = $v['tes']['pagame'];
+                    $asset['a_value'] = $acc_v['import'];
+                    gaz_dbi_table_insert('assets', $asset);
+                    // faccio l'update del riferimento sui righi IVA già inseriti indicando che riguarda l'incremento di valore di un bene ammortizzabile
+                    gaz_dbi_put_row($gTables['rigmoi'], 'id_tes', $tes_id, 'operation_type', 'BENAMM');
                   }
                 }
+                $dacost=$da_c;
+                if($acc_v['import']<0.00) {
+                    $dacost = ($da_c=='A')?'D':'A';
+                    $acc_v['import']=abs($acc_v['import']);
+                }
+                rigmocInsert(array('id_tes' => $tes_id, 'darave' => $dacost, 'codcon' => $acc_k, 'import' => $acc_v['import']));
+                if ($acc_v['accneg']<0.00){ // ho dei righi negativi riferiti allo stesso conto
+                  rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_p, 'codcon' => $acc_k, 'import' => -$acc_v['accneg']));
+                }
               }
-            }
+          }
             if ($tot['vat']>=0.01) {
               rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_c, 'codcon' => $kac, 'import' => $tot['vat']));
             } elseif ($tot['vat']<=-0.01) {

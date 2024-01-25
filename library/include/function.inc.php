@@ -547,48 +547,48 @@ class UserConfig {
 	public $az_email = '';
 
   function __construct() {
-      global $gTables;
-      $results = gaz_dbi_query("SELECT var_name, var_value FROM " . $gTables['admin_config']);
-      while ($row = gaz_dbi_fetch_object($results)) {
-          $this->{$row->var_name} = $row->var_value;
-      }
+    global $gTables;
+    $results = gaz_dbi_query("SELECT var_name, var_value FROM " . $gTables['admin_config']." WHERE adminid='".$_SESSION['user_name']."'");
+    while ($row = gaz_dbi_fetch_object($results)) {
+      $this->{$row->var_name} = $row->var_value;
+    }
   }
 
   function getValue($variable) {
       return $this->{$variable};
   }
 
-  function setValue($variable, $value = array('var_descri' => '', 'var_value' => '')) {
-      /* in $variabile va sempre il nome della variabile,
-       * la tabella viene aggiornata ne caso in cui il nome variabile esiste mentre
-       * viene inserita qualora non esista.
-       * In caso di inserimento � necessario passare un array in $value mentre in caso di
-       * aggiornamento � sufficiente un valore */
-      global $gTables, $form;
-      $variable = filter_var(substr($variable, 0, 100), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-      $result = gaz_dbi_dyn_query("*", $gTables['admin_config'], "var_name='" . $variable . "'");
-      if (gaz_dbi_num_rows($result) >= 1) { // � un aggiornamento
-          if (is_array($value)) {
-              $row = gaz_dbi_fetch_array($result);
-              $value['var_value'] = filter_var(substr($value['var_value'], 0, 100), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-              $this->{$variable} = $value['var_value'];
-              $value['var_name'] = $variable;
-              gaz_dbi_table_update('admin_config', array('id', $row['id']), $value);
-          } else {
-              $this->{$variable} = filter_var(substr($value, 0, 100), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-              gaz_dbi_put_row($gTables['admin_config'], 'var_name', $variable, 'var_value', $value['var_value']);
-          }
-      } else { // � un inserimento
-          gaz_dbi_table_insert('admin_config', $value);
+  function setValue($variable, $value = ['var_descri' => '', 'var_value' => '']) {
+    /* in $variabile va sempre il nome della variabile,
+     * la tabella viene aggiornata ne caso in cui il nome variabile esiste mentre
+     * viene inserita qualora non esista.
+     * In caso di inserimento è necessario passare un array in $value mentre in caso di
+     * aggiornamento è sufficiente un valore */
+    global $gTables;
+    $variable = filter_var(substr($variable, 0, 100), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $result = gaz_dbi_dyn_query("*", $gTables['admin_config'], "var_name='" . $variable . "' AND adminid='".$_SESSION['user_name']."'");
+    if (gaz_dbi_num_rows($result) >= 1) { // � un aggiornamento
+      if (is_array($value)) {
+        $row = gaz_dbi_fetch_array($result);
+        $value['var_value'] = filter_var(substr($value['var_value'], 0, 100), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $this->{$variable} = $value['var_value'];
+        $value['var_name'] = $variable;
+        gaz_dbi_table_update('admin_config', array('id', $row['id']), $value);
+      } else {
+        $this->{$variable} = filter_var(substr($value, 0, 100), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+     		gaz_dbi_query ("UPDATE ".$gTables['admin_config']." SET `var_value`='".$value['var_value']."' WHERE `var_name`='".$variable . "' AND adminid='".$_SESSION['user_name']."'");
       }
+    } else { // è un inserimento
+      gaz_dbi_table_insert('admin_config', $value);
+    }
   }
 
   function setDefaultValue() {
-      $this->setValue('LTE_Fixed', array("var_name" => "LTE_Fixed", "var_descri" => "Attiva lo stile fisso. Non puoi usare fisso e boxed insieme", "var_value" => "false"));
-      $this->setValue('LTE_Boxed', array("var_name" => "LTE_Boxed", "var_descri" => "Attiva lo stile boxed", "var_value" => "false"));
-      $this->setValue('LTE_Collapsed', array("var_name" => "LTE_Collapsed", "var_descri" => "Collassa il menu principale", "var_value" => "true"));
-      $this->setValue('LTE_Onhover', array("var_name" => "LTE_Onhover", "var_descri" => "Espandi automaticamente il menu", "var_value" => "false"));
-      $this->setValue('LTE_SidebarOpen', array("var_name" => "LTE_SidebarOpen", "var_descri" => "Mantieni la barra aperta", "var_value" => "false"));
+    $this->setValue('LTE_Fixed', ["var_name" => "LTE_Fixed", "var_descri" => "Attiva lo stile fisso. Non puoi usare fisso e boxed insieme", "var_value" => "false"]);
+    $this->setValue('LTE_Boxed', ["var_name" => "LTE_Boxed", "var_descri" => "Attiva lo stile boxed", "var_value" => "false"]);
+    $this->setValue('LTE_Collapsed', ["var_name" => "LTE_Collapsed", "var_descri" => "Collassa il menu principale", "var_value" => "true"]);
+    $this->setValue('LTE_Onhover', ["var_name" => "LTE_Onhover", "var_descri" => "Espandi automaticamente il menu", "var_value" => "false"]);
+    $this->setValue('LTE_SidebarOpen', ["var_name" => "LTE_SidebarOpen", "var_descri" => "Mantieni la barra aperta", "var_value" => "false"]);
   }
 
 }
@@ -634,8 +634,8 @@ class Anagrafica {
     function getPartnerData($idAnagra, $acc = 1) {
         global $table_prefix;
         $rs_co = gaz_dbi_dyn_query('codice', $this->gTables['aziend'], 1);
-        $partner_data = array();
-        $partner = array();
+        $partner_data = [];
+        $partner = [];
         while ($co = gaz_dbi_fetch_array($rs_co)) {
             $rs_partner = gaz_dbi_query('SELECT * FROM ' . $table_prefix . sprintf('_%03d', $co['codice']) . 'clfoco WHERE ' .
                     ' codice BETWEEN ' . $acc . '00000001 AND ' . $acc . '99999999 AND id_anagra =' . $idAnagra . '  LIMIT 1');
@@ -1784,7 +1784,7 @@ class GAzieForm {
           echo '		<option value="' . $i . '"' . $selected . '>' . $month_name . '</option>';
       }
       echo '</select>
-	  	<input type="text" name="' . $name . '_Y" id="' . $name . '_Y" value="' . $year . '" class="' . $class . '"  maxlength="4" size="4"' . $refresh . ' />
+	  	<input type="text" name="' . $name . '_Y" id="' . $name . '_Y" value="' . $year . '" class="' . $class . '"  size="4"' . $refresh . ' />
 	  	<a class="btn btn-default btn-sm" href="#" onClick="setDate(\'' . $name . '\'); return false;" title="' . $script_transl['changedate'] . '" name="anchor" id="anchor">
 			<i class="glyphicon glyphicon-calendar"></i>
 			</a>';

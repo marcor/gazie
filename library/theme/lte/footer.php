@@ -119,14 +119,14 @@ $url = basename($_SERVER['REQUEST_URI'], '?' . $_SERVER['QUERY_STRING']);
             <form method="post">
               <!--<h3 class="control-sidebar-heading">Impostazioni </h3>-->
               <?php
-                printCheckbox( "Stile Fixed", "LTE_Fixed", "Attiva lo stile 'fisso'. Non puoi usare 'fisso' e 'boxed' insieme" );
-                printCheckbox("Stile Boxed", "LTE_Boxed", "Attiva lo stile 'boxed'" );
+                printCheckbox( "Stile Fixed", "LTE_Fixed", "Attiva lo stile fisso. Non puoi usare fisso e boxed insieme" );
+                printCheckbox("Stile Boxed", "LTE_Boxed", "Attiva lo stile boxed" );
                 printCheckbox("Menu Ridotto", "LTE_Collapsed", "Collassa il menu principale" );
                 printCheckbox("Menu Automatico", "LTE_Onhover", "Espandi automaticamente il menu" );
                 printCheckbox("Sidebar Aperto", "LTE_SidebarOpen", "Mantieni la barra aperta" );
               ?>
               <div class='form-group'>
-                  <a href="">Ripristina default</a>
+                  <a href="" onclick="restoreUserConfig();">Ripristina default</a>
               </div>
             </form>
           </div><!-- /.tab-pane -->
@@ -139,22 +139,33 @@ $url = basename($_SERVER['REQUEST_URI'], '?' . $_SERVER['QUERY_STRING']);
     <script><!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
       $.widget.bridge('uibutton', $.ui.button);
     </script>
-        <script type="text/javascript">
-        function processForm(el) {
-            var checkbox = $(el);
-            $.ajax( {
-                type: 'POST',
-                url: '../../modules/root/lte_post_config.php',
-                data: { 'name': checkbox.attr('name'),
-                        'val': checkbox.is(':checked'),
-                        'desc': checkbox.attr('hint')
-                },
-                success: function(data) {
-                    $('#message').html(data);
-                }
-            });
-            //window.location.reload();
-        }
+    <script type="text/javascript">
+      function processForm(el) {
+        var checkbox = $(el);
+        $.ajax( {
+          type: 'POST',
+          url: '../../modules/root/lte_post_config.php',
+          data: { 'name': checkbox.attr('name'),
+                  'val': checkbox.is(':checked'),
+                  'desc': checkbox.attr('hint')
+          },
+          success: function(data) {
+            //alert(data);
+            window.location.reload();
+          }
+        });
+      }
+      function restoreUserConfig() {
+        $.ajax( {
+          type: 'POST',
+          url: '../../modules/root/lte_post_config.php',
+          data: { 'name':'restore' },
+          success: function(data) {
+            //alert(data);
+            window.location.reload();
+          }
+        });
+      }
     </script>
     <script src="../../js/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script src="../../library/theme/lte/plugins/slimScroll/jquery.slimscroll.min.js"></script>

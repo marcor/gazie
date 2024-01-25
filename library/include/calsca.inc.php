@@ -27,7 +27,7 @@
 // questa funzione  serve solo per mantenere la compatibilit� con le versioni precedenti NON USARE
 // sui nuovi script usare direttamente la funzione CalcExpiry contenuta nella classe Expiry in expiry_calc.php
 //
-require("../../library/include/expiry_calc.php");
+require_once("../../library/include/expiry_calc.php");
 
 function CalcolaScadenze($totpag, $giorno, $mese, $anno, $tipdec, $giodec, $numrat, $tiprat, $mesesc, $giosuc) {
    $numrat=max($numrat,1); // non posso avere meno di 1 rata

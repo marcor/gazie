@@ -74,6 +74,7 @@ function getMovements($vat_section, $vat_reg, $date_ini, $date_fin) {
         LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['anagra'] . ".id = " . $gTables['clfoco'] . ".id_anagra
         LEFT JOIN " . $gTables['aliiva'] . " ON " . $gTables['rigmoi'] . ".codiva = " . $gTables['aliiva'] . ".codice", $where, $orderby);
     $c_sr = 0;
+    $c_liq = true;
     $c_id = 0;
     $c_p = 0;
     $c_nabs = 0; // nemmto il numero documento assoluto, mi serve per controllare se la sequenza dei numeri quando questa comprende tutti i tipi di documenti (fatt, nc, nd, ecc.)
@@ -87,6 +88,7 @@ function getMovements($vat_section, $vat_reg, $date_ini, $date_fin) {
       }
       if ($c_sr != ($r['ctrl_sr'])) { // devo azzerare tutto perché cambiato l'anno
         $c_sr = 0;
+        $c_liq = true;
         $c_id = 0;
         $c_p = 0;
         $c_nabs = $r['numdoc'];
@@ -98,8 +100,9 @@ function getMovements($vat_section, $vat_reg, $date_ini, $date_fin) {
         $ex = $c_p + 1;
         $c_nabs++;
         if ($r['protoc'] <> $ex && $r['id_tes'] <> $c_id) {  // errore: il protocollo non è consecutivo
-          if ($date_reg>=$date_ini&&$date_reg<=$date_fin){ // controllo solo i movimenti registrati nel periodo selezionato, gli altri liquidabili no
-            $r['err_p'] = $ex;
+          if ($date_reg>=$date_ini&&$date_reg<=$date_fin && !$c_liq){ // controllo solo i movimenti registrati nel periodo selezionato, gli altri liquidabili no
+              $r['err_p'] = $ex;
+              print '<br/>'.$c_liq.'<br>';
           }
         }
       }
@@ -127,6 +130,7 @@ function getMovements($vat_section, $vat_reg, $date_ini, $date_fin) {
       $c_ndoc[$r['caucon']] = $r['numdoc'];
       $c_nabs = $r['numdoc'];
       $c_sr = $r['ctrl_sr'];
+      $c_liq = ( substr($r['datreg'],0,4).substr($r['datreg'],5,2) <> substr($r['datliq'],0,4).substr($r['datliq'],5,2) ) ? true : false; // escludo il prossimo controllo protocollo perché questa è una liquidazione posticipata
       $c_id = $r['id_tes'];
       $c_p = $r['protoc'];
       // fine controllo errori di numerazione

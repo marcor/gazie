@@ -65,6 +65,8 @@ if ((isset($_POST['type']) && isset($_POST['ref'])) OR (isset($_POST['type']) &&
         gaz_dbi_del_row($gTables['tesdoc'], "id_tes", $i);
         if ($data['id_con'] >= 1) {
           gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $data['id_con']);
+          // se la fattura di acquisto è riferita in un bene ammortizzabile elimino i righi in gaz_001assets
+          gaz_dbi_del_row($gTables['assets'], "id_movcon",$data['id_con']);
           // qui controllo se il documento ha generato reverse charge ed eventualmente elimino anche quello
           $id_rc=gaz_dbi_get_row($gTables['rigmoi'], 'reverse_charge_idtes', $data['id_con']); // in $id_rc['id_tes'] ho il riferimento a tesmov figlio
           // cancello l'eventuale figlio (fattura su reg.vendite del reverse charge)

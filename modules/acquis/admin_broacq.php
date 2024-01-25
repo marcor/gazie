@@ -185,7 +185,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['extdoc'] = filter_var($_POST['rows'][$next_row]['extdoc'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
             if (!empty($_FILES['docfile_' . $next_row]['name'])) {
                 $move = false;
-                $mt = substr($_FILES['docfile_' . $next_row]['name'], -3);
+                $mt = strtolower(substr($_FILES['docfile_' . $next_row]['name'], -3));
                 $prefix = $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $next_row;
                 if (($mt == 'png' || $mt == 'peg' || $mt == 'jpg' || $mt == 'pdf') && $_FILES['docfile_' . $next_row]['size'] > 1000) { //se c'e' un nuovo documento nel buffer
                     foreach (glob( DATA_DIR . 'files/tmp/' . $prefix . '_*.*') as $fn) {// prima cancello eventuali precedenti file temporanei
@@ -294,69 +294,69 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $new_clfoco = $anagrafica->getPartnerData($match[1], 1);
                 $form['clfoco'] = $anagrafica->anagra_to_clfoco($new_clfoco, $admin_aziend['masfor'],$form['pagame']);
             }
-			// non attribuisco le spese bancarie che verranno addebitate ( anche se ci sono non le conosco)
-			$form['speban']=0;
+            // non attribuisco le spese bancarie che verranno addebitate ( anche se ci sono non le conosco)
+            $form['speban']=0;
             if ($toDo == 'update') { // e' una modifica
                 $old_rows = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes = " . $form['id_tes'], "id_rig asc");
                 $i = 0;
                 $count = count($form['rows']) - 1;
                 while ($val_old_row = gaz_dbi_fetch_array($old_rows)) {
-                    if ($i <= $count) { //se il vecchio rigo e' ancora presente nel nuovo lo modifico
-						$form['rows'][$i]['delivery_date'] = gaz_format_date($form['rows'][$i]['delivery_date'], true); // formatto la data per il db
-                        $form['rows'][$i]['id_tes'] = $form['id_tes'];
-                        $codice = array('id_rig', $val_old_row['id_rig']);
-                        rigbroUpdate($codice, $form['rows'][$i]);
-                        if (isset($form["row_$i"]) && $val_old_row['id_body_text'] > 0) { //se è un rigo testo già presente lo modifico
-                            bodytextUpdate(array('id_body', $val_old_row['id_body_text']), array('table_name_ref' => 'rigdoc', 'id_ref' => $val_old_row['id_rig'], 'body_text' => $form["row_$i"], 'lang_id' => $admin_aziend['id_language']));
-                            gaz_dbi_put_row($gTables['rigbro'], 'id_rig', $val_old_row['id_rig'], 'id_body_text', $val_old_row['id_body_text']);
-                        } elseif (isset($form["row_$i"]) && $val_old_row['id_body_text'] == 0) { //prima era un rigo diverso da testo
-                            bodytextInsert(array('table_name_ref' => 'rigbro', 'id_ref' => $val_old_row['id_rig'], 'body_text' => $form["row_$i"], 'lang_id' => $admin_aziend['id_language']));
-                            gaz_dbi_put_row($gTables['rigbro'], 'id_rig', $val_old_row['id_rig'], 'id_body_text', gaz_dbi_last_id());
-                        } elseif (!isset($form["row_$i"]) && $val_old_row['id_body_text'] > 0) { //un rigo che prima era testo adesso non lo � pi�
-                            gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigbro' AND id_ref", $val_old_row['id_rig']);
-                        }
-                        if ($form['rows'][$i]['tiprig']==50 && !empty($form['rows'][$i]['extdoc']) && substr($form['rows'][$i]['extdoc'],0,10)!='rigbrodoc_') {
-							// se a questo rigo corrispondeva un certificato controllo che non sia stato aggiornato, altrimenti lo cambio
-                            $dh = opendir( DATA_DIR . 'files/' . $admin_aziend['company_id'] );
-                            while (false !== ($filename = readdir($dh))) {
-                                $fd = pathinfo($filename);
-                                if ($fd['filename'] == 'rigbrodoc_' . $val_old_row['id_rig']) {
-                                    // cancello il file precedente indipendentemente dall'estensione
-                                    $frep = glob( DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $val_old_row['id_rig'] . '.*');
-                                    foreach ($frep as $fdel) {// prima cancello eventuali precedenti file temporanei
-                                        unlink($fdel);
-                                    }
-                                }
-                            }
-                            $tmp_file = DATA_DIR . 'files/tmp/' . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['extdoc'];
-							// sposto e rinomino il relativo file temporaneo
-                            $fn = pathinfo($form['rows'][$i]['extdoc']);
-                            rename($tmp_file, DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $val_old_row['id_rig'] . '.' . $fn['extension']);
-						}
-                    } else { //altrimenti lo elimino
-                        if (intval($val_old_row['id_body_text']) > 0) {  //se c'è un testo allegato al rigo elimino anch'esso
-                            gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigbro' AND id_ref", $val_old_row['id_rig']);
-                        }
-                        gaz_dbi_del_row($gTables['rigbro'], "id_rig", $val_old_row['id_rig']);
+                  if ($i <= $count) { //se il vecchio rigo e' ancora presente nel nuovo lo modifico
+                    $form['rows'][$i]['delivery_date'] = gaz_format_date($form['rows'][$i]['delivery_date'], true); // formatto la data per il db
+                    $form['rows'][$i]['id_tes'] = $form['id_tes'];
+                    $codice = array('id_rig', $val_old_row['id_rig']);
+                    rigbroUpdate($codice, $form['rows'][$i]);
+                    if (isset($form["row_$i"]) && $val_old_row['id_body_text'] > 0) { //se è un rigo testo già presente lo modifico
+                        bodytextUpdate(array('id_body', $val_old_row['id_body_text']), array('table_name_ref' => 'rigdoc', 'id_ref' => $val_old_row['id_rig'], 'body_text' => $form["row_$i"], 'lang_id' => $admin_aziend['id_language']));
+                        gaz_dbi_put_row($gTables['rigbro'], 'id_rig', $val_old_row['id_rig'], 'id_body_text', $val_old_row['id_body_text']);
+                    } elseif (isset($form["row_$i"]) && $val_old_row['id_body_text'] == 0) { //prima era un rigo diverso da testo
+                        bodytextInsert(array('table_name_ref' => 'rigbro', 'id_ref' => $val_old_row['id_rig'], 'body_text' => $form["row_$i"], 'lang_id' => $admin_aziend['id_language']));
+                        gaz_dbi_put_row($gTables['rigbro'], 'id_rig', $val_old_row['id_rig'], 'id_body_text', gaz_dbi_last_id());
+                    } elseif (!isset($form["row_$i"]) && $val_old_row['id_body_text'] > 0) { //un rigo che prima era testo adesso non lo � pi�
+                        gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigbro' AND id_ref", $val_old_row['id_rig']);
                     }
-                    $i++;
+                    if (( $form['rows'][$i]['tiprig']==51 || $form['rows'][$i]['tiprig']==50 ) && !empty($form['rows'][$i]['extdoc']) && substr($form['rows'][$i]['extdoc'],0,10)!='rigbrodoc_') {
+                      // se a questo rigo corrispondeva un certificato controllo che non sia stato aggiornato, altrimenti lo cambio
+                      $dh = opendir( DATA_DIR . 'files/' . $admin_aziend['company_id'] );
+                      while (false !== ($filename = readdir($dh))) {
+                        $fd = pathinfo($filename);
+                        if ($fd['filename'] == 'rigbrodoc_' . $val_old_row['id_rig']) {
+                          // cancello il file precedente indipendentemente dall'estensione
+                          $frep = glob( DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $val_old_row['id_rig'] . '.*');
+                          foreach ($frep as $fdel) {// prima cancello eventuali precedenti file temporanei
+                            unlink($fdel);
+                          }
+                        }
+                      }
+                      $tmp_file = DATA_DIR . 'files/tmp/' . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['extdoc'];
+                      // sposto e rinomino il relativo file temporaneo
+                      $fn = pathinfo($form['rows'][$i]['extdoc']);
+                      rename($tmp_file, DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $val_old_row['id_rig'] . '.' . $fn['extension']);
+                    }
+                  } else { //altrimenti lo elimino
+                    if (intval($val_old_row['id_body_text']) > 0) {  //se c'è un testo allegato al rigo elimino anch'esso
+                        gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigbro' AND id_ref", $val_old_row['id_rig']);
+                    }
+                    gaz_dbi_del_row($gTables['rigbro'], "id_rig", $val_old_row['id_rig']);
+                  }
+                  $i++;
                 }
                 //qualora i nuovi rows fossero di più dei vecchi inserisco l'eccedenza
                 for ($i = $i; $i <= $count; $i++) {
-                    $form['rows'][$i]['delivery_date'] = gaz_format_date($form['rows'][$i]['delivery_date'], true); // formatto la data per il db
-                    $form['rows'][$i]['id_tes'] = $form['id_tes'];
-                    $last_rigbro_id = rigbroInsert($form['rows'][$i]);
-                    if (!empty($form['rows'][$i]['extdoc'])) {
-                        $tmp_file = DATA_DIR . 'files/tmp/' . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['extdoc'];
-// sposto e rinomino il relativo file temporaneo
-                        $fd = pathinfo($form['rows'][$i]['extdoc']);
-                        rename($tmp_file, DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $last_rigbro_id . '.' . $fd['extension']);
-                    }
-                    if (isset($form["row_$i"])) { //se � un rigo testo lo inserisco il contenuto in body_text
-                        bodytextInsert(array('table_name_ref' => 'rigbro', 'id_ref' => $last_rigbro_id, 'body_text' => $form["row_$i"], 'lang_id' => $admin_aziend['id_language']));
-                        gaz_dbi_put_row($gTables['rigbro'], 'id_rig', $last_rigbro_id, 'id_body_text', gaz_dbi_last_id());
-                    }
-				}
+                  $form['rows'][$i]['delivery_date'] = gaz_format_date($form['rows'][$i]['delivery_date'], true); // formatto la data per il db
+                  $form['rows'][$i]['id_tes'] = $form['id_tes'];
+                  $last_rigbro_id = rigbroInsert($form['rows'][$i]);
+                  if (!empty($form['rows'][$i]['extdoc'])) {
+                    $tmp_file = DATA_DIR . 'files/tmp/' . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['extdoc'];
+                    // sposto e rinomino il relativo file temporaneo
+                    $fd = pathinfo($form['rows'][$i]['extdoc']);
+                    rename($tmp_file, DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $last_rigbro_id . '.' . $fd['extension']);
+                  }
+                  if (isset($form["row_$i"])) { //se è un rigo testo lo inserisco il contenuto in body_text
+                    bodytextInsert(array('table_name_ref' => 'rigbro', 'id_ref' => $last_rigbro_id, 'body_text' => $form["row_$i"], 'lang_id' => $admin_aziend['id_language']));
+                    gaz_dbi_put_row($gTables['rigbro'], 'id_rig', $last_rigbro_id, 'id_body_text', gaz_dbi_last_id());
+                  }
+                }
                 //modifico la testata con i nuovi dati...
                 $old_header = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $form['id_tes']);
 				if ($old_header['clfoco']<>$form['clfoco']){ // se è stato cambiato il fornitore azzero alcuni dati specifici per esso
@@ -871,18 +871,18 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$next_row]['pezzi'] = $rigo['pezzi'];
         $form['rows'][$next_row]['extdoc'] = '';
         $form['rows'][$next_row]['status'] = "UPDATE";
-		// recupero il filename dal filesystem e lo sposto sul tmp
-		$dh = opendir( DATA_DIR . 'files/' . $admin_aziend['company_id'] );
-		while (false !== ($filename = readdir($dh))) {
-				$fd = pathinfo($filename);
-				$r = explode('_', $fd['filename']);
-				if ($r[0] == 'rigbrodoc' && $r[1] == $rigo['id_rig']) {
-					/* 	uso id_body_text per mantenere il riferimento riferimento al file del documento esterno
-					* 	e riassegno il nome file
-					*/
-					$form['rows'][$next_row]['extdoc'] = $fd['basename'];
-				}
-		}
+        // recupero il filename dal filesystem e lo sposto sul tmp
+        $dh = opendir( DATA_DIR . 'files/' . $admin_aziend['company_id'] );
+        while (false !== ($filename = readdir($dh))) {
+            $fd = pathinfo($filename);
+            $r = explode('_', $fd['filename']);
+            if ($r[0] == 'rigbrodoc' && $r[1] == $rigo['id_rig']) {
+              /* 	uso id_body_text per mantenere il riferimento riferimento al file del documento esterno
+              * 	e riassegno il nome file
+              */
+              $form['rows'][$next_row]['extdoc'] = $fd['basename'];
+            }
+        }
         $next_row++;
     }
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
@@ -1205,8 +1205,8 @@ foreach ($form['rows'] as $k => $v) {
     echo "<input type=\"hidden\" value=\"{$v['spessore']}\" name=\"rows[{$k}][spessore]\">\n";
     echo "<input type=\"hidden\" value=\"{$v['peso_specifico']}\" name=\"rows[{$k}][peso_specifico]\">\n";
     echo "<input type=\"hidden\" value=\"{$v['pezzi']}\" name=\"rows[{$k}][pezzi]\">\n";
-	echo '<input type="hidden" value="' . $v['extdoc'] . '" name="rows[' . $k . '][extdoc]" />';
-	echo '<input type="hidden" value="' . $v['delivery_date'] . '" name="rows[' . $k . '][delivery_date]" />';
+    echo '<input type="hidden" value="' . $v['extdoc'] . '" name="rows[' . $k . '][extdoc]" />';
+    echo '<input type="hidden" value="' . $v['delivery_date'] . '" name="rows[' . $k . '][delivery_date]" />';
 	// formatto la visualizzazione dei dati dimensionali
 	$dialog_data='';
 	if ($v['pezzi']>=0.001){

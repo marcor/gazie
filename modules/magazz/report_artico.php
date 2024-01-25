@@ -252,9 +252,9 @@ function printPdf(urlPrintDoc){
 	$(function(){
 		$('#framePdf').attr('src',urlPrintDoc);
 		$('#framePdf').css({'height': '100%'});
-		$('.framePdf').css({'display': 'block','width': '90%', 'height': '80%', 'z-index':'2000'});
-    $("html, body").delay(100).animate({scrollTop: $('#framePdf').offset().top},'slow', function() {
-        $("#framePdf").focus();
+		$('.framePdf').css({'display': 'block','width': '80%', 'left': '10%', 'height': '80%', 'z-index':'2000'});
+    $("html, body").delay(100).animate({scrollTop: $('#framePdf').offset().top-80},'slow', function() {
+      $("#framePdf").focus();
     });
 		$('#closePdf').on( "click", function() {
 			$('.framePdf').css({'display': 'none'});
@@ -271,7 +271,7 @@ $ts->output_navbar();
 
 ?>
 <form method="GET">
-  <div class="framePdf panel panel-success" style="display: none; position: absolute; left: 5%; top: 150px">
+  <div class="framePdf panel panel-success" style="display: none; position: absolute;">
 		<div class="col-lg-12">
     <div class="col-xs-11"><h4></h4></div>
 		<div class="col-xs-1"><h4><button type="button" title="chiudi" id="closePdf"><i class="glyphicon glyphicon-remove"></i></button></h4></div>

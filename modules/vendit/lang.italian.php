@@ -357,7 +357,8 @@ $strScript = array("admin_client.php" =>
 			'sololotto' => 'Questa operazione SIAN necessita di avere un lotto',
 			'lotinsuf' => 'Per questo ID lotto non c\'è la quantità richiesta',
 			'forceone' => 'Un articolo prevede la matricola/numero di serie pertanto la quantit&agrave; &egrave; stata forzata ad 1',
-			'lottoNonVendibile' => 'Non si può vendere un lotto in data precedente a quella della sua creazione'
+			'filesize' => 'File troppo grande',
+			'filenoload' => 'Il file non è stato caricato'
 		),
         'consentivisua' => '<center>ATTENZIONE MANCANO I DATI FISCALI</center>'
     ),

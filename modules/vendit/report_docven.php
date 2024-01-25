@@ -668,7 +668,7 @@ function printPdf(urlPrintDoc){
                         $idcon_maggiore_0 .= '<a class="btn btn-xs btn-success" title="Pacchetto di fatture elettroniche in cui &egrave; contenuta questa fattura" href="../vendit/download_zip_package.php?fn='.$revch['fattura_elettronica_zip_package'].'">'.$zipped.'.zip<i class="glyphicon glyphicon-compressed"></i> </a>';
                       }
                     }
-                    if ($sdi_flux) { // ho un modulo per la gestione dei flussi con il SdI: posso visualizzare lo stato
+                    if ($sdi_flux && $sdi_flux <> 'filezip') { // ho un modulo per la gestione dei flussi con il SdI: posso visualizzare lo stato
                       $zip_ref = 'fae_packaging.php?sdiflux='.$sdi_flux;
                       if ($revch['refs_flux_status']==null) {
                         $last_flux_status = '';
@@ -810,7 +810,7 @@ function printPdf(urlPrintDoc){
                     } else { // quando ho pec e/o codice univoco ma non ho creato pacchetti zip
                       echo ">\n";
                     }
-                    if ( $sdi_flux ) { // ho un modulo per la gestione dei flussi con il SdI: posso visualizzare lo stato
+                    if ( $sdi_flux  && $sdi_flux <> 'filezip' ) { // ho un modulo per la gestione dei flussi con il SdI: posso visualizzare lo stato
                       $zip_ref = 'fae_packaging.php?sdiflux='.$sdi_flux;
                       if (!empty($r['refs_flux_status'])){
                         $last_flux_status = explode(',',$r['refs_flux_status'])[0];

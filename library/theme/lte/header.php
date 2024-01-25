@@ -543,11 +543,7 @@ setInterval(menu_check_from_modules,<?php echo intval((int)$period*60000);?>);
                             </li>
                             <!-- Control Sidebar Toggle Button -->
 <?php
-if ($admin_aziend['Abilit'] == 9) {
-    echo "<li><a href=\"#\" data-toggle=\"control-sidebar\"><i class=\"fa fa-bars\"></i></a></li>";
-} else {
-    echo "<li></li>";
-}
+echo "<li><a href=\"#\" data-toggle=\"control-sidebar\"><i class=\"fa fa-bars\"></i></a></li>";
 
 if (!isset($_SESSION['menu_alerts_lastcheck'])||((round(time()/60)-$_SESSION['menu_alerts_lastcheck'])> $period )){ // sono passati $period minuti
 	// non ho mai controllato se ci sono nuovi ordini oppure è passato troppo tempo dall'ultimo controllo vado a farlo

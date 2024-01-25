@@ -1,5 +1,4 @@
 <?php
-
 /*
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
@@ -23,22 +22,14 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
-    $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND
-            strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
-    if (!$isAjax) {
-        $user_error = 'Access denied - not an AJAX request...';
-        trigger_error($user_error, E_USER_ERROR);
-    }
-    require("../../library/include/datlib.inc.php");
-    $config = new UserConfig;
-    $admin_aziend=checkAdmin();
-    if ($_POST['name']=='restore') {
-  		gaz_dbi_query ("UPDATE ".$gTables['admin_config']." SET `var_value`='false' WHERE `var_name` LIKE 'LTE_%' AND adminid='".$_SESSION['user_name']."'");
-    } else {
-      $form['var_descri'] = substr($_POST['desc'],0,50);
-      $form['var_name'] = substr($_POST['name'],0,30);
-      $form['var_value'] = substr($_POST['val'],0,10);
-      $form['adminid'] = $admin_aziend["user_name"];
-      $config->setValue( $form['var_name'], $form );
-    }
+if (isset($_GET['id_doc']) && isset($_GET['fn'])) {
+	require("../../library/include/datlib.inc.php");
+ 	$admin_aziend = checkAdmin();
+  $file=gaz_dbi_get_row($gTables['files'], 'id_doc', intval($_GET['id_doc']));
+  gaz_dbi_del_row($gTables['files'], 'id_doc',$file['id_doc']);
+  unlink( DATA_DIR . 'files/' . $admin_aziend['codice'] . '/doc/'.$file['id_doc'].'.'.$file['extension']);
+  unlink( DATA_DIR . 'files/' . $admin_aziend['codice'] . '/tmp/'.$file['title']);
+  header("Location: acquire_invoice.php");
+  exit;
+}
 ?>

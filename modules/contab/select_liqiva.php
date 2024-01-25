@@ -206,7 +206,9 @@ function sales_by_region($date_ini,$date_fin)
         }
 		return $m;
 }
-
+$gForm = new contabForm();
+require("./lang." . $admin_aziend['lang'] . ".php");
+$transl=$strScript['report_comunicazioni_dati_fatture.php'];
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['hidden_req'] = '';
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
@@ -237,15 +239,6 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     }
     $dtiniobj = new DateTime('@'.$utsdatini);
     $dtfinobj = new DateTime('@'.$utsdatfin);
-    if ($admin_aziend['ivam_t'] == 'M') {
-      $gazTimeFormatter->setPattern('MMMM yyyy');
-      $form['descri'].=ucwords($gazTimeFormatter->format($dtiniobj));
-    } else {
-      $gazTimeFormatter->setPattern('MMMM');
-      $form['descri'].=ucwords($gazTimeFormatter->format($dtiniobj))." - ";
-      $gazTimeFormatter->setPattern('MMMM yyyy');
-      $form['descri'].=ucwords($gazTimeFormatter->format($dtfinobj));
-    }
     $form['date_ini_D']=1;
     $form['date_ini_M']=date("m",$utsdatini);
     $form['date_ini_Y']=date("Y",$utsdatini);
@@ -284,20 +277,20 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     } else {
        $form['cover']='';
     }
+    $dtiniobj = new DateTime('@'.mktime(12,0,0,$form['date_ini_M'],$form['date_ini_D'],$form['date_ini_Y']));
+    $dtfinobj = new DateTime('@'.mktime(12,0,0,$form['date_fin_M'],$form['date_fin_D'],$form['date_fin_Y']));
     if ($form['hidden_req']=='vat_reg' || $form['hidden_req']=='vat_section'){
-      require("lang.".$admin_aziend['lang'].".php");
-      $form['descri'] = $strScript[$scriptname]['descri_value'][$admin_aziend['ivam_t']];
+      //require("lang.".$admin_aziend['lang'].".php");
+      $form['descri'] = ''; //$strScript[$scriptname]['descri_value'][$admin_aziend['ivam_t']];
       $form['page_ini'] = getPage_ini($form['vat_section'],$form['vat_reg']);
-      $dtiniobj = new DateTime('@'.mktime(12,0,0,$form['date_ini_M'],$form['date_ini_D'],$form['date_ini_Y']));
-      $dtfinobj = new DateTime('@'.mktime(12,0,0,$form['date_fin_M'],$form['date_fin_D'],$form['date_fin_Y']));
       if ($admin_aziend['ivam_t'] == 'M') {
-        $gazTimeFormatter->setPattern('MMMM yyyy');
-        $form['descri'].=ucwords($gazTimeFormatter->format($dtiniobj));
+//        $gazTimeFormatter->setPattern('MMMM yyyy');
+//        $form['descri'].=ucwords($gazTimeFormatter->format($dtiniobj));
       } else {
-        $gazTimeFormatter->setPattern('MMMM');
-        $form['descri'].=ucwords($gazTimeFormatter->format($dtiniobj)).' - ';
-        $gazTimeFormatter->setPattern('MMMM yyyy');
-        $form['descri'].=ucwords($gazTimeFormatter->format($dtfinobj));
+//        $gazTimeFormatter->setPattern('MMMM');
+//        $form['descri'].=ucwords($gazTimeFormatter->format($dtiniobj)).' - ';
+//        $gazTimeFormatter->setPattern('MMMM yyyy');
+//        $form['descri'].=ucwords($gazTimeFormatter->format($dtfinobj));
       }
       $form['hidden_req']='';
     } elseif ($form['hidden_req']=='date_fin'){
@@ -327,6 +320,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
         header("Location: ".$form['ritorno']);
         exit;
     }
+    $form['descri'] = $gForm->getPeriodicyDescription([$dtiniobj->format('d-m-Y'),$dtfinobj->format('d-m-Y')],$transl);
 }
 
 //controllo i campi
@@ -358,7 +352,7 @@ if (isset($_POST['print']) && $msg=='') {
     exit;
 }
 require("../../library/include/header.php");
-$script_transl=HeadMain(0,array('calendarpopup/CalendarPopup'));
+$script_transl=HeadMain(0,['calendarpopup/CalendarPopup']);
 echo "<script type=\"text/javascript\">
 var cal = new CalendarPopup();
 var calName = '';
@@ -397,7 +391,6 @@ echo "</script>";
 echo "<form method=\"POST\" name=\"select\">\n";
 echo "<input type=\"hidden\" value=\"".$form['hidden_req']."\" name=\"hidden_req\" />\n";
 echo "<input type=\"hidden\" value=\"".$form['ritorno']."\" name=\"ritorno\" />\n";
-$gForm = new contabForm();
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['title'];
 echo "</div>\n";
 echo "<table class=\"Tmiddle table-striped\">\n";

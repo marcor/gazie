@@ -464,7 +464,7 @@ $strScript = array("select_liqiva.php" =>
         'periodicita_value' => array('M'=>'Mensile','T' => 'Trimestrale', 'S' => 'Semestrale'),
         'esterometro' => 'Solo stranieri (Esterometro)',
         'trimestre_semestre' => 'Periodo di riferimento',
-        'trimestre_semestre_value' => array('M'=>array(1=>"Gennaio", 2=>"Febbraio", 3=>"Marzo", 4=>"Aprile", 5=>"Maggio", 6=>">Giugno", 7=>"Luglio", 8=>"Agosto", 9=>"Settembre", 10=>"Ottobre", 11=>"Novembre", 12=>"Dicembre"),'T'=>array(1 => 'Primo (gennaio-marzo)', 2 => 'Secondo (aprile-giugno)', 3 => 'Terzo (luglio-settembre)', 4 => 'Quarto (ottobre-dicembre)'),'S'=>array(1 => 'Primo (gennaio-giugno)', 2 => 'Secondo (luglio-dicembre)')),
+        'trimestre_semestre_value' => array('M'=>array(1=>"Gennaio", 2=>"Febbraio", 3=>"Marzo", 4=>"Aprile", 5=>"Maggio", 6=>"Giugno", 7=>"Luglio", 8=>"Agosto", 9=>"Settembre", 10=>"Ottobre", 11=>"Novembre", 12=>"Dicembre"),'T'=>array(1 => 'Primo (gennaio-marzo)', 2 => 'Secondo (aprile-giugno)', 3 => 'Terzo (luglio-settembre)', 4 => 'Quarto (ottobre-dicembre)'),'S'=>array(1 => 'Primo (gennaio-giugno)', 2 => 'Secondo (luglio-dicembre)')),
         'CessionarioCommittente' => 'Cessionario Committente',
         'CedentePrestatore' => 'Cedente Prestatore',
         'TipoDocumento' => 'Tipo Documento',
@@ -497,13 +497,13 @@ $strScript = array("select_liqiva.php" =>
         'ok' => 'Genera il file ZIP contenente i due file XML per la comunicazione dati fatture (quadri DTE e DTR)',
     ),
     "report_comunicazioni_dati_fatture.php" =>
-    array('title' => "Lista delle comunicazioni periodiche dei dati fatture",
+    ['title' => "Lista delle comunicazioni periodiche dei dati fatture",
         'anno' => 'Anno',
         'periodicita' => 'Periodicità',
         'periodicita_value' => array('M'=>'Mensile','T' => 'Trimestrale', 'S' => 'Semestrale'),
         'trimestre_semestre' => 'Periodo',
-        'trimestre_semestre_value' => array('M'=>array(1=>"Gennaio", 2=>"Febbraio", 3=>"Marzo", 4=>"Aprile", 5=>"Maggio", 6=>">Giugno", 7=>"Luglio", 8=>"Agosto", 9=>"Settembre", 10=>"Ottobre", 11=>"Novembre", 12=>"Dicembre"),'T'=>array(1 => 'Primo (gennaio-marzo)', 2 => 'Secondo (aprile-giugno)', 3 => 'Terzo (luglio-settembre)', 4 => 'Quarto (ottobre-dicembre)'),'S'=>array(1 => 'Primo (gennaio-giugno)', 2 => 'Secondo (luglio-dicembre)'))
-    ),
+        'trimestre_semestre_value' => ['M'=>[1=>"Gennaio", 2=>"Febbraio", 3=>"Marzo", 4=>"Aprile", 5=>"Maggio", 6=>"Giugno", 7=>"Luglio", 8=>"Agosto", 9=>"Settembre", 10=>"Ottobre", 11=>"Novembre", 12=>"Dicembre"],'T'=>[1 => 'primo trimestre (gennaio-marzo)', 2 => 'secondo trimestre (aprile-giugno)', 3 => 'terzo trimestre (luglio-settembre)', 4 => 'quarto trimestre (ottobre-dicembre)'],'B'=>[1 => 'primo bimestre (gennaio-febbraio)', 2 => 'secondo bimestre (marzo-aprile)', 3 => 'terzo bimestre (maggio-giugno)', 4 => 'quarto bimestre (luglio-agosto)', 5 => 'quinto bimestre (settembre-ottobre)', 6 => 'sesto bimestre (novembre-dicembre)'],'S'=>[1 => 'Primo (gennaio-giugno)', 2 => 'Secondo (luglio-dicembre)']]
+    ],
     "comunicazioni_doc.php" =>
     array('title' => "Comunicazioni dati",
         'text'=>"In questo sottomenù troverete tutte le procedure per l'invio dati in formato XML all'Agenzia delle Entrate"

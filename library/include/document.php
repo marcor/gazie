@@ -596,27 +596,37 @@ class DocContabVars {
         $this->castel = [];
     }
 
-    function getExtDoc($id_rig=0) {
-        /* con questa funzione faccio il push sull'accumulatore dei righi contenenti "documenti esterni" da allegare al pdf
+    function getExtDoc($id_rig=0, $prefix='rigbrodoc_') {
+      /* con questa funzione faccio il push sull'accumulatore dei righi contenenti "documenti esterni" da allegare al pdf
 		  riprendo il nome del file relativo al documento e lo aggiungo alla matrice solo se il file esiste, prima di chiamare
 		  questo metodo dovrò settare $this->id_rig
-        */
-        if (!isset($this->ExternalDoc)) {
-            $this->ExternalDoc = array();
+      */
+      if (!isset($this->ExternalDoc)) {
+        $this->ExternalDoc = [];
+      }
+      $r=[];
+      $r['file']= '';
+      $r['ext'] = '';
+      $files = glob( DATA_DIR . 'files/' . $this->azienda['codice'].'/'.$prefix.'*.*');
+      foreach($files as $file) {
+        $fd = pathinfo($file);
+        if ($prefix=='rigbrodoc_'){
+          if ($fd['filename'] == $prefix.($prefix=='rigbrodoc_'?$id_rig:'')) {
+            $r['file'] .= $file;
+            $r['oriname'] = $fd['basename'];          }
+        } else {
+          $e=explode('_rigdoc_',$fd['filename']);
+          if ($e[0] == $id_rig) {
+            $r['file'] .= $file;
+            $r['oriname'] = $e[1];
+            $this->ExternalDoc[] = $r;
+          }
         }
-		$r=[];
-		$r['file']= $this->azienda['codice'].'/';
-        $r['ext'] = '';
-        $dh = opendir( DATA_DIR . 'files/' . $this->azienda['codice'] );
-        while (false !== ($filename = readdir($dh))) {
-            $fd = pathinfo($filename);
-            if ($fd['filename'] == 'rigbrodoc_' . $id_rig) {
-                $r['file'] .= $filename;
-                $r['ext'] = $fd['extension'];
-				$this->ExternalDoc[] = $r;
-            }
-        }
-        return $r; // in ExternalDocs troverò gli eventuali documenti da allegare
+        $r['ext'] = $fd['extension'];
+        $this->ExternalDoc[] = $r;
+      }
+      //var_dump($r);
+      return $r; // in ExternalDocs troverò gli eventuali documenti da allegare
     }
 
 

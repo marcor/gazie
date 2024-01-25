@@ -109,6 +109,9 @@ function getAssets($date) {
             switch ($row['type_mov']) {
                 case '10' : // incremento valore del bene (accessorio/ampliamento/ammodernamento/manutenzione)
                     // prendo il valore dell'incremento del costo storico dal rigo contabile
+                    if (!isset($acc[$row['acc_fixed_assets']][1]['fixed_tot'])){
+                      //var_dump($row);
+                    }
                     $fx = gaz_dbi_get_row($gTables['rigmoc'], 'codcon', $row['acc_fixed_assets'], $movcon);
                     $acc[$row['acc_fixed_assets']][1]['fixed_tot'] += $fx['import'];
                     $row['fixed_subtot'] = $acc[$row['acc_fixed_assets']][1]['fixed_tot'];
@@ -137,12 +140,12 @@ function getAssets($date) {
                     $row['cost_subtot'] = $acc[$row['acc_fixed_assets']][1]['cost_tot'];
                     // prendo il valore della quota indeducibile dal rigo contabile
                     $n = gaz_dbi_get_row($gTables['rigmoc'], 'codcon', $row['acc_no_deduct_cost'], $movcon);
-                    $row['noded_val'] = $n['import'];
-                    $acc[$row['acc_fixed_assets']][1]['noded_tot'] += $n['import'];
+                    $row['noded_val'] = $n?$n['import']:0;
+                    $acc[$row['acc_fixed_assets']][1]['noded_tot'] += $n?$n['import']:0;
                     $row['noded_subtot'] = $acc[$row['acc_fixed_assets']][1]['noded_tot'];
                     /* anche se da qualche anno non è più fiscalmente una quota persa si deve segnalare sul libro
                      */
-                    $row['lost_cost'] = ($acc[$row['acc_fixed_assets']][1]['valamm'] * $row['fixed_subtot'] / 200) - ($c['import'] + $n['import']);
+                    $row['lost_cost'] = ($acc[$row['acc_fixed_assets']][1]['valamm'] * $row['fixed_subtot'] / 200) - ($c['import'] + ($n?$n['import']:0));
                     if ($row['lost_cost'] < 0) {
                         $row['lost_cost'] = 0;
                     }
@@ -215,7 +218,7 @@ foreach ($form['assets'] as $ka => $va) {
             $head = false;
         }
         if ($v['type_mov'] == 1) {
-            $pdf->MultiCell(84, 4, $v['descri'] . "\n" . $v["desfor"] . ' Fatt.' . $v["nudtes"] . ' del ' . gaz_format_date($v['dtdtes'], false, true) . "\n" . $v['ammmin_ssd'] . "\n Ammortamento normale = " . $v['ammmin_ssrate'] . '%', 1, 'L', true, 2);
+            $pdf->MultiCell(84, 4, $v['descri'] . " (". $v["acc_fixed_assets"].")\n" . $v["desfor"] . ' Fatt.' . $v["nudtes"] . ' del ' . gaz_format_date($v['dtdtes'], false, true) . "\n" . $v['ammmin_ssd'] . "\n Ammortamento normale = " . $v['ammmin_ssrate'] . '%', 1, 'L', true, 2);
             $pdf->Ln(-4);
             $pdf->Cell(84, 4);
             $pdf->Cell(18, 4, '', 1, 0, 'C');

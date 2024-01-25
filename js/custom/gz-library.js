@@ -21,7 +21,7 @@
 /** ENRICO FEDELE */
 
 
-/* Abilita/disabilita un textbox sulla base dello stato di un checkbox collegato */
+/* Abilita/disabilita un textbox sulla base dello stato di un checkbox collegato
 $(document).ready(function () {
     // non uso size inline ma mi baso su maxlenght per avere una proporzionalità di grandezza sugli elementi input
  	$("td>input[maxlength]").each(function(index){
@@ -43,7 +43,7 @@ $(document).ready(function () {
     $('.products-list-last').effect("highlight", {times: 1}, 5000);
     $('#products-list-last').toggleClass('products-list-last products-list-last-moved');
 });
-
+ */
 $(window).resize(function () {
     resizeNavbarText();
 });

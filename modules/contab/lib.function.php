@@ -387,6 +387,70 @@ class contabForm extends GAzieForm {
         return '';
     }
 
+    function getPeriodicyDescription($dates, $lang_transl) {
+      // passare $date nel formato array('datainizio-GG/MM/AAAA','datafine-GG/MM/AAAA')
+      $descri = '';
+      $inisfirst=false;
+      $di=substr($dates[0],0,2);
+      $mi=substr($dates[0],3,2);
+      $yi=substr($dates[0],6,4);
+      $in= new DateTime($di.'-'.$mi.'-'.$yi);
+      $in->modify('first day of this month');
+      $inctrl=$in->format('d-m-Y');
+      // se non coincide non ha periodicità mensile
+      if ($di.'-'.$mi.'-'.$yi == $inctrl) {
+        $inisfirst=true;
+      }
+      $fiislast=false;
+      $df=substr($dates[1],0,2);
+      $mf=substr($dates[1],3,2);
+      $yf=substr($dates[1],6,4);
+      $fi= new DateTime($df.'-'.$mf.'-'.$yf);
+      $fi->modify('last day of this month');
+      $fictrl=$fi->format('d-m-Y');
+      // se non coincide non ha periodicità mensile
+      if ($df.'-'.$mf.'-'.$yf == $fictrl) {
+        $fiislast=true;
+      }
+      // solo se le date sono inizio e fine mese la descrizione sarà riferita ad una periodicità
+      if ($inisfirst&&$fiislast){
+        if ($yi==$yf){ // stesso anno
+          $mdiff=$mf-$mi;
+          switch ($mdiff) {
+            case 0: // stesso mese
+              $descri = 'del mese di '. $lang_transl['trimestre_semestre_value']['M'][intval($mi)] . ' ' .$yi;
+            break;
+            case 1: // bimestre
+              $descri = 'del bimestre '. $lang_transl['trimestre_semestre_value']['M'][intval($mi)] . ' - ' . $lang_transl['trimestre_semestre_value']['M'][intval($mf)] . ' ' .$yi;
+            break;
+            case 2: // trimestre
+              $descri = 'del trimestre '. $lang_transl['trimestre_semestre_value']['M'][intval($mi)] . ' - ' . $lang_transl['trimestre_semestre_value']['M'][intval($mf)] . ' ' .$yi;
+            break;
+            case 3: // quadrimestre
+              $descri = 'del quadrimestre '. $lang_transl['trimestre_semestre_value']['M'][intval($mi)] . ' - ' . $lang_transl['trimestre_semestre_value']['M'][intval($mf)] . ' ' .$yi;
+            break;
+            case 5: // semestre
+              $descri = 'del semestre '. $lang_transl['trimestre_semestre_value']['M'][intval($mi)] . ' - ' . $lang_transl['trimestre_semestre_value']['M'][intval($mf)] . ' ' .$yi;
+            break;
+            case 11: // anno
+              $descri = 'dell\'anno '. $yi;
+            break;
+            default: // altri
+              $descri = 'da '. $lang_transl['trimestre_semestre_value']['M'][intval($mi)] . ' a ' . $lang_transl['trimestre_semestre_value']['M'][intval($mf)] . ' ' .$yi;
+            break;
+          }
+        } else { // anni diversi
+          if ($mi==1 &&  $mf== 12) { // annualità intere
+            $descri = 'dall\'anno '. $yi. ' all\'anno ' .$yf;
+          } else {
+            $descri = 'dal mese di '. $lang_transl['trimestre_semestre_value']['M'][intval($mi)]. ' ' .$yi. ' al mese di '.$lang_transl['trimestre_semestre_value']['M'][intval($mf)]. ' ' . $yf;
+          }
+        }
+      } else { // altrimenti la descrizione conterrà solo data inizio e data fine, dal  - al
+        $descri = 'dal '. $dates[0] . ' al ' .$dates[1];
+      }
+      return $descri;
+    }
 }
 
 function rigmocUpdate($id, $newValue) {

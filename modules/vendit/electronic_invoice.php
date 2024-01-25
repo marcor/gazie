@@ -25,6 +25,7 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 require("../../library/include/electronic_invoice.inc.php");
+$attach_pdf_to_fae = intval(gaz_dbi_get_row($gTables['company_config'], 'var', 'attach_pdf_to_fae')['val']);
 
 // recupero i dati
 if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo documento attraverso il suo id_tes
@@ -108,10 +109,24 @@ if (isset($_GET['reinvia'])) {   //se viene richiesto un reinvio con altro nome 
   }
 }
 
+if ($attach_pdf_to_fae==1){
+  require("../../library/include/document.php");
+  //recupero i dati per pdf
+  $onlyonet_r = gaz_dbi_dyn_query("*", $gTables['tesdoc'],$where,'datemi ASC, numdoc ASC, id_tes ASC',0,1);
+  $onlyonet = gaz_dbi_fetch_array($onlyonet_r);
+  if ($onlyonet) {
+    $testate = gaz_dbi_dyn_query("*", $gTables['tesdoc'],$where,'datemi ASC, numdoc ASC, id_tes ASC');
+    $pdf_content=createMultiDocument($testate, $onlyonet['template'], $gTables, 'X');
+  } else {
+    $pdf_content=false;
+  }
+} else {
+  $pdf_content=false;
+}
 //recupero i dati
 $testate = gaz_dbi_dyn_query("*", $gTables['tesdoc'],$where,'datemi ASC, numdoc ASC, id_tes ASC');
 if (isset($_GET['viewxml'])) {   //se viene richiesta una visualizzazione all'interno del browser
-	$file_content=create_XML_invoice($testate,$gTables,'rigdoc',false,'from_string.xml');
+	$file_content=create_XML_invoice($testate,$gTables,'rigdoc',false,'from_string.xml',false, $pdf_content);
 	$fae_xsl_file = gaz_dbi_get_row($gTables['company_config'], 'var', 'fae_style');
 	$doc = new DOMDocument;
 	$doc->preserveWhiteSpace = false;
@@ -124,6 +139,6 @@ if (isset($_GET['viewxml'])) {   //se viene richiesta una visualizzazione all'in
 	$xslt->importStylesheet($xslDoc);
 	echo $xslt->transformToXML($doc);
 } else { // .... altrimenti faccio il download diretto
-	create_XML_invoice($testate,$gTables);
+	create_XML_invoice($testate,$gTables,'rigdoc',false,false,false,$pdf_content);
 }
 ?>

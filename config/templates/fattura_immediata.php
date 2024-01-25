@@ -23,7 +23,7 @@
  --------------------------------------------------------------------------
 */
 
-require("../../library/include/calsca.inc.php");
+require_once("../../library/include/calsca.inc.php");
 require('template_scheda.php');
 
 class FatturaImmediata extends Template_con_scheda
@@ -36,10 +36,12 @@ class FatturaImmediata extends Template_con_scheda
   public $virtual_taxstamp;
   public $taxstamp;
   public $trasporto;
+  public $tot_rp;
   public $tottraspo;
   public $tipdoc;
   public $descriptive_last_row;
   public $show_artico_composit;
+  public $sedelegale;
 
     function setTesDoc()
     {
@@ -216,6 +218,38 @@ class FatturaImmediata extends Template_con_scheda
                     $this->Cell(80, 5, "Dati Veicoli ex art.38, immatricolato il " . gaz_format_date($rigo['descri']).', km o ore:'.intval($rigo['quanti']), 'LR', 0, 'L', 0, '', 1);
                     $this->Cell(81, 5, '', 'R', 1);
                     break;
+                case "50":
+                  // accumulo il file da allegare e lo indico al posto del codice articolo
+                  $file=$this->docVars->getExtDoc($rigo['id_rig'],'doc/'.$rigo['id_rig'].'_rigdoc_');
+                  $this->Cell(25, 5, $file['oriname'].'.'.$file['ext'],1,0,'L',0,'',1);
+                  $this->Cell(80, 5, $rigo['descri'],1,0,'L',0,'',1);
+                  $this->Cell(7,  5, $rigo['unimis'],1,0,'C');
+                  $this->Cell(16, 5, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R',0,'',1);
+                  if ($rigo['prelis'] > 0) {
+                     $this->Cell(20, 5, number_format($rigo['prelis'],$this->decimal_price,',',''),1,0,'R');
+                  } else {
+                     $this->Cell(20, 5, '',1);
+                  }
+                  if ($rigo['sconto']> 0) {
+                     $this->Cell(6, 5,  number_format($rigo['sconto'],1,',',''),1,0,'C');
+                  } else {
+                     $this->Cell(6, 5, '',1);
+                  }
+                  if ($rigo['importo'] > 0) {
+                     $this->Cell(20, 5, gaz_format_number($rigo['importo']),1,0,'R',0,'',1);
+                  } else {
+                     $this->Cell(20, 5, '',1);
+                  }
+                  $this->Cell(12, 5, gaz_format_number($rigo['pervat']), 1, 1, 'R');
+                  $this->tot_rp +=$rigo['quanti'];
+                  break;
+                case "51":
+                  // accumulo il file da allegare e lo indico al posto del codice articolo
+                  $file=$this->docVars->getExtDoc($rigo['id_rig']);
+                  $this->Cell(25, 5, $file['oriname'].'.'.$file['ext'],1,0,'L',0,'',1);
+                  $this->Cell(80,5,$rigo['descri'],'LR',0,'L',0,'',1);
+                  $this->Cell(81,5,'','R',1);
+                  break;
                 case "210":
                     $oldy = $this->GetY();
                     $this->SetFont('helvetica', '', 8);
@@ -490,14 +524,56 @@ class FatturaImmediata extends Template_con_scheda
                           $this->docVars->vettor['citta'].' '.
                           $this->docVars->vettor['provincia'],'LBR',0,'L',0,'',1);
         $this->Cell(56, 5,'','LBR',1);
-		/* la scheda di trasporto non si usa più
-        if (!empty($this->docVars->vettor['ragione_sociale'])){
-          $this->StartPageGroup();
-          $this->appendix=true;
-          $this->addPage();
-          $this->SchedaTrasporto();
-          $this->appendix=false;
-        }*/
+        if (isset($this->docVars->ExternalDoc)){ // se ho dei documenti esterni allegati
+          $this->print_header = false;
+          $this->extdoc_acc=$this->docVars->ExternalDoc;
+          reset($this->extdoc_acc);
+          foreach ($this->extdoc_acc AS $key => $rigo) {
+            $this->SetTextColor(255, 50, 50);
+            $this->SetFont('helvetica', '', 6);
+            if ($rigo['ext'] == 'pdf') {
+              $this->numPages = $this->setSourceFile( DATA_DIR . 'files/' . $rigo['file'] );
+              if ($this->numPages >= 1) {
+                for ($i = 1; $i <= $this->numPages; $i++) {
+                  $this->_tplIdx = $this->importPage($i);
+                  $specs = $this->getTemplateSize($this->_tplIdx);
+                  // stabilisco se portrait-landscape
+                  if ($specs['h'] > $specs['w']){ //portrait
+                    $pl='P';
+                    $w=210;
+                    $h=297;
+                  }else{ //landscape
+                    $pl='L';
+                    $w=297;
+                    $h=210;
+                  }
+                  $this->AddPage($pl);
+                  $this->print_footer = false;
+                  $this->useTemplate($this->_tplIdx,NULL,NULL,$w,$h, FALSE);
+                  $this->SetXY(10, 0);
+                  $this->Cell(190, 3,$this->intesta1 . ' ' . $this->intesta1bis." - documento allegato a: " . $this->tipdoc , 1, 0, 'C', 0, '', 1);
+                }
+              }
+              $this->print_footer = false;
+            } elseif (!empty($rigo['ext'])) {
+              list($w, $h) = getimagesize( DATA_DIR . 'files/' . $rigo['file'] );
+              $this->SetAutoPageBreak(false, 0);
+              if ($w > $h) { //landscape
+                $this->AddPage('L');
+                $this->print_footer = false;
+                $this->SetXY(10, 0);
+                $this->Cell(280, 3, $this->intesta1 . ' ' . $this->intesta1bis." - documento allegato a: " . $this->tipdoc, 1, 0, 'C', 0, '', 1);
+                $this->image( DATA_DIR . 'files/' . $rigo['file'], 5, 3, 290 );
+              } else { // portrait
+                $this->AddPage('P');
+                $this->print_footer = false;
+                $this->SetXY(10, 0);
+                $this->Cell(190, 3, $this->intesta1 . ' ' . $this->intesta1bis." - documento allegato a: " . $this->tipdoc, 1, 0, 'C', 0, '', 1);
+                $this->image( DATA_DIR . 'files/' . $rigo['file'], 5, 3, 190 );
+              }
+            }
+          }
+        }
     }
 
     function Footer()

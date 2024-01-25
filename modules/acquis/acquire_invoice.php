@@ -224,12 +224,16 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 	$form['date_fin_M'] = date('m');
 	$form['date_fin_Y'] = date('Y');
 	$form['curr_doc'] = 0;
+	$form['id_doc'] = 0;
+	$form['incrbenamm'] = 0;
 	if (in_array($send_fae_zip_package['val'],$sync_mods)){
 		$res_faesync=gaz_dbi_dyn_query("*", $gTables['files'], "item_ref='faesync' AND status = 0", "table_name_ref", 0);
 	}
 } else { // accessi successivi
 	$form['fattura_elettronica_original_name'] = filter_var($_POST['fattura_elettronica_original_name'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 	$form['curr_doc'] = intval($_POST['curr_doc']);
+	$form['id_doc'] = intval($_POST['id_doc']);
+	$form['incrbenamm'] = intval($_POST['incrbenamm']);
 	$form['date_ini_D'] = '01';
 	$form['date_ini_M'] = date('m');
 	$form['date_ini_Y'] = date('Y');
@@ -258,7 +262,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
     }
     if (isset($_POST['fae_from_sync'])){
 			$_POST['fae_original_name']=$_POST['fae_original_name'.intval($_POST['fae_from_sync'])];
-
+      $form['id_doc'] = intval($_POST['fae_from_sync']);
 		}
 
     if (!empty($_FILES['userfile']['name'])) {
@@ -314,6 +318,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 	} else if (isset($_POST['Submit_form'])) { // ho  confermato l'inserimento
 
 		$form['pagame'] = intval($_POST['pagame']);
+		$form['incrbenamm'] = intval($_POST['incrbenamm']);
 		$form['new_acconcile'] = intval($_POST['new_acconcile']);
         if ($form['pagame'] <= 0 ) {  // ma non ho selezionato il pagamento
 			$msg['err'][] = 'no_pagame';
@@ -327,7 +332,9 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$msg['err'][] = 'no_codric';
 			}
 		}
-	} else if (isset($_POST['Download'])) { // faccio il download dell'allegato
+	} else if (isset($_POST['IncreaseBenamm'])){ // ho chiesto l'incremento di valore di un bene ammortizzabile
+		$form['incrbenamm'] = $admin_aziend['mas_fixed_assets'];
+  } else if (isset($_POST['Download'])) { // faccio il download dell'allegato
 		$name = filter_var($_POST['Download'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 		header('Content-Description: File Transfer');
 		header('Content-Type: application/octet-stream');
@@ -356,19 +363,16 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		require('../../library/' . $send_fae_zip_package['val'] . '/SendFaE.php');
 		$AltreFattF = ReceiveFattF(array($admin_aziend['country'].$admin_aziend['codfis'] => array('fattf' => $FattF, 'ini_date' => $form['date_ini_Y'] . '-' . $form['date_ini_M'] . '-' . $form['date_ini_D'], 'fin_date' => $form['date_fin_Y'] . '-' . $form['date_fin_M'] . '-' . $form['date_fin_D'])));
 	}
-
 	$tesdoc = gaz_dbi_get_row($gTables['tesdoc'], 'BINARY fattura_elettronica_original_name', $form["fattura_elettronica_original_name"]);
 	if (!empty($form['fattura_elettronica_original_name'])) { // c'è anche sul database, è una modifica
-
-      if ($tesdoc){
-		$toDo = 'update';
-		$form['datreg'] = gaz_format_date($tesdoc['datreg'], false, false);
-		$form['seziva'] = $tesdoc['seziva'];
-		$msg['war'][] = 'file_exists'; //potrebbe non essere un errore, per esempio quando si importa lo stesso file contenente più fatture
-      }else{
-		$toDo = 'insert';
-
-      }
+    if ($tesdoc){
+      $toDo = 'update';
+      $form['datreg'] = gaz_format_date($tesdoc['datreg'], false, false);
+      $form['seziva'] = $tesdoc['seziva'];
+      $msg['war'][] = 'file_exists'; //potrebbe non essere un errore, per esempio quando si importa lo stesso file contenente più fatture
+    }else{
+      $toDo = 'insert';
+    }
 
 		// INIZIO acquisizione e pulizia file xml o p7m
 		$file_name = DATA_DIR . 'files/' . $admin_aziend['codice'] . '/' . $form['fattura_elettronica_original_name'];
@@ -441,7 +445,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 	}
 
 	// definisco l'array dei righi
-	$form['rows'] = array();
+	$form['rows'] = [];
 
 	$anagra_with_same_pi = false; // sarà true se è una anagrafica esistente ma non è un fornitore sul piano dei conti
 
@@ -676,6 +680,9 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					$form['search_codart_'.$post_nl] = isset($_POST['search_codart_'.$post_nl])?substr($_POST['search_codart_'.$post_nl],0,35):'';
 					$form['rows'][$nl]['search_codart']=$form['search_codart_'.$post_nl];
 					$form['codric_'.$post_nl] = (isset($_POST['codric_'.$post_nl]))?intval($_POST['codric_'.$post_nl]):'';
+          if (isset($_POST['IncreaseBenamm'])){ // ho chiesto l'incremento di valore di un bene ammortizzabile
+            $form['codric_'.$post_nl] ='';
+          }
 					$form['warehouse_'.$post_nl] = (isset($_POST['warehouse_'.$post_nl]))?intval($_POST['warehouse_'.$post_nl]):0;
 					$form['rows'][$nl]['warehouse']=$form['warehouse_'.$post_nl];
 					$form['codvat_'.$post_nl] = (isset($_POST['codvat_'.$post_nl]))?intval($_POST['codvat_'.$post_nl]):'';
@@ -752,7 +759,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				}
 
 			}
-
+//var_dump($form['rows']);
+//var_dump($_POST);
 			//Se la fattura è derivante da un DdT aggiungo i relativi  elementi  all'array dei righi
 			$anomalia="";
       $numddt="";
@@ -783,9 +791,15 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
               } else {
                 $form['rows'][$nl]['exist_ddt']=false;
               }
-              $form['rows'][$nl]['NumeroDDT']=$numddt;
-              $form['rows'][$nl]['DataDDT']=$dataddt;
-              $form['numddt_'.($nl-1)]=$numddt;
+              if (isset($_POST['resetDdT_'.($nl-1)])){
+                $form['rows'][$nl]['NumeroDDT']=false;
+                $form['rows'][$nl]['DataDDT']=false;
+                $form['numddt_'.($nl-1)]='';
+              } else {
+                $form['rows'][$nl]['NumeroDDT']=$numddt;
+                $form['rows'][$nl]['DataDDT']=$dataddt;
+                $form['numddt_'.($nl-1)]=$numddt;
+              }
               // è stato assegnato ad un DdT lo rimuovo dall'array $nl_NumeroLinea in modo da poter, eventualmente trattare questi successivamente
               unset($nl_NumeroLinea[$form['rows'][$nl]['numrig']]);
               $first=false;
@@ -795,7 +809,28 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					$ctrl_NumeroDDT=$numddt;
 					$ctrl_DataDDT=$dataddt;
 				}
-
+        $numddt_tolast=false;
+        // riciclo i righi per assegnare le eventuali nuove scelte DdT dell'utente
+				foreach($form['rows'] as $nl => $v) {
+          if ($_POST['hidden_req']=='concileDdT') { // l'utente ha scelto di cambiare il DdT di riferimento
+            if (substr($_POST['numddt_'.($nl-1)],-7) == '_tolast' ) {
+              $numddt_tolast=substr($_POST['numddt_'.($nl-1)],0,-7);
+            } else {
+              $form['rows'][$nl]['NumeroDDT']=$_POST['numddt_'.($nl-1)];
+              $form['rows'][$nl]['DataDDT']=$acc_DataDDT[$_POST['numddt_'.($nl-1)]]['Data'];
+              $form['numddt_'.($nl-1)]=$_POST['numddt_'.($nl-1)];
+            }
+            if ($numddt_tolast){
+              $form['rows'][$nl]['NumeroDDT']=$numddt_tolast;
+              $form['rows'][$nl]['DataDDT']=$acc_DataDDT[$numddt_tolast]['Data'];
+              $form['numddt_'.($nl-1)]=$numddt_tolast;
+            }
+          } else if (!empty($_POST['numddt_'.($nl-1)]) && $_POST['numddt_'.($nl-1)] <> $v['NumeroDDT'] ) { // se provengo da un cambiamento dell'utente
+                $form['rows'][$nl]['NumeroDDT']=$_POST['numddt_'.($nl-1)];
+                $form['rows'][$nl]['DataDDT']=$acc_DataDDT[$_POST['numddt_'.($nl-1)]]['Data'];
+                $form['numddt_'.($nl-1)]=$_POST['numddt_'.($nl-1)];
+          }
+        }
         $numddt_tolast=false;
         $prevdescri="";
 				foreach($nl_NumeroLinea as $nl){ // in questo mi ritrovo i righi non assegnati ai ddt specifici (potrebbero essere anche tutti), alcune fatture malfatte non specificano i righi!
@@ -870,10 +905,10 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
           if ($vrow['NumeroDDT']) {
             if (!isset($ddtused[$vrow['NumeroDDT']])) { // al primo rigo di questo DdT lo segno come usato e creo la matrice con tutti i righi
               $ddtused[$vrow['NumeroDDT']]= $vrow['DataDDT'];
-              $ddt_accln= ['numdoc'=>$vrow['NumeroDDT'],'date'=>$vrow['DataDDT'],'codart'=>$vrow['codart'],'quanti'=>$vrow['quanti'],'rigddt'=>$vrow['exist_ddt']['rig_codart']];
+              $ddt_accln= ['numdoc'=>$vrow['NumeroDDT'],'date'=>$vrow['DataDDT'],'codart'=>$vrow['codart'],'quanti'=>$vrow['quanti'],'rigddt'=>(isset($vrow['exist_ddt']['rig_codart'])?$vrow['exist_ddt']['rig_codart']:null)];
             }
             // provo ad attribuire il codice articolo di questo ad uno dei i righi presenti sull'accumulatore del DdT già inserito basandomi sulla quantità
-            if ($vrow['codart']=='') { // non ho trovato il codice articolo tramite codice fornitore oppure il fornitore non li attribuisce univocamente, uso quello sul DdT
+            if ($vrow['codart']=='' && isset($ddt_accln['rigddt'])) { // non ho trovato il codice articolo tramite codice fornitore oppure il fornitore non li attribuisce univocamente, uso quello sul DdT
               foreach($ddt_accln['rigddt'] as $krddt => $vrddt) { // percorro la matrice con i righi del DdT fino a trovare quello con la stessa quantità
                 if ($vrow['quanti']==$vrddt['quanti']){
                   $form['codart_'.($kr-1)]=$krddt;
@@ -1273,7 +1308,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
         }
 				$movmag_prev=array();
 				foreach ($form['rows'] as $i => $v) { // inserisco i righi
-					$form['rows'][$i]['status']="INSERT";
+          $form['rows'][$i]['status'] = ( substr($v['codric'],0,3) == $admin_aziend['mas_fixed_assets'] ) ? 'ASS10':'';
 					if (abs($v['prelis'])<0.00000001) { // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo
 						$form['rows'][$i]['tiprig']=2;
 					}
@@ -1298,11 +1333,11 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 								gaz_dbi_del_row($gTables['tesdoc'], "id_tes", $exist_tesdoc['id_tes']);
 								while ($a_row = gaz_dbi_fetch_array($rs_righidel)) {
 								  if ($a_row['id_mag']!=null && $a_row['id_mag']>=1) {
-									$movmag_rowprev = gaz_dbi_get_row($gTables['movmag'], "id_mov", $a_row['id_mag']);
-									$movmag_prev[] = $movmag_rowprev;// creo un array con tutti i vecchi righi di movmag servirà poi per riconnettere l' id del lotto qualora fosse già stato inserito nel precedente ddt
-									$movmag_datreg = $movmag_rowprev['datreg'];
-									gaz_dbi_del_row($gTables['rigdoc'], "id_rig", $a_row['id_rig']);
-									gaz_dbi_del_row($gTables['movmag'], "id_mov", $a_row['id_mag']);
+                    $movmag_rowprev = gaz_dbi_get_row($gTables['movmag'], "id_mov", $a_row['id_mag']);
+                    $movmag_prev[] = $movmag_rowprev;// creo un array con tutti i vecchi righi di movmag servirà poi per riconnettere l' id del lotto qualora fosse già stato inserito nel precedente ddt
+                    $movmag_datreg = $movmag_rowprev['datreg'];
+                    gaz_dbi_del_row($gTables['rigdoc'], "id_rig", $a_row['id_rig']);
+                    gaz_dbi_del_row($gTables['movmag'], "id_mov", $a_row['id_mag']);
 								  }
 								}
 							}
@@ -1405,12 +1440,11 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				}
 
 				if (in_array($send_fae_zip_package['val'],$sync_mods)){
-					$where = array();
+					$where = [];
 					$where[]="title";
 					$where[]=$form['fattura_elettronica_original_name'];
 					$set['status']=1;
 					gaz_dbi_table_update("files", $where, $set);
-
 					//Antonio Germani: caso di 2 o più aziende installate in GAzie con stessa partita IVA e stessa PEC per comunicare con ADE
 					// dopo aver impostato lo status di acquisita su questa azienda, devo togliere eventuali fae.xml caricati  anche nelle altre aziende.
 					// Quindi, vedo se ci sono altre aziende con stessa partita iva togliendo l'azienda attuale
@@ -1510,13 +1544,26 @@ function prevXML(urlPrintDoc){
 		</div>
 		<iframe id="xmlpreview"  style="height: 100%; width: 100%" src=""></iframe>
 	</div>
-   <input type="hidden" name="fattura_elettronica_original_name" value="<?php echo $form['fattura_elettronica_original_name']; ?>">
+    <input type="hidden" name="fattura_elettronica_original_name" value="<?php echo $form['fattura_elettronica_original_name']; ?>">
+    <input type="hidden" name="incrbenamm" value="<?php echo $form['incrbenamm']; ?>">
     <input type="hidden" name="curr_doc" value="<?php echo $form['curr_doc']; ?>">
+    <input type="hidden" name="id_doc" value="<?php echo $form['id_doc']; ?>">
     <input type="hidden" name="hidden_req" id="hidden_req" value="">
 <?php
 // INIZIO form che permetterà all'utente di interagire per (es.) imputare i vari costi al piano dei conti (contabilità) ed anche le eventuali merci al magazzino
 if (count($msg['err']) > 0) { // ho un errore
-    $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
+  $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
+  // controllo se il file è stato acquisito tramite sync, per alcuni errori devo consentire di elimianare il file
+  $typerr=['filmim','invalid_xml','invalid_fae','file_exists','not_mine','same_content'];
+  $isfilerr=false;
+  foreach ($msg['err'] as $verr) {
+    if (in_array($verr,$typerr)){
+      $isfilerr=true;
+    }
+  }
+  if (isset($_POST['fae_from_sync']) && $_POST['fae_from_sync'] >= 1 && $isfilerr) { // visualizzo il bottone per eliminare il file
+    echo '<div class="row col-xs-12 text-center"><a href="delete_fae_from_sync.php?id_doc='.intval($_POST['fae_from_sync']).'&fn='.$_POST['fae_original_name'.intval($_POST['fae_from_sync'])].'" class="btn btn-sm btn-danger">ELIMINA IL FILE '.$_POST['fae_original_name'.intval($_POST['fae_from_sync'])].'</a></div>';
+  }
 }
 if (count($msg['war']) > 0) { // ho un alert
     $gForm->gazHeadMessage($msg['war'], $script_transl['war'], 'war');
@@ -1560,10 +1607,21 @@ if ($toDo=='insert' || $toDo=='update' ) {
 	?>
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			<div class="col-xs-12 text-center bg-info"><h4><?php echo $nomefornitore; ?></h4></div>
+			<div class="col-xs-12 text-center bg-info"><h3><?php echo $nomefornitore; ?></h3></div>
 			<div class="col-xs-12 text-center bg-warning text-danger"><b><?php echo ($partner_with_same_pi && $partner_with_same_pi[0]['aliiva']>=1)?'AVVISO! L\'anagrafica del fornitore: <a target="_blank" href="admin_fornit.php?Update&codice='.intval(substr($partner_with_same_pi[0]['codice'],3,6)).'"> <b>'.$nomefornitore.'</b></a> ha forzato le aliquote IVA dei righi':''; ?></b></div>
 			<div class="row">
-				<div class="col-sm-12 col-md-12 col-lg-12"><?php echo $script_transl['head_text1']. '<span class="label label-success">'.$form['fattura_elettronica_original_name'] .'</span>'.$script_transl['head_text2']; ?>
+				<div class="col-sm-12 col-md-12 col-lg-12">
+        <?php
+        echo $script_transl['head_text1']. '<b>'.$form['fattura_elettronica_original_name'] .'</b>';
+        if ( $form['incrbenamm'] < 100 ) {
+          echo $script_transl['head_text2'];
+          if ($form['id_doc'] >= 1) { // visualizzo il bottone per offrire la possibilità di acquisire il file come bene ammortizzabile
+            echo '<br/>Se questa fattura è relativa ad un <a href="admin_assets.php?id_doc='.$form['id_doc'].'" class="btn btn-xs btn-warning">NUOVO BENE AMMORTIZZABILE CLICCA QUI </a> per procedere all\'acquisizione fornendo altri dati. <br/>Se l\'acquisto va solo ad incrementare il valore di un <b>cespite già presente</b> <small><input name="IncreaseBenamm" type="submit" class="" value="CLICCA QUI PER SCEGLIERE QUALE." /></small>';
+          }
+        } else {
+          echo '<br/><span class="bg-warning text-danger"><b>Hai scelto di acquisire la fattura come incremento di valore di un bene ammortizzabile, scegli il CONTO IMMOBILIZZAZIONE sotto oppure revoca la scelta:<a href="acquire_invoice.php" class="btn btn-xs btn-warning"> ANNULLA </a></b></span> ';
+        }
+        ?>
 				</div>
 			</div> <!-- chiude row  -->
 		</div>
@@ -1592,11 +1650,21 @@ if ($toDo=='insert' || $toDo=='update' ) {
 					 </div>
 				</div>
 				<div class="form-group col-md-6 col-lg-3 nopadding">
-					<label for="new_acconcile" class="col-form-label" ><?php echo $script_transl['new_acconcile']; ?></label>
+					<label for="new_acconcile" class="col-form-label" >
+          <?php
+          if ( $form['incrbenamm'] >= 100 ) {
+            echo '<span class="bg-warning text-danger">'.$script_transl['new_acconcile_incrbenamm'].'</span>';
+          } else {
+            echo $script_transl['new_acconcile'];
+          }
+          ?>
+          </label>
 					<div>
 					<?php
 					// new_acconcile lo riporto sempre a 0 dopo ogni post e solo quando viene cambiato cambieranno tutti i valori dei conti di costo di tutti i righi
-					$gForm->selectAccount('new_acconcile', 0, array('sub',3),'', false, "col-xs-12 small",'style="max-width: 300px;"', false);
+          // se ho scelto di incrementare il valore di un bene ammortizzabile passo il mastro della configurazione azienda altrimenti tutti i conti di costo
+          $acconcile = $form['incrbenamm'] >= 100 ? $form['incrbenamm'] : ['sub',3];
+					$gForm->selectAccount('new_acconcile', 0, $acconcile,'', false, "col-xs-12 small",'style="max-width: 300px;"', false);
 					?>
 					</div>
 				</div>
@@ -1821,7 +1889,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
        <div class="row">
            <div class="col-md-12">
                <div class="form-group">
-                   <label for="image" class="col-sm-4 control-label">Seleziona il file xml, p7m <br/><small>(o pacchetto zip se configurato)</small></label>
+                   <label for="image" class="col-sm-4 control-label">Seleziona il file xml, p7m <?php if (!empty($send_fae_zip_package['val'])) { echo 'o pacchetto ZIP'; } ?> </label>
                    <div class="col-sm-8">File: <input type="file" accept=".xml,.p7m,.zip" name="userfile" />
 				   </div>
                </div>

@@ -278,7 +278,7 @@ if (isset($_POST['ritorno'])) { // accessi successivi
     }
     $adesso->modify('previous year');
     $adesso->modify('last day of december');
-    $form['datreg'] = $adesso->format('d-m-Y');
+    $form['datreg'] = $adesso->format('d/m/Y');
     $form['assets'] = getAssets(gaz_format_date($form['datreg'], true));
 }
 

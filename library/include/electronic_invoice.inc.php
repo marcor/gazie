@@ -24,7 +24,7 @@
   --------------------------------------------------------------------------
  */
 
-require("../../library/include/expiry_calc.php");
+require_once("../../library/include/expiry_calc.php");
 
 class invoiceXMLvars {
   public $totimp_body;
@@ -43,6 +43,7 @@ class invoiceXMLvars {
   public $SpeseBolli;
   public $gTables;
   public $descriptive_last_row;
+  public $attach_pdf_to_fae = 0;
   public $azienda;
   public $pagame;
   public $banapp;
@@ -96,6 +97,7 @@ class invoiceXMLvars {
   public $TipoDocumento;
   public $docRelNum;
   public $docRelDate;
+  public $docDescri=false;
   public $protoc;
   public $fae_reinvii;
   public $seziva;
@@ -133,11 +135,13 @@ class invoiceXMLvars {
   public $descrifae_natura;
   public $reverse_charge_sez;
   public $transchr = ['“'=>'"','‘'=>'\'','€'=>'euro','©'=>'&#169;','®'=>'&#174;','È'=>'&#200;','É'=>'&#201;','Ì'=>'&#204;','À'=>'&#192;','Ò'=>'&#210;','Ù'=>'&#217;',"ø" => "&#248;", "£" => "&#163;"];
+  public $ExternalDocs= [];
 
   function setXMLvars($gTables, $tesdoc, $testat, $tableName, $ecr = false) {
     $this->gTables = $gTables;
     $admin_aziend = gaz_dbi_get_row($gTables['aziend'], 'codice', $_SESSION['company_id']);
     $this->descriptive_last_row = trim(gaz_dbi_get_row($gTables['company_config'], 'var', 'descriptive_last_row')['val']);
+    $this->attach_pdf_to_fae = intval(gaz_dbi_get_row($gTables['company_config'], 'var', 'attach_pdf_to_fae')['val']);
     $this->azienda = $admin_aziend;
     $this->pagame = gaz_dbi_get_row($gTables['pagame'], "codice", $tesdoc['pagame']);
     $this->banapp = gaz_dbi_get_row($gTables['banapp'], "codice", $tesdoc['banapp']);
@@ -250,46 +254,55 @@ class invoiceXMLvars {
         $this->ddt_data = true;
         $this->docRelNum = $this->tesdoc["numfat"].'/'.$this->tesdoc["seziva"];
         $this->docRelDate = $this->tesdoc["datfat"];
+        $this->docDescri = 'Fattura_differita_';
         break;
       case "FAI": // Fattura immediata
         $this->docRelNum = $this->tesdoc["numfat"].'/'.$this->tesdoc["seziva"];
         $this->docRelDate = $this->tesdoc["datfat"];
+        $this->docDescri = 'Fattura_immediata_';
         break;
       case "FAA": // Fattura d'acconto
         $this->TipoDocumento = 'TD02';    // <TipoDocumento> 2.1.1.1
         $this->docRelNum = $this->tesdoc["numfat"].'/'.$this->tesdoc["seziva"];
         $this->docRelDate = $this->tesdoc["datfat"];
+        $this->docDescri = 'Fattura_di_acconto_';
         break;
       case "FAF": // Fattura d'acconto
         $this->TipoDocumento = 'TD27';    // <TipoDocumento> 2.1.1.1
         $this->docRelNum = $this->tesdoc["numfat"].'/'.$this->tesdoc["seziva"];
         $this->docRelDate = $this->tesdoc["datfat"];
+        $this->docDescri = 'Fattura_di_acconto_';
         break;
       case "FNC":
         $this->TipoDocumento = 'TD04';    // <TipoDocumento> 2.1.1.1
         $this->docRelNum = $this->tesdoc["numfat"].'/'.$this->tesdoc["seziva"];
         $this->docRelDate = $this->tesdoc["datfat"];
+        $this->docDescri = 'Nota_di_credito_';
         break;
       case "FND":
         $this->TipoDocumento = 'TD05';    // <TipoDocumento> 2.1.1.1
         $this->docRelNum = $this->tesdoc["numfat"].'/'.$this->tesdoc["seziva"].'/ND';
         $this->docRelDate = $this->tesdoc["datfat"];
+        $this->docDescri = 'Nota_di_debito_';
         break;
       case "FAP":
         $this->TipoDocumento = 'TD06';    // <TipoDocumento> 2.1.1.1
         $this->docRelNum = $this->tesdoc["numfat"].'/'.$this->tesdoc["seziva"];
         $this->docRelDate = $this->tesdoc["datfat"];
+        $this->docDescri = 'Parcella_';
         break;
       case "FAQ": // Parcella d'acconto
         $this->TipoDocumento = 'TD03';    // <TipoDocumento> 2.1.1.1
         $this->docRelNum = $this->tesdoc["numfat"].'/'.$this->tesdoc["seziva"];
         $this->docRelDate = $this->tesdoc["datfat"];
+        $this->docDescri = 'Parcella_di_acconto';
         break;
       case "VCO":
         $this->protoc = $this->tesdoc["numfat"]; //forzo il protocollo al numero fattura in caso di registro corrispettivi
         $this->fae_reinvii = $this->fae_reinvii+4; // e aggiungo 4 per non far collidere con un eventuale fattura normale della stessa sezione
         $this->docRelNum = $this->tesdoc["numfat"].'/'.$this->tesdoc["seziva"].'/SCONTR';
         $this->docRelDate = $this->tesdoc["datfat"];
+        $this->docDescri = 'Fattura_allegata_a_corrispettivo';
         break;
       case "XFA":
       case "XNC":
@@ -299,6 +312,8 @@ class invoiceXMLvars {
         $this->reverse = true;
         $this->docRelNum = $this->tesdoc["protoc"].'/'.$this->tesdoc["seziva"]; // sulle autofatture utilizzo il protocollo per avere sequenzialità
         $this->docRelDate = $this->tesdoc["datreg"];
+        $this->docRelDate = false;
+        $this->docDescri = false;
         break;
       case "DDT":
       case "DDL":
@@ -307,7 +322,9 @@ class invoiceXMLvars {
         $this->ddt_data = true;
         $this->docRelNum = $this->tesdoc["numdoc"].'/'.$this->tesdoc["seziva"];    // Numero del documento relativo
         $this->docRelDate = $this->tesdoc["datemi"];    // Data del documento relativo
+        $this->docDescri = false;
     }
+    $this->docDescri .= $this->tesdoc["numdoc"].'_'.$this->tesdoc["seziva"].'_'.gaz_format_date($this->tesdoc["datemi"]);    // Descrizione per allegato PDF
     $this->seziva = $this->tesdoc["seziva"];
     $this->docYear = substr($this->tesdoc["datemi"], 0, 4);    // Anno del documento
     $this->IdCodice = $admin_aziend['codfis'];
@@ -356,7 +373,7 @@ class invoiceXMLvars {
       }
       $rigo['sconto_su_imponibile'] = array();
       $rigo['codice_tipo']='';
-      if ($rigo['tiprig'] <= 1) { // normale o forfait
+      if ($rigo['tiprig'] <= 1 || $rigo['tiprig'] == 50) { // normale, forfait o normale c/allegato
         if (!empty($rigo['codart'])){ // ho un codice articolo lo riprendo per settare il codice tipo ( ci metterò se bene o servizio e categoria merceologica)
           $artico = gaz_dbi_get_row($this->gTables['artico'], "codice", $rigo['codart']);
           $rigo['codice_tipo']=($artico['good_or_service'] == 0 OR $artico['good_or_service'] == 2) ? 'BENE_CAT_'.$artico['catmer'] : ($artico['catmer'] >=1 ? 'SERVIZIO_CAT_'.$artico['catmer'] : 'SERVIZIO');
@@ -369,6 +386,9 @@ class invoiceXMLvars {
           $rigo['importo'] = CalcolaImportoRigo(1, $rigo['prelis'], 0);
           $v_for_castle = CalcolaImportoRigo(1, $rigo['prelis'], $this->tesdoc['sconto']);
           $rigo['quanti']=1;
+        } elseif ($rigo['tiprig'] == 50) { // normale con allegato
+          // accumulo il file da allegare e lo indico al posto del codice articolo
+          $this->getExtDoc($rigo['id_rig'],$rigo['descri']);
         }
         $sconto_su_imponibile = round($v_for_castle - $rigo['importo'], 2); // qui metto l'eventuale totale imponibile scontato
         if (abs($sconto_su_imponibile)>=0.01){
@@ -399,6 +419,9 @@ class invoiceXMLvars {
         $this->descrifae_natura = $rigo['natura'];
       } elseif ($rigo['tiprig'] == 2) { // descrittivo
 
+      } elseif ($rigo['tiprig'] == 51) { // descrittivo c/allegato
+          // accumulo il file da allegare e lo indico al posto del codice articolo
+          $this->getExtDoc($rigo['id_rig'],$rigo['descri']);
       } elseif ($rigo['tiprig'] == 4) { // cassa previdenziale
         if (!isset($this->castel[$rigo['codvat']])) {
           $this->castel[$rigo['codvat']] = 0;
@@ -536,9 +559,20 @@ class invoiceXMLvars {
     $this->riporto = 0;
     $this->ritenute = 0;
   }
+  function getExtDoc($id_rig,$descri) {
+    // in ExternalDocs metterò gli eventuali documenti da allegare
+    $files = glob( DATA_DIR . 'files/' . $this->azienda['codice'].'/doc/'.$id_rig.'_rigdoc_*.*');
+    foreach($files as $file) {
+      $fd = pathinfo($file);
+      $e=explode('_rigdoc_',$fd['filename']);
+      if ($e[0] == $id_rig) {
+        $this->ExternalDocs[] = ['file'=>$file,'oriname'=>$e[1],'ext'=>$fd['extension'],'descri'=>$descri,'path'=>$file];
+      }
+    }
+  }
 }
 
-function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false, $name_ziparchive = false, $returnDocument=false) {
+function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false, $name_ziparchive = false, $returnDocument=false, $pdf_content=false) {
   $XMLvars = new invoiceXMLvars();
   $domDoc = new DOMDocument;
 	$domDoc->preserveWhiteSpace = false;
@@ -931,6 +965,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 			$sc_su_imp['importo_sconto']=0.00;
       switch ($rigo['tiprig']) {
         case "0":       // normale
+        case "50":      // normale c/allegato
 					$last_pervat = $rigo['pervat'];
 					$benserv = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
           $el = $domDoc->createElement("DettaglioLinee", "");
@@ -1127,6 +1162,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
           $nl = true;
           break;
         case "2": // descrittivo
+        case "51": // descrittivo c/allegato
           // a volte viene usato un rigo descrittivo solo per lasciare uno spazio, in questi casi per evitare lo scarto lo valorizzo con un punto
           if (strlen(trim($rigo['descri'])) < 1) {
             $rigo['descri'] = '.';
@@ -1569,7 +1605,36 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
       $results->appendChild($el);
     }
   }
-
+  // se in configurazione azienda ho scelto di allegare anche il PDF
+  if ($XMLvars->attach_pdf_to_fae >= 1 && $pdf_content && $XMLvars->docDescri) {
+      // elemento di <Allegati> (2.5)
+      $results = $xpath->query("//FatturaElettronicaBody")->item(0);
+      $el = $domDoc->createElement("Allegati", "");
+      $el1 = $domDoc->createElement("NomeAttachment", $XMLvars->docDescri.'.pdf'); // 2.5.1
+      $el->appendChild($el1);
+      $el1 = $domDoc->createElement("FormatoAttachment",  'pdf'); // 2.5.3
+      $el->appendChild($el1);
+      $el1 = $domDoc->createElement("Attachment", base64_encode($pdf_content)); // 2.5.5
+      $el->appendChild($el1);
+      $results->appendChild($el);
+  }
+  if(count($XMLvars->ExternalDocs)>=1){
+    foreach ($XMLvars->ExternalDocs as $v) {
+      // elementi di <Allegati> (2.5)
+      $results = $xpath->query("//FatturaElettronicaBody")->item(0);
+      $el = $domDoc->createElement("Allegati", "");
+      $el1 = $domDoc->createElement("NomeAttachment", $v['oriname'].'.'.$v['ext']); // 2.5.1
+      $el->appendChild($el1);
+      $el1 = $domDoc->createElement("FormatoAttachment",  $v['ext']); // 2.5.3
+      $el->appendChild($el1);
+      $el1 = $domDoc->createElement("DescrizioneAttachment", $v['descri']); // 2.5.4
+      $el->appendChild($el1);
+      $data = file_get_contents($v['path']);
+      $el1 = $domDoc->createElement("Attachment", base64_encode($data)); // 2.5.5
+      $el->appendChild($el1);
+      $results->appendChild($el);
+    }
+  }
 	$faename_base = 36;
 	// faccio l'encode in base 36 per ricavare il progressivo unico di invio
 	if ($XMLvars->reverse) {// è una autofattura reverse charge encodo così:

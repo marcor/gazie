@@ -200,13 +200,16 @@ if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
         closedir($dir);
         // creo la subdir per contenere le immagini
         $dirimg = DATA_DIR . 'files/' . $form['codice'] . '/images';
-        mkdir($dirimg, 0740);
+        mkdir($dirimg, 0755);
         // creo la subdir per contenere i documenti
         $dirdoc = DATA_DIR . 'files/' . $form['codice'] . '/doc';
-        mkdir($dirdoc, 0740);
+        mkdir($dirdoc, 0755);
         // creo la subdir per contenere i file SIAN
         $dirsia = DATA_DIR . 'files/' . $form['codice'] . '/sian';
-        mkdir($dirsia, 0740);
+        mkdir($dirsia, 0755);
+        // creo la subdir per contenere i file temporanei
+        $dirdoc = DATA_DIR . 'files/' . $form['codice'] . '/tmp';
+        mkdir($dirdoc, 0755);
       }
       header('Location: admin_aziend.php?Update&codice=' . $form['codice']);
       exit;

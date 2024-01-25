@@ -118,7 +118,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
 	// dal custom field di admin_module relativo al magazzino trovo il magazzino di default
 	$magmodule = gaz_dbi_get_row($gTables['module'], "name",'magazz');
 	$mod_customfield = gaz_dbi_get_row($gTables['admin_module'], "moduleid",$magmodule['id']," AND adminid='{$form['user_name']}' AND company_id=" . $admin_aziend['company_id']);
-  $mod_customfield['custom_field'] = ($mod_customfield['custom_field'] === NULL) ? '' : $mod_customfield['custom_field'];
+  $mod_customfield['custom_field'] = (!$mod_customfield ||$mod_customfield['custom_field'] === NULL) ? '' : $mod_customfield['custom_field'];
 	$customfield=json_decode($mod_customfield['custom_field']);
 	$form['id_warehouse'] = (isset($customfield->user_id_warehouse))?$customfield->user_id_warehouse:0;
 	$form['user_password_new'] = '';
@@ -634,18 +634,19 @@ onsubmit="document.getElementById('user_password_new').value=forge_sha256(docume
  id="logform" autocomplete="off">
 <input type="hidden" name="ritorno" value="<?php print $_POST['ritorno']; ?>">
 <input type="hidden" name="hidden_req" value="<?php if (isset($_POST['hidden_req'])){ print $_POST['hidden_req']; } ?>">
-<div class="col-xs-12"><div class="col-xs-2"></div><div class="text-center col-xs-7"><h3>
-<?php
-if ($toDo == 'insert') {
-	echo $script_transl['ins_this'] ;
-} else {
-	echo $script_transl['upd_this'] . " '" . $form["user_name"] . "'";
-	echo '<input type="hidden" value="' . $form["user_name"] . '" name="user_name" />';
-}
-echo '</h3></div><div class="col-xs-3"><input name="conferma" id="conferma" class="btn btn-warning" type="submit" value="'.ucfirst($script_transl[$toDo]).'"></div></div>';
-?>
 <div class="panel panel-default gaz-table-form div-bordered">
   <div class="container-fluid">
+    <div class="col-xs-12"><div class="col-xs-2"></div><div class="text-center col-xs-7"><h3>
+    <?php
+    if ($toDo == 'insert') {
+      echo $script_transl['ins_this'] ;
+    } else {
+      echo $script_transl['upd_this'] . " '" . $form["user_name"] . "'";
+      echo '<input type="hidden" value="' . $form["user_name"] . '" name="user_name" />';
+    }
+    echo '</h3></div><div class="col-xs-3 text-right"><input name="conferma" id="conferma" class="btn btn-warning" type="submit" value="'.ucfirst($script_transl[$toDo]).'"> </div>';
+    ?>
+    </div>
     <ul class="nav nav-pills">
       <li class="active"><a data-toggle="pill" href="#generale">Dati utente</a></li>
       <li><a data-toggle="pill" href="#imap">Impostazioni IMAP</a></li>

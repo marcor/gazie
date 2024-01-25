@@ -655,7 +655,7 @@ $strScript = array("admin_fornit.php" =>
 			'Not_all-ddt' => 'Non tutti i ddt sono stati inseriti. Questa FAE xml è mal formata e per poterla acquisire è necessario aver già inserito tutti i DDT. Non puoi inserirne solo alcuni. In alternativa, inserisci la FAE manualmente.'
         ),
         'head_text1' => "La fatture elettronica: ",
-        'head_text2' => " che stai per acquisire è visibile in fondo.<br/> In questo form ti proponiamo di imputare i costi secondo quanto contenuto sugli archivi, e ti invitiamo a controllare ed eventualmente apportare le modifiche opportune. Avrai comunque la possibilità di modificarla sia prima che dopo averla contabilizzata agendo attraverso le apposite interfacce. Dopo l'acquisizione verrai portato sulla lista delle fatture di acquisto già inserite",
+        'head_text2' => " che stai per acquisire è visibile in fondo.<br/> In questo form ti proponiamo di imputare i costi secondo quanto contenuto sugli archivi, e ti invitiamo a controllare ed eventualmente apportare le modifiche opportune. Avrai comunque la possibilità di modificarla sia prima che dopo averla contabilizzata agendo attraverso le apposite interfacce. Dopo l'acquisizione verrai portato sulla lista delle fatture di acquisto già inserite.",
         'seziva' => 'Sezione IVA',
         'datreg' => 'Data Registrazione',
         'pagame'=>'Modalità di pagamento',
@@ -672,6 +672,7 @@ $strScript = array("admin_fornit.php" =>
         'operation_type' => 'Tipo oper.',
         'conto' => 'Conto',
         'new_acconcile'=>'Cambia conti sui righi con:',
+        'new_acconcile_incrbenamm'=>'Scegli il conto immobilizzazione:',
         'confirm' => array('NO' =>'Seleziona per inserimento immediato','SI' => 'Confermo inserimento rigo in un ddt'),
 	),
     "admin_broacq.php" =>
