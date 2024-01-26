@@ -37,21 +37,34 @@ if (isset($_POST['mode']) || isset($_GET['mode'])) {
     }
 }
 
-// e-mail TESTER
-if (isset($_GET['e-test']) && $_GET['e-test']==TRUE){
+// e-mail TESTER &  PEC TESTER - Antonio Germani
+if ((isset($_GET['e-test']) && $_GET['e-test']==TRUE) || (isset($_GET['pec-test']) && $_GET['pec-test']==TRUE)){
+
   $user = array('user_name'=>$admin_aziend['user_name'],'user_firstname'=>$admin_aziend['user_firstname'],'user_lastname'=>$admin_aziend['user_lastname'],'user_email'=>'pippo');
-  $admin_data = ['codice'=>$admin_aziend['codice'],'web_url'=>$admin_aziend['web_url'],'ragso1'=>$admin_aziend['ragso1'],'ragso2'=>$admin_aziend['ragso2'],'colore'=>$admin_aziend['colore'],'e_mail'=>$admin_aziend['e_mail'],'country'=>$admin_aziend['country']];
-  $receiver['e_mail']="info@gmonamour.it";
+  $admin_data = ['codice'=>$admin_aziend['codice'],'web_url'=>$admin_aziend['web_url'],'ragso1'=>$admin_aziend['ragso1'],'ragso2'=>$admin_aziend['ragso2'],'colore'=>$admin_aziend['colore'],'e_mail'=>$admin_aziend['e_mail'],'country'=>$admin_aziend['country'],'pec'=>$admin_aziend['pec']];
   // Inizializzo PHPMailer
       //
-      $rspsw=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = 'smtp_password'");
-      $rpsw=gaz_dbi_fetch_row($rspsw);
-      $config_pass = $rpsw?$rpsw[0]:'';
-      $config_mailer = gaz_dbi_get_row($gTables['company_config'], 'var', 'mailer');
-      $config_port = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_port');
-      $config_secure = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_secure');
-      $config_user = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_user');
-      $config_host = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_server');
+      if (isset($_GET['e-test']) && $_GET['e-test']==TRUE){// se devo provare la mail semplice
+        $rspsw=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = 'smtp_password'");
+        $rpsw=gaz_dbi_fetch_row($rspsw);
+        $config_pass = $rpsw?$rpsw[0]:'';
+        $config_mailer = gaz_dbi_get_row($gTables['company_config'], 'var', 'mailer');
+        $config_port = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_port');
+        $config_secure = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_secure');
+        $config_user = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_user');
+        $config_host = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_server');
+        $sender=$admin_data['e_mail'];
+      }else{// se devo provare la PEC
+        $rspsw=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = 'pec_smtp_psw'");
+        $rpsw=gaz_dbi_fetch_row($rspsw);
+        $config_pass = $rpsw?$rpsw[0]:'';
+        $config_mailer = gaz_dbi_get_row($gTables['company_config'], 'var', 'mailer');
+        $config_port = gaz_dbi_get_row($gTables['company_config'], 'var', 'pec_smtp_port');
+        $config_secure = gaz_dbi_get_row($gTables['company_config'], 'var', 'pec_smtp_secure');
+        $config_user = gaz_dbi_get_row($gTables['company_config'], 'var', 'pec_smtp_usr');
+        $config_host = gaz_dbi_get_row($gTables['company_config'], 'var', 'pec_smtp_server');
+        $sender=$admin_data['pec'];
+      }
       require_once "../../library/phpmailer/class.phpmailer.php";
       require_once "../../library/phpmailer/class.smtp.php";
       $mail = new PHPMailer();
@@ -79,7 +92,7 @@ if (isset($_GET['e-test']) && $_GET['e-test']==TRUE){
             $mail->Password = $config_pass;     // Imposto password per autenticazione SMTP
           }
 
-          $mail->SetFrom($admin_data['e_mail'], $admin_data['ragso1'] . " " . $admin_data['ragso2']);
+          $mail->SetFrom($sender, $admin_data['ragso1'] . " " . $admin_data['ragso2']);
           $mail->AddAddress($admin_data['e_mail']);// destinatario
           // Imposto l'oggetto dell'email
           $subject = $admin_data['ragso1'] . " " . $admin_data['ragso2'] . " - TEST INVIO "; //subject
@@ -90,13 +103,18 @@ if (isset($_GET['e-test']) && $_GET['e-test']==TRUE){
         break;
       }
   if ( $mail->Send() ) {
-    $data = ["send" => "SUCCESS","sender" => $admin_data['e_mail']];
+    if (isset($_GET['e-test']) && $_GET['e-test']==TRUE){
+      $data = ["send" => "SUCCESS","sender" => $admin_data['e_mail'],"pec" => ""];
+    }else{
+      $data = ["send" => "SUCCESS","sender" => $admin_data['e_mail'],"pec" => $admin_data['pec']];
+    }
   echo json_encode($data);exit;
   }else{
   $data = ["error" =>  $mail->ErrorInfo];
   echo json_encode($data);exit;
   }
 }
+
 
 if (count($_POST) > 10) {
 	$error='&ok_insert';
@@ -147,7 +165,8 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
 
 <ul class="nav nav-pills">
         <li class="active"><a data-toggle="pill" href="#generale">Configurazione</a></li>
-        <li class=""><a data-toggle="pill" href="#email">Email</a></li>
+        <li class=""><a data-toggle="pill" href="#email">Test e-mail</a></li>
+        <li class=""><a data-toggle="pill" href="#pec">Test PEC</a></li>
         <li style="float: right;"><div class="btn btn-warning" id="upsave">Salva</div></li>
 </ul>
 <div class="panel panel-default gaz-table-form div-bordered">
@@ -231,13 +250,26 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
 		</br></br><hr>
 
     <div id="wait">
-  <span>Please wait...</span>
-</div>
+      <span>Please wait...</span>
+    </div>
 
 			<div id="btn_send" class="btn btn-default">TEST INVIO MAIL</div>
 			<div id="reply_send"></div>
     </script>
     </div><!-- chiude email  -->
+    <div id="pec" class="tab-pane fade">
+			<div>Il test di configurazione pec ti permette di verificare la configurazione della tua pec. <br>Ricordarsi di inserire l'idirizzo pec nelle impostazioni di configurazione azienda<br><b>Salva</b> la configurazione prima di avviare il test.</i>
+        </div>
+		</br></br><hr>
+
+    <div id="waitPEC">
+      <span>Please wait...</span>
+    </div>
+
+			<div id="btn_sendPEC" class="btn btn-default">TEST INVIO MAIL da PEC</div>
+			<div id="reply_sendPEC"></div>
+    </script>
+    </div><!-- chiude pec  -->
   </div><!-- chiude tab-content  -->
  </div><!-- chiude container-fluid  -->
 </div><!-- chiude panel  -->
@@ -263,11 +295,38 @@ $("#btn_send").click( function() {
 			if (  result.send == 'SUCCESS') {
 		  		$("#reply_send").html( "<strong>Invio riuscito</strong><br><div>Controlla se ti è arrivata una email in <i>"+result.sender+"</i></div>");
 			} else {
-				$("#reply_send").html("<strong>Invio FALLITO!</strong><br><div>Errore: "+result.error+"!</div>");
+				$("#reply_send").html("<strong>Invio FALLITO!</strong><br><div>Errore: "+result.error+"</div>");
 			}
 		},
 		error: function(richiesta,stato,errori){
  				$("#reply_send").html("<strong>Invio FALLITO!</strong><br><div>"+errori+"</div>");
+		},
+	})
+});
+$( "#waitPEC" ).hide();
+$("#btn_sendPEC").click( function() {
+	$.ajax({
+		url: "config_aziend.php?pec-test=true",
+		type: "GET",
+		data: { 'pec-test': true },
+     beforeSend: function () {
+      // ... your initialization code here (so show loader) ...
+      $( "#waitPEC" ).show();
+    },
+    complete: function () {
+      // ... your finalization code here (hide loader) ...
+      $( "#waitPEC" ).hide();
+    },
+		success: function(json) {
+			result = JSON.parse(json);
+			if (  result.send == 'SUCCESS') {
+		  		$("#reply_sendPEC").html( "<strong>Invio riuscito</strong><br><div>Controlla se ti è arrivata una email in <i>"+result.sender+" proveniente da "+result.pec+"</i></div>");
+			} else {
+				$("#reply_sendPEC").html("<strong>Invio FALLITO!</strong><br><div>Errore: "+result.error+"</div>");
+			}
+		},
+		error: function(richiesta,stato,errori){
+ 				$("#reply_sendPEC").html("<strong>Invio FALLITO!</strong><br><div>"+errori+"</div>");
 		},
 	})
 });
