@@ -324,7 +324,7 @@ class invoiceXMLvars {
         $this->docRelDate = $this->tesdoc["datemi"];    // Data del documento relativo
         $this->docDescri = false;
     }
-    $this->docDescri .= $this->tesdoc["numdoc"].'_'.$this->tesdoc["seziva"].'_'.gaz_format_date($this->tesdoc["datemi"]);    // Descrizione per allegato PDF
+    $this->docDescri .= $this->tesdoc["numdoc"].'-'.$this->tesdoc["seziva"].'_del_'.gaz_format_date($this->tesdoc["datemi"]);    // Descrizione per allegato PDF
     $this->seziva = $this->tesdoc["seziva"];
     $this->docYear = substr($this->tesdoc["datemi"], 0, 4);    // Anno del documento
     $this->IdCodice = $admin_aziend['codfis'];
@@ -1627,8 +1627,10 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
       $el->appendChild($el1);
       $el1 = $domDoc->createElement("FormatoAttachment",  $v['ext']); // 2.5.3
       $el->appendChild($el1);
-      $el1 = $domDoc->createElement("DescrizioneAttachment", $v['descri']); // 2.5.4
-      $el->appendChild($el1);
+      if (strlen(trim($v['descri'])) >= 1 ){
+        $el1 = $domDoc->createElement("DescrizioneAttachment", $v['descri']); // 2.5.4
+        $el->appendChild($el1);
+      }
       $data = file_get_contents($v['path']);
       $el1 = $domDoc->createElement("Attachment", base64_encode($data)); // 2.5.5
       $el->appendChild($el1);

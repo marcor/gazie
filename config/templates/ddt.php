@@ -223,9 +223,7 @@ class DDT extends Template_con_scheda
                   $this->Cell(117, 6, "Dati Veicoli ex art.38, immatricolato il " . gaz_format_date($rigo['descri']).', km o ore:'.intval($rigo['quanti']), 'LR', 0, 'L', 0, '', 1);
                   $this->Cell(35,6,'','R',1);
                 } elseif ( $rigo['tiprig'] == 50 ) {
-                  // accumulo il file da allegare e lo indico al posto del codice articolo
-                  $file=$this->docVars->getExtDoc($rigo['id_rig'],'doc/'.$rigo['id_rig'].'_rigdoc_');
-                  $this->Cell(35, 6,  $file['oriname'].'.'.$file['ext'],1,0,'L',0,'',1);
+                  $this->Cell(35, 6, $this->docVars->ExternalDoc[$rigo['id_rig']]['oriname'].'.'.$this->docVars->ExternalDoc[$rigo['id_rig']]['ext'],1,0,'L',0,'',1);
                   $this->Cell(82, 6, $rigo['descri'],1,0,'L',0,'',1);
                   $this->Cell(10,  6, $rigo['unimis'],1,0,'C');
                   $this->Cell(25, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R',0,'',1);
@@ -241,9 +239,7 @@ class DDT extends Template_con_scheda
                   }
                   $this->tot_rp +=$rigo['quanti'];
                 } elseif ( $rigo['tiprig'] == 51 ) {
-                  // accumulo il file da allegare e lo indico al posto del codice articolo
-                  $file=$this->docVars->getExtDoc($rigo['id_rig']);
-                  $this->Cell(35, 5,  $file['oriname'].'.'.$file['ext'],1,0,'L',0,'',1);
+                  $this->Cell(35, 5, $this->docVars->ExternalDoc[$rigo['id_rig']]['oriname'].'.'.$this->docVars->ExternalDoc[$rigo['id_rig']]['ext'],1,0,'L',0,'',1);
                   $this->Cell(117,5,$rigo['descri'],'LR',0,'L',0,'',1);
                   $this->Cell(35,5,'','R',1);
                 } elseif ($rigo['tiprig'] == 210 ) {

@@ -441,110 +441,111 @@ class DocContabVars {
         $this->ritenuta = 0.00;
         $results = array();
         while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
-			// Antonio Germani - se c'è un codice a barre valorizzo barcode
-			$art = gaz_dbi_get_row( $this->gTables['artico'], 'codice', $rigo['codart']);
-			if ($art && intval($art['barcode'])>0){
-				$rigo['barcode']=$art['barcode'];
-			} else {
-				$rigo['barcode']="";
-			}
-
-			// Antonio Germani - se c'è un lotto ne accodo numero e scadenza alla descrizione
-			$checklot=gaz_dbi_get_row($this->gTables['movmag'],'id_mov',$rigo['id_mag']);
-			if ($checklot && strlen ($checklot['id_lotmag'])>0){
-				$getlot=gaz_dbi_get_row($this->gTables['lotmag'],'id',$checklot['id_lotmag']);
-				if (isset ($getlot['identifier']) && strlen ($getlot['identifier'])>0){
-					if (intval ($getlot['expiry'])>0){
-						$rigo['descri']=$rigo['descri']." - lot: ".$getlot['identifier']." ".gaz_format_date($getlot['expiry']);
-					} else {
-						$rigo['descri']=$rigo['descri']." - lot: ".$getlot['identifier'];
-					}
-				}
-			}
-
-			//Antonio Germani
-			if (isset($art['durability_mu']) AND ($art['durability_mu']==">" OR $art['durability_mu']=="<")){ // se impostato accodo la durabilità alla descrizione serve per gli agroalimentari
-				$rigo['descri'] = $rigo['descri']." - Durabilità ".$art['durability_mu']." ".$art['durability']."gg";
-			}
-
-			// Antonio de Vincentiis - se l'articolo ha un documento passo la referenza files_id_doc
-            $checkdoc=false;
-            if ($rigo['tiprig']==0) {
-                $checkdoc = gaz_dbi_get_row($this->gTables['files'], 'table_name_ref', 'artico', "AND item_ref = '".$rigo['codart']."'");
-                if ( $checkdoc ){
-                    $this->artico_doc[$rigo['codart']]='doc/'.$checkdoc['id_doc'].'.'.$checkdoc['extension'];
-                }
+          // Antonio Germani - se c'è un codice a barre valorizzo barcode
+          $art = gaz_dbi_get_row( $this->gTables['artico'], 'codice', $rigo['codart']);
+          if ($art && intval($art['barcode'])>0){
+            $rigo['barcode']=$art['barcode'];
+          } else {
+            $rigo['barcode']="";
+          }
+          // Antonio Germani - se c'è un lotto ne accodo numero e scadenza alla descrizione
+          $checklot=gaz_dbi_get_row($this->gTables['movmag'],'id_mov',$rigo['id_mag']);
+          if ($checklot && strlen ($checklot['id_lotmag'])>0){
+            $getlot=gaz_dbi_get_row($this->gTables['lotmag'],'id',$checklot['id_lotmag']);
+            if (isset ($getlot['identifier']) && strlen ($getlot['identifier'])>0){
+              if (intval ($getlot['expiry'])>0){
+                $rigo['descri']=$rigo['descri']." - lot: ".$getlot['identifier']." ".gaz_format_date($getlot['expiry']);
+              } else {
+                $rigo['descri']=$rigo['descri']." - lot: ".$getlot['identifier'];
+              }
             }
-
-			$from = $this->gTables['orderman'] . ' AS om
+          }
+          //Antonio Germani
+          if (isset($art['durability_mu']) AND ($art['durability_mu']==">" OR $art['durability_mu']=="<")){ // se impostato accodo la durabilità alla descrizione serve per gli agroalimentari
+            $rigo['descri'] = $rigo['descri']." - Durabilità ".$art['durability_mu']." ".$art['durability']."gg";
+          }
+          // Antonio de Vincentiis - se l'articolo ha un documento passo la referenza files_id_doc
+          $checkdoc=false;
+          if ($rigo['tiprig']==0) {
+              $checkdoc = gaz_dbi_get_row($this->gTables['files'], 'table_name_ref', 'artico', "AND item_ref = '".$rigo['codart']."'");
+              if ( $checkdoc ){
+                  $this->artico_doc[$rigo['codart']]='doc/'.$checkdoc['id_doc'].'.'.$checkdoc['extension'];
+              }
+          }
+          $from = $this->gTables['orderman'] . ' AS om
                  LEFT JOIN ' . $this->gTables['tesbro'] . ' AS tb
                  ON om.id_tesbro=tb.id_tes';
-			$rs_orderman = gaz_dbi_dyn_query('om.*,tb.datemi', $from, "om.id = " .  intval($rigo['id_orderman']));
-            $rigo['orderman_data'] = gaz_dbi_fetch_array($rs_orderman);
-			$rigo['orderman_descri']=($rigo['orderman_data'])?$rigo['orderman_data']['description']:'';
-            if ($rigo['tiprig'] <= 1 || $rigo['tiprig'] == 4 || $rigo['tiprig'] == 50 || $rigo['tiprig'] == 90) {
-                $tipodoc = substr($this->tesdoc["tipdoc"], 0, 1);
-                $rigo['importo'] = CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], $rigo['sconto']);
-                $v_for_castle = CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], array($rigo['sconto'], $this->tesdoc['sconto']));
-                if ($rigo['tiprig'] == 1) {
-                    $rigo['importo'] = CalcolaImportoRigo(1, $rigo['prelis'], 0);
-                    $v_for_castle = CalcolaImportoRigo(1, $rigo['prelis'], $this->tesdoc['sconto']);
-                }
-                if ($rigo['tiprig'] == 4) {
-                    $rigo['importo'] = round($rigo['provvigione']*$rigo['prelis']/100,2);
-                    $v_for_castle = $rigo['importo'] ;
-                }
-                if ($rigo['tiprig'] == 90) {
-                    $rigo['importo'] = CalcolaImportoRigo(1, $rigo['prelis'], 0);
-                    $v_for_castle = CalcolaImportoRigo(1, $rigo['prelis'], $this->tesdoc['sconto']);
-                    $asset = gaz_dbi_get_row($this->gTables['assets'], 'acc_fixed_assets', $rigo['codric'], "AND type_mov = '1'");
-                    $rigo['codart'] = $asset['id'] . ' - ' . $asset['descri'] . ' (' . $rigo['codric'] . ')';
-                }
-                if (!isset($this->castel[$rigo['codvat']])) {
-                    $this->castel[$rigo['codvat']] = 0;
-                }
-                if (!isset($this->body_castle[$rigo['codvat']])) {
-                    $this->body_castle[$rigo['codvat']]['impcast'] = 0;
-                }
-                $this->body_castle[$rigo['codvat']]['impcast'] += $v_for_castle;
-                $this->castel[$rigo['codvat']] += $v_for_castle;
-                $this->totimp_body += $rigo['importo'];
-                $this->ritenuta += round($rigo['importo'] * $rigo['ritenuta'] / 100, 2);
-            } elseif ($rigo['tiprig'] == 6 || $rigo['tiprig'] == 7 || $rigo['tiprig'] == 8) {
-                $body_text = gaz_dbi_get_row($this->gTables['body_text'], "id_body", $rigo['id_body_text']);
-                $rigo['descri'] = $body_text['body_text'];
-            } elseif ($rigo['tiprig'] == 3) {
-                $this->riporto += $rigo['prelis'];
-            } elseif ($rigo['tiprig'] == 91) {
-                $this->roundcastle[$rigo['codvat']] = $rigo['prelis'];
+          $rs_orderman = gaz_dbi_dyn_query('om.*,tb.datemi', $from, "om.id = " .  intval($rigo['id_orderman']));
+          $rigo['orderman_data'] = gaz_dbi_fetch_array($rs_orderman);
+          $rigo['orderman_descri']=($rigo['orderman_data'])?$rigo['orderman_data']['description']:'';
+          if ($rigo['tiprig'] <= 1 || $rigo['tiprig'] == 4 || $rigo['tiprig'] == 50 || $rigo['tiprig'] == 90) {
+            $tipodoc = substr($this->tesdoc["tipdoc"], 0, 1);
+            $rigo['importo'] = CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], $rigo['sconto']);
+            $v_for_castle = CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], array($rigo['sconto'], $this->tesdoc['sconto']));
+            if ($rigo['tiprig'] == 1) {
+              $rigo['importo'] = CalcolaImportoRigo(1, $rigo['prelis'], 0);
+              $v_for_castle = CalcolaImportoRigo(1, $rigo['prelis'], $this->tesdoc['sconto']);
+            } elseif ($rigo['tiprig'] == 4) {
+                $rigo['importo'] = round($rigo['provvigione']*$rigo['prelis']/100,2);
+                $v_for_castle = $rigo['importo'] ;
+            } elseif ($rigo['tiprig'] == 50) { // normale con allegato
+              // accumulo il file da allegare e lo indico al posto del codice articolo
+              $attach_path = ($this->tableName=='rigdoc')?'doc/'.$rigo['id_rig'].'_rigdoc_':'rigbrodoc_';
+              $this->getExtDoc($rigo['id_rig'],$attach_path);
+            } elseif ($rigo['tiprig'] == 90) {
+                $rigo['importo'] = CalcolaImportoRigo(1, $rigo['prelis'], 0);
+                $v_for_castle = CalcolaImportoRigo(1, $rigo['prelis'], $this->tesdoc['sconto']);
+                $asset = gaz_dbi_get_row($this->gTables['assets'], 'acc_fixed_assets', $rigo['codric'], "AND type_mov = '1'");
+                $rigo['codart'] = $asset['id'] . ' - ' . $asset['descri'] . ' (' . $rigo['codric'] . ')';
             }
-			if ($this->tesdoc['tipdoc']=='AFA' && $rigo['tiprig'] <= 2 && strlen($rigo['descri'])>70  ){
-				/* 	se la descrizione no la si riesce a contenere in un rigo (es.fattura elettronica d'acquisto)
-					aggiungo righi descrittivi
-				*/
-				$descrizione_nuova='';
-				$nuovi_righi=array();
-				$n_r=explode(' ',$rigo['descri']);
-				foreach($n_r as $v){
-					if (strlen($descrizione_nuova)<=60){ // se  la descrizione è ancora abbastanza corta la aggiungo
-						$descrizione_nuova .= ' '.$v;
-					} else {
-						// i righi iniziali sono aggiunti e definiti descrittivi
-						$nuovi_righi[]=array('tiprig'=>2,'codart'=>'','descri'=>$descrizione_nuova,'quanti'=>0, 'unimis'=>'','prelis'=>0,'sconto'=>0,'prelis'=>0,'pervat'=>0,'codric'=>0,'provvigione'=>0,'ritenuta'=>0,'id_order'=>0,'id_mag'=>0,'id_orderman'=>0);
-						// riparto con un nuovo valore di descrizione
-						$descrizione_nuova = $v;
-					}
-				}
-				// quando esco dal ciclo sull'ultimo rigo rimane dello stesso tipo originale
-				$rigo['descri']=$descrizione_nuova;
-				$nuovi_righi[]=$rigo;
-				foreach($nuovi_righi as $v_nr) { // riattraverso l'array dei nuovi righi e sull'ultimo
-					$results[] = $v_nr;
-				}
-			} else {
-				$results[] = $rigo;
-			}
-            //creo il castelletto IVA ma solo se del tipo normale o forfait
+            if (!isset($this->castel[$rigo['codvat']])) {
+                $this->castel[$rigo['codvat']] = 0;
+            }
+            if (!isset($this->body_castle[$rigo['codvat']])) {
+                $this->body_castle[$rigo['codvat']]['impcast'] = 0;
+            }
+            $this->body_castle[$rigo['codvat']]['impcast'] += $v_for_castle;
+            $this->castel[$rigo['codvat']] += $v_for_castle;
+            $this->totimp_body += $rigo['importo'];
+            $this->ritenuta += round($rigo['importo'] * $rigo['ritenuta'] / 100, 2);
+          } elseif ($rigo['tiprig'] == 6 || $rigo['tiprig'] == 7 || $rigo['tiprig'] == 8) {
+            $body_text = gaz_dbi_get_row($this->gTables['body_text'], "id_body", $rigo['id_body_text']);
+            $rigo['descri'] = $body_text['body_text'];
+          } elseif ($rigo['tiprig'] == 3) {
+            $this->riporto += $rigo['prelis'];
+          } elseif ($rigo['tiprig'] == 91) {
+            $this->roundcastle[$rigo['codvat']] = $rigo['prelis'];
+          } elseif ($rigo['tiprig'] == 51) { // descrittivo con allegato
+            // accumulo il file da allegare e lo indico al posto del codice articolo
+            $attach_path = ($this->tableName=='rigdoc')?'doc/'.$rigo['id_rig'].'_rigdoc_':'rigbrodoc_';
+            $this->getExtDoc($rigo['id_rig'],$attach_path);
+          }
+          if ($this->tesdoc['tipdoc']=='AFA' && $rigo['tiprig'] <= 2 && strlen($rigo['descri'])>70  ){
+            /* 	se la descrizione no la si riesce a contenere in un rigo (es.fattura elettronica d'acquisto)
+              aggiungo righi descrittivi
+            */
+            $descrizione_nuova='';
+            $nuovi_righi=array();
+            $n_r=explode(' ',$rigo['descri']);
+            foreach($n_r as $v){
+              if (strlen($descrizione_nuova)<=60){ // se  la descrizione è ancora abbastanza corta la aggiungo
+                $descrizione_nuova .= ' '.$v;
+              } else {
+                // i righi iniziali sono aggiunti e definiti descrittivi
+                $nuovi_righi[]=array('tiprig'=>2,'codart'=>'','descri'=>$descrizione_nuova,'quanti'=>0, 'unimis'=>'','prelis'=>0,'sconto'=>0,'prelis'=>0,'pervat'=>0,'codric'=>0,'provvigione'=>0,'ritenuta'=>0,'id_order'=>0,'id_mag'=>0,'id_orderman'=>0);
+                // riparto con un nuovo valore di descrizione
+                $descrizione_nuova = $v;
+              }
+            }
+            // quando esco dal ciclo sull'ultimo rigo rimane dello stesso tipo originale
+            $rigo['descri']=$descrizione_nuova;
+            $nuovi_righi[]=$rigo;
+            foreach($nuovi_righi as $v_nr) { // riattraverso l'array dei nuovi righi e sull'ultimo
+              $results[] = $v_nr;
+            }
+          } else {
+            $results[] = $rigo;
+          }
         }
         return $results;
     }
@@ -596,7 +597,7 @@ class DocContabVars {
         $this->castel = [];
     }
 
-    function getExtDoc($id_rig=0, $prefix='rigbrodoc_') {
+    function getExtDoc($id_rig, $prefix) {
       /* con questa funzione faccio il push sull'accumulatore dei righi contenenti "documenti esterni" da allegare al pdf
 		  riprendo il nome del file relativo al documento e lo aggiungo alla matrice solo se il file esiste, prima di chiamare
 		  questo metodo dovrò settare $this->id_rig
@@ -604,32 +605,25 @@ class DocContabVars {
       if (!isset($this->ExternalDoc)) {
         $this->ExternalDoc = [];
       }
-      $r=[];
-      $r['file']= '';
-      $r['ext'] = '';
+      $r=false;
       $files = glob( DATA_DIR . 'files/' . $this->azienda['codice'].'/'.$prefix.'*.*');
       foreach($files as $file) {
         $fd = pathinfo($file);
         if ($prefix=='rigbrodoc_'){
           if ($fd['filename'] == $prefix.($prefix=='rigbrodoc_'?$id_rig:'')) {
-            $r['file'] .= $file;
-            $r['oriname'] = $fd['basename'];          }
+            $r=['file'=> $file, 'oriname' => $fd['basename'],'ext' => $fd['extension']];
+          }
+          $this->ExternalDoc[$id_rig] = $r;
         } else {
           $e=explode('_rigdoc_',$fd['filename']);
           if ($e[0] == $id_rig) {
-            $r['file'] .= $file;
-            $r['oriname'] = $e[1];
-            $this->ExternalDoc[] = $r;
+            $r=['file'=> $file, 'oriname' => $e[1],'ext' => $fd['extension']];
+            $this->ExternalDoc[$id_rig] = $r;
           }
         }
-        $r['ext'] = $fd['extension'];
-        $this->ExternalDoc[] = $r;
       }
-      //var_dump($r);
-      return $r; // in ExternalDocs troverò gli eventuali documenti da allegare
+      // in ExternalDocs troverò gli eventuali documenti da allegare
     }
-
-
 }
 
 function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $dest = false, $lang_template=false, $template=true) {

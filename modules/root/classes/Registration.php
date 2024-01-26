@@ -172,12 +172,12 @@ class Registration
                 $query_new_user_insert->bindValue(':user_name', $user_name, PDO::PARAM_STR);
                 $query_new_user_insert->bindValue(':user_password_hash', $user_password_hash, PDO::PARAM_STR);
                 $query_new_user_insert->bindValue(':user_email', $user_email, PDO::PARAM_STR);
-                $query_new_user_insert->bindValue(':user_telephone', $user_telephone, PDO::PARAM_STR);                
+                $query_new_user_insert->bindValue(':user_telephone', $user_telephone, PDO::PARAM_STR);
 				$query_new_user_insert->bindValue(':user_activation_hash', $user_activation_hash, PDO::PARAM_STR);
                 $query_new_user_insert->bindValue(':user_registration_ip', $_SERVER['REMOTE_ADDR'], PDO::PARAM_STR);
                 $query_new_user_insert->execute();
-				
-				
+
+
                 // id of new user
                 $user_id = $this->db_connection->lastInsertId();
 
@@ -212,7 +212,9 @@ class Registration
         // get email send config from GAzie db
         $var = array('admin_mail', 'admin_smtp_server', 'admin_return_notification', 'admin_mailer', 'admin_smtp_port', 'admin_smtp_secure', 'admin_smtp_user', 'admin_smtp_password');
         foreach ($var as $v) {
-            $query_email_smtp_conf = $this->db_connection->prepare('SELECT cvalue FROM ' . DB_TABLE_PREFIX . '_config WHERE variable=:variable');
+            $qv=($v=='admin_smtp_password')?"AES_DECRYPT(FROM_BASE64(cvalue),'JnèGCM(ùRp$9ò{-c') AS cvalue":'cvalue';
+            // ATTENZIONE!!! L'AES_KEY di default JnèGCM(ùRp$9ò{-c qui è in chiaro eventualmente cambiarlo con altro valore, molto dipende da come utilizzate il gestionale ed in particolare se presente il modulo school o volete consentire la registrazione da remoto (sconsigliato per azienda in produzione)
+            $query_email_smtp_conf = $this->db_connection->prepare('SELECT '.$qv.' FROM ' . DB_TABLE_PREFIX . '_config WHERE variable=:variable');
             $query_email_smtp_conf->bindValue(':variable', $v, PDO::PARAM_STR);
             $query_email_smtp_conf->execute();
             $r = $query_email_smtp_conf->fetchAll();
@@ -241,7 +243,7 @@ class Registration
         } else {
             $mail->IsMail();
         }
-        $mail->IsHTML(true);          
+        $mail->IsHTML(true);
         // Impropriamente uso order_mail in quanto nelle installazioni didattiche non si ricevono ordini
         $mail->From = $this->email_conf['admin_mail'];
 

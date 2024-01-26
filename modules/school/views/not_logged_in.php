@@ -6,7 +6,7 @@
             <div class="panel panel-info" >
                 <div class="panel-heading panel-gazie">
                     <div class="panel-title">
-                        <img width="5%" src="../../library/images/gazie.gif" />
+                        <img width="5%" src="../../library/images/logo_180x180.png" />
                         <img width="5%" src="./school.png" />
                         <?php echo MESSAGE_LOG; ?> <?php echo $server_lang; ?> <img width="5%" src="../../language/<?php echo TRANSL_LANG; ?>/flag.png" />
                     </div>

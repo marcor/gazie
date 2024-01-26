@@ -218,10 +218,8 @@ class FatturaImmediata extends Template_con_scheda
                     $this->Cell(80, 5, "Dati Veicoli ex art.38, immatricolato il " . gaz_format_date($rigo['descri']).', km o ore:'.intval($rigo['quanti']), 'LR', 0, 'L', 0, '', 1);
                     $this->Cell(81, 5, '', 'R', 1);
                     break;
-                case "50":
-                  // accumulo il file da allegare e lo indico al posto del codice articolo
-                  $file=$this->docVars->getExtDoc($rigo['id_rig'],'doc/'.$rigo['id_rig'].'_rigdoc_');
-                  $this->Cell(25, 5, $file['oriname'].'.'.$file['ext'],1,0,'L',0,'',1);
+                case "50": // normale c/allegato
+                  $this->Cell(25, 5, $this->docVars->ExternalDoc[$rigo['id_rig']]['oriname'].'.'.$this->docVars->ExternalDoc[$rigo['id_rig']]['ext'],1,0,'L',0,'',1);
                   $this->Cell(80, 5, $rigo['descri'],1,0,'L',0,'',1);
                   $this->Cell(7,  5, $rigo['unimis'],1,0,'C');
                   $this->Cell(16, 5, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R',0,'',1);
@@ -243,10 +241,8 @@ class FatturaImmediata extends Template_con_scheda
                   $this->Cell(12, 5, gaz_format_number($rigo['pervat']), 1, 1, 'R');
                   $this->tot_rp +=$rigo['quanti'];
                   break;
-                case "51":
-                  // accumulo il file da allegare e lo indico al posto del codice articolo
-                  $file=$this->docVars->getExtDoc($rigo['id_rig']);
-                  $this->Cell(25, 5, $file['oriname'].'.'.$file['ext'],1,0,'L',0,'',1);
+                case "51": // descrittivo c/allegato
+                  $this->Cell(25, 5, $this->docVars->ExternalDoc[$rigo['id_rig']]['oriname'].'.'.$this->docVars->ExternalDoc[$rigo['id_rig']]['ext'],1,0,'L',0,'',1);
                   $this->Cell(80,5,$rigo['descri'],'LR',0,'L',0,'',1);
                   $this->Cell(81,5,'','R',1);
                   break;
@@ -524,7 +520,7 @@ class FatturaImmediata extends Template_con_scheda
                           $this->docVars->vettor['citta'].' '.
                           $this->docVars->vettor['provincia'],'LBR',0,'L',0,'',1);
         $this->Cell(56, 5,'','LBR',1);
-        if (isset($this->docVars->ExternalDoc)){ // se ho dei documenti esterni allegati
+        if (count($this->docVars->ExternalDoc)>=1){ // se ho dei documenti esterni allegati
           $this->print_header = false;
           $this->extdoc_acc=$this->docVars->ExternalDoc;
           reset($this->extdoc_acc);

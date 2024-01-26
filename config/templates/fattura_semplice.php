@@ -260,9 +260,7 @@ class FatturaSemplice extends Template {
             $this->SetFont('helvetica', '', 9);
             break;
           case "50":
-            // accumulo il file da allegare e lo indico al posto del codice articolo
-            $file=$this->docVars->getExtDoc($rigo['id_rig'],'doc/'.$rigo['id_rig'].'_rigdoc_');
-            $this->Cell(25, 5, $file['oriname'].'.'.$file['ext'],1,0,'L',0,'',1);
+            $this->Cell(25, 5,  $this->docVars->ExternalDoc[$rigo['id_rig']]['oriname'].'.'.$this->docVars->ExternalDoc[$rigo['id_rig']]['ext'],1,0,'L',0,'',1);
             $this->Cell(80, 5, $rigo['descri'],1,0,'L',0,'',1);
             $this->Cell(7,  5, $rigo['unimis'],1,0,'C');
             $this->Cell(16, 5, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R',0,'',1);
@@ -285,9 +283,7 @@ class FatturaSemplice extends Template {
             $this->tot_rp +=$rigo['quanti'];
             break;
           case "51":
-            // accumulo il file da allegare e lo indico al posto del codice articolo
-            $file=$this->docVars->getExtDoc($rigo['id_rig']);
-            $this->Cell(25, 5, $file['oriname'].'.'.$file['ext'],1,0,'L',0,'',1);
+            $this->Cell(25, 5, $this->docVars->ExternalDoc[$rigo['id_rig']]['oriname'].'.'.$this->docVars->ExternalDoc[$rigo['id_rig']]['ext'],1,0,'L',0,'',1);
             $this->Cell(80,5,$rigo['descri'],'LR',0,'L',0,'',1);
             $this->Cell(81,5,'','R',1);
             break;

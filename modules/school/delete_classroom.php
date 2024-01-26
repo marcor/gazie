@@ -56,7 +56,7 @@ $script_transl = HeadMain();
             <div class="panel panel-info" >
                 <div class="panel-heading panel-gazie">
                     <div class="panel-title">
-                        <img width="7%" src="../../library/images/gazie.gif" />
+                        <img width="7%" src="../../library/images/logo_180x180.png" />
                         <img width="5%" src="./school.png" />
                         <?php echo $script_transl['title']; ?>
                     </div>

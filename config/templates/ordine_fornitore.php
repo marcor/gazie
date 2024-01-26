@@ -37,7 +37,6 @@ class OrdineFornitore extends Template
   public $consegna;
   public $tot_rp;
   public $id_rig;
- // public $ExternalDoc;
   public $extdoc_acc;
   public $numPages;
   public $_tplIdx;
@@ -192,10 +191,8 @@ class OrdineFornitore extends Template
         case "6":
           $this->writeHtmlCell(188,6,10,$this->GetY(),$rigo['descri'],1,1);
           break;
-        case "50":
-          // accumulo il file da allegare e lo indico al posto del codice articolo
-          $file=$this->docVars->getExtDoc($rigo['id_rig']);
-          $this->Cell(27, 6,  $file['oriname'],1,0,'L',0,'',1);
+        case "50": // normale c/allegato
+          $this->Cell(27, 6, $this->docVars->ExternalDoc[$rigo['id_rig']]['oriname'].'.'.$this->docVars->ExternalDoc[$rigo['id_rig']]['ext'],1,0,'L',0,'',1);
           $this->Cell(100, 6, $rigo['descri'],1,0,'L',0,'',1);
           $this->Cell(7,  6, $rigo['unimis'],1,0,'C');
           $this->Cell(14, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R',0,'',1);
@@ -217,10 +214,8 @@ class OrdineFornitore extends Template
           $this->Ln();
           $this->tot_rp +=$rigo['quanti'];
           break;
-        case "51":
-          // accumulo il file da allegare e lo indico al posto del codice articolo
-          $file=$this->docVars->getExtDoc($rigo['id_rig']);
-          $this->Cell(27, 6, $file['file'],1,0,'L',0,'',1);
+        case "51": // descrittivo c/allegato
+          $this->Cell(27, 6, $this->docVars->ExternalDoc[$rigo['id_rig']]['oriname'].'.'.$this->docVars->ExternalDoc[$rigo['id_rig']]['ext'],1,0,'L',0,'',1);
           $this->Cell(100,6,$rigo['descri'],'LR',0,'L',0,'',1);
           $this->Cell(61,6,'','R',1);
           break;

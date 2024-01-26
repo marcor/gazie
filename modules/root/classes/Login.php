@@ -753,7 +753,9 @@ class Login
 		// get email send config from GAzie db
 		$var = array('admin_mail', 'admin_smtp_server', 'admin_return_notification', 'admin_mailer', 'admin_smtp_port', 'admin_smtp_secure', 'admin_smtp_user', 'admin_smtp_password');
 		foreach ($var as $v) {
-			$query_email_smtp_conf = $this->db_connection->prepare('SELECT cvalue FROM ' . DB_TABLE_PREFIX . '_config WHERE variable=:variable');
+      $qv=($v=='admin_smtp_password')?"AES_DECRYPT(FROM_BASE64(cvalue),'JnèGCM(ùRp$9ò{-c') AS cvalue":'cvalue';
+      // ATTENZIONE!!! L'AES_KEY di default JnèGCM(ùRp$9ò{-c qui è in chiaro eventualmente cambiarlo con altro valore, molto dipende da come utilizzate il gestionale ed in particolare se presente il modulo school o volete consentire la registrazione da remoto (sconsigliato per azienda in produzione)
+			$query_email_smtp_conf = $this->db_connection->prepare('SELECT '.$qv.' FROM ' . DB_TABLE_PREFIX . '_config WHERE variable=:variable');
 			$query_email_smtp_conf->bindValue(':variable', $v, PDO::PARAM_STR);
 			$query_email_smtp_conf->execute();
 			$r = $query_email_smtp_conf->fetchAll();

@@ -251,7 +251,7 @@ class Login {
                     $result_row = $sth->fetchObject();
                     if (isset($result_row->student_id)) {
 
-						
+
                         // write user data into PHP SESSION [a file on your server]
                         $_SESSION['table_prefix'] = DB_TABLE_PREFIX . str_pad($result_row->student_id, 4, '0', STR_PAD_LEFT);
                         $_SESSION['student_id'] = $result_row->student_id;
@@ -267,7 +267,7 @@ class Login {
                         $this->student_email = $result_row->student_email;
                         $this->student_is_logged_in = true;
 
-						// INIZIO ---- ripresa del valore del tema (g6,g7,lte) 
+						// INIZIO ---- ripresa del valore del tema (g6,g7,lte)
 						$rt = $this->db_connection->prepare('SELECT var_value FROM ' . DB_TABLE_PREFIX . str_pad($result_row->student_id, 4, '0', STR_PAD_LEFT) . '_admin_config WHERE var_name = \'theme\' AND adminid = :user_name');
 						$rt->bindValue(':user_name', $result_row->student_name, PDO::PARAM_STR);
 						$rt->execute();
@@ -344,7 +344,7 @@ class Login {
             } else if ($result_row->student_active != 1) {
                 $this->errors[] = MESSAGE_ACCOUNT_NOT_ACTIVATED;
             } else {
-				
+
                 // write user data into PHP SESSION [a file on your server]
                 $_SESSION['table_prefix'] = DB_TABLE_PREFIX . str_pad($result_row->student_id, 4, '0', STR_PAD_LEFT);
                 $_SESSION['student_id'] = $result_row->student_id;
@@ -359,7 +359,7 @@ class Login {
                 $this->student_email = $result_row->student_email;
                 $this->student_is_logged_in = true;
 
-				// INIZIO ---- ripresa del valore del tema (g6,g7,lte) 
+				// INIZIO ---- ripresa del valore del tema (g6,g7,lte)
 				$rt = $this->db_connection->prepare('SELECT var_value FROM ' . DB_TABLE_PREFIX. str_pad($result_row->student_id, 4, '0', STR_PAD_LEFT) . '_admin_config WHERE var_name = \'theme\' AND adminid = :user_name');
 				$rt->bindValue(':user_name', $result_row->student_name, PDO::PARAM_STR);
 				$rt->execute();
@@ -661,7 +661,9 @@ class Login {
         // get email send config from GAzie db
 		$var = array('admin_mail', 'admin_smtp_server', 'admin_return_notification', 'admin_mailer', 'admin_smtp_port', 'admin_smtp_secure', 'admin_smtp_user', 'admin_smtp_password');
 		foreach ($var as $v) {
-			$query_email_smtp_conf = $this->db_connection->prepare('SELECT cvalue FROM ' . DB_TABLE_PREFIX . '_config WHERE variable=:variable');
+      $qv=($v=='admin_smtp_password')?"AES_DECRYPT(FROM_BASE64(cvalue),'JnèGCM(ùRp$9ò{-c') AS cvalue":'cvalue';
+      // ATTENZIONE!!! L'AES_KEY di default JnèGCM(ùRp$9ò{-c qui è in chiaro eventualmente cambiarlo con altro valore, molto dipende da come utilizzate il gestionale ed in particolare se presente il modulo school o volete consentire la registrazione da remoto (sconsigliato per azienda in produzione)
+			$query_email_smtp_conf = $this->db_connection->prepare('SELECT '.$qv.' FROM ' . DB_TABLE_PREFIX . '_config WHERE variable=:variable');
 			$query_email_smtp_conf->bindValue(':variable', $v, PDO::PARAM_STR);
 			$query_email_smtp_conf->execute();
 			$r = $query_email_smtp_conf->fetchAll();
@@ -697,7 +699,7 @@ class Login {
         $mail->AddAddress($student_email);
         $mail->Subject = EMAIL_PASSWORDRESET_SUBJECT;
         $mail->AddEmbeddedImage('./school.png', 'gschool');
-        $mail->AddEmbeddedImage('../../library/images/gazie.gif', 'glogo');
+        $mail->AddEmbeddedImage('../../library/images/logo_180x180.png', 'glogo');
 
         $link = EMAIL_PASSWORDRESET_URL . '?student_name=' . urlencode($student_name) . '&verification_code=' . urlencode($student_password_reset_hash);
         $mail->Body = EMAIL_PASSWORDRESET_CONTENT . '<br> <img height="64" src="cid:glogo" /> <a href="' . $link . '"> <img src="cid:gschool" /> ' . MESSAGE_EMAIL_LINK_FOR_RESET . '</a>';
