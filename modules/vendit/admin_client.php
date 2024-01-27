@@ -25,10 +25,26 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $msg = '';
+$tab = 'home';
 if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo accesso
     $form = array_merge(gaz_dbi_parse_post('clfoco'), gaz_dbi_parse_post('anagra'));
     $form['ritorno'] = $_POST['ritorno'];
     $form['hidden_req'] = $_POST['hidden_req'];
+    if (!empty($_FILES['docfile']['name'])) { // ho aggiunto un documento
+      if (!($_FILES['docfile']['type'] == "image/png" ||
+              $_FILES['docfile']['type'] == "image/x-png" ||
+              $_FILES['docfile']['type'] == "image/jpeg" ||
+              $_FILES['docfile']['type'] == "image/jpg" ||
+              $_FILES['docfile']['type'] == "application/pdf" ||
+              $_FILES['docfile']['type'] == "image/gif" ||
+              $_FILES['docfile']['type'] == "image/x-gif")) $msg .= '22+';
+      if ($_FILES['docfile']['size'] > 1000000) $msg .= '23+';
+      if (empty($msg)) {
+        $fileinfo = pathinfo($_FILES['docfile']['name']);
+        gaz_dbi_query("INSERT INTO ".$gTables['files']." (table_name_ref, id_ref, content, extension, title, adminid) VALUES ('clfoco_doc', '" .intval($admin_aziend['mascli'] * 1000000 + $_POST['codice']). "', TO_BASE64(AES_ENCRYPT('".bin2hex(file_get_contents($_FILES['docfile']['tmp_name']))."','".$_SESSION['aes_key']."')), '".$fileinfo['extension']."','".$fileinfo['filename']."', '".$_SESSION['user_name']."' )");
+      }
+      $tab = 'licenses';
+    }
     $form['pec_email'] = trim($form['pec_email']);
     $form['e_mail'] = trim($form['e_mail']);
     $form['last_modified'] = date("Y-m-d H:i:s");
@@ -239,6 +255,11 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 } elseif (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo accesso per UPDATE
     $anagrafica = new Anagrafica();
     $form = $anagrafica->getPartner(intval($admin_aziend['mascli'] * 1000000 + $_GET['codice']));
+    // riprendo gli eventuali documenti
+    $rs_docs = gaz_dbi_dyn_query("*", $gTables['files'], "table_name_ref = 'clfoco_doc' AND id_ref='".$form['codice']."'", "status ASC");
+    while ($r = gaz_dbi_fetch_array($rs_docs)) {
+      $form['docs'][$r['id_doc']] = $r; // riprendo tutto ma i documenti con status > 9 es. quelli di identità sono criptati/decriptati
+    }
     $form['codice'] = intval(substr($form['codice'], 3));
     $toDo = 'update';
     $form['search']['id_des'] = '';
@@ -262,6 +283,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
   $last = $anagrafica->queryPartners('*', "codice BETWEEN " . $admin_aziend['mascli'] . "000000 AND " . $admin_aziend['mascli'] . "999999", "codice DESC", 0, 1);
   $form = array_merge(gaz_dbi_fields('clfoco'), gaz_dbi_fields('anagra'));
   $form['codice'] = substr($last[0]['codice'], 3) + 1;
+  // cancello i documenti eventualmente rimasti in sospeso da questo utente, non da altri che potrebbero starci lavorando contemporaneamente
+  gaz_dbi_query("DELETE FROM " . $gTables['files'] . " WHERE table_name_ref = 'clfoco_doc' AND id_ref = " .intval($admin_aziend['mascli'] * 1000000 + $form['codice']));
   $toDo = 'insert';
   $form['search']['id_des'] = '';
   $form['search']['fiscal_rapresentative_id'] = '';
@@ -356,19 +379,83 @@ $(function() {
 		});
 		$("#dialog_delete" ).dialog( "open" );
 	});
-    $('#iban,#codfis').keyup(function(){
-        this.value = this.value.toUpperCase();
-    });
+
+  $('#iban,#codfis').keyup(function(){
+      this.value = this.value.toUpperCase();
+  });
+
+	$("#dialog_clfoco_doc_del").dialog({ autoOpen: false });
+	$('.dialog_clfoco_doc_del').click(function() {
+		$("p#nfile").html($(this).attr("ref"));
+		$("p#dfile").html($(this).attr("nf"));
+		var id = $(this).attr('ref');
+		$( "#dialog_clfoco_doc_del" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+   			close: {
+					text:'Non eliminare',
+					'class':'btn btn-default',
+          click:function() {
+            $(this).dialog("close");
+          }
+        },
+				delete:{
+					text:'Elimina',
+					'class':'btn btn-danger',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'clfoco_doc',ref:id},
+						type: 'POST',
+						url: './delete.php',
+						success: function(output){
+		          //alert(output);
+							form.submit();
+						}
+					});
+				}}
+			}
+		});
+		$("#dialog_clfoco_doc_del" ).dialog( "open" );
+	});
 
 });
+function printDoc(urlPrintDoc,nf){
+	$(function(){
+		$("#filen").html('File: ' + nf);
+		$('#frameDoc').attr('src',urlPrintDoc);
+		$('#frameDoc').css({'height': '100%'});
+		$('.frameDoc').css({'display': 'block','width': '90%', 'height': '80%', 'z-index':'2000'});
+		$('#closeDoc').on( "click", function() {
+      $('.frameDoc').css({'display': 'none'});
+    });
+	});
+};
 </script>
-<form method="POST" name="form">
-	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
-        <p><b>Mandato RID</b></p>
-        <p>Numero:</p>
-        <p class="ui-state-highlight" id="idcodice"></p>
-        <p>Data firma:</p>
-        <p class="ui-state-highlight" id="iddescri"></p>
+<form method="POST" name="form" enctype="multipart/form-data">
+	<div style="display:none" id="dialog_delete" title="Conferma eliminazione Mandato">
+    <p><b>Mandato RID</b></p>
+    <p>Numero:</p>
+    <p class="ui-state-highlight" id="idcodice"></p>
+    <p>Data firma:</p>
+    <p class="ui-state-highlight" id="iddescri"></p>
+	</div>
+	<div style="display:none" id="dialog_clfoco_doc_del" title="Conferma eliminazione documento">
+    <p><b>DOCUMENTO</b></p>
+    <p>ID: </p>
+    <p class="ui-state-highlight" id="nfile"></p>
+    <p>Nome File: </p>
+    <p class="ui-state-highlight" id="dfile"></p>
+	</div>
+	<div class="frameDoc panel panel-success" style="display: none; position: fixed; left: 5%; top: 10px">
+		<div class="col-lg-12">
+			<div class="col-xs-11"><h4 id="filen"></h4></div>
+			<div class="col-xs-1"><h4><button type="button" id="closeDoc"><i class="glyphicon glyphicon-remove"></i></button></h4></div>
+		</div>
+		<iframe id="frameDoc" style="height: auto; width: 100%;" src=""></iframe>
 	</div>
 <?php
 
@@ -419,14 +506,14 @@ if (!empty($msg)) {
 <div class="panel panel-default gaz-table-form div-bordered">
   <div class="container-fluid">
   <ul class="nav nav-pills">
-    <li class="active"><a data-toggle="pill" href="#home">Anagrafica</a></li>
-    <li><a data-toggle="pill" href="#commer">Impostazioni</a></li>
-    <li><a data-toggle="pill" href="#licenses">Documenti</a></li>
+    <li class="<?php echo $tab=='home'?'active':''; ?>"><a data-toggle="pill" href="#home">Anagrafica</a></li>
+    <li class="<?php echo $tab=='commer'?'active':''; ?>"><a data-toggle="pill" href="#commer">Impostazioni</a></li>
+    <li class="<?php echo $tab=='licenses'?'active':''; ?>"><a data-toggle="pill" href="#licenses">Documenti</a></li>
     <li style="float: right;"><input class="btn btn-warning" name="Submit" type="submit" value="<?php echo ucfirst($script_transl[$toDo]); ?>"></li>
   </ul>
 
   <div class="tab-content">
-    <div id="home" class="tab-pane fade in active">
+    <div id="home" class="tab-pane fade <?php echo $tab=='home'?'in active':''; ?>">
         <div class="row">
             <div class="col-md-12">
                 <div class="form-group">
@@ -668,7 +755,7 @@ $gForm->variousSelect('fatt_email', $script_transl['fatt_email_value'], $form['f
             </div>
         </div><!-- chiude row  -->
       </div><!-- chiude tab-pane  -->
-      <div id="commer" class="tab-pane fade">
+      <div id="commer" class="tab-pane fade <?php echo $tab=='commer'?'in active':''; ?>">
         <div class="row">
             <div class="col-md-12">
                 <div class="form-group">
@@ -975,21 +1062,27 @@ $gForm->variousSelect('status', $script_transl['status_value'], $form['status'],
           </div>
         </div><!-- chiude row  -->
   </div>
-      <div id="licenses" class="tab-pane fade">
+      <div id="licenses" class="tab-pane fade <?php echo $tab=='licenses'?'in active':''; ?>">
         <div class="row">
             <div class="col-md-12">
                 <div class="form-group">
-                    <label for="codpag" class="col-sm-4 control-label">Autorizzazione/licenza/patente</label>
-    <?php
-    ?>
+                    <label for="codpag" class="col-sm-4 control-label">Carte d'identità, autorizzazioni,<br/>licenze, patenti, ecc.<br/><small style="font-weight: 400;"> (criptati sul database)</small></label>
+                    <div class="col-sm-8">
+<?php
+// riprendo sia i files già confermati
+$rdocs = gaz_dbi_dyn_query("*", $gTables['files'],"id_ref = '" .intval($admin_aziend['mascli'] * 1000000 + $form['codice']). "' AND table_name_ref = 'clfoco_doc'", "id_doc");
+while ($doc = gaz_dbi_fetch_array($rdocs)) {
+  echo  '<div class="col-xs-12"><a class="btn btn-xs btn-default" style="cursor:pointer;" onclick="return printDoc(\'get_files_doc.php?id_doc='. $doc['id_doc'].'\',\''.$doc['title'].'.'.$doc['extension'].'\')" > '.$doc['title'].'.'.$doc['extension'].' &nbsp; <i class="glyphicon glyphicon-eye-open"></i> &nbsp; </a>	<a style="float:right;" class="btn btn-xs btn-elimina dialog_clfoco_doc_del" title="Elimina il documento" ref="'. $doc['id_doc'].'" nf="'.$doc['title'].'.'.$doc['extension'].'" ><i class="glyphicon glyphicon-trash"></i></a><br/>&nbsp;</div>';
+}
+echo '<div class="col-xs-12"><button class="btn btn-md btn-warning" type="image" data-toggle="collapse" href="#extdoc_dialog_othfot" style="font-size: 1.2em;"> <i class="glyphicon glyphicon-camera"></i> <i class="fa fa-file-pdf-o"></i>  &nbsp; Nuovo documento</button></div>';
+echo '<div id="extdoc_dialog_othfot" class="collapse col-xs-12"><input style="margin-left:20%;"  type="file" accept=".png,.jpg,.gif,.pdf" onchange="this.form.submit();" name="docfile"></div>';
+?>
+                  </div>
                 </div>
             </div>
         </div><!-- chiude row  -->
     </div>
 </div>
-</div>
-<div class="text-center">
-
 </div>
 </div>
 </form>

@@ -30,7 +30,7 @@ if (!$isAjax) {
     trigger_error($user_error, E_USER_ERROR);
 }
 
-if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&isset($_POST['id_tes']))) {
+if ((isset($_POST['type'])&&isset($_POST['ref'])) || (isset($_POST['type']) && isset($_POST['id_tes']))) {
 	require("../../library/include/datlib.inc.php");
 	require("../../modules/magazz/lib.function.php");
 	$upd_mm = new magazzForm;
@@ -283,6 +283,10 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
     case "email":
     $i=filter_var($_POST['ref'], FILTER_VALIDATE_EMAIL);
     gaz_dbi_put_query($gTables['tesdoc'], " email LIKE '%".$i."%' AND id_tes =".intval($_POST['tes_id']),'email','');
+    break;
+    case "clfoco_doc":
+    $i=intval($_POST['ref']);
+    gaz_dbi_del_row($gTables['files'], 'id_doc', $i);
     break;
 	}
 }

@@ -34,7 +34,7 @@ $strScript = array("admin_client.php" =>
             'Inserire almeno 2 caratteri!',
             'Cambia anagrafica'),
         'errors' => array('&Egrave; necessario indicare la Ragione Sociale',
-            '&Egrave; necessario indicare l\'indirizzo',
+            '&Egrave; necessario indicare l\'indirizzo', //1
             'Il codice di avviamento postale (CAP) &egrave; sbagliato',
             '&Egrave; necessario indicare la citt&agrave;',
             '&Egrave; necessario indicare la provincia',
@@ -44,7 +44,7 @@ $strScript = array("admin_client.php" =>
             'Codice fiscale sbagliato per una persona fisica',
             'La partita IVA &egrave; formalmente errata!',
             'Esiste gi&agrave un Cliente con la stessa Partita IVA',
-            'Il codice fiscale &egrave; formalmente errato',
+            'Il codice fiscale &egrave; formalmente errato', //11
             'Esiste gi&agrave; un Cliente con lo stesso Codice Fiscale',
             'C.F. mancante! In automatico &egrave; stato<br />impostato con lo stesso valore della Partita IVA!',
             'E\' una persona fisica, inserire il codice fiscale',
@@ -54,7 +54,9 @@ $strScript = array("admin_client.php" =>
             'Il codice del cliente &egrave; gi&agrave; esistente, riprova l\'inserimento con quello proposto (aumentato di 1)',
             'La data di nascita &egrave; sbagliata',
             'Indirizzo email formalmente sbagliato',
-			'Il codice SIAN &egrave; gi&agrave; esistente, riprova l\'inserimento con quello proposto (aumentato di 1)'
+            'Il codice SIAN &egrave; gi&agrave; esistente, riprova l\'inserimento con quello proposto (aumentato di 1)', //21
+            'Tipo documento non valido',
+            'File troppo grande, maggiore di 2MB',
         ),
         'link_anagra' => ' Clicca sotto per inserire l\'anagrafica esistente sul piano dei conti',
         'codice' => "Codice ",
