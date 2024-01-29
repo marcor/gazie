@@ -126,7 +126,7 @@ $url = basename($_SERVER['REQUEST_URI'], '?' . $_SERVER['QUERY_STRING']);
                 printCheckbox("Sidebar Aperto", "LTE_SidebarOpen", "Mantieni la barra aperta" );
               ?>
               <div class='form-group'>
-                  <a href="" onclick="return restoreUserConfig();">Ripristina default</a>
+                <a onclick="restoreUserConfig();" style="cursor: pointer;">Ripristina default</a>
               </div>
             </form>
           </div><!-- /.tab-pane -->

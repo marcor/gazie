@@ -7,10 +7,11 @@ namespace Composer\Autoload;
 class ComposerStaticInit783a7e6f30b1179982f49db97e0f90ee
 {
     public static $files = array (
-        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         '2cffec82183ee1cea088009cef9a6fc3' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier.composer.php',
         '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
+        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
+        'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         'decc78cc4436b1292c6c0d151b19445c' => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib/bootstrap.php',
         'ec07570ca5a812141189b1fa81503674' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
     );
@@ -34,6 +35,7 @@ class ComposerStaticInit783a7e6f30b1179982f49db97e0f90ee
         ),
         'S' => 
         array (
+            'Symfony\\Polyfill\\Php80\\' => 23,
             'Symfony\\Polyfill\\Mbstring\\' => 26,
             'Symfony\\Polyfill\\Ctype\\' => 23,
         ),
@@ -49,7 +51,6 @@ class ComposerStaticInit783a7e6f30b1179982f49db97e0f90ee
         ),
         'M' => 
         array (
-            'MyCLabs\\Enum\\' => 13,
             'Matrix\\' => 7,
         ),
         'D' => 
@@ -81,6 +82,10 @@ class ComposerStaticInit783a7e6f30b1179982f49db97e0f90ee
         array (
             0 => __DIR__ . '/..' . '/twig/twig/src',
         ),
+        'Symfony\\Polyfill\\Php80\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-php80',
+        ),
         'Symfony\\Polyfill\\Mbstring\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
@@ -95,8 +100,8 @@ class ComposerStaticInit783a7e6f30b1179982f49db97e0f90ee
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-factory/src',
-            1 => __DIR__ . '/..' . '/psr/http-message/src',
+            0 => __DIR__ . '/..' . '/psr/http-message/src',
+            1 => __DIR__ . '/..' . '/psr/http-factory/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -117,10 +122,6 @@ class ComposerStaticInit783a7e6f30b1179982f49db97e0f90ee
         'PHPMailer\\PHPMailer\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
-        ),
-        'MyCLabs\\Enum\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/myclabs/php-enum/src',
         ),
         'Matrix\\' => 
         array (
@@ -155,6 +156,7 @@ class ComposerStaticInit783a7e6f30b1179982f49db97e0f90ee
     );
 
     public static $classMap = array (
+        'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Datamatrix' => __DIR__ . '/..' . '/tecnickcom/tcpdf/include/barcodes/datamatrix.php',
         'MySQLDump' => __DIR__ . '/..' . '/dg/mysql-dump/src/MySQLDump.php',
@@ -211,6 +213,7 @@ class ComposerStaticInit783a7e6f30b1179982f49db97e0f90ee
         'PHPUnit\\Framework\\Constraint\\LogicalXor' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Constraint/Operator/LogicalXor.php',
         'PHPUnit\\Framework\\Constraint\\ObjectEquals' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Constraint/Object/ObjectEquals.php',
         'PHPUnit\\Framework\\Constraint\\ObjectHasAttribute' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Constraint/Object/ObjectHasAttribute.php',
+        'PHPUnit\\Framework\\Constraint\\ObjectHasProperty' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Constraint/Object/ObjectHasProperty.php',
         'PHPUnit\\Framework\\Constraint\\Operator' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Constraint/Operator/Operator.php',
         'PHPUnit\\Framework\\Constraint\\RegularExpression' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Constraint/String/RegularExpression.php',
         'PHPUnit\\Framework\\Constraint\\SameSize' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Constraint/Cardinality/SameSize.php',
@@ -441,8 +444,8 @@ class ComposerStaticInit783a7e6f30b1179982f49db97e0f90ee
         'PHPUnit\\TextUI\\XmlConfiguration\\Migrator' => __DIR__ . '/..' . '/phpunit/phpunit/src/TextUI/XmlConfiguration/Migration/Migrator.php',
         'PHPUnit\\TextUI\\XmlConfiguration\\MoveAttributesFromFilterWhitelistToCoverage' => __DIR__ . '/..' . '/phpunit/phpunit/src/TextUI/XmlConfiguration/Migration/Migrations/MoveAttributesFromFilterWhitelistToCoverage.php',
         'PHPUnit\\TextUI\\XmlConfiguration\\MoveAttributesFromRootToCoverage' => __DIR__ . '/..' . '/phpunit/phpunit/src/TextUI/XmlConfiguration/Migration/Migrations/MoveAttributesFromRootToCoverage.php',
-        'PHPUnit\\TextUI\\XmlConfiguration\\MoveWhitelistDirectoriesToCoverage' => __DIR__ . '/..' . '/phpunit/phpunit/src/TextUI/XmlConfiguration/Migration/Migrations/MoveWhitelistDirectoriesToCoverage.php',
         'PHPUnit\\TextUI\\XmlConfiguration\\MoveWhitelistExcludesToCoverage' => __DIR__ . '/..' . '/phpunit/phpunit/src/TextUI/XmlConfiguration/Migration/Migrations/MoveWhitelistExcludesToCoverage.php',
+        'PHPUnit\\TextUI\\XmlConfiguration\\MoveWhitelistIncludesToCoverage' => __DIR__ . '/..' . '/phpunit/phpunit/src/TextUI/XmlConfiguration/Migration/Migrations/MoveWhitelistIncludesToCoverage.php',
         'PHPUnit\\TextUI\\XmlConfiguration\\PHPUnit' => __DIR__ . '/..' . '/phpunit/phpunit/src/TextUI/XmlConfiguration/PHPUnit/PHPUnit.php',
         'PHPUnit\\TextUI\\XmlConfiguration\\Php' => __DIR__ . '/..' . '/phpunit/phpunit/src/TextUI/XmlConfiguration/PHP/Php.php',
         'PHPUnit\\TextUI\\XmlConfiguration\\PhpHandler' => __DIR__ . '/..' . '/phpunit/phpunit/src/TextUI/XmlConfiguration/PHP/PhpHandler.php',
@@ -579,6 +582,7 @@ class ComposerStaticInit783a7e6f30b1179982f49db97e0f90ee
         'PharIo\\Version\\VersionConstraintParser' => __DIR__ . '/..' . '/phar-io/version/src/VersionConstraintParser.php',
         'PharIo\\Version\\VersionConstraintValue' => __DIR__ . '/..' . '/phar-io/version/src/VersionConstraintValue.php',
         'PharIo\\Version\\VersionNumber' => __DIR__ . '/..' . '/phar-io/version/src/VersionNumber.php',
+        'PhpToken' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/PhpToken.php',
         'QRcode' => __DIR__ . '/..' . '/tecnickcom/tcpdf/include/barcodes/qrcode.php',
         'SebastianBergmann\\CliParser\\AmbiguousOptionException' => __DIR__ . '/..' . '/sebastian/cli-parser/src/exceptions/AmbiguousOptionException.php',
         'SebastianBergmann\\CliParser\\Exception' => __DIR__ . '/..' . '/sebastian/cli-parser/src/exceptions/Exception.php',
@@ -758,29 +762,28 @@ class ComposerStaticInit783a7e6f30b1179982f49db97e0f90ee
         'SebastianBergmann\\Timer\\ResourceUsageFormatter' => __DIR__ . '/..' . '/phpunit/php-timer/src/ResourceUsageFormatter.php',
         'SebastianBergmann\\Timer\\TimeSinceStartOfRequestNotAvailableException' => __DIR__ . '/..' . '/phpunit/php-timer/src/exceptions/TimeSinceStartOfRequestNotAvailableException.php',
         'SebastianBergmann\\Timer\\Timer' => __DIR__ . '/..' . '/phpunit/php-timer/src/Timer.php',
-        'SebastianBergmann\\Type\\CallableType' => __DIR__ . '/..' . '/sebastian/type/src/type/CallableType.php',
+        'SebastianBergmann\\Type\\CallableType' => __DIR__ . '/..' . '/sebastian/type/src/CallableType.php',
         'SebastianBergmann\\Type\\Exception' => __DIR__ . '/..' . '/sebastian/type/src/exception/Exception.php',
-        'SebastianBergmann\\Type\\FalseType' => __DIR__ . '/..' . '/sebastian/type/src/type/FalseType.php',
-        'SebastianBergmann\\Type\\GenericObjectType' => __DIR__ . '/..' . '/sebastian/type/src/type/GenericObjectType.php',
+        'SebastianBergmann\\Type\\FalseType' => __DIR__ . '/..' . '/sebastian/type/src/FalseType.php',
+        'SebastianBergmann\\Type\\GenericObjectType' => __DIR__ . '/..' . '/sebastian/type/src/GenericObjectType.php',
         'SebastianBergmann\\Type\\IntersectionType' => __DIR__ . '/..' . '/sebastian/type/src/type/IntersectionType.php',
-        'SebastianBergmann\\Type\\IterableType' => __DIR__ . '/..' . '/sebastian/type/src/type/IterableType.php',
-        'SebastianBergmann\\Type\\MixedType' => __DIR__ . '/..' . '/sebastian/type/src/type/MixedType.php',
+        'SebastianBergmann\\Type\\IterableType' => __DIR__ . '/..' . '/sebastian/type/src/IterableType.php',
+        'SebastianBergmann\\Type\\LogicException' => __DIR__ . '/..' . '/sebastian/type/src/exception/LogicException.php',
+        'SebastianBergmann\\Type\\MixedType' => __DIR__ . '/..' . '/sebastian/type/src/MixedType.php',
         'SebastianBergmann\\Type\\NeverType' => __DIR__ . '/..' . '/sebastian/type/src/type/NeverType.php',
-        'SebastianBergmann\\Type\\NullType' => __DIR__ . '/..' . '/sebastian/type/src/type/NullType.php',
-        'SebastianBergmann\\Type\\ObjectType' => __DIR__ . '/..' . '/sebastian/type/src/type/ObjectType.php',
-        'SebastianBergmann\\Type\\Parameter' => __DIR__ . '/..' . '/sebastian/type/src/Parameter.php',
+        'SebastianBergmann\\Type\\NullType' => __DIR__ . '/..' . '/sebastian/type/src/NullType.php',
+        'SebastianBergmann\\Type\\ObjectType' => __DIR__ . '/..' . '/sebastian/type/src/ObjectType.php',
         'SebastianBergmann\\Type\\ReflectionMapper' => __DIR__ . '/..' . '/sebastian/type/src/ReflectionMapper.php',
         'SebastianBergmann\\Type\\RuntimeException' => __DIR__ . '/..' . '/sebastian/type/src/exception/RuntimeException.php',
-        'SebastianBergmann\\Type\\SimpleType' => __DIR__ . '/..' . '/sebastian/type/src/type/SimpleType.php',
-        'SebastianBergmann\\Type\\StaticType' => __DIR__ . '/..' . '/sebastian/type/src/type/StaticType.php',
-        'SebastianBergmann\\Type\\TrueType' => __DIR__ . '/..' . '/sebastian/type/src/type/TrueType.php',
+        'SebastianBergmann\\Type\\SimpleType' => __DIR__ . '/..' . '/sebastian/type/src/SimpleType.php',
+        'SebastianBergmann\\Type\\StaticType' => __DIR__ . '/..' . '/sebastian/type/src/StaticType.php',
         'SebastianBergmann\\Type\\Type' => __DIR__ . '/..' . '/sebastian/type/src/type/Type.php',
         'SebastianBergmann\\Type\\TypeName' => __DIR__ . '/..' . '/sebastian/type/src/TypeName.php',
         'SebastianBergmann\\Type\\UnionType' => __DIR__ . '/..' . '/sebastian/type/src/type/UnionType.php',
         'SebastianBergmann\\Type\\UnknownType' => __DIR__ . '/..' . '/sebastian/type/src/type/UnknownType.php',
         'SebastianBergmann\\Type\\VoidType' => __DIR__ . '/..' . '/sebastian/type/src/type/VoidType.php',
         'SebastianBergmann\\Version' => __DIR__ . '/..' . '/sebastian/version/src/Version.php',
-        'Stringable' => __DIR__ . '/..' . '/myclabs/php-enum/stubs/Stringable.php',
+        'Stringable' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',
         'TCPDF' => __DIR__ . '/..' . '/tecnickcom/tcpdf/tcpdf.php',
         'TCPDF2DBarcode' => __DIR__ . '/..' . '/tecnickcom/tcpdf/tcpdf_barcodes_2d.php',
         'TCPDFBarcode' => __DIR__ . '/..' . '/tecnickcom/tcpdf/tcpdf_barcodes_1d.php',
@@ -800,6 +803,8 @@ class ComposerStaticInit783a7e6f30b1179982f49db97e0f90ee
         'TheSeer\\Tokenizer\\TokenCollectionException' => __DIR__ . '/..' . '/theseer/tokenizer/src/TokenCollectionException.php',
         'TheSeer\\Tokenizer\\Tokenizer' => __DIR__ . '/..' . '/theseer/tokenizer/src/Tokenizer.php',
         'TheSeer\\Tokenizer\\XMLSerializer' => __DIR__ . '/..' . '/theseer/tokenizer/src/XMLSerializer.php',
+        'UnhandledMatchError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/UnhandledMatchError.php',
+        'ValueError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/ValueError.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

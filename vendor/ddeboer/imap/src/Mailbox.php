@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Ddeboer\Imap;
 
-use DateTimeInterface;
 use Ddeboer\Imap\Exception\ImapNumMsgException;
 use Ddeboer\Imap\Exception\ImapStatusException;
 use Ddeboer\Imap\Exception\InvalidSearchCriteriaException;
@@ -122,10 +121,6 @@ final class Mailbox implements MailboxInterface
         }
         $query = $search->toString();
 
-        if (\PHP_VERSION_ID < 80000) {
-            $descending = (int) $descending;
-        }
-
         // We need to clear the stack to know whether imap_last_error()
         // is related to this imap_search
         \imap_errors();
@@ -196,7 +191,7 @@ final class Mailbox implements MailboxInterface
         return $this->getMessages();
     }
 
-    public function addMessage(string $message, string $options = null, DateTimeInterface $internalDate = null): bool
+    public function addMessage(string $message, string $options = null, \DateTimeInterface $internalDate = null): bool
     {
         $arguments = [
             $this->resource->getStream(),

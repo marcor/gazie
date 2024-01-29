@@ -27,7 +27,7 @@ require("../../modules/magazz/lib.function.php");
 $admin_aziend = checkAdmin();
 $gForm = new acquisForm();
 $msg = array('err' => array(), 'war' => array());
-$tipdoc_conv=array('TD01'=>'AFA','TD02'=>'AFA','TD03'=>'AFA','TD04'=>'AFC','TD05'=>'AFD','TD06'=>'AFA','TD08'=>'AFC','TD24'=>'AFT','TD25'=>'AFT','TD26'=>'AFA','TD27'=>'AFA');
+$tipdoc_conv=array('TD01'=>'AFA','TD02'=>'AFA','TD03'=>'AFA','TD04'=>'AFC','TD05'=>'AFD','TD06'=>'AFA','TD08','TD16'=>'XFA','TD17'=>'XFA','TD18'=>'XFA','TD19'=>'XFA','TD24'=>'AFT','TD25'=>'AFT','TD26'=>'AFA','TD27'=>'AFA');
 
 // ATTENZIONE TD01 deve indicizzare per AFT nel caso in cui ci sono DDT di riferimento all'interno del tracciato, quindi si dovrà gestire questa accezione. Comunque con la prossima versione della fattura elettronica (2.0) saranno da implementare anche altri tipi di doc
 
@@ -478,6 +478,9 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		if (empty($val_err)){
 			// INIZIO CONTROLLO NUMERO DATA, ovvero se nonostante il nome del file sia diverso il suo contenuto è già stato importato e già c'è uno con lo stesso tipo_documento-numero_documento-anno-fornitore
 			$tipdoc=$tipdoc_conv[$xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiGenerali/DatiGeneraliDocumento/TipoDocumento")->item(0)->nodeValue];
+      if (substr($tipdoc,0,2)=='XF'){
+ 				$msg['err'][] = 'reverse_charge';
+      }
 			$datdoc=$xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiGenerali/DatiGeneraliDocumento/Data")->item(0)->nodeValue;
 			$numdoc=$xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiGenerali/DatiGeneraliDocumento/Numero")->item(0)->nodeValue;
 			if ($isFatturaElettronicaSemplificata) {

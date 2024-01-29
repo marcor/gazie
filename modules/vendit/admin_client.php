@@ -38,7 +38,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
               $_FILES['docfile']['type'] == "application/pdf" ||
               $_FILES['docfile']['type'] == "image/gif" ||
               $_FILES['docfile']['type'] == "image/x-gif")) $msg .= '22+';
-      if ($_FILES['docfile']['size'] > 2000000) $msg .= '23+';
+      if ($_FILES['docfile']['size'] > 5000000) $msg .= '23+'; // su MariaDB impostare la direttiva max_allowed_packed ad almeno 8M
       if (empty($msg)) {
         $fileinfo = pathinfo($_FILES['docfile']['name']);
         gaz_dbi_query("INSERT INTO ".$gTables['files']." (table_name_ref, id_ref, content, extension, title, adminid) VALUES ('clfoco_doc', '" .intval($admin_aziend['mascli'] * 1000000 + $_POST['codice']). "', TO_BASE64(AES_ENCRYPT('".bin2hex(file_get_contents($_FILES['docfile']['tmp_name']))."','".$_SESSION['aes_key']."')), '".$fileinfo['extension']."','".$fileinfo['filename']."', '".$_SESSION['user_name']."' )");

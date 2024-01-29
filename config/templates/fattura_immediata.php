@@ -520,7 +520,7 @@ class FatturaImmediata extends Template_con_scheda
                           $this->docVars->vettor['citta'].' '.
                           $this->docVars->vettor['provincia'],'LBR',0,'L',0,'',1);
         $this->Cell(56, 5,'','LBR',1);
-        if (count($this->docVars->ExternalDoc)>=1){ // se ho dei documenti esterni allegati
+        if (isset($this->docVars->ExternalDoc)){ // se ho dei documenti esterni allegati
           $this->print_header = false;
           $this->extdoc_acc=$this->docVars->ExternalDoc;
           reset($this->extdoc_acc);

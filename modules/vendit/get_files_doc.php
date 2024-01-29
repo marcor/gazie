@@ -27,13 +27,18 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 if(isset($_GET['id_doc']))  { // crea immagine dal campo BLOB della tabella gaz_001files per riprendere i documenti criptati con $_SESSION['aes_key']
   $d=intval($_GET['id_doc']);
-  $rsdoc=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(content),'".$_SESSION['aes_key']."') AS content, title, extension  FROM ".$gTables['files']." WHERE id_doc = ".$d);
+  $rsdoc=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(content),'".$_SESSION['aes_key']."') AS content, title, extension, adminid  FROM ".$gTables['files']." WHERE id_doc = ".$d);
   $doc=gaz_dbi_fetch_row($rsdoc);
   $content=hex2bin($doc[0]);
   $mime=strtolower($doc[2]);
+  // se non è un file dell'utente e l'utente non è amministratore non consento la visualizzazione
+  if($_SESSION['Abilit'] < 8 && $_SESSION['user_name']!=$doc[3]){
+    $mime='txt';
+    $content='NON PUOI VISUALIZZARE QUESTO DOCUMENTO IN QUANTO NON SEI AMMINISTRATORE E NON E\' STATO CARICATO DA TE';
+  }
   switch ($mime) {
     case 'pdf':
-      header("Content-type:application/pdf");
+      header('Content-type: application/pdf');
     break;
     case 'jpg':
       header ('Content-type: image/jpg');
@@ -43,6 +48,9 @@ if(isset($_GET['id_doc']))  { // crea immagine dal campo BLOB della tabella gaz_
     break;
     case 'gif':
       header ('Content-type: image/gif');
+    break;
+    default:
+      header ('Content-type: text/html; charset=utf-8');
     break;
   }
   header("Content-Disposition:inline;filename=".$doc[1].'.'.$doc[2]);
