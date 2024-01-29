@@ -491,7 +491,11 @@ class DocContabVars {
             } elseif ($rigo['tiprig'] == 50) { // normale con allegato
               // accumulo il file da allegare e lo indico al posto del codice articolo
               $attach_path = ($this->tableName=='rigdoc')?'doc/'.$rigo['id_rig'].'_rigdoc_':'rigbrodoc_';
-              $this->getExtDoc($rigo['id_rig'],$attach_path);
+              $doc=$this->getExtDoc($rigo['id_rig'],$attach_path);
+              if (!$doc) { // se non ho trovato il file lo metto come tipo normale
+                $rigo['tiprig'] = 0;
+                $rigo['descri'] = 'FILE MANCANTE';
+              }
             } elseif ($rigo['tiprig'] == 90) {
                 $rigo['importo'] = CalcolaImportoRigo(1, $rigo['prelis'], 0);
                 $v_for_castle = CalcolaImportoRigo(1, $rigo['prelis'], $this->tesdoc['sconto']);
@@ -518,7 +522,11 @@ class DocContabVars {
           } elseif ($rigo['tiprig'] == 51) { // descrittivo con allegato
             // accumulo il file da allegare e lo indico al posto del codice articolo
             $attach_path = ($this->tableName=='rigdoc')?'doc/'.$rigo['id_rig'].'_rigdoc_':'rigbrodoc_';
-            $this->getExtDoc($rigo['id_rig'],$attach_path);
+            $doc=$this->getExtDoc($rigo['id_rig'],$attach_path);
+            if (!$doc) { // se non ho trovato il file lo metto come tipo normale
+              $rigo['tiprig'] = 2;
+              $rigo['descri'] = 'FILE MANCANTE';
+            }
           }
           if ($this->tesdoc['tipdoc']=='AFA' && $rigo['tiprig'] <= 2 && strlen($rigo['descri'])>70  ){
             /* 	se la descrizione no la si riesce a contenere in un rigo (es.fattura elettronica d'acquisto)
@@ -623,6 +631,7 @@ class DocContabVars {
         }
       }
       // in ExternalDocs troverò gli eventuali documenti da allegare
+      return $r;
     }
 }
 

@@ -276,162 +276,195 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_quamag'] = $_POST['in_quamag'];
     $form['in_scorta'] = intval($_POST['in_scorta']);
     $form['in_lot_or_serial'] = intval($_POST['in_lot_or_serial']);
+    $form['in_extdoc'] = $_POST['in_extdoc'];
     $form['in_status'] = $_POST['in_status'];
 // fine rigo input
     $form['rows'] = array();
     $i = 0;
     if (isset($_POST['rows'])) {
-        foreach ($_POST['rows'] as $i => $value) {
-            if (isset($_POST["row_$i"])) { //se ho un rigo testo
-                $form["row_$i"] = $_POST["row_$i"];
+      foreach ($_POST['rows'] as $i => $value) {
+        if (isset($_POST["row_$i"])) { //se ho un rigo testo
+            $form["row_$i"] = $_POST["row_$i"];
+        }
+        $form['rows'][$i]['descri'] = substr($value['descri'], 0, 100);
+        $form['rows'][$i]['tiprig'] = intval($value['tiprig']);
+        $form['rows'][$i]['codart'] = substr($value['codart'], 0,32);
+        $form['rows'][$i]['codice_fornitore'] = substr($value['codice_fornitore'], 0, 50);	// Aggiunto a Mano
+        $form['rows'][$i]['pervat'] = preg_replace("/\,/", '.', $value['pervat']);
+        $form['rows'][$i]['ritenuta'] = floatval(preg_replace("/\,/", '.', $value['ritenuta']));
+        $form['rows'][$i]['unimis'] = substr($value['unimis'], 0, 3);
+        $form['rows'][$i]['prelis'] = floatval(preg_replace("/\,/", '.', $value['prelis']));
+        $form['rows'][$i]['sconto'] = floatval(preg_replace("/\,/", '.', $value['sconto']));
+        $form['rows'][$i]['quanti'] = gaz_format_quantity($value['quanti'], 0, $admin_aziend['decimal_quantity']);
+        $form['rows'][$i]['codvat'] = intval($value['codvat']);
+        $form['rows'][$i]['codric'] = intval($value['codric']);
+        $form['rows'][$i]['provvigione'] = floatval($value['provvigione']);
+        $form['rows'][$i]['id_mag'] = intval($value['id_mag']);
+        $form['rows'][$i]['id_warehouse'] = intval($value['id_warehouse']);
+        $form['rows'][$i]['id_order'] = intval($value['id_order']);
+        $form['rows'][$i]['id_orderman'] = intval($value['id_orderman']);
+        $form['rows'][$i]['annota'] = substr($value['annota'], 0, 50);
+        $form['rows'][$i]['pesosp'] = floatval($value['pesosp']);
+        $form['rows'][$i]['gooser'] = intval($value['gooser']);
+        $form['rows'][$i]['quamag'] = floatval($value['quamag']);
+        $form['rows'][$i]['quality'] = strval($value['quality']);
+        $form['rows'][$i]['scorta'] = floatval($value['scorta']);
+        $form['rows'][$i]['lot_or_serial'] = intval($value['lot_or_serial']);
+        $form['rows'][$i]['SIAN'] = intval($value['SIAN']);
+        $form['rows'][$i]['id_rig'] = intval($value['id_rig']);
+        $form['rows'][$i]['extdoc'] = filter_var($value['extdoc'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        if (!empty($_FILES['docfile_' . $i]['name'])) {
+          $move = false;
+          $mt = strtolower(substr($_FILES['docfile_' . $i]['name'], -3));
+          $prefix = $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i;
+          if ($mt == 'pdf' && $_FILES['docfile_' . $i]['size'] > 1000) { //se c'e' un nuovo documento nel buffer
+            if ($_FILES['docfile_' . $i]['size'] > 4500000) $msg['err'][] = "filesize";
+            if (count($msg['err'])==0) {
+              $move = move_uploaded_file($_FILES['docfile_' . $i]['tmp_name'], DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/tmp/'.$i.'_rigdoc_'.$_FILES['docfile_' . $i]['name']);
+              $form['rows'][$i]['extdoc'] = $_FILES['docfile_' . $i]['name'];
+              $form['rows'][$i]['pesosp'] = $_FILES['docfile_' . $i]['size']/1000;
             }
-            $form['rows'][$i]['descri'] = substr($value['descri'], 0, 100);
-            $form['rows'][$i]['tiprig'] = intval($value['tiprig']);
-            $form['rows'][$i]['codart'] = substr($value['codart'], 0,32);
-            $form['rows'][$i]['codice_fornitore'] = substr($value['codice_fornitore'], 0, 50);	// Aggiunto a Mano
-            $form['rows'][$i]['pervat'] = preg_replace("/\,/", '.', $value['pervat']);
-            $form['rows'][$i]['ritenuta'] = floatval(preg_replace("/\,/", '.', $value['ritenuta']));
-            $form['rows'][$i]['unimis'] = substr($value['unimis'], 0, 3);
-            $form['rows'][$i]['prelis'] = floatval(preg_replace("/\,/", '.', $value['prelis']));
-            $form['rows'][$i]['sconto'] = floatval(preg_replace("/\,/", '.', $value['sconto']));
-            $form['rows'][$i]['quanti'] = gaz_format_quantity($value['quanti'], 0, $admin_aziend['decimal_quantity']);
-            $form['rows'][$i]['codvat'] = intval($value['codvat']);
-            $form['rows'][$i]['codric'] = intval($value['codric']);
-            $form['rows'][$i]['provvigione'] = floatval($value['provvigione']);
-            $form['rows'][$i]['id_mag'] = intval($value['id_mag']);
-            $form['rows'][$i]['id_warehouse'] = intval($value['id_warehouse']);
-            $form['rows'][$i]['id_order'] = intval($value['id_order']);
-            $form['rows'][$i]['id_orderman'] = intval($value['id_orderman']);
-            $form['rows'][$i]['annota'] = substr($value['annota'], 0, 50);
-            $form['rows'][$i]['pesosp'] = floatval($value['pesosp']);
-            $form['rows'][$i]['gooser'] = intval($value['gooser']);
-            $form['rows'][$i]['quamag'] = floatval($value['quamag']);
-			$form['rows'][$i]['quality'] = strval($value['quality']);
-            $form['rows'][$i]['scorta'] = floatval($value['scorta']);
-            $form['rows'][$i]['lot_or_serial'] = intval($value['lot_or_serial']);
-			$form['rows'][$i]['SIAN'] = intval($value['SIAN']);
-			$form['rows'][$i]['id_rig'] = intval($value['id_rig']);
-            if ($value['lot_or_serial'] == 2) {
-// se è prevista la gestione per numero seriale/matricola la quantità non può essere diversa da 1
-                if ($form['rows'][$i]['quanti'] <> 1) {
-                    $msg['err'][] = "forceone";
-                }
-                $form['rows'][$i]['quanti'] = 1;
+          }
+          if (!$move) {
+            $msg['err'][] = "filenoload";
+          }
+        }
+        if ($value['lot_or_serial'] == 2) { // se è prevista la gestione per numero seriale/matricola la quantità non può essere diversa da 1
+            if ($form['rows'][$i]['quanti'] <> 1) {
+                $msg['err'][] = "forceone";
             }
-			if (isset($_POST['rows'][$i]['cod_operazione'])){
-				$form['rows'][$i]['cod_operazione'] = intval($_POST['rows'][$i]['cod_operazione']);
-			} else {
-				$form['rows'][$i]['cod_operazione']="";
-			}
-			if (isset($_POST['rows'][$i]['recip_stocc'])){
-				$form['rows'][$i]['recip_stocc'] = $_POST['rows'][$i]['recip_stocc'];
-			} else {
-				$form['rows'][$i]['recip_stocc']="";
-			}
-			if (isset($_POST['rows'][$i]['recip_stocc_destin'])){
-				$form['rows'][$i]['recip_stocc_destin'] = $_POST['rows'][$i]['recip_stocc_destin'];
-			} else {
-				$form['rows'][$i]['recip_stocc_destin']="";
-			}
+            $form['rows'][$i]['quanti'] = 1;
+        }
+        if (isset($_POST['rows'][$i]['cod_operazione'])){
+          $form['rows'][$i]['cod_operazione'] = intval($_POST['rows'][$i]['cod_operazione']);
+        } else {
+          $form['rows'][$i]['cod_operazione']="";
+        }
+        if (isset($_POST['rows'][$i]['recip_stocc'])){
+          $form['rows'][$i]['recip_stocc'] = $_POST['rows'][$i]['recip_stocc'];
+        } else {
+          $form['rows'][$i]['recip_stocc']="";
+        }
+        if (isset($_POST['rows'][$i]['recip_stocc_destin'])){
+          $form['rows'][$i]['recip_stocc_destin'] = $_POST['rows'][$i]['recip_stocc_destin'];
+        } else {
+          $form['rows'][$i]['recip_stocc_destin']="";
+        }
 
-			if (isset($_POST['new_lotmag'][$i])) {// se è stato assegnato un nuovo lotto da un DDR
-				// assegno il nuovo lotto al rigo
+        if (isset($_POST['new_lotmag'][$i])) {// se è stato assegnato un nuovo lotto da un DDR
+          // assegno il nuovo lotto al rigo
+          $form['rows'][$i]['id_lotmag'] = key($_POST['new_lotmag'][$i]);
+          $getlot = $lm->getLot($form['rows'][$i]['id_lotmag']);
+          $form['rows'][$i]['identifier'] = $getlot['identifier'];
+        } else {
+          $form['rows'][$i]['identifier'] = (empty($_POST['rows'][$i]['identifier'])) ? '' : filter_var($_POST['rows'][$i]['identifier'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+          $form['rows'][$i]['id_lotmag'] = $_POST['rows'][$i]['id_lotmag'];
 
-				$form['rows'][$i]['id_lotmag'] = key($_POST['new_lotmag'][$i]);
-				$getlot = $lm->getLot($form['rows'][$i]['id_lotmag']);
-				$form['rows'][$i]['identifier'] = $getlot['identifier'];
-			} else {
-				$form['rows'][$i]['identifier'] = (empty($_POST['rows'][$i]['identifier'])) ? '' : filter_var($_POST['rows'][$i]['identifier'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-				$form['rows'][$i]['id_lotmag'] = $_POST['rows'][$i]['id_lotmag'];
+          if (isset($_POST['rows'][$i]['expiry']) AND $_POST['rows'][$i]['expiry']>0){
+            $form['rows'][$i]['expiry'] = (empty($_POST['rows'][$i]['expiry'])) ? '' : filter_var($_POST['rows'][$i]['expiry'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+          } else {
+            $form['rows'][$i]['expiry']="0000-00-00 00:00:00";
+          }
+        }
 
-				if (isset($_POST['rows'][$i]['expiry']) AND $_POST['rows'][$i]['expiry']>0){
-					$form['rows'][$i]['expiry'] = (empty($_POST['rows'][$i]['expiry'])) ? '' : filter_var($_POST['rows'][$i]['expiry'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-				} else {
-					$form['rows'][$i]['expiry']="0000-00-00 00:00:00";
-				}
-			}
-
-            $form['rows'][$i]['filename'] = filter_var($_POST['rows'][$i]['filename'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-            if (!empty($_FILES['docfile_' . $i]['name'])) {
-                $move = false;
-                $mt = substr($_FILES['docfile_' . $i]['name'], -3);
-                $prefix = $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i;
-                if (($mt == 'png' || $mt == 'peg' || $mt == 'jpg' || $mt == 'pdf') && $_FILES['docfile_' . $i]['size'] > 1000) { //se c'e' una nuova immagine nel buffer
-                    foreach (glob( DATA_DIR . 'files/tmp/' . $prefix . '_*.*') as $fn) {// prima cancello eventuali precedenti file temporanei
-                        unlink($fn);
-                    }
-                    $move = move_uploaded_file($_FILES['docfile_' . $i]['tmp_name'], DATA_DIR . 'files/tmp/' . $prefix . '_' . $_FILES['docfile_' . $i]['name']);
-                    $form['rows'][$i]['filename'] = $_FILES['docfile_' . $i]['name'];
+        $form['rows'][$i]['filename'] = filter_var($_POST['rows'][$i]['filename'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        if (!empty($_FILES['certfile_' . $i]['name'])) {
+            $move = false;
+            $mt = substr($_FILES['certfile_' . $i]['name'], -3);
+            $prefix = $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i;
+            if (($mt == 'png' || $mt == 'peg' || $mt == 'jpg' || $mt == 'pdf') && $_FILES['certfile_' . $i]['size'] > 1000) { //se c'e' una nuova immagine nel buffer
+                foreach (glob( DATA_DIR . 'files/tmp/' . $prefix . '_*.*') as $fn) {// prima cancello eventuali precedenti file temporanei
+                    unlink($fn);
                 }
-                if (!$move) {
-                    $msg['err'][] = "notrack";
-                }
+                $move = move_uploaded_file($_FILES['certfile_' . $i]['tmp_name'], DATA_DIR . 'files/tmp/' . $prefix . '_' . $_FILES['docfile_' . $i]['name']);
+                $form['rows'][$i]['filename'] = $_FILES['certfile_' . $i]['name'];
             }
-            $form['rows'][$i]['status'] = substr($value['status'], 0, 10);
+            if (!$move) {
+                $msg['err'][] = "notrack";
+            }
+        }
+        $form['rows'][$i]['status'] = substr($value['status'], 0, 10);
 
-            if (isset($_POST['upd_row'])) {
-                $key_row = key($_POST['upd_row']);
-                if ($key_row == $i) {
-                    $form['in_descri'] = $form['rows'][$key_row]['descri'];
-                    $form['in_tiprig'] = $form['rows'][$key_row]['tiprig'];
-                    $form['in_codice_fornitore'] = $form['rows'][$key_row]['codice_fornitore'];
-                    $form['in_codart'] = $form['rows'][$key_row]['codart'];
-                    $form['in_pervat'] = $form['rows'][$key_row]['pervat'];
-                    $form['in_ritenuta'] = $form['rows'][$key_row]['ritenuta'];
-                    $form['in_unimis'] = $form['rows'][$key_row]['unimis'];
-                    $form['in_prelis'] = $form['rows'][$key_row]['prelis'];
-                    $form['in_sconto'] = $form['rows'][$key_row]['sconto'];
-                    $form['in_quanti'] = $form['rows'][$key_row]['quanti'];
-                    $form['in_codvat'] = $form['rows'][$key_row]['codvat'];
-                    $form['in_codric'] = $form['rows'][$key_row]['codric'];
-                    $form['in_provvigione'] = $form['rows'][$key_row]['provvigione'];// in caso tiprig=4 questo campo è utilizzato per indicare l'aliquota della cassa previdenziale
-                    $form['in_id_mag'] = $form['rows'][$key_row]['id_mag'];
-                    $form['in_id_warehouse'] = $form['rows'][$key_row]['id_warehouse'];
-                    $form['in_id_order'] = $form['rows'][$key_row]['id_order'];
-                    $orderman = gaz_dbi_get_row($gTables['orderman'], "id", $form['rows'][$key_row]['id_orderman']);
-                    $form['coseprod'] =($orderman)?$orderman['description']:'';
-                    $form['in_id_orderman'] = $form['rows'][$key_row]['id_orderman'];
-                    $form['in_annota'] = $form['rows'][$key_row]['annota'];
-                    $form['in_pesosp'] = $form['rows'][$key_row]['pesosp'];
-                    $form['in_gooser'] = $form['rows'][$key_row]['gooser'];
-                    $form['in_scorta'] = $form['rows'][$key_row]['scorta'];
-                    $form['in_quamag'] = $form['rows'][$key_row]['quamag'];
-                    $form['in_quality'] = $form['rows'][$key_row]['quality'];
-                    $form['in_lot_or_serial'] = $form['rows'][$key_row]['lot_or_serial'];
-                    $form['in_SIAN'] = $form['rows'][$key_row]['SIAN'];
-                    $form['in_cod_operazione'] = $form['rows'][$key_row]['cod_operazione'];
-                    $form['in_recip_stocc'] = $form['rows'][$key_row]['recip_stocc'];
-                    $form['in_recip_stocc_destin'] = $form['rows'][$key_row]['recip_stocc_destin'];
-                    $form['in_status'] = "UPDROW" . $key_row;
-                    // sottrazione ai totali peso,pezzi,volume
-                    $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['rows'][$key_row]['codart']);
-                    $form['net_weight'] -= $form['rows'][$key_row]['quanti'] * $artico['peso_specifico'];
-                    $form['gross_weight'] -= $form['rows'][$key_row]['quanti'] * $artico['peso_specifico'];
-                    if ($artico['pack_units'] > 0) {
-                        $form['units'] -= intval(round($form['rows'][$key_row]['quanti'] / $artico['pack_units']));
-                    }
-                    $form['volume'] -= $form['rows'][$key_row]['quanti'] * $artico['volume_specifico'];
-                    $form['cosear'] = $form['rows'][$key_row]['codart'];
-                    array_splice($form['rows'], $key_row, 1);
-                    $i--;
-                }
-            } elseif ($_POST['hidden_req'] == 'ROW') {
-                if (!empty($form['hidden_req'])) { // al primo ciclo azzero ma ripristino il lordo
-                    $form['gross_weight'] -= $form['net_weight'];
-                    $form['net_weight'] = 0;
-                    $form['units'] = 0;
-                    $form['volume'] = 0;
-                    $form['hidden_req'] = '';
-                }
-                $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['rows'][$next_row]['codart']);
-                $form['net_weight'] += $form['rows'][$next_row]['quanti'] * $artico['peso_specifico'];
-                $form['gross_weight'] += $form['rows'][$next_row]['quanti'] * $artico['peso_specifico'];
+        if (isset($_POST['upd_row'])) {
+            $key_row = key($_POST['upd_row']);
+            if ($key_row == $i) {
+                $form['in_descri'] = $form['rows'][$key_row]['descri'];
+                $form['in_tiprig'] = $form['rows'][$key_row]['tiprig'];
+                $form['in_codice_fornitore'] = $form['rows'][$key_row]['codice_fornitore'];
+                $form['in_codart'] = $form['rows'][$key_row]['codart'];
+                $form['in_pervat'] = $form['rows'][$key_row]['pervat'];
+                $form['in_ritenuta'] = $form['rows'][$key_row]['ritenuta'];
+                $form['in_unimis'] = $form['rows'][$key_row]['unimis'];
+                $form['in_prelis'] = $form['rows'][$key_row]['prelis'];
+                $form['in_sconto'] = $form['rows'][$key_row]['sconto'];
+                $form['in_quanti'] = $form['rows'][$key_row]['quanti'];
+                $form['in_codvat'] = $form['rows'][$key_row]['codvat'];
+                $form['in_codric'] = $form['rows'][$key_row]['codric'];
+                $form['in_provvigione'] = $form['rows'][$key_row]['provvigione'];// in caso tiprig=4 questo campo è utilizzato per indicare l'aliquota della cassa previdenziale
+                $form['in_id_mag'] = $form['rows'][$key_row]['id_mag'];
+                $form['in_id_warehouse'] = $form['rows'][$key_row]['id_warehouse'];
+                $form['in_id_order'] = $form['rows'][$key_row]['id_order'];
+                $orderman = gaz_dbi_get_row($gTables['orderman'], "id", $form['rows'][$key_row]['id_orderman']);
+                $form['coseprod'] =($orderman)?$orderman['description']:'';
+                $form['in_id_orderman'] = $form['rows'][$key_row]['id_orderman'];
+                $form['in_annota'] = $form['rows'][$key_row]['annota'];
+                $form['in_pesosp'] = $form['rows'][$key_row]['pesosp'];
+                $form['in_gooser'] = $form['rows'][$key_row]['gooser'];
+                $form['in_scorta'] = $form['rows'][$key_row]['scorta'];
+                $form['in_quamag'] = $form['rows'][$key_row]['quamag'];
+                $form['in_quality'] = $form['rows'][$key_row]['quality'];
+                $form['in_lot_or_serial'] = $form['rows'][$key_row]['lot_or_serial'];
+                $form['in_SIAN'] = $form['rows'][$key_row]['SIAN'];
+                $form['in_cod_operazione'] = $form['rows'][$key_row]['cod_operazione'];
+                $form['in_recip_stocc'] = $form['rows'][$key_row]['recip_stocc'];
+                $form['in_recip_stocc_destin'] = $form['rows'][$key_row]['recip_stocc_destin'];
+                $form['in_status'] = "UPDROW" . $key_row;
+                // sottrazione ai totali peso,pezzi,volume
+                $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['rows'][$key_row]['codart']);
+                $form['net_weight'] -= $form['rows'][$key_row]['quanti'] * $artico['peso_specifico'];
+                $form['gross_weight'] -= $form['rows'][$key_row]['quanti'] * $artico['peso_specifico'];
                 if ($artico['pack_units'] > 0) {
-                    $form['units'] += intval(round($form['rows'][$next_row]['quanti'] / $artico['pack_units']));
+                    $form['units'] -= intval(round($form['rows'][$key_row]['quanti'] / $artico['pack_units']));
                 }
-                $form['volume'] += $form['rows'][$next_row]['quanti'] * $artico['volume_specifico'];
+                $form['volume'] -= $form['rows'][$key_row]['quanti'] * $artico['volume_specifico'];
+                $form['cosear'] = $form['rows'][$key_row]['codart'];
+                $form['in_extdoc'] = $form['rows'][$key_row]['extdoc'];
+                if (!empty($_FILES['docfile_' . $key_row]['name'])) {
+                    $move = false;
+                    $mt = strtolower(substr($_FILES['docfile_' . $i]['name'], -3));
+                    $prefix = $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i;
+                    if ($mt == 'pdf' && $_FILES['docfile_' . $i]['size'] > 1000) { //se c'e' un nuovo documento nel buffer
+                      if ($_FILES['docfile_' . $i]['size'] > 1999999) $msg['err'][] = "filesize";
+                      if (count($msg['err'])==0) {
+                        $move = move_uploaded_file($_FILES['docfile_' . $i]['tmp_name'], DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/tmp/'.$i.'_rigdoc_'.$_FILES['docfile_' . $i]['name']);
+                        $form['rows'][$i]['extdoc'] = $_FILES['docfile_' . $i]['name'];
+                        $form['rows'][$i]['pesosp'] = $_FILES['docfile_' . $i]['size']/1000;
+                      }
+                    }
+                    if (!$move) {
+                      $msg['err'][] = "filenoload";
+                    }
+                }
+                array_splice($form['rows'], $key_row, 1);
+                $i--;
             }
-            $i++;
+        } elseif ($_POST['hidden_req'] == 'ROW') {
+            if (!empty($form['hidden_req'])) { // al primo ciclo azzero ma ripristino il lordo
+                $form['gross_weight'] -= $form['net_weight'];
+                $form['net_weight'] = 0;
+                $form['units'] = 0;
+                $form['volume'] = 0;
+                $form['hidden_req'] = '';
+            }
+            $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['rows'][$i]['codart']);
+            $form['net_weight'] += $form['rows'][$i]['quanti'] * $artico['peso_specifico'];
+            $form['gross_weight'] += $form['rows'][$i]['quanti'] * $artico['peso_specifico'];
+            if ($artico['pack_units'] > 0) {
+                $form['units'] += intval(round($form['rows'][$i]['quanti'] / $artico['pack_units']));
+            }
+            $form['volume'] += $form['rows'][$i]['quanti'] * $artico['volume_specifico'];
+        }
+        $i++;
 			if ($value['SIAN']>0){
 			$uldtfile=getLastSianDay();
 			$datem=substr($form['datemi'],6,4) . "-" . substr($form['datemi'],3,2) . "-" . substr($form['datemi'],0,2);
@@ -685,7 +718,14 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                         } elseif (!isset($form["row_$i"]) && $val_old_row['id_body_text'] > 0) { //un rigo che prima era testo adesso non lo è più
                             gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigdoc' AND id_ref", $val_old_row['id_rig']);
                         }
-
+                        if  (( $form['rows'][$i]['tiprig']==51 || $form['rows'][$i]['tiprig']==50 ) && !empty($form['rows'][$i]['extdoc'])) {
+                          if (file_exists(DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/tmp/'.$i.'_rigdoc_'.$form['rows'][$i]['extdoc'] )) { // se ho scelto un altro file cancello tutti i vecchi e sposto il nuovo
+                            // se ho scelto un altro file cancello tutti i vecchi e sposto il nuovo
+                            $files = glob( DATA_DIR.'files/'.$admin_aziend['company_id'].'/doc/'.$val_old_row['id_rig'].'_rigdoc_*.*');
+                            foreach($files as $file) { unlink($file); }
+                            rename( DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/tmp/'.$i.'_rigdoc_'.$form['rows'][$i]['extdoc']  , DATA_DIR.'files/'.$admin_aziend['company_id'].'/doc/'.$val_old_row['id_rig'].'_rigdoc_'.$form['rows'][$i]['extdoc']);
+                          }
+                        }
                       // Antonio Germani - inizio salvataggio lotti e magazzino
                       if ($form['rows'][$i]['lot_or_serial'] > 0){ // se l'articolo prevede lotti
 
@@ -791,7 +831,17 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                 for ($i = $i; $i <= $count; $i++) {
                   $form['rows'][$i]['id_tes'] = $form['id_tes'];
                     $last_rigdoc_id =rigdocInsert($form['rows'][$i]);
-                    if ($admin_aziend['conmag'] == 2 &&
+                    // INIZIO INSERIMENTO DOCUMENTI ALLEGATI
+                    if  (( $form['rows'][$i]['tiprig']==51 || $form['rows'][$i]['tiprig']==50 ) && !empty($form['rows'][$i]['extdoc'])) {
+                      if (file_exists(DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/tmp/'.$i.'_rigdoc_'.$form['rows'][$i]['extdoc'] )) {
+                        // se ho scelto un altro file cancello tutti i vecchi e sposto il nuovo
+                        $files = glob( DATA_DIR.'files/'.$admin_aziend['company_id'].'/doc/'.$last_rigdoc_id.'_rigdoc_*.*');
+                        foreach($files as $file) { unlink($file); }
+                        rename( DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/tmp/'.$i.'_rigdoc_'.$form['rows'][$i]['extdoc']  , DATA_DIR.'files/'.$admin_aziend['company_id'].'/doc/'.$last_rigdoc_id.'_rigdoc_'.$form['rows'][$i]['extdoc']);
+                      }
+                    }
+                    // FINE INSERIMENTO DOCUMENTI ALLEGATI
+                      if ($admin_aziend['conmag'] == 2 &&
                             $form['rows'][$i]['tiprig'] == 0 &&
                             $form['rows'][$i]['gooser'] == 0 &&
                             !empty($form['rows'][$i]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
@@ -937,6 +987,16 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                 foreach ($form['rows'] as $i => $value) {
                   $form['rows'][$i]['id_tes'] = $ultimo_id;
                   $last_rigdoc_id=rigdocInsert($form['rows'][$i]);
+                  // INIZIO INSERIMENTO DOCUMENTI ALLEGATI
+                  if  (( $form['rows'][$i]['tiprig']==51 || $form['rows'][$i]['tiprig']==50 ) && !empty($form['rows'][$i]['extdoc'])) {
+                    if (file_exists(DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/tmp/'.$i.'_rigdoc_'.$form['rows'][$i]['extdoc'] )) { // se ho scelto un altro file cancello tutti i vecchi e sposto il nuovo
+                      // se ho scelto un altro file cancello tutti i vecchi e sposto il nuovo
+                      $files = glob( DATA_DIR.'files/'.$admin_aziend['company_id'].'/doc/'.$last_rigdoc_id.'_rigdoc_*.*');
+                      foreach($files as $file) { unlink($file); }
+                      rename( DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/tmp/'.$i.'_rigdoc_'.$form['rows'][$i]['extdoc']  , DATA_DIR.'files/'.$admin_aziend['company_id'].'/doc/'.$last_rigdoc_id.'_rigdoc_'.$form['rows'][$i]['extdoc']);
+                    }
+                  }
+                  // FINE INSERIMENTO DOCUMENTI ALLEGATI
                   if (isset($form["row_$i"])) { //se è un rigo testo lo inserisco il contenuto in body_text
                     $last_bodytext_id=bodytextInsert(array('table_name_ref' => 'rigdoc', 'id_ref' => $last_rigdoc_id, 'body_text' => $form["row_$i"], 'lang_id' => $admin_aziend['id_language']));
                     gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $last_rigdoc_id, 'id_body_text',$last_bodytext_id);
@@ -1108,6 +1168,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$old_key]['provvigione'] = $form['in_provvigione']; // in caso tiprig=4 questo campo è utilizzato per indicare l'aliquota della cassa previdenziale
             $form['rows'][$old_key]['prelis'] = floatval(preg_replace("/\,/", '.', $form['in_prelis']));
             $form['rows'][$old_key]['sconto'] = $form['in_sconto'];
+            $form['rows'][$old_key]['extdoc'] = $form['in_extdoc'];
             $form['rows'][$old_key]['codvat'] = $form['in_codvat'];
             $form['rows'][$old_key]['codice_fornitore'] = $form['in_codice_fornitore'];
             $iva_row = gaz_dbi_get_row($gTables['aliiva'], "codice", $form['in_codvat']);
@@ -1191,9 +1252,10 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$i]['recip_stocc'] = "";
             $form['rows'][$i]['recip_stocc_destin'] = "";
             $form['rows'][$i]['expiry'] = '';
+            $form['rows'][$i]['extdoc'] = 0;
             $form['rows'][$i]['filename'] = '';
             $form['rows'][$i]['quality'] = '';
-            if ($form['in_tiprig'] == 0) {  //rigo normale
+            if ($form['in_tiprig'] == 0 || $form['in_tiprig'] == 50) {  //rigo normale
                 $form['rows'][$i]['codart'] = $form['in_codart'];
                 $form['rows'][$i]['codice_fornitore'] = $artico['codice_fornitore']; //M1 aggiunto a mano
                 $form['rows'][$i]['annota'] = $artico['annota'];
@@ -1296,7 +1358,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                     $form['rows'][$i]['pervat'] = $iva_row['aliquo'];
                     $form['rows'][$i]['tipiva'] = $iva_row['tipiva'];
                 }
-            } elseif ($form['in_tiprig'] == 2) { //descrittivo
+            } elseif ($form['in_tiprig'] == 2 || $form['in_tiprig'] == 51) { //descrittivo
                 $form['rows'][$i]['codart'] = "";
                 $form['rows'][$i]['annota'] = "";
                 $form['rows'][$i]['pesosp'] = 0;
@@ -1361,7 +1423,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                     $form['rows'][$i]['descri']= 'Contributo '.strtolower($v->field[1]);
                   }
                 }
-            } elseif ($form['in_tiprig'] > 5 && $form['in_tiprig'] < 9) { //testo
+            } elseif ($form['in_tiprig'] > 5 && $form['in_tiprig'] < 9 ) { //testo
                 $form["row_$i"] = "";
                 $form['rows'][$i]['codart'] = "";
                 $form['rows'][$i]['annota'] = "";
@@ -1532,13 +1594,14 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_id_order'] = 0;
     $form['in_id_orderman'] = 0;
     $form['in_annota'] = "";
+    $form['in_extdoc'] = 0;
     $form['in_pesosp'] = 0;
     $form['in_gooser'] = 0;
     $form['in_scorta'] = 0;
     $form['in_quamag'] = 0;
     $form['in_lot_or_serial'] = 0;
     $form['in_SIAN'] = 0;
-    $form['in_status'] = "INSERT";
+    $form['in_status'] = "";
 // fine rigo input
     $form['rows'] = array();
 // ...e della testata
@@ -1656,7 +1719,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
 				$form['rows'][$i]['filename'] = '';
 				$form['rows'][$i]['identifier'] = '';
 				$form['rows'][$i]['expiry'] = '';
-				$form['rows'][$i]['status'] = "UPDATE";
+				$form['rows'][$i]['status'] = "";
 
 				if ($form['rows'][$i]['SIAN']>0){
 					$camp_mov_sian = gaz_dbi_get_row($gTables['camp_mov_sian'], "id_movmag", $form['rows'][$i]['id_mag']);
@@ -1688,7 +1751,6 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
 						$form['rows'][$i]['expiry']="0000-00-00 00:00:00";
 					}
 				} else {
-					$form['rows'][$i]['status'] = "Insert";
 					$form['rows'][$i]['id_mag'] = 0;
 				}
 				} else {
@@ -1773,7 +1835,19 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
       $form['rows'][$i]['filename'] = '';
       $form['rows'][$i]['identifier'] = '';
       $form['rows'][$i]['expiry'] = '';
-      $form['rows'][$i]['status'] = "UPDATE";
+      $form['rows'][$i]['extdoc'] = '';
+      if ($row['tiprig']==50||$row['tiprig']==51){
+        $form['rows'][$i]['pesosp'] = $row['peso_specifico'];
+        // recupero il filename dal filesystem
+        $dh = opendir( DATA_DIR . 'files/' . $admin_aziend['company_id'].'/doc' );
+        while (false !== ($filename = readdir($dh))) {
+          $fd = pathinfo($filename);
+          $e = explode('_rigdoc_', $fd['basename']);
+          if ($e[0] == $row['id_rig']) {
+            $form['rows'][$i]['extdoc'] = $e[1];
+          }
+        }
+      }
       if ($form['rows'][$i]['SIAN']>0){
         $camp_mov_sian = gaz_dbi_get_row($gTables['camp_mov_sian'], "id_movmag", $form['rows'][$i]['id_mag']);
         if ($camp_mov_sian) {
@@ -1805,9 +1879,10 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
 				$form['rows'][$i]['expiry'] = gaz_format_date($lotmag['expiry']);
 			} else {
 				$form['rows'][$i]['expiry']="0000-00-00 00:00:00";
+        $form['rows'][$i]['status'] = "";
 			}
 		} else {
-			$form['rows'][$i]['status'] = "Insert";
+			$form['rows'][$i]['status'] = "";
 			$form['rows'][$i]['id_mag'] = 0;
 		}
 		} else {
@@ -1868,6 +1943,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_pervat'] = "";
     $form['in_ritenuta'] = 0;
     $form['in_unimis'] = "";
+    $form['in_extdoc'] = 0;
     $form['in_prelis'] = 0.000;
     $form['in_sconto'] = 0;
     $form['in_quanti'] = 0;
@@ -1894,7 +1970,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
     $form['cod_operazione'] = 11;
     $form['recip_stocc'] = "";
     $form['recip_stocc_destin'] = "";
-    $form['in_status'] = "INSERT";
+    $form['in_status'] = "";
 // fine rigo input
     $form['search']['clfoco'] = '';
     $form['cosear'] = "";
@@ -2305,6 +2381,7 @@ echo '<input type="hidden" value="' . $strArrayDest . '" name="rs_destinazioni">
 		<input type="hidden" value="<?php echo $form['in_descri']; ?>" name="in_descri" />
 		<input type="hidden" value="<?php echo $form['in_pervat']; ?>" name="in_pervat" />
 		<input type="hidden" value="<?php echo $form['in_unimis']; ?>" name="in_unimis" />
+		<input type="hidden" value="<?php echo $form['in_extdoc']; ?>" name="in_extdoc" />
 		<input type="hidden" value="<?php echo $form['in_prelis']; ?>" name="in_prelis" />
 		<input type="hidden" value="<?php echo $form['in_id_mag']; ?>" name="in_id_mag" />
 		<input type="hidden" value="<?php echo $form['in_id_order']; ?>" name="in_id_order" />
@@ -2378,7 +2455,7 @@ echo '<input type="hidden" value="' . $strArrayDest . '" name="rs_destinazioni">
 				}
 				$imprig = 0;
 				 //creo il castelletto IVA
-				if ($v['tiprig'] <= 1 || $v['tiprig'] == 4) { // calcolo per tipi righi normale, forfait e cassa previdenziale
+				if ($v['tiprig'] <= 1 || $v['tiprig'] == 4 || $v['tiprig'] == 50) { // calcolo per tipi righi normale, forfait e cassa previdenziale
 					$imprig = CalcolaImportoRigo($v['quanti'], $v['prelis'], $v['sconto']);
 					$v_for_castle = CalcolaImportoRigo($v['quanti'], $v['prelis'], array($v['sconto'], $form['sconto']));
 					if ($v['tiprig'] == 1) {// se del tipo forfait
@@ -2424,7 +2501,8 @@ echo '<input type="hidden" value="' . $strArrayDest . '" name="rs_destinazioni">
 				echo "<input type=\"hidden\" value=\"" . $v['annota'] . "\" name=\"rows[$k][annota]\">\n";
 				echo "<input type=\"hidden\" value=\"" . $v['scorta'] . "\" name=\"rows[$k][scorta]\">\n";
 				echo "<input type=\"hidden\" value=\"" . $v['quamag'] . "\" name=\"rows[$k][quamag]\">\n";
-				echo "<input type=\"hidden\" value=\"" . $v['pesosp'] . "\" name=\"rows[$k][pesosp]\">\n";
+        echo '<input type="hidden" value="' . $v['extdoc'] . '" name="rows[' . $k . '][extdoc]" />';
+        echo "<input type=\"hidden\" value=\"" . $v['pesosp'] . "\" name=\"rows[$k][pesosp]\">\n";
 				echo '<input type="hidden" value="' . $v['lot_or_serial'] . '" name="rows[' . $k . '][lot_or_serial]" />';
 				echo '<input type="hidden" value="' . ((array_key_exists('id_lotmag',$v)) ? $v['id_lotmag'] : '') . '" name="rows[' . $k . '][id_lotmag]" />';
 				// colonne editabili
@@ -2516,7 +2594,7 @@ echo '<input type="hidden" value="' . $strArrayDest . '" name="rs_destinazioni">
 								$lm_acc .='<div id="lm_dialog' . $k . '" class="collapse" >
 								<div class="form-group">
 								<div>';
-								$lm_acc .='<input type="file" onchange="this.form.submit();" name="docfile_' . $k . '">
+								$lm_acc .='<input type="file" onchange="this.form.submit();" name="certfile_' . $k . '">
 									<label>' . $script_transl['identifier'] . '</label><input type="text" name="rows[' . $k . '][identifier]" value="' . $form['rows'][$k]['identifier'] . '" ><br>
 									<label>' . $script_transl['expiry'] . ' </label><input class="datepicker" type="text" name="rows[' . $k . '][expiry]"  value="' . $form['rows'][$k]['expiry'] . '" >
 									</div>
@@ -2666,7 +2744,6 @@ echo '<input type="hidden" value="' . $strArrayDest . '" name="rs_destinazioni">
 						$resprow[$k][3]['value'] .= $lm_acc;
 						break;
 					case "1":
-						// in caso di rigo cassa previdenziale
 						$resprow[$k][1]['value'] = '<button name="upd_row[' . $k . ']" class="btn btn-info btn-xs"
 						title="' . $script_transl['update'] . $script_transl['thisrow'] . '"
 						type="submit"><i class="glyphicon glyphicon-refresh"></i> forfait </button>';
@@ -2726,7 +2803,43 @@ echo '<input type="hidden" value="' . $strArrayDest . '" name="rs_destinazioni">
 						$resprow[$k][11]['value'] = '';
 						$resprow[$k][12]['value'] = '';
 						break;
-				}
+          case "50":
+            break;
+          case "51":
+						$resprow[$k][1]['value'] = '<button name="upd_row[' . $k . ']" class="btn btn-info btn-xs"
+						title="' . $script_transl['update'] . $script_transl['thisrow'] . '"
+						type="submit"><i class="glyphicon glyphicon-refresh"></i> Descrittivo c/allegato</button>';
+            if (empty($form['rows'][$k]['extdoc'])) {
+              $html= '<div><button class="btn btn-xs btn-danger" type="image" data-toggle="collapse" href="#extdoc_dialog' . $k . '">'
+              . $script_transl['insert'] . ' documento esterno <i class="glyphicon glyphicon-tag"></i>'
+              . '</button></div>';
+            } else {
+              $html= '<div>documento esterno:<button class="btn btn-xs btn-success" type="image" data-toggle="collapse" href="#extdoc_dialog' . $k . '">'
+              . $form['rows'][$k]['extdoc'] . ' <i class="glyphicon glyphicon-tag"></i>'
+              . '</button> ' . round($form['rows'][$k]['pesosp']) . 'KB</div>';
+            }
+            $html .= '<div id="extdoc_dialog' . $k . '" class="collapse" >
+                  <div class="form-group">
+                  <div>';
+            $html .= '<input type="file" onchange="this.form.submit();" name="docfile_' . $k . '" accept=".pdf" />
+                            <label>File: ' . $form['rows'][$k]['extdoc'] . '</label><input type="hidden" name="rows[' . $k . '][extdoc]" value="' . $form['rows'][$k]['extdoc'] . '" >
+              </div>
+              </div>
+              </div>';
+
+
+						$resprow[$k][2]['value'] = $html; //magazzino
+						$resprow[$k][3]['value'] = ''; //codice_fornitore
+						$resprow[$k][5]['value'] = ''; //unimis
+						$resprow[$k][6]['value'] = ''; //quanti
+						$resprow[$k][7]['value'] = ''; //prelis
+						$resprow[$k][8]['value'] = ''; //sconto
+						$resprow[$k][9]['value'] = ''; //quanti
+						$resprow[$k][10]['value'] = ''; //prelis
+						$resprow[$k][11]['value'] = '';
+						$resprow[$k][12]['value'] = '';
+          break;
+        }
 				$ctrl_orderman=$v['id_orderman'];
 			}
 			if ($net_weight > 0 ){

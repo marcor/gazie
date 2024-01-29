@@ -1471,7 +1471,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
       $form['rows'][$next_row]['scorta'] = 0;
       $form['rows'][$next_row]['quamag'] = 0;
       $form['rows'][$next_row]['ritenuta'] = $form['in_ritenuta'];
-      if ($form['in_tiprig'] == 0) {  //rigo normale
+      if ($form['in_tiprig'] == 0 || $form['in_tiprig'] == 50) {  //rigo normale
         $form['rows'][$next_row]['codart'] = $form['in_codart'];
         $form['rows'][$next_row]['annota'] = $artico['annota'];
         $form['rows'][$next_row]['pesosp'] = $artico['peso_specifico'];
@@ -1662,7 +1662,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['gooser'] = 0;
           }
         }
-      } elseif ($form['in_tiprig'] == 1 || $form['in_tiprig'] == 50) { //forfait
+      } elseif ($form['in_tiprig'] == 1) { //forfait
         $form['rows'][$next_row]['codart'] = "";
         $form['rows'][$next_row]['annota'] = "";
         $form['rows'][$next_row]['pesosp'] = "";
@@ -3293,7 +3293,7 @@ foreach ($form['rows'] as $k => $v) {
             break;
         case "50":
             echo "<td><button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\"><i class=\"glyphicon glyphicon-arrow-up\"></i></button></td>";
-            echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$k}]\" value=\"* documento allegato *\" /></td>\n";
+            echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$k}]\" value=\"Normale c/allegato\" /></td>\n";
             echo '<td>';
             if (empty($form['rows'][$k]['extdoc'])) {
               echo '<div><button class="btn btn-xs btn-danger" type="image" data-toggle="collapse" href="#extdoc_dialog' . $k . '">'
@@ -3321,14 +3321,14 @@ foreach ($form['rows'] as $k => $v) {
             echo "<td><input type=\"text\" name=\"rows[{$k}][sconto]\" value=\"{$v['sconto']}\" maxlength=\"4\"  onchange=\"this.form.submit()\" /></td>\n";
             echo "<td class=\"text-right\">" . gaz_format_number($imprig) . "</td>\n";
             echo "<td>{$v['pervat']}%</td>\n";
-            echo "<td>" . $v['codric'] . "</td>\n";
+            echo "<td>" . $v['codric'] . "</td><td></td>\n";
             echo '
                 ';
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
         case "51":
           echo "<td><button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\"><i class=\"glyphicon glyphicon-arrow-up\"></i></button></td>";
-          echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$k}]\" value=\"* documento allegato *\" /></td>\n";
+          echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\"><input class=\"btn btn-xs btn-info btn-block\" type=\"submit\" name=\"upd_row[{$k}]\" value=\"Descrittivo c/allegato\" /></td>\n";
           echo '<td>';
           if (empty($form['rows'][$k]['extdoc'])) {
             echo '<div><button class="btn btn-xs btn-danger" type="image" data-toggle="collapse" href="#extdoc_dialog' . $k . '">'
@@ -3353,7 +3353,7 @@ foreach ($form['rows'] as $k => $v) {
           echo "<td><input type=\"hidden\" name=\"rows[{$k}][sconto]\" value=\"\" /></td>\n";
           echo '<td><input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" /></td>
                 <td><input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" /></td>
-                <td><input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" /></td>';
+                <td><input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" /></td><td></td>';
           $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
         break;
         case "90": //ventita cespite - alienazione bene ammortizzabile
