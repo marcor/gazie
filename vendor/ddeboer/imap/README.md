@@ -2,12 +2,12 @@
 
 [![Latest Stable Version](https://img.shields.io/packagist/v/ddeboer/imap.svg)](https://packagist.org/packages/ddeboer/imap)
 [![Downloads](https://img.shields.io/packagist/dt/ddeboer/imap.svg)](https://packagist.org/packages/ddeboer/imap)
-[![Integrate](https://github.com/ddeboer/imap/workflows/CI/badge.svg)](https://github.com/ddeboer/imap/actions)
+[![Integrate](https://github.com/ddeboer/imap/workflows/Integrate/badge.svg?branch=master)](https://github.com/ddeboer/imap/actions)
 [![Code Coverage](https://codecov.io/gh/ddeboer/imap/coverage.svg?branch=master)](https://codecov.io/gh/ddeboer/imap?branch=master)
 
 A PHP IMAP library to read and process e-mails over IMAP protocol, built with robust Object-Oriented architecture.
 
-This library requires PHP >= 8.1 with [IMAP](https://www.php.net/manual/en/book.imap.php),
+This library requires PHP >= 7.4 with [IMAP](https://www.php.net/manual/en/book.imap.php),
 [iconv](https://www.php.net/manual/en/book.iconv.php) and
 [Multibyte String](https://www.php.net/manual/en/book.mbstring.php) extensions installed.
 
@@ -157,7 +157,7 @@ By the way most of the common search criteria are available and functioning, bro
 References:
 
 1. https://stackoverflow.com/questions/36356715/imap-search-unknown-search-criterion-or
-2. imap-2007f.tar.gz: `./src/c-client/mail.c` and `./docs/internal.txt`
+1. imap-2007f.tar.gz: `./src/c-client/mail.c` and `./docs/internal.txt`
 
 #### Message Properties and Operations
 
@@ -182,27 +182,17 @@ $message->isDraft();
 $message->isSeen();
 ```
 
-Get message headers as a [\Ddeboer\Imap\Message\Headers](/src/Message/Headers.php) object:
+Get message headers as a [\Ddeboer\Imap\Message\Headers](/src/Ddeboer/Imap/Message/Headers.php) object:
 
 ```php
 $message->getHeaders();
 ```
 
-Get message body as HTML or plain text (only first part):
+Get message body as HTML or plain text:
 
 ```php
 $message->getBodyHtml();    // Content of text/html part, if present
 $message->getBodyText();    // Content of text/plain part, if present
-```
-
-
-Get complete body (all parts):
-
-```php
-$body = $message->getCompleteBodyHtml();    // Content of text/html part, if present
-if ($body === null) { // If body is null, there are no HTML parts, so let's try getting the text body
-    $body = $message->getCompleteBodyText();    // Content of text/plain part, if present
-}
 ```
 
 Reading the message body keeps the message as unseen.

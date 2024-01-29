@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Ddeboer\Imap\Message;
 
-use Ddeboer\Imap\Exception\UnsupportedCharsetException;
-
 final class Headers extends Parameters
 {
     public function __construct(\stdClass $headers)
@@ -18,7 +16,7 @@ final class Headers extends Parameters
         foreach ($headers as $key => $value) {
             try {
                 $this[$key] = $this->parseHeader($key, $value);
-            } catch (UnsupportedCharsetException) {
+            } catch (\Ddeboer\Imap\Exception\UnsupportedCharsetException $e) {
                 // safely skip header with unsupported charset
             }
         }
@@ -56,6 +54,7 @@ final class Headers extends Parameters
             case 'sender':
             case 'return_path':
                 \assert(\is_array($value));
+                /** @var \stdClass $address */
                 foreach ($value as $address) {
                     if (isset($address->mailbox)) {
                         $address->host     = $address->host ?? null;

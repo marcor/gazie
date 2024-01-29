@@ -6,6 +6,7 @@ namespace Ddeboer\Imap;
 
 use Ddeboer\Imap\Exception\CreateMailboxException;
 use Ddeboer\Imap\Exception\DeleteMailboxException;
+use Ddeboer\Imap\Exception\InvalidResourceException;
 use Ddeboer\Imap\Exception\MailboxDoesNotExistException;
 
 /**
@@ -30,6 +31,8 @@ interface ConnectionInterface extends \Countable
 
     /**
      * Check if the connection is still active.
+     *
+     * @throws InvalidResourceException If connection was closed
      */
     public function ping(): bool;
 
