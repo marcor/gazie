@@ -26,7 +26,7 @@ require("../../library/include/datlib.inc.php");
 
 $admin_aziend=checkAdmin();
 
-require('../../library/tcpdf/tcpdf.php');
+require('../../vendor/tecnickcom/tcpdf/tcpdf.php');
 
 
 $logo=$admin_aziend['image'];

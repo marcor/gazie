@@ -281,7 +281,7 @@ $strScript = array("admin_fornit.php" =>
         'search' => ' ricerca per ',
         'in_artsea_value' => array('C' => 'Codice articolo', 'B' => 'Codice a barre', 'D' => 'Descrizione'),
         'tiprig' => 'Tipo rigo',
-        'tiprig_value' => array(0 => 'Normale', 1 => 'Forfait', 2 => 'Descrittivo',4=>'Cassa previdenziale',6=>'Testo',51=>'Descrittivo c/allegato'),
+        'tiprig_value' => array(0 => 'Normale', 1 => 'Forfait', 2 => 'Descrittivo',4=>'Cassa previdenziale',6=>'Testo',50=>'Normale c/allegato',51=>'Descrittivo c/allegato'),
         'body_title' => 'corpo',
         'foot_title' => 'totali',
         'nrow' => 'Rigo',

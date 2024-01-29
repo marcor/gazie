@@ -2804,6 +2804,27 @@ echo '<input type="hidden" value="' . $strArrayDest . '" name="rs_destinazioni">
 						$resprow[$k][12]['value'] = '';
 						break;
           case "50":
+						$resprow[$k][1]['value'] = '<button name="upd_row[' . $k . ']" class="btn btn-info btn-xs"
+						title="' . $script_transl['update'] . $script_transl['thisrow'] . '"
+						type="submit"><i class="glyphicon glyphicon-refresh"></i> Normale c/allegato</button>';
+            if (empty($form['rows'][$k]['extdoc'])) {
+              $html= '<div><button class="btn btn-xs btn-danger" type="image" data-toggle="collapse" href="#extdoc_dialog' . $k . '">'
+              . $script_transl['insert'] . ' documento esterno <i class="glyphicon glyphicon-tag"></i>'
+              . '</button></div>';
+            } else {
+              $html= '<div>documento esterno:<button class="btn btn-xs btn-success" type="image" data-toggle="collapse" href="#extdoc_dialog' . $k . '">'
+              . $form['rows'][$k]['extdoc'] . ' <i class="glyphicon glyphicon-tag"></i>'
+              . '</button> ' . round($form['rows'][$k]['pesosp']) . 'KB</div>';
+            }
+            $html .= '<div id="extdoc_dialog' . $k . '" class="collapse" >
+                  <div class="form-group">
+                  <div>';
+            $html .= '<input type="file" onchange="this.form.submit();" name="docfile_' . $k . '" accept=".pdf" />
+                            <label>File: ' . $form['rows'][$k]['extdoc'] . '</label><input type="hidden" name="rows[' . $k . '][extdoc]" value="' . $form['rows'][$k]['extdoc'] . '" >
+              </div>
+              </div>
+              </div>';
+						$resprow[$k][2]['value'] = $html; //magazzino
             break;
           case "51":
 						$resprow[$k][1]['value'] = '<button name="upd_row[' . $k . ']" class="btn btn-info btn-xs"
@@ -2826,8 +2847,6 @@ echo '<input type="hidden" value="' . $strArrayDest . '" name="rs_destinazioni">
               </div>
               </div>
               </div>';
-
-
 						$resprow[$k][2]['value'] = $html; //magazzino
 						$resprow[$k][3]['value'] = ''; //codice_fornitore
 						$resprow[$k][5]['value'] = ''; //unimis

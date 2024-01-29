@@ -32,7 +32,7 @@
 // Antonio Germani    - STAMPA COPERTINA ANNUALE QUADERNO DI CAMPAGNA -
 
 require("../../library/include/datlib.inc.php");
-require_once('../../library/tcpdf/tcpdf.php');
+require_once('../../vendor/tecnickcom/tcpdf/tcpdf.php');
 $admin_aziend=checkAdmin();
 
 if (!ini_get('safe_mode')){ //se me lo posso permettere...

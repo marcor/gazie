@@ -534,7 +534,7 @@ class FatturaImmediata extends Template_con_scheda
                   $this->_tplIdx = $this->importPage($i);
                   $specs = $this->getTemplateSize($this->_tplIdx);
                   // stabilisco se portrait-landscape
-                  if ($specs['h'] > $specs['w']){ //portrait
+                  if ($specs['height'] > $specs['width']){ //portrait
                     $pl='P';
                     $w=210;
                     $h=297;

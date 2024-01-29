@@ -142,10 +142,9 @@ define('MY_PER_PAGE', 30);
 define('MY_DATA_DIR', '../../data/');
 
 //
-// Directory usata dal modulo tcpdf
+// Directory usata come cache da tcpdf
 //
-define('MY_K_PATH_CACHE', '../../library/tcpdf/cache/');
-// define('MY_K_PATH_CACHE', '../../vendor/tecnickcom/tcpdf/cache/'); // useremo questa directory per i file temporanei non appena aggiorneremo il resto
+define('MY_K_PATH_CACHE', '../../data/files/tmp/');
 
 ////////////////////////////////////////////////////////////////////////
 // definisce il nome della sessione ma solo in caso di uso dei domini di livello superiore al secondo, in

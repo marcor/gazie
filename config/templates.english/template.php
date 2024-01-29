@@ -24,7 +24,7 @@
   --------------------------------------------------------------------------
  */
 
-require('../../library/tcpdf/tcpdf.php');
+require('../../vendor/tecnickcom/tcpdf/tcpdf.php');
 require('../../library/tcpdf/tcpdi.php');
 
 class Template extends TCPDI {

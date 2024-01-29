@@ -23,10 +23,9 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
-require('../../library/tcpdf/tcpdf.php');
-require('../../library/tcpdf/tcpdi.php');
 
-class Template extends TCPDI {
+use setasign\Fpdi\Tcpdf\Fpdi;
+class Template extends Fpdi {
 
   public $docVars;
   public $gaz_path;

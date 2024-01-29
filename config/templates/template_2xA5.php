@@ -24,10 +24,8 @@
   --------------------------------------------------------------------------
  */
 
-require('../../library/tcpdf/tcpdf.php');
-require('../../library/tcpdf/tcpdi.php');
-
-class Template_2xA5 extends TCPDI {
+use setasign\Fpdi\Tcpdf\Fpdi;
+class Template_2xA5 extends Fpdi {
 
   public $docVars;
   public $gaz_path;

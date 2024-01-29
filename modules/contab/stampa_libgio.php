@@ -112,7 +112,7 @@ while ($mov = gaz_dbi_fetch_assoc($result)) {
 $rip[$p]['dare']=$rid;
 $rip[$p]['avere']=$ria;
 if (isset($_GET['pdfa']) || isset($_GET['pdfamese'])) {
-	require('../../library/tcpdf/tcpdf.php');
+	require('../../vendor/tecnickcom/tcpdf/tcpdf.php');
   class GL_template extends TCPDF {
     public $ad_az;
     public $intesta1;

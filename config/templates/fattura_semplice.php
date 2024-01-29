@@ -542,8 +542,9 @@ class FatturaSemplice extends Template {
                 for ($i = 1; $i <= $this->numPages; $i++) {
                   $this->_tplIdx = $this->importPage($i);
                   $specs = $this->getTemplateSize($this->_tplIdx);
+               //   var_dump($specs);
                   // stabilisco se portrait-landscape
-                  if ($specs['h'] > $specs['w']){ //portrait
+                  if ($specs['height'] > $specs['width']){ //portrait
                     $pl='P';
                     $w=210;
                     $h=297;
