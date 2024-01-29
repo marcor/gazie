@@ -42,6 +42,9 @@ class FatturaSemplice extends Template {
   public $descriptive_last_row;
   public $show_artico_composit;
   public $sedelegale;
+  public $numPages;
+  public $_tplIdx;
+  public $extdoc_acc;
 
   function setTesDoc() {
     $this->tesdoc = $this->docVars->tesdoc;

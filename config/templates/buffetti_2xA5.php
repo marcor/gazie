@@ -48,6 +48,9 @@ class Template_2xA5 extends TCPDI {
   public $intesta3;
   public $intesta4;
   public $sedelegale;
+  public $numPages;
+  public $_tplIdx;
+  public $extdoc_acc;
   public $colore;
   public $decimal_quantity;
   public $decimal_price;
