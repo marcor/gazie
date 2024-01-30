@@ -97,11 +97,10 @@ if (isset($_POST['conferma']) && isset($_POST['num_orders'])) { // se confermato
 
       $stapre="T"; // stampa prezzi con totale
 
-
 			$esiste=0;
 			if (strlen($_POST['ref_ecommerce_id_customer'.$ord])>0){ // controllo esistenza cliente per codice e-commerce
 				unset($cl);
-				$cl = gaz_dbi_get_row($gTables['clfoco'], "ref_ecommerce_id_customer", intval($_POST['ref_ecommerce_id_customer'.$ord]));
+				$cl = gaz_dbi_get_row($gTables['clfoco'], "ref_ecommerce_id_customer", $_POST['ref_ecommerce_id_customer'.$ord]);
 				if (isset($cl)){
 					$clfoco=$cl['codice'];
 					$esiste=1;
@@ -397,7 +396,7 @@ if ( isset($headers[0]) AND intval(substr($headers[0], 9, 3))==200){ // controll
 						echo '<input type="hidden" name="order_discount_price'. $n .'" value="'. $order->TotalDiscount .'">';
 						echo '</td><td>';
 						echo '<input type="hidden" name="ref_ecommerce_id_order'. $n .'" value="'. $order->Numbering .'">';
-						echo '<input type="hidden" name="ref_ecommerce_id_customer'. $n .'" value="'. $order->CustomerCode .'">';
+						echo '<input type="text" name="ref_ecommerce_id_customer'. $n .'" value="'. $order->CustomerCode .'">';
 						echo '<input type="hidden" name="prospe'. $n .'" value="'. $order->CustomerProvince .'">';
 						echo '<input type="hidden" name="capspe'. $n .'" value="'. $order->CustomerPostCode .'">';
 						echo '<input type="hidden" name="indspe'. $n .'" value="'. $order->CustomerAddress .'">';
