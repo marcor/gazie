@@ -396,7 +396,7 @@ if ( isset($headers[0]) AND intval(substr($headers[0], 9, 3))==200){ // controll
 						echo '<input type="hidden" name="order_discount_price'. $n .'" value="'. $order->TotalDiscount .'">';
 						echo '</td><td>';
 						echo '<input type="hidden" name="ref_ecommerce_id_order'. $n .'" value="'. $order->Numbering .'">';
-						echo '<input type="text" name="ref_ecommerce_id_customer'. $n .'" value="'. $order->CustomerCode .'">';
+						echo '<input type="hidden" name="ref_ecommerce_id_customer'. $n .'" value="'. $order->CustomerCode .'">';
 						echo '<input type="hidden" name="prospe'. $n .'" value="'. $order->CustomerProvince .'">';
 						echo '<input type="hidden" name="capspe'. $n .'" value="'. $order->CustomerPostCode .'">';
 						echo '<input type="hidden" name="indspe'. $n .'" value="'. $order->CustomerAddress .'">';
