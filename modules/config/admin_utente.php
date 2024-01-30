@@ -362,7 +362,7 @@ if (isset($_POST['conferma'])) {
 
 		} elseif ($toDo == 'update') {
       $custom_field=gaz_dbi_get_row($gTables['anagra'], "id", $form['id_anagra'])['custom_field']; // carico il json custom_field esistente
-      if ($data = json_decode($custom_field,true)){// se c'è un json
+      if ($custom_field && $data = json_decode($custom_field,true)){// se c'è un json
         if (isset($data['config']) && is_array($data['config']) && isset($data['config'][$form['company_id']])){ // se c'è il modulo "config" e c'è l'azienda attuale aggiorno il custom field
           $data['config'][$form['company_id']]['imap_usr']=$form['imap_usr'];
           if (strlen($form['imap_pwr'])>4){// se è stata scritta una password la inserisco o modifico

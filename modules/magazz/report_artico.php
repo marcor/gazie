@@ -345,8 +345,8 @@ $ts->output_headers();
 echo '</tr>';
 while ($r = gaz_dbi_fetch_array($result)) {
   // se l'articolo è stato movimentato non consento l'eliminazione
-  $rs_artmov = gaz_dbi_query("SELECT SUM(artmov) AS artmov FROM ( SELECT COUNT(*) AS artmov FROM ".$gTables['movmag']." WHERE artico = '".$r['codice']."' UNION ALL SELECT COUNT(*) AS artmov FROM ".$gTables['rigdoc']." WHERE codart = '".$r['codice']."' UNION ALL SELECT COUNT(*) AS artmov FROM ".$gTables['rigbro']." WHERE codart = '".$r['codice']."' ) AS artmov");
-  $artmov = gaz_dbi_fetch_array($rs_artmov)[0];
+    $rs_artmov = gaz_dbi_query("SELECT ( SELECT COUNT(*) FROM ".$gTables['movmag']." WHERE artico = '".$r['codice']."'), (SELECT COUNT(*) FROM ".$gTables['rigdoc']." WHERE codart = '".$r['codice']."'), (SELECT COUNT(*) FROM ".$gTables['rigbro']." WHERE codart = '".$r['codice']."')");
+  $artmov = array_sum(gaz_dbi_fetch_row($rs_artmov));
 	// da configurazione azienda
 	$show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
 	$tipo_composti = gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti');
@@ -461,7 +461,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 	echo "</td>\n";
     echo '<td class="text-center"><a class="btn btn-xs btn-default btn-elimina';
     if ( $artmov >= 1 ){
-      echo '" disabled title="Articolo non è eliminabile perché movimentato "';
+      echo '" disabled title="Articolo non è eliminabile perché presente su '. $artmov.' registrazioni"';
     } else {
       echo ' dialog_delete" ref="'. $r['codice'].'" artico="'. $r['descri'].'"';
     }
