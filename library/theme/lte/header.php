@@ -24,8 +24,8 @@
  */
 $config = new UserConfig;
 
-$pdb = gaz_dbi_get_row($gTables['company_config'], 'var', 'menu_alerts_check')['val'];
-$period = ($pdb == 0)? 60 : $pdb;
+$pdb = intval(gaz_dbi_get_row($gTables['company_config'], 'var', 'menu_alerts_check')['val']);
+$period = ($pdb < 15)? 60 : $pdb;
 
 require("../../library/theme/lte/function.php");
 
