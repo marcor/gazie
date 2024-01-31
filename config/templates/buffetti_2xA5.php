@@ -27,10 +27,9 @@
 // Antonio Germani
 // ATTENZIONE!! QUESTO TEMPLATE è STUDIATO PER IL MODULO RICEVUTE FISCALI DELLA DITTA BUFFETTI ART.8205L2000
 
+use setasign\Fpdi\Tcpdf\Fpdi;
+class Template_2xA5 extends Fpdi {
 
-require('../../library/tcpdf/tcpdi.php');
-
-class Template_2xA5 extends TCPDI {
   public $docVars;
   public $gaz_path;
   public $rigbro;

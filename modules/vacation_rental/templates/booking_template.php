@@ -24,10 +24,11 @@
   --------------------------------------------------------------------------
  */
 
+use setasign\Fpdi\Tcpdf\Fpdi;
 
-require('../../library/tcpdf/tcpdi.php');
 #[AllowDynamicProperties]
-class Template extends TCPDI {
+
+class Template extends Fpdi {
 
     function setVars(&$docVars, $Template = '') {
         $this->docVars = & $docVars;
