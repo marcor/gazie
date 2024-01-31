@@ -25,14 +25,30 @@ when using Write() etc.
 
 If you're using Composer to manage dependencies, you can use
 
-    $ composer require setasign/tfpdf:1.25
+    $ composer require setasign/tfpdf:1.33
 
 or you can include the following in your composer.json file:
 
 ```json
 {
     "require": {
-        "setasign/tfpdf": "1.25"
+        "setasign/tfpdf": "1.33"
     }
 }
+```
+
+## Usage
+
+Notice that tFPDF is not name-spaced. You can extend the class this way:
+
+```php 
+namespace your\namespace;
+    
+class Document extends \tFPDF
+```
+
+or create an instance this way:
+
+```php 
+$pdf = new \tFPDF();
 ```

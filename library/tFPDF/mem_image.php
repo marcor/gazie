@@ -1,6 +1,6 @@
 <?php
 require('../../library/tFPDF/tfpdf.php');
-
+#[AllowDynamicProperties]
 // Stream handler to read from global variables
 class VariableStream
 {
@@ -46,7 +46,7 @@ class VariableStream
 		}
 		return false;
 	}
-	
+
 	function stream_stat()
 	{
 		return array();

@@ -32,6 +32,8 @@ define('ROWS_PERPAGE',60);
 
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
+use setasign\Fpdi\Tcpdf\Fpdi;
+
 if (!ini_get('safe_mode')){ //se me lo posso permettere...
     ini_set('memory_limit','512M');
     gaz_set_time_limit (240);
@@ -111,9 +113,9 @@ while ($mov = gaz_dbi_fetch_assoc($result)) {
 }
 $rip[$p]['dare']=$rid;
 $rip[$p]['avere']=$ria;
+$dl=false;
 if (isset($_GET['pdfa']) || isset($_GET['pdfamese'])) {
-	require('../../vendor/tecnickcom/tcpdf/tcpdf.php');
-  class GL_template extends TCPDF {
+  class GL_template extends  Fpdi {
     public $ad_az;
     public $intesta1;
     public $intesta2;
@@ -145,6 +147,7 @@ if (isset($_GET['pdfa']) || isset($_GET['pdfamese'])) {
 	}
 	$pdf = new GL_template('P', 'mm', 'A4', true, 'UTF-8', false, true);
 } else {
+  $dl=true;
 	require('../../library/tFPDF/mem_image.php');
     class GL_template extends PDF_MemImage {
       public $ad_az;
@@ -218,7 +221,7 @@ if ( count($a)>=2 ){
           $pdf->Cell(10,4,$k2,1,0,'R');
           $pdf->Cell(78,4,$dsx,$b,0,'L',0,'',1);
           $pdf->Cell(16,4,$v2['codcon'],'LT',0,'C');
-          $pdf->Cell(46,4,$v2['cfdes'],'LT',0,'L',0,'',1);
+          $pdf->Cell(46,4,($dl?substr($v2['cfdes'],0,31):$v2['cfdes']),'LT',0,'L',0,'',1);
           $pdf->Cell(20,4,$v2['dare'],'LT',0,'R');
           $pdf->Cell(20,4,$v2['avere'],'LRT',1,'R');
         $ci=$v2['id_tes'];

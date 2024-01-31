@@ -254,12 +254,6 @@ class Template extends Fpdi {
             }
             $this->Cell(115);
             $this->Cell(75, 5, $this->cliente4, 0, 1, 'L', 0, '', 1);
-/* QUESTO NON SO CHI LO HA FATTO MA MI VEDO COSTRETTO A COMMENTARLO PERCHE' VA AD ACCAVALLARSI CON IL CORPO
-            if (!empty($this->cliente4b)) {
-                $this->Cell(115);
-                $this->Cell(75, 5, $this->cliente4b, 0, 1, 'L', 0, '', 1);
-            }
-*/
             $this->SetFont('helvetica', '', 7);
             if (!empty($this->c_Attenzione)) {
                 $this->SetFont('helvetica', '', 10);
