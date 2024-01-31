@@ -24,7 +24,7 @@
   --------------------------------------------------------------------------
  */
 
-require('../../vendor/tecnickcom/tcpdf/tcpdf.php');
+
 require('../../library/tcpdf/tcpdi.php');
 #[AllowDynamicProperties]
 class Template extends TCPDI {

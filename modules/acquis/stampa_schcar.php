@@ -24,7 +24,7 @@
 */
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
-require('../../vendor/tecnickcom/tcpdf/tcpdf.php');
+
 if ($admin_aziend['ivam_t']== 'M') {
     $mesetrim='Mese';
 } else {

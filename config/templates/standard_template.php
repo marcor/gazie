@@ -23,7 +23,7 @@
   Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
-require('../../vendor/tecnickcom/tcpdf/tcpdf.php');
+
 
 class Standard_template extends TCPDF {
 

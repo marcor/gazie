@@ -24,11 +24,10 @@
   --------------------------------------------------------------------------
  */
 
-require_once('../../vendor/tecnickcom/tcpdf/tcpdf.php');
-require_once('../../library/tcpdf/tcpdi.php');
-//require('../../vendor/tecnickcom/tcpdf/tcpdf.php');
+use tecnickcom\tcpdf\tcpdf;
+use setasign\Fpdi\Tcpdf\Fpdi;
+class Report_template extends Fpdi {
 
-class Report_template extends TCPDI {
   public $colore;
   public $logo;
   public $link;

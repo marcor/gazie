@@ -780,7 +780,7 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
 }
 
 function createMultiDocument($results, $templateName, $gTables, $dest = false, $lang_template=false, $template=true) {
-    if ($templateName=='Parcella') {
+    if ($templateName=='Parcella' || empty($templateName)) {
       $templateName='FatturaSemplice';
     }
     $templates = array('Received' => 'received',

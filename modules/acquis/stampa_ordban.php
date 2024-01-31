@@ -27,7 +27,7 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 require("../../library/include/ciftolet.inc.php");
 
-require('../../vendor/tecnickcom/tcpdf/tcpdf.php');
+
 
 $nuw = new numberstowords_it();
 

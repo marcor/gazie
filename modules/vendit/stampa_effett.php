@@ -26,7 +26,7 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 require("../../library/include/ciftolet.inc.php");
-require('../../vendor/tecnickcom/tcpdf/tcpdf.php');
+
 
 $calc = new Compute;
 

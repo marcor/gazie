@@ -24,7 +24,7 @@
   --------------------------------------------------------------------------
  */
 
-require('../../vendor/tecnickcom/tcpdf/tcpdf.php');
+
 
 class Report_template extends TCPDF {
 

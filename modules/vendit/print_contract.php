@@ -30,7 +30,7 @@ if (!isset($_GET['id_contract']) || $_GET['id_contract'] < 1) {
 } else {
     $id= intval($_GET['id_contract']);
 }
-require('../../vendor/tecnickcom/tcpdf/tcpdf.php');
+
 require("./lang.".$admin_aziend['lang'].".php");
 require("../../language/".$admin_aziend['lang']."/menu.inc.php");
 $script_transl=$strCommon+$strScript['admin_contract.php'];

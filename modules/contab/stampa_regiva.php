@@ -46,6 +46,38 @@ if (!isset($_GET['vr']) ||
 require("../../config/templates/standard_template.php");
 
 class vatBook extends Standard_template {
+  public $azienda;
+  public $desregrc;
+  public $script_transl ;
+  public $endyear;
+  public $vatsect;
+  public $rc_sect;
+  public $typbook;
+  public $semplificata;
+  public $inidate;
+  public $enddate;
+  public $logo;
+  public $colore;
+  public $link;
+  public $intesta1;
+  public $intesta2;
+  public $intesta3;
+  public $intesta4;
+  public $luogo;
+  public $n_page;
+  public $rows;
+  public $vat_castle;
+  public $acc_castle;
+  public $vat_castle_liq;
+  public $acc_rows;
+  public $acc_operation_type;
+  public $taxable;
+  public $tax;
+  public $taxable_liq;
+  public $tax_liq;
+  public $top_bar;
+  public $top_carry_bar;
+  public $bot_carry_bar;
 
   function setData($data, $gTables, $admin_aziend) {
     $this->azienda = $admin_aziend;
