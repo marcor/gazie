@@ -40,7 +40,7 @@ if (count($_POST) > 0) {
     header("Location: set_config_data.php?ok");
 }
 
-require("../../library/include/header.php");
+require("../../library/theme/g7/header.php");
 $script_transl = HeadMain();
 $result = gaz_dbi_dyn_query("*", $gTables['config'], 1, ' id ASC', 0, 1000);
 if ($_GET['iframe']="TRUE"){

@@ -35,6 +35,8 @@ class Standard_template extends TCPDF {
   public $intesta4;
   public $n_page;
   public $luogo;
+  public $top_carry_bar;
+  public $bot_carry_bar;
 
     public function setVars($admin_aziend, $title = false, $luogo_data = 1, $n_page = true) {
         global $gazTimeFormatter,$gazTime;

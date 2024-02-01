@@ -28,7 +28,7 @@ require("../../library/include/document.php");
 require("../vendit/lib.function.php");
 $dati_intestazione = $_SESSION['print_request'];
 unset ($_SESSION['print_request']);
-$testata= array('id_tes'=> 0,'seziva'=>0,'protoc'=>0,'numdoc'=>0,'numfat'=>0,
+$testata= array('id_tes'=> 0,'seziva'=>0,'protoc'=>0,'numdoc'=>0,'numfat'=>0,'destin'=>'  ',
           'datfat'=>$dati_intestazione['data'],'clfoco'=>$dati_intestazione['clfoco'],
           'datemi'=>$dati_intestazione['data'],'pagame'=>0,'banapp'=>0,'vettor'=>0,
           'listin'=>0,'spediz'=>'','portos'=>'','imball'=>'','traspo'=>0,'speban'=>0,
