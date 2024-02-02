@@ -37,7 +37,7 @@ function effettInsert ($newValue)
 function agentiInsert ($codice, $newValue)
 {
     $table = 'agenti';
-    $columns = array('id_agente','id_fornitore','base_percent','tipo_contratto','adminid');
+    $columns = array('id_agente','id_agente_coord','id_fornitore','base_percent','coord_percent','tipo_contratto','adminid');
     //$newValue['adminid'] = $_SESSION["user_name"];
     return tableInsert($table, $columns, $newValue);
 }
@@ -45,7 +45,7 @@ function agentiInsert ($codice, $newValue)
 function agentiUpdate ($codice, $newValue)
 {
     $table = 'agenti';
-    $columns = array('id_agente','id_fornitore','base_percent','tipo_contratto','adminid');
+    $columns = array('id_agente','id_agente_coord','id_fornitore','base_percent','coord_percent','tipo_contratto','adminid');
     //$newValue['adminid'] = $_SESSION["user_name"];
     tableUpdate($table, $columns, $codice, $newValue);
 }

@@ -52,6 +52,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
   $form['id_agente'] = intval($_POST['id_agente']);
   $form['clfoco'] = substr($_POST['clfoco'],0,12);
   $form['adminid'] = substr($_POST['adminid'],0,20);
+  $form['id_agente_coord'] = intval($_POST['id_agente_coord']);
+  $form['coord_percent'] = floatval(preg_replace("/\,/",'.',$_POST['coord_percent']));
   $form['hidden_req'] = substr($_POST['hidden_req'],0,20);;
   $form['base_percent'] = floatval(preg_replace("/\,/",'.',$_POST['base_percent']));
   $anagrafica = new Anagrafica();
@@ -68,6 +70,10 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
   // fine rigo input
   $form['righi'] = array();
   $next_row = 0;
+  $admuser = gaz_dbi_get_row($gTables['admin'],'user_name',$form['adminid']," AND Abilit >= 8");
+  if (!empty($admuser)) { // l'agente non può essere amministratore
+    $msg .= "21+";
+  }
   if (isset($_POST['righi'])) {
      foreach ($_POST['righi'] as $next_row => $value) {
           // inizio impedimento della duplicazione dei codici
@@ -215,6 +221,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['clfoco'] = $agenti['id_fornitore'];
     $form['adminid'] = $agenti['adminid'];
     $form['base_percent'] = $agenti['base_percent'];
+    $form['id_agente_coord'] = $agenti['id_agente_coord'];
+    $form['coord_percent'] = $agenti['coord_percent'];
     $form['hidden_req'] ='';
     $next_row = 0;
     while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
@@ -242,12 +250,29 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['clfoco'] = '';
     $form['adminid'] = '';
     $form['base_percent'] = 0;
+    $form['id_agente_coord'] = '';
+    $form['coord_percent'] = '';
     $form['seach_clfoco'] = '';
     $form['hidden_req'] ='';
 }
 
 require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('custom/autocomplete'));
+?>
+<script>
+$(function(){
+  $('select[name="id_agente_coord"]').bind('change', function () {
+    var ida = parseInt($(this).val());
+    if ( ida >= 1){
+      $('#display_coord_percent').show();
+    } else{
+      $('#display_coord_percent').hide();
+    }
+  });
+  $('select[name="id_agente_coord"]').trigger('change');
+});
+</script>
+<?php
 echo "<form method=\"POST\">\n";
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".ucfirst($script_transl[$toDo].$script_transl[1])."</div> ";
 echo "<input type=\"hidden\" name=\"".ucfirst($toDo)."\" value=\"\">\n";
@@ -282,7 +307,7 @@ echo "<td class=\"FacetFieldCaptionTD\">$script_transl[3] : </td><td class=\"Fac
 $select_fornitore = new selectPartner('clfoco');
 $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['clfoco'], 'clfoco', $script_transl['search_partner'], $admin_aziend['masfor']);
 echo "</td></tr>\n";
-$sql = gaz_dbi_dyn_query ("*", $gTables['admin']." LEFT JOIN ".$gTables['anagra']." ON (".$gTables['admin'].".id_anagra = ".$gTables['anagra'].".id)" );
+$sql = gaz_dbi_dyn_query ("*", $gTables['admin']." LEFT JOIN ".$gTables['anagra']." ON (".$gTables['admin'].".id_anagra = ".$gTables['anagra'].".id) ", $gTables['admin'].".Abilit < 8" );
 $accopt='<option value="no_user"> non è un utente</option>';
 $sel=false;
 while ($row = $sql->fetch_assoc()){
@@ -300,8 +325,26 @@ echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">$script_transl[6] : </td><td class=\"FacetDataTD\">\n";
 echo "<input type=\"text\" name=\"base_percent\" value=\"".$form['base_percent']."\" maxlength=\"5\"  class=\"FacetInput\">";
 echo "</td></tr>\n";
+?>
+<tr>
+  <td colspan=2 class="text-center bg-info"><b><?php echo $script_transl['agente_coord']; ?></b></td>
+</tr>
+<tr>
+  <td colspan=2 class="text-center bg-info">
+  <?php
+  $select_agente = new selectAgente("id_agente_coord");
+  $select_agente->addSelected($form["id_agente_coord"]);
+  $select_agente->output();
+  ?>
+  </td>
+</tr>
+<tr id="display_coord_percent">
+  <td class="FacetFieldCaptionTD"><?php echo $script_transl['coord_percent']; ?></td>
+  <td class="FacetDataTD"><input type="text" name="coord_percent" value="<?php echo $form['coord_percent']; ?>" class="FacetInput"></td>
+</tr>
+<?php
 echo "</table>\n";
-echo "<div class=\"FacetSeparatorTD\" align=\"center\">$script_transl[10] $script_transl[7] / $script_transl[8]</div>\n";
+echo "<div class=\"FacetFormHeaderFont\" align=\"center\">$script_transl[10] $script_transl[7] / $script_transl[8]</div>\n";
 // inizio rigo inserimento
 echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
 echo "<input type=\"hidden\" value=\"".$form['in_status']."\" name=\"in_status\" />\n";
@@ -368,3 +411,4 @@ echo "</table>";
 <?php
 require("../../library/include/footer.php");
 ?>
+

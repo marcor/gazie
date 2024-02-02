@@ -151,7 +151,7 @@ $strScript = array("admin_client.php" =>
         'consentivisua' => '<center>ATTENZIONE MANCANO I DATI FISCALI</center>'
     ),
     "admin_agenti.php" =>
-    array("Agenti di vendita ",
+    ["Agenti di vendita ",
         "Agente di vendita",
         "Numero",
         "Fornitore",
@@ -161,27 +161,31 @@ $strScript = array("admin_client.php" =>
         "Categoria Merceologica",
         "Articolo",
         "Percentuale",
-        "Specifiche per ",
+        "Specifiche per ", //10
         "gi&agrave; inserito!",
         "Mancano dei dati necessari per aggiungere un rigo!",
         "La percentuale delle provvigioni dev'essere maggiore di 0.01!",
         "Stai tentando di inserire un agente senza collegarlo ad un fornitore!",
         "Non &egrave; stato inserito il numero di agente",
         "Stai tentando di inserire un fornitore che &egrave; gi&agrave; un agente!",
-        "Stai tentando di inserire un numero di agente che gi&agrave; esiste!",
+        "Stai tentando di inserire un numero di agente che gi&agrave; esistente!", //17
         "Stai elimimando un agente!",
         "Lista Provvigioni",
         'title' => 'Gestione degli Agenti di vendita',
         'ins_this' => 'Inserisci un nuovo agente di vendita',
         "Lista Clienti",
-        'search_partner' => array('La ricerca non ha dato risultati',
+        'Un agente non può essere utente amministratore', //22
+        'agente_coord' => 'Eventuale agente coordinatore',
+        'coord_percent' => 'Percentuale a coordinatore: ',
+        'search_partner' => ['La ricerca non ha dato risultati',
           'Inserire almeno 2 caratteri',
           'Cambia cliente',
           'Scegli un cliente',
           ' C.F.:',
           'Anonimo'
-        )
-    ),
+        ]
+
+    ],
     "select_provvigioni.php" =>
     array("Selezione per Stampa lista Provvigioni",
         "Agente di vendita",

@@ -1557,7 +1557,7 @@ function prevXML(urlPrintDoc){
 if (count($msg['err']) > 0) { // ho un errore
   $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
   // controllo se il file è stato acquisito tramite sync, per alcuni errori devo consentire di elimianare il file
-  $typerr=['filmim','invalid_xml','invalid_fae','file_exists','not_mine','same_content'];
+  $typerr=['filmim','invalid_xml','invalid_fae','file_exists','not_mine','same_content','reverse_charge'];
   $isfilerr=false;
   foreach ($msg['err'] as $verr) {
     if (in_array($verr,$typerr)){
