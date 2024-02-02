@@ -324,7 +324,7 @@ class invoiceXMLvars {
         $this->docRelDate = $this->tesdoc["datemi"];    // Data del documento relativo
         $this->docDescri = false;
     }
-    $this->docDescri .= $this->tesdoc["numdoc"].'-'.$this->tesdoc["seziva"].'_del_'.gaz_format_date($this->tesdoc["datemi"]);    // Descrizione per allegato PDF
+    $this->docDescri .= $this->tesdoc["numfat"].'-'.$this->tesdoc["seziva"].'_del_'.gaz_format_date($this->tesdoc["datemi"]);    // Descrizione per allegato PDF
     $this->seziva = $this->tesdoc["seziva"];
     $this->docYear = substr($this->tesdoc["datemi"], 0, 4);    // Anno del documento
     $this->IdCodice = $admin_aziend['codfis'];
