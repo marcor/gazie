@@ -149,7 +149,6 @@ class PreventivoFornitore extends Template
 					$this->Cell(125, 6, $rigo['codart'].$rigo['codice_fornitore'].$rigo['quality'].$res_ps ,'LRB',0,'L',0,'',1);
           $this->Cell(7,  6, $rigo['unimis'],1,0,'C');
           $this->Cell(14, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R',0,'',1);
-          /* commento perchè non funzionante da PHP8.2
 					$py=$this->GetY();
 					$px=$this->GetX();
 					$this->Rect($px,$py,17,6,'DF');
@@ -158,10 +157,7 @@ class PreventivoFornitore extends Template
 					$px=$this->GetX();
 					$this->Rect($px,$py,8,6,'DF');
 					$this->TextField('sconto'.$key, 8, 6);
-          */
-          $this->Cell(17, 6,'',1);
-          $this->Cell(8, 6);
-          $this->Cell(15, 6, '',1,1);
+					$this->TextField('importo'.$key, 15, 6);
         break;
         case "1":
           $this->Cell(125, 6, $rigo['descri'],'LBR',0,'L',0,'',1);
@@ -192,7 +188,7 @@ class PreventivoFornitore extends Template
         break;
         case "51":
           $this->Cell(25, 6,  $this->docVars->ExternalDoc[$rigo['id_rig']]['oriname'].'.'.$this->docVars->ExternalDoc[$rigo['id_rig']]['ext'],1,0,'L',0,'',1);
-          $this->Cell(100,6,$rigo['descri'],'LR',0,'L',0,'',1);
+          $this->Cell(100,6, $rigo['descri'].'','LR',0,'L',0,'',1);
           $this->Cell(61,6,'','R',1);
         break;
       }

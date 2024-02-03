@@ -26,6 +26,7 @@
 
 
 class Standard_template extends TCPDF {
+  public $title;
   public $logo;
   public $colore;
   public $link;
@@ -37,6 +38,8 @@ class Standard_template extends TCPDF {
   public $luogo;
   public $top_carry_bar;
   public $bot_carry_bar;
+  public $top_bar;
+  public $cover;
 
     public function setVars($admin_aziend, $title = false, $luogo_data = 1, $n_page = true) {
         global $gazTimeFormatter,$gazTime;
