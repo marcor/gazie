@@ -51,13 +51,13 @@ $url = basename($_SERVER['REQUEST_URI'], '?' . $_SERVER['QUERY_STRING']);
       <aside class="control-sidebar control-sidebar-dark">
         <!-- Create the tabs -->
         <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
-          <li class="active"><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>
-          <li><a href="#control-sidebar-settings-tab" data-toggle="tab"><i class="fa fa-gears"></i></a></li>
+          <li><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-bar-chart"></i></a></li>
+          <li class="active"><a href="#control-sidebar-settings-tab" data-toggle="tab"><i class="fa fa-list-ul"></i></a></li>
         </ul>
         <!-- Tab panes -->
         <div class="tab-content">
           <!-- Home tab content -->
-          <div class="tab-pane active" id="control-sidebar-home-tab">
+          <div class="tab-pane" id="control-sidebar-home-tab">
               <ul class="control-sidebar-menu">
                 <?php
             $result   = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $admin_aziend['company_id'] . '" AND adminid="' . $admin_aziend["user_name"] . '" ', ' click DESC, last_use DESC', 0, 20);
@@ -115,7 +115,7 @@ $url = basename($_SERVER['REQUEST_URI'], '?' . $_SERVER['QUERY_STRING']);
           <!-- Stats tab content -->
           <div class="tab-pane" id="control-sidebar-stats-tab">Stats Tab Content</div><!-- /.tab-pane -->
           <!-- Settings tab content -->
-          <div class="tab-pane" id="control-sidebar-settings-tab">
+          <div class="tab-pane active" id="control-sidebar-settings-tab">
             <form method="post">
               <!--<h3 class="control-sidebar-heading">Impostazioni </h3>-->
               <?php

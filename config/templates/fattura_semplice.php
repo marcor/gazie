@@ -124,6 +124,8 @@ class FatturaSemplice extends Template {
               $dataddt .= ' (Causale: montaggio)';
             } elseif ($this->tesdoc['ddt_type'] == 'R') {
               $dataddt .= ' tipo : C M R';
+            } elseif ($this->tesdoc['ddt_type'] == 'O') {
+              $dataddt .= ' (reso da c/lavorazione)';
             } else {
               $dataddt .= ' (Causale: vendita)';
             }

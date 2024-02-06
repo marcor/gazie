@@ -38,7 +38,7 @@ class Expiry {
   public $ctrl_year;
   public $expiry;
 
-  public function CalcExpiry($amount,$date,$effect='D',$start_day=0,$expiry_number=1,$periodicity='M',$foll_month=0,$fix_day=0)
+  public function CalcExpiry($amount,$date,$effect='D',$start_day=0,$expiry_number=1,$periodicity='M',$foll_month=0,$fix_day=0,$distribution=false)
   {
     /* Questa funzione serve per il calcolo delle scadenze.
        Restituisce una matrice (array) bidimensionale dove
@@ -50,6 +50,7 @@ class Expiry {
        $periodicity  è la periodicità in mesi
        $foll_month è il mese da saltare (es.agosto)
        $fix_day è il giorno fisso di scadenza quando $effect vale 'G'
+       $distribution può contenere una matrice bidimensionale con il riparto (la cui somma dev'essere del 100%) delle singole rate quando queste non sono costanti
     */
     // definisco le variabili comuni
     $this->year=intval(substr($date,0,4));

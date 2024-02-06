@@ -1193,7 +1193,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
     </div><!-- chiude panel  -->
     <div align="center"><b>Corpo</b></div>
     <?php
-    echo "<input type=\"hidden\" value=\"" . $form['in_descri'] . "\" name=\"in_descri\" />
+  echo "<input type=\"hidden\" value=\"" . $form['in_descri'] . "\" name=\"in_descri\" />
         <input type=\"hidden\" value=\"" . $form['in_pervat'] . "\" name=\"in_pervat\" />
         <input type=\"hidden\" value=\"" . $form['in_unimis'] . "\" name=\"in_unimis\" />
         <input type=\"hidden\" value=\"" . $form['in_prezzo'] . "\" name=\"in_prezzo\" />
@@ -1201,7 +1201,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
         <input type=\"hidden\" value=\"" . $form['in_annota'] . "\" name=\"in_annota\" />
         <input type=\"hidden\" value=\"" . $form['in_scorta'] . "\" name=\"in_scorta\" />
         <input type=\"hidden\" value=\"" . $form['in_quamag'] . "\" name=\"in_quamag\" />
-		<input type=\"hidden\" value=\"" . $form['in_quality'] . "\" name=\"in_quality\" />
+        <input type=\"hidden\" value=\"" . $form['in_quality'] . "\" name=\"in_quality\" />
         <input type=\"hidden\" value=\"" . $form['in_pesosp'] . "\" name=\"in_pesosp\" />
         <input type=\"hidden\" value=\"" . $form['in_good_or_service'] . "\" name=\"in_good_or_service\" />
         <input type=\"hidden\" value=\"" . $form['in_SIAN'] . "\" name=\"in_SIAN\" />
@@ -1210,10 +1210,9 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
         <input type=\"hidden\" value=\"" . $form['in_recip_stocc_destin'] . "\" name=\"in_recip_stocc_destin\" />
         <input type=\"hidden\" value=\"" . $form['in_lot_or_serial'] . "\" name=\"in_lot_or_serial\" />
         <input type=\"hidden\" value=\"" . $form['in_id_lotmag'] . "\" name=\"in_id_lotmag\" />
-		<input type=\"hidden\" value=\"" . $form['in_identifier'] . "\" name=\"in_identifier\" />
+        <input type=\"hidden\" value=\"" . $form['in_identifier'] . "\" name=\"in_identifier\" />
         <input type=\"hidden\" value=\"" . $form['in_status'] . "\" name=\"in_status\" />
-        <input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />
-		<input type=\"hidden\" value=\"" . $form['ok_barcode'] . "\" name=\"ok_barcode\" />";
+        <input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />";
     if ($next_row > 0) {
       $tot = 0;
       $tot_row = 0;
