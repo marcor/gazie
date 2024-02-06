@@ -312,7 +312,6 @@ class invoiceXMLvars {
         $this->reverse = true;
         $this->docRelNum = $this->tesdoc["protoc"].'/'.$this->tesdoc["seziva"]; // sulle autofatture utilizzo il protocollo per avere sequenzialità
         $this->docRelDate = $this->tesdoc["datreg"];
-        $this->docRelDate = false;
         $this->docDescri = false;
         break;
       case "DDT":
