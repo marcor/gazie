@@ -567,7 +567,7 @@ class UserConfig {
     global $gTables;
     $variable = filter_var(substr($variable, 0, 100), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $result = gaz_dbi_dyn_query("*", $gTables['admin_config'], "var_name='" . $variable . "' AND adminid='".$_SESSION['user_name']."'");
-    if (gaz_dbi_num_rows($result) >= 1) { // � un aggiornamento
+    if (gaz_dbi_num_rows($result) >= 1) { // è un aggiornamento
       if (is_array($value)) {
         $row = gaz_dbi_fetch_array($result);
         $value['var_value'] = filter_var(substr($value['var_value'], 0, 100), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -584,7 +584,7 @@ class UserConfig {
   }
 
   function setDefaultValue() {
-    $this->setValue('LTE_Fixed', ["var_name" => "LTE_Fixed", "var_descri" => "Attiva lo stile fisso. Non puoi usare fisso e boxed insieme", "var_value" => "false"]);
+    $this->setValue('LTE_Fixed', ["var_name" => "LTE_Fixed", "var_descri" => "Attiva lo stile fisso", "var_value" => "false"]);
     $this->setValue('LTE_Boxed', ["var_name" => "LTE_Boxed", "var_descri" => "Attiva lo stile boxed", "var_value" => "false"]);
     $this->setValue('LTE_Collapsed', ["var_name" => "LTE_Collapsed", "var_descri" => "Collassa il menu principale", "var_value" => "true"]);
     $this->setValue('LTE_Onhover', ["var_name" => "LTE_Onhover", "var_descri" => "Espandi automaticamente il menu", "var_value" => "false"]);

@@ -119,7 +119,7 @@ $url = basename($_SERVER['REQUEST_URI'], '?' . $_SERVER['QUERY_STRING']);
             <form method="post">
               <!--<h3 class="control-sidebar-heading">Impostazioni </h3>-->
               <?php
-                printCheckbox( "Stile Fixed", "LTE_Fixed", "Attiva lo stile fisso. Non puoi usare fisso e boxed insieme" );
+                printCheckbox( "Stile Fixed", "LTE_Fixed", "Attiva lo stile fisso" );
                 printCheckbox("Stile Boxed", "LTE_Boxed", "Attiva lo stile boxed" );
                 printCheckbox("Menu Ridotto", "LTE_Collapsed", "Collassa il menu principale" );
                 printCheckbox("Menu Automatico", "LTE_Onhover", "Espandi automaticamente il menu" );

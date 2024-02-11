@@ -35,10 +35,41 @@
     if ($_POST['name']=='restore') {
   		gaz_dbi_query ("UPDATE ".$gTables['admin_config']." SET `var_value`='false' WHERE `var_name` LIKE 'LTE_%' AND adminid='".$_SESSION['user_name']."'");
     } else {
+      // LTE_Collapsed e LTE_Onhover sono alternativi, lo stesso LTE_Boxed e LTE_Fixed
       $form['var_descri'] = substr($_POST['desc'],0,50);
       $form['var_name'] = substr($_POST['name'],0,30);
       $form['var_value'] = substr($_POST['val'],0,10);
       $form['adminid'] = $admin_aziend["user_name"];
       $config->setValue( $form['var_name'], $form );
+      switch ($form['var_name']){
+        case 'LTE_Collapsed':
+          if ($form['var_value']=='true') {
+            $form['var_name'] = 'LTE_Onhover';
+            $form['var_value'] = 'false';
+            $config->setValue( $form['var_name'], $form );
+          }
+        break;
+        case 'LTE_Onhover':
+          if ($form['var_value']=='true') {
+            $form['var_name'] = 'LTE_Collapsed';
+            $form['var_value'] = 'false';
+            $config->setValue( $form['var_name'], $form );
+          }
+        break;
+        case 'LTE_Boxed':
+          if ($form['var_value']=='true') {
+            $form['var_name'] = 'LTE_Fixed';
+            $form['var_value'] = 'false';
+            $config->setValue( $form['var_name'], $form );
+          }
+        break;
+        case 'LTE_Fixed':
+          if ($form['var_value']=='true') {
+            $form['var_name'] = 'LTE_Boxed';
+            $form['var_value'] = 'false';
+            $config->setValue( $form['var_name'], $form );
+          }
+        break;
+      }
     }
 ?>
