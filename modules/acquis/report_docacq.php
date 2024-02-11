@@ -439,7 +439,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
   if (!empty($modifi)) {
     echo '<a class="btn btn-xs btn-'.$btncol.'" href="' . $modifi . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $row["protoc"] . "</td>";
   } else {
-    echo '<button class="btn btn-xs btn-'.$btncol.' disabled">' . $row["protoc"] . " &nbsp;</button></td>";
+    echo '<button class="btn btn-xs btn-'.$btncol.' disabled" title="Fattura differita, puoi modificare solo i DdT">' . $row["protoc"] . " &nbsp;</button></td>";
   }
   echo "<td>" . gaz_format_date($row["datreg"]) . " &nbsp;</td>";
   if (empty($row["fattura_elettronica_original_name"])) {

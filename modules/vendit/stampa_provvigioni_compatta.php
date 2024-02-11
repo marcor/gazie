@@ -1,5 +1,4 @@
 <?php
-
 /*
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
@@ -23,18 +22,17 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
-
-function getNewAgente($id) {
-   global $gTables;
-   $agente = gaz_dbi_get_row($gTables['agenti'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['agenti'] . ".id_fornitore = " . $gTables['clfoco'] . ".codice
-                                                  LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id', $gTables['agenti'] . '.id_agente', $id);
-   return $agente;
-}
-
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 require("lang." . $admin_aziend['lang'] . ".php");
 require("../../config/templates/report_template.php");
+
+function getNewAgente($id) {
+   global $gTables;
+   $agente = gaz_dbi_get_row($gTables['agenti'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['agenti'] . ".id_fornitore = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id', $gTables['agenti'] . '.id_agente', $id);
+   return $agente;
+}
+
 if (!isset($_GET['datini']) or ! isset($_GET['datfin']) or ! isset($_GET['id_agente'])) {
    header("Location: select_provvigioni.php");
    exit;

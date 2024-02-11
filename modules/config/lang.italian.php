@@ -260,7 +260,7 @@ $strScript = array(
         ['C'=>'contanti','O'=>'bonifico','K'=>'carte di pagamento','D'=>'rimessa diretta','I'=>'rapporto interbancario diretto (RID)','B'=>'Ricevuta Bancaria','T'=>'Cambiale-Tratta','V'=>'mediante avviso(MAV)','F'=>'finanziamento','M'=>'misto'],
         ['S'=>'Si','N'=>'No'],
         ['D'=>'data fattura','G'=>'giorno fisso','F'=>'fine mese'],
-        ['Q'=>'quindicinali','M'=>'mensili','B'=>'bimestrali','T'=>'trimestrali','U'=>'quadrimestrali','S'=>'semestrali','A'=>'annuali'],
+        ['Q'=>'quindicinali','M'=>'mensili','B'=>'bimestrali','T'=>'trimestrali','U'=>'quadrimestrali','S'=>'semestrali','A'=>'annuali','N'=>'senza periodicità'],
         "Il codice scelto &egrave; gi&agrave; stato usato!",
         "La descrizione &egrave; vuota!",
         "Il codice dev'essere compreso tra 1 e 99",

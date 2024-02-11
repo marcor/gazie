@@ -50,8 +50,9 @@ class Expiry {
        $periodicity  è la periodicità in mesi
        $foll_month è il mese da saltare (es.agosto)
        $fix_day è il giorno fisso di scadenza quando $effect vale 'G'
-       $distribution può contenere una matrice bidimensionale con il riparto (la cui somma dev'essere del 100%) delle singole rate quando queste non sono costanti
+       $distribution si deve passare la matrice contenente le rate in gaz_XXXpagame_distribution
     */
+
     // definisco le variabili comuni
     $this->year=intval(substr($date,0,4));
     $this->month=intval(substr($date,5,2));
@@ -68,23 +69,53 @@ class Expiry {
     $this->ctrl_month=$this->month;
     $this->ctrl_year=$this->year;
 
+    $this->expiry=[];
+
     // main
-    $this->expiry=array();
-    $partial=0.00;
-    for ($c=1; $c<=$this->expiry_number; $c++) {
-       if ($c==$this->expiry_number && $this->expiry_number==1) { // rata unica
-           $this->expiry[$c]['amount']= number_format($amount,2,'.','');
-       } elseif ($c==$this->expiry_number && $this->expiry_number>1) { // ultima rata
-           $this->expiry[$c]['amount']= number_format(($amount-$partial),2,'.','');
-       } elseif ($c<$this->expiry_number && $this->expiry_number>1) { // rate intermedie e prima
-           $this->expiry[$c]['amount']= number_format(($amount/$this->expiry_number),2,'.','');
-       }
-       $partial+=$this->expiry[$c]['amount'];
-       // chiamo la funzione per il calcolo della data
-       $this->expiry[$c]['date']= $this->_Date($c);
+    if ($distribution && is_array($distribution) && count($distribution) >=1 ) { // in caso di riparto derivante da gaz_XXXpagame_distribution
+      $totpercent=0.0;
+      $partial=0.00;
+      $c=1;
+      foreach ($distribution as $d) {
+        // amount
+        $this->expiry[$c]['amount'] = round($amount*$d['ratperc']/100,2);
+        $partial+=$this->expiry[$c]['amount'];
+        // date
+        if (intval($d['from_prev']) >=1 ) { // ho passato un numero
+          $this->periodicity='D';
+          $this->start_day=$d['from_prev'];
+          $this->expiry[$c]['date'] = $this->_Date($c);
+        } elseif(strlen($d['from_prev'].'')>=1) { // ho passato un carattere di periodicity
+          $this->periodicity=$d['from_prev'];
+          $this->expiry[$c]['date'] = $this->_Date($c);
+        } else { // non ho passato nulla userò le descrizioni data coinciderà con $date o con la precedente
+          $this->expiry[$c]['date']=($c==1)?$date:$this->expiry[($c-1)]['date'];
+        }
+        // descri
+        $this->expiry[$c]['descri'] = $d['descri'];
+        $c++;
+      }
+      $this->expiry[($c-1)]['amount'] += round($amount-$partial,2);
+    } else { // in caso di dati derivanti solo da gaz_XXXpagame
+      $partial=0.00;
+      for ($c=1; $c<=$this->expiry_number; $c++) {
+        if ($c==$this->expiry_number && $this->expiry_number==1) { // rata unica
+          $this->expiry[$c]['amount'] = number_format($amount,2,'.','');
+        } elseif ($c==$this->expiry_number && $this->expiry_number>1) { // ultima rata
+          $this->expiry[$c]['amount'] = number_format(($amount-$partial),2,'.','');
+        } elseif ($c<$this->expiry_number && $this->expiry_number>1) { // rate intermedie e prima
+          $this->expiry[$c]['amount'] = number_format(($amount/$this->expiry_number),2,'.','');
+        }
+        $partial+=$this->expiry[$c]['amount'];
+        // chiamo la funzione per il calcolo della data
+        $this->expiry[$c]['date'] = $this->_Date($c);
+        // popolo comunque descri con la data
+        $this->expiry[$c]['descri'] = $this->expiry[$c]['date'];
+      }
     }
     // end main
     return $this->expiry;
+
   }
 
   // calcolo date
