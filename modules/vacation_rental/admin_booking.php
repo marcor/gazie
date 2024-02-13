@@ -928,10 +928,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $gen_iva_code = $artico['aliiva'];
         $night=0;
         while (strtotime($start) < strtotime($form['end'])) {// ciclo il periodo della locazione giorno per giorno
-          // Controllo disponibilità
-          $what = "title";
-          $table = $gTables['rental_events'];
-          $where = "house_code = '".$form['in_codart']."' AND start <= '". $start ."' AND end >= '". date ("Y-m-d", strtotime("+1 days", strtotime($start)))."'";
+          // Controllo disponibilità e conteggio notti
+          $what = "title, custom_field";
+          $table = $gTables['rental_events']." LEFT JOIN " . $gTables['tesbro'] . " ON " . $gTables['rental_events'] . ".id_tesbro = " . $gTables['tesbro'] . ".id_tes ";
+          $where = "house_code = '".$form['in_codart']."' AND start <= '". $start ."' AND end >= '". date ("Y-m-d", strtotime("+1 days", strtotime($start)))."' AND custom_field NOT LIKE '%QUOTE%'";
           $result = gaz_dbi_dyn_query($what, $table, $where);
           $available = gaz_dbi_fetch_array($result);
           if (isset($available)){
@@ -965,7 +965,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $start="";
 
         $form['in_prelis']=$total_price;
-
         if ($night<intval($min_stay)){// se non si raggiunge il minimo prenotabile
           $msg .= "65+";
         }

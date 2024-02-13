@@ -267,7 +267,10 @@ $strScript = array(
         'on_behalf' => 'Locazione effettuata per conto del ',
         'acc_prev' => 'Per accettare il preventivo ed effettuare la prenotazione usi questo link: ',
         'book_now' => 'PRENOTA ORA',
-        'access_prev' => '<p>Le inviamo, in allegato, una copia del suo preventivo</p>'
+        'access_prev' => '<p>Le inviamo, in allegato, una copia del suo preventivo</p>',
+        'upd_data' => 'Data updating',
+        'discount_applied' => 'Applicato sconto di €'
+
     ),
     "admin_house.php" =>
       array('title' => 'Gestione degli alloggi',
@@ -573,6 +576,7 @@ $strScript = array(
 		'FROZEN' => 'CONGELATO',
 		'ISSUE' => 'PROBLEMI da risolvere',
 		'CANCELLED' => 'ANNULLATO',
+    'changement' => 'Cambiamento stato prenotazione',
 		'no_extra' => 'Nessun extra acquistato',
 		'change_status' => 'Lo stato della prenotazione è cambiato in',
 		'booking_number' => 'Numero prenotazione',
@@ -755,8 +759,8 @@ $strScript = array(
           'ok' => 'ok riempitura array'
 		),
 		'guest'=>'Ospiti',
-    'opinion' => 'Valutazioni alloggio',
-    'average' => 'Valutazione media generale',
+    'opinion' => 'Valutazione degli ospiti',
+    'average' => 'Media delle valutazioni',
     'guest_reviews' => 'Recensioni degli ospiti',
     'no_review' => 'Non ci sono ancora recensioni',
     'prev' => ' Precedente ',

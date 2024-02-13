@@ -832,10 +832,9 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
         }
 
         if (strlen($vacation_url_user)>3 && $templates[$templateName]=="booking_quote"){// se è un preventivo
-          $arr = explode("modules", $_SERVER['HTTP_REFERER'], 2);
           if ($data = json_decode($testata['custom_field'], TRUE)) { // se esiste un json nel custom field della testata
             if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['acc_prev'])){// se c'è una acc_prev per il preventivo
-            $mail_message .= "<p>".$script_transl['access_prev']."</p><p>".$script_transl['acc_prev']." <a href = ".$arr[0]."modules/vacation_rental/user_booking.php?acc_prev=".str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($data['vacation_rental']['acc_prev']))."'> ".$script_transl['book_now']."</a></p><p>".$script_transl['best_regards']."</p>";
+            $mail_message .= "<p>".$script_transl['access_prev']."</p><p>".$script_transl['acc_prev']." <a href = https://".$_SERVER['HTTP_HOST']."/modules/vacation_rental/user_booking.php?acc_prev=".str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($data['vacation_rental']['acc_prev']))."'> ".$script_transl['book_now']."</a></p><p>".$script_transl['best_regards']."</p>";
             }
           }
         }
