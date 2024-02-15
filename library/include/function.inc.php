@@ -611,7 +611,7 @@ class Anagrafica {
 	public $gTables = [];
 	public $partnerTables = '';
 	public $cache = [];
-
+  public $codice;
     function __construct() {
         global $gTables;
         $this->gTables = $gTables;
@@ -725,8 +725,7 @@ class Anagrafica {
         }
         gaz_dbi_insert_anagra($v);
         $v['id_anagra'] = gaz_dbi_last_id();
-        gaz_dbi_table_insert('clfoco', $v);
-				$this->codice=gaz_dbi_last_id();
+        $this->codice=gaz_dbi_table_insert('clfoco', $v);
     }
 
     function deletePartner($idClfoco) {
