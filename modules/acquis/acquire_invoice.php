@@ -1337,7 +1337,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 								while ($a_row = gaz_dbi_fetch_array($rs_righidel)) {
 								  if ($a_row['id_mag']!=null && $a_row['id_mag']>=1) {
                     $movmag_rowprev = gaz_dbi_get_row($gTables['movmag'], "id_mov", $a_row['id_mag']);
-                    $movmag_prev[] = $movmag_rowprev;// creo un array con tutti i vecchi righi di movmag servirà poi per riconnettere l' id del lotto qualora fosse già stato inserito nel precedente ddt
+                    $movmag_prev[] = $movmag_rowprev;// creo un array con tutti i vecchi righi di movmag cancellati servirà poi per riconnettere l' id del lotto qualora fosse già stato inserito nel precedente ddt. Servirà anche per riconnettere eventuali movimenti SIAN
                     $movmag_datreg = $movmag_rowprev['datreg'];
                     gaz_dbi_del_row($gTables['rigdoc'], "id_rig", $a_row['id_rig']);
                     gaz_dbi_del_row($gTables['movmag'], "id_mov", $a_row['id_mag']);
@@ -1356,6 +1356,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 							file_put_contents($fn,$form['fattura_elettronica_original_content']);
 						}
 						$ctrl_ddt=$v['NumeroDDT'];
+
 					}
           //echo"<pre>",print_r($movmag_prev);die;
 					$form['rows'][$i]['id_tes'] = $ultimo_id;
@@ -1364,9 +1365,11 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					if ($exist_new_codart && substr($v['codart'],0,6)!='Insert') { // il codice esiste lo uso, ma prima controllo se l'ho volutamente cambiato sul form
 						if( $exist_new_codart['codice'] != $form['rows'][$i]['codart'] ){ // ho scelto un codice diverso
 							$other_artico=gaz_dbi_get_row($gTables['artico'], "codice", $form['rows'][$i]['codart']);
-							$form['rows'][$i]['good_or_service']=$other_artico['good_or_service'];
-							//aggiorno l'articolo con questo codice fornitore
-							gaz_dbi_put_row($gTables['artico'], 'codice', $other_artico['codice'], 'codice_fornitore', $v['codice_fornitore']);
+              if (isset($other_artico)){
+                $form['rows'][$i]['good_or_service']=$other_artico['good_or_service'];
+                //aggiorno l'articolo con questo codice fornitore
+                gaz_dbi_put_row($gTables['artico'], 'codice', $other_artico['codice'], 'codice_fornitore', $v['codice_fornitore']);
+              }
 						} else {
 							$form['rows'][$i]['codart']=$exist_new_codart['codice'];
 							$form['rows'][$i]['good_or_service']=$exist_new_codart['good_or_service'];
@@ -1411,16 +1414,15 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 						// Antonio Germani - creo movimento di magazzino sempre perché, se c'erano, sono stati cancellati
 						if (isset($v['NumeroDDT']) && $v['NumeroDDT']>0){ // se c'è un ddt
               $idlotmag='';$n=0;$rif_sian_movmag='';$break=0;
-              foreach($movmag_prev as $movmag_row){// controllo se un rigo con stesso codice articolo e la stessa relativa quantità erano nei movmag cancellati
 
+              foreach($movmag_prev as $key => $movmag_row){// controllo se un rigo con stesso codice articolo e la stessa relativa quantità erano nei movmag cancellati
                 if ($movmag_row['artico'] == $form['rows'][$i]['codart'] && floatval($movmag_row['quanti']) == floatval($form['rows'][$i]['quanti'])){
                   $idlotmag=intval($movmag_row['id_lotmag']);//se era presente ne prendo l' id_lot
                   $art=gaz_dbi_get_row($gTables['artico'], "codice", $movmag_row['artico']);// prendo i dati di questo articolo
                   if (intval($art['SIAN'])>0){// se l'articolo movimenta il SIAN, allora devo riconnettere il movmag con camp_mov_sian
                     $rif_sian_movmag=intval($movmag_row['id_mov']);// quando avrò il nuovo id movamag aggiornero il camp_mov_sian
                   }
-
-                 unset ($movmag_prev[$n]);// tolgo questo rigo dall'array dei previous in quanto già elaborato( per evitare di riaverlo dentro questo ciclo qualora ci fossero più righi di uno con stesso codart con stessa quanti
+                  unset ($movmag_prev[$key]);// tolgo questo rigo dall'array dei previous in quanto già elaborato( per evitare di riaverlo dentro questo ciclo qualora ci fossero più righi di uno con stesso codart con stessa quanti
                   break;
                 }
                 $n++;
@@ -1440,10 +1442,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 
 						// aggiorno idmag nel rigdoc
 						gaz_dbi_query("UPDATE " . $gTables['rigdoc'] . " SET id_mag = " . $id_mag . " WHERE `id_rig` = $id_rif ");
-
             if (intval($idlotmag)>0){// aggiorno lotmag
-              gaz_dbi_query("UPDATE " . $gTables['lotmag'] . " SET id_movmag = " . $id_mag . " WHERE `id` = $idlotmag ");
-              gaz_dbi_query("UPDATE " . $gTables['lotmag'] . " SET id_rigdoc = " . $id_rif . " WHERE `id` = $idlotmag ");
+              gaz_dbi_query("UPDATE " . $gTables['lotmag'] . " SET id_movmag = " . intval($id_mag) . ", id_rigdoc = " . intval($id_rif) . " WHERE id = ".intval($idlotmag));
 
             }
 
@@ -1479,6 +1479,13 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					}
 
 				}
+        if (count($movmag_prev)>0){// se mi sono rimasti dei righi nei movimenti precedenti segnalo l'incoerenze fra DDT e FAE
+          ?>
+          <script>
+          alert('ATTENZIONE: la FAE è stata acquisita ma sono state riscontrate incoerenze negli articoli presenti nel DDT con quelli della FAE. Tali incoerenze hanno creato ERRORI nella gestione dei lotti e dei movimenti SIAN, qualora presenti. Gli errori dovranno essere corretti manualmente da un esperto di GAzie');
+          </script>
+          <?php
+        }
         header('Location: report_docacq.php?sezione='.$form['seziva']);
 				exit;
 			} else { // non ho confermato, sono alla prima entrata dopo l'upload del file
