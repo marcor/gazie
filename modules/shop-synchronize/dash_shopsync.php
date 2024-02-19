@@ -36,7 +36,7 @@ $test=gaz_dbi_fetch_array($rs);
 <?php
 if ($test && $test['access']==3){ 
 ?>
-<div class="box-header bg-info">
+<div class="box-header company-color">
 	<h4 class="box-title"><i class="glyphicon glyphicon-transfer"></i> SINCRONIZZAZIONE SHOP ONLINE</h4>
 	<a class="pull-right dialog_grid" id_bread="<?php echo $grr['id_bread']; ?>" style="cursor:pointer;"><i class="glyphicon glyphicon-cog"></i></a>
 </div>
@@ -46,7 +46,7 @@ if ($test && $test['access']==3){
 <?php
 } else {
 ?>
-<div class="box-header bg-danger">
+<div class="box-header company-color">
 	<h3 class="box-title">LA FUNZIONE SINCRONIZZAZIONE SHOP FUNZIONA SOLO ATTIVANDO IL RELATIVO MODULO </h3>
 </div>
 

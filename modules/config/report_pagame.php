@@ -92,26 +92,37 @@ $headers_pagame = array  (
               );
 $linkHeaders = new linkHeaders($headers_pagame);
 $linkHeaders -> output();
+$accmov=[];
+$rs=gaz_dbi_query("SELECT pagame , COUNT(*) FROM ".$gTables['tesdoc']."  GROUP BY pagame");
+while ($r=gaz_dbi_fetch_row($rs)) {
+  $accmov[$r[0]]=isset($accmov[$r[0]])?($accmov[$r[0]]+$r[1]):(int)$r[1];
+};
+$rs=gaz_dbi_query("SELECT pagame, COUNT(*) FROM ".$gTables['tesbro']."  GROUP BY pagame");
+while ($r=gaz_dbi_fetch_row($rs)) {
+  $accmov[$r[0]]=isset($accmov[$r[0]])?($accmov[$r[0]]+$r[1]):(int)$r[1];
+};
+$rs=gaz_dbi_query("SELECT codpag, COUNT(*) FROM ".$gTables['clfoco']."  GROUP BY codpag");
+while ($r=gaz_dbi_fetch_row($rs)) {
+  $accmov[$r[0]]=isset($accmov[$r[0]])?($accmov[$r[0]]+$r[1]):(int)$r[1];
+};
+//var_dump($accmov);
+
 $result = gaz_dbi_dyn_query ('*', $gTables['pagame'], $where, $orderby, $limit, $passo);
-while ($a_row = gaz_dbi_fetch_array($result)) {
-	$rs_check_doc = gaz_dbi_dyn_query("id_tes", $gTables['tesdoc'], "pagame = '{$a_row['codice']}'", "id_tes", 0, 1);
-  $check_doc = gaz_dbi_num_rows($rs_check_doc);
-	$rs_check_cli = gaz_dbi_dyn_query("codice", $gTables['clfoco'], "codpag = '{$a_row['codice']}'", "codice", 0, 1);
-  $check_cli = gaz_dbi_num_rows($rs_check_cli);
+while ($r = gaz_dbi_fetch_array($result)) {
   echo "<tr class=\"FacetDataTD\">\n";
-  echo "<td align=\"center\"><a class=\"btn btn-xs btn-edit\" href=\"admin_pagame.php?codice=".$a_row["codice"]."&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["codice"]."</a></td>\n";
-  echo "<td>".$a_row["descri"]." &nbsp;</td>\n";
-  echo "<td align=\"center\">".$a_row["giodec"]." &nbsp;</td>\n";
-  echo "<td align=\"center\">".$a_row["numrat"]." &nbsp;</td>\n";
-  echo "<td align=\"center\">".$a_row["tiprat"]." &nbsp;</td>\n";
-  echo "<td align=\"center\">".$a_row["fae_mode"]." &nbsp;</td><td align=\"center\">\n";
-  if ($check_doc > 0 || $check_cli > 0){
+  echo "<td align=\"center\"><a class=\"btn btn-xs btn-edit\" href=\"admin_pagame.php?codice=".$r["codice"]."&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$r["codice"]."</a></td>\n";
+  echo "<td>".$r["descri"]." &nbsp;</td>\n";
+  echo "<td align=\"center\">".$r["giodec"]." &nbsp;</td>\n";
+  echo "<td align=\"center\">".$r["numrat"]." &nbsp;</td>\n";
+  echo "<td align=\"center\">".$r["tiprat"]." &nbsp;</td>\n";
+  echo "<td align=\"center\">".$r["fae_mode"]." &nbsp;</td><td align=\"center\">\n";
+  if (isset($accmov[$r["codice"]])){
 		?>
 		<button title="Impossibile cancellare perché usata da clienti/fornitori e/o documenti" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-trash"></i></button>
 		<?php
 	} else {
 		?>
-		<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella la modalità di pagamento" ref="<?php echo $a_row['codice'];?>" ragso="<?php echo $a_row['descri'];?>">
+		<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella la modalità di pagamento" ref="<?php echo $r['codice'];?>" ragso="<?php echo $r['descri'];?>">
 			<i class="glyphicon glyphicon-trash"></i>
 		</a>
 		<?php

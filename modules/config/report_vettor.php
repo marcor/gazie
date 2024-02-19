@@ -88,23 +88,26 @@ $headers_vettor = array  (
               );
 $linkHeaders = new linkHeaders($headers_vettor);
 $linkHeaders -> output();
+$accmov=[];
+$rs=gaz_dbi_query("SELECT vettor , COUNT(*) FROM ".$gTables['tesdoc']."  GROUP BY vettor");
+while ($r=gaz_dbi_fetch_row($rs)) {
+  $accmov[$r[0]]=isset($accmov[$r[0]])?($accmov[$r[0]]+$r[1]):(int)$r[1];
+};
 $result = gaz_dbi_dyn_query ('*', $gTables['vettor'], $where, $orderby, $limit, $passo);
-while ($a_row = gaz_dbi_fetch_array($result)) {
-	$rs_check_doc = gaz_dbi_dyn_query("id_tes", $gTables['tesdoc'], "vettor = '{$a_row['codice']}'", "id_tes", 0, 1);
-  $check_doc = gaz_dbi_num_rows($rs_check_doc);
+while ($r = gaz_dbi_fetch_array($result)) {
   echo "<tr class=\"FacetDataTD\">";
-  echo "<td align=\"center\"><a class=\"btn btn-xs btn-edit\" href=\"admin_vettore.php?Update&codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["codice"]."</a> &nbsp</td>";
-  echo "<td>".$a_row["ragione_sociale"]." &nbsp;</td>";
-  echo "<td align=\"center\">".$a_row["citta"]." &nbsp;</td>";
-  echo "<td align=\"center\">".$a_row["telefo"]." &nbsp;</td>";
+  echo "<td align=\"center\"><a class=\"btn btn-xs btn-edit\" href=\"admin_vettore.php?Update&codice=".$r["codice"]."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$r["codice"]."</a> &nbsp</td>";
+  echo "<td>".$r["ragione_sociale"]." &nbsp;</td>";
+  echo "<td align=\"center\">".$r["citta"]." &nbsp;</td>";
+  echo "<td align=\"center\">".$r["telefo"]." &nbsp;</td>";
   echo "<td align=\"center\">";
-  if ($check_doc > 0 ){
+  if (isset($accmov[$r["codice"]])){
 		?>
 		<button title="Impossibile cancellare perché usato sui documenti" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-trash"></i></button>
 		<?php
 	} else {
 		?>
-		<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il vettore" ref="<?php echo $a_row['codice'];?>" ragso="<?php echo $a_row['ragione_sociale'];?>">
+		<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il vettore" ref="<?php echo $r['codice'];?>" ragso="<?php echo $r['ragione_sociale'];?>">
 			<i class="glyphicon glyphicon-trash"></i>
 		</a>
 		<?php

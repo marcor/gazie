@@ -47,7 +47,7 @@ while ($r = gaz_dbi_fetch_array($rs)) {
 }
 ?>
 <div class="panel panel-danger col-sm-12">
-  <div class="box-header bg-danger">
+  <div class="box-header company-color">
     <b>Articoli da riordinare</b>
     <a class="pull-right dialog_grid" id_bread="<?php echo $grr['id_bread']; ?>" style="cursor:pointer;"><i class="glyphicon glyphicon-cog"></i></a>
   </div>

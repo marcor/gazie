@@ -2310,6 +2310,8 @@ class TableSorter {
         $this->set_pagination();
         $this->default_order = $default_order;
         $this->parse_order_request();
+        $this->style = 'tsstyle';
+
     }
 
    /**

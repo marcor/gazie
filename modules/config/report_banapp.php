@@ -92,25 +92,35 @@ $linkHeaders -> output();
 ?>
    </tr>
 <?php
+$accmov=[];
+$rs=gaz_dbi_query("SELECT banapp , COUNT(*) FROM ".$gTables['tesdoc']."  GROUP BY banapp");
+while ($r=gaz_dbi_fetch_row($rs)) {
+  $accmov[$r[0]]=isset($accmov[$r[0]])?($accmov[$r[0]]+$r[1]):(int)$r[1];
+};
+$rs=gaz_dbi_query("SELECT banapp, COUNT(*) FROM ".$gTables['tesbro']."  GROUP BY banapp");
+while ($r=gaz_dbi_fetch_row($rs)) {
+  $accmov[$r[0]]=isset($accmov[$r[0]])?($accmov[$r[0]]+$r[1]):(int)$r[1];
+};
+$rs=gaz_dbi_query("SELECT banapp, COUNT(*) FROM ".$gTables['clfoco']."  GROUP BY banapp");
+while ($r=gaz_dbi_fetch_row($rs)) {
+  $accmov[$r[0]]=isset($accmov[$r[0]])?($accmov[$r[0]]+$r[1]):(int)$r[1];
+};
+
 $result = gaz_dbi_dyn_query ('*', $gTables['banapp'], $where, $orderby, $limit, $passo);
-while ($a_row = gaz_dbi_fetch_array($result)) {
-	$rs_check_doc = gaz_dbi_dyn_query("id_tes", $gTables['tesdoc'], "banapp = '{$a_row['codice']}'", "id_tes", 0, 1);
-  $check_doc = gaz_dbi_num_rows($rs_check_doc);
-	$rs_check_cli = gaz_dbi_dyn_query("codice", $gTables['clfoco'], "banapp = '{$a_row['codice']}'", "codice", 0, 1);
-  $check_cli = gaz_dbi_num_rows($rs_check_cli);
+while ($r = gaz_dbi_fetch_array($result)) {
   echo "<tr class=\"FacetDataTD\">";
-  echo "<td align=\"center\"><a class=\"btn btn-xs btn-edit\" href=\"admin_banapp.php?Update&codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["codice"]."</a> &nbsp</td>";
-  echo "<td>".$a_row["descri"]." &nbsp;</td>";
-  echo "<td align=\"center\">".$a_row["locali"]." &nbsp;</td>";
-  echo "<td align=\"center\">". sprintf("%'.05d\n", $a_row["codabi"]) ."</td>";
-  echo "<td align=\"center\">". sprintf("%'.05d\n", $a_row["codcab"]) ."</td><td align=\"center\">";
-  if ($check_doc > 0 || $check_cli > 0){
+  echo "<td align=\"center\"><a class=\"btn btn-xs btn-edit\" href=\"admin_banapp.php?Update&codice=".$r["codice"]."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$r["codice"]."</a> &nbsp</td>";
+  echo "<td>".$r["descri"]." &nbsp;</td>";
+  echo "<td align=\"center\">".$r["locali"]." &nbsp;</td>";
+  echo "<td align=\"center\">". sprintf("%'.05d\n", $r["codabi"]) ."</td>";
+  echo "<td align=\"center\">". sprintf("%'.05d\n", $r["codcab"]) ."</td><td align=\"center\">";
+  if (isset($accmov[$r["codice"]])){
 		?>
-		<button title="Impossibile cancellare perché usata da clienti e/o documenti di vendita" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-trash"></i></button>
+		<button title="Impossibile cancellare perché usata da clienti e/o documenti" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-trash"></i></button>
 		<?php
 	} else {
 		?>
-		<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella la banca d'appoggio" ref="<?php echo $a_row['codice'];?>" ragso="<?php echo $a_row['descri'];?>">
+		<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella la banca d'appoggio" ref="<?php echo $r['codice'];?>" ragso="<?php echo $r['descri'];?>">
 			<i class="glyphicon glyphicon-trash"></i>
 		</a>
 		<?php

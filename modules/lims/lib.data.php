@@ -22,4 +22,9 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
 */
+//Aggiunta di tabelle aziendali specifiche del modulo Lims
+$t = ['biochemical_parameters'];
+foreach ($t as $v) {
+  $gTables[$v] = $table_prefix."_".$v;
+}
 ?>

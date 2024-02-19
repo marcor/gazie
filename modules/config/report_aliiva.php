@@ -96,27 +96,37 @@ $headers = array  (
 );
 $linkHeaders = new linkHeaders($headers);
 $linkHeaders -> output();
+$accmov=[];
+$rs=gaz_dbi_query("SELECT codiva , COUNT(*) FROM ".$gTables['rigmoi']."  GROUP BY codiva");
+while ($r=gaz_dbi_fetch_row($rs)) {
+  $accmov[$r[0]]=isset($accmov[$r[0]])?($accmov[$r[0]]+$r[1]):(int)$r[1];
+};
+$rs=gaz_dbi_query("SELECT codvat, COUNT(*) FROM ".$gTables['rigdoc']."  GROUP BY codvat");
+while ($r=gaz_dbi_fetch_row($rs)) {
+  $accmov[$r[0]]=isset($accmov[$r[0]])?($accmov[$r[0]]+$r[1]):(int)$r[1];
+};
+$rs=gaz_dbi_query("SELECT codvat, COUNT(*) FROM ".$gTables['rigbro']."  GROUP BY codvat");
+while ($r=gaz_dbi_fetch_row($rs)) {
+  $accmov[$r[0]]=isset($accmov[$r[0]])?($accmov[$r[0]]+$r[1]):(int)$r[1];
+};
+//var_dump($accmov);
 $result = gaz_dbi_dyn_query ('*', $gTables['aliiva'], $where, $orderby, $limit, $passo);
-while ($a_row = gaz_dbi_fetch_array($result)) {
-	$rs_check_mov = gaz_dbi_dyn_query("COUNT(*) AS nr", $gTables['rigmoi'], "codiva = '{$a_row['codice']}'", "id_rig", 0, 1);
-  $check_mov = gaz_dbi_fetch_array($rs_check_mov);
-	$rs_check_doc = gaz_dbi_dyn_query("COUNT(*) AS nr", $gTables['rigdoc'], "codvat = '{$a_row['codice']}'", "id_rig", 0, 1);
-  $check_doc = gaz_dbi_fetch_array($rs_check_doc);
+while ($r = gaz_dbi_fetch_array($result)) {
   echo "<tr class=\"FacetDataTD\">";
-  echo "<td align=\"center\"><a class=\"btn btn-xs btn-edit\" href=\"admin_aliiva.php?Update&codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-edit\"></i> ".$a_row["codice"]."</a> &nbsp</td>";
-  echo "<td>".$a_row["descri"]."  </td>";
-  echo "<td align=\"center\">".$script_transl['tipiva'][$a_row["tipiva"]]."</td>";
-  echo "<td align=\"center\">".$a_row["operation_type"]."  </td>";
-  echo "<td align=\"center\">".$a_row["aliquo"]."  </td>";
-  echo "<td align=\"center\">".$script_transl['yn_value'][$a_row["taxstamp"]]."  </td>";
-  echo "<td align=\"center\">".$a_row["fae_natura"]."  </td><td align=\"center\">";
-  if ($check_doc['nr'] > 0 || $check_mov['nr'] > 0){
+  echo "<td align=\"center\"><a class=\"btn btn-xs btn-edit\" href=\"admin_aliiva.php?Update&codice=".$r["codice"]."\"><i class=\"glyphicon glyphicon-edit\"></i> ".$r["codice"]."</a> &nbsp</td>";
+  echo "<td>".$r["descri"]."  </td>";
+  echo "<td align=\"center\">".$script_transl['tipiva'][$r["tipiva"]]."</td>";
+  echo "<td align=\"center\">".$r["operation_type"]."  </td>";
+  echo "<td align=\"center\">".$r["aliquo"]."  </td>";
+  echo "<td align=\"center\">".$script_transl['yn_value'][$r["taxstamp"]]."  </td>";
+  echo "<td align=\"center\">".$r["fae_natura"]."  </td><td align=\"center\">";
+  if (isset($accmov[$r["codice"]])) {
 		?>
-		<button title="Impossibile cancellare perché ci sono  <?php echo ($check_doc['nr']+$check_mov['nr']); ?>  movimenti associati" class="btn btn-xs btn-default btn-elimina disabled"> <i class="glyphicon glyphicon-trash"></i></button>
+		<button title="Impossibile cancellare perché ci sono  <?php  echo ($accmov[$r["codice"]]); ?>  movimenti associati" class="btn btn-xs btn-default btn-elimina disabled"> <i class="glyphicon glyphicon-trash"></i></button>
 		<?php
 	} else {
 		?>
-		<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella l'aliquota IVA" ref="<?php echo $a_row['codice'];?>" ragso="<?php echo $a_row['descri'];?>">
+		<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella l'aliquota IVA" ref="<?php  echo $r['codice'];?>" ragso="<?php echo $r['descri'];?>">
 			<i class="glyphicon glyphicon-trash"></i>
 		</a>
 		<?php

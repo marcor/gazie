@@ -148,9 +148,11 @@ function selectCompany($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg=
 
 /* Style the back side */
 .flip-image-back {
-  background-color: #<?php echo $admin_aziend['colore']; ?>;
-  color: white;
-  transform: rotateY(180deg);
+	background-color: #FCFCFC;
+	color: white;
+	transform: rotateY(180deg);
+	border-radius: 20px;
+	box-shadow: 0 0 5px #<?php echo $admin_aziend['colore']; ?>;
 }
 .flip-image-back>a {
   color: black;

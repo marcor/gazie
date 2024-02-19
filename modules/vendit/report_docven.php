@@ -510,9 +510,6 @@ function printPdf(urlPrintDoc){
                 <option value="default" <?php if ($flt_info=="default" ) echo "selected";?>>da Contab.</option>
               </select>
             </td>
-            <td class="FacetFieldCaptionTD"> &nbsp; </td>
-            <td class="FacetFieldCaptionTD"> &nbsp; </td>
-            <td class="FacetFieldCaptionTD"> &nbsp; </td>
             <td class="FacetFieldCaptionTD">
               <input type="submit" class="btn btn-sm btn-default btn-50" name="search" value="Cerca" tabindex="1">
               <?php $ts->output_order_form(); ?>
@@ -520,6 +517,9 @@ function printPdf(urlPrintDoc){
             <td class="FacetFieldCaptionTD">
               <a class="btn btn-sm btn-default btn-50" href="?">Reset</a>
             </td>
+            <td class="FacetFieldCaptionTD"> &nbsp; </td>
+            <td class="FacetFieldCaptionTD"> &nbsp; </td>
+            <td class="FacetFieldCaptionTD"> &nbsp; </td>
           </tr>
           <tr>
             <?php
@@ -727,7 +727,7 @@ function printPdf(urlPrintDoc){
                   }
                 }
               } else {
-                $idcon_maggiore_0 = " <a class=\"btn btn-xs btn-default btn-cont\" href=\"accounting_documents.php?type=F&vat_section=" . $sezione . "&last=" . $r["protoc"] . "\"><i class=\"glyphicon glyphicon-euro\"></i>&nbsp;Contabilizza</a>";
+                $idcon_maggiore_0 = " <a class=\"btn btn-xs btn-default btn-cont\" style=\"font-size:10px;\" href=\"accounting_documents.php?type=F&vat_section=" . $sezione . "&last=" . $r["protoc"] . "\"><i class=\"glyphicon glyphicon-euro\"></i>&nbsp;CONTABILIZZA</a>";
               }
               $effett_result = gaz_dbi_dyn_query('*', $gTables['effett'], "id_doc = " . $r["reftes"], 'progre');
               while ($r_e = gaz_dbi_fetch_array($effett_result)) {
@@ -769,11 +769,11 @@ function printPdf(urlPrintDoc){
                 // Colonna cliente
                 echo "<td><a title=\"Dettagli cliente\" href=\"report_client.php?nome=" . htmlspecialchars($r["ragso1"]) . "\">" . $r["ragso1"] . ((empty($r["ragso2"]))?"":" ".$r["ragso2"]) . "</a>";
                 if (strlen(trim($r['fe_cod_univoco']))==6){
-                  echo '<a class="btn btn-sm btn-info" title="Codice Univoco Ufficio della Pubblica Amministrazione" href="admin_client.php?codice='.intval(substr($r["clfoco"],-6,6)).'&Update">[pa]@ '.$r['fe_cod_univoco'].' </a>';
+                  echo '<a class="btn btn-xs btn-info" title="Codice Univoco Ufficio della Pubblica Amministrazione" href="admin_client.php?codice='.intval(substr($r["clfoco"],-6,6)).'&Update">[pa]@ '.$r['fe_cod_univoco'].' </a>';
                 }
                 echo "</td>";
                 // Colonna movimenti contabili
-                echo "<td align=\"left\">";
+                echo "<td>";
                 $res_consenti_nofisc = gaz_dbi_dyn_query("codfis,pariva","{$gTables['clfoco']} LEFT JOIN {$gTables['anagra']} ON {$gTables['clfoco']}.id_anagra = {$gTables['anagra']}.id","codice=".$r['clfoco'] );
                 $r_consenti_nofisc = gaz_dbi_fetch_array($res_consenti_nofisc);
                 if ( $r_consenti_nofisc['pariva']!="" || $r_consenti_nofisc['codfis']!="" ) {

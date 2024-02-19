@@ -23,7 +23,8 @@
   --------------------------------------------------------------------------
 */
 $menu_data = array('m1' => array('link' => "docume_lims.php"),
-                        'm2' => array(1 => array('link' => "config_lims.php", 'weight' => 30)
+                        'm2' => array(1 => array('link' => "config_lims.php", 'weight' => 30),
+                                      2 => array('link' => "report_biochemical_parameters.php", 'weight' => 90)
                                      ),
                 );
 $module_class='fas fa-landmark';

@@ -31,7 +31,7 @@ if ($admin_aziend['Abilit'] >= 8) {
     ?>
     <!-- Scadenziari -->
 	<div class="panel panel-info col-sm-12" >
-          <div class="box-header bg-danger">
+          <div class="box-header company-color">
             <div class="box-title"><b><?php echo $script_transl['sca_scafor']; ?></b> -> data di riferimento:
 			<?php echo '<input type="text" value="'.$form['datref_for'].'" id="datref_for" name="datref_for" readonly>'; ?><small>(6 mesi prima e 6 dopo)</small>
 			</div>

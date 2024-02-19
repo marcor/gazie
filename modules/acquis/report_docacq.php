@@ -435,7 +435,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
 		$modulo = "stampa_docacq.php?id_tes=" . $row['id_tes']."&template=".$template;
 		$modifi = "";
 	}
-  echo '<tr class="FacetDataTD"><td align="center" class="bg-'.$btncol.'">';
+  echo '<tr class="FacetDataTD"><td align="center">';
   if (!empty($modifi)) {
     echo '<a class="btn btn-xs btn-'.$btncol.'" href="' . $modifi . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $row["protoc"] . "</td>";
   } else {
