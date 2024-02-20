@@ -471,7 +471,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
   if (isset($accmov[$r["codice"]])){
     echo 'btn-default" disabled title="Articolo non è eliminabile perché presente su '. $accmov[$r["codice"]].' registrazioni"';
   } else {
-    echo 'btn-elimina" dialog_delete" ref="'. $r['codice'].'" artico="'. $r['descri'].'"';
+    echo 'btn-elimina dialog_delete" ref="'. $r['codice'].'" artico="'. $r['descri'].'"';
   }
   echo '> <i class="glyphicon glyphicon-trash"></i></a>';
 	echo "</td>\n";
