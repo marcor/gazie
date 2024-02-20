@@ -462,7 +462,7 @@ function getRegimeFiscale($si){
 	global $gTables;
 	$res=false;
   $conf_rf=gaz_dbi_get_row($gTables['company_config'], 'var', 'sezione_regime_fiscale');
-  $rrff=($conf_rf)?trim($conf_rf['val']):0;
+  $rrff=($conf_rf)?trim($conf_rf['val'].''):0;
 	$rf=explode(';',$rrff);
 	if (isset($rf[0])&&!empty($rf[0])){// ho almeno un altro regime
 		foreach($rf as $v){

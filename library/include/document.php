@@ -124,7 +124,7 @@ class DocContabVars {
       $this->gTables = $gTables;
       $admin_aziend = gaz_dbi_get_row($gTables['aziend'], 'codice', $_SESSION['company_id']);
       $this->layout_pos_logo_on_doc = gaz_dbi_get_row($gTables['company_config'], 'var', 'layout_pos_logo_on_doc')['val'];
-      $this->descriptive_last_row = trim(gaz_dbi_get_row($gTables['company_config'], 'var', 'descriptive_last_row')['val']);
+      $this->descriptive_last_row = trim(gaz_dbi_get_row($gTables['company_config'], 'var', 'descriptive_last_row')['val'].'');
       $this->descriptive_last_ddt = gaz_dbi_get_row($gTables['company_config'], 'var', 'descriptive_last_ddt')['val'];
       $this->show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit')['val'];
       $this->user = gaz_dbi_get_row($gTables['admin'], "user_name", $_SESSION["user_name"]);
