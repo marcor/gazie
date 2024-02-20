@@ -326,10 +326,8 @@ $ts->output_navbar();
 			<?php  $ts->output_order_form(); ?>
 		</td>
 	</tr>
-
 <?php
 $gForm = new magazzForm();
-
 $result = gaz_dbi_dyn_query ( $gTables['artico']. ".*, ".$gTables['catmer']. ".descri AS descat, ".$gTables['catmer']. ".codice AS codcat",$tablejoin, $ts->where, $ts->orderby, $ts->getOffset(), $ts->getLimit());
 ?>
 	<tr class="visible-xs hidden-xs">
@@ -338,7 +336,6 @@ $result = gaz_dbi_dyn_query ( $gTables['artico']. ".*, ".$gTables['catmer']. ".d
 			<a class="btn btn-xs btn-default col-xs-2"  style="color: red;" href="?">Reset</a>
 		</td>
 	</tr>
-
 <?php
 echo '<tr>';
 $ts->output_headers();
@@ -358,45 +355,43 @@ while ($r=gaz_dbi_fetch_row($rs)) {
   $accmov[$r[0]]=isset($accmov[$r[0]])?($accmov[$r[0]]+$r[1]):(int)$r[1];
 };
 
-while ($r = gaz_dbi_fetch_array($result)) {
-	// da configurazione azienda
-	$show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
-	$tipo_composti = gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti');
-	// acquisti
-    // giacenza
-    $mv = $gForm->getStockValue(false, $r['codice']);
-    $magval = array_pop($mv);
-    $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
-	 if (isset($magval['q_g']) && round($magval['q_g'],6) == "-0"){
-		 $magval['q_g']=0;
-	 }
-	$class = 'success';
-    if ($r['good_or_service']==1) { // è un servizio
-        $class = 'info';
-    } elseif (is_numeric($magval)) { // giacenza = 0
-        $class = 'danger';
-        $magval=[];
-        $magval['q_g']=0;
-    } elseif ($magval['q_g'] < 0) { // giacenza inferiore a 0
-        $class = 'danger';
+// da configurazione azienda
+$tipo_composti = gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti');
 
-    } elseif ($magval['q_g'] > 0) { //
-      if ($magval['q_g']<=$r['scorta']){
-        $class = 'warning';
-      }
-    } else { // giacenza = 0
-        $class = 'danger';
+while ($r = gaz_dbi_fetch_array($result)) {
+  // giacenza
+  $mv = $gForm->getStockValue(false, $r['codice']);
+  $magval = array_pop($mv);
+  $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
+  if (isset($magval['q_g']) && round($magval['q_g'],6) == "-0"){
+    $magval['q_g']=0;
+  }
+	$class = 'success';
+  if ($r['good_or_service']==1) { // è un servizio
+    $class = 'info';
+  } elseif (is_numeric($magval)) { // giacenza = 0
+    $class = 'danger';
+    $magval=[];
+    $magval['q_g']=0;
+  } elseif ($magval['q_g'] < 0) { // giacenza inferiore a 0
+    $class = 'danger';
+  } elseif ($magval['q_g'] > 0) { //
+    if ($magval['q_g']<=$r['scorta']){
+      $class = 'warning';
     }
-    // contabilizzazione magazzino
-    $com = '';
-    if ($admin_aziend['conmag'] > 0 && $r["good_or_service"] != 1 && $tipo_composti['val']=="STD") {
-        $com = '<a class="btn btn-xs btn-'.$class.'" href="../magazz/select_schart.php?di=0101' . date('Y') . '&df=' . date('dmY') . '&id=' . $r['codice'] . '" target="_blank">
-	  <i class="glyphicon glyphicon-list"></i> <i class="glyphicon glyphicon-print"></i>
-	  </a>';
-    }
-    // IVA
-    $iva = gaz_dbi_get_row($gTables['aliiva'], 'codice', $r['aliiva']);
-    if (!$iva) $iva=array('aliquo'=>0);
+  } else { // giacenza = 0
+      $class = 'danger';
+  }
+  // contabilizzazione magazzino
+  $com = '';
+  if ($admin_aziend['conmag'] > 0 && $r["good_or_service"] != 1 && $tipo_composti['val']=="STD") {
+      $com = '<a class="btn btn-xs btn-'.$class.'" href="../magazz/select_schart.php?di=0101' . date('Y') . '&df=' . date('dmY') . '&id=' . $r['codice'] . '" target="_blank">
+  <i class="glyphicon glyphicon-list"></i> <i class="glyphicon glyphicon-print"></i>
+  </a>';
+  }
+  // IVA
+  $iva = gaz_dbi_get_row($gTables['aliiva'], 'codice', $r['aliiva']);
+  if (!$iva) $iva=array('aliquo'=>0);
 	switch ($r['web_public']) {// 1=attivo su web; 2=attivo e prestabilito; 3=attivo e pubblicato in home; 4=attivo, in home e prestabilito; 5=disattivato su web
 		case "0":
 			$ecomGlobe="";
@@ -417,40 +412,40 @@ while ($r = gaz_dbi_fetch_array($result)) {
 			$ecomGlobe="class='glyphicon glyphicon-globe' title='Disattivato su e-commerce'";
 			break;
 	}
-    echo "<tr>\n";
-    echo '<td>
-    <a class="btn btn-xs btn-'.$class.'" href="../magazz/admin_artico.php?Update&codice='.$r['codice'].'" ><i class="glyphicon glyphicon-edit"></i> '.$r['codice'].'</a>';
-    if ( $r["good_or_service"] == 2 ) {
-        echo '<a class="btn btn-xs btn-default" href="../magazz/admin_artico_compost.php?Update&codice='.$r['codice'].'" ><i class="glyphicon glyphicon-plus"></i></a>';
-        $des_bom ='<span class="text-info bg-info"> <b> '.$script_transl['good_or_service_value'][$r['good_or_service']].' </b> </span> <a target="_blank" title="Stampa l\'albero della distinta base" class="btn btn-xs btn-info" href="stampa_bom.php?ri=' . $r["codice"] . '"><i class="glyphicon glyphicon-tasks"></i></a>';
-    } else {
-        $des_bom = $script_transl['good_or_service_value'][intval($r['good_or_service'])];
-    }
+  echo "<tr>\n";
+  echo '<td>
+  <a class="btn btn-xs btn-'.$class.'" href="../magazz/admin_artico.php?Update&codice='.$r['codice'].'" ><i class="glyphicon glyphicon-edit"></i> '.$r['codice'].'</a>';
+  if ( $r["good_or_service"] == 2 ) {
+    echo '<a class="btn btn-xs btn-default" href="../magazz/admin_artico_compost.php?Update&codice='.$r['codice'].'" ><i class="glyphicon glyphicon-plus"></i></a>';
+    $des_bom ='<span class="text-info bg-info"> <b> '.$script_transl['good_or_service_value'][$r['good_or_service']].' </b> </span> <a target="_blank" title="Stampa l\'albero della distinta base" class="btn btn-xs btn-info" href="stampa_bom.php?ri=' . $r["codice"] . '"><i class="glyphicon glyphicon-tasks"></i></a>';
+  } else {
+    $des_bom = $script_transl['good_or_service_value'][intval($r['good_or_service'])];
+  }
 	echo "<i ".$ecomGlobe." ></i>";// globo per e-commerce
-    echo '</td>';
-    echo '<td><span class="gazie-tooltip col-xs-12" data-type="product-thumb" data-id="'. $r['codice'] .'" data-title="'. $r['annota'].'" data-maxsize="360" >'.$r['descri'].'</span>';
-    echo "</td>\n";
-    echo '<td class="text-center">'.$r['catmer'].'-'.$r['descat'];
-    echo "</td>\n";
-    echo '<td class="text-center">'.$des_bom. ' ';
+  echo '</td>';
+  echo '<td><span class="gazie-tooltip col-xs-12" data-type="product-thumb" data-id="'. $r['codice'] .'" data-title="'. $r['annota'].'" data-maxsize="360" >'.$r['descri'].'</span>';
+  echo "</td>\n";
+  echo '<td class="text-center">'.$r['catmer'].'-'.$r['descat'];
+  echo "</td>\n";
+  echo '<td class="text-center">'.$des_bom. ' ';
 	if ($r['id_artico_group']>0){
 		echo '<a class="btn btn-xs btn-default" title="Gruppo varianti"  onclick="getgroup(\''.$r['id_artico_group'].'\');"> <i class="glyphicon glyphicon-level-up"></i> </a> ';
-    }
+  }
   // colonna codice fornitore
 	echo '</td><td class="text-center">'.$r['codice_fornitore'].'</td>';
 	echo "</td>\n";
-    echo '<td class="text-center">'.$r['unimis'];
+  echo '<td class="text-center">'.$r['unimis'];
 	echo "</td>\n";
-    echo '<td class="text-center">'.number_format($r['preve1'], $admin_aziend['decimal_price'], ',', '.');
+  echo '<td class="text-center">'.number_format($r['preve1'], $admin_aziend['decimal_price'], ',', '.');
 	echo "</td>\n";
-    echo '<td class="text-center">';
-    echo '<a class="btn btn-xs btn-default" title="Ordini aperti"  onclick="getorders(\''.$r['codice'].'\');"> <i class="glyphicon glyphicon-th-list"></i> </a> ';
+  echo '<td class="text-center">';
+  echo '<a class="btn btn-xs btn-default" title="Ordini aperti"  onclick="getorders(\''.$r['codice'].'\');"> <i class="glyphicon glyphicon-th-list"></i> </a> ';
 	echo "</td>\n";
-    echo '<td class="text-center">';
-    echo ' <a class="btn btn-xs btn-default" title="Acquisti"  onclick="getlastbuys(\''.$r['codice'].'\');"> <i class="glyphicon glyphicon-download-alt"></i></a>';
+  echo '<td class="text-center">';
+  echo ' <a class="btn btn-xs btn-default" title="Acquisti"  onclick="getlastbuys(\''.$r['codice'].'\');"> <i class="glyphicon glyphicon-download-alt"></i></a>';
 	echo "</td>\n";
   if (($r['mostra_qdc']==1 && $r["good_or_service"]==1) or ($r["good_or_service"]==1 && floatval($magval['q_g'])==0)){//se è riservato al quaderno di campagna ed è servizio || è servizio e la q.tà è zero
-     echo "<td></td>";// colonna quantità vuota
+    echo "<td></td>";// colonna quantità vuota
   }elseif ($r["good_or_service"]==1 && floatval($magval['q_g'])<>0 ){// se è un servizio ma sono stati registrati movimenti
     echo '<td class="text-right bg-danger text-danger">'.gaz_format_quantity(floatval(substr($magval['q_g'],0,15)),1,$admin_aziend['decimal_quantity']);
     echo "</td>\n";// segnalo in rosso
@@ -458,29 +453,29 @@ while ($r = gaz_dbi_fetch_array($result)) {
     echo '<td class="text-right">'.gaz_format_quantity(floatval(substr($magval['q_g'],0,15)),1,$admin_aziend['decimal_quantity']).' '.$com;
     echo "</td>\n";
   }
-    echo '<td class="text-center">'.floatval($iva['aliquo']);
+  echo '<td class="text-center">'.floatval($iva['aliquo']);
 	echo "</td>\n";
-    echo '<td class="text-center">';
+  echo '<td class="text-center">';
 	if (intval($r['lot_or_serial'])>0) {
 		$classcol=(intval($r['lot_or_serial'])==1)?'btn-info':'btn-success';
 		$lor=(intval($r['lot_or_serial'])==1)?'Lot':'Ser';
     ?>
     <a class="btn <?php echo $classcol; ?> btn-xs" href="javascript:;" onclick ="printPdf('../../modules/magazz/mostra_lotti.php?codice=<?php echo $r["codice"];?>')"> <i class="glyphicon glyphicon-tag"></i></a>
     <?php
-   }
-    echo "</td>\n";
-    echo '<td class="text-center"><a class="btn btn-xs btn-default" href="clone_artico.php?codice='.$r["codice"].'"> <i class="glyphicon glyphicon-export"></i></a>';
+  }
+  echo "</td>\n";
+  echo '<td class="text-center"><a class="btn btn-xs btn-default" href="clone_artico.php?codice='.$r["codice"].'"> <i class="glyphicon glyphicon-export"></i></a>';
 	echo "</td>\n";
   // colonna elimina
-    echo '<td class="text-center"><a class="btn btn-xs btn-default btn-elimina';
-    if (isset($accmov[$r["codice"]])){
-      echo '" disabled title="Articolo non è eliminabile perché presente su '. $accmov[$r["codice"]].' registrazioni"';
-    } else {
-      echo ' dialog_delete" ref="'. $r['codice'].'" artico="'. $r['descri'].'"';
-    }
-    echo '> <i class="glyphicon glyphicon-trash"></i></a>';
+  echo '<td class="text-center"><a class="btn btn-xs btn-default btn-elimina';
+  if (isset($accmov[$r["codice"]])){
+    echo '" disabled title="Articolo non è eliminabile perché presente su '. $accmov[$r["codice"]].' registrazioni"';
+  } else {
+    echo ' dialog_delete" ref="'. $r['codice'].'" artico="'. $r['descri'].'"';
+  }
+  echo '> <i class="glyphicon glyphicon-trash"></i></a>';
 	echo "</td>\n";
-    echo "</tr>\n";
+  echo "</tr>\n";
 }
 ?>
      </table>
