@@ -343,10 +343,22 @@ $result = gaz_dbi_dyn_query ( $gTables['artico']. ".*, ".$gTables['catmer']. ".d
 echo '<tr>';
 $ts->output_headers();
 echo '</tr>';
+// creo la matrice con il numero delle movimentazioni subite dagli articoli
+$accmov=[];
+$rs=gaz_dbi_query("SELECT artico , COUNT(*) FROM ".$gTables['movmag']." GROUP BY artico");
+while ($r=gaz_dbi_fetch_row($rs)) {
+  $accmov[$r[0]]=isset($accmov[$r[0]])?($accmov[$r[0]]+$r[1]):(int)$r[1];
+};
+$rs=gaz_dbi_query("SELECT codart, COUNT(*) FROM ".$gTables['rigdoc']." GROUP BY codart");
+while ($r=gaz_dbi_fetch_row($rs)) {
+  $accmov[$r[0]]=isset($accmov[$r[0]])?($accmov[$r[0]]+$r[1]):(int)$r[1];
+};
+$rs=gaz_dbi_query("SELECT codart, COUNT(*) FROM ".$gTables['rigbro']." GROUP BY codart");
+while ($r=gaz_dbi_fetch_row($rs)) {
+  $accmov[$r[0]]=isset($accmov[$r[0]])?($accmov[$r[0]]+$r[1]):(int)$r[1];
+};
+
 while ($r = gaz_dbi_fetch_array($result)) {
-  // se l'articolo è stato movimentato non consento l'eliminazione
-    $rs_artmov = gaz_dbi_query("SELECT ( SELECT COUNT(*) FROM ".$gTables['movmag']." WHERE artico = '".$r['codice']."'), (SELECT COUNT(*) FROM ".$gTables['rigdoc']." WHERE codart = '".$r['codice']."'), (SELECT COUNT(*) FROM ".$gTables['rigbro']." WHERE codart = '".$r['codice']."')");
-  $artmov = array_sum(gaz_dbi_fetch_row($rs_artmov));
 	// da configurazione azienda
 	$show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
 	$tipo_composti = gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti');
@@ -459,9 +471,10 @@ while ($r = gaz_dbi_fetch_array($result)) {
     echo "</td>\n";
     echo '<td class="text-center"><a class="btn btn-xs btn-default" href="clone_artico.php?codice='.$r["codice"].'"> <i class="glyphicon glyphicon-export"></i></a>';
 	echo "</td>\n";
+  // colonna elimina
     echo '<td class="text-center"><a class="btn btn-xs btn-default btn-elimina';
-    if ( $artmov >= 1 ){
-      echo '" disabled title="Articolo non è eliminabile perché presente su '. $artmov.' registrazioni"';
+    if (isset($accmov[$r["codice"]])){
+      echo '" disabled title="Articolo non è eliminabile perché presente su '. $accmov[$r["codice"]].' registrazioni"';
     } else {
       echo ' dialog_delete" ref="'. $r['codice'].'" artico="'. $r['descri'].'"';
     }
