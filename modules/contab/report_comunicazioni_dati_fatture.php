@@ -69,7 +69,7 @@ if (isset($_POST['hidden_req'])) { // accessi successivi allo script
                                 echo "<td align=\"center\">" . $row['nome_file_DTR'] . " &nbsp;</td>";
                                 echo '<td align="center"><a class="btn btn-xs btn-default" href="download_comunicazione_dati_fatture.php?id='.$row["id"].'">'. $row['nome_file_ZIP'] .'<i class="glyphicon glyphicon-download"></i></a> &nbsp;</td>';
                                 if ( $admin_aziend['Abilit']==9 )
-                                    echo '<td align="center"><a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="'.$row['id'].'"><i class="glyphicon glyphicon-trash"></i></a> &nbsp;</td>';
+                                    echo '<td align="center"><a class="btn btn-xs  btn-elimina dialog_delete" ref="'.$row['id'].'"><i class="glyphicon glyphicon-trash"></i></a> &nbsp;</td>';
                                 echo "</tr>";
                             }
                             ?>

@@ -1489,7 +1489,7 @@ $ts->output_navbar();
               if (!$remains_atleastone || !$processed_atleastone) {
                   //possono essere cancellati solo gli ordini inevasi o completamente evasi
                 ?>
-                <a class="btn btn-xs btn-default btn-elimina dialog_delete " <?php echo $disabled_del_style; ?> title="Cancella il documento" ref="<?php echo $r['id_tes'];?>" nome="<?php echo $r['ragso1']; ?>">
+                <a class="btn btn-xs  btn-elimina dialog_delete " <?php echo $disabled_del_style; ?> title="Cancella il documento" ref="<?php echo $r['id_tes'];?>" nome="<?php echo $r['ragso1']; ?>">
                   <i class="glyphicon glyphicon-remove"></i>
                 </a>
                 <?php

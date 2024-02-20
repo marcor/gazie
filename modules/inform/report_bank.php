@@ -208,7 +208,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 	echo "</td>\n";
     echo '<td>'.strtoupper($r['descomune']);
 	echo "</td>\n";
-    echo '<td class="text-center"><a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="'. $r['id'].'" abicab="ABI: '. $r['codabi'].' CAB:'.$r['codcab'].'" describank="'. $r['descriabi'].' '.$r['descricab'].'"> <i class="glyphicon glyphicon-trash"></i></a>';
+    echo '<td class="text-center"><a class="btn btn-xs  btn-elimina dialog_delete" ref="'. $r['id'].'" abicab="ABI: '. $r['codabi'].' CAB:'.$r['codcab'].'" describank="'. $r['descriabi'].' '.$r['descricab'].'"> <i class="glyphicon glyphicon-trash"></i></a>';
 	echo "</td>\n";
     echo "</tr>\n";
 }

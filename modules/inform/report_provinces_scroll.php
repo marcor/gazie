@@ -61,7 +61,7 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
                 <span class="gazie-tooltip" data-type="product-thumb" data-id="<?php echo $row["stat_code"]; ?>" data-label="<?php echo $row['stat_code']; ?>"><?php echo $row["stat_code"]; ?></span>
             </td>
             <td class="text-center">
-                <a class="btn btn-xs btn-default btn-elimina" href="delete_provinces.php?id=<?php echo $row["id"]; ?>">
+                <a class="btn btn-xs  btn-elimina" href="delete_provinces.php?id=<?php echo $row["id"]; ?>">
                     <i class="glyphicon glyphicon-trash"></i>
                 </a>
             </td>

@@ -345,7 +345,7 @@ if (isset($_SESSION['print_request']) && intval($_SESSION['print_request'])>0){
                                 if ($r['tipdoc'] == 'DDV' && $r['id_doc_ritorno'] > 0) {
                                   echo "<td><a class=\"btn btn-xs btn-warning\" href=\"admin_docven.php?Update&id_tes=" . $r['id_doc_ritorno'] . "\">" . $script_transl['doc_returned'] . "</a>";
                                     ?>
-                                    <a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento" ref="<?php echo $r['id_tes'];?>" ragso1="<?php echo $r['ragso1'];?>">
+                                    <a class="btn btn-xs  btn-elimina dialog_delete" title="Cancella il documento" ref="<?php echo $r['id_tes'];?>" ragso1="<?php echo $r['ragso1'];?>">
                                       <i class="glyphicon glyphicon-trash"></i>
                                     </a>
                                   <?php
@@ -407,13 +407,13 @@ if (isset($_SESSION['print_request']) && intval($_SESSION['print_request'])>0){
                             if ($ultimoddt == $r["numdoc"] && $r['numfat'] < 1 ){
                                 echo "<td>";
                                 ?>
-                                <a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento" ref="<?php echo $r['id_tes'];?>" ragso1="<?php echo $r['ragso1'];?>">
+                                <a class="btn btn-xs  btn-elimina dialog_delete" title="Cancella il documento" ref="<?php echo $r['id_tes'];?>" ragso1="<?php echo $r['ragso1'];?>">
                                   <i class="glyphicon glyphicon-trash"></i>
                                 </a>
                                 <?php
                                 echo "</td>";
                             } else{
-                                echo "<td><button class=\"btn btn-xs btn-default btn-elimina disabled\"><i class=\"glyphicon glyphicon-trash\"></i></button></td>";
+                                echo "<td><button class=\"btn btn-xs   disabled\"><i class=\"glyphicon glyphicon-trash\"></i></button></td>";
                               echo "</tr>\n";
                             }
                             break;
@@ -480,7 +480,7 @@ if (isset($_SESSION['print_request']) && intval($_SESSION['print_request'])>0){
                             // Colonna Elimina
                                 echo "<td>";
                               ?>
-                              <a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento" ref="<?php echo $r['id_tes'];?>" ragso1="<?php echo $r['ragso1'];?>">
+                              <a class="btn btn-xs  btn-elimina dialog_delete" title="Cancella il documento" ref="<?php echo $r['id_tes'];?>" ragso1="<?php echo $r['ragso1'];?>">
                                 <i class="glyphicon glyphicon-trash"></i>
                               </a>
                               </td>

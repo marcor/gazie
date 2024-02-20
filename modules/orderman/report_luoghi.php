@@ -171,17 +171,17 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			$used_from=explode(',',is_string($a_row['used_from_modules'])?$a_row['used_from_modules']:'');
 			if (intval ($a_row['campo_impianto'])>0) {
 				?>
-				<button title="Luogo non cancellabile perche' ha movimenti di magazzino" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-trash"></i></button>
+				<button title="Luogo non cancellabile perche' ha movimenti di magazzino" class="btn btn-xs   disabled"><i class="glyphicon glyphicon-trash"></i></button>
 				<?php
 			} elseif (count($used_from)==1 AND ($used_from[0]=="orderman" OR  $used_from[0]=="" OR $used_from[0]=="NULL")){ // posso cancellare perché non ci sono moduli specifici associati
 				?>
-				<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $a_row["codice"];?>" luodes="<?php echo $a_row["descri"]; ?>">
+				<a class="btn btn-xs  btn-elimina dialog_delete" ref="<?php echo $a_row["codice"];?>" luodes="<?php echo $a_row["descri"]; ?>">
 					<i class="glyphicon glyphicon-trash"></i>
 				</a>
 				<?php
 			} else {
 				?>
-				<button title="Luogo non cancellabile perche' ci sono dei moduli specifici associati" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-trash"></i></button>
+				<button title="Luogo non cancellabile perche' ci sono dei moduli specifici associati" class="btn btn-xs   disabled"><i class="glyphicon glyphicon-trash"></i></button>
 				<?php
 			}
 			echo "</td></tr>";

@@ -791,7 +791,7 @@ $gForm->selectFromDB('customer_group', 'id_customer_group', 'id', $form['id_cust
                                     <i class="glyphicon glyphicon-file"></i>
                                 </a><?php echo $val['title']; ?>
                                 <input type="button" value="<?php echo ucfirst($script_transl['update']); ?>" onclick="location.href = 'admin_mndtritdinf.php?id_doc=<?php echo $val['id_doc']; ?>&Update'" />
-							<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il mandato" ref="<?php echo $val['id_doc'];?>"
+							<a class="btn btn-xs  btn-elimina dialog_delete" title="Cancella il mandato" ref="<?php echo $val['id_doc'];?>"
                             <?php
                            	if ($data=json_decode($val['custom_field'],true)){// se c'è un json nel custom_field
                                 if (is_array($data['vendit']) && strlen($data['vendit']['dtofsgntr'])>0) { // se è riferito al modulo vendit e contiene la data di firma del RID

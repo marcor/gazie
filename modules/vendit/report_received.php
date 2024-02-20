@@ -192,7 +192,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
     if ($last_n == $row["numfat"] && $row["id_con"] == 0){
        echo "<td class=\"FacetDataTD\" align=\"center\">";
 			?>
-			<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento" ref="<?php echo $row['id_tes'];?>" datemi="<?php echo $row['datemi']; ?>">
+			<a class="btn btn-xs  btn-elimina dialog_delete" title="Cancella il documento" ref="<?php echo $row['id_tes'];?>" datemi="<?php echo $row['datemi']; ?>">
 				<i class="glyphicon glyphicon-trash"></i>
 			</a>
 			</td>

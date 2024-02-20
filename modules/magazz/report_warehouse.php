@@ -152,19 +152,19 @@ while ($r = gaz_dbi_fetch_array($rs)) {
 <?php
   if ($moved>=1){
 ?>
- <a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Magazzino non eliminabile perché movimentato" disabled ><i class="glyphicon glyphicon-trash"></i></a>
+ <a class="btn btn-xs  btn-elimina dialog_delete" title="Magazzino non eliminabile perché movimentato" disabled ><i class="glyphicon glyphicon-trash"></i></a>
 <?php
   } elseif ($yshel>=1){
 ?>
- <a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Magazzino non eliminabile perché contenente uno scaffale" disabled ><i class="glyphicon glyphicon-trash"></i></a>
+ <a class="btn btn-xs  btn-elimina dialog_delete" title="Magazzino non eliminabile perché contenente uno scaffale" disabled ><i class="glyphicon glyphicon-trash"></i></a>
 <?php
   } elseif ($yposi>=1){
 ?>
- <a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Magazzino non eliminabile perché contenente una posizione" disabled ><i class="glyphicon glyphicon-trash"></i></a>
+ <a class="btn btn-xs  btn-elimina dialog_delete" title="Magazzino non eliminabile perché contenente una posizione" disabled ><i class="glyphicon glyphicon-trash"></i></a>
 <?php
   } else {
 ?>
- <a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $r['id'];?>" warehouse="<?php echo $r['name'];?>"><i class="glyphicon glyphicon-trash"></i></a>
+ <a class="btn btn-xs  btn-elimina dialog_delete" ref="<?php echo $r['id'];?>" warehouse="<?php echo $r['name'];?>"><i class="glyphicon glyphicon-trash"></i></a>
 <?php
   }
 ?>

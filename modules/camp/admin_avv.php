@@ -149,7 +149,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 				<span class="gazie-tooltip" data-type="catmer-thumb" data-id="<?php echo $a_row['id_avv']; ?>" data-title="<?php echo $a_row['nome_avv']; ?>"><?php echo $a_row["nome_avv"]; ?></span>
 			</td>
 			<td align="center">
-				<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $a_row['id_avv'];?>" avvdes="<?php echo $a_row['nome_avv']; ?>">
+				<a class="btn btn-xs  btn-elimina dialog_delete" ref="<?php echo $a_row['id_avv'];?>" avvdes="<?php echo $a_row['nome_avv']; ?>">
 					<i class="glyphicon glyphicon-trash"></i>
 				</a>
 			</td>

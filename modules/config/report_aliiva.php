@@ -122,11 +122,11 @@ while ($r = gaz_dbi_fetch_array($result)) {
   echo "<td align=\"center\">".$r["fae_natura"]."  </td><td align=\"center\">";
   if (isset($accmov[$r["codice"]])) {
 		?>
-		<button title="Impossibile cancellare perché ci sono  <?php  echo ($accmov[$r["codice"]]); ?>  movimenti associati" class="btn btn-xs btn-default btn-elimina disabled"> <i class="glyphicon glyphicon-trash"></i></button>
+		<button title="Impossibile cancellare perché ci sono  <?php  echo ($accmov[$r["codice"]]); ?>  movimenti associati" class="btn btn-xs btn-default disabled"> <i class="glyphicon glyphicon-trash"></i></button>
 		<?php
 	} else {
 		?>
-		<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella l'aliquota IVA" ref="<?php  echo $r['codice'];?>" ragso="<?php echo $r['descri'];?>">
+		<a class="btn btn-xs btn-elimina dialog_delete" title="Cancella l'aliquota IVA" ref="<?php  echo $r['codice'];?>" ragso="<?php echo $r['descri'];?>">
 			<i class="glyphicon glyphicon-trash"></i>
 		</a>
 		<?php

@@ -210,7 +210,7 @@ if (!empty($elencoSconti)) {
 //        foreach ($riga as $campo) {
 //         echo "<td class=\"FacetFieldCaptionTD\">$campo</td>";
 //      }
-      echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" "
+      echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs  btn-elimina\" "
       . "title=\"Cancella sconto\" "
       . "href=\"delete_sconto_raggruppamento.php?"
       . "codclfoco=" . $riga['codclfoco']

@@ -309,7 +309,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
       }
 			?>
 			<td align="center">
-				<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $r['id'];?>" ref2="<?php echo $r['id_tesbro'];?>" orddes="<?php echo $r['description']; ?>" <?php echo $disabled," ",$title; ?>>
+				<a class="btn btn-xs  btn-elimina dialog_delete" ref="<?php echo $r['id'];?>" ref2="<?php echo $r['id_tesbro'];?>" orddes="<?php echo $r['description']; ?>" <?php echo $disabled," ",$title; ?>>
 					<i class="glyphicon glyphicon-trash"></i>
 				</a>
 			</td>

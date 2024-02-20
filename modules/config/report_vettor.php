@@ -103,11 +103,11 @@ while ($r = gaz_dbi_fetch_array($result)) {
   echo "<td align=\"center\">";
   if (isset($accmov[$r["codice"]])){
 		?>
-		<button title="Impossibile cancellare perché usato sui documenti" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-trash"></i></button>
+		<button title="Impossibile cancellare perché usato sui documenti" class="btn btn-xs   disabled"><i class="glyphicon glyphicon-trash"></i></button>
 		<?php
 	} else {
 		?>
-		<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il vettore" ref="<?php echo $r['codice'];?>" ragso="<?php echo $r['ragione_sociale'];?>">
+		<a class="btn btn-xs  btn-elimina dialog_delete" title="Cancella il vettore" ref="<?php echo $r['codice'];?>" ragso="<?php echo $r['ragione_sociale'];?>">
 			<i class="glyphicon glyphicon-trash"></i>
 		</a>
 		<?php

@@ -147,7 +147,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
         echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["base_percent"]." &nbsp;</td>";
         echo "<td class=\"FacetDataTD\" align=\"center\">";
 		?>
-		<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $a_row['id_agente'];?>" nome="<?php echo $a_row['ragso1']," ",$a_row['ragso2']; ?>">
+		<a class="btn btn-xs  btn-elimina dialog_delete" ref="<?php echo $a_row['id_agente'];?>" nome="<?php echo $a_row['ragso1']," ",$a_row['ragso2']; ?>">
 			<i class="glyphicon glyphicon-trash"></i>
 		</a>
 		<?php

@@ -767,7 +767,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
       echo "</td>\n";
 			echo '<td class="text-center"><a class="btn btn-xs btn-default" href="clone_house.php?codice='.$r["codice"].'"> <i class="glyphicon glyphicon-export"></i></a>';
 			echo "</td>\n";
-			echo '<td class="text-center"><a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="'. $r['codice'].'" artico="'. $r['descri'].'"> <i class="glyphicon glyphicon-trash"></i></a>';
+			echo '<td class="text-center"><a class="btn btn-xs  btn-elimina dialog_delete" ref="'. $r['codice'].'" artico="'. $r['descri'].'"> <i class="glyphicon glyphicon-trash"></i></a>';
 			echo "</td>\n";
 			echo "</tr>\n";
 		}

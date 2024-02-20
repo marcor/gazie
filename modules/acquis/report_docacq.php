@@ -554,7 +554,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
   if ($row['fattura_elettronica_zip_package'] != '' && strlen($row['fattura_elettronica_zip_package']) > 4){// se è stato creato un pacchetto .zip
 	//echo "<a title=\"scarica il pacchetto\" class=\"btn btn-xs btn-warning \" href=\"fae_acq_packaging.php?name=" . $row['fattura_elettronica_zip_package'] . "\"><i class=\"glyphicon glyphicon-compressed\"></i> ".substr($row['fattura_elettronica_zip_package'],0,19)."</a>";
 	?>
-	<a class="btn btn-xs btn-default btn-elimina dialog_packet" title="Apri il popup del pacchetto" ref="<?php echo $row['fattura_elettronica_zip_package'];?>">
+	<a class="btn btn-xs  btn-elimina dialog_packet" title="Apri il popup del pacchetto" ref="<?php echo $row['fattura_elettronica_zip_package'];?>">
 		<i class="glyphicon glyphicon-compressed"></i>
 		<?php echo substr($row['fattura_elettronica_zip_package'],0,19); ?>
 	</a>
@@ -572,18 +572,18 @@ while ($row = gaz_dbi_fetch_array($result)) {
   // faccio il controllo di eliminazione dell'ultima fattura ricevuta
   if (isset($year_last_protoc_id_tes[$row['id_tes']]) && $check_lot_exit===FALSE) {
 	?>
-	<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Elimina questo documento" ref="<?php echo $row['id_tes'];?>" fornitore="<?php echo $row['ragso1']; ?>">
+	<a class="btn btn-xs  btn-elimina dialog_delete" title="Elimina questo documento" ref="<?php echo $row['id_tes'];?>" fornitore="<?php echo $row['ragso1']; ?>">
 		<i class="glyphicon glyphicon-trash"></i>
 	</a>
 	<?php
 
   }elseif($check_lot_exit===TRUE){
     ?>
-    <button title="Non puoi eliminare questo DDT perché almeno uno dei suoi articoli ha un ID lotto che è già uscito dal magazzino" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-trash"></i></button>
+    <button title="Non puoi eliminare questo DDT perché almeno uno dei suoi articoli ha un ID lotto che è già uscito dal magazzino" class="btn btn-xs   disabled"><i class="glyphicon glyphicon-trash"></i></button>
     <?php
   } else {
 		?>
-		<button title="Non puoi eliminare un documento diverso dall'ultimo emesso" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-trash"></i></button>
+		<button title="Non puoi eliminare un documento diverso dall'ultimo emesso" class="btn btn-xs   disabled"><i class="glyphicon glyphicon-trash"></i></button>
 		<?php
   }
   echo "</td></tr>";

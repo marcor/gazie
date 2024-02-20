@@ -210,7 +210,7 @@ $(function() {
            echo "<td class=\"FacetDataTD\" title=\"$title\" align=\"center\">" . gaz_html_call_tel($telefono) . " &nbsp;</td>";
            echo "<td class=\"FacetDataTD\" align=\"center\">";
 		   ?>
-		   <a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $a_row['codice'];?>" anagrafe="<?php echo $a_row['anagrafe']; ?>">
+		   <a class="btn btn-xs  btn-elimina dialog_delete" ref="<?php echo $a_row['codice'];?>" anagrafe="<?php echo $a_row['anagrafe']; ?>">
 				<i class="glyphicon glyphicon-trash"></i>
 			</a>
 			<?php

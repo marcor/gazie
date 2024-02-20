@@ -73,7 +73,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     print "<td class=\"FacetDataTD\" align=\"right\">".$a_row["portos"]." &nbsp;</td>";
     print "<td class=\"FacetDataTD\" align=\"center\">".$a_row["status"]." &nbsp;</td>";
     print "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"stampa_salcon.php?id_tes=".$a_row['id_tes']."\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a></td>";
-    print "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_salcon.php?id_tes=".$a_row['id_tes']."\"><i class=\"glyphicon glyphicon-trash\"></i></a></td>";
+    print "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs  btn-elimina\" href=\"delete_salcon.php?id_tes=".$a_row['id_tes']."\"><i class=\"glyphicon glyphicon-trash\"></i></a></td>";
     print "</tr>";
 }
 ?>

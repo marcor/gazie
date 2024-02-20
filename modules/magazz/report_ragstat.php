@@ -102,7 +102,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 				<td class="text-center">'.$a_row["ricarico"].'</td>
 				<td class="text-center">'.$a_row["annota"].'</td>
 				<td class="text-center">
-					<a class="btn btn-xs btn-default btn-elimina" href="delete_ragstat.php?codice='.$a_row["codice"].'">
+					<a class="btn btn-xs  btn-elimina" href="delete_ragstat.php?codice='.$a_row["codice"].'">
 						<i class="glyphicon glyphicon-trash"></i>
 					</a>
 				</td>

@@ -138,7 +138,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			<a class="btn btn-xs btn-default" href="stampa_install.php?id=<?php echo $a_row["id"]; ?>&cod=<?php echo $a_row["codice"]; ?>&stato=<?php echo $a_row["stato"]; ?>" target="_blank"><i class="glyphicon glyphicon-print"></i></a>
 		</td>
 		<td>
-			<a class="btn btn-xs btn-default btn-elimina" href="delete_assist.php?id=<?php echo $a_row["id"]; ?>&cod=<?php echo $a_row["codice"]; ?>">
+			<a class="btn btn-xs  btn-elimina" href="delete_assist.php?id=<?php echo $a_row["id"]; ?>&cod=<?php echo $a_row["codice"]; ?>">
 			<i class="glyphicon glyphicon-trash"></i></a>
 		</td>
    </tr>

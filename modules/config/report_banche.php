@@ -108,7 +108,7 @@ foreach($result as $r) {
        echo "<td colspan=\"4\">".$script_transl['msg'][0]."</td>\n";
     }
     echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"../contab/select_partit.php?id=".$r["codice"]."\" target=\"_blank\"><i class=\"glyphicon glyphicon-check\"></i>&nbsp;<i class=\"glyphicon glyphicon-print\"></a></td>";
-    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina dialog_delete\" ref=\"".$r["codice"]."\"><i class=\"glyphicon glyphicon-trash\"></i></a></td>";
+    echo "<td align=\"center\"><a class=\"btn btn-xs  btn-elimina dialog_delete\" ref=\"".$r["codice"]."\"><i class=\"glyphicon glyphicon-trash\"></i></a></td>";
     echo "</tr>";
 }
 ?>

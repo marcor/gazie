@@ -326,7 +326,7 @@ $recordnav -> output();
 					?>
 				</td>
 				<td align="center">
-					<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $a_row['cod_silos'];?>" capacity="<?php echo $a_row['capacita']; ?>">
+					<a class="btn btn-xs  btn-elimina dialog_delete" ref="<?php echo $a_row['cod_silos'];?>" capacity="<?php echo $a_row['capacita']; ?>">
 						<i class="glyphicon glyphicon-trash"></i>
 					</a>
 				</td>

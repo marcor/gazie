@@ -240,11 +240,11 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "<td title=\"Cancella\" align=\"center\">";
     if ($check_mov > 0 OR $check_doc > 0 OR $check_bro > 0){
 		?>
-		<button title="Impossibile cancellare perché ci sono movimenti associati" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-trash"></i></button>
+		<button title="Impossibile cancellare perché ci sono movimenti associati" class="btn btn-xs   disabled"><i class="glyphicon glyphicon-trash"></i></button>
 		<?php
 	} else {
 		?>
-		<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il fornitore" ref="<?php echo $a_row['codice'];?>" ragso="<?php echo $a_row['ragso2']," ",$a_row['ragso1'];?>">
+		<a class="btn btn-xs  btn-elimina dialog_delete" title="Cancella il fornitore" ref="<?php echo $a_row['codice'];?>" ragso="<?php echo $a_row['ragso2']," ",$a_row['ragso1'];?>">
 			<i class="glyphicon glyphicon-trash"></i>
 		</a>
 		<?php

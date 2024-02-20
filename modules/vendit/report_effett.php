@@ -219,7 +219,7 @@ $recordnav->output();
             // Colonna "Elimina"
             echo "<td align=\"center\">";
             ?>
-			<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento e la registrazione contabile relativa" ref="<?php echo $r['id_tes'];?>" ragso="<?php echo $cliente['ragso1']; ?>">
+			<a class="btn btn-xs  btn-elimina dialog_delete" title="Cancella il documento e la registrazione contabile relativa" ref="<?php echo $r['id_tes'];?>" ragso="<?php echo $cliente['ragso1']; ?>">
 				<i class="glyphicon glyphicon-trash"></i>
 			</a>
 			</td>

@@ -97,7 +97,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "<td align=\"center\">".$a_row["annota"]." &nbsp;</td>";
     ?>
     <td align="center">
-		<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella l'imballo" ref="<?php echo $a_row['codice'];?>" ragso="<?php echo $a_row['descri'];?>">
+		<a class="btn btn-xs  btn-elimina dialog_delete" title="Cancella l'imballo" ref="<?php echo $a_row['codice'];?>" ragso="<?php echo $a_row['descri'];?>">
 			<i class="glyphicon glyphicon-trash"></i>
 		</a>
     </td></tr>

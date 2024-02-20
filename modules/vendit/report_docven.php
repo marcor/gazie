@@ -806,7 +806,7 @@ function printPdf(urlPrintDoc){
                         $dest = '';
                         $d_title = 'Stampa richiesta cartacea (cliente senza mail)';
                       }
-                      echo '><button onclick="confirPecSdi(this);return false;" id="doc3_' . $r['clfoco'] . '" url="stampa_richiesta_pecsdi.php?codice='.$r['clfoco'].$dest.'" href="#" title="'. $d_title . '" mail="' . $r['e_mail'] . '" namedoc="Richiesta codice SdI o indirizzo PEC"  class="btn btn-xs btn-default btn-elimina"><i class="glyphicon glyphicon-tag"></i></button>';
+                      echo '><button onclick="confirPecSdi(this);return false;" id="doc3_' . $r['clfoco'] . '" url="stampa_richiesta_pecsdi.php?codice='.$r['clfoco'].$dest.'" href="#" title="'. $d_title . '" mail="' . $r['e_mail'] . '" namedoc="Richiesta codice SdI o indirizzo PEC"  class="btn btn-xs  btn-elimina"><i class="glyphicon glyphicon-tag"></i></button>';
                     } else { // quando ho pec e/o codice univoco ma non ho creato pacchetti zip
                       echo ">\n";
                     }
@@ -956,19 +956,19 @@ function printPdf(urlPrintDoc){
                   // Permette di cancellare il documento.
                   if ($r["id_con"] > 0) {
                   ?>
-                    <a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento e la registrazione contabile relativa" ref="<?php echo $r['protoc'];?>" ragso1="<?php echo $r['ragso1']; ?>" seziva="<?php echo $r['seziva']; ?>" anno="<?php echo substr($r["datfat"], 0, 4); ?>">
+                    <a class="btn btn-xs  btn-elimina dialog_delete" title="Cancella il documento e la registrazione contabile relativa" ref="<?php echo $r['protoc'];?>" ragso1="<?php echo $r['ragso1']; ?>" seziva="<?php echo $r['seziva']; ?>" anno="<?php echo substr($r["datfat"], 0, 4); ?>">
                       <i class="glyphicon glyphicon-trash"></i>
                     </a>
                   <?php
                   } else {
                   ?>
-                    <a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento" ref="<?php echo $r['protoc'];?>" ragso1="<?php echo $r['ragso1']; ?>" seziva="<?php echo $r['seziva']; ?>" anno="<?php echo substr($r["datfat"], 0, 4); ?>">
+                    <a class="btn btn-xs  btn-elimina dialog_delete" title="Cancella il documento" ref="<?php echo $r['protoc'];?>" ragso1="<?php echo $r['ragso1']; ?>" seziva="<?php echo $r['seziva']; ?>" anno="<?php echo substr($r["datfat"], 0, 4); ?>">
                       <i class="glyphicon glyphicon-trash"></i>
                     </a>
                   <?php
                   }
                 } else {
-                  echo "<button title=\"Per garantire la sequenza corretta della numerazione, non &egrave; possibile cancellare un documento diverso dall'ultimo\" class=\"btn btn-xs btn-default btn-elimina disabled\"><i class=\"glyphicon glyphicon-trash\"></i></button>";
+                  echo "<button title=\"Per garantire la sequenza corretta della numerazione, non &egrave; possibile cancellare un documento diverso dall'ultimo\" class=\"btn btn-xs   disabled\"><i class=\"glyphicon glyphicon-trash\"></i></button>";
                 }
                 echo "</td>";
                 echo "</tr>\n";

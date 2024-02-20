@@ -186,7 +186,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			<td align="center"><?php echo gaz_format_date($a_row["giorno_decadimento"]),"<br>ID mov.",$a_row["id_mov"];?></td>
       <?php }else{ echo "<td></td>"; } ?>
 			<td align="center">
-				<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $a_row['codice'];?>" descamp="<?php echo $a_row['descri']; ?>">
+				<a class="btn btn-xs  btn-elimina dialog_delete" ref="<?php echo $a_row['codice'];?>" descamp="<?php echo $a_row['descri']; ?>">
 					<i class="glyphicon glyphicon-trash"></i>
 				</a>
 			</td>

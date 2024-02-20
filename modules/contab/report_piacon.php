@@ -160,11 +160,11 @@ while ($r = gaz_dbi_fetch_array($rs)) {
       <td class="'.$color_class.' text-center">';
       if (isset($conferma) OR $check_moc>0){
       ?>
-        <button title="Non è possibile cancellare questo conto: il mastro deve essere vuoto e non ci possono essere movimenti contabili." class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-trash"></i></button>
+        <button title="Non è possibile cancellare questo conto: il mastro deve essere vuoto e non ci possono essere movimenti contabili." class="btn btn-xs   disabled"><i class="glyphicon glyphicon-trash"></i></button>
       <?php
       } else {
         ?>
-        <a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il conto" ref="<?php echo $r['codice'];?>" descri="<?php echo $r['descri'];?>">
+        <a class="btn btn-xs  btn-elimina dialog_delete" title="Cancella il conto" ref="<?php echo $r['codice'];?>" descri="<?php echo $r['descri'];?>">
           <i class="glyphicon glyphicon-trash"></i>
         </a>
         <?php
@@ -181,13 +181,13 @@ while ($r = gaz_dbi_fetch_array($rs)) {
             <td class="'.$color_class.' text-center">';
               if (isset($conferma) OR $check_moc>0){
               ?>
-                <a class="btn btn-xs btn-default btn-elimina " title="Non è possibile cancellare questo conto: il mastro deve essere vuoto e non ci possono essere movimenti contabili.">
+                <a class="btn btn-xs  btn-elimina " title="Non è possibile cancellare questo conto: il mastro deve essere vuoto e non ci possono essere movimenti contabili.">
                   <i class="glyphicon glyphicon-ban-circle"></i>
                 </a>
               <?php
               } else {
                 ?>
-                <a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il conto" ref="<?php echo $r['codice'];?>" descri="<?php echo $r['descri'];?>">
+                <a class="btn btn-xs  btn-elimina dialog_delete" title="Cancella il conto" ref="<?php echo $r['codice'];?>" descri="<?php echo $r['descri'];?>">
                   <i class="glyphicon glyphicon-trash"></i>
                 </a>
               <?php

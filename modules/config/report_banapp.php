@@ -116,11 +116,11 @@ while ($r = gaz_dbi_fetch_array($result)) {
   echo "<td align=\"center\">". sprintf("%'.05d\n", $r["codcab"]) ."</td><td align=\"center\">";
   if (isset($accmov[$r["codice"]])){
 		?>
-		<button title="Impossibile cancellare perché usata da clienti e/o documenti" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-trash"></i></button>
+		<button title="Impossibile cancellare perché usata da clienti e/o documenti" class="btn btn-xs   disabled"><i class="glyphicon glyphicon-trash"></i></button>
 		<?php
 	} else {
 		?>
-		<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella la banca d'appoggio" ref="<?php echo $r['codice'];?>" ragso="<?php echo $r['descri'];?>">
+		<a class="btn btn-xs  btn-elimina dialog_delete" title="Cancella la banca d'appoggio" ref="<?php echo $r['codice'];?>" ragso="<?php echo $r['descri'];?>">
 			<i class="glyphicon glyphicon-trash"></i>
 		</a>
 		<?php

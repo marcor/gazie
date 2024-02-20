@@ -342,16 +342,16 @@ echo '</tr>';
                 if (in_array($row['id_tes'],$last_tickets)) {
                     echo "<td align=\"center\">";
 					?>
-					<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento e la registrazione contabile relativa" ref="<?php echo $row['id_tes'];?>" datemi="<?php echo $row['datemi']; ?>">
+					<a class="btn btn-xs  btn-elimina dialog_delete" title="Cancella il documento e la registrazione contabile relativa" ref="<?php echo $row['id_tes'];?>" datemi="<?php echo $row['datemi']; ?>">
 						<i class="glyphicon glyphicon-trash"></i>
 					</a>
 					</td>
 					<?php
 				} else {
-                    echo "<td align=\"center\"><button class=\"btn btn-xs btn-default btn-elimina disabled\"><i class=\"glyphicon glyphicon-trash\"></i></button></td>";
+                    echo "<td align=\"center\"><button class=\"btn btn-xs   disabled\"><i class=\"glyphicon glyphicon-trash\"></i></button></td>";
                 }
             } else {
-                echo "<td align=\"center\"><button class=\"btn btn-xs btn-default btn-elimina disabled\"><i class=\"glyphicon glyphicon-trash\"></i></button></td>";
+                echo "<td align=\"center\"><button class=\"btn btn-xs   disabled\"><i class=\"glyphicon glyphicon-trash\"></i></button></td>";
             }
             // Colonna invia a ECR
             echo "<td align=\"center\">";

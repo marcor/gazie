@@ -1870,7 +1870,7 @@ if ( $_POST['rigcon']>=1){
           echo '<td></td>'.$acc_darave.$acc_amount;
         }
         echo '  <td>
-			  <button type="submit" class="btn btn-default btn-elimina btn-sm" name="del[' . $i . ']" title="' . $script_transl['delrow'] . '!"><i class="glyphicon glyphicon-trash"></i></button>
+			  <button type="submit" class="btn  btn-elimina btn-sm" name="del[' . $i . ']" title="' . $script_transl['delrow'] . '!"><i class="glyphicon glyphicon-trash"></i></button>
 			</td>
 		  </tr>';
     }

@@ -308,7 +308,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 <?php
 	if ( !isset( $_GET['idinstallazione']) ) {
 		echo "<td>
-			<a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_assist.php?id=".$a_row['id']."\">
+			<a class=\"btn btn-xs  btn-elimina\" href=\"delete_assist.php?id=".$a_row['id']."\">
 			<i class=\"glyphicon glyphicon-trash\"></i></a>
 		</td>";
 	}

@@ -167,7 +167,7 @@ include "../../library/theme/g7/header.php";
 							// sposto nella cartella di lettura il relativo file temporaneo
 							copy($tmp_file, "../../modules/camp/tmp/".$img);
 							echo '<img src="../../modules/camp/tmp/'.$img.'" alt="certificato lotto" width="50" border="1" style="cursor: -moz-zoom-in;" onclick="this.width=500;" ondblclick="this.width=50;" />';
-							echo '<a class="btn btn-xs btn-default btn-elimina" href="../../modules/camp/tmp/'.$img.'" download><i class="glyphicon glyphicon-download"></i></a></td>';
+							echo '<a class="btn btn-xs  btn-elimina" href="../../modules/camp/tmp/'.$img.'" download><i class="glyphicon glyphicon-download"></i></a></td>';
 							} else {
 									echo '<i class="glyphicon glyphicon-eye-close"></i>';
 								}

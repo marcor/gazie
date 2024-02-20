@@ -131,7 +131,7 @@ if ($handle = opendir(DATA_DIR.'files/'.$admin_aziend['codice'].'/sian/')){
 			?>
 			<tr>
 				<td class="bg-danger">Conferma la cancellazione da GAzie di
-				<input type="submit" name="confirm" title="clicca per confermare" value="<?php echo $form['delete']; ?>" class="btn btn-xs btn-default btn-elimina">
+				<input type="submit" name="confirm" title="clicca per confermare" value="<?php echo $form['delete']; ?>" class="btn btn-xs  btn-elimina">
 				</td>
 				<td>
 				<input type="submit" name="null" value="Annulla">
@@ -143,7 +143,7 @@ if ($handle = opendir(DATA_DIR.'files/'.$admin_aziend['codice'].'/sian/')){
 			?>
 			<tr>
 				<td class="bg-warning">Conferma di voler creare un file SIAN che annulli questo:
-				<input type="submit" name="confirmsian" title="clicca per confermare" value="<?php echo $form['deletesian']; ?>" class="btn btn-xs btn-default btn-elimina">
+				<input type="submit" name="confirmsian" title="clicca per confermare" value="<?php echo $form['deletesian']; ?>" class="btn btn-xs  btn-elimina">
 				</td>
 				<td>
 				<input type="submit" name="null" value="Annulla">
@@ -183,7 +183,7 @@ if ($handle = opendir(DATA_DIR.'files/'.$admin_aziend['codice'].'/sian/')){
 				if (!isset($first)){
 					?>
 					<td align="center">
-					<button type="submit" onclick = "this.form.submit();" title="Elimina da GAzie" name="del" value="del" class="btn btn-xs btn-default btn-elimina" >
+					<button type="submit" onclick = "this.form.submit();" title="Elimina da GAzie" name="del" value="del" class="btn btn-xs  btn-elimina" >
 					<span class="glyphicon glyphicon-trash"></span>
 					</button>
           <input type="hidden" name="first" value="<?php echo $file;?>">

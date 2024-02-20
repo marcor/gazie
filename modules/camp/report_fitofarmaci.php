@@ -197,7 +197,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 				<span><?php echo $a_row["tempo_sosp"]," gg"; ?></span>
 			</td>
 			<td align="center">
-				<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $a_row['id'];?>" codart="<?php echo $a_row['cod_art']; ?>">
+				<a class="btn btn-xs  btn-elimina dialog_delete" ref="<?php echo $a_row['id'];?>" codart="<?php echo $a_row['cod_art']; ?>">
 					<i class="glyphicon glyphicon-trash"></i>
 				</a>
 			</td>

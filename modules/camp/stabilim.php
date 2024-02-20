@@ -159,7 +159,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			<td align="center"><?php echo $a_row['comune'];?></td>
 			<td align="center"><?php echo $a_row['provincia'];?></td>
 			<td align="center">
-				<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $a_row['codice'];?>" desstab="<?php echo $a_row['descri']; ?>">
+				<a class="btn btn-xs  btn-elimina dialog_delete" ref="<?php echo $a_row['codice'];?>" desstab="<?php echo $a_row['descri']; ?>">
 					<i class="glyphicon glyphicon-trash"></i>
 				</a>
 			</td>

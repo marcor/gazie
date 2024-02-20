@@ -205,7 +205,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 	echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" style=\"cursor:pointer;\" onclick=\"printPdf('".$modulo."')\"><i class=\"glyphicon glyphicon-print\" title=\"Stampa documento PDF\"></i></a></td>
 			  <td align=\"center\">";
 	?>
-	<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Elimina questo documento" ref="<?php echo $a_row['id_tes'];?>" fornitore="<?php echo $fornitore['ragso1']; ?>">
+	<a class="btn btn-xs  btn-elimina dialog_delete" title="Elimina questo documento" ref="<?php echo $a_row['id_tes'];?>" fornitore="<?php echo $fornitore['ragso1']; ?>">
 		<i class="glyphicon glyphicon-trash"></i>
 	</a>
 	<?php

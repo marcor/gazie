@@ -116,7 +116,7 @@ $linkHeaders = new linkHeaders($headers);
 						</a>						
 						</td>
 						<td>
-							<a class="btn btn-xs btn-default btn-elimina" href="delete_ruburl.php?id=<?php echo $row["id"]; ?>">
+							<a class="btn btn-xs  btn-elimina" href="delete_ruburl.php?id=<?php echo $row["id"]; ?>">
 								<i class="glyphicon glyphicon-trash"></i></a>
 						</td>
 					</tr>

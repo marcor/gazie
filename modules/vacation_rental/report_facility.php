@@ -221,7 +221,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 			echo "</td>\n";
 			echo '<td class="text-center"><a class="btn btn-xs btn-default" style="cursor:pointer;" onclick="openframe(\'facility_availability.php?code='.$r["id_artico_group"].'\',\'Calendario disponibilità della struttura: '.$r["descri"].'. Le caselle bianche indicano tutto disponibile.\')" data-toggle="modal" data-target="#iframe"> <i class="glyphicon glyphicon-calendar" title="Calendario della disponibilità"></i></a>';
 			echo "</td>\n";
-			echo '<td class="text-center"><a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="'. $r['id_artico_group'].'" artico="'. $r['descri'].'"> <i class="glyphicon glyphicon-trash"></i></a>';
+			echo '<td class="text-center"><a class="btn btn-xs  btn-elimina dialog_delete" ref="'. $r['id_artico_group'].'" artico="'. $r['descri'].'"> <i class="glyphicon glyphicon-trash"></i></a>';
 			echo "</td>\n";
 			echo "</tr>\n";
 		}

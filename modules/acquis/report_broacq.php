@@ -501,7 +501,7 @@ function printPdf(urlPrintDoc){
 				// colonna elimina
 				echo "<td align=\"center\">";
 				?>
-				<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $r['id_tes'];?>" catdes="<?php echo $r['ragso1']; ?>">
+				<a class="btn btn-xs  btn-elimina dialog_delete" ref="<?php echo $r['id_tes'];?>" catdes="<?php echo $r['ragso1']; ?>">
 					<i class="glyphicon glyphicon-trash"></i>
 				</a>
 				<?php

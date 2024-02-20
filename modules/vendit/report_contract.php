@@ -227,7 +227,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
 		print "</td>";
         print "<td class=\"FacetDataTD\" align=\"center\">";
 		?>
-		<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $row['id_contract'];?>" cliente="<?php echo $cliente['ragso1']; ?>">
+		<a class="btn btn-xs  btn-elimina dialog_delete" ref="<?php echo $row['id_contract'];?>" cliente="<?php echo $cliente['ragso1']; ?>">
 			<i class="glyphicon glyphicon-trash"></i>
 		</a>
 		<?php

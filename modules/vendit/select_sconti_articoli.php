@@ -213,7 +213,7 @@ if (!empty($elencoSconti)) {
       echo "<td class=\"FacetDataTD\" align=\"right\">$campo</td>";
       $campo = gaz_format_number($riga['sconto']);
       echo "<td class=\"FacetDataTD\" align=\"right\">$campo</td>";
-      echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" "
+      echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs  btn-elimina\" "
       . "title=\"Cancella sconto\" "
       . "href=\"delete_sconto_articolo.php?"
       . "codclfoco=" . $riga['codclfoco']

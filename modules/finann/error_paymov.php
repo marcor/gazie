@@ -136,7 +136,7 @@ if (sizeof($m) > 0) {
     <td><a class="btn btn-info btn-xs" href="'. $reflink . '" >Controlla '.$clfoco['descri'].'</a></td>
     <td>'.$mv['op_cl'].'</td><td>'.$refdesc.'</td>
     <td class="text-right"> € '.gaz_format_number($mv['amount']).'</td>
-    <td><a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il movimento" ref="'.$mv['id'].'" descri="'. $refdesc.'">
+    <td><a class="btn btn-xs  btn-elimina dialog_delete" title="Cancella il movimento" ref="'.$mv['id'].'" descri="'. $refdesc.'">
         <i class="glyphicon glyphicon-trash"></i>
         </a>
     </tr>';
