@@ -184,87 +184,90 @@ function clipandgo(pi,url) {
             <?php $ts->output_headers(); ?>
         </tr>
         <?php
-    while ($a_row = gaz_dbi_fetch_array($result)) {
-			$rs_check_mov = gaz_dbi_dyn_query("clfoco", $gTables['tesmov'], "clfoco = '".$a_row['codice']."'","id_tes asc",0,1);
-            $check_mov = gaz_dbi_num_rows($rs_check_mov);
-			$rs_check_doc = gaz_dbi_dyn_query("clfoco", $gTables['tesdoc'], "clfoco = '".$a_row['codice']."'","id_tes asc",0,1);
-			$check_doc = gaz_dbi_num_rows($rs_check_doc);
-			$rs_check_bro = gaz_dbi_dyn_query("clfoco", $gTables['tesbro'], "clfoco = '".$a_row['codice']."'","id_tes asc",0,1);
-			$check_bro = gaz_dbi_num_rows($rs_check_bro);
-			echo "<tr class=\"FacetDataTD\">";
-            // Colonna codice cliente
-            echo "<td align=\"center\"><a class=\"btn btn-xs btn-edit\" href=\"admin_client.php?codice=" . substr($a_row["codice"], 3) . "&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" .intval(substr($a_row["codice"],3)) . "</a> &nbsp</td>";
-            // Colonna ragione sociale
-            echo '<td><span class="gazie-tooltip col-xs-12" data-type="anagra-thumb" data-id="'. $a_row['codice'] .'" data-title="'. $a_row["ragso1"].' '.$a_row["ragso2"].'">' . $a_row["ragso1"] . " </span></td>";
-            // colonna sesso
-            echo "<td align=\"center\">" . $a_row["sexper"] . "</td>";
-            // colonna indirizzo
-            $google_string = str_replace(" ", "+", $a_row["indspe"]) . "," . str_replace(" ", "+", $a_row["capspe"]) . "," . str_replace(" ", "+", $a_row["citspe"]) . "," . str_replace(" ", "+", $a_row["prospe"]);
-            echo "<td title=\"" . $a_row["capspe"] . " " . $a_row["indspe"] . "\">";
-            echo "<a class=\"btn btn-xs btn-default\" rel=\"noreferrer\" target=\"_blank\" href=\"https://www.google.it/maps/place/" . $google_string . "\">" . $a_row["citspe"] . " (" . $a_row["prospe"] . ")&nbsp;<i class=\"glyphicon glyphicon-map-marker\"></i></a>";
-            echo "<a class=\"btn btn-xs btn-default\" rel=\"noreferrer\" target=\"_blank\" href=\"https://www.google.it/maps/dir/" . $admin_aziend['latitude'] . "," . $admin_aziend['longitude'] . "/" . $google_string . "\">  <i class=\"glyphicon glyphicon-random\"></i></a>";
-            echo "</td>";
-            // composizione telefono
-            $title = "";
-            $telefono = "";
-            if (!empty($a_row["telefo"])) {
-                $telefono = $a_row["telefo"];
-                if (!empty($a_row["cell"])) {
-                    $title .= "cell:" . $a_row["cell"];
-                }
-                if (!empty($a_row["fax"])) {
-                    $title .= " fax:" . $a_row["fax"];
-                }
-            } elseif (!empty($a_row["cell"])) {
-                $telefono = $a_row["cell"];
-                if (!empty($a_row["fax"])) {
-                    $title .= " fax:" . $a_row["fax"];
-                }
-            } elseif (!empty($a_row["fax"])) {
-                $telefono = "fax:" . $a_row["fax"];
-            } else {
-                $telefono = "_";
-                $title = " nessun contatto telefonico memorizzato ";
-            }
-            // colonna telefono
-            echo "<td title=\"$title\" align=\"center\">" . gaz_html_call_tel($telefono) . " &nbsp;</td>";
-            // colonna fiscali
-            if ($a_row['pariva'] > 0 && empty($a_row['codfis'])) {
-                echo "<td align=\"center\">" . $a_row['country'] . " " . $a_row['pariva'] . "</td>";
-            } elseif ($a_row['pariva'] < 1 && !empty($a_row['codfis'])) {
-                echo "<td align=\"center\">" . $a_row['codfis'] . "</td>";
-            } elseif ($a_row['pariva'] >= 1 && !empty($a_row['codfis'])) {
-                if ($a_row['pariva'] == $a_row['codfis']) {
-                    echo '<td align="center">'.gaz_html_ae_checkiva($a_row['country'], $a_row['pariva']).'</td>';
-                } else {
-                    echo "<td align=\"center\">" . gaz_html_ae_checkiva($a_row['country'], $a_row['pariva']) . "<br/>" . $a_row['codfis'] . "</td>";
-                }
-            } else {
-                echo "<td class=\"FacetDataTDred\" align=\"center\"> * NO * </td>";
-            }
-            // colonna stampa privacy
-            echo "<td align=\"center\"><a title=\"stampa informativa sulla privacy\" class=\"btn btn-xs btn-default\" href=\"stampa_privacy.php?codice=" . $a_row["codice"] . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-eye-close\"></i></a><a title=\"stampa richiesta codice sdi o pec\" class=\"btn btn-xs btn-default\" href=\"stampa_richiesta_pecsdi.php?codice=" . $a_row["codice"] . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-inbox\"></i></a></td>";
-            echo "<td title=\"Effettuato un pagamento da " . $a_row["ragso1"] . "\" align=\"center\"><a class=\"btn btn-xs btn-default btn-pagamento\" href=\"customer_payment.php?partner=" . $a_row["codice"] . "\"><i class=\"glyphicon glyphicon-euro\"></i></a></td>";
-            echo "<td title=\"Visualizza e stampa il partitario\" align=\"center\">  <a class=\"btn btn-xs btn-default\" href=\"report_contcli.php?id=".$a_row["codice"]."\"  target=\"_blank\"><i class=\"glyphicon glyphicon-list-alt\"></i></a> <a class=\"btn btn-xs btn-default\" href=\"../contab/select_partit.php?id=".$a_row["codice"]."\" target=\"_blank\"><i class=\"glyphicon glyphicon-check\"></i>&nbsp;<i class=\"glyphicon glyphicon-print\"></a></td>";
-            echo "<td align=\"center\">";
-			if ($check_mov > 0 or $check_doc > 0 or $check_bro > 0) {
-				?>
-				<button title="Impossibile cancellare perch� ci sono dei movimenti associati" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-trash"></i></button>
-				<?php
-
-			} else {
-				?>
-				<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il cliente" ref="<?php echo $a_row['codice'];?>" ragso="<?php echo $a_row['ragso2']," ",$a_row['ragso1'];?>">
-					<i class="glyphicon glyphicon-trash"></i>
-				</a>
-				<?php
-			}
-            echo "</td></tr>\n";
-        }
-        ?>
-        <tr><th class="FacetFieldCaptionTD" colspan="10"></th></tr>
+$accmov=[];
+$rs=gaz_dbi_query("SELECT clfoco , COUNT(*) FROM ".$gTables['tesdoc']."  GROUP BY clfoco");
+while ($r=gaz_dbi_fetch_row($rs)) {
+  $accmov[$r[0]]=isset($accmov[$r[0]])?($accmov[$r[0]]+$r[1]):(int)$r[1];
+};
+$rs=gaz_dbi_query("SELECT clfoco, COUNT(*) FROM ".$gTables['tesbro']."  GROUP BY clfoco");
+while ($r=gaz_dbi_fetch_row($rs)) {
+  $accmov[$r[0]]=isset($accmov[$r[0]])?($accmov[$r[0]]+$r[1]):(int)$r[1];
+};
+$rs=gaz_dbi_query("SELECT clfoco, COUNT(*) FROM ".$gTables['tesmov']."  GROUP BY clfoco");
+while ($r=gaz_dbi_fetch_row($rs)) {
+  $accmov[$r[0]]=isset($accmov[$r[0]])?($accmov[$r[0]]+$r[1]):(int)$r[1];
+};
+while ($r = gaz_dbi_fetch_array($result)) {
+  echo "<tr class=\"FacetDataTD\">";
+  // Colonna codice cliente
+  echo "<td align=\"center\"><a class=\"btn btn-xs btn-edit\" href=\"admin_client.php?codice=" . substr($r["codice"], 3) . "&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" .intval(substr($r["codice"],3)) . "</a> &nbsp</td>";
+  // Colonna ragione sociale
+  echo '<td><span class="gazie-tooltip col-xs-12" data-type="anagra-thumb" data-id="'. $r['codice'] .'" data-title="'. $r["ragso1"].' '.$r["ragso2"].'">' . $r["ragso1"] . " </span></td>";
+  // colonna sesso
+  echo "<td align=\"center\">" . $r["sexper"] . "</td>";
+  // colonna indirizzo
+  $google_string = str_replace(" ", "+", $r["indspe"]) . "," . str_replace(" ", "+", $r["capspe"]) . "," . str_replace(" ", "+", $r["citspe"]) . "," . str_replace(" ", "+", $r["prospe"]);
+  echo "<td title=\"" . $r["capspe"] . " " . $r["indspe"] . "\">";
+  echo "<a class=\"btn btn-xs btn-default\" rel=\"noreferrer\" target=\"_blank\" href=\"https://www.google.it/maps/place/" . $google_string . "\">" . $r["citspe"] . " (" . $r["prospe"] . ")&nbsp;<i class=\"glyphicon glyphicon-map-marker\"></i></a>";
+  echo "<a class=\"btn btn-xs btn-default\" rel=\"noreferrer\" target=\"_blank\" href=\"https://www.google.it/maps/dir/" . $admin_aziend['latitude'] . "," . $admin_aziend['longitude'] . "/" . $google_string . "\">  <i class=\"glyphicon glyphicon-random\"></i></a>";
+  echo "</td>";
+  // composizione telefono
+  $title = "";
+  $telefono = "";
+  if (!empty($r["telefo"])) {
+      $telefono = $r["telefo"];
+      if (!empty($r["cell"])) {
+          $title .= "cell:" . $r["cell"];
+      }
+      if (!empty($r["fax"])) {
+          $title .= " fax:" . $r["fax"];
+      }
+  } elseif (!empty($r["cell"])) {
+      $telefono = $r["cell"];
+      if (!empty($r["fax"])) {
+          $title .= " fax:" . $r["fax"];
+      }
+  } elseif (!empty($r["fax"])) {
+      $telefono = "fax:" . $r["fax"];
+  } else {
+      $telefono = "_";
+      $title = " nessun contatto telefonico memorizzato ";
+  }
+  // colonna telefono
+  echo "<td title=\"$title\" align=\"center\">" . gaz_html_call_tel($telefono) . " &nbsp;</td>";
+  // colonna fiscali
+  if ($r['pariva'] > 0 && empty($r['codfis'])) {
+      echo "<td align=\"center\">" . $r['country'] . " " . $r['pariva'] . "</td>";
+  } elseif ($r['pariva'] < 1 && !empty($r['codfis'])) {
+      echo "<td align=\"center\">" . $r['codfis'] . "</td>";
+  } elseif ($r['pariva'] >= 1 && !empty($r['codfis'])) {
+      if ($r['pariva'] == $r['codfis']) {
+          echo '<td align="center">'.gaz_html_ae_checkiva($r['country'], $r['pariva']).'</td>';
+      } else {
+          echo "<td align=\"center\">" . gaz_html_ae_checkiva($r['country'], $r['pariva']) . "<br/>" . $r['codfis'] . "</td>";
+      }
+  } else {
+      echo "<td class=\"FacetDataTDred\" align=\"center\"> * NO * </td>";
+  }
+  // colonna stampa privacy
+  echo "<td align=\"center\"><a title=\"stampa informativa sulla privacy\" class=\"btn btn-xs btn-default\" href=\"stampa_privacy.php?codice=" . $r["codice"] . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-eye-close\"></i></a><a title=\"stampa richiesta codice sdi o pec\" class=\"btn btn-xs btn-default\" href=\"stampa_richiesta_pecsdi.php?codice=" . $r["codice"] . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-inbox\"></i></a></td>";
+  echo "<td title=\"Effettuato un pagamento da " . $r["ragso1"] . "\" align=\"center\"><a class=\"btn btn-xs btn-default btn-pagamento\" href=\"customer_payment.php?partner=" . $r["codice"] . "\"><i class=\"glyphicon glyphicon-euro\"></i></a></td>";
+  echo "<td title=\"Visualizza e stampa il partitario\" align=\"center\">  <a class=\"btn btn-xs btn-default\" href=\"report_contcli.php?id=".$r["codice"]."\"  target=\"_blank\"><i class=\"glyphicon glyphicon-list-alt\"></i></a> <a class=\"btn btn-xs btn-default\" href=\"../contab/select_partit.php?id=".$r["codice"]."\" target=\"_blank\"><i class=\"glyphicon glyphicon-check\"></i>&nbsp;<i class=\"glyphicon glyphicon-print\"></a></td>";
+  echo "<td align=\"center\">";
+  if (isset($accmov[$r["codice"]])){
+    ?>
+    <button title="Impossibile cancellare perché ci sono dei movimenti associati" class="btn btn-xs btn-default disabled"><i class="glyphicon glyphicon-trash"></i></button>
+    <?php
+  } else {
+    ?>
+    <a class="btn btn-xs btn-elimina dialog_delete" title="Cancella il cliente" ref="<?php echo $r['codice'];?>" ragso="<?php echo $r['ragso2']," ",$r['ragso1'];?>"><i class="glyphicon glyphicon-trash"></i></a>
+    <?php
+  }
+  echo "</td></tr>\n";
+}
+?>
     </table>
-    </div>
+  </div>
 </form>
 
 <script>

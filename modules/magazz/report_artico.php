@@ -467,11 +467,11 @@ while ($r = gaz_dbi_fetch_array($result)) {
   echo '<td class="text-center"><a class="btn btn-xs btn-default" href="clone_artico.php?codice='.$r["codice"].'"> <i class="glyphicon glyphicon-export"></i></a>';
 	echo "</td>\n";
   // colonna elimina
-  echo '<td class="text-center"><a class="btn btn-xs btn-default btn-elimina';
+  echo '<td class="text-center"><a class="btn btn-xs ';
   if (isset($accmov[$r["codice"]])){
-    echo '" disabled title="Articolo non è eliminabile perché presente su '. $accmov[$r["codice"]].' registrazioni"';
+    echo 'btn-default" disabled title="Articolo non è eliminabile perché presente su '. $accmov[$r["codice"]].' registrazioni"';
   } else {
-    echo ' dialog_delete" ref="'. $r['codice'].'" artico="'. $r['descri'].'"';
+    echo 'btn-elimina" dialog_delete" ref="'. $r['codice'].'" artico="'. $r['descri'].'"';
   }
   echo '> <i class="glyphicon glyphicon-trash"></i></a>';
 	echo "</td>\n";

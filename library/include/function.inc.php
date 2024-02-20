@@ -280,7 +280,7 @@ function gaz_html_call_tel($tel_n) {
 }
 
 function gaz_html_ae_checkiva($paese, $pariva) {
-    $htmlpariva = '<a class="dialog_vies" target="_blank" country="' . $paese . '" ref="' . $pariva . '">' . $paese . ' ' . $pariva . '</a>';
+    $htmlpariva = '<a class="dialog_vies" target="_blank" country="' . $paese . '" ref="' . $pariva . '" style="cursor: pointer;" title="Controllo VIES">' . $paese . ' ' . $pariva . '</a>';
     return $htmlpariva;
 }
 
