@@ -31,7 +31,8 @@ $tesbro = gaz_dbi_get_row($gTables['tesbro'],"id_tes", intval($_GET['id_tes']));
 $lang = false;
 $id_anagra = gaz_dbi_get_row($gTables['clfoco'], 'codice', $tesbro['clfoco']);
 $id_lang = gaz_dbi_get_row($gTables['anagra'], 'id', $id_anagra['id_anagra'])['id_language'];
-$lan_sef = gaz_dbi_get_row($gTables['languages'], 'lang_id', $id_lang)['sef'];
+$lan_row = gaz_dbi_get_row($gTables['languages'], 'lang_id', $id_lang);
+$lan_sef = (isset($lan_row))?$lan_row['sef']:'';
 switch($lan_sef){
 	case 'it':
 		$lang='';
