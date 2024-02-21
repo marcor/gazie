@@ -543,7 +543,7 @@ function printPdf(urlPrintDoc){
 					  "flux_status, received_date, flux_descri") . ", " .
           "MAX(id_tes) AS reftes, " .
           "GROUP_CONCAT(id_tes ORDER BY datemi DESC) AS refs_id, " .
-          "GROUP_CONCAT(flux_status ORDER BY received_date DESC) AS refs_flux_status, " .
+          "GROUP_CONCAT(flux_status ORDER BY received_date DESC, exec_date DESC) AS refs_flux_status, " .
           "GROUP_CONCAT(numdoc ORDER BY datemi DESC) AS refs_num",
           $tesdoc_e_partners,
           $ts->where . " " . $ts->group_by,
