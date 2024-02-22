@@ -2,12 +2,12 @@
 /*
 	  --------------------------------------------------------------------------
 	  GAzie - Gestione Azienda
-	  Copyright (C) 2004-2023 - Antonio De Vincentiis Montesilvano (PE)
+	  Copyright (C) 2004-2024 - Antonio De Vincentiis Montesilvano (PE)
 	  (http://www.devincentiis.it)
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
 	  SHOP SYNCHRONIZE è un modulo creato per GAzie da Antonio Germani, Massignano AP
-	  Copyright (C) 2018-2023 - Antonio Germani, Massignano (AP)
+	  Copyright (C) 2018-2024 - Antonio Germani, Massignano (AP)
 	  https://www.lacasettabio.it
 	  https://www.programmisitiweb.lacasettabio.it
 	  --------------------------------------------------------------------------
