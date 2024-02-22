@@ -2,7 +2,7 @@
 /*
 	  --------------------------------------------------------------------------
 	  GAzie - Gestione Azienda
-	  Copyright (C) 2004-2024 - Antonio De Vincentiis Montesilvano (PE)
+	  Copyright (C) 2004-2023 - Antonio De Vincentiis Montesilvano (PE)
 	  (http://www.devincentiis.it)
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
@@ -1189,7 +1189,7 @@ class shopsynchronizegazSynchro {
 						$esiste=0;
 						if (strlen($order->CustomerCode)>0){ // controllo esistenza cliente per codice e-commerce
 							unset($cl);
-							$cl = gaz_dbi_get_row($gTables['clfoco'], "ref_ecommerce_id_customer", intval($order->CustomerCode));
+							$cl = gaz_dbi_get_row($gTables['clfoco'], "ref_ecommerce_id_customer", $order->CustomerCode);
 							if (isset($cl)){
 								$clfoco=$cl['codice'];
 								$esiste=1;
@@ -1209,10 +1209,10 @@ class shopsynchronizegazSynchro {
 								if (substr_compare($order->CustomerVatCode, "IT", 0, 2, true)==0){// se c'è IT davanti alla partita iva
 								  $order->CustomerVatCode=substr($order->CustomerVatCode,2);// tolgo IT
 								}
-                if (strlen($order->CustomerVatCode)<>11 && intval($order->CustomerVatCode)==0){// se non è una partita iva allora è un privato
-                    $order->CustomerVatCode=""; // deve essere vuoto
-                    $order->CustomerCodeFattEl = "0000000";// il codice univoco deve essere 7 volte zero
-                }
+								if (strlen($order->CustomerVatCode)<>11 && intval($order->CustomerVatCode)==0){// se non è una partita iva allora è un privato
+									$order->CustomerVatCode=""; // deve essere vuoto
+									$order->CustomerCodeFattEl = "0000000";// il codice univoco deve essere 7 volte zero
+								}
 
 							} elseif ($order->CustomerCountry=="EN"){ // se la nazione è EN // se non è italiano imposto il codice univoco con 7 X maiuscolo e il codice fiscale con il codice clfoco assegnato da GAzie
 								$lang="1";
@@ -1250,9 +1250,9 @@ class shopsynchronizegazSynchro {
 								}
 							} else {
 								$sexper="G";
-                if (strlen ($order->CustomerFiscalCode)==0){// se non è stato passato il codice fiscale
-                  $order->CustomerFiscalCode = "00000000000";//GAzie vuole 11 zeri
-                }
+								if (strlen ($order->CustomerFiscalCode)==0){// se non è stato passato il codice fiscale
+								  $order->CustomerFiscalCode = "00000000000";//GAzie vuole 11 zeri
+								}
 							}
 							gaz_dbi_query("INSERT INTO " . $gTables['anagra'] . "(ragso1,ragso2,sexper,indspe,capspe,citspe,prospe,country,id_currency,id_language,telefo,codfis,pariva,fe_cod_univoco,e_mail,pec_email) VALUES ('" . addslashes($order->CustomerSurname)." ". addslashes($order->CustomerName) . "', '" . addslashes($order->BusinessName) . "', '". $sexper. "', '".addslashes($order->CustomerAddress) ."', '".$order->CustomerPostCode."', '". addslashes($order->CustomerCity) ."', '". $order->CustomerProvince ."', '" . addslashes($order->CustomerCountry). "', '1', '".$lang."', '". $order->CustomerTel ."', '". strtoupper($order->CustomerFiscalCode) ."', '" . $order->CustomerVatCode . "', '" . $order->CustomerCodeFattEl . "', '". $order->CustomerEmail . "', '". $order->CustomerPecEmail . "')");
 
