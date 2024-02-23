@@ -65,7 +65,7 @@ $sortable_headers = array(
     "Mail" => "",
     "Origine" => "",
     "Duplica" => "",
-    "Cancella" => ""
+    "Elimina" => ""
 );
 
 require("../../library/include/header.php");
@@ -403,19 +403,19 @@ if (isset($_SESSION['print_request']) && intval($_SESSION['print_request'])>0){
                             }
                             echo "<td><a class=\"btn btn-xs btn-default btn-duplica\" href=\"admin_docven.php?Duplicate&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-duplicate\"></i></a>";
                             echo "</td>";
-
+// colonna elimina
                             if ($ultimoddt == $r["numdoc"] && $r['numfat'] < 1 ){
-                                echo "<td>";
-                                ?>
-                                <a class="btn btn-xs  btn-elimina dialog_delete" title="Cancella il documento" ref="<?php echo $r['id_tes'];?>" ragso1="<?php echo $r['ragso1'];?>">
-                                  <i class="glyphicon glyphicon-trash"></i>
-                                </a>
-                                <?php
-                                echo "</td>";
+                              echo "<td>";
+                              ?>
+                              <a class="btn btn-xs  btn-elimina dialog_delete" title="Cancella il documento" ref="<?php echo $r['id_tes'];?>" ragso1="<?php echo $r['ragso1'];?>">
+                                <i class="glyphicon glyphicon-trash"></i>
+                              </a>
+                              <?php
+                              echo "</td>";
                             } else{
-                                echo "<td><button class=\"btn btn-xs   disabled\"><i class=\"glyphicon glyphicon-trash\"></i></button></td>";
-                              echo "</tr>\n";
+                              echo "<td></td>";
                             }
+                            echo "</tr>\n";
                             break;
                             case "DDR":
                             case "DDL":
