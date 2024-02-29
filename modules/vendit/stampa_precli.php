@@ -27,16 +27,36 @@ $admin_aziend=checkAdmin();
 require("../../library/include/document.php");
 $testat = $_GET['id_tes'];
 $tesbro = gaz_dbi_get_row($gTables['tesbro'],"id_tes", $testat);
+$lang = false;
+$id_anagra = gaz_dbi_get_row($gTables['clfoco'], 'codice', $tesbro['clfoco']);
+$id_lang = gaz_dbi_get_row($gTables['anagra'], 'id', $id_anagra['id_anagra'])['id_language'];
+$lan_row = gaz_dbi_get_row($gTables['languages'], 'lang_id', $id_lang);
+$lan_sef = (isset($lan_row))?$lan_row['sef']:'';
+
+switch($lan_sef){
+	case 'it':
+		$lang='';
+		break;
+	case 'en':
+		$lang='english';
+		break;
+	case 'es':
+		$lang='espanol';
+		break;
+	default:
+		$lang='';
+		break;
+}
 
 if ($tesbro['tipdoc'] <> 'VPR') {
-    header("Location: report_broven.php");
-    exit;
+  header("Location: report_broven.php");
+  exit;
 }
 if (isset($_GET['dest'])&& $_GET['dest']=='E' ){ // se l'utente vuole inviare una mail
-     createDocument($tesbro, 'PreventivoCliente',$gTables,'rigbro','E', false, false);
+  createDocument($tesbro, 'PreventivoCliente',$gTables,'rigbro','E', $lang, false);
 } elseif (isset($_GET['lh'])){ // se l'utente vuole che venga stampata su una carta intestata
-     createDocument($tesbro, 'PreventivoCliente',$gTables,'rigbro','H');
+  createDocument($tesbro, 'PreventivoCliente',$gTables,'rigbro','H', $lang, false);
 }else {
-     createDocument($tesbro, 'PreventivoCliente',$gTables,'rigbro');
+  createDocument($tesbro, 'PreventivoCliente',$gTables,'rigbro',false, $lang, false);
 }
 ?>
