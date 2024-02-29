@@ -1,6 +1,6 @@
 UPDATE `gaz_config` SET `cvalue` = '157' WHERE `id` =2;
 CREATE TABLE IF NOT EXISTS `gaz_forme_giuridiche` (
-  `id_forgiu` int(10) NOT NULL AUTO_INCREMENT,
+  `id_forgiu` int NOT NULL AUTO_INCREMENT,
   `descri` varchar(100) DEFAULT NULL,
   `sigla` varchar(15) DEFAULT NULL,
   `ordine` tinyint(3) DEFAULT NULL,
@@ -180,4 +180,11 @@ CREATE TABLE IF NOT EXISTS `gaz_XXXpagame_distribution` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Il contenuto di questa tabella serve per gestire i pagamenti con scadenze e rate non costanti nell''importo e nella periodicità. Ed è legata alla tabella gaz_XXXpagame. Ogni rigo di questa tabella rappresenta una rata per il pagamento riferito con la colonna codpag e verranno passate come matrice alla funzione CalcExpiry nel file expiry_calc.php ';
 ALTER TABLE `gaz_XXXpagame` CHANGE COLUMN `tippag` `tippag` CHAR(1) NOT NULL DEFAULT '' COMMENT 'C=contanti,O=bonifico,K=carte di pagamento,D=rimessa diretta,I=rapporto interbancario diretto (RID),B=Ricevuta Bancaria,T=Cambiale-Tratta,V=mediante avviso(MAV),F=finanziamento,M=misto. ATTENZIONE se F o M ci si può appoggiare alla tabella gaz_XXXcompany_data per contenere dati quali anticipo, finanziato, importo rate, numero rate, periodicità' AFTER `descri`;
 ALTER TABLE `gaz_XXXcompany_data`	COMMENT='Multipurpose table. Tabella per contenere dati di qualsiasi genere, utilizzabile sulle personalizzazioni per conservare (ad es.) documenti crittografati.', ADD COLUMN `id_ref` INT(10) NULL COMMENT 'Referenza numerica alla fonte' AFTER `id`,	ADD INDEX `id_ref` (`id_ref`);
+ALTER TABLE `gaz_XXXartico`
+	ADD COLUMN `iso_country` char(2) NOT NULL DEFAULT 'IT' COMMENT 'A parità di codice, inserendo un\'altro rigo consente la generazione di più righi (normalmente 2) sui documenti con la traduzione della descrizione nella lingua indicata in lang_id ed eventualmente anche valuta, cambio ecc ' AFTER `codice`,
+	ADD COLUMN `lang_id` int NOT NULL DEFAULT '1' COMMENT 'Se appartenente ad un altro iso_country indica la lingua nella quale è possibile creare un altro rigo sui documenti per la traduzione ' AFTER `id_artico_group`,
+	DROP PRIMARY KEY,
+	ADD PRIMARY KEY (`codice`, `iso_country`) USING BTREE,
+	ADD INDEX `codice` (`codice`);
+ALTER TABLE `gaz_XXXrigdoc`	ADD COLUMN `transl_id_ref` int NOT NULL DEFAULT '0' COMMENT 'Se > 0 è una referenza ad id_ref di gaz_001company_data dove riprendere i dati per la traduzione (o altro) nella lingua del partner' AFTER `tiprig`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )
