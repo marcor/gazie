@@ -1474,7 +1474,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
   }
   $results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
   foreach ($XMLvars->cast as $key => $value) {
-    $el = $domDoc->createElement("DatiRiepilogo", "");
+    $el = $domDoc->createElement("DatiRiepilogo", "\n");
     $el1 = $domDoc->createElement("AliquotaIVA", number_format($value['periva'], 2, '.', ''));
     $el->appendChild($el1);
     if ($value['periva'] < 0.01) {
