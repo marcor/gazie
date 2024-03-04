@@ -967,7 +967,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
         case "50":      // normale c/allegato
 					$last_pervat = $rigo['pervat'];
 					$benserv = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
-          $el = $domDoc->createElement("DettaglioLinee", "");
+          $el = $domDoc->createElement("DettaglioLinee", "\n");
           $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
           $el->appendChild($el1);
 					if ($rigo['quanti']*$rigo['prelis']<0 && !$XMLvars->reverse) {
@@ -1068,7 +1068,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
         case "90": // forfait, vendita cespite
 					$last_pervat = $rigo['pervat'];
 					$benserv = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
-          $el = $domDoc->createElement("DettaglioLinee", "");
+          $el = $domDoc->createElement("DettaglioLinee", "\n");
           $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
           $el->appendChild($el1);
           $el1 = $domDoc->createElement("Descrizione", substr($rigo['descri'], -1000));
@@ -1124,7 +1124,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
           break;
         case "T":       // trasporto
 					$benserv = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
-          $el = $domDoc->createElement("DettaglioLinee", "");
+          $el = $domDoc->createElement("DettaglioLinee", "\n");
           $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
           $el->appendChild($el1);
 					$el1 = $domDoc->createElement("TipoCessionePrestazione", 'AC');
@@ -1167,7 +1167,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
             $rigo['descri'] = '.';
           }
 					$benserv = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
-          $el = $domDoc->createElement("DettaglioLinee", "");
+          $el = $domDoc->createElement("DettaglioLinee", "\n");
           $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
           $el->appendChild($el1);
           $el1 = $domDoc->createElement("Descrizione", substr($rigo['descri'], -1000));
@@ -1190,7 +1190,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
           $arrdescri = explode('<t@g>',$rdescri);
           foreach($arrdescri as $vd) {
             $benserv = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
-            $el = $domDoc->createElement("DettaglioLinee", "");
+            $el = $domDoc->createElement("DettaglioLinee", "\n");
             $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
             $el->appendChild($el1);
             $el1 = $domDoc->createElement("Descrizione", $vd);
@@ -1269,7 +1269,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
   }
   if ($XMLvars->tesdoc['speban'] >= 0.01) {
 		$results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
-    $el = $domDoc->createElement("DettaglioLinee", "");
+    $el = $domDoc->createElement("DettaglioLinee", "\n");
     $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
     $el->appendChild($el1);
     $el1 = $domDoc->createElement("TipoCessionePrestazione", 'AC');
@@ -1298,7 +1298,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
   // eventualemente aggiungo i rimborsi per i bolli, ma solo se sono da addebitare
   if ($XMLvars->impbol >= 0.01 && $XMLvars->chk_taxstamp) {
     $results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
-    $el = $domDoc->createElement("DettaglioLinee", "");
+    $el = $domDoc->createElement("DettaglioLinee", "\n");
     $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
     $el->appendChild($el1);
     $el1 = $domDoc->createElement("TipoCessionePrestazione", 'AC');
@@ -1321,7 +1321,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
   // ... e se voluto anche il rigo descrittivo derivante dalla configurazione avanzata azienda
   if (!empty($XMLvars->descriptive_last_row) && !$XMLvars->reverse ) {
     $results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
-    $el = $domDoc->createElement("DettaglioLinee", "");
+    $el = $domDoc->createElement("DettaglioLinee", "\n");
     $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
     $el->appendChild($el1);
     $el1 = $domDoc->createElement("Descrizione", $XMLvars->descriptive_last_row);
