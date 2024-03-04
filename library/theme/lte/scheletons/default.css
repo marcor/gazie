@@ -200,7 +200,7 @@ section.content {
   margin: 10px;
   height: 150px;
 	max-width: 100%;
-  box-shadow: 0 0 5px 5px;
+  box-shadow: 0 0 3px 3px #ddd;
   border-radius: 50%;
 }
 .btn {

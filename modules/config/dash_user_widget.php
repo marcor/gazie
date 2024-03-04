@@ -28,3 +28,8 @@ if ($t > 4 && $t <= 13) {
     <a class="btn btn-default" href="../config/print_privacy_regol.php" > <?php echo $script_transl['user_regol'];?></a>
   </div>
 </div>
+<style>
+img.usr-picture:hover {
+	box-shadow: 0 0 5px #<?php echo $admin_aziend['colore']; ?>;
+}
+</style>

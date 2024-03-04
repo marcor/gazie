@@ -1,5 +1,5 @@
 <div class="panel panel-info col-md-12" >
-    <div class="box-header company-color">
+    <div class="box-header company-color text-bold">Ultime operazioni
 		<a class="pull-right dialog_grid" id_bread="<?php echo $grr['id_bread']; ?>" style="cursor:pointer;"><i class="glyphicon glyphicon-cog"></i></a>
 	</div>
     <div class="img-containter">
@@ -37,15 +37,15 @@
                         echo '../../modules' . $r["link"];
                     else
                         echo "&nbsp;";
-                    ?>" type="button" class="btn btn-default btn-full" style="background-color: #<?php echo $r["color"]; ?>; font-size: 85%; text-align: left;">
+                    ?>" type="button" class="btn btn-default btn-full" style="font-size: 85%; text-align: left;">
                         <span ><?php
-                            echo gaz_time_from(strtotime($r["last_use"])) . ' - <b>';
+                            echo '<b>';
                             if (is_string($rref_name)) {
                                 echo $rref_name;
                             } else {
                                 echo "Errore nello script (array)";
                             }
-                            echo '</b>';
+                            echo '</b> ('. gaz_time_from(strtotime($r["last_use"])) .')';
                             ?></span></a>
             </div>
             <?php
