@@ -237,7 +237,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
   echo "<td title=\"$title\" align=\"center\">" . gaz_html_call_tel($telefono) . " &nbsp;</td>";
   // colonna fiscali
   if ($r['pariva'] > 0 && empty($r['codfis'])) {
-      echo "<td align=\"center\">" . $r['country'] . " " . $r['pariva'] . "</td>";
+      echo "<td align=\"center\">" . gaz_html_ae_checkiva($r['country'], $r['pariva']) . "</td>";
   } elseif ($r['pariva'] < 1 && !empty($r['codfis'])) {
       echo "<td align=\"center\">" . $r['codfis'] . "</td>";
   } elseif ($r['pariva'] >= 1 && !empty($r['codfis'])) {
