@@ -180,7 +180,7 @@ $strScript = array("select_liqiva.php" =>
             'The date of the document must not be later than that of the registration!',
             'WARNING you\'re editing a movement that involving a VAT registry!',
             'You\'re trying to record a document that is already registered',
-            'Il totale dei movimenti dello scadenziario non coincidono con l\'importo del rigo ad esso relativo'
+            'Il totale dei movimenti dello scadenzario non coincidono con l\'importo del rigo ad esso relativo'
         ),
         'id_testata' => 'Entry number',
         'date_reg' => 'Registration date',

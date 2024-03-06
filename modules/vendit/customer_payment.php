@@ -309,7 +309,7 @@ echo <<<END
 END;
 
 if ($form['partner'] > 100000000) { // partner selezionato
-    // ottengo il valore del saldo contabile per confrontarlo con quello dello scadenziario
+    // ottengo il valore del saldo contabile per confrontarlo con quello dello scadenzario
     $saldocontabile = $paymov->getPartnerAccountingBalance($form['partner'], $date);
     $paymov->getPartnerStatus($form['partner'], $date);
     $kd_paymov = 0;

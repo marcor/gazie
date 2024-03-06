@@ -209,7 +209,7 @@ if ($admin_aziend['Abilit'] >= 8) {
 	//});
 
 	$(window).on('load',(function(){
-		// Scadenziario Fornitori
+		// Scadenzario Fornitori
 		keyRowfor = "<?php echo $keyRowFoundfor ?>";
 
 		if(keyRowfor != ""){

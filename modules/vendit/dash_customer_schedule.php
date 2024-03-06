@@ -214,7 +214,7 @@ if ($admin_aziend['Abilit'] >= 8) {
 	//});
 
 	$(window).on('load',(function(){
-		// Scadenziario Clienti
+		// Scadenzario Clienti
 		keyRowCli = "<?php echo $keyRowFoundCli ?>";
 
 		if(keyRowCli != ""){

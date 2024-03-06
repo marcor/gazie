@@ -177,7 +177,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
               // inserisco l'artico sul database ma solo se non ne ho uno con lo stesso codice
               $numinsert=gaz_dbi_query("INSERT IGNORE INTO ".$gTables['artico']." (codice,descri,unimis,preve1,sconto,aliiva) VALUES ('".$jv->codart."','".$jv->descri."','".$jv->unimis."','".$jv->preve1."','".$jv->sconto."','".$jv->aliiva."')",true);
               if ($numinsert >=1) {
-                // controlle se ho già una categoria merceologica con la stessa descrizione;
+                // controllo se ho già una categoria merceologica con la stessa descrizione;
                 $yescatmer = gaz_dbi_get_row($gTables['catmer'], 'descri', $jv->catmer);
                 if ($yescatmer) {  // ho già una categoria merceologica con la stessa descrizione, prendo il suo codice e lo uso per aggiornare l'articolo appena inserito
                   $catmer=$yescatmer['codice'];
@@ -197,7 +197,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
     } else { // ho degli errori ripropongo il form
       $preview = true;
     }
-	} elseif (isset($_POST['Cancel'])) { // ho  confermato l'inserimento
+	} elseif (isset($_POST['Cancel'])) { // ho confermato l'inserimento
     header("Location: ./custom_from_fae.php");
     exit;
 

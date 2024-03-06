@@ -328,8 +328,8 @@ $strScript = array(
         'add'           => 'Aggiungi'
     ),
     "custom_from_fae.php" =>
-      array('title' => 'Importa l\'archivio clienti e contratti a utilizzando le fatture elettroniche',
-      'disclaimer'=>'  Da questa pagina potrai importare i clienti contenuti negli XML delle fatture elettroniche. La procedura è particolarmente comoda in fase di <b>migrazione da altri gestionali verso GAzie</b>. Basta ottenere un pacchetto con una esportazione massiva di fatture elettroniche di vendita dal portale "Fatture e Corrispettivi" oppure da uno dei tanti Terzi intermediari e poi caricare il pacchetto ZIP ottenuto direttamente qui. Si ricorda che per la trasmissione delle fatture di vendita si può continuare ad usare il portale del terzo intermediario, basta creare periodicamente il pacchetto ZIP e caricarlo sullo stesso.',
+      array('title' => 'Importa clienti e contratti utilizzando le fatture elettroniche',
+      'disclaimer'=>'Da questa pagina potrai importare i clienti contenuti negli XML delle fatture elettroniche. La procedura è particolarmente comoda in fase di <b>migrazione da altri gestionali verso GAzie</b>. Basta ottenere un pacchetto con una esportazione massiva di fatture elettroniche di vendita dal portale "Fatture e Corrispettivi" oppure da uno dei tanti Terzi intermediari e poi caricare il pacchetto ZIP ottenuto direttamente qui. Si ricorda che per la trasmissione delle fatture di vendita si può continuare ad usare il portale del terzo intermediario, basta creare periodicamente il pacchetto ZIP e caricarlo sullo stesso.',
       'btn_acquire'=>'Carica il file',
       'war' => array(
           'ok_suppl' => 'Il cliente è già in archivio',

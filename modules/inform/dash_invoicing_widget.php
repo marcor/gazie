@@ -9,7 +9,7 @@
       <tr>
         <th>Tipo di segnalazione</th>
         <th class="text-center">Numero</th>
-        <th class="text-center">Operazione consiglata</th>
+        <th class="text-center">Operazione consigliata</th>
       </tr>
     </thead>
     <tbody>
