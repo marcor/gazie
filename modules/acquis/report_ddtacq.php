@@ -27,10 +27,17 @@ require ("../../modules/vendit/lib.function.php");
 $lm = new lotmag;
 $admin_aziend = checkAdmin();
 $pdf_to_modal = gaz_dbi_get_row($gTables['company_config'], 'var', 'pdf_reports_send_to_modal')['val'];
-$tipdoc=array('DDL', 'RDL', 'DDR','ADT', 'AFT');
+$tipdoc_filter = "('DDL', 'RDL', 'DDR','ADT', 'AFT')";
 
 $partner_select = !gaz_dbi_get_row($gTables['company_config'], 'var', 'partner_select_mode')['val'];
-$tesdoc_e_partners = $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id';
+
+$tesdoc = "(SELECT * FROM {$gTables['tesdoc']} WHERE tipdoc IN $tipdoc_filter) as dtesdoc";
+$tesdoc_e_partners = "{$gTables['tesdoc']} " .
+                     "INNER JOIN {$gTables['clfoco']}" .
+                     " ON ({$gTables['tesdoc']}.clfoco = {$gTables['clfoco']}.codice " .
+                     " AND tipdoc IN $tipdoc_filter) " .
+                     "LEFT JOIN {$gTables['anagra']}" .
+                     " ON {$gTables['clfoco']}.id_anagra = {$gTables['anagra']}.id";
 
 // funzione di utilità generale, adatta a mysqli.inc.php
 function cols_from($table_name, ...$col_names) {
@@ -63,8 +70,10 @@ $sortable_headers = array(
 require("../../library/include/header.php");
 $script_transl = HeadMain();
 $ts = new TableSorter(
-    !$partner_select && isset($_GET["fornitore"]) ? $tesdoc_e_partners : $gTables['tesdoc'],
-    $passo, ['id_tes' => 'desc'], ['sezione'=>1],[], " (tipdoc = 'DDL' OR tipdoc = 'RDL' OR tipdoc = 'DDR' OR tipdoc = 'ADT' OR tipdoc = 'AFT')"
+    !$partner_select && isset($_GET["fornitore"]) ? $tesdoc_e_partners : $tesdoc,
+    $passo,
+    ['id_tes' => 'desc'],
+    ['sezione'=>1]
 );
 ?>
 <script>

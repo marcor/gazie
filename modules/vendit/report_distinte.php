@@ -47,16 +47,20 @@ $sortable_headers = array  (
 );
 
 echo "<div align='center' class='FacetFormHeaderFont '>{$script_transl['title']}</div>\n";
-$table = $gTables['effett']." LEFT JOIN ".$gTables['files']." ON (".$gTables['effett'].".id_distinta = ".$gTables['files'].".id_doc)
-		 LEFT JOIN ".$gTables['clfoco']." ON (".$gTables['effett'].".banacc = ".$gTables['clfoco'].".codice)";
+
+$table = "{$gTables['effett']} " .
+        "INNER JOIN {$gTables['files']}" .
+        " ON ({$gTables['effett']}.id_distinta = {$gTables['files']}.id_doc" .
+        " AND table_name_ref='effett' AND id_ref > 0) " .
+        "LEFT JOIN {$gTables['clfoco']} " .
+        " ON {$gTables['effett']}.banacc = {$gTables['clfoco']}.codice";
 
 $t = new TableSorter(
     $table,
     $passo,
     ['id_doc' => 'desc'],
     ['item_ref'=>'distinta'],
-    ['id_distinta'],
-    " table_name_ref='effett' AND id_ref > 0");
+    ['id_distinta']);
 $t->output_navbar();
 
 $rs=gaz_dbi_dyn_query ($gTables['clfoco'].".descri AS desbanacc, ".$gTables['clfoco'].".codice AS codbanacc", $table, $t->where." GROUP BY codbanacc","codbanacc", $t->getOffset(), $t->getLimit());
