@@ -610,10 +610,7 @@ if ($modal === false) {
 
     $script_transl = $strCommon + $script_transl;
 }
-/** ENRICO FEDELE */
-/* Assegno un id al form, quindi distinguo tra modale e non
- * in caso di finestra modale, aggiungo un campo nascosto che mi serve per salvare nel database
- */
+
 ?>
 <script>
 function calcDiscount() {
@@ -1037,49 +1034,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-				<?php
-				 // se esiste un json per l'attributo della variante dell'e-commerce
-				if (isset ($form['var_id']) OR isset ($form['var_name'])){
-					?>
-					<!--+ DC - 06/02/2019 div class="row" --->
-<!--
-					<div id="webUrl" class="row IERincludeExcludeRow">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="var_id" class="col-sm-4 control-label">ID attributo variante</label>
-								<input class="col-sm-8" type="text" value="<?php echo $form['var_id']; ?>" name="var_id" maxlength="255" />
-							</div>
-						</div>
-					</div><!-- chiude row  -->
-					<!--+ DC - 06/02/2019 div class="row" --->
-<!--
-					<div id="webUrl" class="row IERincludeExcludeRow">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="var_name" class="col-sm-4 control-label">Nome attributo variante</label>
-								<input class="col-sm-8" type="text" value="<?php echo $form['var_name']; ?>" name="var_name" maxlength="255" />
-							</div>
-						</div>
-					</div><!-- chiude row  -->
-					<?php
-				}
-				?>
-                <!--+ DC - 06/02/2019 div class="row" --->
-<!--
-                <div id="depliPublic" class="row IERincludeExcludeRow">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="depli_public" class="col-sm-4 control-label"><?php echo $script_transl['depli_public']; ?></label>
-                            <?php
-                            /*
-                            $gForm->variousSelect('depli_public', $script_transl['depli_public_value'], $form['depli_public'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
-                            */
-                            ?>
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
-                <!--+ DC - 06/02/2019 div class="row" --->
 
+                <!--+ DC - 06/02/2019 div class="row" --->
                 <div id="webPublic" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
@@ -1092,7 +1048,16 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-
+                <div id="ordinabile" class="row IERincludeExcludeRow">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="ordinabile" class="col-sm-4 control-label"><?php echo $script_transl['ordinabile']; ?></label>
+                            <?php
+                            $gForm->variousSelect('ordinabile', $script_transl['ordinabile_value'], $form['ordinabile'], "col-sm-8", false, '', false, 'style="max-width: 200px;"');
+                            ?>
+                         </div>
+                    </div>
+                </div><!-- chiude row  -->
               </div><!-- chiude tab-pane  -->
               <div id="contab" class="tab-pane fade">
                 <!--+ DC - 06/02/2019 div class="row" --->

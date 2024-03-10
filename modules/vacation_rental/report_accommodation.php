@@ -665,34 +665,14 @@ while ($r = gaz_dbi_fetch_array($result)) {
 			$show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
 			$tipo_composti = gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti');
 			// acquisti
-			// giacenza
-			$mv = $gForm->getStockValue(false, $r['codice']);
-			$magval = array_pop($mv);
-			$magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
-			 if (isset($magval['q_g']) && round($magval['q_g'],6) == "-0"){
-				 $magval['q_g']=0;
-			 }
-			$class = 'success';
-			if (is_numeric($magval)) { // giacenza = 0
+
+			$class = 'success';// di default l'alloggio è aperto
+      $title = 'Aperto';
+			if ($r['ordinabile']=='N') { // se l'alloggio è chiuso
 				$class = 'danger';
-				$magval=[];
-				$magval['q_g']=0;
-			} elseif ($magval['q_g'] < 0) { // giacenza inferiore a 0
-				$class = 'danger';
-			} elseif ($magval['q_g'] > 0) { //
-			  if ($magval['q_g']<=$r['scorta']){
-				$class = 'warning';
-			  }
-			} else { // giacenza = 0
-				$class = 'danger';
+        $title = 'Chiuso';
 			}
-			// contabilizzazione magazzino
-			$com = '';
-			if ($admin_aziend['conmag'] > 0 && $r["good_or_service"] != 1 && $tipo_composti['val']=="STD") {
-				$com = '<a class="btn btn-xs btn-'.$class.'" href="../magazz/select_schart.php?di=0101' . date('Y') . '&df=' . date('dmY') . '&id=' . $r['codice'] . '" target="_blank">
-			  <i class="glyphicon glyphicon-check"></i><i class="glyphicon glyphicon-print"></i>
-			  </a>';
-			}
+
 			// IVA
 			$iva = gaz_dbi_get_row($gTables['aliiva'], 'codice', $r['aliiva']);
 			if (!$iva) $iva=array('aliquo'=>0);
@@ -718,9 +698,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 			}
 			echo "<tr>\n";
 			echo '<td>
-			<a class="btn btn-xs btn-'.$class.'" href="../vacation_rental/admin_house.php?Update&codice='.$r['codice'].'" ><i class="glyphicon glyphicon-edit"></i> '.$r['codice'].'</a>';
-
-
+			<a title="'.$title.'" class="btn btn-xs btn-'.$class.'" href="../vacation_rental/admin_house.php?Update&codice='.$r['codice'].'" ><i class="glyphicon glyphicon-edit"></i> '.$r['codice'].' </a>';
 
 			echo "<i ".$ecomGlobe." ></i>";// globo per e-commerce
 			echo '</td>';
