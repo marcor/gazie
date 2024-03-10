@@ -63,7 +63,11 @@ $t = new TableSorter(
     ['id_distinta']);
 $t->output_navbar();
 
-$rs=gaz_dbi_dyn_query ($gTables['clfoco'].".descri AS desbanacc, ".$gTables['clfoco'].".codice AS codbanacc", $table, $t->where." GROUP BY codbanacc","codbanacc", $t->getOffset(), $t->getLimit());
+$rs=gaz_dbi_dyn_query(
+    "{$gTables['clfoco']}.descri AS desbanacc," .
+    "{$gTables['clfoco']}.codice AS codbanacc",
+    $table, $t->where, "codbanacc",
+    $t->getOffset(), $t->getLimit(), "codbanacc");
 $optval='';
 while($r= gaz_dbi_fetch_array($rs)) {
     $optval=($optval=='')?[]:$optval;

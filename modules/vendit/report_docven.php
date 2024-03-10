@@ -546,10 +546,11 @@ function printPdf(urlPrintDoc){
           "GROUP_CONCAT(flux_status ORDER BY received_date DESC, exec_date DESC) AS refs_flux_status, " .
           "GROUP_CONCAT(numdoc ORDER BY datemi DESC) AS refs_num",
           $tesdoc_e_partners,
-          $ts->where . " " . $ts->group_by,
+          $ts->where,
           $ts->orderby,
           $ts->getOffset(),
-          $flt_info!="none" ? 1000 : $ts->getLimit());
+          $flt_info != "none" ? 1000 : $ts->getLimit(),
+          $ts->group_by);
           $ctrl_doc = "";
           $ctrl_eff = 999999;
           $last_fae_packet = '';
