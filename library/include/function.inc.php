@@ -2352,16 +2352,14 @@ class TableSorter {
         $url_search_query_parts = array();
         $where_parts = array();
         # tolgo i parametri vuoti (es. x in "?x=&y=3&z=0")
-
         $pruned_GET = array_filter($_GET, 'strlen');
         # i valori di default vengono sovrascritti se presenti anche nella richiesta
         $def_GET = array_merge($this->default_search, $pruned_GET);
         foreach ($search_fields as $field => $sql_expr) {
-            $pruned_GET[$field]=(isset($pruned_GET[$field]))?$pruned_GET[$field]:''; // non ho valorizzato $_GET metto vuoto
-            if (isset($def_GET[$field]) && strlen($def_GET[$field]) && $pruned_GET[$field] != 'All') {
+            if (isset($def_GET[$field]) && strlen($def_GET[$field])) {
                 global $$field;  # settiamo una variabile globale chiamata come il parametro
                 $$field = $def_GET[$field];
-                if (isset($pruned_GET[$field]))  # escludiamo dall'url i valori default applicati ed anche i valori esattamente 'All'
+                if (isset($pruned_GET[$field]))  # escludiamo dall'url i valori default applicati
                     $url_search_query_parts[] = "$field=" . urlencode($$field);
                 $where_parts[] = sprintf($sql_expr, gaz_dbi_real_escape_string($$field));
                 $$field = htmlspecialchars($$field, ENT_QUOTES);
