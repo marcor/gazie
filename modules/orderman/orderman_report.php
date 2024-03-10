@@ -317,10 +317,23 @@ while ($r = gaz_dbi_fetch_array($result)) {
 <?php
 }
 ?>
-        </table></div>
-		</form>
+</table></div>
+</form>
+
+<script>
+    $(document).ready(function(){
+        // intercetta i submit e rimuove i campi vuoti dalla richiesta
+        // URL: http://www.billerickson.net/code/hide-empty-fields-get-form/
+        $("form").submit(function() {
+            $(this).find(":input").filter(function(){ return !this.value; }).attr("disabled", "disabled");
+            return true; // ensure form still submits
+        });
+
+        // Un-disable form fields when page loads, in case they click back after submission
+        $("form").find( ":input" ).prop( "disabled", false );
+    });
+</script>
 
 <?php
-
 require("../../library/include/footer.php");
 ?>

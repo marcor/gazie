@@ -982,31 +982,31 @@ function printPdf(urlPrintDoc){
 </form>
 
 <script>
-$(document).ready(function(){
-  var selects = $("select");
-  // la funzione gaz_flt_dsp_select usa "All", qui usiamo invece valori vuoti
-  // (in questo modo i campi non usati possono essere esclusi)
-  $("option", selects).filter(function(){ return this.value == "All"; }).val("");
+    $(document).ready(function(){
+        var selects = $("select");
+        // la funzione gaz_flt_dsp_select usa "All", qui usiamo invece valori vuoti
+        // (in questo modo i campi non usati possono essere esclusi)
+        $("option", selects).filter(function(){ return this.value == "All"; }).val("");
 
-  // la stessa funzione imposta onchange="this.form.submit()" sulle select:
-  // l'azione non lancia un evento "submit" e non può essere intercettata.
-  // per non andare a modificare la funzione rimpiazziamo l'attributo onchange:
-  selects.attr('onchange', null).change(function() { $(this.form).submit(); });
+        // la stessa funzione imposta onchange="this.form.submit()" sulle select:
+        // l'azione non lancia un evento "submit" e non può essere intercettata.
+        // per non andare a modificare la funzione rimpiazziamo l'attributo onchange:
+        selects.attr('onchange', null).change(function() { $(this.form).submit(); });
+    });
+</script>
 
-  // così ora possiamo intercettare tutti i submit e pulire la GET dal superfluo
-  $("form").submit(function() {
-      $(this).find(":input").filter(function(){ return !this.value; }).attr("disabled", "disabled");
-      return true; // ensure form still submits
-  });
+<script>
+    $(document).ready(function(){
+        // intercetta i submit e rimuove i campi vuoti dalla richiesta
+        // URL: http://www.billerickson.net/code/hide-empty-fields-get-form/
+        $("form").submit(function() {
+            $(this).find(":input").filter(function(){ return !this.value; }).attr("disabled", "disabled");
+            return true; // ensure form still submits
+        });
 
-  // Un-disable form fields when page loads, in case they click back after submission
-  $( "form" ).find( ":input" ).prop( "disabled", false );
-  var _sezi = $("select[name='sezione'] option:selected").text().trim();
-  $.each(['FAI','FNC','FND','FAP'], function( i, v ) {
-    var _href = $("a[href*='admin_docven.php?Insert&tipdoc=" + v + "']").attr('href');
-    $("a[href*='admin_docven.php?Insert&tipdoc=" + v + "']").attr('href', _href + '&seziva=' + _sezi);
-  });
-});
+        // Un-disable form fields when page loads, in case they click back after submission
+        $("form").find( ":input" ).prop( "disabled", false );
+    });
 </script>
 
 <?php

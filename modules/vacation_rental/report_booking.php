@@ -1505,8 +1505,7 @@ $ts->output_navbar();
 	<div class="modal" id="confirm_print" title="Scegli la carta dove stampare"></div>
 </form>
 <a href="https://programmisitiweb.lacasettabio.it/gazie/vacation-rental-il-gestionale-per-case-vacanza-residence-bb-e-agriturismi/" target="_blank" class="navbar-fixed-bottom" style="max-width:350px; left:10%; bottom:15px; z-index:2000;"> Vacation rental è un modulo di Antonio Germani</a>
-<script>
-$(document).ready(function(){
+
 <?php
 if (isset($_SESSION['print_queue']['idDoc']) && !empty($_SESSION['print_queue']['idDoc'])) {
 	$printIdDoc =  (int) $_SESSION['print_queue']['idDoc'];
@@ -1515,37 +1514,49 @@ if (isset($_SESSION['print_queue']['idDoc']) && !empty($_SESSION['print_queue'][
 		if ($_SESSION['print_queue']['tpDoc'] == 'VOR') {
 			$target = "stampa_ordcli.php?id_tes=$printIdDoc";
 		}
-
-		echo "fileLoad('$target', false);\n";
-	}
-
+?>
+<script>
+  $(document).ready(function() { fileLoad('<?php echo $target;?>', false); }
+</script>
+<?php
+  }
 	unset($_SESSION['print_queue']);
 }
 ?>
-     var selects = $("select");
-     // la funzione gaz_flt_dsp_select usa "All", qui usiamo invece valori vuoti
-     // (in questo modo i campi non usati possono essere esclusi)
-     $("option", selects).filter(function(){ return this.value == "All"; }).val("");
 
-     // la stessa funzione imposta onchange="this.form.submit()" sulle select:
-     // l'azione non lancia un evento "submit" e non può essere intercettata.
-     // per non andare a modificare la funzione rimpiazziamo l'attributo onchange:
-     selects.attr('onchange', null).change(function() { $(this.form).submit(); });
+<script>
+    $(document).ready(function(){
+        var selects = $("select");
+        // la funzione gaz_flt_dsp_select usa "All", qui usiamo invece valori vuoti
+        // (in questo modo i campi non usati possono essere esclusi)
+        $("option", selects).filter(function(){ return this.value == "All"; }).val("");
 
-     // così ora possiamo intercettare tutti i submit e pulire la GET dal superfluo
-     $("form").submit(function() {
-         $(this).find(":input").filter(function(){ return !this.value; }).attr("disabled", "disabled");
-         return true; // ensure form still submits
-     });
+        // la stessa funzione imposta onchange="this.form.submit()" sulle select:
+        // l'azione non lancia un evento "submit" e non può essere intercettata.
+        // per non andare a modificare la funzione rimpiazziamo l'attributo onchange:
+        selects.attr('onchange', null).change(function() { $(this.form).submit(); });
+    });
+</script>
 
-     // Un-disable form fields when page loads, in case they click back after submission
-     $( "form" ).find( ":input" ).prop( "disabled", false );
-});
+<script>
+    $(document).ready(function(){
+        // intercetta i submit e rimuove i campi vuoti dalla richiesta
+        // URL: http://www.billerickson.net/code/hide-empty-fields-get-form/
+        $("form").submit(function() {
+            $(this).find(":input").filter(function(){ return !this.value; }).attr("disabled", "disabled");
+            return true; // ensure form still submits
+        });
+
+        // Un-disable form fields when page loads, in case they click back after submission
+        $("form").find( ":input" ).prop( "disabled", false );
+    });
 </script>
 
 <?php
 require("../../library/include/footer.php");
+?>
 
+<?php
 function withoutLetterHeadTemplate($tipdoc='VPR')
 {
 	$withoutLetterHeadTemplate=false;

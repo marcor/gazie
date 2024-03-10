@@ -604,8 +604,13 @@ while ($row = gaz_dbi_fetch_array($result)) {
         // l'azione non lancia un evento "submit" e non può essere intercettata.
         // per non andare a modificare la funzione rimpiazziamo l'attributo onchange:
         selects.attr('onchange', null).change(function() { $(this.form).submit(); });
+    });
+</script>
 
-        // così ora possiamo intercettare tutti i submit e pulire la GET dal superfluo
+<script>
+    $(document).ready(function(){
+        // intercetta i submit e rimuove i campi vuoti dalla richiesta
+        // URL: http://www.billerickson.net/code/hide-empty-fields-get-form/
         $("form").submit(function() {
             $(this).find(":input").filter(function(){ return !this.value; }).attr("disabled", "disabled");
             return true; // ensure form still submits
@@ -615,6 +620,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
         $("form").find( ":input" ).prop( "disabled", false );
     });
 </script>
+
 <?php
 require("../../library/include/footer.php");
 ?>
