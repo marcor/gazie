@@ -857,7 +857,7 @@ function printPdf(urlPrintDoc){
 <?php
 $ts->output_navbar();
 ?>
-<form method="GET" id="report_form" >
+<form method="GET" id="report_form" class="clean_get">
 <!-- inizio div per dialog -->
 <div style="display:none" id="dialog_payment" title="Pagamenti">
   <p class="ui-state-highlight" id="payment_des"></p>
@@ -1524,34 +1524,8 @@ if (isset($_SESSION['print_queue']['idDoc']) && !empty($_SESSION['print_queue'][
 }
 ?>
 
-<script>
-    $(document).ready(function(){
-        var selects = $("select");
-        // la funzione gaz_flt_dsp_select usa "All", qui usiamo invece valori vuoti
-        // (in questo modo i campi non usati possono essere esclusi)
-        $("option", selects).filter(function(){ return this.value == "All"; }).val("");
-
-        // la stessa funzione imposta onchange="this.form.submit()" sulle select:
-        // l'azione non lancia un evento "submit" e non può essere intercettata.
-        // per non andare a modificare la funzione rimpiazziamo l'attributo onchange:
-        selects.attr('onchange', null).change(function() { $(this.form).submit(); });
-    });
-</script>
-
-<script>
-    $(document).ready(function(){
-        // intercetta i submit e rimuove i campi vuoti dalla richiesta
-        // URL: http://www.billerickson.net/code/hide-empty-fields-get-form/
-        $("form").submit(function() {
-            $(this).find(":input").filter(function(){ return !this.value; }).attr("disabled", "disabled");
-            return true; // ensure form still submits
-        });
-
-        // Un-disable form fields when page loads, in case they click back after submission
-        $("form").find( ":input" ).prop( "disabled", false );
-    });
-</script>
-
+<script src="../../js/custom/fix_select.js" type="text/javascript"></script>
+<script src="../../js/custom/clean_empty_form_fields.js" type="text/javascript"></script>
 <?php
 require("../../library/include/footer.php");
 ?>

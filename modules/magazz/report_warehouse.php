@@ -96,7 +96,7 @@ $(function() {
 	});
 });
 </script>
-<form method="GET">
+<form method="GET" class="clean_get">
 	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
 		<p><b>ID</b></p>
         <p class="ui-state-highlight" id="idcodice"></p>
@@ -176,20 +176,7 @@ while ($r = gaz_dbi_fetch_array($rs)) {
 	</div>
 </form>
 
-<script>
-    $(document).ready(function(){
-        // intercetta i submit e rimuove i campi vuoti dalla richiesta
-        // URL: http://www.billerickson.net/code/hide-empty-fields-get-form/
-        $("form").submit(function() {
-            $(this).find(":input").filter(function(){ return !this.value; }).attr("disabled", "disabled");
-            return true; // ensure form still submits
-        });
-
-        // Un-disable form fields when page loads, in case they click back after submission
-        $("form").find( ":input" ).prop( "disabled", false );
-    });
-</script>
-
+<script src="../../js/custom/clean_empty_form_fields.js" type="text/javascript"></script>
 <?php
 require("../../library/include/footer.php");
 ?>

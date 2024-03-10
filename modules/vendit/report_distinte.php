@@ -108,7 +108,7 @@ $(function() {
 	});
 });
 </script>
-<form method="GET">
+<form method="GET" class="clean_get">
 	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
 		<p><b>Distinta effetti</b></p>
         <p class="ui-state-highlight" id="idcodice"></p>

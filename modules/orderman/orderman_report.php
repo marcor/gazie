@@ -165,7 +165,7 @@ function printPdf(urlPrintDoc){
 $ts->output_navbar();
 
 ?>
-<form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+<form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>" class="clean_get">
 	<div class="framePdf panel panel-success" style="display: none; position: absolute; left: 5%; top: 100px">
 		<div class="col-lg-12">
 			<div class="col-xs-11"><h4><?php echo $script_transl['print'];; ?></h4></div>
@@ -320,20 +320,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 </table></div>
 </form>
 
-<script>
-    $(document).ready(function(){
-        // intercetta i submit e rimuove i campi vuoti dalla richiesta
-        // URL: http://www.billerickson.net/code/hide-empty-fields-get-form/
-        $("form").submit(function() {
-            $(this).find(":input").filter(function(){ return !this.value; }).attr("disabled", "disabled");
-            return true; // ensure form still submits
-        });
-
-        // Un-disable form fields when page loads, in case they click back after submission
-        $("form").find( ":input" ).prop( "disabled", false );
-    });
-</script>
-
+<script src="../../js/custom/clean_empty_form_fields.js" type="text/javascript"></script>
 <?php
 require("../../library/include/footer.php");
 ?>

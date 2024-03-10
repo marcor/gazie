@@ -130,7 +130,7 @@ $script_transl = HeadMain(0, array('custom/autocomplete'));
 $ts->output_navbar();
 
 ?>
-<form method="GET">
+<form method="GET" class="clean_get">
 	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
         <p><b>Struttura:</b></p>
         <p>codice:</p>
@@ -233,20 +233,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 </form>
 <a href="https://programmisitiweb.lacasettabio.it/gazie/vacation-rental-il-gestionale-per-case-vacanza-residence-bb-e-agriturismi/" target="_blank" class="navbar-fixed-bottom" style="max-width:350px; left:20%; z-index:2000;"> Vacation rental è un modulo di Antonio Germani</a>
 
-<script>
-    $(document).ready(function(){
-        // intercetta i submit e rimuove i campi vuoti dalla richiesta
-        // URL: http://www.billerickson.net/code/hide-empty-fields-get-form/
-        $("form").submit(function() {
-            $(this).find(":input").filter(function(){ return !this.value; }).attr("disabled", "disabled");
-            return true; // ensure form still submits
-        });
-
-        // Un-disable form fields when page loads, in case they click back after submission
-        $("form").find( ":input" ).prop( "disabled", false );
-    });
-</script>
-
+<script src="../../js/custom/clean_empty_form_fields.js" type="text/javascript"></script>
 <?php
 require("../../library/include/footer.php");
 ?>
