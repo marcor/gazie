@@ -2314,39 +2314,39 @@ class TableSorter {
 
     }
 
-   /**
-    * Ritorna l'offset a partire dal quale estrarre i record (LIMIT).
-    */
+    /**
+     * Ritorna l'offset a partire dal quale estrarre i record (LIMIT).
+     */
     public function getOffset() {
         if ($this->paginate)
             return ($this->cur_page - 1) * $this->passo;
         else return 0;
     }
 
-   /**
-    * Ritorna il numero di record da estrarre (LIMIT).
-    */
+    /**
+     * Ritorna il numero di record da estrarre (LIMIT).
+     */
     public function getLimit() {
         if ($this->paginate)
             return $this->passo;
         else return 100000;      # estrai tutti i record
     }
 
-   /**
-    * Compone frammenti di query ignorando quelli vuoti.
-    */
+    /**
+     * Compone frammenti di query ignorando quelli vuoti.
+     */
     public static function join_queries(...$url_queries) {
         return implode("&", array_filter($url_queries));
     }
 
-   /**
-    * Elabora i parametri di ricerca contenuti nell'url della richiesta.
-    *
-    * Compone la parte WHERE della query db, e ricompone la parte di ricerca della url query
-    * per utilizzarla nei link. Usa la variabile globale $search_fields, che a ogni nome di
-    * parametro ricercabile deve associare un'espressione filtro da inserire nella WHERE.
-    *
-    */
+    /**
+     * Elabora i parametri di ricerca contenuti nell'url della richiesta.
+     *
+     * Compone la parte WHERE della query db, e ricompone la parte di ricerca della url query
+     * per utilizzarla nei link. Usa la variabile globale $search_fields, che a ogni nome di
+     * parametro ricercabile deve associare un'espressione filtro da inserire nella WHERE.
+     *
+     */
     protected function parse_search_request() {
         global $search_fields;
         $url_search_query_parts = array();
@@ -2357,7 +2357,7 @@ class TableSorter {
         # i valori di default vengono sovrascritti se presenti anche nella richiesta
         $def_GET = array_merge($this->default_search, $pruned_GET);
         foreach ($search_fields as $field => $sql_expr) {
-			$pruned_GET[$field]=(isset($pruned_GET[$field]))?$pruned_GET[$field]:''; // non ho valorizzato $_GET metto vuoto
+            $pruned_GET[$field]=(isset($pruned_GET[$field]))?$pruned_GET[$field]:''; // non ho valorizzato $_GET metto vuoto
             if (isset($def_GET[$field]) && strlen($def_GET[$field]) && $pruned_GET[$field] != 'All') {
                 global $$field;  # settiamo una variabile globale chiamata come il parametro
                 $$field = $def_GET[$field];
@@ -2368,14 +2368,14 @@ class TableSorter {
             }
         }
         $this->where = implode(" AND ", $where_parts);
-		if (count($where_parts)>=1&&!empty($this->where_fix)){ $this->where .= ' AND '; }
-		$this->where .= $this->where_fix;
+        if (count($where_parts)>=1&&!empty($this->where_fix)){ $this->where .= ' AND '; }
+        $this->where .= $this->where_fix;
         $this->url_search_query = implode("&", $url_search_query_parts);
     }
 
-   /**
-    * Imposta i dati di paginazione in base alle preferenze e al numero totale di record.
-    */
+    /**
+     * Imposta i dati di paginazione in base alle preferenze e al numero totale di record.
+     */
     protected function set_pagination() {
         $this->pages = ceil($this->count / $this->passo) or 1;
         if (isset($_GET['pag'])) {
@@ -2389,26 +2389,26 @@ class TableSorter {
         }
     }
 
-   /**
-    * Compone la parte di ordinamento di una url query.
-    *
-    * @param array $parts I parametri di ordinamento voluti; possono essere diversi da quelli attuali.
-    */
+    /**
+     * Compone la parte di ordinamento di una url query.
+     *
+     * @param array $parts I parametri di ordinamento voluti; possono essere diversi da quelli attuali.
+     */
     protected function make_url_order_query($parts) {
         $a = array();
         foreach ($parts as $field => $value) $a[] = self::ord_prefix . "$field=$value";
         return join("&", $a);
     }
 
-   /**
-    * Elabora i parametri di ordinamento contenuti nell'url della richiesta.
-    *
-    * I campi ammessi devono essere specificati nell'array globale $order_fields. Compone la parte
-    * ORDER BY della query db e ricompone la parte di ordinamento dell'url, mantenendo l'ordine originale.
-    * Per generare i link che permettono di cambiare l'ordinamento popola l'array $url_order_query_parts
-    * con i parametri esplosi.
-    *
-    */
+    /**
+     * Elabora i parametri di ordinamento contenuti nell'url della richiesta.
+     *
+     * I campi ammessi devono essere specificati nell'array globale $order_fields. Compone la parte
+     * ORDER BY della query db e ricompone la parte di ordinamento dell'url, mantenendo l'ordine originale.
+     * Per generare i link che permettono di cambiare l'ordinamento popola l'array $url_order_query_parts
+     * con i parametri esplosi.
+     *
+     */
     protected function parse_order_request() {
         global $sortable_headers;
         $allowed_order_fields = array_filter(array_values($sortable_headers));
@@ -2430,9 +2430,9 @@ class TableSorter {
         $this->orderby = implode(", ", $orderby);
     }
 
-   /**
-    * Stampa il numero di record, e se applicabile il n. di pagina corrente.
-    */
+    /**
+     * Stampa il numero di record, e se applicabile il n. di pagina corrente.
+     */
     protected function count_header() {
         if ($this->count <= $this->passo) {
             $text = "record: $this->count";
@@ -2446,9 +2446,9 @@ class TableSorter {
         echo "<div align='center'><font class='FacetFormDataFont'> $text </font></div>\n";
     }
 
-   /**
-    * Stampa, se occorrono, i link di navigazione tra le pagine.
-    */
+    /**
+     * Stampa, se occorrono, i link di navigazione tra le pagine.
+     */
     public function output_navbar() {
         $this->count_header();
         if ($this->pages > 1 && $this->paginate) {
@@ -2479,28 +2479,28 @@ class TableSorter {
         }
     }
 
-   /**
-    * Ritorna il successivo modo di ordinamento disponibile.
-    */
+    /**
+     * Ritorna il successivo modo di ordinamento disponibile.
+     */
     protected function next_sort_order($current) {
         $keys = array_keys($this->arrows);
         return $keys[(array_search($current, $keys) + 1) % 3];
     }
 
-   /**
-    * Ritorna l'indicatore visivo dell'ordinamento di una colonna.
-    */
+    /**
+     * Ritorna l'indicatore visivo dell'ordinamento di una colonna.
+     */
     protected function make_arrows($field, $order, $style="") {
         $arrows = str_repeat($this->arrows[$order[$field]], array_search($field, array_keys($order)) + 1);
         return "<span style='float: right; $style'>$arrows</span>";
     }
 
-   /**
-    * Stampa il titolo cliccabile di una colonna che può essere ordinata.
-    *
-    * Utilizzata dal metodo output_headers().
-    *
-    */
+    /**
+     * Stampa il titolo cliccabile di una colonna che può essere ordinata.
+     *
+     * Utilizzata dal metodo output_headers().
+     *
+     */
     protected function make_header_link($text, $field) {
         $next = $this->next_sort_order("");
         $order = $this->url_order_query_parts;
@@ -2517,14 +2517,14 @@ class TableSorter {
         echo "<th class='$this->style' $this->align ><a href='?$url_query'>$text</a></th>\n";
     }
 
-   /**
-    * Stampa i titoli di tutte le colonne, con o senza link per l'ordinamento.
-    *
-    * Usa la variabile globale $sortable_headers, un array associativo tra titolo e
-    * colonna del db corrispondente (o stringa vuota se quella colonna non deve poter
-    * essere ordinata).
-    *
-    */
+    /**
+     * Stampa i titoli di tutte le colonne, con o senza link per l'ordinamento.
+     *
+     * Usa la variabile globale $sortable_headers, un array associativo tra titolo e
+     * colonna del db corrispondente (o stringa vuota se quella colonna non deve poter
+     * essere ordinata).
+     *
+     */
     public function output_headers() {
         global $sortable_headers;
         foreach ($sortable_headers as $text => $field) {
@@ -2536,13 +2536,13 @@ class TableSorter {
         }
     }
 
-   /**
-    * Stampa i parametri di ordinamento correnti per l'inclusione nella form di ricerca.
-    *
-    * In questo modo l'ordinamento delle colonne (e l'uso o meno della paginazione) può
-    * essere mantenuto da una ricerca all'altra.
-    *
-    */
+    /**
+     * Stampa i parametri di ordinamento correnti per l'inclusione nella form di ricerca.
+     *
+     * In questo modo l'ordinamento delle colonne (e l'uso o meno della paginazione) può
+     * essere mantenuto da una ricerca all'altra.
+     *
+     */
     public function output_order_form() {
         foreach ($this->url_order_query_parts as $field => $value) {
             printf("<input type='hidden' name='%s' value='%s' />\n", self::ord_prefix . $field, $value);
