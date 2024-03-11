@@ -307,8 +307,10 @@ function printPdf(urlPrintDoc){
           echo "</td></tr>";
         }
         ?>
+    </table>
+    </div>
 </form>
-</table></div>
+
 <script src="../../js/custom/fix_select.js" type="text/javascript"></script>
 <script src="../../js/custom/clean_empty_form_fields.js" type="text/javascript"></script>
 <?php

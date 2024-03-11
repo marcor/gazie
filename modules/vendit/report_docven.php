@@ -984,6 +984,16 @@ function printPdf(urlPrintDoc){
 
 <script src="../../js/custom/fix_select.js" type="text/javascript"></script>
 <script src="../../js/custom/clean_empty_form_fields.js" type="text/javascript"></script>
+<script>
+$(document).ready(function(){
+     var _sezi = $("select[name='sezione'] option:selected").text().trim();
+     $.each(['FAI','FNC','FND','FAP'], function( i, v ) {
+         var _href = $("a[href*='admin_docven.php?Insert&tipdoc=" + v + "']").attr('href');
+         $("a[href*='admin_docven.php?Insert&tipdoc=" + v + "']").attr('href', _href + '&seziva=' + _sezi);
+     });
+});
+</script>
+
 <?php
 require("../../library/include/footer.php");
 ?>
