@@ -285,11 +285,11 @@ function printPdf(urlPrintDoc){
 	</div>
     <div align="center" class="FacetFormHeaderFont"> <?php echo $script_transl['title_dist'][$flt_tipo]; ?>
 	<input type="hidden" name="flt_tipo" value="<?php echo $flt_tipo; ?>" />
-	<select name="auxil" class="FacetSelect" onchange="this.form.submit()">
+	<select name="sezione" class="FacetSelect" onchange="this.form.submit()">
             <?php
             for ($sez = 1; $sez <= 9; $sez++) {
                 $selected = "";
-                if (substr($auxil, 0, 1) == $sez)
+                if (substr($sezione, 0, 1) == $sez)
                     $selected = " selected ";
                 echo "<option value=\"" . $sez . "\"" . $selected . ">" . $sez . "</option>";
             }
@@ -322,7 +322,7 @@ function printPdf(urlPrintDoc){
 
             <td  class="FacetFieldCaptionTD">
 			<input type="submit" class="btn btn-sm btn-default" name="search" value="<?php echo $script_transl['search'];?>" onClick="javascript:document.report.all.value=1;">
-			<a class="btn btn-sm btn-default" href="?">Reset</a>
+			<a class="btn btn-sm btn-default" href="?flt_tipo=<?php echo $flt_tipo ?>">Reset</a>
 			<?php  $ts->output_order_form(); ?>
             </td>
         </tr>
