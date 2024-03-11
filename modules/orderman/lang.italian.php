@@ -83,12 +83,12 @@ $strScript = array("admin_orderman.php" =>
 		"id lotto inesistente nel silos selezionato"
 		),
 	"orderman_report.php" =>
-		array('title' => 'Gestione delle produzioni',
+		array('title' => 'Produzioni/commesse',
         'mesg' => array('La ricerca non ha dato risultati!',
             'Inserire almeno 2 caratteri!')
 			),
-	"admin_luoghi.php" =>	
-	array('title' => 'Gestione luoghi di produzione',
+	"admin_luoghi.php" =>
+	array('title' => 'Siti di produzione',
         'mesg' => array('La ricerca non ha dato risultati!',
             'Inserire almeno 2 caratteri!'),
 		"Id",
@@ -101,6 +101,6 @@ $strScript = array("admin_orderman.php" =>
 		"L'immagine inserita ha un formato non ammesso",
 		"Luogo di produzione",
 		'web_url' => 'Mappa di Google<br />(es: https://goo.gl/maps/YajAcRexvDp)'
-			)	
+			)
 );
 ?>

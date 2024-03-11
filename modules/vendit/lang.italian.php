@@ -27,7 +27,7 @@
 //*+- Nuove stringhe per modulo select_analisi_avanzamento_per_fornitore.php - DC - 19 apr 2018
 
 $strScript = array("admin_client.php" =>
-    array('title' => 'Gestione dei clienti',
+    array('title' => 'Clienti',
         'ins_this' => 'Inserisci un cliente',
         'upd_this' => 'Modifica  il cliente ',
         'mesg' => array('La ricerca non ha dato risultati!',
@@ -171,7 +171,7 @@ $strScript = array("admin_client.php" =>
         "Stai tentando di inserire un numero di agente che gi&agrave; esistente!", //17
         "Stai elimimando un agente!",
         "Lista Provvigioni",
-        'title' => 'Gestione degli Agenti di vendita',
+        'title' => 'Agenti di vendita',
         'ins_this' => 'Inserisci un nuovo agente di vendita',
         "Lista Clienti",
         'Un agente non può essere utente amministratore', //22
@@ -674,7 +674,7 @@ $strScript = array("admin_client.php" =>
         'mail_alert2' => 'con allegato il seguente contratto:'
     ),
     "admin_contract.php" =>
-    array('title' => 'Gestione dei contratti',
+    array('title' => 'Contratti con clienti',
         'ins_this' => 'Stipula un nuovo contratto con ',
         'upd_this' => 'Modifica contratto stipulato con ',
         'errors' => array('Data di stipula non corretta',
@@ -933,7 +933,7 @@ $strScript = array("admin_client.php" =>
         'upd_this' => 'Modifica scontrino con PREZZI IVA INCLUSA n.',
 	),
     "admin_scontr.php" =>
-    array('title' => 'Gestione degli scontrini',
+    array('title' => 'Scontrini',
         'ins_this' => 'Emetti un nuovo scontrino fiscale a ',
         'upd_this' => 'Modifica lo scontrino fiscale n.',
         'err' => array(
@@ -1621,7 +1621,7 @@ $strScript = array("admin_client.php" =>
         'send_alert2' => 'con il seguente file zip:',
     ),
     "admin_destinazioni.php" =>
-    array('title' => 'Gestione degli indirizzi di destinazione',
+    array('title' => 'Indirizzi delle destinazioni',
         'ins_this' => 'Inserimento destinazione',
         'upd_this' => 'Modifica la destinazione con cod.',
         'errors' => array('Devi associare la destinazione ad una anagrafica',
@@ -1964,7 +1964,7 @@ $strScript = array("admin_client.php" =>
 
     ),
     "admin_ecr.php" =>
-    array('title' => 'Gestione Registratori Telematici',
+    array('title' => 'Registratori Telematici',
         'ins_this' => 'Nuovo Registratore Telematico',
         'upd_this' => 'Modifica Registratore Telematico ',
         'report' => 'Lista dei Registratori Telematici',

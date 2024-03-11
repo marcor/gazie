@@ -25,7 +25,7 @@
  */
 $strScript = array(
     "admin_aziend.php" =>
-    array('title' => 'Gestione delle aziende',
+    array('title' => 'Configurazione azienda',
         'ins_this' => 'Inserisci l\'azienda',
         'upd_this' => 'Modifica l\'azienda ',
         'err' => array(
@@ -300,7 +300,7 @@ $strScript = array(
         'annota' => 'Descrizione estesa'
     ),
     "admin_banapp.php" =>
-    array('title' => 'Gestione delle banche di appoggio',
+    array('title' => 'Banche di appoggio',
         'ins_this' => 'Inserisci una nuova banca di appoggio',
         'upd_this' => 'Modifica la banca di appoggio ',
         'del_this' => ' la banca di appoggio ',
@@ -320,7 +320,7 @@ $strScript = array(
         'report' => 'Lista delle banche di appoggio'
     ),
     "admin_imball.php" =>
-    array('title' => 'Gestione degli imballi',
+    array('title' => 'Imballi',
         'ins_this' => 'Inserisci un nuovo tipo di imballo',
         'upd_this' => 'Modifica l\'imballo ',
         'errors' => array('Il codice non &egrave; valido (min=1 max=99)!',
@@ -336,7 +336,7 @@ $strScript = array(
         'del_this' => 'imballo'
     ),
     "admin_portos.php" =>
-    array('title' => 'Gestione dei porti/rese',
+    array('title' => 'Porti e/o rese',
         'ins_this' => 'Inserisci una nuovo porto/resa',
         'upd_this' => 'Modifica il porto/resa ',
         'errors' => array('Il codice non &egrave; valido (min=1 max=99)!',
@@ -351,7 +351,7 @@ $strScript = array(
         'del_this' => 'porto/resa'
     ),
     "admin_spediz.php" =>
-    array('title' => 'Gestione delle spedizioni',
+    array('title' => 'Tipo spedizioni',
         'ins_this' => 'Inserisci una nuovo tipo di spedizione',
         'upd_this' => 'Modifica la spedizione ',
         'errors' => array('Il codice non &egrave; valido (min=1 max=99)!',
@@ -444,7 +444,7 @@ $strScript = array(
 
     ),
     "admin_utente.php" =>
-    array('title' => 'Gestione degli utenti',
+    array('title' => 'Utenti',
         'ins_this' => 'Inserire un nuovo utente',
         'upd_this' => 'Modificare l\'utente',
         'err' => array(

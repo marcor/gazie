@@ -64,7 +64,7 @@ function getDocuments($td = 0, $si = 1, $where_data=['cl'=>0,'ag'=>0]) {
     $customer =($where_data['cl']>100000000)?' AND clfoco = '.$where_data['cl']:'';
     $agente =($where_data['ag']>=1)?' AND tesdoc.id_agente = '.$where_data['ag']:'';
     $datfat=($td==6)?'datemi':'datfat';
-    $numfat=($td==6)?'numdoc':'numfat';
+    $numfat=($td==6)?'numdoc':'REGEXP_SUBSTR(numfat,"[0-9]+")';
     $where_data['pi']=($td==6||$td==7)?'0':$where_data['pi'];
     $where_data['pf']=($td==6||$td==7)?'999999999':$where_data['pf'];
     $where =($td==2)?"(tipdoc = 'FAI' OR tipdoc = 'FAA')":"tipdoc LIKE '".$type[$td]."'";

@@ -29,7 +29,7 @@
  * Revised by:
  */
 $strScript = array("admin_fornit.php" =>
-    array('title' => 'Gestione dei fornitori',
+    array('title' => 'Fornitori',
         'ins_this' => 'Inserisci un fornitore',
         'upd_this' => 'Modifica  il fornitore ',
         'mesg' => array('La ricerca non ha dato risultati!',
@@ -504,7 +504,7 @@ $strScript = array("admin_fornit.php" =>
         "Stai tentando di inserire un numero di agente che gi&agrave; esiste",
         "Stai elimimando un agente",
         "Lista Provvigioni",
-        'title' => 'Gestione degli Agenti di Fornitori',
+        'title' => 'Agenti dei Fornitori',
         'ins_this' => 'Inserisci un nuovo agente di fornitori'
     ),
     "select_provvigioni.php" =>

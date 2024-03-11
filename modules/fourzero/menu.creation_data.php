@@ -26,4 +26,5 @@ $menu_data = array('m1' => array('link' => "docume_fourzero.php"),
                         'm2' => array(1 => array('link' => "config_fourzero.php", 'weight' => 30)
                                      ),
                 );
+$module_class='fa fa-industry40';
 ?>

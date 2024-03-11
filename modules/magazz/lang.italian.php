@@ -378,7 +378,7 @@ $strScript = array(
             'Prezzo vecchio' => '', 'Incidenza peso' => '', 'Prezzo nuovo' => ''
         )),
     "admin_artico.php" =>
-      array('title' => 'Gestione degli articoli',
+      array('title' => 'Merci e servizi',
         'ins_this' => 'Inserimento articolo',
         'upd_this' => 'Modifica l\'articolo ',
         'err' => array(
@@ -482,7 +482,7 @@ $strScript = array(
         )
     ),
 	"admin_group.php" =>
-    array('title' => 'Gestione dei gruppi delle varianti',
+    array('title' => 'Gruppi delle varianti',
         'ins_this' => 'Inserimento gruppo delle varianti',
         'upd_this' => 'Modifica il gruppo delle varianti',
         'err' => array(
@@ -520,7 +520,7 @@ $strScript = array(
     array('title' => 'Mostra lotti articolo'
     ),
   "admin_artico_compost.php" =>
-    array('title' => 'Gestione delle composizioni',
+    array('title' => 'Composizioni articoli',
       'err' => array(
         'codart' => 'Non hai selezionato l\'articolo da aggiungere alla composizione',
         'quanti' => 'Non hai selezionato la quantità da aggiungere alla composizione',

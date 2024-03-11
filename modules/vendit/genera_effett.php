@@ -48,6 +48,7 @@ function getSaldo($gTables,$clfoco,$id_con){
 
 function getDocumentsBill($upd = false,$group_rid=false,$modamount=[]) {
     global $gTables, $admin_aziend;
+    //$m1=microtime(true);
     $calc = new Compute;
     $from = $gTables['tesdoc'] . ' AS tesdoc
              LEFT JOIN ' . $gTables['pagame'] . ' AS pay
@@ -57,13 +58,13 @@ function getDocumentsBill($upd = false,$group_rid=false,$modamount=[]) {
              LEFT JOIN ' . $gTables['anagra'] . ' AS anagraf
              ON anagraf.id=customer.id_anagra
              LEFT JOIN ' . $gTables['files'] . " AS files
-             ON tesdoc.clfoco=( SELECT files.id_ref FROM ". $gTables['files'] . "  WHERE files.table_name_ref='clfoco' AND files.item_ref='mndtritdinf' ORDER BY id_tes DESC LIMIT 1 )";
+             ON tesdoc.clfoco=( SELECT files.id_ref FROM ". $gTables['files'] . "  WHERE files.table_name_ref='clfoco' AND files.item_ref='mndtritdinf' ORDER BY files.id_doc DESC LIMIT 1 )";
     $where = "(tippag = 'B' OR tippag = 'T' OR tippag = 'V' OR tippag = 'I') AND geneff = '' AND tipdoc LIKE 'FA_'";
     $orderby = "datfat ASC, protoc ASC, id_tes ASC";
     $result = gaz_dbi_dyn_query('tesdoc.*, tesdoc.id_con AS last_id_movcon,
                         pay.tippag,pay.numrat,pay.tipdec,pay.giodec,pay.tiprat,pay.mesesc,pay.giosuc,customer.codice, customer.speban AS addebitospese, customer.iban,
                         CONCAT(anagraf.ragso1,\' \',anagraf.ragso2) AS ragsoc,CONCAT(anagraf.citspe,\' (\',anagraf.prospe,\')\') AS citta,
-                        files.id_doc AS mndtritdinf, files.custom_field AS files_data ', $from, $where, $orderby);
+                        files.id_doc AS mndtritdinf', $from, $where, $orderby);
     $doc = array();
     $ctrlp = 0;
     while ($tes = gaz_dbi_fetch_array($result)) {
@@ -221,7 +222,7 @@ function getDocumentsBill($upd = false,$group_rid=false,$modamount=[]) {
         $ctrl_date = substr($v['tes']['datfat'], 0, 4);
     }
     // FINE ciclo fatture con effetti con o senza progressivi raggruppati, pronti per essere visualizzati o inseriti sul db in base alla scelta
-
+    //var_dump(microtime(true)-$m1);
     if ($upd) { // ho scelto di generare
         foreach ($effetti as $k=>$v) {
           if (isset($modamount[$k])) { // è stato modificato l'importo del RID
@@ -456,6 +457,7 @@ if (isset($_POST['preview'])) {
         echo  '€ '.gaz_format_number($v['impeff']);
         echo "</td></tr>\n";
         $ctrldoc=$v['protoc'];
+        $ctrl_date=substr($v['datfat'],0,4);
     }
 
     foreach ($tot_type as $k_t => $v_t) {

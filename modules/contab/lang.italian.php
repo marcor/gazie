@@ -105,7 +105,7 @@ $strScript = array("select_liqiva.php" =>
         )
     ),
     "admin_caucon.php" =>
-    array('title' => 'Gestione delle causali contabili',
+    array('title' => 'Causali contabili',
         'ins_this' => 'Inserisci una nuova causale contabile ',
         'upd_this' => 'Modifica della causale contabile',
         'mesg' => array('La ricerca non ha dato risultati!',
@@ -142,7 +142,7 @@ $strScript = array("select_liqiva.php" =>
         'add_row' => 'Aggiungi un rigo'
     ),
     "admin_piacon.php" =>
-    array('title' => 'Gestione del piano dei conti',
+    array('title' => 'Piano dei conti',
         'ins_this' => 'Inserisci un nuovo conto',
         'upd_this' => 'Modifica il conto ',
         'errors' => array('Il codice non &egrave; valido!',
@@ -160,7 +160,7 @@ $strScript = array("select_liqiva.php" =>
         'annota' => "Note"
     ),
     "admin_movcon.php" =>
-    array('title' => 'Gestione dei movimenti contabili',
+    array('title' => 'Movimenti contabili',
         'ins_this' => 'Inserisci un nuovo movimento contabile ',
         'upd_this' => 'Modifica il movimento contabile',
         'mesg' => array('La ricerca non ha dato risultati!',

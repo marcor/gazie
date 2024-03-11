@@ -217,7 +217,7 @@ $strScript = array(
 		'name_search'=>'aggiungi "%" e invia per ricerca, oppure seleziona'
     ),
 	"admin_municipalities.php" =>
-    array('title' => 'Gestione archivio dei comuni',
+    array('title' => 'Archivio dei comuni',
         'ins_this' => "Inserimento nuovo comune",
         'upd_this' => "Modifica il comune con ID:",
         'err' => array('name' => '&Egrave; necessario indicare il nome del comune',
@@ -246,7 +246,7 @@ $strScript = array(
 		'name_search'=>'aggiungi "%" e invia per ricerca, oppure seleziona'
     ),
 	"admin_provinces.php" =>
-    array('title' => 'Gestione archivio delle province',
+    array('title' => 'Archivio delle province',
         'ins_this' => "Inserimento nuova provincia",
         'upd_this' => "Modifica la provincia con ID:",
         'err' => array('name' => '&Egrave; necessario indicare il nome della provincia',
@@ -263,7 +263,7 @@ $strScript = array(
 		'email'=>'E-Mail'
     ),
 	"admin_bank.php" =>
-    array('title' => 'Gestione archivio dei sportelli bancari',
+    array('title' => 'Archivio dei sportelli bancari',
         'ins_this' => "Inserimento nuovo sportello bancario",
         'upd_this' => "Modifica sportello bancario ID:",
         'err' => array('id_municipalities' => '&Egrave; necessario indicare il comune',
@@ -287,7 +287,7 @@ $strScript = array(
 
     ),
     "report_ruburl.php" =>
-    array('title'       => 'Gestione archivio dei siti internet',
+    array('title'       => 'Archivio dei siti internet',
         'subtitle'      => 'Accesso rapido ai siti aziendali',
         'ins_this'      => "Inserimento nuovo indirizzo",
         'upd_this'      => "Modifica l'indirizzo",
