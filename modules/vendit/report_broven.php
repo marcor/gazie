@@ -577,24 +577,37 @@ $ts->output_navbar();
 	<div class="modal" id="confirm_print" title="Scegli la carta dove stampare"></div>
 </form>
 
-<script>
-$(document).ready(function(){
 <?php
 if (isset($_SESSION['print_queue']['idDoc']) && !empty($_SESSION['print_queue']['idDoc'])) {
-	$printIdDoc =  (int) $_SESSION['print_queue']['idDoc'];
-	if (isset($_SESSION['print_queue']['tpDoc'])) {
-		$target = "stampa_precli.php?id_tes=$printIdDoc";
-		if ($_SESSION['print_queue']['tpDoc'] == 'VOR') {
-			$target = "stampa_ordcli.php?id_tes=$printIdDoc";
-		}
+    $printIdDoc =  (int) $_SESSION['print_queue']['idDoc'];
+    if (isset($_SESSION['print_queue']['tpDoc'])) {
+        $target = "stampa_precli.php?id_tes=$printIdDoc";
+        if ($_SESSION['print_queue']['tpDoc'] == 'VOR') {
+            $target = "stampa_ordcli.php?id_tes=$printIdDoc";
+        }
+?>
+<script>
+        $(document).ready(function(){ fileLoad("<?php echo $target ?>", false); }
+</script>
+<?php
+    }
+    unset($_SESSION['print_queue']);
+}
 
-		echo "fileLoad('$target', false);\n";
-	}
-
-	unset($_SESSION['print_queue']);
+function withoutLetterHeadTemplate($tipdoc='VPR') {
+    $withoutLetterHeadTemplate = false;
+    $nf="preventivo_cliente";
+    if ($tipdoc == 'VOR') $nf = "ordine_cliente";
+    $configTemplate = new configTemplate;
+    $handle = opendir("../../config/templates".($configTemplate->template ? '.' . $configTemplate->template : ''));
+    while ($file = readdir($handle)) {
+        if(($file == ".") || ($file == "..")) continue;
+        if (!preg_match("/^".$nf."_lh.php$/",$file)) continue; // se è presente un template adatto per stampa su carta intestata (suffisso "_lh" )
+        $withoutLetterHeadTemplate = true; //
+    }
+    return $withoutLetterHeadTemplate;
 }
 ?>
-</script>
 
 <script src="../../js/custom/fix_select.js" type="text/javascript"></script>
 <script src="../../js/custom/clean_empty_form_fields.js" type="text/javascript"></script>
