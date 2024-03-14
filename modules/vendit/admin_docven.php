@@ -162,7 +162,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
     $new_pag = $new_pag?$new_pag:['tippag'=>'D','numrat'=>1];
     if ($toDo == 'update') {  //se è una modifica mi baso sulle vecchie spese
         $old_header = gaz_dbi_get_row($gTables['tesdoc'], "id_tes", $form['id_tes']);
-        if ($cliente['speban'] == "S" && ($new_pag['tippag'] == 'T' || $new_pag['tippag'] == 'B' || $new_pag['tippag'] == 'V')) {
+        if (isset($cliente['speban']) && $cliente['speban'] == "S" && ($new_pag['tippag'] == 'T' || $new_pag['tippag'] == 'B' || $new_pag['tippag'] == 'V')) {
             if ($old_header['speban'] > 0) {
                 $form['speban'] = $old_header['speban'];
             } else {
