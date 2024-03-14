@@ -156,7 +156,7 @@ define('DATA_DIR', (defined('MY_DATA_DIR')) ? MY_DATA_DIR : '../../data/');
 //
 // Directory usata dal modulo tcpdf
 //
-define('K_PATH_CACHE', (defined('MY_K_PATH_CACHE')) ? MY_K_PATH_CACHE : '../../library/tcpdf/cache/');
+define('K_PATH_CACHE', (defined('MY_K_PATH_CACHE')) ? MY_K_PATH_CACHE : '../../data/files/tmp/');
 
 ////////////////////////////////////////////////////////////////////////
 // definisce il nome della sessione ma solo in caso di uso dei domini di livello superiore al secondo, in
