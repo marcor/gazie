@@ -329,8 +329,9 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
       bodytextInsert(array('table_name_ref' => 'artico_' . $form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
       }
     } elseif ($toDo == 'update') {
-      $custom_field=gaz_dbi_get_row($gTables['artico'], "codice", $form['codice'])['custom_field']; // carico il vecchio json custom_field
-      if ($data = json_decode($custom_field,true)){// se c'è un json
+      $artico_row=gaz_dbi_get_row($gTables['artico'], "codice", $form['codice']); // carico il vecchio json custom_field
+      $custom_field=(isset($artico_row['custom_field']))?$artico_row['custom_field']:'';
+      if ($custom_field<>'' && $data = json_decode($custom_field,true)){// se c'è un json
         if (is_array($data['vacation_rental'])){ // se c'è il modulo "vacation rental" lo aggiorno
           $data['vacation_rental']['accommodation_type']=$_POST['accommodation_type'];
           $data['vacation_rental']['room_type']=$_POST['room_type'];
