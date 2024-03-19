@@ -1163,7 +1163,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$next_row]['in_fixquote'] = 0;
       }
 
-        if (substr($form['in_status'], 0, 6) == "UPDROW") { //se e' un rigo da modificare
+      if (substr($form['in_status'], 0, 6) == "UPDROW") { //se e' un rigo da modificare
             $old_key = intval(substr($form['in_status'], 6));
             $form['rows'][$old_key]['tiprig'] = $form['in_tiprig'];
             $form['rows'][$old_key]['id_doc'] = $form['in_id_doc'];
@@ -1197,9 +1197,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$old_key]['tipiva'] = $iva_row['tipiva'];
             }
             /* $form['rows'][$old_key]['codvat'] = $form['in_codvat'];
-              $iva_row = gaz_dbi_get_row($gTables['aliiva'],"codice",$form['in_codvat']);
-              $form['rows'][$old_key]['pervat'] = $iva_row['aliquo'];
-              $form['rows'][$old_key]['tipiva'] = $iva_row['tipiva']; */
+            $iva_row = gaz_dbi_get_row($gTables['aliiva'],"codice",$form['in_codvat']);
+            $form['rows'][$old_key]['pervat'] = $iva_row['aliquo'];
+            $form['rows'][$old_key]['tipiva'] = $iva_row['tipiva']; */
             $form['rows'][$old_key]['scorta'] = '';
             $form['rows'][$old_key]['quamag'] = 0;
             $form['rows'][$old_key]['annota'] = '';
@@ -1294,7 +1294,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             }
             ksort($form['rows']);
         } else { //se è un rigo da inserire
-
             $form['rows'][$next_row]['tiprig'] = $form['in_tiprig'];
             $form['rows'][$next_row]['id_doc'] = $form['in_id_doc'];
             $form['rows'][$next_row]['descri'] = $form['in_descri'];
@@ -1349,29 +1348,29 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['provvigione'] = $provvigione->getPercent($form['id_tourOp'], $form['in_codart']);
                 if (!isset($tmpPrezzoNetto_Sconto) or ( $tmpPrezzoNetto_Sconto >= 0)) { // non ho trovato un prezzo netto per il cliente/articolo
                     if ($form['listin'] == 2) {
-						if (floatval($artico['preve2'])<=0){
-							echo "ERRORE il cliente ha il listino ",$form['listin']," ma questo listino non ha un prezzo inserito";
-						}else{
-							$form['rows'][$next_row]['prelis'] = number_format($artico['preve2'], $admin_aziend['decimal_price'], '.', '');
-						}
+                      if (floatval($artico['preve2'])<=0){
+                        echo "ERRORE il cliente ha il listino ",$form['listin']," ma questo listino non ha un prezzo inserito";
+                      }else{
+                        $form['rows'][$next_row]['prelis'] = number_format($artico['preve2'], $admin_aziend['decimal_price'], '.', '');
+                      }
                     } elseif ($form['listin'] == 3) {
-						if (floatval($artico['preve3'])<=0){
-							echo "ERRORE il cliente ha il listino ",$form['listin']," ma questo listino non ha un prezzo inserito";
-						}else{
-							$form['rows'][$next_row]['prelis'] = number_format($artico['preve3'], $admin_aziend['decimal_price'], '.', '');
-						}
+                      if (floatval($artico['preve3'])<=0){
+                        echo "ERRORE il cliente ha il listino ",$form['listin']," ma questo listino non ha un prezzo inserito";
+                      }else{
+                        $form['rows'][$next_row]['prelis'] = number_format($artico['preve3'], $admin_aziend['decimal_price'], '.', '');
+                      }
                     } elseif ($form['listin'] == 4) {
-						if (floatval($artico['preve4'])<=0){
-							echo "ERRORE il cliente ha il listino ",$form['listin']," ma questo listino non ha un prezzo inserito";
-						}else{
-							$form['rows'][$next_row]['prelis'] = number_format($artico['preve4'], $admin_aziend['decimal_price'], '.', '');
-						}
+                      if (floatval($artico['preve4'])<=0){
+                        echo "ERRORE il cliente ha il listino ",$form['listin']," ma questo listino non ha un prezzo inserito";
+                      }else{
+                        $form['rows'][$next_row]['prelis'] = number_format($artico['preve4'], $admin_aziend['decimal_price'], '.', '');
+                      }
                     } elseif ($form['listin'] == 5) {// prezzo web
-						if (floatval($artico['preve5'])<=0){
-							echo "ERRORE il cliente ha il listino ",$form['listin']," ma questo listino non ha un prezzo inserito";
-						}else{
-							$form['rows'][$next_row]['prelis'] = number_format($form['in_prelis'], $admin_aziend['decimal_price'], '.', '');
-						}
+                      if (floatval($artico['preve5'])<=0){
+                        echo "ERRORE il cliente ha il listino ",$form['listin']," ma questo listino non ha un prezzo inserito";
+                      }else{
+                        $form['rows'][$next_row]['prelis'] = number_format($form['in_prelis'], $admin_aziend['decimal_price'], '.', '');
+                      }
                     } else {
                         $form['rows'][$next_row]['prelis'] = number_format($form['in_prelis'], $admin_aziend['decimal_price'], '.', '');
                     }
@@ -1397,13 +1396,17 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['rows'][$next_row]['codric'] = $artico['codcon'];
                     $form['in_codric'] = $artico['codcon'];
                 }
+                if ($form['in_codart']=="TASSA-TURISTICA") {//SE E' tassa turistica
+                  $form['rows'][$next_row]['pervat']=0;// iva imposta turistica è esclusa art15
+                }
                 if (intval($form['id_agente'])>0){// se c'è un proprietario (visto che gli extra possono essere in comune fra i vari proprietari)
                   if (floatval($gen_iva_perc)==0){// e se l'IVA dell'alloggio è zero, vuol dire che il proprietario è un privato
                     $form['rows'][$next_row]['prelis'] = $form['rows'][$next_row]['prelis'] + (($form['rows'][$next_row]['prelis']*$form['rows'][$next_row]['pervat'])/100);// ci aggiungo l'IVA
                     $form['rows'][$next_row]['pervat']=0;// e forzo la percentuale iva dell'extra a zero
-					$form['rows'][$next_row]['codvat'] = $gen_iva_code;	// forzo anche il codice iva come quello dell'alloggio
+                    $form['rows'][$next_row]['codvat'] = $gen_iva_code;	// forzo anche il codice iva come quello dell'alloggio
                   }
                 }
+
                 $mv = $upd_mm->getStockValue(false, $form['in_codart'], $form['annemi'] . '-' . $form['mesemi'] . '-' . $form['gioemi'], $admin_aziend['stock_eval_method']);
                 $magval = array_pop($mv);
                 $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
