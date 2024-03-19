@@ -927,17 +927,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $gen_iva_perc = gaz_dbi_get_row($gTables['aliiva'], 'codice', $artico['aliiva'])['aliquo'];
         $gen_iva_code = $artico['aliiva'];
         $night=0;
+		$check_availability=check_availability($form['start'],$form['end'],$form['in_codart'], $open_from="", $open_to="");// controllo disponibilità
+		if (intval($check_availability)==0){
+			$overbooking=1;
+		}		
         while (strtotime($start) < strtotime($form['end'])) {// ciclo il periodo della locazione giorno per giorno
-          // Controllo disponibilità e conteggio notti
-          $what = "title, custom_field";
-          $table = $gTables['rental_events']." LEFT JOIN " . $gTables['tesbro'] . " ON " . $gTables['rental_events'] . ".id_tesbro = " . $gTables['tesbro'] . ".id_tes ";
-          $where = "house_code = '".$form['in_codart']."' AND start <= '". $start ."' AND end >= '". date ("Y-m-d", strtotime("+1 days", strtotime($start)))."' AND custom_field NOT LIKE '%QUOTE%'";
-          $result = gaz_dbi_dyn_query($what, $table, $where);
-          $available = gaz_dbi_fetch_array($result);
-          if (isset($available)){
-             $overbooking=1;
-          }
-          //Calcolo del prezzo locazione
+          //Calcolo del prezzo locazione e conteggio notti
           $what = "price";
           $table = $gTables['rental_prices'];
           $where = "start <= '". $start ."' AND end >= '". $start."' AND house_code='".$form['in_codart']."'";
@@ -1406,7 +1401,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['rows'][$next_row]['codvat'] = $gen_iva_code;	// forzo anche il codice iva come quello dell'alloggio
                   }
                 }
-
                 $mv = $upd_mm->getStockValue(false, $form['in_codart'], $form['annemi'] . '-' . $form['mesemi'] . '-' . $form['gioemi'], $admin_aziend['stock_eval_method']);
                 $magval = array_pop($mv);
                 $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
