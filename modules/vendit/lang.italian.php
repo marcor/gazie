@@ -227,6 +227,7 @@ $strScript = array("admin_client.php" =>
         ),
         'title' => 'Documenti di vendita',
         'tipdoc' => ' documento di  tipo: ',
+        'lottoNonVendibile' => 'Non si può vendere un lotto in data precedente a quella della sua creazione',
         'mesg' => array('La ricerca non ha dato risultati!',
             'Inserire almeno 2 caratteri!',
             'Cambia cliente/fornitore'),

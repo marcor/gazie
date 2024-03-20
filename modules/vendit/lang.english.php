@@ -178,6 +178,7 @@ $strScript = array("admin_client.php" =>
         ),
         'title' => 'Sales documents',
         'tipdoc' => ' sales document type: ',
+        'lottoNonVendibile' => 'It is not possible to sell a lot before the date of its creation',
         'mesg' => array('The search yielded no results!',
             'Insert at least 2 characters!',
             'Changing customer / supplier'
