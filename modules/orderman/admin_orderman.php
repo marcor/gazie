@@ -90,6 +90,7 @@ if ((isset($_GET['Update']) and !isset($_GET['codice'])) or isset($_POST['Return
     exit;
 }
 if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ // se NON è il primo accesso
+
   $form = gaz_dbi_parse_post('orderman');
   $form['order_type'] = $_POST['order_type'];
   $form['description'] = $_POST['description'];
@@ -212,65 +213,74 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ // se NON è il pri
   $form['identifier'] = (isset($_POST['identifier']))?$_POST['identifier']:'';
   $form['expiry'] = (isset($_POST['expiry']))?$_POST['expiry']:'';
 
-    if (strlen($_POST['datreg']) > 0) {
-        $form['datreg'] = $_POST['datreg'];
-    } else {
-        $form['datreg'] = date("Y-m-d");
-    }
-    $form['id_movmag'] = $_POST['id_movmag'];
-    $form['id_lotmag'] = (isset($_POST['id_lotmag']))?$_POST['id_lotmag']:'';
-    if (isset($_POST['numcomp'])) {
-      $form['numcomp'] = $_POST['numcomp'];
-      if ($form['numcomp'] > 0) {
-        for ($m = 0;$m < $form['numcomp'];++$m) {
-          if (isset($_POST['artcomp' . $m])){
-            $form['artcomp'][$m] = $_POST['artcomp' . $m];
-            $form['SIAN_comp'][$m] = $_POST['SIAN_comp' . $m];
-            if ($form['SIAN_comp'][$m]==0){
-              $_POST['recip_stocc_comp' . $m]="";
-            }
-            $form['quality_comp'][$m] = $_POST['quality_comp' . $m];
-            $form['quanti_comp'][$m] = $_POST['quanti_comp' . $m];
-            $form['prezzo_comp'][$m] = $_POST['prezzo_comp' . $m];
-            $form['q_lot_comp'][$m] = $_POST['q_lot_comp' . $m];
-            $form['id_mov'][$m]=$_POST['id_mov' . $m];
-            $form['old_quanti_comp'][$m]=$_POST['old_quanti_comp' . $m];
-            $form['recip_stocc_comp'][$m] = (isset($_POST['recip_stocc_comp' . $m]))?$_POST['recip_stocc_comp' . $m]:"";
-            if (strlen($form['recip_stocc_comp'][$m])>0 AND intval($form['cod_operazione'] >0 AND intval($form['cod_operazione'])<4)) { // se sono operazioni che producono olio confezionato
-              $var_orig = $campsilos->getContentSil($form['recip_stocc_comp'][$m]);
-              unset($var_orig['varieta']['totale']);//tolgo il totale
-              $var=implode(", ",array_keys($var_orig['varieta']));// creo l'elenco varietà
-              if ($form['quality_comp'][$m] !== $var){ // se le varietà del silos non coincidono con quelle della confezione
-                $warnmsg.= "44+";$block_var="SI";
-              }
-            }
-            if (isset($_POST['subtLot'. $m]) AND $form['q_lot_comp'][$m]>1){
-              $form['q_lot_comp'][$m]--;
-            }
-            if (isset($_POST['addLot'. $m])){
-              $form['q_lot_comp'][$m]++;
-            }
-            if (isset($_POST['manLot'. $m])) {
-              $form['amLot'. $m] = $_POST['manLot'. $m];
-            } elseif (isset($_POST['autoLot'. $m])) {
-              $form['amLot'. $m] = $_POST['autoLot'. $m];
-            } else {
-              $form['amLot'. $m] = (isset ($_POST['amLot'. $m]))?$_POST['amLot'. $m]:'';
-            }
-            for ($n = 0;$n < $form['q_lot_comp'][$m];++$n) { // se q lot comp è zero vuol dire che non ci sono lotti
-              $form['id_lot_comp'][$m][$n] = (isset($_POST['id_lot_comp' . $m . $n]))?$_POST['id_lot_comp' . $m . $n]:0;
-              $form['lot_quanti'][$m][$n] = (isset($_POST['lot_quanti' . $m . $n]))?$_POST['lot_quanti' . $m . $n]:0;
-              $form['lot_idmov'][$m][$n] = (isset($_POST['lot_idmov' . $m . $n]))?$_POST['lot_idmov' . $m . $n]:0;
+  if (strlen($_POST['datreg']) > 0) {
+      $form['datreg'] = $_POST['datreg'];
+  } else {
+      $form['datreg'] = date("Y-m-d");
+  }
+  $form['id_movmag'] = $_POST['id_movmag'];
+  $form['id_lotmag'] = (isset($_POST['id_lotmag']))?$_POST['id_lotmag']:'';
+  if (isset($_POST['numcomp'])) {
+    $form['numcomp'] = $_POST['numcomp'];
+    if ($form['numcomp'] > 0) {
+      for ($m = 0;$m < $form['numcomp'];++$m) {
+        if (isset($_POST['artcomp' . $m])){
+          $form['artcomp'][$m] = $_POST['artcomp' . $m];
+          $form['SIAN_comp'][$m] = $_POST['SIAN_comp' . $m];
+          if ($form['SIAN_comp'][$m]==0){
+            $_POST['recip_stocc_comp' . $m]="";
+          }
+          $form['quality_comp'][$m] = $_POST['quality_comp' . $m];
+          $form['quanti_comp'][$m] = $_POST['quanti_comp' . $m];
+          $form['prezzo_comp'][$m] = $_POST['prezzo_comp' . $m];
+          $form['q_lot_comp'][$m] = $_POST['q_lot_comp' . $m];
+          $form['id_mov'][$m]=$_POST['id_mov' . $m];
+          $form['old_quanti_comp'][$m]=$_POST['old_quanti_comp' . $m];
+          $form['recip_stocc_comp'][$m] = (isset($_POST['recip_stocc_comp' . $m]))?$_POST['recip_stocc_comp' . $m]:"";
+          if (strlen($form['recip_stocc_comp'][$m])>0 AND intval($form['cod_operazione'] >0 AND intval($form['cod_operazione'])<4)) { // se sono operazioni che producono olio confezionato
+            $var_orig = $campsilos->getContentSil($form['recip_stocc_comp'][$m]);
+            unset($var_orig['varieta']['totale']);//tolgo il totale
+            $var=implode(", ",array_keys($var_orig['varieta']));// creo l'elenco varietà
+            if ($form['quality_comp'][$m] !== $var){ // se le varietà del silos non coincidono con quelle della confezione
+              $warnmsg.= "44+";$block_var="SI";
             }
           }
+          if (isset($_POST['subtLot'. $m]) AND $form['q_lot_comp'][$m]>1){
+            $form['q_lot_comp'][$m]--;
+          }
+          if (isset($_POST['addLot'. $m])){
+            $form['q_lot_comp'][$m]++;
+          }
+          if (isset($_POST['manLot'. $m])) {
+            $form['amLot'. $m] = $_POST['manLot'. $m];
+          } elseif (isset($_POST['autoLot'. $m])) {
+            $form['amLot'. $m] = $_POST['autoLot'. $m];
+          } else {
+            $form['amLot'. $m] = (isset ($_POST['amLot'. $m]))?$_POST['amLot'. $m]:'';
+          }
+          $tot_lot_quanti[$m]=0;
+          for ($n = 0;$n < $form['q_lot_comp'][$m];++$n) { // se q lot comp è zero vuol dire che non ci sono lotti
+            $form['id_lot_comp'][$m][$n] = (isset($_POST['id_lot_comp' . $m . $n]))?$_POST['id_lot_comp' . $m . $n]:0;
+            $form['lot_quanti'][$m][$n] = (isset($_POST['lot_quanti' . $m . $n]))?$_POST['lot_quanti' . $m . $n]:0;
+            $form['lot_idmov'][$m][$n] = (isset($_POST['lot_idmov' . $m . $n]))?$_POST['lot_idmov' . $m . $n]:0;
+            $tot_lot_quanti[$m] += $form['lot_quanti'][$m][$n];
+          }
+          if ($_POST['hidden_req'] == 'manualUpd' && floatval($form['quanti_comp'][$m])<>floatval($tot_lot_quanti[$m])){
+             $msg .= "48+";
+          }
         }
-      } else {
-          $form['amLot0']="";
-          $form['id_mov'][0]=0;
-          $form['old_quanti_comp'][0]=0;
       }
+
+
+    } else {
+        $form['amLot0']="";
+        $form['id_mov'][0]=0;
+        $form['old_quanti_comp'][0]=0;
     }
+  }
+
     // Se viene inviata la richiesta di conferma totale ... ******   CONTROLLO ERRORI   ******
+
     $form['datemi'] = $form['anninp'] . "-" . $form['mesinp'] . "-" . $form['gioinp'];
     if (isset($_POST['ins'])) {
 
@@ -413,8 +423,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ // se NON è il pri
               }
             }
           }
-        }
-
+        }// fine se in produzione industriale
         if ($msg == "") { // nessun errore
           // Antonio Germani >>>> inizio SCRITTURA dei database    §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
           // echo"<pre>",print_r($form);die;
@@ -1509,7 +1518,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
                       ?>
                       <input type="hidden" name="lot_idmov<?php echo $nc, $l; ?>" value="<?php echo $form['lot_idmov'][$nc][$l]; ?>">
                       <input type="hidden" name="id_lot_comp<?php echo $nc, $l; ?>" value="<?php echo $form['id_lot_comp'][$nc][$l]; ?>">
-                      Quantità<input type="text" name="lot_quanti<?php echo $nc, $l; ?>" value="<?php echo $form['lot_quanti'][$nc][$l]; ?>" onchange="this.form.submit();">
+                      Quantità<input type="text" name="lot_quanti<?php echo $nc, $l; ?>" value="<?php echo $form['lot_quanti'][$nc][$l]; ?>" onchange="this.form.hidden_req.value='manualUpd'; this.form.submit();">
                       </div>
                       <?php
                     }
