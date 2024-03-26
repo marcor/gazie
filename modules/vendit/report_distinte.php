@@ -47,27 +47,19 @@ $sortable_headers = array  (
 );
 
 echo "<div align='center' class='FacetFormHeaderFont '>{$script_transl['title']}</div>\n";
-
-$table = "{$gTables['effett']} " .
-        "INNER JOIN {$gTables['files']}" .
-        " ON ({$gTables['effett']}.id_distinta = {$gTables['files']}.id_doc" .
-        " AND table_name_ref='effett' AND id_ref > 0) " .
-        "LEFT JOIN {$gTables['clfoco']} " .
-        " ON {$gTables['effett']}.banacc = {$gTables['clfoco']}.codice";
+$table = $gTables['effett']." LEFT JOIN ".$gTables['files']." ON (".$gTables['effett'].".id_distinta = ".$gTables['files'].".id_doc)
+		 LEFT JOIN ".$gTables['clfoco']." ON (".$gTables['effett'].".banacc = ".$gTables['clfoco'].".codice)";
 
 $t = new TableSorter(
     $table,
     $passo,
     ['id_doc' => 'desc'],
     ['item_ref'=>'distinta'],
-    ['id_distinta']);
+    ['id_distinta'],
+    " table_name_ref='effett' AND id_ref > 0");
 $t->output_navbar();
 
-$rs=gaz_dbi_dyn_query(
-    "{$gTables['clfoco']}.descri AS desbanacc," .
-    "{$gTables['clfoco']}.codice AS codbanacc",
-    $table, $t->where, "codbanacc",
-    $t->getOffset(), $t->getLimit(), "codbanacc");
+$rs=gaz_dbi_dyn_query ($gTables['clfoco'].".descri AS desbanacc, ".$gTables['clfoco'].".codice AS codbanacc", $table, $t->where." GROUP BY codbanacc","codbanacc", $t->getOffset(), $t->getLimit());
 $optval='';
 while($r= gaz_dbi_fetch_array($rs)) {
     $optval=($optval=='')?[]:$optval;
@@ -149,8 +141,7 @@ $(function() {
 
 <?php
 $today = strtotime(date("Y-m-d"));
-$rs=gaz_dbi_dyn_query ("COUNT(".$gTables['effett'].".id_tes) AS neff, MAX(".$gTables['effett'].".scaden) AS maxsca, MIN(".$gTables['effett'].".scaden) AS minsca, ".$gTables['effett'].".tipeff, ".$gTables['files'].".*, ".$gTables['clfoco'].".descri AS desbanacc, ".$gTables['clfoco'].".codice AS codbanacc", $table, $t->where." ".$t->group_by, $t->orderby, $t->getOffset(), $t->getLimit());
-
+$rs=gaz_dbi_dyn_query ("COUNT(".$gTables['effett'].".id_tes) AS neff, MAX(".$gTables['effett'].".scaden) AS maxsca, MIN(".$gTables['effett'].".scaden) AS minsca, ".$gTables['effett'].".tipeff, ".$gTables['files'].".*, ".$gTables['clfoco'].".descri AS desbanacc, ".$gTables['clfoco'].".codice AS codbanacc", $table, $t->where." GROUP BY ".$t->group_by, $t->orderby, $t->getOffset(), $t->getLimit());
 echo '<tr>';
 $t->output_headers();
 echo '</tr>';

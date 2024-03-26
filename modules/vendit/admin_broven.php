@@ -252,10 +252,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         unlink($fn);
                     }
                     $move = move_uploaded_file($_FILES['docfile_' . $next_row]['tmp_name'], DATA_DIR . 'files/tmp/' . $prefix . '_' . $_FILES['docfile_' . $next_row]['name']);
+                                        var_dump($_FILES['docfile_' . $next_row]['name']);
                     $form['rows'][$next_row]['extdoc'] = $_FILES['docfile_' . $next_row]['name'];
                 }
                 if (!$move) {
                     $msg .= '56+';
+
                 }
             }
             $form['rows'][$next_row]['status'] = substr($v['status'], 0, 10);
@@ -938,36 +940,45 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             } else {
               $bodytext = '';
             }
+            // configurazione avanzata azienda: la descrizione estesa dell'articolo
+            $cbt=gaz_dbi_get_row($gTables['company_config'],'var','ext_artico_description')['val'];
+            $cbt=($cbt==1||$cbt==2)?$cbt:0;
             if (!empty($bodytext) && !empty($bodytext['body_text'])) { // il testo aggiuntivo c'è (e non è vuoto)
-              $form["row_$next_row"] = $bodytext['body_text'];
-              $form['rows'][$next_row]['tiprig'] = 6;
-              $form['rows'][$next_row]['descri'] = '';
-              $form['rows'][$next_row]['id_mag'] = 0;
-              $form['rows'][$next_row]['id_rig'] = 0;
-              $form['rows'][$next_row]['id_lotmag'] = 0;
-              $form['rows'][$next_row]['identifier'] = '';
-              $form['rows'][$next_row]['cod_operazione'] = 11;
-              $form['rows'][$next_row]['recip_stocc'] = '';
-              $form['rows'][$next_row]['recip_stocc_destin'] = '';
-              $form['rows'][$next_row]['lot_or_serial'] = 0;
-              $form['rows'][$next_row]['SIAN'] = 0;
-              $form['rows'][$next_row]['status'] = '';
-              $form['rows'][$next_row]['scorta'] = 0;
-              $form['rows'][$next_row]['quamag'] = 0;
-              $form['rows'][$next_row]['codart'] = '';
-              $form['rows'][$next_row]['annota'] = '';
-              $form['rows'][$next_row]['pesosp'] = '';
-              $form['rows'][$next_row]['gooser'] = 0;
-              $form['rows'][$next_row]['unimis'] = '';
-              $form['rows'][$next_row]['quanti'] = 0;
-              $form['rows'][$next_row]['prelis'] = 0;
-              $form['rows'][$next_row]['codric'] = 0;
-              $form['rows'][$next_row]['sconto'] = 0;
-              $form['rows'][$next_row]['pervat'] = 0;
-              $form['rows'][$next_row]['tipiva'] = 0;
-              $form['rows'][$next_row]['ritenuta'] = 0;
-              $form['rows'][$next_row]['codvat'] = 0;
-              $next_row++;
+              // creo il rigo che andrò a mettere prima o dopo o mai in base a ext_artico_description di configurazione avanzata azienda
+              $rbt=[];
+              $rbt['row_next_row'] = $bodytext['body_text'];
+              $rbt['tiprig'] = 6;
+              $rbt['descri'] = '';
+              $rbt['id_mag'] = 0;
+              $rbt['id_rig'] = 0;
+              $rbt['id_lotmag'] = 0;
+              $rbt['identifier'] = '';
+              $rbt['cod_operazione'] = 11;
+              $rbt['recip_stocc'] = '';
+              $rbt['recip_stocc_destin'] = '';
+              $rbt['lot_or_serial'] = 0;
+              $rbt['SIAN'] = 0;
+              $rbt['status'] = '';
+              $rbt['scorta'] = 0;
+              $rbt['quamag'] = 0;
+              $rbt['codart'] = '';
+              $rbt['annota'] = '';
+              $rbt['pesosp'] = '';
+              $rbt['gooser'] = 0;
+              $rbt['unimis'] = '';
+              $rbt['quanti'] = 0;
+              $rbt['prelis'] = 0;
+              $rbt['codric'] = 0;
+              $rbt['sconto'] = 0;
+              $rbt['pervat'] = 0;
+              $rbt['tipiva'] = 0;
+              $rbt['ritenuta'] = 0;
+              $rbt['codvat'] = 0;
+              if ($cbt==1) {
+                $form["row_$next_row"] = $bodytext['body_text'];
+                $form['rows'][$next_row]=$rbt;
+                $next_row++;
+              }
             }
           }
           $form['rows'][$next_row]['tiprig'] = $form['in_tiprig'];
@@ -1011,80 +1022,85 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 }
               }
             }
-                /* fine modifica FP */
-                $form['rows'][$next_row]['ritenuta'] = $form['in_ritenuta'];
-                $provvigione = new Agenti;
-                $form['rows'][$next_row]['provvigione'] = $provvigione->getPercent($form['id_agente'], $form['in_codart']);
-                if (!isset($tmpPrezzoNetto_Sconto) or ( $tmpPrezzoNetto_Sconto >= 0)) { // non ho trovato un prezzo netto per il cliente/articolo
-                    if ($form['listin'] == 2) {
-                        $form['rows'][$next_row]['prelis'] = number_format((isset($artico['preve2']))?$artico['preve2']:0, $admin_aziend['decimal_price'], '.', '');
-                    } elseif ($form['listin'] == 3) {
-                        $form['rows'][$next_row]['prelis'] = number_format($artico['preve3'], $admin_aziend['decimal_price'], '.', '');
-                    } elseif ($form['listin'] == 4) {
-                        $form['rows'][$next_row]['prelis'] = number_format($artico['preve4'], $admin_aziend['decimal_price'], '.', '');
-                    } elseif ($form['listin'] == 5) {
-                        $form['rows'][$next_row]['prelis'] = number_format((isset($artico))?$artico['web_price']:0, $admin_aziend['decimal_price'], '.', '');
-                    } else {
-                        $form['rows'][$next_row]['prelis'] = number_format((isset($artico['preve1']))?$artico['preve1']:0, $admin_aziend['decimal_price'], '.', '');
-                    }
+            /* fine modifica FP */
+            $form['rows'][$next_row]['ritenuta'] = $form['in_ritenuta'];
+            $provvigione = new Agenti;
+            $form['rows'][$next_row]['provvigione'] = $provvigione->getPercent($form['id_agente'], $form['in_codart']);
+            if (!isset($tmpPrezzoNetto_Sconto) or ( $tmpPrezzoNetto_Sconto >= 0)) { // non ho trovato un prezzo netto per il cliente/articolo
+                if ($form['listin'] == 2) {
+                    $form['rows'][$next_row]['prelis'] = number_format((isset($artico['preve2']))?$artico['preve2']:0, $admin_aziend['decimal_price'], '.', '');
+                } elseif ($form['listin'] == 3) {
+                    $form['rows'][$next_row]['prelis'] = number_format($artico['preve3'], $admin_aziend['decimal_price'], '.', '');
+                } elseif ($form['listin'] == 4) {
+                    $form['rows'][$next_row]['prelis'] = number_format($artico['preve4'], $admin_aziend['decimal_price'], '.', '');
+                } elseif ($form['listin'] == 5) {
+                    $form['rows'][$next_row]['prelis'] = number_format((isset($artico))?$artico['web_price']:0, $admin_aziend['decimal_price'], '.', '');
+                } else {
+                    $form['rows'][$next_row]['prelis'] = number_format((isset($artico['preve1']))?$artico['preve1']:0, $admin_aziend['decimal_price'], '.', '');
                 }
-                $form['rows'][$next_row]['codvat'] = $admin_aziend['preeminent_vat'];
-                $iva_azi = gaz_dbi_get_row($gTables['aliiva'], "codice", $admin_aziend['preeminent_vat']);
-                $form['rows'][$next_row]['pervat'] = $iva_azi['aliquo'];
-                $form['rows'][$next_row]['tipiva'] = $iva_azi['tipiva'];
-                if (isset($artico) && $artico['aliiva'] > 0) {
-                    $form['rows'][$next_row]['codvat'] = $artico['aliiva'];
-                    $iva_row = gaz_dbi_get_row($gTables['aliiva'], "codice", $artico['aliiva']);
-                    $form['rows'][$next_row]['pervat'] = $iva_row['aliquo'];
-                    $form['rows'][$next_row]['tipiva'] = $iva_row['tipiva'];
+            }
+            $form['rows'][$next_row]['codvat'] = $admin_aziend['preeminent_vat'];
+            $iva_azi = gaz_dbi_get_row($gTables['aliiva'], "codice", $admin_aziend['preeminent_vat']);
+            $form['rows'][$next_row]['pervat'] = $iva_azi['aliquo'];
+            $form['rows'][$next_row]['tipiva'] = $iva_azi['tipiva'];
+            if (isset($artico) && $artico['aliiva'] > 0) {
+                $form['rows'][$next_row]['codvat'] = $artico['aliiva'];
+                $iva_row = gaz_dbi_get_row($gTables['aliiva'], "codice", $artico['aliiva']);
+                $form['rows'][$next_row]['pervat'] = $iva_row['aliquo'];
+                $form['rows'][$next_row]['tipiva'] = $iva_row['tipiva'];
+            }
+            if ($form['in_codvat'] > 0) {
+                $form['rows'][$next_row]['codvat'] = $form['in_codvat'];
+                $iva_row = gaz_dbi_get_row($gTables['aliiva'], "codice", $form['in_codvat']);
+                $form['rows'][$next_row]['pervat'] = $iva_row['aliquo'];
+                $form['rows'][$next_row]['tipiva'] = $iva_row['tipiva'];
+            }
+            if (isset($artico) && $artico['codcon'] > 0) {
+                $form['rows'][$next_row]['codric'] = $artico['codcon'];
+                $form['in_codric'] = $artico['codcon'];
+            }
+            $mv = $upd_mm->getStockValue(false, $form['in_codart'], $form['annemi'] . '-' . $form['mesemi'] . '-' . $form['gioemi'], $admin_aziend['stock_eval_method']);
+            $magval = array_pop($mv);
+            $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
+            $form['rows'][$next_row]['scorta'] = (isset($artico))?$artico['scorta']:0;
+            $form['rows'][$next_row]['quamag'] = $magval['q_g'];
+            if (isset($artico) && $artico['good_or_service']==2 and $tipo_composti['val']=="KIT") {
+                $whe_dis = "codice_composizione = '".$form['in_codart']."'";
+                $res_dis = gaz_dbi_dyn_query('*', $gTables['distinta_base'], $whe_dis, 'id', 0, PER_PAGE);
+                while ($row_dis = gaz_dbi_fetch_array($res_dis)) {
+                    $next_row++;
+                    $result2 = gaz_dbi_dyn_query('*', $gTables['artico'], " codice = '".$row_dis['codice_artico_base']."'", 'codice', 0, PER_PAGE);
+                    $row2 = gaz_dbi_fetch_array($result2);
+                    $form['rows'][$next_row]['lot_or_serial'] = 0;
+                    $form['rows'][$next_row]['id_lotmag'] = 0;
+                    $form['rows'][$next_row]['tiprig'] = 210;
+                    $form['rows'][$next_row]['id_mag'] = "";
+                    $form['rows'][$next_row]['id_rig'] = "";
+                    $form['rows'][$next_row]['status'] = "INSERT";
+                    $form['rows'][$next_row]['scorta'] = 0;
+                    $form['rows'][$next_row]['codart'] = $row2['codice'];
+                    $form['rows'][$next_row]['good_or_service'] = $row2['good_or_service'];
+                    $form['rows'][$next_row]['descri'] = $row2['descri'];
+                    $form['rows'][$next_row]['unimis'] = $row2['unimis'];
+                    $form['rows'][$next_row]['prelis'] = 0;
+                    $form['rows'][$next_row]['quanti'] = $row_dis['quantita_artico_base'];
+                    $form['rows'][$next_row]['id_doc'] = "";
+                    $form['rows'][$next_row]['prelis'] = 0;
+                    $form['rows'][$next_row]['codric'] = 0;
+                    $form['rows'][$next_row]['sconto'] = 0;
+                    $form['rows'][$next_row]['pervat'] = 0;
+                    $form['rows'][$next_row]['tipiva'] = 0;
+                    $form['rows'][$next_row]['ritenuta'] = 0;
+                    $form['rows'][$next_row]['codvat'] = 0;
+                    $form['rows'][$next_row]['annota'] = "";
+                    $form['rows'][$next_row]['pesosp'] = 0;
                 }
-                if ($form['in_codvat'] > 0) {
-                    $form['rows'][$next_row]['codvat'] = $form['in_codvat'];
-                    $iva_row = gaz_dbi_get_row($gTables['aliiva'], "codice", $form['in_codvat']);
-                    $form['rows'][$next_row]['pervat'] = $iva_row['aliquo'];
-                    $form['rows'][$next_row]['tipiva'] = $iva_row['tipiva'];
-                }
-                if (isset($artico) && $artico['codcon'] > 0) {
-                    $form['rows'][$next_row]['codric'] = $artico['codcon'];
-                    $form['in_codric'] = $artico['codcon'];
-                }
-                $mv = $upd_mm->getStockValue(false, $form['in_codart'], $form['annemi'] . '-' . $form['mesemi'] . '-' . $form['gioemi'], $admin_aziend['stock_eval_method']);
-                $magval = array_pop($mv);
-                $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
-                $form['rows'][$next_row]['scorta'] = (isset($artico))?$artico['scorta']:0;
-                $form['rows'][$next_row]['quamag'] = $magval['q_g'];
-                if (isset($artico) && $artico['good_or_service']==2 and $tipo_composti['val']=="KIT") {
-                    $whe_dis = "codice_composizione = '".$form['in_codart']."'";
-                    $res_dis = gaz_dbi_dyn_query('*', $gTables['distinta_base'], $whe_dis, 'id', 0, PER_PAGE);
-                    while ($row_dis = gaz_dbi_fetch_array($res_dis)) {
-                        $next_row++;
-                        $result2 = gaz_dbi_dyn_query('*', $gTables['artico'], " codice = '".$row_dis['codice_artico_base']."'", 'codice', 0, PER_PAGE);
-                        $row2 = gaz_dbi_fetch_array($result2);
-                        $form['rows'][$next_row]['lot_or_serial'] = 0;
-                        $form['rows'][$next_row]['id_lotmag'] = 0;
-                        $form['rows'][$next_row]['tiprig'] = 210;
-                        $form['rows'][$next_row]['id_mag'] = "";
-                        $form['rows'][$next_row]['id_rig'] = "";
-                        $form['rows'][$next_row]['status'] = "INSERT";
-                        $form['rows'][$next_row]['scorta'] = 0;
-                        $form['rows'][$next_row]['codart'] = $row2['codice'];
-                        $form['rows'][$next_row]['good_or_service'] = $row2['good_or_service'];
-                        $form['rows'][$next_row]['descri'] = $row2['descri'];
-                        $form['rows'][$next_row]['unimis'] = $row2['unimis'];
-                        $form['rows'][$next_row]['prelis'] = 0;
-                        $form['rows'][$next_row]['quanti'] = $row_dis['quantita_artico_base'];
-                        $form['rows'][$next_row]['id_doc'] = "";
-                        $form['rows'][$next_row]['prelis'] = 0;
-                        $form['rows'][$next_row]['codric'] = 0;
-                        $form['rows'][$next_row]['sconto'] = 0;
-                        $form['rows'][$next_row]['pervat'] = 0;
-                        $form['rows'][$next_row]['tipiva'] = 0;
-                        $form['rows'][$next_row]['ritenuta'] = 0;
-                        $form['rows'][$next_row]['codvat'] = 0;
-                        $form['rows'][$next_row]['annota'] = "";
-                        $form['rows'][$next_row]['pesosp'] = 0;
-                    }
-                }
+            }
+            if (!empty($bodytext) && !empty($bodytext['body_text']) && $cbt== 2) { // il testo aggiuntivo c'è, non è vuoto e va dopo il rigo normale
+                $next_row++;
+                $form["row_$next_row"] = $bodytext['body_text'];
+                $form['rows'][$next_row]=$rbt;
+            }
           } elseif ($form['in_tiprig'] == 1 || $form['in_tiprig'] == 50) { //rigo forfait o normale con allegato
                 $form['rows'][$next_row]['codart'] = "";
                 $form['rows'][$next_row]['good_or_service'] = "";

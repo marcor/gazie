@@ -75,8 +75,7 @@ $ts = new TableSorter(
     !$partner_select && isset($_GET["fornitore"]) ? $tesbro_e_partners : $gTables['tesbro'],
     $passo,
     ['id_tes' => 'desc'],
-    ['sezione'=>1, 'flt_tipo'=>$flt_tipo],
-    []
+    ['sezione'=>1, 'flt_tipo'=>$flt_tipo]
 );
 
 $gForm = new acquisForm();

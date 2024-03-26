@@ -1417,36 +1417,47 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
 				} else {
 					$bodytext = '';
 				}
+        // configurazione avanzata azienda: la descrizione estesa dell'articolo
+        $cbt=gaz_dbi_get_row($gTables['company_config'],'var','ext_artico_description')['val'];
+        $cbt=($cbt==1||$cbt==2)?$cbt:0;
         if (!empty($bodytext) && !empty($bodytext['body_text'])) { // il testo aggiuntivo c'è (e non è vuoto)
-          $form["row_$next_row"] = $bodytext['body_text'];
-          $form['rows'][$next_row]['tiprig'] = 6;
-          $form['rows'][$next_row]['descri'] = '';
-          $form['rows'][$next_row]['id_mag'] = 0;
-          $form['rows'][$next_row]['id_lotmag'] = 0;
-					$form['rows'][$next_row]['identifier'] = '';
-					$form['rows'][$next_row]['cod_operazione'] = 11;
-					$form['rows'][$next_row]['recip_stocc'] = '';
-					$form['rows'][$next_row]['recip_stocc_destin'] = '';
-          $form['rows'][$next_row]['lot_or_serial'] = 0;
-					$form['rows'][$next_row]['quality'] = '';
-					$form['rows'][$next_row]['SIAN'] = 0;
-          $form['rows'][$next_row]['status'] = '';
-          $form['rows'][$next_row]['scorta'] = 0;
-          $form['rows'][$next_row]['quamag'] = 0;
-          $form['rows'][$next_row]['codart'] = '';
-          $form['rows'][$next_row]['annota'] = '';
-          $form['rows'][$next_row]['pesosp'] = '';
-          $form['rows'][$next_row]['gooser'] = 0;
-          $form['rows'][$next_row]['unimis'] = '';
-          $form['rows'][$next_row]['quanti'] = 0;
-          $form['rows'][$next_row]['prelis'] = 0;
-          $form['rows'][$next_row]['codric'] = 0;
-          $form['rows'][$next_row]['sconto'] = 0;
-          $form['rows'][$next_row]['pervat'] = 0;
-          $form['rows'][$next_row]['tipiva'] = 0;
-          $form['rows'][$next_row]['ritenuta'] = 0;
-          $form['rows'][$next_row]['codvat'] = 0;
-          $next_row++;
+          // creo il rigo che andrò a mettere prima o dopo o mai in base a ext_artico_description di configurazione avanzata azienda
+          $rbt=[];
+          $rbt['row_next_row'] = $bodytext['body_text'];
+          $rbt['tiprig'] = 6;
+          $rbt['descri'] = '';
+          $rbt['id_mag'] = 0;
+          $rbt['id_rig'] = 0;
+          $rbt['id_lotmag'] = 0;
+          $rbt['identifier'] = '';
+          $rbt['cod_operazione'] = 11;
+          $rbt['recip_stocc'] = '';
+          $rbt['recip_stocc_destin'] = '';
+          $rbt['lot_or_serial'] = 0;
+          $rbt['SIAN'] = 0;
+          $rbt['status'] = '';
+          $rbt['scorta'] = 0;
+          $rbt['quamag'] = 0;
+          $rbt['codart'] = '';
+          $rbt['annota'] = '';
+          $rbt['pesosp'] = '';
+          $rbt['gooser'] = 0;
+          $rbt['unimis'] = '';
+          $rbt['quanti'] = 0;
+          $rbt['prelis'] = 0;
+          $rbt['codric'] = 0;
+          $rbt['sconto'] = 0;
+          $rbt['pervat'] = 0;
+          $rbt['tipiva'] = 0;
+          $rbt['ritenuta'] = 0;
+          $rbt['codvat'] = 0;
+          $rbt['quality'] = '';
+          $rbt['extdoc'] = '';
+          if ($cbt==1) {
+            $form["row_$next_row"] = $bodytext['body_text'];
+            $form['rows'][$next_row]=$rbt;
+            $next_row++;
+          }
         }
       }
       $form['rows'][$next_row]['lot_or_serial'] = 0;
@@ -1662,6 +1673,12 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['gooser'] = 0;
           }
         }
+        if (!empty($bodytext) && !empty($bodytext['body_text']) && $cbt== 2) { // il testo aggiuntivo c'è, non è vuoto e va dopo il rigo normale
+            $next_row++;
+            $form["row_$next_row"] = $bodytext['body_text'];
+            $form['rows'][$next_row]=$rbt;
+        }
+
       } elseif ($form['in_tiprig'] == 1) { //forfait
         $form['rows'][$next_row]['codart'] = "";
         $form['rows'][$next_row]['annota'] = "";

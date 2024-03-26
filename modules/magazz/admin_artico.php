@@ -26,6 +26,10 @@
  */
 require("../../library/include/datlib.inc.php");
 
+// configurazione avanzata azienda: la descrizione estesa dell'articolo
+$cbt=gaz_dbi_get_row($gTables['company_config'], 'var', 'ext_artico_description')['val'];
+$cbt=($cbt==1||$cbt==2)?$cbt:0;
+
 // m1 Modificato a mano
  function serchCOD()
    {
@@ -827,7 +831,7 @@ if ($modal_ok_insert === true) {
                 <div id="bodyText" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label for="body_text" class="col-sm-4 control-label"><?php echo $script_transl['body_text']; ?></label>
+                            <label for="body_text" class="col-sm-4 control-label"><?php echo $script_transl['body_text'].'<br/><small>Inserimento documenti: '.$script_transl['body_text_val'][$cbt].'<br/><span style="font-weight: 200;">(vedi configurazione avanzata azienda)</span></small>'; ?></label>
                             <div class="col-sm-8">
                                 <textarea id="body_text" name="body_text" class="mceClass"><?php echo $form['body_text']; ?></textarea>
                             </div>
