@@ -2275,8 +2275,8 @@ class TableSorter {
     protected $count;      # n. totale record
     public $group_by;      # se non vuota avrà forma: "x, y, z"
     public $where = "";    # costruita a partire dall'url corrente
-    public $where_fix;     # condizioni fisse non dipendenti dall'url corrente
     public $orderby = "";  # idem
+    public $where_fix;     # condizioni fisse non dipendenti dall'url corrente
 
     # paginazione
     public $paginate = True;    # dividi i record in pagine?
@@ -2363,9 +2363,8 @@ class TableSorter {
                 $$field = htmlspecialchars($$field, ENT_QUOTES);
             }
         }
+        if ($this->where_fix) $where_parts[] = $this->where_fix;
         $this->where = implode(" AND ", $where_parts);
-        if (count($where_parts)>=1&&!empty($this->where_fix)){ $this->where .= ' AND '; }
-        $this->where .= $this->where_fix;
         $this->url_search_query = implode("&", $url_search_query_parts);
     }
 

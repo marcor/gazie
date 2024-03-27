@@ -59,7 +59,7 @@ $t = new TableSorter(
     " table_name_ref='effett' AND id_ref > 0");
 $t->output_navbar();
 
-$rs=gaz_dbi_dyn_query ($gTables['clfoco'].".descri AS desbanacc, ".$gTables['clfoco'].".codice AS codbanacc", $table, $t->where." GROUP BY codbanacc","codbanacc", $t->getOffset(), $t->getLimit());
+$rs=gaz_dbi_dyn_query ($gTables['clfoco'].".descri AS desbanacc, ".$gTables['clfoco'].".codice AS codbanacc", $table, $t->where, "codbanacc", $t->getOffset(), $t->getLimit(), "codbanacc");
 $optval='';
 while($r= gaz_dbi_fetch_array($rs)) {
     $optval=($optval=='')?[]:$optval;
@@ -141,7 +141,7 @@ $(function() {
 
 <?php
 $today = strtotime(date("Y-m-d"));
-$rs=gaz_dbi_dyn_query ("COUNT(".$gTables['effett'].".id_tes) AS neff, MAX(".$gTables['effett'].".scaden) AS maxsca, MIN(".$gTables['effett'].".scaden) AS minsca, ".$gTables['effett'].".tipeff, ".$gTables['files'].".*, ".$gTables['clfoco'].".descri AS desbanacc, ".$gTables['clfoco'].".codice AS codbanacc", $table, $t->where." GROUP BY ".$t->group_by, $t->orderby, $t->getOffset(), $t->getLimit());
+$rs=gaz_dbi_dyn_query ("COUNT(".$gTables['effett'].".id_tes) AS neff, MAX(".$gTables['effett'].".scaden) AS maxsca, MIN(".$gTables['effett'].".scaden) AS minsca, ".$gTables['effett'].".tipeff, ".$gTables['files'].".*, ".$gTables['clfoco'].".descri AS desbanacc, ".$gTables['clfoco'].".codice AS codbanacc", $table, $t->where, $t->orderby, $t->getOffset(), $t->getLimit(), $t->group_by);
 echo '<tr>';
 $t->output_headers();
 echo '</tr>';
@@ -168,6 +168,10 @@ while ($r = gaz_dbi_fetch_array($rs)) {
      </table>
 	</div>
 </form>
+
+<script src="../../js/custom/fix_select.js" type="text/javascript"></script>
+<script src="../../js/custom/clean_empty_form_fields.js" type="text/javascript"></script>
+
 <?php
 require("../../library/include/footer.php");
 ?>
