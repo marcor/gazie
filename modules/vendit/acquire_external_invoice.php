@@ -137,7 +137,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		$doc = new DOMDocument;
 		$doc->preserveWhiteSpace = false;
 		$doc->formatOutput = true;
-		$doc->loadXML(utf8_encode($invoiceContent));
+		$doc->loadXML(mb_convert_encoding($invoiceContent, 'UTF-8', 'ISO-8859-1'));
 		$xpath = new DOMXpath($doc);
 		$f_ex=true;
 	} else {
@@ -740,34 +740,25 @@ if ($toDo=='insert' || $toDo=='update' ) {
 <br>
 <?php
 	}
-	if (substr($_SESSION['theme'],-2)!='te'){ 
-		/* se non ho "lte" come motore di interfaccia allora richiamo subito il footer
-		 * della pagina e poi visualizzo l'xml altrimenti non mi fa il submit del form */
-		require("../../library/include/footer.php");
-	} else if (substr($_SESSION['theme'],-3)=='lte') {
-?>
-<div style="padding-top:20px;clear:left">
-<?php
-	}
 	if ($f_ex) {	// visualizzo la fattura elettronica in calce
-		$fae_xsl_file = gaz_dbi_get_row($gTables['company_config'], 'var', 'fae_style');
-		$xslDoc = new DOMDocument();
-		$xslDoc->load("../../library/include/".$fae_xsl_file['val'].".xsl");
-		$xslt = new XSLTProcessor();
-		$xslt->importStylesheet($xslDoc);
-		echo $xslt->transformToXML($doc);
-	}
-	if (substr($_SESSION['theme'],-3)=='lte') {
+
+        $fae_xsl_file = gaz_dbi_get_row($gTables['company_config'], 'var', 'fae_style');
+        $xslDoc = new DOMDocument();
+        $xslDoc->load("../../library/include/".$fae_xsl_file['val'].".xsl");
+        $xslt = new XSLTProcessor();
+        $xslt->importStylesheet($xslDoc);
+        $iframe_src = str_replace('"', '&quot;', $xslt->transformToXML($doc));
 ?>
-</div>
+        <iframe style="border: none" width="99%" height="400px" sandbox="allow-same-origin"
+                srcdoc="<?=$iframe_src?>"
+                onload="this.style.height = this.contentWindow.document.body.scrollHeight + 'px'">
+        </iframe>
 <?php
-		// footer  richiamato alla fine in caso di utilizzo di lte 
-		require("../../library/include/footer.php");
-	}
-} else { // all'inizio chiedo l'upload di un file xml o p7m 
+    }
+} else { // all'inizio chiedo l'upload di un file xml o p7m
 ?>
 <div class="panel panel-default gaz-table-form">
-	<div class="container-fluid">
+    <div class="container-fluid">
        <div class="row">
            <div class="col-md-12">
                <div class="form-group">
@@ -778,11 +769,10 @@ if ($toDo=='insert' || $toDo=='update' ) {
            </div>
        </div><!-- chiude row  -->
 	   <div class="col-sm-12 text-right"><input name="Submit_file" type="submit" class="btn btn-warning" value="<?php echo $script_transl['btn_acquire']; ?>" />
-	   </div>		   
+	   </div>
 	</div> <!-- chiude container -->
 </div><!-- chiude panel -->
 <?php
-	require("../../library/include/footer.php");
 }
+require("../../library/include/footer.php");
 ?>
-
