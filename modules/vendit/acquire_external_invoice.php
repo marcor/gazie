@@ -738,12 +738,16 @@ if ($toDo=='insert' || $toDo=='update' ) {
 	   </div>		   
 </form>
 <br>
-<?php			
+<?php
 	}
 	if (substr($_SESSION['theme'],-2)!='te'){ 
 		/* se non ho "lte" come motore di interfaccia allora richiamo subito il footer
 		 * della pagina e poi visualizzo l'xml altrimenti non mi fa il submit del form */
 		require("../../library/include/footer.php");
+	} else if (substr($_SESSION['theme'],-3)=='lte') {
+?>
+<div style="padding-top:20px;clear:left">
+<?php
 	}
 	if ($f_ex) {	// visualizzo la fattura elettronica in calce
 		$fae_xsl_file = gaz_dbi_get_row($gTables['company_config'], 'var', 'fae_style');
@@ -753,7 +757,10 @@ if ($toDo=='insert' || $toDo=='update' ) {
 		$xslt->importStylesheet($xslDoc);
 		echo $xslt->transformToXML($doc);
 	}
-	if (substr($_SESSION['theme'],-3)=='lte'){ 
+	if (substr($_SESSION['theme'],-3)=='lte') {
+?>
+</div>
+<?php
 		// footer  richiamato alla fine in caso di utilizzo di lte 
 		require("../../library/include/footer.php");
 	}
