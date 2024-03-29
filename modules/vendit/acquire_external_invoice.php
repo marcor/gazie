@@ -137,7 +137,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		$doc = new DOMDocument;
 		$doc->preserveWhiteSpace = false;
 		$doc->formatOutput = true;
-		$doc->loadXML(mb_convert_encoding($invoiceContent, 'UTF-8', 'ISO-8859-1'));
+		$doc->loadXML(mb_convert_encoding($invoiceContent, 'UTF-8', mb_list_encodings()));
 		$xpath = new DOMXpath($doc);
 		$f_ex=true;
 	} else {
@@ -539,7 +539,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			$form['numfat']=$xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Numero")->item(0)->nodeValue;
 			$form['numdoc']=intval(preg_replace('/[^0-9]/', false, $form['numfat']));
 			$form['datfat']=$xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Data")->item(0)->nodeValue;
-			$form['fattura_elettronica_original_content'] = utf8_encode($invoiceContent);
+			$form['fattura_elettronica_original_content'] = mb_convert_encoding($invoiceContent, 'UTF-8', mb_list_encodings());
 			$form['datreg']=$form['datfat'];
 			$form['datemi']=$form['datfat'];
 			$form['protoc']=getLastProtocol($form['tipdoc'],substr($form['datreg'],0,4),$form['seziva'])['last_protoc'];

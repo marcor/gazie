@@ -233,10 +233,10 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
       $xml = new DOMDocument;
       $xml->preserveWhiteSpace = false;
       $xml->formatOutput = true;
-      if (FALSE === @$xml->loadXML(utf8_encode($invoiceContent))) {
+      if (FALSE === @$xml->loadXML(mb_convert_encoding($invoiceContent, 'UTF-8', mb_list_encodings()))) {
         // elimino le sequenze di caratteri non stampabili aggiunti dalla firma (da testare approfonditamente)
         $invoiceContent = preg_replace('/[[:^print:]]/', "", $invoiceContent);
-        if (FALSE === @$xml->loadXML(utf8_encode($invoiceContent))) {
+        if (FALSE === @$xml->loadXML(mb_convert_encoding($invoiceContent, 'UTF-8', mb_list_encodings()))) {
           $xml->loadXML(recoverCorruptedXML($invoiceContent));
         }
       }

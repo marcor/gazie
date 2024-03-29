@@ -329,7 +329,7 @@ class informForm extends GAzieForm {
 		$this->doc = new DOMDocument;
 		$this->doc->preserveWhiteSpace = false;
 		$this->doc->formatOutput = true;
-		$this->doc->loadXML(utf8_encode($invoiceContent));
+		$this->doc->loadXML(mb_convert_encoding($invoiceContent, 'UTF-8', mb_list_encodings()));
 		$this->xpath = new DOMXpath($this->doc);
   }
 

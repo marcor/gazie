@@ -210,10 +210,10 @@ if (isset($_GET['id_tes'])){
 	$doc->preserveWhiteSpace = false;
 	$doc->formatOutput = true;
 
-	if (FALSE === @$doc->loadXML(utf8_encode($invoiceContent))) {
+	if (FALSE === @$doc->loadXML(mb_convert_encoding($invoiceContent, 'UTF-8', mb_list_encodings()))) {
     	// elimino le sequenze di caratteri non stampabili aggiunti dalla firma (da testare approfonditamente)
     	$invoiceContent = preg_replace('/[[:^print:]]/', '', $invoiceContent);
-		if (FALSE === @$doc->loadXML(utf8_encode($invoiceContent))) {
+		if (FALSE === @$doc->loadXML(mb_convert_encoding($invoiceContent, 'UTF-8', mb_list_encodings()))) {
         	$invoiceContent = recoverCorruptedXML($invoiceContent);
         	if (FALSE === @$doc->loadXML($invoiceContent)) {
 				function HandleXmlError($errno, $errstr, $errfile, $errline)
