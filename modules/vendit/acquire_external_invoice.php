@@ -737,7 +737,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
 		<input name="Submit_form" type="submit" class="btn btn-warning" value="<?php echo $script_transl['submit']; ?>" />
 	   </div>		   
 </form>
-<br>
+<br />
 <?php
 	}
 	if ($f_ex) {	// visualizzo la fattura elettronica in calce
@@ -749,9 +749,10 @@ if ($toDo=='insert' || $toDo=='update' ) {
         $xslt->importStylesheet($xslDoc);
         $iframe_src = str_replace('"', '&quot;', $xslt->transformToXML($doc));
 ?>
-        <iframe style="border: none" width="99%" height="400px" sandbox="allow-same-origin"
+        <iframe style="border: none" width="100%" height="400px" sandbox="allow-same-origin"
                 srcdoc="<?=$iframe_src?>"
-                onload="this.style.height = this.contentWindow.document.body.scrollHeight + 'px'">
+                onload="this.style.height = this.contentDocument.firstChild.scrollHeight + 'px';
+                        this.contentDocument.body.style.textAlign = 'center';">
         </iframe>
 <?php
     }

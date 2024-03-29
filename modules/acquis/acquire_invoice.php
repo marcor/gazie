@@ -1851,16 +1851,10 @@ if ($toDo=='insert' || $toDo=='update' ) {
           class="btn btn-warning" value="<?php echo $script_transl['submit']; ?>" />
 				</div>
 			</div>
-		</div>
-	</form>
-	<br>
+    </form>
+	<br/>
 	<?php
 		}
-	}
-	if (substr($_SESSION['theme'],-2)!='te'){
-		/* se non ho "lte" come motore di interfaccia allora richiamo subito il footer
-		 * della pagina e poi visualizzo l'xml altrimenti non mi fa il submit del form */
-		require("../../library/include/footer.php");
 	}
 	if ($f_ex) {	// visualizzo la fattura elettronica in calce
 		$fae_xsl_file = gaz_dbi_get_row($gTables['company_config'], 'var', 'fae_style');
@@ -1868,11 +1862,14 @@ if ($toDo=='insert' || $toDo=='update' ) {
 		$xslDoc->load('../../library/include/'.$fae_xsl_file['val'].'.xsl');
 		$xslt = new XSLTProcessor();
 		$xslt->importStylesheet($xslDoc);
-		echo '<center>' . $xslt->transformToXML($xml) . '</center>';
-	}
-	if (substr($_SESSION['theme'],-3)=='lte'){
-		// footer  richiamato alla fine in caso di utilizzo di lte
-		require("../../library/include/footer.php");
+		$iframe_src = str_replace('"', '&quot;', $xslt->transformToXML($xml));
+?>
+        <iframe style="border: none" width="99%" height="400px" sandbox="allow-same-origin"
+                srcdoc="<?=$iframe_src?>"
+                onload="this.style.height = this.contentDocument.firstChild.scrollHeight + 'px';
+                        this.contentDocument.body.style.textAlign = 'center';">
+        </iframe>
+<?php
 	}
 } else { // all'inizio chiedo l'upload di un file xml o p7m
 ?>
@@ -1989,7 +1986,7 @@ if (!empty($send_fae_zip_package['val']) && $send_fae_zip_package['val']!='pec_S
 	</div> <!-- chiude container -->
 </div><!-- chiude panel -->
 <?php
-	require("../../library/include/footer.php");
 }
+require("../../library/include/footer.php");
 ?>
 
