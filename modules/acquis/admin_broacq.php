@@ -1342,8 +1342,7 @@ foreach ($form['rows'] as $k => $v) {
             break;
         case "50":
 			echo "<td><button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\"><i class=\"glyphicon glyphicon-arrow-up\"></i></button></td>";
-            echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$k}]\" value=\"* documento allegato *\" /></td>\n";
-                echo '<td>';
+            echo "<td colspan=2 title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$k}]\" value=\"* documento allegato *\" />\n";
                 if (empty($form['rows'][$k]['extdoc'])) {
                     echo '<div><button class="btn btn-xs btn-danger" type="image" data-toggle="collapse" href="#extdoc_dialog' . $k . '">'
                     . $script_transl['insert'] . ' documento esterno <i class="glyphicon glyphicon-tag"></i>'
@@ -1362,12 +1361,12 @@ foreach ($form['rows'] as $k => $v) {
 			</div>
 		     </div>
               </div>' . "</td>\n";
-            echo "<td><input type=\"text\" name=\"rows[{$k}][descri]\" value=\"$descrizione\" maxlength=\"1000\"  class=\"col-lg-12\" /></td>\n";
+            echo "<td><input type=\"text\" name=\"rows[{$k}][descri]\" value=\"$descrizione\" maxlength=1000 size=100 class=\"col-lg-12\" /></td>\n";
             echo '<td>
-						<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][unimis]" value="' . $v['unimis'] . '" maxlength="3" />
+						<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][unimis]" value="' . $v['unimis'] . '" maxlength=3 size=3 />
 					  </td>
 					  <td>
-						<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][quanti]" value="' . $v['quanti'] . '" align="right" maxlength="11" onchange="this.form.submit();" />
+						<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][quanti]" value="' . $v['quanti'] . '" align="right" maxlength=11 size= 6 onchange="this.form.submit();" />
 					  </td>';
             /** ENRICO FEDELE */
             echo "<td><input type=\"text\" name=\"rows[{$k}][prelis]\" value=\"{$v['prelis']}\" align=\"right\" maxlength=\"11\"  onchange=\"this.form.submit()\" /></td>\n";
@@ -1379,8 +1378,7 @@ foreach ($form['rows'] as $k => $v) {
             break;
         case "51":
 			echo "<td><button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\"><i class=\"glyphicon glyphicon-arrow-up\"></i></button></td>";
-            echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$k}]\" value=\"* documento allegato *\" /></td>\n";
-                echo '<td>';
+            echo "<td colspan=2 title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$k}]\" value=\"* documento allegato *\" />\n";
                 if (empty($form['rows'][$k]['extdoc'])) {
                     echo '<div><button class="btn btn-xs btn-danger" type="image" data-toggle="collapse" href="#extdoc_dialog' . $k . '">'
                     . $script_transl['insert'] . ' documento esterno <i class="glyphicon glyphicon-tag"></i>'
@@ -1399,7 +1397,7 @@ foreach ($form['rows'] as $k => $v) {
 			</div>
 		     </div>
               </div>' . "</td>\n";
-            echo "<td><input type=\"text\"   name=\"rows[{$k}][descri]\" value=\"$descrizione\" maxlength=\"50\"  /></td>\n";
+            echo "<td><input type=\"text\"   name=\"rows[{$k}][descri]\" value=\"$descrizione\" maxlength=100 size=50 /></td>\n";
             echo "<td><input type=\"hidden\" name=\"rows[{$k}][unimis]\" value=\"\" /></td>\n";
             echo "<td><input type=\"hidden\" name=\"rows[{$k}][quanti]\" value=\"\" /></td>\n";
             echo "<td><input type=\"hidden\" name=\"rows[{$k}][prelis]\" value=\"\" /></td>\n";
@@ -1505,13 +1503,13 @@ echo "<div class=\"FacetSeparatorTD\" align=\"center\"><b>$script_transl[2]</b><
 			<tr>
 				<td class=\"FacetFieldCaptionTD\">$script_transl[27]</td>
 				<td class=\"FacetDataTD\">
-					<input type=\"text\" name=\"spediz\" value=\"" . $form["spediz"] . "\" maxlength=\"50\"  class=\"FacetInput\" />\n";
+					<input type=\"text\" name=\"spediz\" value=\"" . $form["spediz"] . "\" maxlength=50 size=20 class=\"FacetInput\" />\n";
 $select_spediz = new SelectValue("spedizione");
 $select_spediz->output('spediz', 'spediz');
 echo "		</td>
   				<td class=\"FacetFieldCaptionTD\">$script_transl[29]</td>
 				<td colspan=\"2\" class=\"FacetDataTD\">
-					<input type=\"text\" name=\"portos\" value=\"" . $form["portos"] . "\" maxlength=\"50\"  class=\"FacetInput\" />\n";
+					<input type=\"text\" name=\"portos\" value=\"" . $form["portos"] . "\" maxlength=50 size=20 class=\"FacetInput\" />\n";
 $select_spediz = new SelectValue("portoresa");
 $select_spediz->output('portos', 'portos');
 echo "	</td>
@@ -1534,7 +1532,7 @@ echo "	</td>
 						</td>\n";
     } else {
         echo '<td class="FacetDataTD text-center" colspan=2>';
-        echo "<textarea rows=\"1\" cols=\"40\" name=\"destin\" class=\"FacetInput\">" . $form["destin"] . "</textarea>
+        echo "<textarea rows=\"1\" cols=\"40\" style=\"width:100%;\" name=\"destin\" class=\"FacetInput\">" . $form["destin"] . "</textarea>
 						</td>
 						<input type=\"hidden\" name=\"id_des_same_company\" value=\"" . $form['id_des_same_company'] . "\">
 						<input type=\"hidden\" name=\"id_des\" value=\"" . $form['id_des'] . "\">

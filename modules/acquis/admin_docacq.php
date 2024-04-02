@@ -3133,9 +3133,9 @@ if (count($form['rows']) > 0) {
 						<label for="vettor" class="col-form-label"><?php echo $script_transl['initra']; ?></label>
 						<div>
 					<?php
-					echo "		<input class=\"FacetText\" type=\"text\" name=\"giotra\" value=\"" . $form['giotra'] . "\" >
-							<input class=\"FacetText\" type=\"text\" name=\"mestra\" value=\"" . $form['mestra'] . "\" >
-							<input class=\"FacetText\" type=\"text\" name=\"anntra\" value=\"" . $form['anntra'] . "\" >
+					echo "		<input class=\"FacetText\" type=\"text\" name=\"giotra\" value=\"" . $form['giotra'] . "\" maxlength=2 size=2 >
+							<input class=\"FacetText\" type=\"text\" name=\"mestra\" value=\"" . $form['mestra'] . "\" maxlength=2 size=2 >
+							<input class=\"FacetText\" type=\"text\" name=\"anntra\" value=\"" . $form['anntra'] . "\" maxlength=4 size=4 >
 							<a href=\"#\" onClick=\"cal.showCalendar('anchor','" . $form['mestra'] . "/" . $form['giotra'] . "/" . $form['anntra'] . "'); return false;\" title=\" cambia la data! \" name=\"anchor\" id=\"anchor\" class=\"btn btn-default btn-xs\">\n";
 		//echo "<img border=\"0\" src=\"../../library/images/cal.png\"></A>$script_transl[31]";
 		echo '					<i class="glyphicon glyphicon-calendar"></i>

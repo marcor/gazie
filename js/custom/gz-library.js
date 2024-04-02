@@ -23,25 +23,29 @@
 
 /* Abilita/disabilita un textbox sulla base dello stato di un checkbox collegato*/
 $(document).ready(function () {
-    // non uso size inline ma mi baso su maxlenght per avere una proporzionalità di grandezza sugli elementi input
+    // se non c'è definisco size inline basandomi su maxlenght per avere una proporzionalità di grandezza sugli elementi input
  	$("td>input[maxlength]").each(function(index){
-		var ml = parseInt($(this).attr('maxlength'));
-    if (ml>=6){ $(this).attr('size', ml) } else { $(this).attr('size', ml/2) }
-		if (ml>=33){ $(this).attr('style', 'width: 100%;')}
-    });
-    gzTooltip();
-    $("#alert-discount").fadeTo(2500, 1500).slideUp(750, function () {
-        $("#alert-discount").alert('close');
-    });
-    var current = $("#alert-last-row").css('color');
-    $("#alert-last-row")
-            .animate({backgroundColor: '#faebcc'}, 2000)
-            .animate({backgroundColor: '#d6e9c6'}, 2000)
-            .animate({backgroundColor: '#faebcc'}, 2000)
-            .animate({backgroundColor: '#d6e9c6'}, 2000);
-			$('#products-list > tbody > tr:first').before($('#products-list-last'));
-    $('.products-list-last').effect("highlight", {times: 1}, 5000);
-    $('#products-list-last').toggleClass('products-list-last products-list-last-moved');
+    if(!$(this).attr('size')) {
+      var ml = parseInt($(this).attr('maxlength'));
+      if (ml>=3){ $(this).attr('size', ml) } else { $(this).attr('size', ml/2) }
+      if (!$(this).attr('style') && ml>=33) { $(this).attr('style', 'width: 100%;')}
+    }
+  });
+
+  gzTooltip();
+  $("#alert-discount").fadeTo(2500, 1500).slideUp(750, function () {
+      $("#alert-discount").alert('close');
+  });
+  var current = $("#alert-last-row").css('color');
+  $("#alert-last-row")
+          .animate({backgroundColor: '#faebcc'}, 2000)
+          .animate({backgroundColor: '#d6e9c6'}, 2000)
+          .animate({backgroundColor: '#faebcc'}, 2000)
+          .animate({backgroundColor: '#d6e9c6'}, 2000);
+    $('#products-list > tbody > tr:first').before($('#products-list-last'));
+  $('.products-list-last').effect("highlight", {times: 1}, 5000);
+  $('#products-list-last').toggleClass('products-list-last products-list-last-moved');
+
 });
 
 $(window).resize(function () {
