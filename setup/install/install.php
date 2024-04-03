@@ -537,11 +537,11 @@ function executeModulesUpdate(){// Antonio Germani 12/07/2022 - funzione per ese
                echo '<input name="'.$form['install_upgrade'].'" type="submit" value="'.strtoupper($msg[$form['install_upgrade']]).'!">';
             } else {
                foreach ($err as $v){
-                  echo $v." <br />";
                   if ($v=='is_align'){
                      echo '<input  onClick="location.href=\'../../modules/root/admin.php\'" name="'.$form['install_upgrade'].'" type="button" value="'.$msg['gi_is_align'].'">';
                      echo "\n <br />".$msg['gi_usr_psw']." <br />";
                   } else {
+                     echo $v." <br />";
                      echo '<span class=\"btn btn-xs btn-default\"><i class=\"glyphicon glyphicon-remove\"></i></span><br /> ';
                  }
                }
