@@ -281,7 +281,7 @@ if (count($msg['err']) > 0) { // ho un errore
             <div class="col-md-12">
                 <div class="form-group">
                     <label for="pariva" class="col-sm-4 control-label"><?php echo $script_transl['pariva']; ?></label>
-                    <input class="col-sm-3" type="text" value="<?php echo $form['pariva']; ?>" name="pariva" maxlength="11" />
+                    <input class="col-sm-3" type="text" value="<?php echo $form['pariva']; ?>" name="pariva" maxlength="28" />
                 </div>
             </div>
         </div><!-- chiude row  -->

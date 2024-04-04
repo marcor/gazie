@@ -690,7 +690,7 @@ $gForm->selectFromDB('country', 'counas', 'iso', $form['counas'], 'iso', 1, ' - 
             <div class="col-md-12">
                 <div class="form-group">
                     <label for="pariva" class="col-sm-4 control-label"><a href="https://telematici.agenziaentrate.gov.it/VerificaPIVA/Scegli.do?parameter=verificaPiva" target="blank"><?php echo $script_transl['pariva']; ?></a></label>
-                    <input class="col-sm-4" type="text" value="<?php echo $form['pariva']; ?>" name="pariva" maxlength="11"/>
+                    <input class="col-sm-4" type="text" value="<?php echo $form['pariva']; ?>" name="pariva" maxlength="28"/>
                 </div>
             </div>
         </div><!-- chiude row  -->
