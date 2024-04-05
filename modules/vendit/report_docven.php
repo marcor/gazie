@@ -761,7 +761,7 @@ function printPdf(urlPrintDoc){
                 if (!empty($modifi)) {
                   echo "<td class=\"text-center\"><a href=\"" . $modifi . "\" class=\"btn btn-xs " . $classe_btn . "\" title=\"Modifica " . $tipodoc . " \">" . $r["protoc"] . "&nbsp;" . $r["tipdoc"] . "&nbsp;<i class=\"glyphicon glyphicon-edit\"></i></a></td>";
                 } else {
-                  echo "<td class=\"text-center\"><button class=\"btn btn-100 btn-xs " . $classe_btn . " disabled\" title=\"Per poter modificare questa " . $tipodoc . " devi modificare i DdT in essa contenuti!\">" . $r["protoc"] . "&nbsp;" . $r["tipdoc"] . " &nbsp;<i class=\"glyphicon glyphicon-edit\"></i></button></td>";
+                  echo "<td class=\"text-center\"><button class=\"btn btn-xs " . $classe_btn . " disabled\" title=\"Per poter modificare questa " . $tipodoc . " devi modificare i DdT in essa contenuti!\">" . $r["protoc"] . "&nbsp;" . $r["tipdoc"] . " &nbsp;<i class=\"glyphicon glyphicon-edit\"></i></button></td>";
                 }
                 // Colonna numero documento
                 echo "<td align=\"center\">" . $r["numfat"] . " &nbsp;</td>";
