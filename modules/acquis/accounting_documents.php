@@ -677,7 +677,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
           $status='TD18';
         }
         // se il fornitore ha una partita IVA italiana pur essendo straniero diventa TD19
-        require("../../library/include/check.inc.php");
+        require_once("../../library/include/check.inc.php");
         $cf_pi = new check_VATno_TAXcode();
         $r_pi = $cf_pi->check_VAT_reg_no($partner['pariva'], 'IT');
         if (empty($r_pi)) {
