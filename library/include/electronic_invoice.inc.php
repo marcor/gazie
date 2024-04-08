@@ -141,7 +141,8 @@ class invoiceXMLvars {
     $this->gTables = $gTables;
     $admin_aziend = gaz_dbi_get_row($gTables['aziend'], 'codice', $_SESSION['company_id']);
     $this->descriptive_last_row = trim(gaz_dbi_get_row($gTables['company_config'], 'var', 'descriptive_last_row')['val']);
-    $this->attach_pdf_to_fae = intval(gaz_dbi_get_row($gTables['company_config'], 'var', 'attach_pdf_to_fae')['val']);
+    $res_attach_pdf_to_fae = gaz_dbi_get_row($gTables['company_config'], 'var', 'attach_pdf_to_fae');
+    $this->attach_pdf_to_fae = (isset($res_attach_pdf_to_fae['val']))?intval($res_attach_pdf_to_fae['val']):'';
     $this->azienda = $admin_aziend;
     $this->pagame = gaz_dbi_get_row($gTables['pagame'], "codice", $tesdoc['pagame']);
     $this->banapp = gaz_dbi_get_row($gTables['banapp'], "codice", $tesdoc['banapp']);
