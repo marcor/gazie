@@ -25,7 +25,8 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 require("../../library/include/electronic_invoice.inc.php");
-$attach_pdf_to_fae = intval(gaz_dbi_get_row($gTables['company_config'], 'var', 'attach_pdf_to_fae')['val']);
+$res_attach_pdf_to_fae = gaz_dbi_get_row($gTables['company_config'], 'var', 'attach_pdf_to_fae');
+$attach_pdf_to_fae = isset($res_attach_pdf_to_fae['val'])?intval($res_attach_pdf_to_fae['val']):'';
 
 // recupero i dati
 if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo documento attraverso il suo id_tes
