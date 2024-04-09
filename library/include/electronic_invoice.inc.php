@@ -1592,7 +1592,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
         $el->appendChild($el1);
         $el1 = $domDoc->createElement("ImportoPagamento", number_format($v['amount'],2,'.','')); // 2.4.2.6
         $el->appendChild($el1);
-        if ($XMLvars->pagame['tippag'] == 'B') { // se il pagamento è una RiBa indico CAB e ABI
+        if ($XMLvars->pagame['tippag'] == 'B' && isset($XMLvars->banapp['codabi'])) { // se il pagamento è una RiBa indico CAB e ABI
             $el1 = $domDoc->createElement("ABI", str_pad($XMLvars->banapp['codabi'], 5, '0', STR_PAD_LEFT)); // 2.4.2.14
             $el->appendChild($el1);
             $el1 = $domDoc->createElement("CAB", str_pad($XMLvars->banapp['codcab'], 5, '0', STR_PAD_LEFT)); // 2.4.2.15

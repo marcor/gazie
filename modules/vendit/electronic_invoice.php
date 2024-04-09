@@ -117,7 +117,12 @@ if ($attach_pdf_to_fae==1){
   $onlyonet = gaz_dbi_fetch_array($onlyonet_r);
   if ($onlyonet) {
     $testate = gaz_dbi_dyn_query("*", $gTables['tesdoc'],$where,'datemi ASC, numdoc ASC, id_tes ASC');
-    $pdf_content=createMultiDocument($testate, $onlyonet['template'], $gTables, 'X');
+    if ($onlyonet['tipdoc']=='FAD') {
+      $pdf_content=createInvoiceFromDDT($testate,$gTables,'X');
+    } else {
+      $testata = gaz_dbi_fetch_array($testate);
+      $pdf_content=createDocument($testata,$onlyonet['template'],$gTables,'rigdoc','X');
+    }
   } else {
     $pdf_content=false;
   }
