@@ -80,16 +80,17 @@ $recordnav -> output();
 ?>
 <div class="table-responsive"><table class="Tlarge table table-striped table-bordered table-condensed">
 <?php
-$headers_utenti = array  (
-              $script_transl["user_name"] => "user_name",
-              $script_transl['user_lastname'] => "Cognome",
-              $script_transl['user_firstname'] => "Nome",
-              $script_transl['Abilit'] => "Abilit",
-              $script_transl['company'] => "",
-			  'Privacy'=>'user_id',
-              $script_transl['Access'] => "Access",
-              $script_transl['delete'] => ""
-            );
+$headers_utenti=[
+  $script_transl["user_name"] => "user_name",
+  $script_transl['user_lastname'] => "Cognome",
+  $script_transl['user_firstname'] => "Nome",
+  $script_transl['Abilit'] => "Abilit",
+  $script_transl['company'] => "",
+  'Privacy'=>'',
+  'Tema' => "",
+  $script_transl['Access'] => "Access",
+  $script_transl['delete'] => ""
+];
 $linkHeaders = new linkHeaders($headers_utenti);
 $linkHeaders -> output();
 
@@ -98,38 +99,40 @@ $rs_admins = gaz_dbi_dyn_query("user_id", $gTables['admin'], " Abilit = 9 ", "us
 $admins = gaz_dbi_num_rows($rs_admins);
 
 $result = gaz_dbi_dyn_query ('*', $gTables['admin'], $where, $orderby, $limit, $passo);
-while ($a_row = gaz_dbi_fetch_array($result)) {
+while ($r = gaz_dbi_fetch_array($result)) {
 	// RESPONSABILE O INCARICATO: DIPENDE DAL LIVELLO DI ABILITAZIONE
 	$ri_descr='stampa nomina INCARICATO trattamento dati personali';
 	$regol_lnk='';
-	$company = gaz_dbi_get_row($gTables['aziend'], 'codice', $a_row['company_id']);
-	if ($a_row["Abilit"]>8){
+	$company = gaz_dbi_get_row($gTables['aziend'], 'codice', $r['company_id']);
+  $tema = explode('/',gaz_dbi_get_row($gTables['admin_config'], 'adminid', $r["user_name"], " AND var_name ='theme'")['var_value']);
+	if ($r["Abilit"]>8){
 		$company['ragso1']=$script_transl['all'];
 		$ri_descr='stampa nomina RESPONSABILE trattamento dati personali';
-		$regol_lnk=' _ <a title="stampa e/o edita il REGOLAMENTO per l’utilizzo e la gestione delle risorse informatiche" class="btn btn-xs btn-default" href="edit_privacy_regol.php?user_id=' . $a_row["user_id"] . '" target="_blank"><i class="glyphicon glyphicon-list"></i></a> ';
+		$regol_lnk=' _ <a title="stampa e/o edita il REGOLAMENTO per l’utilizzo e la gestione delle risorse informatiche" class="btn btn-xs btn-default" href="edit_privacy_regol.php?user_id=' . $r["user_id"] . '" target="_blank"><i class="glyphicon glyphicon-list"></i></a> ';
 	}
 	if ($company_choice>0){
 		$company['ragso1']=$script_transl['all'];
 	}
-  echo "<tr class=\"FacetDataTD\">";
-  echo "<td title=\"".$script_transl['update']."\" align=\"center\"><a class=\"btn btn-xs btn-edit\" href=\"admin_utente.php?user_name=".$a_row["user_name"]."&Update\">".$a_row["user_name"]." </a> &nbsp</td>";
-  echo "<td>".$a_row["user_lastname"]." &nbsp;</td>";
-  echo "<td>".$a_row["user_firstname"]." &nbsp;</td>";
-  echo "<td align=\"center\">".$a_row["Abilit"]." &nbsp;</td>";
-  echo "<td>".$company['ragso1']." &nbsp;</td>";
+  echo "<tr>";
+  echo "<td title=\"".$script_transl['update']."\" align=\"center\"><a class=\"btn btn-xs btn-edit\" href=\"admin_utente.php?user_name=".$r["user_name"]."&Update\">".$r["user_name"]." </a> &nbsp</td>";
+  echo "<td>".$r["user_lastname"]." </td>";
+  echo "<td>".$r["user_firstname"]." </td>";
+  echo "<td align=\"center\">".$r["Abilit"]." </td>";
+  echo "<td>".$company['ragso1']." </td>";
   // colonna stampa nomina trattamento dati personali
-  echo "<td align=\"center\"><a title=\"".$ri_descr."\" class=\"btn btn-xs btn-default\" href=\"stampa_nomina.php?user_id=" . $a_row["user_id"] . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-eye-close\"></i></a>".
+  echo "<td align=\"center\"><a title=\"".$ri_descr."\" class=\"btn btn-xs btn-default\" href=\"stampa_nomina.php?user_id=" . $r["user_id"] . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-eye-close\"></i></a>".
 	$regol_lnk."
 	</td>";
-	// fine colonna privacy
-  echo "<td align=\"center\">".$a_row["Access"]." &nbsp;</td><td align=\"center\">";
-  if ($admins <=1 && $a_row["Abilit"] == 9 ){
+	// colonna tema
+  echo '<td align="center">'.$tema[3].'</td>';
+  echo "<td align=\"center\">".$r["Access"]." </td><td align=\"center\">";
+  if ($admins <=1 && $r["Abilit"] == 9 ){
 		?>
 		<button title="Impossibile cancellare perché è l'unico amministratore " class="btn btn-xs   disabled"><i class="glyphicon glyphicon-trash"></i></button>
 		<?php
 	} else {
 		?>
-		<a class="btn btn-xs  btn-elimina dialog_delete" title="Cancella l'utente" ref="<?php echo $a_row['user_name'];?>" ragso="<?php echo $a_row['user_firstname'].' '.$a_row['user_lastname'];?>">
+		<a class="btn btn-xs  btn-elimina dialog_delete" title="Cancella l'utente" ref="<?php echo $r['user_name'];?>" ragso="<?php echo $r['user_firstname'].' '.$r['user_lastname'];?>">
 			<i class="glyphicon glyphicon-trash"></i>
 		</a>
 		<?php
