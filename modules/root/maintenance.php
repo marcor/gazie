@@ -20,8 +20,8 @@
     <body>
         <article>
             <h1>Al momento non è concesso accedere a GAzie.</h1>
-            <p>Siamo spiacenti per il disagio causato, la procedura di manutenzione non durerà ancora molto. Riprova più tardi.</p>
-            <p id="signature">Per informazioni contatta <a href="mailto:<?php echo $maintenance; ?>"><?php echo $maintenance; ?></a> oppure riprova e <a href="../../index.php">Torna in GAzie</a></p>
+            <p>Le cause potrebbero essere di diversa natura.</p>
+            <p id="signature">Per avere maggiori informazioni contatta <a href="mailto:<?php echo $maintenance; ?>"><?php echo $maintenance; ?></a> oppure riprova e <a href="../../index.php">Torna in GAzie</a></p>
         </article>
     </body>
 </html>
