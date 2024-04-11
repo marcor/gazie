@@ -1418,7 +1418,8 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
 					$bodytext = '';
 				}
         // configurazione avanzata azienda: la descrizione estesa dell'articolo
-        $cbt=gaz_dbi_get_row($gTables['company_config'],'var','ext_artico_description')['val'];
+        $res_cbt=gaz_dbi_get_row($gTables['company_config'],'var','ext_artico_description');
+        $cbt=(isset($res_cbt['val']))?$res_cbt['val']:'';
         $cbt=($cbt==1||$cbt==2)?$cbt:0;
         if (!empty($bodytext) && !empty($bodytext['body_text'])) { // il testo aggiuntivo c'è (e non è vuoto)
           // creo il rigo che andrò a mettere prima o dopo o mai in base a ext_artico_description di configurazione avanzata azienda
