@@ -168,9 +168,9 @@ UPDATE `gaz_module` SET `class`='fa fa-lims' WHERE  `name`='lims';
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 CREATE TABLE IF NOT EXISTS `gaz_XXXpagame_distribution` (
   `id_pagdis` int NOT NULL AUTO_INCREMENT,
-  `codpag` int NOT NULL DEFAULT '0' COMMENT 'Referenza alla tabella gaz_XXXpagame (molti a uno)',
+  `codpag` int NOT NULL COMMENT 'Referenza alla tabella gaz_XXXpagame (molti a uno)',
   `descri` varchar(50) NOT NULL DEFAULT '' COMMENT 'La descrizione è indispensabile in assenza di data di scadenza (expiry)',
-  `ratperc` decimal(4,1) NOT NULL DEFAULT (0) COMMENT 'La somma dei righi riferiti allo stesso codpag dovrebbe essere 100 se non lo è viene troncato o riempito fino a capienza',
+  `ratperc` decimal(4,1) NOT NULL COMMENT 'La somma dei righi riferiti allo stesso codpag dovrebbe essere 100 se non lo è viene troncato o riempito fino a capienza',
   `from_prev` varchar(3) NULL DEFAULT NULL COMMENT 'Sono i giorni  dalla scadenza precedente o dalla data di riferimento, si può indicare anche una lettere coma nella colonna tiprat di gaz_XXXpagame. non è indispensabile e se variabile, ovvero non strettamente determinato, es. quando il limite temporale dipende dalla fine dei lavori o da altre condizione queste verranno indicate in descrizione e lasciata vuota o NULL.',
   `tippag` char(1) NOT NULL DEFAULT '0' COMMENT 'La stessa della colonna tippag di gaz_XXXpagame ma prevale su di essa se valorizzata. Consente metodi di pagamento diversi sulle diverse rate',
   `fae_mode` varchar(4) DEFAULT NULL COMMENT 'Come su gaz_XXXpagame è il valore MPXX della fattura elettronica. Consente metodi di pagamento diversi sulle diverse rate',
