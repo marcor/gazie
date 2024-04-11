@@ -2358,9 +2358,9 @@ class TableSorter {
                 global $$field;  # settiamo una variabile globale chiamata come il parametro
                 $$field = $def_GET[$field];
                 if (isset($pruned_GET[$field]))  # escludiamo dall'url i valori default applicati
-                    $url_search_query_parts[] = "$field=" . urlencode($$field);
-                $where_parts[] = sprintf($sql_expr, gaz_dbi_real_escape_string($$field));
-                $$field = htmlspecialchars($$field, ENT_QUOTES);
+                  $url_search_query_parts[] = "$field=" . urlencode($$field);
+                  $where_parts[] = sprintf($sql_expr, gaz_dbi_real_escape_string($$field), gaz_dbi_real_escape_string($$field));
+                  $$field = htmlspecialchars($$field, ENT_QUOTES);
             }
         }
         if ($this->where_fix) $where_parts[] = $this->where_fix;
