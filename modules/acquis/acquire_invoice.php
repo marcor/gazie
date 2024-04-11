@@ -1159,14 +1159,17 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
       }
 
 			// ricavo l'allegato, e se presente metterò un bottone per permettere il download
-			$nf = $doc->getElementsByTagName('NomeAttachment')->item(0);
-			if ($nf) {
-				$name_file = $nf->textContent;
-				$att = $doc->getElementsByTagName('Attachment')->item(0);
-				$base64 = $att->textContent;
-				$bin = base64_decode($base64);
-				file_put_contents( DATA_DIR . 'files/tmp/' . $name_file, $bin);
-			}
+      $yesatt = $doc->getElementsByTagName('NomeAttachment')->item(0);
+      if ($yesatt){
+        $yesatt=[];
+        $allegati = $doc->getElementsByTagName('Allegati');
+        foreach ($allegati as $allitem){
+          $nomeatt = $allitem->getElementsByTagName('NomeAttachment')->item(0);
+          $name_file = $nomeatt->textContent;
+          $contentatt = $allitem->getElementsByTagName('Attachment')->item(0);
+          $yesatt[]='<div class="text-bold">Download allegato: <a download='.$name_file.'" href="data:application/'.pathinfo($name_file,PATHINFO_EXTENSION).';base64,'.$contentatt->textContent.'">'.$name_file.'</a></div>';
+        }
+      }
 			if (isset($_POST['Select_doc'])) { // vengo da una selezione di fattura corrente  contenuta in un xml multiplo
                 // non modifico i valori derivanti da $form
 			} else if (empty($_POST['Submit_file'])) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati dall'utente
@@ -1820,11 +1823,11 @@ if ($toDo=='insert' || $toDo=='update' ) {
   <div class="row">
       <div class="col-sm-2">
 	<?php
-			if ($nf){
-	?>
-			Allegato: <input name="Download" type="submit" class="btn btn-default" value="<?php echo $name_file; ?>" />
-	<?php
-			}
+if ($yesatt){
+  foreach ($yesatt as $yav){
+    echo $yav;
+  }
+}
 	?>
 			</div>
 			<?php
