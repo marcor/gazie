@@ -138,12 +138,32 @@ if (isset($_GET['viewxml'])) {   //se viene richiesta una visualizzazione all'in
 	$doc->preserveWhiteSpace = false;
 	$doc->formatOutput = true;
  	$doc->loadXML($file_content);
+  // ricavo l'allegato, e se presente metterò un bottone per permettere il download
+  $yesatt = $doc->getElementsByTagName('NomeAttachment')->item(0);
+  require("../../library/include/header.php");
+  $script_transl = HeadMain(0, array('custom/modal_form'));
+  if ($yesatt){
+    $allegati = $doc->getElementsByTagName('Allegati');
+    foreach ($allegati as $allitem){
+      $nomeatt = $allitem->getElementsByTagName('NomeAttachment')->item(0);
+      $name_file = $nomeatt->textContent;
+      $contentatt = $allitem->getElementsByTagName('Attachment')->item(0);
+      echo '<div class="text-center text-bold">Download allegato: <a download='.$name_file.'" href="data:application/'.pathinfo($name_file,PATHINFO_EXTENSION).';base64,'.$contentatt->textContent.'">'.$name_file.'</a></div>';
+    }
+  }
 	$xpath = new DOMXpath($doc);
 	$xslDoc = new DOMDocument();
 	$xslDoc->load("../../library/include/".$fae_xsl_file['val'].".xsl");
 	$xslt = new XSLTProcessor();
 	$xslt->importStylesheet($xslDoc);
-	echo $xslt->transformToXML($doc);
+	$iframe_src = str_replace('"', '&quot;', $xslt->transformToXML($doc));
+?>
+  <iframe style="border: none" width="99%" height="400px" sandbox="allow-same-origin"
+    srcdoc="<?=$iframe_src?>"
+    onload="this.style.height = this.contentDocument.firstChild.scrollHeight + 'px'; this.contentDocument.body.style.textAlign = 'center';">
+  </iframe>
+<?php
+  require("../../library/include/footer.php");
 } else { // .... altrimenti faccio il download diretto
 	create_XML_invoice($testate,$gTables,'rigdoc',false,false,false,$pdf_content);
 }
