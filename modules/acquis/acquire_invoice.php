@@ -569,11 +569,22 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			// INIZIO creazione array dei righi con la stessa nomenclatura usata sulla tabella rigdoc a causa della mancanza di rigore del tracciato ufficiale siamo costretti a crearci un castelletto conti e iva	al fine contabilizzare direttamente qui senza passare per la contabilizzazione di GAzie e tentare di creare dei	righi documenti la cui somma coincida con il totale imponibile riportato sul tracciato
       // prendo i valori dal documento corrente
       $curr_doc_cont = $xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]");
+      $df = $xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiGenerali/DatiGeneraliDocumento/Data")->item(0)->nodeValue;
+      // trovo l'ultima data di registrazione
+      $lr = getLastProtocol('AF_',substr($df,0,4),1)['last_datreg'];/**/
+      if ($lr > $df) {
+        $form['datreg'] = gaz_format_date($lr, false, true);
+      }
+      // controllo se ho uno split payment
+      $yes_split = false;
+      if ($xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiBeniServizi/DatiRiepilogo/EsigibilitaIVA")->length >= 1) {
+        $yes_split = $xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiBeniServizi/DatiRiepilogo/EsigibilitaIVA")->item(0)->nodeValue;
+      }
       $cudo=$curr_doc_cont->item(0);
 			$DettaglioLinee = $cudo->getElementsByTagName('DettaglioLinee');
 			$nl=0;
 			$nl_NumeroLinea = []; // matrice che conterrà i riferimenti tra $nl e il NumeroLinea, da utilizzare per assegnare Numero/DataDDT se presenti
-			foreach ($DettaglioLinee as $item) {
+      foreach ($DettaglioLinee as $item) {
 				$nl++;
 				// assegno i riferimenti tra $nl e il NumeroLinea
 				// succede di tutto: se NumeroLinea è doppio lo dobbiamo controllare...
@@ -707,24 +718,12 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					   - i costi sulle linee (righe) in base al fornitore
 					   - le aliquote IVA in base a quanto trovato sul database e sul riepilogo del tracciato
 					*/
-					/* NON SEMBRA ESSERE UTILIZZATA - DA RIVEDERE*/
-					$df = $xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiGenerali/DatiGeneraliDocumento/Data")->item(0)->nodeValue;
-					// trovo l'ultima data di registrazione
-					$lr = getLastProtocol('AF_',substr($df,0,4),1)['last_datreg'];/**/
-					if ($lr > $df) {
-						$form['datreg'] = gaz_format_date($lr, false, true);
-					}
 					$form['codric_'.$post_nl] = $form['partner_cost'];
 					$form['warehouse_'.$post_nl] = $form['in_id_warehouse'];
 					if (preg_match('/TRASP/i',strtoupper($form['rows'][$nl]['descri']))) { // se sulla descrizione ho un trasporto lo propongo come costo d'acquisto
 						$form['codric_'.$post_nl] = $admin_aziend['cost_tra'];
 					}
 					$expect_vat = gaz_dbi_get_row($gTables['aliiva'], 'codice', $form['partner_vat']); // analizzo le possibilità
-					// controllo se ho uno split payment
-					$yes_split = false;
-					if ($xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiBeniServizi/DatiRiepilogo/EsigibilitaIVA")->length >= 1) {
-						$yes_split = $xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiBeniServizi/DatiRiepilogo/EsigibilitaIVA")->item(0)->nodeValue;
-					}
 					@$Natura = $item->getElementsByTagName('Natura')->item(0)->nodeValue;
 					if ($yes_split == 'S') {
 						$rs_split_vat = gaz_dbi_dyn_query("*", $gTables['aliiva'], "aliquo=" . $form['rows'][$nl]['pervat'] . " AND tipiva='T'", "codice ASC", 0, 1);
@@ -762,8 +761,6 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				}
 
 			}
-//var_dump($form['rows']);
-//var_dump($_POST);
 			//Se la fattura è derivante da un DdT aggiungo i relativi  elementi  all'array dei righi
 			$anomalia="";
       $numddt="";

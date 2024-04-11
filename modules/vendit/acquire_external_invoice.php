@@ -266,12 +266,29 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		if ($doc->getElementsByTagName("BolloVirtuale")->length >= 1){
 			$form['virtual_taxstamp'] = 1;
 		}
+    $df = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Data")->item(0)->nodeValue;
+    // trovo l'ultima data di registrazione
+    $lr=getLastProtocol('F__',substr($df,0,4),1)['last_datreg'];
+    $lrt = strtotime($lr);
+    $dft = strtotime($df);
+    if ($lrt<=$dft) { // se l'ultima registrazione è precedente alla fattura propongo la data della fattura
+      $form['datreg']	= gaz_format_date($df, false, false);
+    } else {
+      $form['datreg']	= gaz_format_date($lr, false, false);
+    }
+    // controllo se ho uno split payment
+    $yes_split=false;
+    if($xpath->query("//FatturaElettronicaBody/DatiBeniServizi/DatiRiepilogo/EsigibilitaIVA")->length >=1){
+      $yes_split=$xpath->query("//FatturaElettronicaBody/DatiBeniServizi/DatiRiepilogo/EsigibilitaIVA")->item(0)->nodeValue;
+    }
 		/*
+
 		INIZIO creazione array dei righi con la stessa nomenclatura usata sulla tabella rigdoc
 		a causa della mancanza di rigore del tracciato ufficiale siamo costretti a crearci un castelletto conti e iva
 		al fine contabilizzare direttamente qui senza passare per la contabilizzazione di GAzie e tentare di creare dei
 		righi documenti la cui somma coincida con il totale imponibile riportato sul tracciato
 		*/
+
 		$DettaglioLinee = $doc->getElementsByTagName('DettaglioLinee');
 		$nl=0;
 		foreach ($DettaglioLinee as $item) {
@@ -339,27 +356,12 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				   - i costi sulle linee (righe) in base al cliente
 				   - le aliquote IVA in base a quanto trovato sul database e sul riepilogo del tracciato
 				*/
-				$df = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Data")->item(0)->nodeValue;
-				// trovo l'ultima data di registrazione
-				$lr=getLastProtocol('F__',substr($df,0,4),1)['last_datreg'];
-				$lrt = strtotime($lr);
-				$dft = strtotime($df);
-				if ($lrt<=$dft) { // se l'ultima registrazione è precedente alla fattura propongo la data della fattura
-					$form['datreg']	= gaz_format_date($df, false, false);
-				} else {
-					$form['datreg']	= gaz_format_date($lr, false, false);
-				}
 				$form['codric_'.$post_nl] = $form['partner_revenues'];
 				if (preg_match('/TRASP/i',strtoupper($form['rows'][$nl]['descri']))) { // se sulla descrizione ho un trasporto lo propongo come ricavo di vendita
 					$form['codric_'.$post_nl] = $admin_aziend['cost_tra'];
 				}
 				$expect_vat = gaz_dbi_get_row($gTables['aliiva'], 'codice', $form['partner_vat']);
 				// analizzo le possibilità
-				// controllo se ho uno split payment
-				$yes_split=false;
-				if($xpath->query("//FatturaElettronicaBody/DatiBeniServizi/DatiRiepilogo/EsigibilitaIVA")->length >=1){
-					$yes_split=$xpath->query("//FatturaElettronicaBody/DatiBeniServizi/DatiRiepilogo/EsigibilitaIVA")->item(0)->nodeValue;
-				}
 				if ($yes_split=='S'){
 					$rs_split_vat = gaz_dbi_dyn_query("*", $gTables['aliiva'], "aliquo = " . $form['rows'][$nl]['pervat']." AND tipiva ='T'", "codice ASC", 0, 1);
 					$split_vat = gaz_dbi_fetch_array($rs_split_vat);
