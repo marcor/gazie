@@ -158,12 +158,26 @@ if (isset($_GET['viewxml'])) {   //se viene richiesta una visualizzazione all'in
 	$xslt->importStylesheet($xslDoc);
 	$iframe_src = str_replace('"', '&quot;', $xslt->transformToXML($doc));
 ?>
-  <iframe style="border: none" width="99%" height="400px" sandbox="allow-same-origin"
+  <div class="col-sm-6 text-center"><a class="btn btn-info" href="./electronic_invoice.php?id_tes=<?php echo $id_testata; ?>&viewforprint" target="_new">Visualizza per stampa</a></div><div class="col-sm-6"></div>
+  <iframe style="border: none" width="99%" height="400px" sandbox="allow-same-origin" name="frame"
     srcdoc="<?=$iframe_src?>"
     onload="this.style.height = this.contentDocument.firstChild.scrollHeight + 'px'; this.contentDocument.body.style.textAlign = 'center';">
   </iframe>
 <?php
   require("../../library/include/footer.php");
+} elseif (isset($_GET['viewforprint'])) {   //se viene richiesta una prestampa
+	$file_content=create_XML_invoice($testate,$gTables,'rigdoc',false,'from_string.xml',false, $pdf_content);
+	$fae_xsl_file = gaz_dbi_get_row($gTables['company_config'], 'var', 'fae_style');
+	$doc = new DOMDocument;
+	$doc->preserveWhiteSpace = false;
+	$doc->formatOutput = true;
+ 	$doc->loadXML($file_content);
+	$xpath = new DOMXpath($doc);
+	$xslDoc = new DOMDocument();
+	$xslDoc->load("../../library/include/".$fae_xsl_file['val'].".xsl");
+	$xslt = new XSLTProcessor();
+	$xslt->importStylesheet($xslDoc);
+	echo $xslt->transformToXML($doc);
 } else { // .... altrimenti faccio il download diretto
 	create_XML_invoice($testate,$gTables,'rigdoc',false,false,false,$pdf_content);
 }
