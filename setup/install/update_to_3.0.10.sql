@@ -1,5 +1,5 @@
 UPDATE `gaz_config` SET `cvalue` = '34' WHERE `id` =2;
-ALTER TABLE `gaz_aziend` ADD `decimal_quantity` INT( 1 ) NOT NULL AFTER `regime` ;
+ALTER TABLE `gaz_aziend` ADD `decimal_quantity` INT NOT NULL AFTER `regime` ;
 ALTER TABLE `gaz_rigdoc` CHANGE `quanti` `quanti` DECIMAL( 12, 3 );
 ALTER TABLE `gaz_rigbro` CHANGE `quanti` `quanti` DECIMAL( 12, 3 ); 
 ALTER TABLE `gaz_movmag` CHANGE `quanti` `quanti` DECIMAL( 12, 3 );
@@ -15,4 +15,4 @@ UPDATE `gaz_aziend` SET `decimal_quantity` = 9 WHERE 1;
 ALTER TABLE `gaz_aziend` ADD `country` VARCHAR( 2 ) NOT NULL AFTER `prospe` ;
 UPDATE `gaz_aziend` SET `country` = 'IT' WHERE 1;
 ALTER TABLE `gaz_rigbro` ADD `delivery_date` DATE NOT NULL AFTER `provvigione` ;
-ALTER TABLE `gaz_rigdoc` ADD `id_order` INT( 9 ) NOT NULL AFTER `provvigione` ;
+ALTER TABLE `gaz_rigdoc` ADD `id_order` INT NOT NULL AFTER `provvigione` ;

@@ -1,9 +1,9 @@
 UPDATE `gaz_config` SET `cvalue` = '157' WHERE `id` =2;
 CREATE TABLE IF NOT EXISTS `gaz_forme_giuridiche` (
-  `id_forgiu` int NOT NULL AUTO_INCREMENT,
-  `descri` varchar(100) DEFAULT NULL,
-  `sigla` varchar(15) DEFAULT NULL,
-  `ordine` tinyint(3) DEFAULT NULL,
+  `id_forgiu` INT NOT NULL AUTO_INCREMENT,
+  `descri` VARCHAR(100) DEFAULT NULL,
+  `sigla` VARCHAR(15) DEFAULT NULL,
+  `ordine` TINYINT DEFAULT NULL,
   PRIMARY KEY (`id_forgiu`),
   KEY `ordine` (`ordine`) USING BTREE
 ) ENGINE=MyISAM AUTO_INCREMENT=73;
@@ -80,20 +80,20 @@ INSERT INTO `gaz_forme_giuridiche` (`id_forgiu`, `descri`, `sigla`, `ordine`) VA
 	(70, 'SOCIETA\' SEMPLICE', 'S.S.', 1),
 	(71, 'SOCIETA\' TRA PROFESSIONISTI', 'SOC.PROF.', 1),
 	(72, 'NON SPECIFICATA', '', 1);
-ALTER TABLE `gaz_anagra` CHANGE COLUMN `legrap_pf_nome` `legrap_pf_nome` VARCHAR(60) NOT NULL DEFAULT '' COMMENT 'nome del rappresentante legale (persona fisica)' AFTER `sedleg`, CHANGE COLUMN `legrap_pf_cognome` `legrap_pf_cognome` VARCHAR(60) NOT NULL DEFAULT '' COMMENT 'cognome del rappresentante legale (persona fisica)' AFTER `legrap_pf_nome`, ADD COLUMN `legrap_pf_luonas` VARCHAR(60) NOT NULL DEFAULT '' COMMENT 'luogo di nascita del rappresentante legale (persona fisica) ' AFTER `legrap_pf_cognome`, ADD COLUMN `legrap_pf_pronas` VARCHAR(2) NOT NULL DEFAULT '' COMMENT 'provincia di nascita del rappresentante legale (persona fisica) EE per esterno' AFTER `legrap_pf_luonas`, ADD COLUMN `legrap_pf_datnas` DATE NULL COMMENT 'data di nascita del rappresentante legale (persona fisica)' AFTER `legrap_pf_pronas`, ADD COLUMN `legrap_pf_codfis` VARCHAR(16) NOT NULL DEFAULT '' COMMENT 'codice fiscale del rappresentante legale (persona fisica)' AFTER `legrap_pf_datnas`, ADD COLUMN `cod_ateco` INT(10) NULL DEFAULT NULL AFTER `pariva`, ADD COLUMN `id_forgiu` INT(10) NULL DEFAULT NULL COMMENT 'riferimento alla tabella gaz_forme_giuridiche' AFTER `sexper`;
+ALTER TABLE `gaz_anagra` CHANGE COLUMN `legrap_pf_nome` `legrap_pf_nome` VARCHAR(60) NOT NULL DEFAULT '' COMMENT 'nome del rappresentante legale (persona fisica)' AFTER `sedleg`, CHANGE COLUMN `legrap_pf_cognome` `legrap_pf_cognome` VARCHAR(60) NOT NULL DEFAULT '' COMMENT 'cognome del rappresentante legale (persona fisica)' AFTER `legrap_pf_nome`, ADD COLUMN `legrap_pf_luonas` VARCHAR(60) NOT NULL DEFAULT '' COMMENT 'luogo di nascita del rappresentante legale (persona fisica) ' AFTER `legrap_pf_cognome`, ADD COLUMN `legrap_pf_pronas` VARCHAR(2) NOT NULL DEFAULT '' COMMENT 'provincia di nascita del rappresentante legale (persona fisica) EE per esterno' AFTER `legrap_pf_luonas`, ADD COLUMN `legrap_pf_datnas` DATE NULL COMMENT 'data di nascita del rappresentante legale (persona fisica)' AFTER `legrap_pf_pronas`, ADD COLUMN `legrap_pf_codfis` VARCHAR(16) NOT NULL DEFAULT '' COMMENT 'codice fiscale del rappresentante legale (persona fisica)' AFTER `legrap_pf_datnas`, ADD COLUMN `cod_ateco` INT NULL AFTER `pariva`, ADD COLUMN `id_forgiu` INT NULL COMMENT 'riferimento alla tabella gaz_forme_giuridiche' AFTER `sexper`;
 DROP TABLE IF EXISTS `gaz_biochemical_parameters`;
 CREATE TABLE IF NOT EXISTS `gaz_biochemical_parameters` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `RiferimentoNormativo` varchar(127) DEFAULT NULL,
-  `Parte` varchar(10) DEFAULT NULL,
-  `ordine` int NOT NULL DEFAULT '0',
-  `Parametro` varchar(64) DEFAULT NULL,
-  `ValMinimoParametro` varchar(64) DEFAULT NULL,
-  `ValMassimoParametro` varchar(64) DEFAULT NULL,
-  `UnitaMisura` varchar(32) DEFAULT NULL,
-  `Note` varchar(2000) DEFAULT NULL,
-  `Metodo` varchar(255) DEFAULT NULL,
-  `Settore` varchar(64) DEFAULT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `RiferimentoNormativo` VARCHAR(127) DEFAULT NULL,
+  `Parte` VARCHAR(10) DEFAULT NULL,
+  `ordine` INT NOT NULL,
+  `Parametro` VARCHAR(64) DEFAULT NULL,
+  `ValMinimoParametro` VARCHAR(64) DEFAULT NULL,
+  `ValMassimoParametro` VARCHAR(64) DEFAULT NULL,
+  `UnitaMisura` VARCHAR(32) DEFAULT NULL,
+  `Note` VARCHAR(2000) DEFAULT NULL,
+  `Metodo` VARCHAR(255) DEFAULT NULL,
+  `Settore` VARCHAR(64) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `RiferimentoNormativo` (`RiferimentoNormativo`),
   KEY `Settore` (`Settore`),
@@ -167,26 +167,26 @@ UPDATE `gaz_module` SET `class`='fa fa-industry40' WHERE  `name`='fourzero';
 UPDATE `gaz_module` SET `class`='fa fa-lims' WHERE  `name`='lims';
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 CREATE TABLE IF NOT EXISTS `gaz_XXXpagame_distribution` (
-  `id_pagdis` int NOT NULL AUTO_INCREMENT,
-  `codpag` int NOT NULL COMMENT 'Referenza alla tabella gaz_XXXpagame (molti a uno)',
-  `descri` varchar(50) NOT NULL DEFAULT '' COMMENT 'La descrizione è indispensabile in assenza di data di scadenza (expiry)',
+  `id_pagdis` INT NOT NULL AUTO_INCREMENT,
+  `codpag` INT NOT NULL COMMENT 'Referenza alla tabella gaz_XXXpagame (molti a uno)',
+  `descri` VARCHAR(50) NOT NULL DEFAULT '' COMMENT 'La descrizione è indispensabile in assenza di data di scadenza (expiry)',
   `ratperc` decimal(4,1) NOT NULL COMMENT 'La somma dei righi riferiti allo stesso codpag dovrebbe essere 100 se non lo è viene troncato o riempito fino a capienza',
-  `from_prev` varchar(3) NULL DEFAULT NULL COMMENT 'Sono i giorni  dalla scadenza precedente o dalla data di riferimento, si può indicare anche una lettere coma nella colonna tiprat di gaz_XXXpagame. non è indispensabile e se variabile, ovvero non strettamente determinato, es. quando il limite temporale dipende dalla fine dei lavori o da altre condizione queste verranno indicate in descrizione e lasciata vuota o NULL.',
-  `tippag` char(1) NOT NULL DEFAULT '0' COMMENT 'La stessa della colonna tippag di gaz_XXXpagame ma prevale su di essa se valorizzata. Consente metodi di pagamento diversi sulle diverse rate',
-  `fae_mode` varchar(4) DEFAULT NULL COMMENT 'Come su gaz_XXXpagame è il valore MPXX della fattura elettronica. Consente metodi di pagamento diversi sulle diverse rate',
-  `id_bank` int NOT NULL,
-  `annota` varchar(50) DEFAULT NULL,
+  `from_prev` VARCHAR(3) NULL DEFAULT NULL COMMENT 'Sono i giorni  dalla scadenza precedente o dalla data di riferimento, si può indicare anche una lettere coma nella colonna tiprat di gaz_XXXpagame. non è indispensabile e se variabile, ovvero non strettamente determinato, es. quando il limite temporale dipende dalla fine dei lavori o da altre condizione queste verranno indicate in descrizione e lasciata vuota o NULL.',
+  `tippag` CHAR(1) NOT NULL DEFAULT '0' COMMENT 'La stessa della colonna tippag di gaz_XXXpagame ma prevale su di essa se valorizzata. Consente metodi di pagamento diversi sulle diverse rate',
+  `fae_mode` VARCHAR(4) DEFAULT NULL COMMENT 'Come su gaz_XXXpagame è il valore MPXX della fattura elettronica. Consente metodi di pagamento diversi sulle diverse rate',
+  `id_bank` INT NOT NULL,
+  `annota` VARCHAR(50) DEFAULT NULL,
   PRIMARY KEY (`id_pagdis`) USING BTREE,
   KEY `codpag` (`codpag`),
   KEY `from_prev` (`from_prev`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COMMENT='Il contenuto di questa tabella serve per gestire i pagamenti con scadenze e rate non costanti nell''importo e nella periodicità. Ed è legata alla tabella gaz_XXXpagame. Ogni rigo di questa tabella rappresenta una rata per il pagamento riferito con la colonna codpag e verranno passate come matrice alla funzione CalcExpiry nel file expiry_calc.php ';
 ALTER TABLE `gaz_XXXpagame` CHANGE COLUMN `tippag` `tippag` CHAR(1) NOT NULL DEFAULT '' COMMENT 'C=contanti,O=bonifico,K=carte di pagamento,D=rimessa diretta,I=rapporto interbancario diretto (RID),B=Ricevuta Bancaria,T=Cambiale-Tratta,V=mediante avviso(MAV),F=finanziamento,M=misto. ATTENZIONE se F o M ci si può appoggiare alla tabella gaz_XXXcompany_data per contenere dati quali anticipo, finanziato, importo rate, numero rate, periodicità' AFTER `descri`;
-ALTER TABLE `gaz_XXXcompany_data`	COMMENT='Multipurpose table. Tabella per contenere dati di qualsiasi genere, utilizzabile sulle personalizzazioni per conservare (ad es.) documenti crittografati.', ADD COLUMN `id_ref` INT(10) NULL COMMENT 'Referenza numerica alla fonte' AFTER `id`,	ADD INDEX `id_ref` (`id_ref`);
+ALTER TABLE `gaz_XXXcompany_data`	COMMENT='Multipurpose table. Tabella per contenere dati di qualsiasi genere, utilizzabile sulle personalizzazioni per conservare (ad es.) documenti crittografati.', ADD COLUMN `id_ref` INT NULL COMMENT 'Referenza numerica alla fonte' AFTER `id`,	ADD INDEX `id_ref` (`id_ref`);
 ALTER TABLE `gaz_XXXartico`
-	ADD COLUMN `iso_country` char(2) NOT NULL DEFAULT 'IT' COMMENT 'A parità di codice, inserendo un\'altro rigo consente la generazione di più righi (normalmente 2) sui documenti con la traduzione della descrizione nella lingua indicata in lang_id ed eventualmente anche valuta, cambio ecc ' AFTER `codice`,
-	ADD COLUMN `lang_id` int NOT NULL DEFAULT '1' COMMENT 'Se appartenente ad un altro iso_country indica la lingua nella quale è possibile creare un altro rigo sui documenti per la traduzione ' AFTER `id_artico_group`,
+	ADD COLUMN `iso_country` CHAR(2) NOT NULL DEFAULT 'IT' COMMENT 'A parità di codice, inserendo un\'altro rigo consente la generazione di più righi (normalmente 2) sui documenti con la traduzione della descrizione nella lingua indicata in lang_id ed eventualmente anche valuta, cambio ecc ' AFTER `codice`,
+	ADD COLUMN `lang_id` INT NOT NULL DEFAULT '1' COMMENT 'Se appartenente ad un altro iso_country indica la lingua nella quale è possibile creare un altro rigo sui documenti per la traduzione ' AFTER `id_artico_group`,
 	DROP PRIMARY KEY,
 	ADD PRIMARY KEY (`codice`, `iso_country`) USING BTREE,
 	ADD INDEX `codice` (`codice`);
-ALTER TABLE `gaz_XXXrigdoc`	ADD COLUMN `transl_id_ref` int NOT NULL DEFAULT '0' COMMENT 'Se > 0 è una referenza ad id_ref di gaz_001company_data dove riprendere i dati per la traduzione (o altro) nella lingua del partner' AFTER `tiprig`;
+ALTER TABLE `gaz_XXXrigdoc`	ADD COLUMN `transl_id_ref` INT NOT NULL COMMENT 'Se > 0 è una referenza ad id_ref di gaz_001company_data dove riprendere i dati per la traduzione (o altro) nella lingua del partner' AFTER `tiprig`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )

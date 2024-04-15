@@ -1,7 +1,7 @@
 UPDATE `gaz_config` SET `cvalue` = '95' WHERE `id` =2;
-ALTER TABLE `gaz_aziend` ADD COLUMN `lost_cost_assets` INT(9) NOT NULL DEFAULT '0' AFTER `mas_cost_assets`;
+ALTER TABLE `gaz_aziend` ADD COLUMN `lost_cost_assets` INT NOT NULL AFTER `mas_cost_assets`;
 ALTER TABLE `gaz_aziend` ADD COLUMN `min_rate_deprec` DECIMAL(4,1) NOT NULL DEFAULT '0.0' AFTER `lost_cost_assets`;
-ALTER TABLE `gaz_aziend` ADD COLUMN `super_amm_account` INT(9) NOT NULL DEFAULT '0' AFTER `lost_cost_assets`;
+ALTER TABLE `gaz_aziend` ADD COLUMN `super_amm_account` INT NOT NULL AFTER `lost_cost_assets`;
 ALTER TABLE `gaz_aziend` ADD COLUMN `super_amm_rate` DECIMAL(4,1) NOT NULL DEFAULT '40.0' AFTER `super_amm_account`;
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT id FROM `gaz_menu_module` WHERE `link`='report_assets.php'), 'depreciation_assets.php', '', '', 7, '', 7  FROM `gaz_menu_script`;
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT id FROM `gaz_menu_module` WHERE `link`='select_situazione_contabile.php'), 'select_debiti_crediti.php', '', '', 7, '', 2  FROM `gaz_menu_script`;

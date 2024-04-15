@@ -1,5 +1,5 @@
 UPDATE `gaz_config` SET `cvalue` = '88' WHERE `id` =2;
-ALTER TABLE `gaz_aziend` ADD `split_payment` INT(9) NOT NULL AFTER `ivaera`;
+ALTER TABLE `gaz_aziend` ADD `split_payment` INT NOT NULL AFTER `ivaera`;
 UPDATE `gaz_aziend` SET `split_payment` = '588000020' WHERE 1;
 UPDATE `gaz_aziend` SET `template` = '' WHERE 1; 
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)

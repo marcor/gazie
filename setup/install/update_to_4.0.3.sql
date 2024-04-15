@@ -1,9 +1,9 @@
 UPDATE `gaz_config` SET `cvalue` = '46' WHERE `id` =2;
 ALTER TABLE `gaz_letter` CHANGE `corpo` `corpo` TEXT;
 ALTER TABLE `gaz_rigdoc` CHANGE `descri` `descri` VARCHAR( 100 ) NOT NULL;
-ALTER TABLE `gaz_rigdoc` ADD `id_body_text` INT( 9 ) NOT NULL AFTER `descri`;
+ALTER TABLE `gaz_rigdoc` ADD `id_body_text` INT NOT NULL AFTER `descri`;
 ALTER TABLE `gaz_rigbro` CHANGE `descri` `descri` VARCHAR( 100 ) NOT NULL;
-ALTER TABLE `gaz_rigbro` ADD `id_body_text` INT( 9 ) NOT NULL AFTER `descri`;
+ALTER TABLE `gaz_rigbro` ADD `id_body_text` INT NOT NULL AFTER `descri`;
 ALTER TABLE `gaz_aziend` ADD `ricbol` DECIMAL( 5, 2 ) NOT NULL AFTER `acciva` ;
 UPDATE `gaz_module` SET `weight` = '99' WHERE `id` =1 LIMIT 1 ;
 UPDATE `gaz_aziend` SET `ricbol` = '1.81' WHERE `codice` = 1 ;
@@ -70,7 +70,7 @@ VALUES
 (57, 1, 'accounting_documents.php?type=VRI', '', '', 24, '', 3),
 (58, 1, 'report_received.php', '', '', 25, '', 2),
 (59, 11, 'admin_docacq.php?tipdoc=ADT&Insert', '', '', 10, '', 2),
-(60, 11, 'report_acqddt.php', '', '', 9, '', 1); 
+(60, 11, 'report_acqddt.php', '', '', 9, '', 1);
 TRUNCATE TABLE `gaz_menu_module`;
 INSERT INTO `gaz_menu_module`
 (`id`, `id_module`, `link`, `icon`, `class`, `translate_key`, `accesskey`, `weight`)
@@ -128,58 +128,58 @@ VALUES
 (49, 8, 'backup.php', '', '', 3, '', 3),
 (50, 8, 'update_control.php', '', '', 4, '', 4);
 CREATE TABLE `gaz_contract` (
-  `id_contract` int(9) NOT NULL auto_increment,
-  `id_costumer` int(9) NOT NULL default '0',
-  `vat_section` int(1) NOT NULL default '0',
-  `doc_number` int(9) NOT NULL default '0',
-  `doc_type` varchar(3) NOT NULL,
-  `conclusion_date` date NOT NULL default '0000-00-00',
-  `start_date` date NOT NULL default '0000-00-00',
-  `months_duration` int(3) NOT NULL default '0',
-  `initial_fee` decimal(15,2) NOT NULL default '0.00',	
-  `periodic_reassessment` int(1) NOT NULL default '0',
-  `periodicity` int(2) NOT NULL default '0',
-  `payment_method` int(2) NOT NULL default '0', 
-  `bank` int( 3 ) NOT NULL default '0',
-  `tacit_renewal` int(1) NOT NULL default '0',
-  `current_fee` decimal(15,2) NOT NULL default '0.00',
-  `cod_revenue` int(9) NOT NULL default '0',
-  `id_con` int(9) NOT NULL,
-  `vat_code` int(2) NOT NULL default '0',
-  `id_body_text` int(9) NOT NULL default '0',
-  `last_reassessment` date NOT NULL default '0000-00-00',
-  `id_agente` int(9) NOT NULL,
+  `id_contract` INT NOT NULL auto_increment,
+  `id_costumer` INT NOT NULL,
+  `vat_section` INT NOT NULL,
+  `doc_number` INT NOT NULL,
+  `doc_type` VARCHAR(3) NOT NULL,
+  `conclusion_date` DATE NOT NULL DEFAULT '0000-00-00',
+  `start_date` DATE NOT NULL DEFAULT '0000-00-00',
+  `months_duration` INT NOT NULL,
+  `initial_fee` decimal(15,2) NOT NULL DEFAULT '0.00',
+  `periodic_reassessment` INT NOT NULL,
+  `periodicity` INT NOT NULL,
+  `payment_method` INT NOT NULL,
+  `bank` INT NOT NULL,
+  `tacit_renewal` INT NOT NULL,
+  `current_fee` decimal(15,2) NOT NULL DEFAULT '0.00',
+  `cod_revenue` INT NOT NULL,
+  `id_con` INT NOT NULL,
+  `vat_code` INT NOT NULL,
+  `id_body_text` INT NOT NULL,
+  `last_reassessment` DATE NOT NULL DEFAULT '0000-00-00',
+  `id_agente` INT NOT NULL,
   `provvigione` decimal(4,2) NOT NULL,
-  `status` varchar(10) NOT NULL,
-  `note` varchar(64) NOT NULL,
-  `adminid` varchar(20) NOT NULL default '',
-  `last_modified` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+  `status` VARCHAR(10) NOT NULL,
+  `note` VARCHAR(64) NOT NULL,
+  `adminid` VARCHAR(20) NOT NULL DEFAULT '',
+  `last_modified` TIMESTAMP NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
   PRIMARY KEY  (`id_contract`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
 
 CREATE TABLE `gaz_contract_row` (
-  `id_row` int(9) NOT NULL auto_increment,
-  `id_contract` int(9) NOT NULL default '0',
-  `descri` varchar(100) default NULL,
-  `unimis` char(3) NOT NULL default '',
+  `id_row` INT NOT NULL auto_increment,
+  `id_contract` INT NOT NULL,
+  `descri` VARCHAR(100) default NULL,
+  `unimis` CHAR(3) NOT NULL DEFAULT '',
   `quanti` decimal(12,3) default NULL,
-  `price` decimal(14,5) default '0.00000',
-  `discount` decimal(4,1) default '0.0',
-  `vat_code` int(2) NOT NULL default '0',
-  `cod_revenue` int(9) NOT NULL default '0',
-  `id_con` int(9) NOT NULL,
-  `status` varchar(10) NOT NULL default '',
+  `price` decimal(14,5) DEFAULT '0.00000',
+  `discount` decimal(4,1) DEFAULT '0.0',
+  `vat_code` INT NOT NULL,
+  `cod_revenue` INT NOT NULL,
+  `id_con` INT NOT NULL,
+  `status` VARCHAR(10) NOT NULL DEFAULT '',
   PRIMARY KEY  (`id_contract`,`id_row`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 CREATE TABLE `gaz_body_text` (
-  `id_body` int(9) unsigned NOT NULL auto_increment,
-  `table_name_ref` varchar(50) NOT NULL default '',
-  `id_ref` int(9) NOT NULL default '0',
+  `id_body` INT NOT NULL auto_increment,
+  `table_name_ref` VARCHAR(50) NOT NULL DEFAULT '',
+  `id_ref` INT NOT NULL,
   `body_text` TEXT NOT NULL,
-  `iso3_country` CHAR(3) NOT NULL default '',
+  `iso3_country` CHAR(3) NOT NULL DEFAULT '',
   PRIMARY KEY  (`id_body`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
-ALTER TABLE `gaz_tesbro` CHANGE `id_iva` `id_contract` INT( 9 ) NOT NULL DEFAULT '0' ;
-ALTER TABLE `gaz_tesdoc` CHANGE `id_iva` `id_contract` INT( 9 ) NOT NULL DEFAULT '0' ;
+ALTER TABLE `gaz_tesbro` CHANGE `id_iva` `id_contract` INT NOT NULL ;
+ALTER TABLE `gaz_tesdoc` CHANGE `id_iva` `id_contract` INT NOT NULL ;

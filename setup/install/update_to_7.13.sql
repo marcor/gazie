@@ -11,14 +11,14 @@ UPDATE `gaz_config` SET `cvalue` = '113' WHERE `id` =2;
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 INSERT INTO `gaz_XXXcompany_config` (`description`, `var`) VALUES ('Eventuale ultimo rigo descrittivo su fatture es. Contributo CONAI', 'descriptive_last_row');
 CREATE TABLE `gaz_XXXsyncronize_oc` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `table_oc` varchar(40) NOT NULL,
-  `table_gz` varchar(40) NOT NULL,
-  `id_oc` int(11) NOT NULL,
-  `id_gz` int(11) NOT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `table_oc` VARCHAR(40) NOT NULL,
+  `table_gz` VARCHAR(40) NOT NULL,
+  `id_oc` INT NOT NULL,
+  `id_gz` INT NOT NULL,
   `date_created` datetime NOT NULL,
   `date_update` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM;
-ALTER TABLE `gaz_XXXtesdoc`	ADD COLUMN `fattura_elettronica_reinvii` INT(1) NULL DEFAULT '0' COMMENT 'Numero di reinvii allo SdI della fattura elettronica, assieme alla sezione, alla data fattura e al numero di protocollo e dopo un encode in base 36 determinerà gli ultimi cinque caratteri del nome file' AFTER `fattura_elettronica_original_content`;
+ALTER TABLE `gaz_XXXtesdoc`	ADD COLUMN `fattura_elettronica_reinvii` INT NULL COMMENT 'Numero di reinvii allo SdI della fattura elettronica, assieme alla sezione, alla data fattura e al numero di protocollo e dopo un encode in base 36 determinerà gli ultimi cinque caratteri del nome file' AFTER `fattura_elettronica_original_content`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)

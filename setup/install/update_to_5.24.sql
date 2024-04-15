@@ -1,10 +1,10 @@
 UPDATE `gaz_config` SET `cvalue` = '82' WHERE `id` =2;
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 ALTER TABLE `gaz_XXXclfoco` ADD `sia_code` VARCHAR( 5 ) NOT NULL AFTER `iban` ;
-ALTER TABLE `gaz_XXXeffett` ADD `protoc` INT( 9 ) NOT NULL AFTER `seziva`; 
+ALTER TABLE `gaz_XXXeffett` ADD `protoc` INT NOT NULL AFTER `seziva`; 
 TRUNCATE TABLE `gaz_XXXpaymov`; 
 ALTER TABLE `gaz_XXXpaymov` CHANGE `id_tesdoc_ref` `id_tesdoc_ref` VARCHAR( 15 ) NOT NULL;
-ALTER TABLE `gaz_XXXcaucon` ADD `pay_schedule` INT( 1 ) NOT NULL AFTER `operat`;
+ALTER TABLE `gaz_XXXcaucon` ADD `pay_schedule` INT NOT NULL AFTER `operat`;
 UPDATE `gaz_XXXcaucon` SET `pay_schedule` = 1 WHERE (`codice` = 'FAP' OR `codice` = 'FND' OR `codice` = 'AFC' OR `codice` = 'FNC' OR `codice` = 'FDR' OR `codice` = 'FDE' OR `codice` = 'FAI' OR `codice` = 'FAD' OR `codice` = 'AFA');
 INSERT INTO `gaz_XXXcaucon` (`codice`, `descri`, `insdoc`, `regiva`, `operat`, `pay_schedule`, `contr1`, `tipim1`, `daav_1`, `contr2`, `tipim2`, `daav_2`, `contr3`, `tipim3`, `daav_3`, `contr4`, `tipim4`, `daav_4`, `contr5`, `tipim5`, `daav_5`, `contr6`, `tipim6`, `daav_6`, `adminid`, `last_modified`) VALUES
 ('RIB', 'EMESSA RICEVUTA BANCARIA', 1, 0, 0, 2, 103000000, 'A', 'A', 597000021, 'A', 'D', 0, '', 'D', 0, '', 'D', 0, '', 'D', 0, '', 'D', 'amministratore', '0000-00-00 00:00:00'),

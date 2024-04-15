@@ -1,5 +1,5 @@
 UPDATE `gaz_config` SET `cvalue` = '53' WHERE `id` =2;
-ALTER TABLE `gaz_aziend` ADD `c_ritenute` INT( 9 ) NOT NULL AFTER `cocamb` ,
+ALTER TABLE `gaz_aziend` ADD `c_ritenute` INT NOT NULL AFTER `cocamb` ,
 ADD `ritenuta` DECIMAL( 3, 1 ) NOT NULL AFTER `c_ritenute`;
 UPDATE `gaz_aziend` SET `c_ritenute` = '106000003' WHERE 1;
 ALTER TABLE `gaz_rigdoc` ADD `ritenuta` DECIMAL( 3, 1 ) NOT NULL AFTER `provvigione` ;

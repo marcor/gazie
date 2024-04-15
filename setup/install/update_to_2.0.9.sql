@@ -1,7 +1,7 @@
 UPDATE `gaz_config` SET `cvalue` = '06' WHERE `id` =2;
-ALTER TABLE `gaz_clfoco` ADD `cosric` INT( 9 ) NOT NULL AFTER `aliiva`;
+ALTER TABLE `gaz_clfoco` ADD `cosric` INT NOT NULL AFTER `aliiva`;
 UPDATE `gaz_config` SET `cvalue` = '07' WHERE `id` =2;
-ALTER TABLE `gaz_rigbro` ADD `id_doc` INT( 9 ) NOT NULL AFTER `codric` ;
+ALTER TABLE `gaz_rigbro` ADD `id_doc` INT NOT NULL AFTER `codric` ;
 UPDATE `gaz_config` SET `cvalue` = '08' WHERE `id` =2;
 UPDATE `gaz_tesdoc` SET numdoc=numfat WHERE tipdoc = 'FAI' or tipdoc = 'FNC' or tipdoc = 'FND';
 UPDATE `gaz_config` SET `cvalue` = '09' WHERE `id` =2;

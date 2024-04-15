@@ -1,7 +1,7 @@
 UPDATE `gaz_config` SET `cvalue` = '65' WHERE `id` =2;
 UPDATE `gaz_menu_script` SET `link` = 'admin_effett.php?Insert' WHERE `link` = 'insert_effett.php' LIMIT 1;
 UPDATE `gaz_config` SET `cvalue` = '66' WHERE `id` =2;
-ALTER TABLE `gaz_country` ADD `IBAN_prefix` VARCHAR( 2 ) NOT NULL AFTER `numcode`, ADD `IBAN_lenght` INT( 2 ) NOT NULL AFTER `IBAN_prefix`;
+ALTER TABLE `gaz_country` ADD `IBAN_prefix` VARCHAR( 2 ) NOT NULL AFTER `numcode`, ADD `IBAN_lenght` INT NOT NULL AFTER `IBAN_prefix`;
 UPDATE `gaz_country` SET `IBAN_prefix` =  'IT', `IBAN_lenght` = '27' WHERE `iso` = 'IT' LIMIT 1;
 UPDATE `gaz_country` SET `IBAN_prefix` =  'AD', `IBAN_lenght` = '24' WHERE `iso` = 'AD' LIMIT 1;
 UPDATE `gaz_country` SET `IBAN_prefix` =  'AT', `IBAN_lenght` = '20' WHERE `iso` = 'AT' LIMIT 1;

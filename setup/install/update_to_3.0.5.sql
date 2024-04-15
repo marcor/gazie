@@ -1,13 +1,13 @@
 UPDATE `gaz_config` SET `cvalue` = '24' WHERE `id` =2;
 CREATE TABLE `gaz_menu_module` (
-  `id` int(4) NOT NULL,
-  `id_module` int(4) NOT NULL,
-  `link` varchar(50) NOT NULL default '',
-  `icon` varchar(50) NOT NULL,
-  `class` varchar(30) NOT NULL,
-  `translate_key` int(2) NOT NULL default '0',
-  `accesskey` varchar(1) NOT NULL,
-  `weight` int(2) default NULL,
+  `id` INT NOT NULL,
+  `id_module` INT NOT NULL,
+  `link` VARCHAR(50) NOT NULL DEFAULT '',
+  `icon` VARCHAR(50) NOT NULL,
+  `class` VARCHAR(30) NOT NULL,
+  `translate_key` INT NOT NULL,
+  `accesskey` VARCHAR(1) NOT NULL,
+  `weight` INT DEFAULT NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1;
 
@@ -65,27 +65,27 @@ INSERT INTO `gaz_menu_module` (`id`, `id_module`, `link`, `icon`, `class`, `tran
 (50, 8, 'update_control.php', '', '', 4, '', 4);
 
 CREATE TABLE `gaz_menu_script` (
-  `id` int(4) NOT NULL,
-  `id_menu` int(4) NOT NULL,
-  `link` varchar(50) NOT NULL default '',
-  `icon` varchar(50) NOT NULL,
-  `class` varchar(30) NOT NULL,
-  `translate_key` int(2) NOT NULL default '0',
-  `accesskey` varchar(1) NOT NULL,
-  `weight` int(2) default NULL,
+  `id` INT NOT NULL,
+  `id_menu` INT NOT NULL,
+  `link` VARCHAR(50) NOT NULL DEFAULT '',
+  `icon` VARCHAR(50) NOT NULL,
+  `class` VARCHAR(30) NOT NULL,
+  `translate_key` INT NOT NULL,
+  `accesskey` VARCHAR(1) NOT NULL,
+  `weight` INT DEFAULT NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 DROP TABLE `gaz_module`;
 
 CREATE TABLE `gaz_module` (
-  `id` int(11) NOT NULL auto_increment,
-  `name` varchar(30) NOT NULL default '',
-  `link` varchar(50) NOT NULL default '',
-  `icon` varchar(50) NOT NULL,
-  `class` varchar(30) NOT NULL,
-  `access` int(11) default '0',
-  `weight` int(11) default NULL,
+  `id` INT NOT NULL auto_increment,
+  `name` VARCHAR(30) NOT NULL DEFAULT '',
+  `link` VARCHAR(50) NOT NULL DEFAULT '',
+  `icon` VARCHAR(50) NOT NULL,
+  `class` VARCHAR(30) NOT NULL,
+  `access` INT DEFAULT '0',
+  `weight` INT DEFAULT NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=9 ;
 

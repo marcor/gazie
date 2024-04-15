@@ -10,5 +10,5 @@ INSERT INTO `gaz_XXXcaumag` (`codice`, `descri`, `type_cau`, `clifor`, `insdoc`,
 83, 'SCARICO PER TRASFERIMENTO VERSO ALTRO MAGAZZINO', 9, 0, 0, -1 FROM DUAL
 WHERE NOT EXISTS (SELECT `codice` FROM `gaz_XXXcaumag` WHERE `codice` = 83 LIMIT 1);
 UPDATE `gaz_XXXartico` SET `good_or_service`= 0 WHERE `good_or_service` IS NULL;
-ALTER TABLE `gaz_XXXartico` CHANGE COLUMN `good_or_service` `good_or_service` INT(1) NOT NULL AFTER `movimentabile`;
+ALTER TABLE `gaz_XXXartico` CHANGE COLUMN `good_or_service` `good_or_service` INT NOT NULL AFTER `movimentabile`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )

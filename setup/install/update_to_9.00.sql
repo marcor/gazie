@@ -1,6 +1,6 @@
 UPDATE `gaz_config` SET `cvalue` = '150' WHERE `id` =2;
 CREATE TABLE IF NOT EXISTS `gaz_anagraes` (
-  `id` INT(9) NOT NULL AUTO_INCREMENT,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `ragso1` TINYBLOB,
   `ragso2` TINYBLOB,
   `sedleg` BLOB,

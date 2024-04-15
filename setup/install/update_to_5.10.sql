@@ -1,37 +1,37 @@
 UPDATE `gaz_config` SET `cvalue` = '70' WHERE `id` =2;
 ALTER TABLE `gaz_aziend` ADD `web_url` VARCHAR( 255 ) NOT NULL AFTER `e_mail`;
 CREATE TABLE IF NOT EXISTS `gaz_municipalities` (
-  `id` int(9) NOT NULL AUTO_INCREMENT,
-  `id_province` int(9) NOT NULL,
-  `name` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
-  `postal_code` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
-  `dialing_code` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
-  `stat_code` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
-  `code_register` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
-  `web_url` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
-  `email` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `id_province` INT NOT NULL,
+  `name` VARCHAR(255) CHARACTER SET utf8 DEFAULT NULL,
+  `postal_code` VARCHAR(255) CHARACTER SET utf8 DEFAULT NULL,
+  `dialing_code` VARCHAR(255) CHARACTER SET utf8 DEFAULT NULL,
+  `stat_code` VARCHAR(255) CHARACTER SET utf8 DEFAULT NULL,
+  `code_register` VARCHAR(255) CHARACTER SET utf8 DEFAULT NULL,
+  `web_url` VARCHAR(255) CHARACTER SET utf8 DEFAULT NULL,
+  `email` VARCHAR(255) CHARACTER SET utf8 DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0;
 CREATE TABLE IF NOT EXISTS `gaz_provinces` (
-  `id` int(9) NOT NULL AUTO_INCREMENT,
-  `id_region` int(9) NOT NULL,
-  `name` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
-  `stat_code` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
-  `abbreviation` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
-  `web_url` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
-  `email` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `id_region` INT NOT NULL,
+  `name` VARCHAR(255) CHARACTER SET utf8 DEFAULT NULL,
+  `stat_code` VARCHAR(255) CHARACTER SET utf8 DEFAULT NULL,
+  `abbreviation` VARCHAR(255) CHARACTER SET utf8 DEFAULT NULL,
+  `web_url` VARCHAR(255) CHARACTER SET utf8 DEFAULT NULL,
+  `email` VARCHAR(255) CHARACTER SET utf8 DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0;
 CREATE TABLE IF NOT EXISTS `gaz_regions` (
-  `id` int(9) NOT NULL AUTO_INCREMENT,
-  `iso_country` varchar(2) CHARACTER SET utf8 NOT NULL,
-  `name` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
-  `capital` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
-  `zone` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
-  `stat_code` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
-  `abbreviation` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
-  `web_url` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
-  `email` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `iso_country` VARCHAR(2) CHARACTER SET utf8 NOT NULL,
+  `name` VARCHAR(255) CHARACTER SET utf8 DEFAULT NULL,
+  `capital` VARCHAR(255) CHARACTER SET utf8 DEFAULT NULL,
+  `zone` VARCHAR(255) CHARACTER SET utf8 DEFAULT NULL,
+  `stat_code` VARCHAR(255) CHARACTER SET utf8 DEFAULT NULL,
+  `abbreviation` VARCHAR(255) CHARACTER SET utf8 DEFAULT NULL,
+  `web_url` VARCHAR(255) CHARACTER SET utf8 DEFAULT NULL,
+  `email` VARCHAR(255) CHARACTER SET utf8 DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0; 
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)

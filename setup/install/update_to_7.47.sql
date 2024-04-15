@@ -6,7 +6,7 @@ ALTER TABLE `gaz_staff_work_type` ADD COLUMN `descri_ext` VARCHAR(255) NULL DEFA
 UPDATE `gaz_staff_work_type` SET `descri_ext` = `descri` WHERE 1;
 INSERT INTO gaz_staff_work_type (id_work_type, hour_year_limit, hour_month_limit, hour_week_limit, hour_day_limit, increase, inps_ref, causal, descri, descri_ext) SELECT 9, 0, 0, 0, 0, 0, inps_ref, causal, descri, descri_ext FROM `gaz_staff_absence_type` WHERE 1;
 DROP TABLE `gaz_staff_absence_type`;
-ALTER TABLE `gaz_staff_work_type` CHANGE COLUMN `id_work_type` `id_work_type` INT(3) NOT NULL COMMENT '1=straordinario;  2,8=altri; 9=assenze;' AFTER `id_work`;
+ALTER TABLE `gaz_staff_work_type` CHANGE COLUMN `id_work_type` `id_work_type` INT NOT NULL COMMENT '1=straordinario;  2,8=altri; 9=assenze;' AFTER `id_work`;
 DELETE t1 FROM gaz_module t1 INNER JOIN gaz_module t2 WHERE t1.id > t2.id AND t1.name = t2.name;
 INSERT INTO `gaz_menu_module` SELECT MAX(id)+1, (SELECT MIN(id) FROM `gaz_module` WHERE `name`='humres'), 'employee_timesheet.php', '', '', '2', '', '20'  FROM `gaz_menu_module`;
 INSERT INTO `gaz_menu_module` SELECT MAX(id)+1, (SELECT MIN(id) FROM `gaz_module` WHERE `name`='humres'), 'pay_salary.php', '', '', '3', '', '30'  FROM `gaz_menu_module`;
