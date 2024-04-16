@@ -79,33 +79,35 @@ if (isset($_GET['reinvia'])) {   //se viene richiesto un reinvio con altro nome 
     $namelib = preg_replace("/[^a-zA-Z]+/", "", $_GET['sdiflux']);
     // distinguo se libreria "modalità catsrl" oppure modulo "modalità gazSynchro"
     if ( file_exists('../'.$namelib.'/sync.function.php') ) { // modalità gazSynchro
-      require_once('../'.$namelib.'/sync.function.php');
-      $classnamesdiflux = $namelib.'gazSynchro';
-      $sdifluxSync = new $classnamesdiflux();
-      // invio tramite i metodi della classe per la sincronizzazione con SdI
-      $res=$sdifluxSync->SendFaE($_GET);
-      if (strlen($res)>1){ // invio non riuscito
-        print '<br/>'.$res;
-        exit;
-      } else { // invio riuscito
-        header("Location: " . $_SERVER['HTTP_REFERER']);
-      }
-    } elseif(file_exists('../../library/'.$namelib.'/SendFaE.php'))  { // modalità catsrl
-      require('../../library/'.$namelib.'/SendFaE.php');
-      $zn = substr($_GET['zn'], 0, 37); // con questo metodo passo solo lo zip
-      $file_url = DATA_DIR.'files/' . $admin_aziend['codice'] . '/' . $zn;
-      $IdentificativiSdI = SendFattureElettroniche($file_url);
-      if (!empty($IdentificativiSdI)) {
-        if (is_array($IdentificativiSdI)) {
-          gaz_dbi_put_query($gTables['fae_flux'], "filename_zip_package = '" . $zn."'", "flux_status", "@@");
-          foreach ($IdentificativiSdI as $filename_ori=>$IdentificativoSdI) {
-            gaz_dbi_put_query($gTables['fae_flux'], "filename_ori = '" . $filename_ori."'", "id_SDI", $IdentificativoSdI);
-          }
-        } else {
-          echo '<p>' . print_r($IdentificativiSdI, true) . '</p>';
-        }
-      }
-      header('Location: report_fae_sdi.php?post_xml_result=OK');
+		require_once('../'.$namelib.'/sync.function.php');
+		$classnamesdiflux = $namelib.'gazSynchro';
+		$sdifluxSync = new $classnamesdiflux();
+		// invio tramite i metodi della classe per la sincronizzazione con SdI
+		$res = $sdifluxSync->SendFaE($_GET);
+		if (strlen($res)>1) { // invio non riuscito
+			print '<br/>'.$res;
+			exit;
+		} else { // invio riuscito
+			header("Location: " . $_SERVER['HTTP_REFERER']);
+		}
+    } elseif(file_exists('../../library/'.$namelib.'/SendFaE.php')) { // modalità catsrl
+		require('../../library/'.$namelib.'/SendFaE.php');
+		if (isset($_GET['zn'])) {
+			$zn = substr($_GET['zn'], 0, 37); // con questo metodo passo solo lo zip
+			$file_url = DATA_DIR.'files/' . $admin_aziend['codice'] . '/' . $zn;
+			$IdentificativiSdI = SendFattureElettroniche($file_url);
+			if (!empty($IdentificativiSdI)) {
+				if (is_array($IdentificativiSdI)) {
+					gaz_dbi_put_query($gTables['fae_flux'], "filename_zip_package = '" . $zn."'", "flux_status", "@@");
+					foreach ($IdentificativiSdI as $filename_ori=>$IdentificativoSdI) {
+					gaz_dbi_put_query($gTables['fae_flux'], "filename_ori = '" . $filename_ori."'", "id_SDI", $IdentificativoSdI);
+					}
+				} else {
+					echo '<p>' . print_r($IdentificativiSdI, true) . '</p>';
+				}
+			}
+		}
+		header('Location: report_fae_sdi.php?post_xml_result=OK');
     }
   }
 }
