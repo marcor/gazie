@@ -196,26 +196,31 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
 	if ($form['change_pag'] != $form['pagame']) {  //se è stato cambiato il pagamento
         $new_pag = gaz_dbi_get_row($gTables['pagame'], "codice", $form['pagame']);
         $old_pag = gaz_dbi_get_row($gTables['pagame'], "codice", $form['change_pag']);
-        if (($new_pag['tippag'] == 'B' || $new_pag['tippag'] == 'T' || $new_pag['tippag'] == 'V')
-                && ( $old_pag['tippag'] == 'C' || $old_pag['tippag'] == 'D' || $old_pag['tippag'] == 'O')) { // se adesso devo mettere le spese e prima no
-            $form['numrat'] = $new_pag['numrat'];
-            if ($toDo == 'update') {  //se è una modifica mi baso sulle vecchie spese
-                $old_header = gaz_dbi_get_row($gTables['tesdoc'], "id_tes", $form['id_tes']);
-                if ($old_header['speban'] > 0 && $fornitore['speban'] == "S") {
-                    $form['speban'] = 0;
-                } elseif ($old_header['speban'] == 0 && $fornitore['speban'] == "S") {
-                    $form['speban'] = 0;
-                } else {
-                    $form['speban'] = 0.00;
-                }
-            } else { //altrimenti mi avvalgo delle nuove dell'azienda
-                $form['speban'] = 0;
-            }
-        } elseif (($new_pag['tippag'] == 'C' || $new_pag['tippag'] == 'D' || $new_pag['tippag'] == 'O')
-                && ( $old_pag['tippag'] == 'B' || $old_pag['tippag'] == 'T' || $old_pag['tippag'] == 'V')) { // se devo togliere le spese
-            $form['speban'] = 0.00;
-            $form['numrat'] = 1;
-        }
+		if (isset($new_pag)) {
+			if (($new_pag['tippag'] == 'B' || $new_pag['tippag'] == 'T' || $new_pag['tippag'] == 'V')
+					&& ( $old_pag['tippag'] == 'C' || $old_pag['tippag'] == 'D' || $old_pag['tippag'] == 'O')) { // se adesso devo mettere le spese e prima no
+				$form['numrat'] = $new_pag['numrat'];
+				if ($toDo == 'update') {  //se è una modifica mi baso sulle vecchie spese
+					$old_header = gaz_dbi_get_row($gTables['tesdoc'], "id_tes", $form['id_tes']);
+					if ($old_header['speban'] > 0 && $fornitore['speban'] == "S") {
+						$form['speban'] = 0;
+					} elseif ($old_header['speban'] == 0 && $fornitore['speban'] == "S") {
+						$form['speban'] = 0;
+					} else {
+						$form['speban'] = 0.00;
+					}
+				} else { //altrimenti mi avvalgo delle nuove dell'azienda
+					$form['speban'] = 0;
+				}
+			} elseif (($new_pag['tippag'] == 'C' || $new_pag['tippag'] == 'D' || $new_pag['tippag'] == 'O')
+					&& ( $old_pag['tippag'] == 'B' || $old_pag['tippag'] == 'T' || $old_pag['tippag'] == 'V')) { // se devo togliere le spese
+				$form['speban'] = 0.00;
+				$form['numrat'] = 1;
+			}
+		} else {
+			$form['speban'] = 0.00;
+			$form['numrat'] = 1;
+		}
         $form['pagame'] = $_POST['pagame'];
         $form['change_pag'] = $_POST['pagame'];
     }
@@ -421,12 +426,12 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                 $form['in_status'] = "UPDROW" . $key_row;
                 // sottrazione ai totali peso,pezzi,volume
                 $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['rows'][$key_row]['codart']);
-                $form['net_weight'] -= $form['rows'][$key_row]['quanti'] * $artico['peso_specifico'];
-                $form['gross_weight'] -= $form['rows'][$key_row]['quanti'] * $artico['peso_specifico'];
+                $form['net_weight'] -= $form['rows'][$key_row]['quanti'] * ($artico['peso_specifico'] ?? 1);
+                $form['gross_weight'] -= $form['rows'][$key_row]['quanti'] * ($artico['peso_specifico'] ?? 1);
                 if ($artico['pack_units'] > 0) {
                     $form['units'] -= intval(round($form['rows'][$key_row]['quanti'] / $artico['pack_units']));
                 }
-                $form['volume'] -= $form['rows'][$key_row]['quanti'] * $artico['volume_specifico'];
+                $form['volume'] -= $form['rows'][$key_row]['quanti'] * ($artico['volume_specifico'] ?? 1);
                 $form['cosear'] = $form['rows'][$key_row]['codart'];
                 $form['in_extdoc'] = $form['rows'][$key_row]['extdoc'];
                 if (!empty($_FILES['docfile_' . $key_row]['name'])) {
