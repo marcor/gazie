@@ -160,6 +160,7 @@ if (sizeof($result) > 0) {
       $pdf->Cell(17,3,number_format($row['prezzo'],$admin_aziend['decimal_price'],',','.'),1,0,'R',$rf);
       $pdf->Cell(18,3,gaz_format_number(CalcolaImportoRigo($row['quanti'],$row['prezzo'],array($row['scochi'],$row['scorig']))),1,0,'R',$rf);
     } else {
+      $row['ragsoc']=(isset($row['ragsoc']))?$row['ragsoc']:'';
       $pdf->Cell(20,3,substr($row['ragsoc'],0,30),1, 0, 'L',$rf, '', 1);
 	  }
 	  $pdf->Cell(10,3,$row['unimis'],1,0,'C',$rf);
