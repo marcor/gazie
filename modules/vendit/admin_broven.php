@@ -189,6 +189,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_provvigione'] = $_POST['in_provvigione'];
     $form['in_id_mag'] = $_POST['in_id_mag'];
     $form['in_id_rig'] = $_POST['in_id_rig'];
+    $form['in_nrow'] = $_POST['in_nrow'];
+    $form['in_nrow_linked'] = $_POST['in_nrow_linked'];
     $form['in_annota'] = $_POST['in_annota'];
     $form['in_scorta'] = $_POST['in_scorta'];
     $form['in_quamag'] = $_POST['in_quamag'];
@@ -241,6 +243,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             }
             $form['rows'][$next_row]['id_mag'] = intval($v['id_mag']);
             $form['rows'][$next_row]['id_rig'] = intval($v['id_rig']);
+            $form['rows'][$next_row]['nrow'] = intval($v['nrow']);
+            $form['rows'][$next_row]['nrow_linked'] = intval($v['nrow_linked']);
             $form['rows'][$next_row]['annota'] = substr($v['annota'], 0, 50);
             $form['rows'][$next_row]['scorta'] = floatval($v['scorta']);
             $form['rows'][$next_row]['quamag'] = floatval($v['quamag']);
@@ -255,7 +259,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         unlink($fn);
                     }
                     $move = move_uploaded_file($_FILES['docfile_' . $next_row]['tmp_name'], DATA_DIR . 'files/tmp/' . $prefix . '_' . $_FILES['docfile_' . $next_row]['name']);
-                                        var_dump($_FILES['docfile_' . $next_row]['name']);
                     $form['rows'][$next_row]['extdoc'] = $_FILES['docfile_' . $next_row]['name'];
                 }
                 if (!$move) {
@@ -296,6 +299,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['in_provvigione'] = (isset($form['rows'][$k_row]['provvigione']))?$form['rows'][$k_row]['provvigione']:0;
                     $form['in_id_mag'] = $form['rows'][$k_row]['id_mag'];
                     $form['in_id_rig'] = $form['rows'][$k_row]['id_rig'];
+                    $form['in_nrow'] = $form['rows'][$k_row]['nrow'];
+                    $form['in_nrow_linked'] = $form['rows'][$k_row]['nrow_linked'];
                     $form['in_annota'] = $form['rows'][$k_row]['annota'];
                     $form['in_scorta'] = $form['rows'][$k_row]['scorta'];
                     $form['in_quamag'] = $form['rows'][$k_row]['quamag'];
@@ -834,6 +839,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$old_key]['descri'] = $form['in_descri'];
             $form['rows'][$old_key]['id_mag'] = $form['in_id_mag'];
             $form['rows'][$old_key]['id_rig'] = $form['in_id_rig'];
+            $form['rows'][$old_key]['nrow'] = $form['in_nrow'];
+            $form['rows'][$old_key]['nrow_linked'] = $form['in_nrow_linked'];
             $form['rows'][$old_key]['status'] = "UPDATE";
             $form['rows'][$old_key]['unimis'] = $form['in_unimis'];
             $form['rows'][$old_key]['quanti'] = $form['in_quanti'];
@@ -930,6 +937,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             }
             ksort($form['rows']);
         } else { //se è un rigo da inserire
+          $nrow_linked = $next_row+1; // di default lo linko su se stesso
           if ($form['in_tiprig'] == 0) {   // è un rigo normale controllo se l'articolo prevede un rigo testuale che lo precede
             $article_text = gaz_dbi_get_row($gTables['company_config'], 'var', 'article_text');
             if ($article_text['val'] < 2){
@@ -948,6 +956,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
               $rbt['descri'] = '';
               $rbt['id_mag'] = 0;
               $rbt['id_rig'] = 0;
+              $rbt['nrow'] = $nrow_linked;
               $rbt['id_lotmag'] = 0;
               $rbt['identifier'] = '';
               $rbt['cod_operazione'] = 11;
@@ -972,9 +981,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
               $rbt['ritenuta'] = 0;
               $rbt['codvat'] = 0;
               if ($cbt==1) {
+                $rbt['nrow_linked'] = $next_row+2; // se il testuale viene prima lo linko al rigo successivo
                 $form["row_$next_row"] = $bodytext['body_text'];
                 $form['rows'][$next_row]=$rbt;
                 $next_row++;
+              } elseif ($cbt==2) {
+                $nrow_linked = $next_row+2; // se il testuale viene dopo lo linko al rigo successivo
               }
             }
           }
@@ -983,6 +995,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
           $form['rows'][$next_row]['descri'] = $form['in_descri'];
           $form['rows'][$next_row]['id_mag'] = $form['in_id_mag'];
           $form['rows'][$next_row]['id_rig'] = $form['in_id_rig'];
+          $form['rows'][$next_row]['nrow'] =  $next_row+1;
+          $form['rows'][$next_row]['nrow_linked'] =  $nrow_linked; // se non ho avuto $cbt=1 questo sarà lo stesso di nrow in cbt
+          // se non è linkato ad altri righi li imposto uguali
+          $form['rows'][$next_row]['nrow'] =$next_row+1;
           $form['rows'][$next_row]['extdoc'] = 0;
           $form['rows'][$next_row]['status'] = "INSERT";
           $form['rows'][$next_row]['scorta'] = 0;
@@ -1095,6 +1111,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             }
             if (!empty($bodytext) && !empty($bodytext['body_text']) && $cbt== 2) { // il testo aggiuntivo c'è, non è vuoto e va dopo il rigo normale
                 $next_row++;
+                $rbt['nrow_linked'] = $next_row; // se il testuale viene dopo lo linko al rigo precedente
+                $rbt['nrow'] = $next_row+1;
                 $form["row_$next_row"] = $bodytext['body_text'];
                 $form['rows'][$next_row]=$rbt;
             }
@@ -1199,32 +1217,194 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['cosear'] = "";
         $next_row++;
     }
-    // Se viene inviata la richiesta di spostamento verso l'alto del rigo
-    if (isset($_POST['upper_row'])) {
-        $upp_key = key($_POST['upper_row']);
-        if ($upp_key > 0) {
-            $new_key = $upp_key - 1;
-        } else {
-            $new_key = $next_row - 1;
+
+    // Se viene richiesto lo spostamento di un rigo
+    if ($_POST['hidden_req']=='moverow') {
+      $form['hidden_req'] = '';
+      $kFrom=intval($_POST['moved_nrow'])-1;
+      $kTo=intval($_POST['moved_to'])-1;
+      $accnew=[];
+      $acctesto=[];
+      $to_data=$form['rows'][$kTo];
+      $nrow_data=$form['rows'][$kFrom];
+      $from_islink = ($nrow_data['nrow']<$nrow_data['nrow_linked'])?$nrow_data['nrow_linked']:false;
+      // controllo per evitare di spostare su un rigo linkato
+      if($to_data['nrow']>$to_data['nrow_linked']) {
+        $msg .= "59+";
+      } else {
+        // mi creo un array con i riferimenti ai righi movimentati
+        $jumplnk=true;
+        foreach($form['rows'] as $k=>$v){ // riattraverso tutti i righi per spostare il rigo richiesto (eventualmente assieme a quello linkato) ed i successivi
+          $nextlink=($v['nrow']<$v['nrow_linked'])?true:false;
+
+// si possono verificare due casi: il rigo è spostato in giù oppure in su
+
+          if ($kFrom > $kTo) {
+// SPOSTO SU
+      // LINKATO
+           if ($from_islink) {  // sto spostando uno linkato, dovrò aggiungere anche il rigo collegato e poi spostare di 2 tutti i successivi
+            if ($k < $kTo || $k > ($kFrom+1) ) { // è un rigo che sta prima della destinazione o dopo il rigo spostato, lo riaccumulo così com'è
+              $accnew[$k]=$v;
+              if (isset($form["row_".$k])){
+                $acctesto[$k]=$form["row_".$k];
+                unset($form["row_".$k]);
+              }
+            } elseif($k==$kTo) {
+              // è il posto dove è destinato il rigo, lo valorizzo con esso
+              $rowFrom= $form['rows'][$kFrom];
+              $rowFrom['nrow']=$k+1;
+              $rowFrom['nrow_linked']=$k+2;
+              $accnew[$k]=$rowFrom;
+              // accumulo anche eventuale testo
+              if (isset($form["row_".$kFrom])) {
+                $acctesto[$k]=$form["row_".$kFrom];
+                unset($form["row_".$kFrom]);
+              }
+              // aggiungo subito dopo il linkato all'accumulatore
+              $form['rows'][($from_islink-1)]['nrow']=$k+1;
+              $form['rows'][($from_islink-1)]['nrow_linked']=$k;
+              $accnew[($k+1)]=$form['rows'][($from_islink-1)];
+              // accumulo testo linkato
+              if (isset($form["row_".($from_islink-1)])){
+                $acctesto[($k+1)]=$form["row_".($from_islink-1)];
+                unset($form["row_".($from_islink-1)]);
+              }
+              // riprendo il vecchio rigo e lo riposiziono più in basso tal quale
+              $v['nrow'] += 2;
+              $v['nrow_linked'] += 2;
+              $accnew[($k+2)]=$v;
+              // accumulo eventuale testo originale
+              if (isset($form["row_".$k])){
+                $acctesto[$k+2]=$form["row_".$k];
+                unset($form["row_".$k]);
+              }
+            } elseif( $k == $kFrom || $k == ($from_islink-1)) { // quello spostato ed il relativo linkato l'ho accumulato sopra
+
+            } else { // tutti i righi compresi tra partenza e destinazione li sposto in basso di 2
+                $v['nrow'] += 2;
+                $v['nrow_linked'] += 2;
+                $accnew[($k+2)]=$v;
+                // sposto un eventuale testo
+                if (isset($form["row_".$k])){
+                  $acctesto[($k+2)]=$form["row_".$k];
+                  unset($form["row_".$k]);
+                }
+            }
+           } else {
+      // NON LINKATO
+            if ($k < $kTo || $k > $kFrom) { // è un rigo che sta prima della destinazione o dopo il rigo spostato, lo riaccumulo così com'è
+              $accnew[$k]=$v;
+              if (isset($form["row_".$k])){
+                $acctesto[$k]=$form["row_".$k];
+                unset($form["row_".$k]);
+              }
+            } elseif($k==$kTo) { // è la posizione di destinazione
+              $form['rows'][$kFrom]['nrow']=$k+1;
+              $form['rows'][$kFrom]['nrow_linked']=$k+1;
+              $accnew[$k]=$form['rows'][$kFrom];
+              // se il rigo spostato è un testo lo accumulo sulla sua matrice
+              if (isset($form["row_".$kFrom])){
+                $acctesto[$k]=$form["row_".$kFrom];
+                unset($form["row_".$kFrom]);
+              }
+              //  e sposto questo verso il basso quello che c'era prima
+                $form['rows'][$k]['nrow']=$v['nrow']+1;
+                $form['rows'][$k]['nrow_linked']=$v['nrow_linked']+1;
+                $accnew[$k+1]=$form['rows'][$k];
+                // sposto un eventuale testo
+                if (isset($form["row_".$k])){
+                  $acctesto[$k+1]=$form["row_".$k];
+                  unset($form["row_".$k]);
+                }
+            } elseif( $k == $kFrom) { // quello spostato l'ho già accumulato  verso l'alto
+
+            } else { // tutti i righi compresi tra partenza e destinazione
+                $v['nrow']++;
+                $v['nrow_linked']++;
+                $accnew[($k+1)]=$v;
+                // sposto un eventuale testo
+                if (isset($form["row_".$k])){
+                  $acctesto[($k+1)]=$form["row_".$k];
+                  unset($form["row_".$k]);
+                }
+            }
+           }
+
+          } else {
+
+// SPOSTO GIU
+
+      // LINKATO
+           if ($from_islink) {  // sto spostando uno linkato , devo partire da una posizione in meno rispetto al singolo, e poi aggiungere anche il rigo collegato
+            if ($k < $kFrom || $k >= $kTo) { // è un rigo che stanno prima di quello spostato o quello di destinazione e successivi,  lo riaccumulo così com'è
+              $accnew[$k]=$form['rows'][$k];
+            } elseif( $k == $kFrom) { // è il rigo spostato
+                $v['nrow']=$kTo-1;
+                $v['nrow_linked']=$kTo;
+                $accnew[$kTo-2]=$v; // lo accumulo
+                // sposto un eventuale testo
+                if (isset($form["row_$k"])){
+                  $acctesto[$kTo-2]=$form["row_$k"];
+                  unset($form["row_$k"]);
+                }
+                // aggiungo anche il relativo linkato all'accumulatore
+                $form['rows'][($from_islink-1)]['nrow']=$kTo;
+                $form['rows'][($from_islink-1)]['nrow_linked']=$kTo-1;
+                $accnew[$kTo-1]=$form['rows'][($from_islink-1)];
+                // sposto un eventuale testo
+                if (isset($form["row_".($from_islink-1)])){
+                  $acctesto[$kTo-1]=$form["row_".($from_islink-1)];
+                  unset($form["row_".($from_islink-1)]);
+                }
+            } else { // tutti i righi compresi tra partenza e destinazione
+                if ($jumplnk){ // salto il linkato perché già aggiunto sopra
+                  $jumplnk=false;
+                } else {
+                  $v['nrow'] -=2;
+                  $v['nrow_linked'] -=2;
+                  $accnew[$k-2]=$v;
+                 // sposto un eventuale testo
+                  if (isset($form["row_".$k])){
+                    $acctesto[$k-2]=$form["row_".$k];
+                    unset($form["row_".$k]);
+                  }
+                }
+            }
+      // NON LINKATO
+           } else {
+            if ($k < $kFrom || $k >= $kTo) { // è un rigo che sta prima di quello spostato o quello di destinazione e successivi,  lo riaccumulo così com'è
+              $accnew[$k]=$form['rows'][$k];
+            } elseif( $k == $kFrom) { // è il rigo spostato
+                $v['nrow']=$kTo-1;
+                $v['nrow_linked']=$kTo-1;
+                $accnew[$kTo-1]=$v; // lo accumulo di un rigo prima di quello indicato in destinazione
+                // sposto un eventuale testo
+                if (isset($form["row_$k"])){
+                  $acctesto[$kTo-1]=$form["row_$k"];
+                  unset($form["row_$k"]);
+                }
+            } else { // tutti i righi compresi tra partenza e destinazione
+                $v['nrow']--;
+                $v['nrow_linked']--;
+                $accnew[$k-1]=$v;
+                // sposto un eventuale testo
+                if (isset($form["row_".$k])){
+                  $acctesto[$k-1]=$form["row_".$k];
+                  unset($form["row_".$k]);
+                }
+            }
+           }
+          }
         }
-      //   echo "upkey:",$upp_key," - new:",$new_key,"<pre>matrice:",print_r($form);die;
-        if (isset($form["row_$upp_key"]) && !isset($form["row_$new_key"])) { //se sto spostando un rigo testo dove non c'era un altro rigo testo
-            $form["row_$new_key"] = $form["row_$upp_key"];
-            unset($form["row_$upp_key"]);
-        } elseif(isset($form["row_$upp_key"]) && isset($form["row_$new_key"]))  { //se lo sto spostando dove prima c'era un rigo testo li scambio
-            $swap=$form["row_$upp_key"];
-            $form["row_$upp_key"] = $form["row_$new_key"];
-            $form["row_$new_key"] = $swap;
-        }elseif(isset($form["row_$new_key"]))  { //se lo sto spostando dove prima c'era un rigo normale
-            $form["row_$upp_key"] = $form["row_$new_key"];
-            unset($form["row_$new_key"]);
+
+        ksort($accnew);
+        foreach($acctesto as $kt => $vt){
+          $form["row_$kt"]=$vt;
         }
-        $updated_row = $form['rows'][$new_key];
-        $form['rows'][$new_key] = $form['rows'][$upp_key];
-        $form['rows'][$upp_key] = $updated_row;
-        ksort($form['rows']);
-        unset($updated_row);
+        $form['rows']=$accnew;
+      }
     }
+
     // Se viene inviata la richiesta elimina il rigo corrispondente
     if (isset($_POST['del'])) {
         $delri = key($_POST['del']);
@@ -1288,6 +1468,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_codric'] = substr($admin_aziend['impven'], 0, 3);
     $form['in_id_mag'] = 0;
     $form['in_id_rig'] = 0;
+    $form['in_nrow'] = 0;
+    $form['in_nrow_linked'] = 0;
     $form['in_annota'] = "";
     $form['in_pesosp'] = 0;
     $form['in_scorta'] = 0;
@@ -1400,11 +1582,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$next_row]['provvigione'] = $rigo['provvigione'];
         $form['rows'][$next_row]['id_mag'] = $rigo['id_mag'];
         $form['rows'][$next_row]['id_rig'] = $rigo['id_rig'];
-        $form['rows'][$next_row]['annota'] = (isset($articolo['annota']))?$articolo['annota']:'';
+        $form['rows'][$next_row]['nrow'] = ($rigo['nrow'] >=1 ) ? $rigo['nrow'] : ($next_row+1); // retrocompatibilità
+        $form['rows'][$next_row]['nrow_linked'] = ($rigo['nrow_linked'] >=1 ) ? $rigo['nrow_linked'] : ($next_row+1); // retrocompatibilità
+        $form['rows'][$next_row]['annota'] = (isset($articolo['annota'])) ? $articolo['annota']:'';
         $mv = $upd_mm->getStockValue(false, $rigo['codart'], "", $admin_aziend['stock_eval_method']);
         $magval = array_pop($mv);
         $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
-        $form['rows'][$next_row]['id_rig'] = $rigo['id_rig'];
         $form['rows'][$next_row]['scorta'] = (isset($articolo['scorta']))?$articolo['scorta']:'';
         $form['rows'][$next_row]['quamag'] = $magval['q_g'];
         $form['rows'][$next_row]['pesosp'] = (isset($articolo['peso_specifico']))?$articolo['peso_specifico']:'';
@@ -1469,6 +1652,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_provvigione'] = 0;
     $form['in_id_mag'] = 0;
     $form['in_id_rig'] = 0;
+    $form['in_nrow'] = 0;
+    $form['in_nrow_linked'] = 0;
     $form['in_annota'] = "";
     $form['in_scorta'] = 0;
     $form['in_quamag'] = 0;
@@ -1541,60 +1726,44 @@ require("../../library/include/header.php");
 require("./lang." . $admin_aziend['lang'] . ".php");
 
 // INIZIO VIEW
-
 $script_transl = $strScript["admin_broven.php"] + HeadMain(0, array('calendarpopup/CalendarPopup','custom/autocomplete','custom/miojs'));
 if ($form['id_tes'] > 0) {
     $title = ucfirst($script_transl[$toDo] . $script_transl[0][$form['tipdoc']]) . " n." . $form['numdoc'];
 } else {
     $title = ucfirst($script_transl[$toDo] . $script_transl[0][$form['tipdoc']]);
 }
-echo '<script type="text/javascript">';
-if ( empty($msg) && !isset($_POST['ins']) && $scorrimento == '1' ) { // se ho un errore non scrollo
-	if (!empty($_POST['last_focus'])){
-		$idlf='#'.$_POST['last_focus'];
-		$_POST['last_focus']='';
-	} else {
-		$idlf="#search_cosear";
-	}
-	echo '
-	$( function() {
-				$("html, body").delay(100).animate({scrollTop: $("'.$idlf.'").offset().top-100}, 1000);
-				}); ';
+?>
+<script>
+var cal = new CalendarPopup();
+cal.setReturnFunction("setMultipleValues");
+function setMultipleValues(y, m, d) {
+    document.broven.anntra.value = y;
+    document.broven.mestra.value = LZ(m);
+    document.broven.giotra.value = LZ(d);
 }
-
-echo "
 function pulldown_menu(selectName, destField)
 {
-    // Create a variable url to contain the value of the
-    // selected option from the the form named broven and variable selectName
-    var url = document.broven[selectName].options[document.broven[selectName].selectedIndex].value;
-    document.broven[destField].value = url;
-}";
-echo "
-   function preStampa() // stampa il dettaglio del preventivo senza salvarlo
-    {
-        var mywindow = window.open('', 'my div', 'height=400,width=600');
-        mywindow.document.write('<html><head><title>Stampa</title>');
+  var url = document.broven[selectName].options[document.broven[selectName].selectedIndex].value;
+  document.broven[destField].value = url;
+}
+function preStampa() // stampa il dettaglio del preventivo senza salvarlo
+{
+  var mywindow = window.open('', 'my div', 'height=400,width=600');
+  mywindow.document.write('<html><head><title>Stampa</title>');
+  mywindow.document.write('</head><body >');
+  mywindow.document.write('<h1>CLIENTE: '+$('[name=\"change\"]').val()+'</h1>');
+  mywindow.document.write('<table name=lista border=1> ');
+  mywindow.document.write($('[name=\"elenco\"]').html());
+  mywindow.document.write('</table> ');
+  mywindow.document.write('<h2>TOTALE: &#8364; '+$('[name=\"totale\"]').html()+'</h2>');
+  mywindow.document.write('</body></html>');
+  mywindow.document.close(); // necessary for IE >= 10
+  mywindow.focus(); // necessary for IE >= 10
+  mywindow.print();
+  mywindow.close();
+  return true;
+}
 
-        mywindow.document.write('</head><body >');
-        //alert($('[name=\"change\"]').val());
-        mywindow.document.write('<h1>CLIENTE: '+$('[name=\"change\"]').val()+'</h1>');
-        mywindow.document.write('<table name=lista border=1> ');
-        mywindow.document.write($('[name=\"elenco\"]').html());
-        mywindow.document.write('</table> ');
-        mywindow.document.write('<h2>TOTALE: &#8364; '+$('[name=\"totale\"]').html()+'</h2>');
-        mywindow.document.write('</body></html>');
-
-        mywindow.document.close(); // necessary for IE >= 10
-        mywindow.focus(); // necessary for IE >= 10
-
-        mywindow.print();
-        mywindow.close();
-
-        return true;
-    }
-";
-?>
 function printPdf(urlPrintDoc){
   $(function(){
     $('#framePdf').attr('src',urlPrintDoc);
@@ -1606,22 +1775,100 @@ function printPdf(urlPrintDoc){
     });
   });
 };
-<?php
-echo "</script>\n";
-?>
-<script LANGUAGE="JavaScript" ID="datapopup">
-    var cal = new CalendarPopup();
-    cal.setReturnFunction("setMultipleValues");
-    function setMultipleValues(y, m, d) {
-        document.broven.anntra.value = y;
-        document.broven.mestra.value = LZ(m);
-        document.broven.giotra.value = LZ(d);
-    }
 
-</script>
+$( function() {
+	$("#dialog_moverow").dialog({ autoOpen: false });
+	$('.dialog_moverow').click(function() {
+		var movdescr = $(this).attr("descr");
+		var movnrow = $(this).attr('nrow');
+    var nr=parseInt(movnrow)-1;
+    var movnrow_linked = $('input[name="rows['+nr+'][nrow_linked]"]').val();
+    var intmovnrow_linked = parseInt(movnrow_linked);
+    var descri_linked = (movnrow_linked==movnrow)?'':' legato al rigo ' + movnrow_linked;
+		var maxnrow = $('div#maxnrow').attr('movemax');
+		var intmaxnrow = parseInt(maxnrow);
+    $('input#moved_nrow').val(movnrow);
+    $('input#obj_nrow').val(movnrow);
+    $('input#moved_to').val(movnrow);
+    $('input#obj_nrow').attr('max',maxnrow);
+    $("p#movdescr").html(movdescr);
+    $('input#obj_nrow').on( "change", function() {
+      var intobj_nrow=parseInt($('input#obj_nrow').val());
+      if (intobj_nrow == intmovnrow_linked ){ // se provo ad usare il numero linkato non lo permetto e lo riporto all'originale
+        $('input#obj_nrow').val(movnrow);
+      } else { // se pro
+        $('input#moved_to').val($('input#obj_nrow').val());
+      }
+    });
+    $('input#obj_nrow').on( "keyup", function() {
+      var intobj_nrow=parseInt($('input#obj_nrow').val());
+      if (intobj_nrow > intmaxnrow ) {
+        $('input#obj_nrow').val(maxnrow);
+      }
+    });
+		$( "#dialog_moverow" ).dialog({
+      title: 'Spostamento del rigo '+ movnrow + descri_linked,
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+   			close: {
+					text:'Non spostare',
+					'class':'btn btn-default',
+          click:function() {
+            $(this).dialog("close");
+          }
+        },
+        space: {
+					text:' <-> ',
+					'class':' none '
+        },
+        move: {
+					text:'Conferma spostamento',
+					'class':'btn btn-warning',
+          click:function() {
+            var newrow = $('input#moved_to').val();
+            var newid = parseInt(newrow)-1;
+            if (newrow==movnrow){
+              alert('stai spostando un rigo su se stesso');
+              //$(this).dialog("close");
+            } else {
+              $('input[name="last_focus"]').val('row_'+newid);
+              $('input[name="hidden_req"]').val('moverow');
+              $("#broven").submit();
+            }
+          }
+        }
+			}
+		});
+		$("#dialog_moverow" ).dialog( "open" );
+	});
 <?php
-echo "<form method=\"POST\" name=\"broven\" enctype=\"multipart/form-data\">\n";
+if ( empty($msg) && !isset($_POST['ins']) && $scorrimento == '1' ) { // se ho un errore non scrollo
+	if (!empty($_POST['last_focus'])){
+		$idlf='#'.$_POST['last_focus'];
+		$_POST['last_focus']='';
+	} else {
+		$idlf="#search_cosear";
+	}
+	echo '$("html, body").delay(100).animate({scrollTop: $("'.$idlf.'").offset().top-100}, 1000);';
+}
 ?>
+
+});
+</script>
+
+<form method="POST" name="broven" id="broven" enctype="multipart/form-data">
+
+<!-- FINESTRE MODALI -->
+<div class="modal" id="dialog_moverow" title='Spostamento rigo' style="display:none">
+  <p>Rigo da spostare:</p>
+  <p class="ui-state-highlight" id="movdescr"></p>
+  <p>spostalo sopra al rigo: <input type="number" min="1" max="1" id="obj_nrow" name="obj_nrow" maxlength="3" value="1" /></p>
+</div>
+
 <div class="framePdf panel panel-success" style="display: none; position: absolute; left: 5%; top: 100px">
   <div class="col-lg-12">
     <div class="col-xs-11"><h4><?php echo $script_transl['print'];; ?></h4></div>
@@ -1632,6 +1879,8 @@ echo "<form method=\"POST\" name=\"broven\" enctype=\"multipart/form-data\">\n";
 <?php
 $gForm = new venditForm();
 echo '	<input type="hidden" name="' . ucfirst($toDo) . '" value="" />
+    <input type="hidden" id="moved_nrow" name="moved_nrow" value=""/>
+    <input type="hidden" id="moved_to" name="moved_to" value=""/>
 		<input type="hidden" value="' . $form['id_tes'] . '" name="id_tes" />
 		<input type="hidden" value="' . $form['indspe'] . '" name="indspe" />
 		<input type="hidden" value="' . $form['tipdoc'] . '" name="tipdoc" />
@@ -1809,8 +2058,9 @@ echo '<div class="table-responsive">
 	  <table name="elenco" class="Tlarge table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
+      <td>Rigo</td>
 				<td class="FacetFieldCaptionTD">' . $script_transl[20] . '</td>
-				<td class="FacetFieldCaptionTD" colspan="2">' . $script_transl[21] . '</td>
+				<td class="FacetFieldCaptionTD" >' . $script_transl[21] . '</td>
 				<td class="FacetFieldCaptionTD">' . $script_transl[22] . '</td>
                 <td class="FacetFieldCaptionTD">' . $script_transl[16] . '</td>
                 <td class="FacetFieldCaptionTD">' . $script_transl[23] . '</td>
@@ -1831,7 +2081,9 @@ $rit = 0;
 $carry = 0;
 $last_row = array();
 $vp = gaz_dbi_get_row($gTables['company_config'], 'var', 'vat_price')['val'];
+$nr=0;
 foreach ($form['rows'] as $k => $v) {
+    $nr=$k+1;
     $v['provvigione']=(isset($v['provvigione']))?$v['provvigione']:0;
     //creo il castelletto IVA
     $imprig = 0;
@@ -1866,12 +2118,17 @@ foreach ($form['rows'] as $k => $v) {
     echo "<input type=\"hidden\" value=\"" . $v['codric'] . "\" name=\"rows[$k][codric]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['id_mag'] . "\" name=\"rows[$k][id_mag]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['id_rig'] . "\" name=\"rows[$k][id_rig]\">\n";
+    echo "<input type=\"hidden\" value=\"" . $v['nrow'] . "\" name=\"rows[$k][nrow]\">\n";
+    echo "<input type=\"hidden\" value=\"" . $v['nrow_linked'] . "\" name=\"rows[$k][nrow_linked]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['annota'] . "\" name=\"rows[$k][annota]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['scorta'] . "\" name=\"rows[$k][scorta]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['quamag'] . "\" name=\"rows[$k][quamag]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['pesosp'] . "\" name=\"rows[$k][pesosp]\">\n";
     echo "<input type=\"hidden\" value=\"" . ((isset($v['extdoc']))?$v['extdoc']:'') . "\" name=\"rows[$k][extdoc]\">\n";
     //stampo i rows in modo diverso a secondo del tipo
+    $btngly=($v['nrow_linked'] < $v['nrow'])?'link':'resize-vertical';
+    $btntit=($v['nrow_linked'] < $v['nrow'])?'Legato al precedente':'Sposta rigo';
+    $btndia=($v['nrow_linked'] < $v['nrow'])?'':'dialog_moverow';
     echo "<tr>";
     switch ($v['tiprig']) {
       case "0":
@@ -1894,12 +2151,8 @@ foreach ($form['rows'] as $k => $v) {
         if (is_numeric($v['pesosp']) && $v['pesosp'] <> 0) {
           $peso = gaz_format_number($v['quanti'] / $v['pesosp']);
         }
-        echo '	<td>
-					<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-xs" title="' . $script_transl['3'] . '!">
-						<i class="glyphicon glyphicon-arrow-up"></i>
-					</button>
-			  	</td>
-                                <td title="' . $script_transl['update'] . $script_transl['thisrow'] . '!' . $btn_title . '">
+        echo '<td><a nrow="'.$nr.'" id="row_'.$k.'" class="btn btn-default btn-xs '.$btndia.'" title="'.$btntit.'" descr="<b>'.$v['codart'].'</b>  '.$v['descri'].'"><i class="glyphicon glyphicon-'.$btngly.'"></i></a> '.$nr.'</td>';
+        echo'<td title="' . $script_transl['update'] . $script_transl['thisrow'] . '!' . $btn_title . '">
 					<button name="upd_row[' . $k . ']" class="btn btn-xs ' . $btn_class . ' btn-block" type="submit">
 						<i class="glyphicon glyphicon-refresh"></i>&nbsp;' . $v['codart'] . '
 					</button>
@@ -1927,13 +2180,9 @@ foreach ($form['rows'] as $k => $v) {
             $last_row[] = array_unshift($last_row, '<strong>' . $v['codart'] . '</strong>, ' . $v['descri'] . ', ' . $v['quanti'] . $v['unimis'] . ', <strong>' . $script_transl[23] . '</strong>: ' . gaz_format_number($v['prelis']) . ', %<strong>' . substr($script_transl[24], 0, 2) . '</strong>: ' . gaz_format_number($v['sconto']) . ', <strong>' . $script_transl[25] . '</strong>: ' . gaz_format_number($imprig) . ', <strong>' . $script_transl[19] . '</strong>: ' . $v['pervat'] . '%, <strong>' . $script_transl[18] . '</strong>: ' . $v['codric']);
             break;
         case "1":
-            echo '		<td>
-						<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-xs" title="' . $script_transl['3'] . '!">
-							<i class="glyphicon glyphicon-arrow-up"></i>
-						</button>
-					</td>'
-            . '<td title="' . $script_transl['update'] . $script_transl['thisrow'] . '!">
-              			<input class="FacetDataTDsmall" type="submit" name="upd_row[' . $k . ']" value="' . $script_transl['typerow'][$v['tiprig']] . '" />
+          echo '<td><a nrow="'.$nr.'" id="row_'.$k.'" class="btn btn-default btn-xs '.$btndia.'" title="'.$btntit.'" descr="<b>'.$script_transl['typerow'][$v['tiprig']].'</b>  '.$v['descri'].'"><i class="glyphicon glyphicon-'.$btngly.'"></i></a> '.$nr.'</td>'
+              .'<td title="' . $script_transl['update'] . $script_transl['thisrow'] . '!">
+              <input class="FacetDataTDsmall" type="submit" name="upd_row[' . $k . ']" value="' . $script_transl['typerow'][$v['tiprig']] . '" />
 					</td>
 			  		<td>
 		 				<input type="text" name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength=100 size=100 />
@@ -1964,12 +2213,8 @@ foreach ($form['rows'] as $k => $v) {
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
         case "2": // descrittivo
-            echo "	<td>
-				<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-xs\" title=\"" . $script_transl['3'] . "!\">
-						<i class=\"glyphicon glyphicon-arrow-up\"></i>
-				</button>
-			</td>
-                        <td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
+          echo '<td><a nrow="'.$nr.'" id="row_'.$k.'" class="btn btn-default btn-xs dialog_moverow" title="'.$btntit.'" descr="<b>'. $script_transl['typerow'][$v['tiprig']].'</b>  '.$v['descri'].'"><i class="glyphicon glyphicon-'.$btngly.'"></i></a> '.$nr.'</td>';
+          echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
                                 <input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
 			</td>
 			<td>
@@ -1986,16 +2231,13 @@ foreach ($form['rows'] as $k => $v) {
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
         case "3":
-            echo "	<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
+       			echo '<td><a nrow="'.$nr.'" id="row_'.$k.'" class="btn btn-default btn-xs '.$btndia.'" title="'.$btntit.'" descr="<b>'. $script_transl['typerow'][$v['tiprig']].'</b>  '.$v['descri'].'"><i class="glyphicon glyphicon-'.$btngly.'"></i></a> '.$nr.'</td>';
+
+            echo "	<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "\">
               		<input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
 				</td>
 			  	<td>
 		 			<input type=\"text\" name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=100 size=100 >
-				</td>
-				<td>
-					<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-xs\" title=\"" . $script_transl['3'] . "!\">
-						<i class=\"glyphicon glyphicon-arrow-up\"></i>
-					</button>
 				</td>
 				<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" /></td>
                 <td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>
@@ -2010,20 +2252,12 @@ foreach ($form['rows'] as $k => $v) {
         case "6":
         case "7":
         case "8":
-            /**
-              <textarea id="row_'.$k.'" name="row_'.$k.'" class="mceClass'.$k.'" style="width:100%;height:100px;">'.$form["row_$k"].'</textarea>
-             */
-            echo '	<td title="' . $script_transl['update'] . $script_transl['thisrow'] . '!">
-					<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-xs" title="' . $script_transl['3'] . '!">
-						<i class="glyphicon glyphicon-arrow-up"></i>
-					</button></td><td>
-		 			<input class="FacetDataTDsmall" type="submit" name="upd_row[' . $k . ']" value="' . $script_transl['typerow'][$v['tiprig']] . '" />
+          echo '<td><a nrow="'.$nr.'" id="row_'.$k.'" class="btn btn-default btn-xs '.$btndia.'" title="'.$btntit.'" descr="<b>'. $script_transl['typerow'][$v['tiprig']].'</b>  '.$v['descri'].'"><i class="glyphicon glyphicon-'.$btngly.'"></i></a> '.(($btndia=='')?'':$nr).'</td>';
+					echo '<td>
+		 			<input class="FacetDataTDsmall" type="submit" name="" value="' . $script_transl['typerow'][$v['tiprig']] . '"  disabled />
 				</td>
 				<td colspan="9">
-					<textarea id="row_' . $k .
-                '" name="row_' . $k .
-                '" class="mceClass" style="width:100%;height:100px;">'
-                . $form["row_$k"] . '</textarea>
+					<textarea name="row_'.$k.'" class="mceClass" style="width:100%;height:100px;">'.$form["row_$k"].'</textarea>
 				</td>
 				<input type="hidden" value="" name="rows[' . $k . '][descri]" />
 				<input type="hidden" value="" name="rows[' . $k . '][unimis]" />
@@ -2044,12 +2278,8 @@ foreach ($form['rows'] as $k => $v) {
         case "25": // Stato avanzamento
         case "26": // Lettera intento
         case "31": // Dati Veicoli
-            echo "	<td>
-						<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-xs\" title=\"" . $script_transl['3'] . "!\">
-							<i class=\"glyphicon glyphicon-arrow-up\"></i>
-						</button>
-					</td>
-                                        <td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
+          echo '<td><a nrow="'.$nr.'" id="row_'.$k.'" class="btn btn-default btn-xs '.$btndia.'" title="'.$btntit.'" descr="<b>'. $script_transl['typerow'][$v['tiprig']].'</b>  '.$v['descri'].'"><i class="glyphicon glyphicon-'.$btngly.'"></i></a> '.$nr.'</td>';
+          echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
               			<input class=\"btn btn-xs btn-success btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
 					</td>
 					<td>
@@ -2066,8 +2296,8 @@ foreach ($form['rows'] as $k => $v) {
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
         case "50":
-			echo "<td><button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\"><i class=\"glyphicon glyphicon-arrow-up\"></i></button></td>";
-            echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$k}]\" value=\"* documento allegato *\" />\n";
+          echo '<td><a nrow="'.$nr.'" id="row_'.$k.'" class="btn btn-default btn-xs '.$btndia.'" title="'.$btntit.'" descr="<b>Documento esterno</b>  '.$v['descri'].'"><i class="glyphicon glyphicon-'.$btngly.'"></i></a> '.$nr.'</td>';
+          echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$k}]\" value=\"* documento allegato *\" />\n";
                 if (empty($form['rows'][$k]['extdoc'])) {
                     echo '<div><button class="btn btn-xs btn-danger" type="image" data-toggle="collapse" href="#extdoc_dialog' . $k . '">'
                     . $script_transl['insert'] . ' documento esterno <i class="glyphicon glyphicon-tag"></i>'
@@ -2110,8 +2340,8 @@ foreach ($form['rows'] as $k => $v) {
             $last_row[] = array_unshift($last_row, '<strong>' . $v['codart'] . '</strong>, ' . $v['descri'] . ', ' . $v['quanti'] . $v['unimis'] . ', <strong>' . $script_transl[23] . '</strong>: ' . gaz_format_number($v['prelis']) . ', %<strong>' . substr($script_transl[24], 0, 2) . '</strong>: ' . gaz_format_number($v['sconto']) . ', <strong>' . $script_transl[25] . '</strong>: ' . gaz_format_number($imprig) . ', <strong>' . $script_transl[19] . '</strong>: ' . $v['pervat'] . '%, <strong>' . $script_transl[18] . '</strong>: ' . $v['codric']);
             break;
         case "51":
-			echo "<td><button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\"><i class=\"glyphicon glyphicon-arrow-up\"></i></button></td>";
-            echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$k}]\" value=\"* documento allegato *\" />\n";
+			echo '<td><a nrow="'.$nr.'" id="row_'.$k.'" class="btn btn-default btn-xs '.$btndia.'" title="'.$btntit.'" descr="<b>'.$v['codart'].'</b>  '.$v['descri'].'"><i class="glyphicon glyphicon-'.$btngly.'"></i></a> '.$nr.'</td>';
+            echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$k}]\" value=\"* documento allegato *\" />\n";
                 if (empty($form['rows'][$k]['extdoc'])) {
                     echo '<div><button class="btn btn-xs btn-danger" type="image" data-toggle="collapse" href="#extdoc_dialog' . $k . '">'
                     . $script_transl['insert'] . ' documento esterno <i class="glyphicon glyphicon-tag"></i>'
@@ -2189,6 +2419,7 @@ foreach ($form['rows'] as $k => $v) {
     }
     echo "</tr>";
 }
+echo '<div id="maxnrow" movemax="'.$nr.'"</div>';
 
 if (isset($ultimoprezzo) && $ultimoprezzo<>'') {
     $msgtoast = $upd_mm->toast(" <strong>Ultime vendite:</strong>".$ultimoprezzo, 'alert-last-row', 'alert-success');
@@ -2221,6 +2452,8 @@ echo '
 	  <input type="hidden" value="' . $form['in_prelis'] . '" name="in_prelis" />
 	  <input type="hidden" value="' . $form['in_id_mag'] . '" name="in_id_mag" />
     <input type="hidden" value="' . $form['in_id_rig'] . '" name="in_id_rig" />
+    <input type="hidden" value="' . $form['in_nrow'] . '" name="in_nrow" />
+    <input type="hidden" value="' . $form['in_nrow_linked'] . '" name="in_nrow_linked" />
 	  <input type="hidden" value="' . $form['in_id_doc'] . '" name="in_id_doc" />
 	  <input type="hidden" value="' . $form['in_annota'] . '" name="in_annota" />
 	  <input type="hidden" value="' . $form['in_scorta'] . '" name="in_scorta" />
@@ -2503,8 +2736,6 @@ echo "</tr>	</table></div>";
 			$("#cat_prelis").val("0");
 		}
 	}
-</script>
-<script language="JavaScript">
 var last_focus_value;
 var last_focus;
 last_focus_value = document.broven.last_focus.value;

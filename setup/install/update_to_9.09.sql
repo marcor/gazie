@@ -9,5 +9,5 @@ ALTER TABLE `gaz_currency_history`
 	ADD INDEX `date_reference` (`date_reference`);
 ALTER TABLE `gaz_anagra` CHANGE `pariva` `pariva` VARCHAR(28) NOT NULL DEFAULT '0';
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
-INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) VALUES ('Inserimento automatico rigo testo descrittivo articolo 0=mai,1=prima,2=dopo,','ext_artico_description','1');
+INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) VALUES ('Inserimento automatico rigo testo descrittivo articolo 0=mai,1=prima,2=dopo,','ext_artico_description','2');
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )

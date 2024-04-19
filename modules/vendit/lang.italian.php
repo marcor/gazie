@@ -470,6 +470,7 @@ $strScript = array("admin_client.php" =>
         "Provvigioni",
         "Vuoi modificare un D.d.T. gi&agrave; fatturato!",
         "Questo documento &egrave; gi&agrave; stato contabilizzato!",
+        'Non è possibile spostare su un rigo linkato',
         'speban' => "Spese incasso",
         'speban_title' => 'Spese incasso non documentate/rate',
         'traspo_title' => 'Spese trasporto non documentate',

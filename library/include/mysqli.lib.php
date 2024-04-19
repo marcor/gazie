@@ -34,7 +34,6 @@ function connectIsOk() {
 
 function gaz_dbi_query($query, $ar = false) {
    global $link;
-   debug_query($query);
    $result = mysqli_query($link, $query);
    if (!$result) gaz_die ( $query, "72", __FUNCTION__ );
    if ($ar) {
@@ -841,14 +840,14 @@ function paymovUpdate($id, $newValue) {
 
 function rigbroInsert($newValue) {
    $table = 'rigbro';
-   $columns = array('id_tes', 'tiprig', 'codart', 'codice_fornitore', 'descri', 'quality','id_body_text', 'unimis', 'lunghezza', 'larghezza', 'spessore', 'peso_specifico', 'pezzi', 'quanti', 'prelis', 'sconto', 'codvat', 'pervat', 'codric', 'provvigione', 'ritenuta', 'delivery_date', 'id_doc', 'id_mag', 'id_rigmoc', 'id_orderman', 'status');
+   $columns = array('id_tes', 'tiprig', 'nrow', 'nrow_linked', 'codart', 'codice_fornitore', 'descri', 'quality','id_body_text', 'unimis', 'lunghezza', 'larghezza', 'spessore', 'peso_specifico', 'pezzi', 'quanti', 'prelis', 'sconto', 'codvat', 'pervat', 'codric', 'provvigione', 'ritenuta', 'delivery_date', 'id_doc', 'id_mag', 'id_rigmoc', 'id_orderman', 'status');
    $last_id=tableInsert($table, $columns, $newValue);
    return $last_id;
 }
 
 function rigbroUpdate($codice, $newValue) {
    $table = 'rigbro';
-   $columns = array('id_tes', 'tiprig', 'codart', 'codice_fornitore', 'descri', 'quality', 'id_body_text', 'unimis', 'lunghezza', 'larghezza', 'spessore', 'peso_specifico', 'pezzi', 'quanti','prelis', 'sconto', 'codvat', 'pervat', 'codric', 'provvigione', 'ritenuta', 'delivery_date', 'id_doc', 'id_mag', 'id_rigmoc', 'id_orderman', 'status');
+   $columns = array('id_tes', 'tiprig', 'nrow', 'nrow_linked', 'codart', 'codice_fornitore', 'descri', 'quality', 'id_body_text', 'unimis', 'lunghezza', 'larghezza', 'spessore', 'peso_specifico', 'pezzi', 'quanti','prelis', 'sconto', 'codvat', 'pervat', 'codric', 'provvigione', 'ritenuta', 'delivery_date', 'id_doc', 'id_mag', 'id_rigmoc', 'id_orderman', 'status');
    tableUpdate($table, $columns, $codice, $newValue);
 }
 
@@ -866,75 +865,50 @@ function rigcmrUpdate($codice, $newValue) {
 
 function rigdocInsert($newValue) {
    $table = 'rigdoc';
-   $columns = array('id_tes', 'tiprig', 'codart', 'codice_fornitore', 'descri', 'id_body_text', 'unimis', 'quanti', 'prelis', 'sconto', 'codvat', 'pervat', 'codric', 'provvigione', 'peso_specifico', 'ritenuta', 'id_order', 'id_mag', 'id_orderman', 'status');
+   $columns = array('id_tes', 'tiprig', 'nrow', 'nrow_linked', 'codart', 'codice_fornitore', 'descri', 'id_body_text', 'unimis', 'quanti', 'prelis', 'sconto', 'codvat', 'pervat', 'codric', 'provvigione', 'peso_specifico', 'ritenuta', 'id_order', 'id_mag', 'id_orderman', 'status');
    $last_id = tableInsert($table, $columns, $newValue);
    return $last_id;
 }
 
 function rigdocUpdate($codice, $newValue) {
    $table = 'rigdoc';
-   $columns = array('id_tes', 'tiprig', 'codart', 'codice_fornitore', 'descri', 'id_body_text', 'unimis', 'quanti', 'prelis', 'sconto', 'codvat', 'pervat', 'codric', 'provvigione', 'peso_specifico', 'ritenuta', 'id_order', 'id_mag', 'id_orderman', 'status');
+   $columns = array('id_tes', 'tiprig', 'nrow', 'nrow_linked', 'codart', 'codice_fornitore', 'descri', 'id_body_text', 'unimis', 'quanti', 'prelis', 'sconto', 'codvat', 'pervat', 'codric', 'provvigione', 'peso_specifico', 'ritenuta', 'id_order', 'id_mag', 'id_orderman', 'status');
    tableUpdate($table, $columns, $codice, $newValue);
 }
 
 function tesbroInsert($newValue) {
    $table = 'tesbro';
-   $columns = array('seziva', 'tipdoc','ref_ecommerce_id_order', 'template', 'email', 'print_total', 'delivery_time', 'day_of_validity', 'datemi', 'protoc', 'numdoc', 'numfat', 'datfat', 'clfoco', 'pagame', 'banapp', 'vettor', 'weekday_repeat', 'listin', 'destin', 'id_des', 'id_des_same_company', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar', 'round_stamp', 'cauven', 'caucon', 'caumag', 'id_agente', 'id_parent_doc', 'sconto', 'expense_vat', 'stamp', 'net_weight', 'gross_weight', 'taxstamp', 'virtual_taxstamp', 'units', 'volume', 'initra', 'geneff', 'id_contract', 'id_con', 'id_orderman', 'status', 'custom_field', 'adminid');
+   $columns = array('seziva', 'tipdoc', 'tipdoc_buf', 'ref_ecommerce_id_order', 'template', 'email', 'print_total', 'delivery_time', 'day_of_validity', 'datemi', 'protoc', 'numdoc', 'numfat', 'datfat', 'clfoco', 'pagame', 'banapp', 'vettor', 'weekday_repeat', 'listin', 'destin', 'id_des', 'id_des_same_company', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar', 'round_stamp', 'cauven', 'caucon', 'caumag', 'id_agente', 'id_parent_doc', 'sconto', 'expense_vat', 'stamp', 'net_weight', 'gross_weight', 'taxstamp', 'virtual_taxstamp', 'units', 'volume', 'initra', 'geneff', 'id_contract', 'id_con', 'id_orderman', 'status', 'custom_field', 'adminid');
    $newValue['adminid'] = $_SESSION["user_name"];
    $last_id=tableInsert($table, $columns, $newValue);
    return $last_id;
 }
 
-function tescmrInsert($newValue) {
-   $table = 'tescmr';
-   $columns = array('seziva', 'tipdoc', 'template', 'print_total', 'delivery_time', 'day_of_validity', 'datemi', 'protoc', 'numdoc', 'numfat', 'datfat',
-       'clfoco', 'pagame', 'banapp', 'vettor', 'weekday_repeat', 'listin', 'destin', 'id_des', 'id_des_same_company', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar',
-       'round_stamp', 'cauven', 'caucon', 'caumag', 'id_agente', 'id_parent_doc', 'sconto', 'expense_vat', 'stamp', 'net_weight', 'gross_weight',
-       'taxstamp', 'virtual_taxstamp', 'units', 'volume', 'initra', 'geneff', 'id_contract', 'id_con', 'status', 'adminid');
-   $newValue['adminid'] = $_SESSION["user_name"];
-   tableInsert($table, $columns, $newValue);
-}
-
 function tesbroUpdate($codice, $newValue) {
    $table = 'tesbro';
-   $columns = array('seziva', 'tipdoc','ref_ecommerce_id_order', 'template', 'email', 'print_total', 'delivery_time', 'day_of_validity', 'datemi', 'protoc', 'numdoc', 'numfat', 'datfat', 'clfoco', 'pagame', 'banapp', 'vettor', 'weekday_repeat', 'listin', 'destin', 'id_des', 'id_des_same_company', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar', 'round_stamp', 'cauven', 'caucon', 'caumag', 'id_agente', 'id_parent_doc', 'sconto', 'expense_vat', 'stamp', 'net_weight', 'gross_weight', 'taxstamp', 'virtual_taxstamp', 'units', 'volume', 'initra', 'geneff', 'id_contract', 'id_con', 'id_orderman', 'status', 'adminid', 'custom_field');
-   $newValue['adminid'] = $_SESSION["user_name"];
-   tableUpdate($table, $columns, $codice, $newValue);
-}
-
-function tescmrUpdate($codice, $newValue) {
-   $table = 'tescmr';
-   $columns = array('seziva', 'tipdoc', 'template', 'print_total', 'delivery_time', 'day_of_validity', 'datemi', 'protoc', 'numdoc', 'numfat', 'datfat',
-       'clfoco', 'pagame', 'banapp', 'vettor', 'weekday_repeat', 'listin', 'destin', 'id_des', 'id_des_same_company', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar',
-       'round_stamp', 'cauven', 'caucon', 'caumag', 'id_agente', 'id_parent_doc', 'sconto', 'expense_vat', 'stamp', 'net_weight', 'gross_weight',
-       'taxstamp', 'virtual_taxstamp', 'units', 'volume', 'initra', 'geneff', 'id_contract', 'id_con', 'status', 'adminid');
+   $columns = array('seziva', 'tipdoc', 'tipdoc_buf', 'ref_ecommerce_id_order', 'template', 'email', 'print_total', 'delivery_time', 'day_of_validity', 'datemi', 'protoc', 'numdoc', 'numfat', 'datfat', 'clfoco', 'pagame', 'banapp', 'vettor', 'weekday_repeat', 'listin', 'destin', 'id_des', 'id_des_same_company', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar', 'round_stamp', 'cauven', 'caucon', 'caumag', 'id_agente', 'id_parent_doc', 'sconto', 'expense_vat', 'stamp', 'net_weight', 'gross_weight', 'taxstamp', 'virtual_taxstamp', 'units', 'volume', 'initra', 'geneff', 'id_contract', 'id_con', 'id_orderman', 'status', 'adminid', 'custom_field');
    $newValue['adminid'] = $_SESSION["user_name"];
    tableUpdate($table, $columns, $codice, $newValue);
 }
 
 function tesdocInsert($newValue) {
-   $table = 'tesdoc';
-   $columns = array('seziva', 'tipdoc', 'ddt_type', 'id_doc_ritorno', 'template', 'datemi', 'protoc', 'numdoc', 'numfat', 'datfat', 'clfoco', 'pagame', 'banapp', 'vettor', 'listin',
-       'destin', 'id_des', 'id_des_same_company', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar', 'round_stamp', 'cauven', 'caucon', 'caumag',
-       'id_agente', 'id_parent_doc', 'sconto', 'expense_vat', 'stamp', 'net_weight', 'gross_weight', 'units', 'volume', 'initra', 'geneff',
-       'taxstamp', 'virtual_taxstamp', 'id_contract', 'id_con', 'datreg', 'fattura_elettronica_original_name', 'status', 'adminid',
-       /** inizio modifica FP 19/10/2015 */
-       'ragbol', 'data_ordine'
-           /** fine modifica FP */           );
-   $newValue['adminid'] = $_SESSION["user_name"];
-    $last_id=tableInsert($table, $columns, $newValue);
-	  return $last_id;
+  $table = 'tesdoc';
+  $columns = array('seziva', 'tipdoc', 'tipdoc_buf', 'ddt_type', 'id_doc_ritorno', 'template', 'datemi', 'protoc', 'numdoc', 'numfat', 'datfat', 'clfoco', 'pagame', 'banapp', 'vettor', 'listin',
+      'destin', 'id_des', 'id_des_same_company', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar', 'round_stamp', 'cauven', 'caucon', 'caumag',
+      'id_agente', 'id_parent_doc', 'sconto', 'expense_vat', 'stamp', 'net_weight', 'gross_weight', 'units', 'volume', 'initra', 'geneff',
+      'taxstamp', 'virtual_taxstamp', 'id_contract', 'id_con', 'datreg', 'fattura_elettronica_original_name', 'status', 'adminid', 'ragbol', 'data_ordine'
+  );
+  $newValue['adminid'] = $_SESSION["user_name"];
+  $last_id=tableInsert($table, $columns, $newValue);
+	return $last_id;
 }
 
 function tesdocUpdate($codice, $newValue) {
    $table = 'tesdoc';
-   $columns = array('seziva', 'tipdoc', 'ddt_type', 'id_doc_ritorno', 'template', 'datemi', 'protoc', 'numdoc', 'numfat', 'datfat', 'clfoco', 'pagame', 'banapp', 'vettor', 'listin',
+   $columns = array('seziva', 'tipdoc', 'tipdoc_buf', 'ddt_type', 'id_doc_ritorno', 'template', 'datemi', 'protoc', 'numdoc', 'numfat', 'datfat', 'clfoco', 'pagame', 'banapp', 'vettor', 'listin',
        'destin', 'id_des', 'id_des_same_company', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar', 'round_stamp', 'cauven', 'caucon', 'caumag',
        'id_agente', 'id_parent_doc', 'sconto', 'expense_vat', 'stamp', 'net_weight', 'gross_weight', 'units', 'volume', 'initra', 'geneff',
-       'taxstamp', 'virtual_taxstamp', 'id_contract', 'id_con', 'datreg', 'fattura_elettronica_original_name', 'status', 'adminid',
-       /** inizio modifica FP 19/10/2015 */
-       'ragbol', 'data_ordine'
-           /** fine modifica FP */
+       'taxstamp', 'virtual_taxstamp', 'id_contract', 'id_con', 'datreg', 'fattura_elettronica_original_name', 'status', 'adminid', 'ragbol', 'data_ordine'
    );
    $newValue['adminid'] = $_SESSION["user_name"];
    tableUpdate($table, $columns, $codice, $newValue);
@@ -942,14 +916,14 @@ function tesdocUpdate($codice, $newValue) {
 
 function tesmovUpdate($codice, $newValue) {
    $table = 'tesmov';
-   $columns = array('caucon', 'descri', 'notess', 'datreg', 'datliq', 'seziva', 'id_doc', 'protoc', 'numdoc', 'datdoc', 'clfoco', 'regiva', 'operat', 'libgio', 'adminid');
+   $columns = array('caucon', 'caucon_buf', 'descri', 'notess', 'datreg', 'datliq', 'seziva', 'id_doc', 'protoc', 'numdoc', 'datdoc', 'clfoco', 'regiva', 'operat', 'libgio', 'adminid');
    $newValue['adminid'] = $_SESSION["user_name"];
    tableUpdate($table, $columns, $codice, $newValue);
 }
 
 function tesmovInsert($newValue) {
    $table = 'tesmov';
-   $columns = array('caucon', 'descri', 'notess', 'datreg', 'datliq', 'seziva', 'id_doc', 'protoc', 'numdoc', 'datdoc', 'clfoco', 'regiva', 'operat', 'libgio', 'adminid');
+   $columns = array('caucon', 'caucon_buf', 'descri', 'notess', 'datreg', 'datliq', 'seziva', 'id_doc', 'protoc', 'numdoc', 'datdoc', 'clfoco', 'regiva', 'operat', 'libgio', 'adminid');
    $newValue['adminid'] = $_SESSION["user_name"];
    $last_id = tableInsert($table, $columns, $newValue);
    return $last_id;
@@ -1107,13 +1081,5 @@ function gaz_die( $query, $riga, $funzione="" ) {
         $edie = "Query error";
     }
     die ( $edie );
-}
-
-function debug_query($query) {
-	if ( defined('debug_active') && debug_active ) {
-		if (function_exists('d')) {
-			d($query);
-		}
-	}
 }
 ?>

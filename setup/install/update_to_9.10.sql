@@ -10,4 +10,5 @@ ALTER TABLE `gaz_XXXdistinta_base` ADD COLUMN `sort_order` INT NOT NULL COMMENT 
 ALTER TABLE `gaz_XXXartico`	ADD COLUMN `sort_order` INT NOT NULL COMMENT 'Per ordinamento articolo, ad esempio su catalogo' AFTER `ref_ecommerce_id_product`,	ADD INDEX `sort_order` (`sort_order`);
 ALTER TABLE `gaz_XXXcatmer`	ADD COLUMN `sort_order` INT NOT NULL COMMENT 'Per ordinamento categoria merceologica, ad esempio su catalogo' AFTER `ref_ecommerce_id_category`, ADD INDEX `sort_order` (`sort_order`);
 ALTER TABLE `gaz_XXXassets` ADD COLUMN `sort_order` INT NOT NULL COMMENT 'Per ordinamento bene strumentale, ad esempio su libro cespiti' AFTER `codice_artico`, ADD INDEX `sort_order` (`sort_order`);
+UPDATE `gaz_XXXcompany_config` SET `val`= '2' WHERE `var` = 'ext_artico_description';
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )

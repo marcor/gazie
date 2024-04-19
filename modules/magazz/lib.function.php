@@ -217,7 +217,7 @@ class magazzForm extends GAzieForm {
 	private function getBOMfromDB($codcomp,$depth){
         global $gTables;
 		$ret=[];
-		$rs_BOM = gaz_dbi_dyn_query("*", $gTables['distinta_base'].' LEFT JOIN '.$gTables['artico'].' ON codice_artico_base = codice', "codice_composizione = '".$codcomp."'",'codice_artico_base');
+		$rs_BOM = gaz_dbi_dyn_query("*", $gTables['distinta_base'].' LEFT JOIN '.$gTables['artico'].' ON codice_artico_base = codice', "codice_composizione = '".$codcomp."'",'sort_order, codice_artico_base');
 		while ($r = gaz_dbi_fetch_array($rs_BOM)) {
 			$r['depth']=$depth;
 			$ret[$r['codice_artico_base']]=$r;
