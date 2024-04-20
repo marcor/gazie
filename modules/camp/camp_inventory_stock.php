@@ -61,31 +61,31 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
             $magval = array_pop($mv);
             $form['a'][$r['codice']]['i_d'] = $r['descri'];
             $form['a'][$r['codice']]['i_u'] = $r['unimis'];
-            $form['a'][$r['codice']]['v_a'] = $magval['v'];
-            $form['a'][$r['codice']]['v_r'] = $magval['v'];
+            $form['a'][$r['codice']]['v_a'] = (isset($magval['v']))?$magval['v']:0;
+            $form['a'][$r['codice']]['v_r'] = (isset($magval['v']))?$magval['v']:0;
             $form['a'][$r['codice']]['i_a'] = $r['annota'];
             $form['a'][$r['codice']]['i_g'] = $r['catmer'];
             $form['a'][$r['codice']]['g_d'] = $r['descat'];
 			if (isset($magval['q_g']) && round($magval['q_g'],6) == "-0"){
 				$magval['q_g']=0;
 			}
-            $form['a'][$r['codice']]['g_a'] = $magval['q_g'];
-            $form['a'][$r['codice']]['g_r'] = number_format($magval['q_g'],3);
-            $form['a'][$r['codice']]['v_g'] = $magval['v_g'];
+            $form['a'][$r['codice']]['g_a'] = (isset($magval['q_g']))?$magval['q_g']:0;
+            $form['a'][$r['codice']]['g_r'] = (isset($magval['q_g']))?number_format($magval['q_g'],3):0;
+            $form['a'][$r['codice']]['v_g'] = (isset($magval['v_g']))?$magval['v_g']:0;
             $form['vac_on' . $r['codice']] = '';
-            if (number_format($magval['q_g'],3) < 0) {
+            if (isset($magval['q_g']) && number_format($magval['q_g'],3) < 0) {
                 $form['chk_on' . $r['codice']] = ' checked ';
                 $form['a'][$r['codice']]['col'] = 'red';
-            } elseif (number_format($magval['q_g'],3) > 0) {
+            } elseif (isset($magval['q_g']) && number_format($magval['q_g'],3) > 0) {
                 $form['chk_on' . $r['codice']] = ' checked ';
                 $form['a'][$r['codice']]['col'] = '';
             } else {
                 $form['chk_on' . $r['codice']] = '';
                 $form['a'][$r['codice']]['col'] = '';
             }
-
+            $v_g=(isset($magval['v_g']))?$magval['v_g']:0;
             // Calcolo totale valore giacenza by DF
-            $tot_val_giac += $magval['v_g'];
+            $tot_val_giac += $v_g;
 			}
         }
     }
