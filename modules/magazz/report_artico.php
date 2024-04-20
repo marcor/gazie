@@ -420,8 +420,8 @@ while ($r = gaz_dbi_fetch_array($result)) {
   echo '<td>
   <a class="btn btn-xs btn-'.$class.'" href="../magazz/admin_artico.php?Update&codice='.$r['codice'].'" ><i class="glyphicon glyphicon-edit"></i> '.$r['codice'].'</a>';
   if ( $r["good_or_service"] == 2 ) {
-    echo '<a class="btn btn-xs btn-default" href="../magazz/admin_artico_compost.php?Update&codice='.$r['codice'].'" ><i class="glyphicon glyphicon-plus"></i></a>';
-    $des_bom ='<span class="text-info bg-info"> <b> '.$script_transl['good_or_service_value'][$r['good_or_service']].' </b> </span> <a target="_blank" title="Stampa l\'albero della distinta base" class="btn btn-xs btn-info" href="stampa_bom.php?ri=' . $r["codice"] . '"><i class="glyphicon glyphicon-tasks"></i></a>';
+    echo '<a class="btn btn-xs btn-warning" href="../magazz/admin_artico_compost.php?Update&codice='.$r['codice'].'" title="Modifica la composizione"><i class="glyphicon glyphicon-list"></i></a>';
+    $des_bom ='<span class="text-info bg-info"> <b> '.$script_transl['good_or_service_value'][$r['good_or_service']].' </b> </span> <a target="_blank" title="Stampa l\'albero della distinta base" class="btn btn-xs btn-info" href="stampa_bom.php?ri=' . $r["codice"] . '"><i class="glyphicon glyphicon-tasks"></i> <i class="fas fa-file-pdf"></i></a>';
   } else {
     $des_bom = $script_transl['good_or_service_value'][intval($r['good_or_service'])];
   }
