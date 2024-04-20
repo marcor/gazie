@@ -354,6 +354,10 @@ $rs=gaz_dbi_query("SELECT codart, COUNT(*) FROM ".$gTables['rigbro']." GROUP BY 
 while ($r=gaz_dbi_fetch_row($rs)) {
   $accmov[$r[0]]=isset($accmov[$r[0]])?($accmov[$r[0]]+$r[1]):(int)$r[1];
 };
+$rs=gaz_dbi_query("SELECT codice_artico_base, COUNT(*) FROM ".$gTables['distinta_base']." GROUP BY codice_artico_base");
+while ($r=gaz_dbi_fetch_row($rs)) {
+  $accmov[$r[0]]=isset($accmov[$r[0]])?($accmov[$r[0]]+$r[1]):(int)$r[1];
+};
 
 // da configurazione azienda
 $tipo_composti = gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti');

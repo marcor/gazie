@@ -482,8 +482,8 @@ class magazzForm extends GAzieForm {
 		$rs = gaz_dbi_dyn_query("quantita_artico_base,codice_composizione,codice_artico_base", $gTables['distinta_base'], "codice_artico_base = '".$codcomp."' GROUP BY codice_composizione");
 		while ($r = gaz_dbi_fetch_assoc($rs)) {
 			$art=gaz_dbi_get_row($gTables['artico'], "codice", $r['codice_composizione']);
-			$r['codice']=$art['codice'];
-			$r['descri']=$art['descri'];
+			$r['codice']=$art?$art['codice']: $r['codice_composizione'];
+			$r['descri']=$art?$art['descri']:'<span class="bg-danger text-danger"> Codice '.$r['codice_composizione'].' non trovato **** eliminato? **** </span>';
 			$acc[]=$r;
 		}
 		return $acc;
