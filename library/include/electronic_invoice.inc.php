@@ -1547,11 +1547,11 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 			$el1 = $domDoc->createElement("UnitaMisuraPeso", 'kg');
 			$el->appendChild($el1);
 			if ($XMLvars->tesdoc['gross_weight']>=0.001){
-				$el1 = $domDoc->createElement("PesoLordo", $XMLvars->tesdoc['gross_weight']);
+				$el1 = $domDoc->createElement("PesoLordo", substr(floatval($XMLvars->tesdoc['gross_weight']),0,7));
 				$el->appendChild($el1);
 			}
 			if ($XMLvars->tesdoc['net_weight']>=0.001){
-				$el1 = $domDoc->createElement("PesoNetto", $XMLvars->tesdoc['net_weight']);
+				$el1 = $domDoc->createElement("PesoNetto", substr(floatval($XMLvars->tesdoc['net_weight']),0,7));
 				$el->appendChild($el1);
 			}
     }
