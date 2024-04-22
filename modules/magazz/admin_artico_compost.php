@@ -168,7 +168,7 @@ function itemErase(id,descri,codcomp){
 		$data=$gForm->getBOM($codcomp);
         echo '<div class="panel panel-default"><div class="panel-heading"><h4>Distinta base della composizione: <a class="btn btn-md btn-success" href="admin_artico.php?Update&codice=' . $codcomp . '">'.$codcomp.'</a> -'.$art['descri']."\n</h4>".'</div><div class="panel-body">';
 		if (count($data)>=1){
-        echo '<ul class="col-xs-12 col-sm-12 col-md-11 col-lg-10 distintabase">';
+        echo '<ul class="col-xs-12 distintabase">';
 		foreach($data as $k0=>$v0) {
 			$icona=(is_array($v0['codice_artico_base']))?'<a class="btn btn-xs btn-info collapsible" id="'.$v0[2].'" data-toggle="collapse" data-target=".' . $v0[2] . '"><i class="glyphicon glyphicon-list"></i></a>':'';
 			echo '<li><div class="col-xs-12 row" style="background-color: #'.$color.'"><div class="col-xs-2"><a class="btn btn-xs btn-success" href="admin_artico.php?Update&amp;codice=' . $v0[2] . '">'.$v0[2].'</a> '.$icona.'</div> <div class="col-xs-8"> '.$v0['descri'].' <a class="btn btn-xs btn-danger" onclick="itemErase('.intval($v0['id']).',\''.addslashes(str_replace('"','',$v0['descri'])).'\',\''.$codcomp.'\');"> <i class="glyphicon glyphicon-trash"></i> </a></div><div class="col-xs-2">'.$v0['unimis'].': <input type="number" step="any" name="qta['.intval($v0['id']).']" value="'.floatval($v0['quantita_artico_base']).'" /></div></div>';
