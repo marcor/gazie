@@ -1544,14 +1544,22 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 			$el->appendChild($el1);
 		}
 		if (($XMLvars->tesdoc['net_weight']+$XMLvars->tesdoc['gross_weight'])>=0.001){
-			$el1 = $domDoc->createElement("UnitaMisuraPeso", 'kg');
+      $pn=floatval($XMLvars->tesdoc['net_weight']);
+      $pl=floatval($XMLvars->tesdoc['gross_weight']);
+      $ump='kg';
+      if ($pn>1000||$pl>1000){
+        $ump='ton';
+        $pn=$pn/1000;
+        $pl=$pl/1000;
+      }
+			$el1 = $domDoc->createElement("UnitaMisuraPeso", $ump);
 			$el->appendChild($el1);
 			if ($XMLvars->tesdoc['gross_weight']>=0.001){
-				$el1 = $domDoc->createElement("PesoLordo", substr(floatval($XMLvars->tesdoc['gross_weight']),0,7));
+				$el1 = $domDoc->createElement("PesoLordo", number_format($pl,2,'.',''));
 				$el->appendChild($el1);
 			}
 			if ($XMLvars->tesdoc['net_weight']>=0.001){
-				$el1 = $domDoc->createElement("PesoNetto", substr(floatval($XMLvars->tesdoc['net_weight']),0,7));
+				$el1 = $domDoc->createElement("PesoNetto",  number_format($pn,2,'.',''));
 				$el->appendChild($el1);
 			}
     }
