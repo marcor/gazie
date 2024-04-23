@@ -27,7 +27,8 @@
 require("../../library/include/datlib.inc.php");
 
 // configurazione avanzata azienda: la descrizione estesa dell'articolo
-$cbt=gaz_dbi_get_row($gTables['company_config'], 'var', 'ext_artico_description')['val'];
+$cbt_res=gaz_dbi_get_row($gTables['company_config'], 'var', 'ext_artico_description');
+$cbt=(isset($cbt_res['val']))?$cbt_res['val']:0;
 $cbt=($cbt==1||$cbt==2)?$cbt:0;
 
 // m1 Modificato a mano
