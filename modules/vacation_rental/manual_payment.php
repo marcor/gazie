@@ -62,10 +62,7 @@ if (!$link) {
 }
 $link -> set_charset("utf8");
 
-
-
-
-if (isset($_POST['type']) && isset($_POST['ref']) && isset($_POST['payment_gross']) && floatval($_POST['payment_gross'])>0 ) {
+if (isset($_POST['type']) && isset($_POST['ref']) && isset($_POST['payment_gross']) && floatval($_POST['payment_gross'])<>0 ) {
 
   $id_tesbro=  intval($_POST['ref']);
   $type=substr($_POST['type'],0,10);

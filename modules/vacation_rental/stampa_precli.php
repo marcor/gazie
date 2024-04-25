@@ -8,7 +8,7 @@
   --------------------------------------------------------------------------
  --------------------------------------------------------------------------
                             GAzie - Gestione Azienda
-    Copyright (C) 2004-2024 - Antonio De Vincentiis Montesilvano (PE)
+    Copyright (C) 2004-2023 - Antonio De Vincentiis Montesilvano (PE)
          (http://www.devincentiis.it)
            <http://gazie.sourceforge.net>
  --------------------------------------------------------------------------
@@ -47,6 +47,7 @@ if ($stato AND $stato['id_language'] == 1 or $stato['id_language'] == 0){// se Ã
 }elseif ($stato AND $stato['id_language'] == 3 ) {// se Ã¨ spagnolo
   $lang_template = 'spanish';$lang="es";
 }
+$user_level=get_user_points_level($id_anagra['id_anagra']);
 
 if ($tesbro['tipdoc']=='VPR') {
 	$dest=false;
@@ -64,7 +65,7 @@ if ($tesbro['tipdoc']=='VPR') {
 	if ($tesbro['template']=='Ticket'){
 		$template='Ticket';
 	}
-  createDocument($tesbro,$template,$gTables,'rigbro',$dest,$lang_template,$genTables,$azTables,"","","",$lang);
+  createDocument($tesbro,$template,$gTables,'rigbro',$dest,$lang_template,$genTables,$azTables,"","","",$lang,$user_level);
 } else {
     header("Location: report_booking?auxil=VPR.php");
     exit;
