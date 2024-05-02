@@ -24,15 +24,20 @@
 */
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
-$doc = gaz_dbi_get_row($gTables['files'],'id_doc',intval($_GET['id_doc']));
-if ($doc['id_ref']==1) {
-	$doc['id_doc']=$admin_aziend['company_id']."/images/".$doc['id_doc'];
+if (isset($_GET['filename'])) {
+  $doc = pathinfo($_GET['filename']);
+  $doc['title']=$_GET['descriname'];
+  $filepath = $admin_aziend['company_id']."/".$doc['basename'];
+} elseif (isset($_GET['id_ref'])) {
+  $doc = gaz_dbi_get_row($gTables['files'],'id_doc',intval($_GET['id_doc']));
+	$filepath=$admin_aziend['company_id']."/images/".$doc['id_doc'].'.'.$doc['extension'];
 } else {
-	$doc['id_doc']=$admin_aziend['company_id']."/doc/".$doc['id_doc'];
+  $doc = gaz_dbi_get_row($gTables['files'],'id_doc',intval($_GET['id_doc']));
+	$filepath=$admin_aziend['company_id']."/doc/".$doc['id_doc'].'.'.$doc['extension'];
 }
 header("Content-Type: application/".$doc['extension']);
-header('Content-Disposition: attachment; filename="Doc_'.intval($_GET['id_doc']).'.'.$doc['extension'].'"');
+header('Content-Disposition: attachment; filename="'.$doc['title'].'"');
 // data retrieved from filesystem
-$doc=file_get_contents(DATA_DIR.'files/'.$doc['id_doc'].'.'.$doc['extension']);
+$doc=file_get_contents(DATA_DIR.'files/'.$filepath);
 echo $doc;
 ?>

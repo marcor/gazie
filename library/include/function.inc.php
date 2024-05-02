@@ -2810,6 +2810,7 @@ class Schedule {
   public $Status;
   public $docData = [];
   public $PartnerStatus = [];
+  public $Partners;
     function __construct() {
         $this->target = 0;
         $this->id_target = 0;
