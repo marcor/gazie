@@ -550,8 +550,8 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                 rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_p, 'codcon' => $krit, 'import' => $v['rit']));
             }
             if ($v['tes']['incaut'] > 100000000 ) {  // se il pagamento prevede l'incasso automatico o sul tracciato XML avevo ModalitaPagamento=MP01
-                rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_c, 'codcon' => $v['tes']['clfoco'], 'import' => ($tot['tot'] - $v['rit'])));
-                rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_p, 'codcon' => $v['tes']['incaut'], 'import' => ($tot['tot'] - $v['rit'])));
+                rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_c, 'codcon' => $v['tes']['clfoco'], 'import' => ($tot['tot'] - $v['rit'] - $iva_reverse_charge)));
+                rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_p, 'codcon' => $v['tes']['incaut'], 'import' => ($tot['tot'] - $v['rit'] - $iva_reverse_charge)));
             } else { // altrimenti inserisco le partite aperte
               if (isset($v['pay'])&&count($v['pay'])>0){ // se ho i dati provenienti dal XML li uso
                 foreach ($v['pay'] as $v_pay) {
