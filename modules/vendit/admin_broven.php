@@ -1419,18 +1419,31 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
           $form['volume'] -= $form['rows'][$delri]['quanti'] * $artico['volume_specifico'];
         }
         // fine sottrazione peso,pezzi,volume
-        // diminuisco o lascio inalterati gli index dei testi
-        foreach ($form['rows'] as $k => $val) {
-            if (isset($form["row_$k"])) { //se ho un rigo testo
-                if ($k > $delri) { //se ho un rigo testo dopo
-                    $new_k = $k - 1;
-                    $form["row_$new_k"] = $form["row_$k"];
-                    unset($form["row_$k"]);
-                }
+        $islinked=false;
+        foreach ($form['rows'] as $k => $val) { // primo ciclo per controllare i linked
+          // trovo qual'è il k di un eventuale rigo linkato da eliminare
+          if ( $k == $delri ) { // è il rigo da eliminare
+            if (($val['nrow']+1) == $val['nrow_linked']) { // ha un link con il successivo
+              $islinked=true;
+            } else if (($val['nrow']-1) == $val['nrow_linked'] ){ // link con il precedente
+              $islinked=true;
+              $delri--; // parto con cancellare anche il precedente
             }
+          }
         }
-        array_splice($form['rows'], $delri, 1);
-        $next_row--;
+        $ndelrow=$islinked?2:1;
+        foreach ($form['rows'] as $k => $val) {
+          // diminuisco o lascio inalterati gli index dei testi
+          if (isset($form["row_$k"])) { //se ho un rigo testo
+            if ($k > $delri) { //se ho un rigo testo dopo
+              $new_k = $k - $ndelrow;
+              $form["row_$new_k"] = $form["row_$k"];
+              unset($form["row_$k"]);
+            }
+          }
+        }
+        array_splice($form['rows'], $delri, $ndelrow);
+        $next_row -= $ndelrow;
     }
 } elseif ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo accesso per UPDATE
     $tesbro = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $_GET['id_tes']);
