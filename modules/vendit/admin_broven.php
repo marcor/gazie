@@ -1435,7 +1435,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         foreach ($form['rows'] as $k => $val) {
           // diminuisco o lascio inalterati gli index dei testi
           if (isset($form["row_$k"])) { //se ho un rigo testo
-            if ($k > $delri) { //se ho un rigo testo dopo
+            if ($k > ($delri+$ndelrow-1)) { //se ho un rigo testo dopo
               $new_k = $k - $ndelrow;
               $form["row_$new_k"] = $form["row_$k"];
               unset($form["row_$k"]);
@@ -1866,7 +1866,7 @@ if ( empty($msg) && !isset($_POST['ins']) && $scorrimento == '1' ) { // se ho un
 	} else {
 		$idlf="#search_cosear";
 	}
-	echo '$("html, body").delay(100).animate({scrollTop: $("'.$idlf.'").offset().top-100}, 1000);';
+	echo '$("html, body").delay(100).animate({scrollTop: $("'.$idlf.'").offset().top-100},150);';
 }
 ?>
 
