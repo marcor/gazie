@@ -1205,9 +1205,8 @@ class selectPosition extends SelectBox
 class selectproduction extends SelectBox {
   public $selected;
   public $name;
-     function output($cerca, $without_closed = true, $class = 'FacetSelect',$sele=1) {
-        global $gTables, $script_transl, $script_transl;
-        $msg = "";
+     function output($cerca, $without_closed = true, $class = 'FacetSelect',$sele=1, $msg = "") {
+        global $gTables, $script_transl;
         $opera = "%'";
         if (strlen($cerca) >= 1) {
             $opera = "'"; ////
@@ -1230,15 +1229,57 @@ class selectproduction extends SelectBox {
 				echo ' </select>';
 			} else {
                 $msg = $script_transl['notfound'] . '!';
-                echo '<input type="hidden" name="' . $this->name . '" value="" />';
+                echo '<input type="hidden" name="' . $this->name . '"  id="'. $this->name.'" />';
             }
         } else {
             $msg = $script_transl['minins'] . ' 2 ' . $script_transl['charat'] . '!';
-            echo '<input type="hidden" name="' . $this->name . '" value="" />';
+            echo '<input type="hidden" name="' . $this->name . '"  id="'. $this->name.'" />';
         }
         echo '&nbsp;<input type="text" class="' . $class . '" name="coseprod" placeholder="'.$msg.'" id="search_production" value="' . $cerca . '" maxlength="16" />';
     }
 
+}
+
+class selectcontract extends SelectBox {
+  public $selected;
+  public $name;
+  function output($cerca,$clfoco,$class = 'FacetSelect') {
+    global $gTables, $script_transl;
+    $msg = "";
+    $opera = "%'";
+    if (strlen($cerca) >= 1) {
+      $resp = gaz_dbi_dyn_query("id_contract,conclusion_date,doc_number", $gTables['contract'], "id_customer=". $clfoco." AND (conclusion_date LIKE '" . addslashes($cerca) . "')", "id_contract DESC");
+      $numclfoco = gaz_dbi_num_rows($resp);
+      $resc = gaz_dbi_dyn_query("id_tes AS id_contract,datemi AS conclusion_date,numdoc AS doc_number", $gTables['tesbro'], "tipdoc='CON' AND clfoco=". $clfoco." AND datemi LIKE '" . addslashes($cerca) ."'", "id_tes DESC");
+      $numclfoco += gaz_dbi_num_rows($resc);
+      if ($numclfoco > 0) {
+				echo ' <select name="' . $this->name . '" class="' . $class . '" >';
+				while ($r = gaz_dbi_fetch_array($resp)) {
+					$selected = "";
+					if ($r["id_contract"] == $this->selected) {
+						$selected = ' selected ';
+					}
+					echo ' <option value="' . $r["id_contract"] . '"' . $selected .'>N.' . $r["doc_number"] .' del '.gaz_format_date($r["conclusion_date"]). '</option>';
+				}
+				while ($r = gaz_dbi_fetch_array($resc)) {
+					$selected = "";
+					if ($r["id_contract"] == $this->selected) {
+						$selected = ' selected ';
+					}
+					echo ' <option value="' . $r["id_contract"] . '"' . $selected .'>N.' . $r["doc_number"] .' del '.gaz_format_date($r["conclusion_date"]). '</option>';
+				}
+        echo "<option value=\"0\"> ---------- </option>\n";
+				echo ' </select>';
+			} else {
+        $msg = $script_transl['notfound'] . '!';
+        echo '<input type="hidden" name="' . $this->name . '" id="'. $this->name.'" />';
+      }
+    } else {
+      $msg = $script_transl['minins'] . ' 2 ' . $script_transl['charat'] . '!';
+      echo '<input type="hidden" name="' . $this->name . '" id="'. $this->name.'" />';
+    }
+    echo '&nbsp;<input type="text" class="' . $class . '" name="cosecont" placeholder="'.$msg.'" id="search_contract" value="' . $cerca . '" maxlength="16" />';
+  }
 }
 
 // classe per la generazione di select box degli articoli
@@ -2051,7 +2092,7 @@ class GAzieForm {
         return '';
     }
 
-    function gazResponsiveTable($rows,$id='gaz-responsive-table',$rowshead=[],$rowsfoot=[]) {
+    function gazResponsiveTable($rows,$id='gaz-responsive-table',$rowshead=[],$rowsfoot=[], $theadclass='bg-success',$thclass='') {
       // in $row ci devono essere i righi con un array così formattato:
       // $rows[row][col]=array('title'=>'nome_colonna','value'=>'valore','type'=>'es_input','class'=>'classe_bootstrap',table_id=>'gaz-resposive_table')
       // eventualmente si può valorizzare $rowshead e $rowsfoot per scrivere un rigo prima o dopo di quello di riferimento
@@ -2060,12 +2101,12 @@ class GAzieForm {
         <div id="<?php echo $id; ?>"  class="table-responsive" style="min-height: 80px;">
           <table class="col-xs-12 table-striped table-condensed cf">
             <thead class="cf">
-              <tr class="bg-success">
+              <tr class="<?php echo $theadclass;?>">
       <?php
       // attraverso il primo elemento dell'array allo scopo di scrivere il thead
 			$fk=key($rows);
       foreach ($rows[$fk] as $v) {
-        echo '<th>' . $v['head'] . "</th>";
+        echo '<th class="'.$thclass.'">' . $v['head'] . "</th>";
       }
       ?>
               </tr>

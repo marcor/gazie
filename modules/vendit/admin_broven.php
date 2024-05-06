@@ -1866,7 +1866,7 @@ if ( empty($msg) && !isset($_POST['ins']) && $scorrimento == '1' ) { // se ho un
 	} else {
 		$idlf="#search_cosear";
 	}
-	echo '$("html, body").delay(100).animate({scrollTop: $("'.$idlf.'").offset().top-100},150);';
+	echo '$("html, body").delay(100).animate({scrollTop: $("'.$idlf.'").offset().top-100},200);';
 }
 ?>
 
@@ -2425,10 +2425,14 @@ foreach ($form['rows'] as $k => $v) {
             }
             break;
     }
-    if ( $v['tiprig']!="210" ) {
+    if ( $v['tiprig']!="210") {
+      if ($v['nrow_linked'] < $v['nrow']) {
+        echo '<td></td>';
+      } else {
         echo '<td class="text-right">
 		    <button type="submit" class="btn btn-default btn-xs" name="del[' . $k . ']" title="' . $script_transl['delete'] . $script_transl['thisrow'] . '"><i class="glyphicon glyphicon-trash"></i></button>
 		    </td>';
+      }
     }
     echo "</tr>";
 }

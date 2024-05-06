@@ -62,7 +62,6 @@ $(function() {
 		source: "../../modules/root/search.php?opt=production",
 		minLength: 2,
         html: true, // optional (jquery.ui.autocomplete.html.js required)
-
       	// optional (if other layers overlap autocomplete list)
         open: function(event, ui) {
             $(".ui-autocomplete").css("z-index", 1000);
@@ -70,6 +69,20 @@ $(function() {
 		select: function(event, ui) {
 			$("#search_production").val(ui.item.description);
 			$("#in_id_orderman").val(ui.item.id);
+			$(this).closest("form").submit();
+		}
+	});
+	$( "#search_contract" ).autocomplete({
+		source: "../../modules/root/search.php?opt=contract&clfoco="+$("#clfoco").val(),
+		minLength: 2,
+        html: true, // optional (jquery.ui.autocomplete.html.js required)
+      	// optional (if other layers overlap autocomplete list)
+        open: function(event, ui) {
+            $(".ui-autocomplete").css("z-index", 1000);
+        },
+		select: function(event, ui) {
+			$("#search_contract").val(ui.item.conclusion_date);
+			$("#id_contract").val(ui.item.id_contract);
 			$(this).closest("form").submit();
 		}
 	});

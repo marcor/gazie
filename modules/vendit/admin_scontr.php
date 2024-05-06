@@ -1063,7 +1063,7 @@ $script_transl = HeadMain(0, array('custom/autocomplete'));
 <?php
 if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non scrollo
     ?>
-            $("html, body").delay(100).animate({scrollTop: $('#search_cosear').offset().top-100}, 1000);
+            $("html, body").delay(100).animate({scrollTop: $('#search_cosear').offset().top-100},200);
     <?php
 }
 ?>

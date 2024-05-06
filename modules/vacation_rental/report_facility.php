@@ -111,7 +111,7 @@ function openframe(url,codice){
 		$('#framePdf').attr('src',url);
 		$('#framePdf').css({'height': '100%'});
 		$('.framePdf').css({'display': 'block','width': '90%', 'height': '80%', 'z-index':'2000'});
-    $("html, body").delay(100).animate({scrollTop: $('#framePdf').offset().top},'slow', function() {
+    $("html, body").delay(100).animate({scrollTop: $('#framePdf').offset().top},200, function() {
         $("#framePdf").focus();
     });
 	});

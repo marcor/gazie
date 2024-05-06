@@ -1555,7 +1555,7 @@ function prevXML(urlPrintDoc){
 		$('#xmlpreview').attr('src',urlPrintDoc);
 		$('#xmlpreview').css({'height': '100%'});
 		$('.xmlpreview').css({'display': 'block','width': '90%', 'height': '80%', 'z-index':'2000'});
-    $("html, body").delay(100).animate({scrollTop: $('#xmlpreview').offset().top},'slow', function() {
+    $("html, body").delay(100).animate({scrollTop: $('#xmlpreview').offset().top},200, function() {
         $("#xmlpreview").focus();
     });
 		$('#closeXML').on( "click", function() {

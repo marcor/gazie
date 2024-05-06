@@ -157,6 +157,8 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
   $form['round_stamp'] = intval($_POST['round_stamp']);
   $form['pagame'] = $_POST['pagame'];
   $form['change_pag'] = $_POST['change_pag'];
+	$form['id_contract'] = intval($_POST['id_contract']);
+	$form['cosecont']= $_POST['cosecont'];
   if ($form['change_pag'] != $form['pagame']) {  //se è stato cambiato il pagamento
     $new_pag = gaz_dbi_get_row($gTables['pagame'], "codice", $form['pagame']);
     $new_pag = $new_pag?$new_pag:['tippag'=>'D','numrat'=>1];
@@ -195,6 +197,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
   $form['banapp'] = $_POST['banapp'];
   $form['vettor'] = $_POST['vettor'];
   $form['id_agente'] = intval($_POST['id_agente']);
+  $form['id_contract'] = intval($_POST['id_contract']);
   $form['net_weight'] = floatval($_POST['net_weight']);
   $form['gross_weight'] = floatval($_POST['gross_weight']);
   $form['units'] = intval($_POST['units']);
@@ -839,7 +842,6 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
         }
         $form['ddt_type'] = $old_head['ddt_type'];
         $form['geneff'] = $old_head['geneff'];
-        $form['id_contract'] = $old_head['id_contract'];
         $form['id_con'] = $old_head['id_con'];
         $form['status'] = $old_head['status'];
         $form['datemi'] = $datemi;
@@ -1158,6 +1160,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
     }
     $form['hidden_req'] = '';
   }
+
   // Se viene inviata la richiesta di conferma rigo
 	if (isset($_POST['in_submit_desc'])) { //rigo Descrittivo rapido
     $form['rows'][$next_row]['codart'] = '';
@@ -2068,6 +2071,16 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
   $form['banapp'] = $tesdoc['banapp'];
   $form['vettor'] = $tesdoc['vettor'];
   $form['id_agente'] = $tesdoc['id_agente'];
+  $form['id_contract'] = $tesdoc['id_contract'];
+  $form['cosecont'] ='';
+  // se ho un contratto generatore controllo se esso proviene da un contratto standalone o da uno periodico
+  $stand_alone_contract = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $form['id_contract'], " AND tipdoc='CON' AND clfoco=".$cliente['codice']);
+  if ($stand_alone_contract) { // controllo se sta
+    $form['cosecont'] = $stand_alone_contract?$stand_alone_contract['datemi']:'';
+  } else {
+    $periodic_contract = gaz_dbi_get_row($gTables['contract'], "id_contract", $form['id_contract'], " AND id_customer=".$cliente['codice']);
+    $form['cosecont'] = $periodic_contract ? $periodic_contract['conclusion_date'] : '';
+  }
   $provvigione = new Agenti;
   $form['in_provvigione'] = $provvigione->getPercent($form['id_agente']);
   $form['net_weight'] = $tesdoc['net_weight'];
@@ -2303,6 +2316,8 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
   $form['banapp'] = "";
   $form['vettor'] = "";
   $form['id_agente'] = 0;
+  $form['id_contract'] = 0;
+  $form['cosecont'] = '';
   $form['net_weight'] = 0;
   $form['gross_weight'] = 0;
   $form['units'] = 0;
@@ -2354,7 +2369,7 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup','custom/autocom
 <?php
 if ( count($msg['err'])<=0 && count($msg['war'])<=0 && $form['clfoco']>=100000000  && $scorrimento == '1' ) { // scrollo solo se voluto, ho selezionato il cliente e non ci sono errori
     ?>
-            $("html, body").delay(100).animate({scrollTop: $('#search_cosear').offset().top-100}, 1000);
+            $("html, body").delay(100).animate({scrollTop: $('#search_cosear').offset().top-100}, 200);
     <?php
 }
 ?>
@@ -2607,7 +2622,14 @@ if ($form['tipdoc'] == "DDT") {
     echo "<input type=\"hidden\" value=\"" . $form['annord'] . "\" name=\"annord\">\n";
     echo "<input type=\"hidden\" value=\"" . $form['ragbol'] . "\" name=\"ragbol\">\n";
 } else {
-    echo "</td></tr></table></div>\n";
+    echo "</td></tr>";
+echo '<tr><td colspan=2 class="text-right">Contratto: </td><td colspan=2> ';
+$select_contract = new selectcontract("id_contract");
+$select_contract->addSelected($form['id_contract']);
+$select_contract->output($form['cosecont'],$form['clfoco']);
+echo '</td><td colspan=2 class="text-right"></td><td colspan=2>';
+echo "</td>\n";
+echo "</tr></table></div>\n";
     echo "<input type=\"hidden\" value=\"" . $form['gioord'] . "\" name=\"gioord\">\n";
     echo "<input type=\"hidden\" value=\"" . $form['mesord'] . "\" name=\"mesord\">\n";
     echo "<input type=\"hidden\" value=\"" . $form['annord'] . "\" name=\"annord\">\n";

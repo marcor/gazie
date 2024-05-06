@@ -31,6 +31,7 @@ if (!$isAjax) {
     $user_error = 'Access denied - not an AJAX request...';
     trigger_error($user_error, E_USER_ERROR);
 }
+
 if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato direttamente
   if (isset($_GET['opt'])) {
       $opt = $_GET['opt'];
@@ -99,6 +100,38 @@ if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato diret
       $result = gaz_dbi_dyn_query("id, CONCAT(id,' - ',description,' - ',add_info) AS label, id AS value, 'S' AS movimentabile, description ",
               $gTables['orderman'], "(".$like.") AND stato_lavorazione < 9", // così prendo solo gli ordini da clienti
               "id DESC",0,500);
+      break;
+    case 'contract':
+      $clfoco=(isset($_GET['clfoco']))?$_GET['clfoco']:'0';
+      $fields = array("doc_number", "conclusion_date"); //	Sono i campi sui quali effettuare la ricerca
+      foreach ($fields as $id1 => $field) {   //	preparo i diversi campi per il like, questo funziona meglio del concat
+          foreach ($parts as $id => $part) {   //	(inteso come stringa sulla quale fare il like) perchè è più flessibile con i caratteri jolly
+              $like[] = like_prepare($field, $part); //	Altrimenti se si cerca za%, il like viene fatto su tutto il concat, e se il codice prodotto
+          }           //	non inizia per za il risultato è nullo, così invece se cerco za%, viene fuori anche un prodotto il
+      }            //  cui nome (o descrizione) inizia per za ma il cui codice può anche essere TPQ
+      $like1 = implode(" OR ", $like);    //	creo la porzione di query per il like, con OR perchè cerco in campi differenti
+      $result = gaz_dbi_dyn_query("id_contract, CONCAT('N.',doc_number,' del ',DATE_FORMAT(conclusion_date,'%d-%m-%Y')) AS label, id_contract AS value, conclusion_date", $gTables['contract'], "(".$like1.") AND id_customer = ".$clfoco,"id_contract DESC",0,500);
+      while ($row = gaz_dbi_fetch_assoc($result)) {
+          $return_arr[] = $row;
+      }
+      $like=[];
+      $fields = array("numdoc", "datemi"); //	Sono i campi sui quali effettuare la ricerca
+      foreach ($fields as $id1 => $field) {   //	preparo i diversi campi per il like, questo funziona meglio del concat
+          foreach ($parts as $id => $part) {   //	(inteso come stringa sulla quale fare il like) perchè è più flessibile con i caratteri jolly
+              $like[] = like_prepare($field, $part); //	Altrimenti se si cerca za%, il like viene fatto su tutto il concat, e se il codice prodotto
+          }           //	non inizia per za il risultato è nullo, così invece se cerco za%, viene fuori anche un prodotto il
+      }            //  cui nome (o descrizione) inizia per za ma il cui codice può anche essere TPQ
+      $like2 = implode(" OR ", $like);    //	creo la porzione di query per il like, con OR perchè cerco in campi differenti
+      $result = gaz_dbi_dyn_query("id_tes AS id_contract, CONCAT('N.',numdoc,' del ',DATE_FORMAT(datemi,'%d-%m-%Y')) AS label, id_tes AS value, datemi AS conclusion_date", $gTables['tesbro'], "(".$like2.") AND tipdoc ='CON' AND clfoco=".$clfoco,"id_tes DESC",0,500);
+      while ($row = gaz_dbi_fetch_assoc($result)) {
+          $return_arr[] = $row;
+      }
+      if ($term != '%%') { //	E' indispensabile, altrimenti si possono generare warning che non fanno funzionare l'autocompletamento
+        $return_arr = apply_highlight($return_arr, str_replace("%", '', $parts));
+      }
+      $return_arr = apply_evidenze($return_arr);
+      echo json_encode($return_arr);
+      exit;
       break;
     case 'quality':
       $fields = array("quality"); //	Sono i campi sui quali effettuare la ricerca
