@@ -60,7 +60,7 @@ if (isset($_SESSION['print_request'])) {
       if ($documento['numdoc'] > 0) {
          echo "<HTML><HEAD><TITLE>Wait for PDF</TITLE>\n";
          echo "<script type=\"text/javascript\">\n";
-         $_SESSION['script_ref'] = $_SERVER['HTTP_REFERER'];
+         $_SESSION['script_ref'] = (isset($_SESSION['script_ref'])) ? $_SESSION['script_ref'] : $_SERVER['HTTP_REFERER'];
          echo "setTimeout(\"window.location='stampa_docven.php?id_tes=" . $documento['id_tes'] . $template . "'\",1000)\n";
          echo "</script></HEAD>\n<BODY><DIV align=\"center\">Wait for PDF</DIV><DIV align=\"center\">Aspetta il PDF</DIV></BODY></HTML>";
       } else {
