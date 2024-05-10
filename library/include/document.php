@@ -494,7 +494,7 @@ class DocContabVars {
               $doc=$this->getExtDoc($rigo['id_rig'],$attach_path);
               if (!$doc) { // se non ho trovato il file lo metto come tipo normale
                 $rigo['tiprig'] = 0;
-                $rigo['descri'] = 'FILE MANCANTE';
+                // $rigo['descri'] = 'FILE MANCANTE';
               }
             } elseif ($rigo['tiprig'] == 90) {
                 $rigo['importo'] = CalcolaImportoRigo(1, $rigo['prelis'], 0);
