@@ -52,12 +52,12 @@ function getMovements($account_ini, $account_fin, $date_ini, $date_fin) {
         if ($account_ini == $account_fin || $account_fin == 0) {
             // INIZIO crezione tabella per la visualizzazione sul tootip di tutto il movimento e facccio la somma del totale movimento
             $res_rig = gaz_dbi_dyn_query("*", $gTables['rigmoc'], 'id_tes=' . $r["id_tes"], 'id_rig');
-            $r['tt'] = '<table><th colspan=3 >' . $r['tesdes'] . '</th>';
+            $r['tt'] = '<p class=\'bg-info text-primary\'><b>' . $r['tesdes'] . '</b></p>';
             $tot = 0.00;
             $refclfoco=0;
             while ($rr = gaz_dbi_fetch_array($res_rig)) {
-              $account = $anagrafica->getPartner($rr["codcon"]);
-              $r['tt'] .= '<tr><td>' . htmlspecialchars($account['descri']) . ' </td><td align=right> ' . $rr['import'] . '</td><td align=right>' . $rr['darave'] . '</td></tr>';
+              $account = $anagrafica->getPartner($rr['codcon']);
+              $r['tt'] .= '<p class=\'text-right\'>'.($account==null?'':htmlspecialchars($account['descri'])).'  '.$rr['import'].'  ' . $rr['darave'] . '</p>';
               if ($rr['darave'] == 'D') {
                   $tot += $rr['import'];
               }
@@ -71,7 +71,7 @@ function getMovements($account_ini, $account_fin, $date_ini, $date_fin) {
                 $refclfoco=$rr['codcon'];
               }
             }
-            $r['tt'] .= '</table>';
+            $r['tt'] = str_replace("\"", "'", $r['tt']);
             // FINE creazione tabella per il tooltip
         }
         $m[] = $r;
