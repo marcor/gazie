@@ -812,6 +812,9 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
         $numddt_tolast=false;
         // riciclo i righi per assegnare le eventuali nuove scelte DdT dell'utente
 				foreach($form['rows'] as $nl => $v) {
+          if ( !isset($v['NumeroDDT']) ){
+            $v['NumeroDDT']='';
+          }
           if ($_POST['hidden_req']=='concileDdT') { // l'utente ha scelto di cambiare il DdT di riferimento
             if (substr($_POST['numddt_'.($nl-1)],-7) == '_tolast' ) {
               $numddt_tolast=substr($_POST['numddt_'.($nl-1)],0,-7);
@@ -825,7 +828,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
               $form['rows'][$nl]['DataDDT']=$acc_DataDDT[$numddt_tolast]['Data'];
               $form['numddt_'.($nl-1)]=$numddt_tolast;
             }
-          } else if (!empty($_POST['numddt_'.($nl-1)]) && $_POST['numddt_'.($nl-1)] <> $v['NumeroDDT'] ) { // se provengo da un cambiamento dell'utente
+          } else if ( !empty($_POST['numddt_'.($nl-1)]) && $_POST['numddt_'.($nl-1)] <> $v['NumeroDDT'] ) { // se provengo da un cambiamento dell'utente
                 $form['rows'][$nl]['NumeroDDT']=$_POST['numddt_'.($nl-1)];
                 $form['rows'][$nl]['DataDDT']=$acc_DataDDT[$_POST['numddt_'.($nl-1)]]['Data'];
                 $form['numddt_'.($nl-1)]=$_POST['numddt_'.($nl-1)];

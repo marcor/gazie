@@ -81,17 +81,17 @@ if (isset($_POST['Duplicate'])) {
 		*/
 		$stmtInsRows = mysqli_prepare($link,
 			"INSERT INTO {$gTables['rigbro']} (
-				`id_rig`, `id_tes`, `tiprig`, `codart`, `descri`, `id_body_text`,
+				`id_rig`, `nrow`, `nrow_linked`, `id_tes`, `tiprig`, `codart`, `codice_fornitore`, `descri`, `id_body_text`,
 				`unimis`, `quanti`, `prelis`, `sconto`, `codvat`, `pervat`,
 				`codric`, `provvigione`, `ritenuta`, `delivery_date`, `id_doc`, `id_mag`,
 				`status`
 			) (
-			SELECT null, ?, `tiprig`, `codart`, `descri`, `id_body_text`,
+			SELECT null, `nrow`, `nrow_linked`, ?, `tiprig`, `codart`, `codice_fornitore`, `descri`, `id_body_text`,
 				`unimis`, `quanti`, `prelis`, `sconto`, `codvat`, `pervat`,
 				`codric`, `provvigione`, `ritenuta`, `delivery_date`, 0, 0,
 				'INSERT'
 			FROM {$gTables['rigbro']}
-			WHERE id_tes = ?
+			WHERE id_tes = ? ORDER BY `id_rig`
 			)"
 		);
 

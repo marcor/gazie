@@ -26,12 +26,13 @@ require("../../library/include/datlib.inc.php");
 require("../../modules/magazz/lib.function.php");
 $admin_aziend = checkAdmin();
 $pdf_to_modal = gaz_dbi_get_row($gTables['company_config'], 'var', 'pdf_reports_send_to_modal')['val'];
-$scorrimento = gaz_dbi_get_row($gTables['company_config'], 'var', 'autoscroll_to_last_row')['val'];
+$scroll_input_row = gaz_dbi_get_row($gTables['company_config'], 'var', 'autoscroll_to_last_row')['val'];
 $after_newdoc_back_to_doclist=gaz_dbi_get_row($gTables['company_config'], 'var', 'after_newdoc_back_to_doclist')['val'];
 $msgtoast = "";
 $msg = "";
 $show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
 $tipo_composti = gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti');
+
 function getDayNameFromDayNumber($day_number) {
   global $gazTimeFormatter;
   $gazTimeFormatter->setPattern('eeee');
@@ -1859,7 +1860,7 @@ $( function() {
 		$("#dialog_moverow" ).dialog( "open" );
 	});
 <?php
-if ( empty($msg) && !isset($_POST['ins']) && $scorrimento == '1' ) { // se ho un errore non scrollo
+if ( empty($msg) && !isset($_POST['ins']) && $scroll_input_row == '1' ) { // se ho un errore non scrollo
 	if (!empty($_POST['last_focus'])){
 		$idlf='#'.$_POST['last_focus'];
 		$_POST['last_focus']='';
@@ -1891,6 +1892,90 @@ if ( empty($msg) && !isset($_POST['ins']) && $scorrimento == '1' ) { // se ho un
 </div>
 <?php
 $gForm = new venditForm();
+
+function printInputNewRowForm ($form,$trsl,$gForm) {
+  $class_conf_row='btn-success';
+  $descributton = $trsl['insert'];
+  $nurig = count($form['rows'])+1;
+  $expsts = explode('UPDROW',$form['in_status']);
+  if (isset($expsts[1])){
+    $nurig = (int)$expsts[1]+1;
+    $class_conf_row = 'btn-warning';
+    $descributton = $trsl['update'];
+  }
+  $descributton .= ' il rigo '.$nurig;
+  echo '
+	  <input type="hidden" value="' . $form['in_descri'] . '" name="in_descri" />
+	  <input type="hidden" value="' . $form['in_pervat'] . '" name="in_pervat" />
+	  <input type="hidden" value="' . $form['in_tipiva'] . '" name="in_tipiva" />
+	  <input type="hidden" value="' . $form['in_ritenuta'] . '" name="in_ritenuta" />
+    <input type="hidden" value="' . $form['in_unimis'] . '" name="in_unimis" />
+	  <input type="hidden" value="' . $form['in_prelis'] . '" name="in_prelis" />
+	  <input type="hidden" value="' . $form['in_id_mag'] . '" name="in_id_mag" />
+    <input type="hidden" value="' . $form['in_id_rig'] . '" name="in_id_rig" />
+    <input type="hidden" value="' . $form['in_nrow'] . '" name="in_nrow" />
+    <input type="hidden" value="' . $form['in_nrow_linked'] . '" name="in_nrow_linked" />
+	  <input type="hidden" value="' . $form['in_id_doc'] . '" name="in_id_doc" />
+	  <input type="hidden" value="' . $form['in_annota'] . '" name="in_annota" />
+	  <input type="hidden" value="' . $form['in_scorta'] . '" name="in_scorta" />
+	  <input type="hidden" value="' . $form['in_quamag'] . '" name="in_quamag" />
+	  <input type="hidden" value="' . $form['in_pesosp'] . '" name="in_pesosp" />
+	  <input type="hidden" value="' . $form['in_extdoc'] . '" name="in_extdoc" />
+	  <input type="hidden" value="' . $form['in_status'] . '" name="in_status" />
+	  <input type="hidden" value="' . $form['hidden_req'] . '" name="hidden_req" />
+	  <div class="table-responsive">
+    <table class="Tlarge table input-area">
+	  <tr>
+			<td>' . $trsl[17] . ':';
+  $gForm->selTypeRow('in_tiprig', $form['in_tiprig']);
+  echo $trsl[15] . ':&nbsp;';
+  $select_artico = new selectartico("in_codart");
+  $select_artico->addSelected($form['in_codart']);
+  //$select_artico->output($form['cosear'], $form['in_artsea']);
+  $select_artico->output($form['cosear']);
+?>
+	</td>
+	<td><?php echo $trsl[16] ?>:&nbsp;<input type="text" value="<?php echo $form['in_quanti'] ?>" maxlength=11 size=8 name="in_quanti" tabindex="5" accesskey="q" /></td>
+	<td align="right">
+<?php
+if (substr($form['in_status'], 0, 6) != "UPDROW") { //se non è un rigo da modificare
+?>
+			<button type="submit" class="btn btn-info btn-sm" name="in_submit_desc" title="Aggiungi rigo Descrittivo"><i class="glyphicon glyphicon-pencil"></i></button>
+			<button type="submit" class="btn btn-info btn-sm" name="in_submit_text" title="Aggiungi rigo Testo"><i class="glyphicon glyphicon-list"></i></button>
+<?php
+}
+?>
+			</td>
+		</tr>
+		<tr>
+			<td>
+<?php
+  echo $trsl[18] . ": ";
+  $select_codric = new selectconven("in_codric");
+  $select_codric->addSelected($form['in_codric']);
+  $select_codric->output(substr($form['in_codric'], 0, 1));
+  echo '			%' . $trsl[24] . ': <input type="text" value="' . $form['in_sconto'] . '" maxlength=4 size=3 name="in_sconto">
+             %' . $trsl[56] . ': <input type="text" value="' . $form['in_provvigione'] . '" maxlength=6 size=3 name="in_provvigione">'
+   . ' %' . $trsl['ritenuta'] . ': <input type="text" value="' . $form['in_ritenuta'] . '" maxlength=6 size=3 name="in_ritenuta">
+            </td>
+          <td>' . $trsl['vat_constrain'];
+  $select_in_codvat = new selectaliiva("in_codvat");
+  $select_in_codvat->addSelected($form['in_codvat']);
+  $select_in_codvat->output();
+?>
+</td>
+<td>
+  <button type="submit" class="btn <?php echo $class_conf_row; ?>" name="in_submit" tabindex="6"><?php echo $descributton ?>
+    <i class="glyphicon glyphicon-ok"></i>
+  </button>
+</td>
+</tr>
+</table>
+</div>
+<?php
+// FINE FUNZIONE STAMPA RIGO DI INPUT
+}
+
 echo '	<input type="hidden" name="' . ucfirst($toDo) . '" value="" />
     <input type="hidden" id="moved_nrow" name="moved_nrow" value=""/>
     <input type="hidden" id="moved_to" name="moved_to" value=""/>
@@ -2067,6 +2152,11 @@ echo '		</td>
 		</tr>
 	  </table></div>
     <div class="FacetSeparatorTD" align="center"><b>' . $script_transl[1] . '</b></div>';
+
+if ( $scroll_input_row == 9 ) { // ho scelto di posizionare il rigo di input PRIMA della tabella dei righi
+  echo printInputNewRowForm($form,$script_transl,$gForm);
+}
+
 echo '<div class="table-responsive">
 	  <table name="elenco" class="Tlarge table table-striped table-bordered table-condensed">
 		<thead>
@@ -2223,7 +2313,7 @@ foreach ($form['rows'] as $k => $v) {
 					</td>
 					<td class="text-right">' . $v['pervat'] . '%</td>
 					<td class="text-right codricTooltip" title="Contropartita">' . $v['codric'] . '</td>';
-            $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
+            $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']].' ( digitare testo  e importo)');
             break;
         case "2": // descrittivo
           echo '<td><a nrow="'.$nr.'" id="row_'.$k.'" class="btn btn-default btn-xs dialog_moverow" title="'.$btntit.'" descr="<b>'. $script_transl['typerow'][$v['tiprig']].'</b>  '.$v['descri'].'"><i class="glyphicon glyphicon-'.$btngly.'"></i></a> '.$nr.'</td>';
@@ -2241,7 +2331,7 @@ foreach ($form['rows'] as $k => $v) {
             echo "<td></td>\n";
             echo "<td></td>\n";
             echo "<td></td>\n";
-            $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
+            $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']].' ( digitare il testo)');
             break;
         case "3":
        			echo '<td><a nrow="'.$nr.'" id="row_'.$k.'" class="btn btn-default btn-xs '.$btndia.'" title="'.$btntit.'" descr="<b>'. $script_transl['typerow'][$v['tiprig']].'</b>  '.$v['descri'].'"><i class="glyphicon glyphicon-'.$btngly.'"></i></a> '.$nr.'</td>';
@@ -2260,7 +2350,7 @@ foreach ($form['rows'] as $k => $v) {
 				<td class=\"text-right\"><input type=\"text\" name=\"rows[$k][prelis]\" value=\"" . $v['prelis'] . "\" align=\"right\" maxlength=11 size=8  /></td>
 				<td></td>
 				<td></td>\n";
-            $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
+            $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']].' ( digitare descrizione e importo variazione totale da pagare)');
             break;
         case "6":
         case "7":
@@ -2278,7 +2368,9 @@ foreach ($form['rows'] as $k => $v) {
 				<input type="hidden" value="" name="rows[' . $k . '][prelis]" />
 				<input type="hidden" value="" name="rows[' . $k . '][sconto]" />
 				<input type="hidden" value="" name="rows[' . $k . '][provvigione]" />';
+          if ($v['nrow_linked'] == $v['nrow']) { // lo notifico solo se non linkato
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
+          }
             break;
         case "11": // CIG fattura PA
         case "12": // CUP fattura PA
@@ -2306,7 +2398,7 @@ foreach ($form['rows'] as $k => $v) {
 					<td></td>
 					<td></td>
 					<td></td>\n";
-            $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
+            $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']].' ( digitare i dati)');
             break;
         case "50":
           echo '<td><a nrow="'.$nr.'" id="row_'.$k.'" class="btn btn-default btn-xs '.$btndia.'" title="'.$btntit.'" descr="<b>Documento esterno</b>  '.$v['descri'].'"><i class="glyphicon glyphicon-'.$btngly.'"></i></a> '.$nr.'</td>';
@@ -2382,7 +2474,7 @@ foreach ($form['rows'] as $k => $v) {
             echo "<td></td>\n";
             echo "<td></td>\n";
             echo "<td></td>\n";
-            $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
+            $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']].' ( digitare il testo)');
             break;
         case "210":  // serve per gli articoli composti contattare andrea
             if ( $show_artico_composit['val']=="1" && $tipo_composti['val']=="KIT") {
@@ -2441,16 +2533,7 @@ echo '<div id="maxnrow" movemax="'.$nr.'"</div>';
 if (isset($ultimoprezzo) && $ultimoprezzo<>'') {
     $msgtoast = $upd_mm->toast(" <strong>Ultime vendite:</strong>".$ultimoprezzo, 'alert-last-row', 'alert-success');
 }
-$class_conf_row='btn-success';
-$descributton = $script_transl['insert'];
-$nurig = count($form['rows'])+1;
-$expsts = explode('UPDROW',$form['in_status']);
-if (isset($expsts[1])){
-  $nurig = (int)$expsts[1]+1;
-  $class_conf_row = 'btn-warning';
-  $descributton = $script_transl['update'];
-}
-$descributton .= ' il rigo '.$nurig;
+
 if (count($form['rows']) > 0) {
   $msgtoast = $upd_mm->toast($msgtoast);  //lo mostriamo
   if (isset($_POST['in_submit']) && count($form['rows']) > 5) {
@@ -2460,74 +2543,9 @@ if (count($form['rows']) > 0) {
   echo '<tr id="alert-zerorows"><td colspan="12" class="alert alert-danger">' . $script_transl['zero_rows'] . '</td></tr>';
 }
 echo '</tbody></table></div>';
-echo '
-	  <input type="hidden" value="' . $form['in_descri'] . '" name="in_descri" />
-	  <input type="hidden" value="' . $form['in_pervat'] . '" name="in_pervat" />
-	  <input type="hidden" value="' . $form['in_tipiva'] . '" name="in_tipiva" />
-	  <input type="hidden" value="' . $form['in_ritenuta'] . '" name="in_ritenuta" />
-    <input type="hidden" value="' . $form['in_unimis'] . '" name="in_unimis" />
-	  <input type="hidden" value="' . $form['in_prelis'] . '" name="in_prelis" />
-	  <input type="hidden" value="' . $form['in_id_mag'] . '" name="in_id_mag" />
-    <input type="hidden" value="' . $form['in_id_rig'] . '" name="in_id_rig" />
-    <input type="hidden" value="' . $form['in_nrow'] . '" name="in_nrow" />
-    <input type="hidden" value="' . $form['in_nrow_linked'] . '" name="in_nrow_linked" />
-	  <input type="hidden" value="' . $form['in_id_doc'] . '" name="in_id_doc" />
-	  <input type="hidden" value="' . $form['in_annota'] . '" name="in_annota" />
-	  <input type="hidden" value="' . $form['in_scorta'] . '" name="in_scorta" />
-	  <input type="hidden" value="' . $form['in_quamag'] . '" name="in_quamag" />
-	  <input type="hidden" value="' . $form['in_pesosp'] . '" name="in_pesosp" />
-	  <input type="hidden" value="' . $form['in_extdoc'] . '" name="in_extdoc" />
-	  <input type="hidden" value="' . $form['in_status'] . '" name="in_status" />
-	  <input type="hidden" value="' . $form['hidden_req'] . '" name="hidden_req" />
-	  <div class="table-responsive"><table class="Tlarge table input-area">
-	  	<tr>
-			<td>' . $script_transl[17] . ':';
-$gForm->selTypeRow('in_tiprig', $form['in_tiprig']);
-echo $script_transl[15] . ':&nbsp;';
-$select_artico = new selectartico("in_codart");
-$select_artico->addSelected($form['in_codart']);
-//$select_artico->output($form['cosear'], $form['in_artsea']);
-$select_artico->output($form['cosear']);
-?>
-	</td>
-	<td><?php echo $script_transl[16] ?>:&nbsp;<input type="text" value="<?php echo $form['in_quanti'] ?>" maxlength=11 size=8 name="in_quanti" tabindex="5" accesskey="q" /></td>
-	<td align="right">
-<?php
-if (substr($form['in_status'], 0, 6) != "UPDROW") { //se non è un rigo da modificare
-?>
-			<button type="submit" class="btn btn-info btn-sm" name="in_submit_desc" title="Aggiungi rigo Descrittivo"><i class="glyphicon glyphicon-pencil"></i></button>
-			<button type="submit" class="btn btn-info btn-sm" name="in_submit_text" title="Aggiungi rigo Testo"><i class="glyphicon glyphicon-list"></i></button>
-<?php
+if ( $scroll_input_row < 9 ) { // ho il rigo di input posizionato dopo la tabella dei righi
+  echo printInputNewRowForm($form,$script_transl,$gForm);
 }
-?>
-			</td>
-		</tr>
-		<tr>
-			<td>
-<?php
-echo $script_transl[18] . ": ";
-$select_codric = new selectconven("in_codric");
-$select_codric->addSelected($form['in_codric']);
-$select_codric->output(substr($form['in_codric'], 0, 1));
-echo '			%' . $script_transl[24] . ': <input type="text" value="' . $form['in_sconto'] . '" maxlength=4 size=3 name="in_sconto">
-	  			 %' . $script_transl[56] . ': <input type="text" value="' . $form['in_provvigione'] . '" maxlength=6 size=3 name="in_provvigione">'
- . ' %' . $script_transl['ritenuta'] . ': <input type="text" value="' . $form['in_ritenuta'] . '" maxlength=6 size=3 name="in_ritenuta">
-	   			</td>
-				<td>' . $script_transl['vat_constrain'];
-$select_in_codvat = new selectaliiva("in_codvat");
-$select_in_codvat->addSelected($form['in_codvat']);
-$select_in_codvat->output();
-?>
-</td>
-<td>
-  <button type="submit" class="btn <?php echo $class_conf_row; ?>" name="in_submit" tabindex="6"><?php echo $descributton ?>
-    <i class="glyphicon glyphicon-ok"></i>
-  </button>
-</td>
-</tr>
-</table>
-</div>
-<?php
 
 echo '<div class="FacetSeparatorTD text-center"><b>' . $script_transl[2] . '</b></div><div>
 		<table class="Tlarge table table-striped table-bordered table-condensed">
