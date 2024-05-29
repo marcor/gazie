@@ -447,6 +447,16 @@ $gForm->selectFromDB('country', 'counas', 'iso', $form['counas'], 'iso', 1, ' - 
         <div class="row">
             <div class="col-md-12">
                 <div class="form-group">
+                    <label for="status" class="col-sm-4 control-label"><?php echo $script_transl['codice_campi']; ?> </label>
+<?php
+$gForm->selectFromDB('campi', 'codice_campi', 'codice', $form['codice_campi'], false, 1, ' - ', 'descri', '', 'col-sm-8', null, 'style="max-width: 250px;"');
+?>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
                     <label for="start_date" class="col-sm-4 control-label"><?php echo $script_transl['start_date']; ?> </label>
                     <input class="col-sm-8" type="text" value="<?php echo $form['start_date']; ?>" name="start_date" id="start_date" maxlength="10" />
                 </div>

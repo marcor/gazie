@@ -85,6 +85,7 @@ $strScript = array("admin_staff.php" =>
         'annota' => 'Annotazioni',
         'Codice_CCNL' => 'Codice CCNL',
         'job_title' => 'Mansione',
+        'codice_campi'=>"Reparto/luogo di lavoro",
         'start_date'=>"Data assunzione",
 		'end_date'=>"Data Fine Rapporto",
 		'last_hourly_cost'=>'Ultimo costo orario'
@@ -172,6 +173,6 @@ $strScript = array("admin_staff.php" =>
     "report_pay_salary.php" =>
     array('title' => 'Lista bonifici per salari e stipendi ',
     )
-	
+
 );
 ?>
