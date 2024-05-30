@@ -13,6 +13,6 @@ ALTER TABLE `gaz_XXXcatmer`	ADD COLUMN `sort_order` INT NOT NULL COMMENT 'Per or
 ALTER TABLE `gaz_XXXassets` ADD COLUMN `sort_order` INT NOT NULL COMMENT 'Per ordinamento bene strumentale, ad esempio su libro cespiti' AFTER `codice_artico`, ADD INDEX `sort_order` (`sort_order`);
 UPDATE `gaz_XXXcompany_config` SET `val`= '2' WHERE `var` = 'ext_artico_description';
 UPDATE `gaz_XXXcompany_config` SET `description`= 'Attiva lo scroll automatico sull\'ultimo rigo dei documenti (0= No, 1= Si, 9= No, ma con rigo input in testa)' WHERE `var` = 'autoscroll_to_last_row';
-ALTER TABLE `gaz_XXXstaff` ADD COLUMN `codice_campi` INT(10) NULL DEFAULT NULL COMMENT 'riferimento alla tabella gaz_001campi (reparto o luogo di lavoro)' AFTER `employment_status`;
-ALTER TABLE `gaz_XXXstaff_worked_hours`	ADD COLUMN `codice_campi` INT(10) NULL DEFAULT NULL COMMENT 'riferimento alla tabella gaz_001campi per indicare il luogo/reparto dove è stato eseguito il lavoro' AFTER `id_orderman`, ADD INDEX `codice_campi` (`codice_campi`);
+ALTER TABLE `gaz_XXXstaff` ADD COLUMN `codice_campi` INT(10) NULL DEFAULT NULL COMMENT 'riferimento alla tabella gaz_NNNcampi (reparto o luogo di lavoro)' AFTER `employment_status`;
+ALTER TABLE `gaz_XXXstaff_work_movements`	ADD COLUMN `codice_campi` INT(10) NULL DEFAULT NULL COMMENT 'riferimento alla tabella gaz_NNNcampi per indicare il luogo/reparto dove è stato eseguito il lavoro' AFTER `id_orderman`, ADD INDEX `codice_campi` (`codice_campi`);
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )
