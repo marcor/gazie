@@ -223,7 +223,8 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 
 		// Antonio Germani inserico colonna campi di coltivazione, superficie, coltura
 		echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row['campo_impianto']." - ".$a_row['descamp']." &nbsp;</td>\n";
-		echo "<td class=\"FacetDataTD\" align=\"center\">".str_replace('.', ',',$a_row["superf"])." &nbsp;</td>\n";
+    $a_row_res=(is_null($a_row["superf"]))?'':str_replace('.', ',',$a_row["superf"]);
+		echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row_res." &nbsp;</td>\n";
 		echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row['id_colture']." - ".$a_row["nome_colt"]." &nbsp";
 		if ($data=json_decode($a_row['custom_field'],true)){// se c'è un json nel custom_field
 			if (is_array($data['camp']) AND strlen($data['camp']['fase_fenologica'])>0){ // se è riferito al modulo camp
