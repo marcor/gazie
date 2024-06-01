@@ -1775,25 +1775,7 @@ echo "</td></tr>";
 // Antonio Germani selezione responsabile o addetto alla produzione fra l'elenco staff
 // SELECT da staff con acquisizione nome da clfoco
 echo "<tr><td class=\"FacetFieldCaptionTD\">Responsabile/addetto produzione</td><td class=\"FacetDataTD\">\n";
-?>
-<select name="id_staff_def" onchange="this.form.submit()">
-<?php
-$sql = gaz_dbi_query("SELECT ".$gTables['anagra'].".* FROM ".$gTables['staff']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['staff'].".id_clfoco = ".$gTables['clfoco'].".codice LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id ".
-// tolgo l'UNION con gli utenti
-//UNION SELECT ".$gTables['anagra'].".*  FROM ".$gTables['admin']." LEFT JOIN ".$gTables['anagra']." ON ".$gTables['admin'].".id_anagra = ".$gTables['anagra'].".id
-" WHERE 1" );
-$sel=0;
-while ($row = $sql->fetch_assoc()){
-	$selected = "";
-	if ($row['id'] == $form['id_staff_def']) {
-		$selected = "selected";
-		$sel=1;
-	}
-	echo "<option ".$selected." value=\"".$row['id']."\">" . $row['ragso1'] ." ".$row['ragso2']. "</option>";
-}
-if ($sel==0){
-	echo "<option selected value=\"\"></option>";
-}
+$gForm->selectWorker($form['id_staff_def'],$form['anninp'],$form['mesinp'], "style='max-width: 300px;'",true);
 ?>
 </select>
 

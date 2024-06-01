@@ -56,13 +56,13 @@ function getWorkedHours($mese,$anno) { // Carico staff worked hours per il dato 
 	return $month_res;
 }
 
-function getWorkers($mese,$anno) { // carico i collaboratori ancora in forza per il dato mese e anno
+function getWorkers($mese,$anno) { // carico i collaboratori ancora in forza per il dato mese e anno e non nascosti alla ricerca
 	global $gTables;
 	$cols=array();
 	$query="SELECT ragso1,ragso2,id_staff,id_clfoco,last_hourly_cost FROM ".$gTables['staff']."
 	LEFT JOIN ". $gTables['clfoco'] . " ON ". $gTables['staff'] .".id_clfoco = ". $gTables['clfoco'] .".codice
 	LEFT JOIN ". $gTables['anagra'] . " ON ". $gTables['anagra'] .".id = ". $gTables['clfoco'] .".id_anagra
-	WHERE DATE_FORMAT(start_date, '%Y%m') <=  ".$anno.str_pad($mese,2,"0",STR_PAD_LEFT)." AND (DATE_FORMAT(end_date, '%Y%m') >= ".$anno.str_pad($mese,2,"0",STR_PAD_LEFT)." OR end_date IS NULL OR end_date <= '2004-01-27')";
+	WHERE DATE_FORMAT(start_date, '%Y%m') <=  ".$anno.str_pad($mese,2,"0",STR_PAD_LEFT)." AND (DATE_FORMAT(end_date, '%Y%m') >= ".$anno.str_pad($mese,2,"0",STR_PAD_LEFT)." OR end_date IS NULL OR end_date <= '2004-01-27') AND status <> 'HIDDEN'";
 	$coll = gaz_dbi_query($query);
 	while($col = $coll->fetch_assoc()){
 		$cols[]=$col;

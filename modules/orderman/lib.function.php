@@ -25,22 +25,22 @@
  */
 
 class ordermanForm extends GAzieForm {
-	
+
 	// Antonio Germani - Come select selectFromDB ma con in più preleva $key4 da $table2, dove $key3 è uguale a $key2, e lo visualizza nella scelta del select. Cioè nelle scelte del select ci sarà $key e $key4
 	function selectFrom2DB($table,$table2,$key3,$key4, $name, $key, $val, $order = false, $empty = false, $bridge = '', $key2 = '', $val_hiddenReq = '', $class = 'FacetSelect', $addOption = null, $style = '', $where = false, $echo=false) {
         global $gTables;
 		$acc='';
         $refresh = '';
-		
+
         if (!$order) {
             $order = $key;
         }
-		
+
         $query = 'SELECT * FROM `' . $gTables[$table] . '` ';
         if ($where) {
             $query .= ' WHERE ' . $where;
         }
-        $query .= ' ORDER BY `' . $order . '`'; 
+        $query .= ' ORDER BY `' . $order . '`';
         if (!empty($val_hiddenReq)) {
             $refresh = "onchange=\"this.form.hidden_req.value='$val_hiddenReq'; this.form.submit();\"";
         }
@@ -48,16 +48,16 @@ class ordermanForm extends GAzieForm {
         if ($empty) {
             $acc .= "\t\t <option value=\"\"></option>\n";
         }
-		
+
         $result = gaz_dbi_query($query);
         while ($r = gaz_dbi_fetch_array($result)) {
             $selected = '';
             if ($r[$key] == $val) {
                 $selected = "selected";
             }
-						
+
 			$r2 = gaz_dbi_get_row($gTables[$table2], $key3, $r[$key2]);
-			
+
             $acc .= "\t\t <option value=\"" . $r[$key] . "\" $selected >";
             if (empty($key2)) {
                 $acc .= substr($r[$key], 0, 43) . "</option>\n";
@@ -78,6 +78,27 @@ class ordermanForm extends GAzieForm {
 		} else {
 			echo $acc;
 		}
-    }	
+  }
+
+  function selectWorker($val, $anno=false, $mese=false, $class = 'FacetSelect', $val_hiddenReq=false) {
+      global $gTables;
+      $anno=$anno?$anno:date("Y");
+      $mese=$mese?$mese:date("m");
+      $refresh = $val_hiddenReq?'onchange="this.form.submit();"':'';
+      $query = "SELECT " . $gTables['staff'] . ".id_staff," . $gTables['clfoco'] . ".descri
+                FROM " . $gTables['staff'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['staff'] . ".id_clfoco = " . $gTables['clfoco'] . ".codice WHERE DATE_FORMAT(start_date, '%Y%m') <=  ".$anno.str_pad($mese,2,"0",STR_PAD_LEFT)." AND (DATE_FORMAT(end_date, '%Y%m') >= ".$anno.str_pad($mese,2,"0",STR_PAD_LEFT)." OR end_date IS NULL OR end_date <= '2004-01-27') AND status <> 'HIDDEN'";
+      echo '<select name="id_staff_def" class="'.$class.'" '.$refresh.' >';
+      echo "\t\t <option value=\"0\">---------</option>\n";
+      $rs = gaz_dbi_query($query);
+      while ($r = gaz_dbi_fetch_array($rs)) {
+          $selected = '';
+          if ($r["id_staff"] == $val) {
+              $selected = "selected";
+          }
+          echo "\t\t <option value=\"" . $r["id_staff"] . "\" $selected >" . $r['id_staff'].' - '.$r['descri'] . "</option>\n";
+      }
+      echo "\t </select>\n";
+  }
+
 }
 ?>

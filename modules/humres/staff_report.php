@@ -42,15 +42,16 @@ if (isset($_GET['auxil1'])) {
 }
 
 if (isset($_GET['all'])) {
-    $auxil = "&all=yes";
-    $passo = 100000;
+  $auxil = "&all=yes";
+  $passo = 100000;
 } else {
-    if (isset($_GET['auxil']) and $auxil1 == "") {
-        $where .= " AND ragso1 LIKE '" . addslashes($auxil) . "%'";
-    } elseif (isset($_GET['auxil1'])) {
-        $codicetemp = intval($auxil1);
-        $where .= " AND id_contract = " . $codicetemp ;
-    }
+  $where .= " AND status <>'HIDDEN' ";
+  if (isset($_GET['auxil']) and $auxil1 == "") {
+      $where .= " AND ragso1 LIKE '" . addslashes($auxil) . "%'";
+  } elseif (isset($_GET['auxil1'])) {
+      $codicetemp = intval($auxil1);
+      $where .= " AND id_contract = " . $codicetemp ;
+  }
 }
 
 if (!isset($_GET['field'])||strlen($_GET['field'])<2) {
@@ -138,7 +139,7 @@ $(function() {
                     <input type="submit" class="btn btn-xs btn-default" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value = 1;">
                 </td>
                 <td colspan="3">
-                    <input type="submit" class="btn btn-xs btn-default" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value = 1;">
+                    <input type="submit" class="btn btn-xs btn-default" name="all" value="Mostra tutti (anche i nascosti)" onClick="javascript:document.report.all.value = 1;">
                 </td>
             </tr>
             <tr>
