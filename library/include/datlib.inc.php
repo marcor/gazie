@@ -28,9 +28,11 @@ require( "../../config/config/gconfig.php" );
 require( "../../library/include/" . $NomeDB . ".lib.php" );
 require( "../../library/include/function.inc.php"  );
 
-if ( $debug_active ) {
+if ($debug_active) {
 	error_reporting(E_ALL);
-	//require ( "../../library/kint/build/kint.phar");// solo quando verrà aggiornato KINT potremo utilizzarlo, tolto sulla 7.43
+  ini_set("xdebug.var_display_max_children", '-1');
+  ini_set("xdebug.var_display_max_data", '-1');
+  ini_set("xdebug.var_display_max_depth", '-1');
 } else {
 	error_reporting($error_reporting_level);
 }
