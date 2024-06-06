@@ -35,8 +35,8 @@ if (file_exists(DATA_DIR.'files/'.$admin_aziend['codice'].'/favicon.ico')) { // 
 		<link rel="apple-touch-startup-image" href="data:image/x-icon;base64,<?php echo $ico114; ?>"  type="image/x-icon">
 		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="data:image/x-icon;base64,<?php echo $ico114; ?>"  type="image/x-icon" />
     <link href="../../js/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="../../js/jquery.ui/jquery-ui.css" rel="stylesheet">
-    <link href="../../library/theme/g7/smartmenus-master/bootstrap/jquery.smartmenus.bootstrap.css" rel="stylesheet" />
+    <link href="../../<?php echo(STATIC_VERSION);?>js/jquery.ui/jquery-ui.css" rel="stylesheet">
+    <link href="../../<?php echo(STATIC_VERSION);?>library/theme/g7/smartmenus-master/bootstrap/jquery.smartmenus.bootstrap.css" rel="stylesheet" />
     <script src="../../js/jquery/jquery-3.7.0.min.js"></script>
     <?php
     // carico il css strutturale grandezza font, posizione, ecc
@@ -74,8 +74,8 @@ if (file_exists(DATA_DIR.'files/'.$admin_aziend['codice'].'/favicon.ico')) { // 
       return '#' . implode($rgb);
     }
     ?>
-    <link href="../../library/theme/g7/scheletons/<?php echo $style; ?>" rel="stylesheet" type="text/css" />
-    <link href="../../library/theme/g7/skins/<?php echo $skin; ?>" rel="stylesheet" type="text/css" />
+    <link href="../../<?php echo(STATIC_VERSION);?>library/theme/g7/scheletons/<?php echo $style; ?>" rel="stylesheet" type="text/css" />
+    <link href="../../<?php echo(STATIC_VERSION);?>library/theme/g7/skins/<?php echo $skin; ?>" rel="stylesheet" type="text/css" />
     <style type="text/css">
       body {
         background-image: url("data:image/x-icon;base64,<?php echo $sfondo; ?>");

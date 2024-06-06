@@ -176,6 +176,9 @@ define( 'HELPDIR',  (defined('MY_HELPDIR')) ? MY_HELPDIR : 'help');
 // versione software
 define( 'GAZIE_VERSION',  (defined('MY_GAZIE_VERSION')) ? MY_GAZIE_VERSION: '9.10');
 
+// versioning degli asset (file statici)
+//define('STATIC_VERSION', ''); // se si usa nginx e non c'è la direttiva su nginx.conf si disattiva con la stringa vuota
+define('STATIC_VERSION', 'gazieVersion' . GAZIE_VERSION . '/');
 
 // permetti la modifica dei ddt fatturati, utile se bisogna modificare i prezzi degli articoli
 $modifica_fatture_ddt = (defined('modifica_fatture_ddt')) ? modifica_fatture_ddt : FALSE;

@@ -9,3 +9,15 @@ php_flag magic_quotes_gpc off
 php_value max_input_vars 20000
 php_value date.timezone 'Europe/Rome'
 Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Remove signature of the static files that is used to overcome the browser cache
+    RewriteRule ^gazieVersion.+?/(.+)$ $1 [L]
+
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-l
+
+    RewriteRule .* $0 [L]
+</IfModule>

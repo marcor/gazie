@@ -94,10 +94,10 @@ if (file_exists(DATA_DIR.'files/'.$admin_aziend['codice'].'/favicon.ico')) { // 
 		<link rel="apple-touch-startup-image" href="data:image/x-icon;base64,<?php echo $ico114; ?>"  type="image/x-icon">
 		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="data:image/x-icon;base64,<?php echo $ico114; ?>"  type="image/x-icon" />
     <link href="../../js/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="../../library/theme/lte/font-awesome/css/font-awesome.min.css">
-    <link rel="stylesheet" href="../../library/theme/lte/ionicons/css/ionicons.min.css">
-    <link rel="stylesheet" href="../../library/theme/lte/adminlte/dist/css/AdminLTE.css">
-    <link href="../../js/jquery.ui/jquery-ui.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../<?php echo(STATIC_VERSION);?>library/theme/lte/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../<?php echo(STATIC_VERSION);?>library/theme/lte/ionicons/css/ionicons.min.css">
+    <link rel="stylesheet" href="../../<?php echo(STATIC_VERSION);?>library/theme/lte/adminlte/dist/css/AdminLTE.css">
+    <link href="../../<?php echo(STATIC_VERSION);?>js/jquery.ui/jquery-ui.css" rel="stylesheet">
 		<script src="../../js/jquery/jquery-3.7.0.min.js"></script>
     <?php
     if (!empty($admin_aziend['style']) && file_exists("../../library/theme/lte/scheletons/" . $admin_aziend['style'])) {
@@ -120,8 +120,8 @@ if (file_exists(DATA_DIR.'files/'.$admin_aziend['codice'].'/favicon.ico')) { // 
       echo '<style> pre.xdebug-var-dump { z-index: 820; position: relative; } </style>';
     } ;
     ?>
-        <link href="../../library/theme/lte/scheletons/<?php echo $style; ?>" rel="stylesheet" type="text/css" />
-        <link href="../../library/theme/lte/skins/<?php echo $skin; ?>" rel="stylesheet" type="text/css" />
+        <link href="../../<?php echo(STATIC_VERSION);?>library/theme/lte/scheletons/<?php echo $style; ?>" rel="stylesheet" type="text/css" />
+        <link href="../../<?php echo(STATIC_VERSION);?>library/theme/lte/skins/<?php echo $skin; ?>" rel="stylesheet" type="text/css" />
         <style>
             .company-color, .company-color-bright, li.user-header, .company-color-logo, .dropdown-menu > li > a:hover, .dropdown-menu > li.user-body:hover, .navbar-default .navbar-nav > li > a:hover,
             nav.navbar.navbar-static-top.company-color-bright:hover
