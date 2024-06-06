@@ -15,4 +15,9 @@ UPDATE `gaz_XXXcompany_config` SET `val`= '2' WHERE `var` = 'ext_artico_descript
 UPDATE `gaz_XXXcompany_config` SET `description`= 'Attiva lo scroll automatico sull\'ultimo rigo dei documenti (0= No, 1= Si, 9= No, ma con rigo input in testa)' WHERE `var` = 'autoscroll_to_last_row';
 ALTER TABLE `gaz_XXXstaff` ADD COLUMN `codice_campi` INT(10) NULL DEFAULT NULL COMMENT 'riferimento alla tabella gaz_NNNcampi (reparto o luogo di lavoro)' AFTER `employment_status`;
 ALTER TABLE `gaz_XXXstaff_work_movements`	ADD COLUMN `codice_campi` INT(10) NULL DEFAULT NULL COMMENT 'riferimento alla tabella gaz_NNNcampi per indicare il luogo/reparto dove è stato eseguito il lavoro' AFTER `id_orderman`, ADD INDEX `codice_campi` (`codice_campi`);
+ALTER TABLE `gaz_XXXstaff_worked_hours`
+	CHANGE COLUMN `hours_normal` `hours_normal` DECIMAL(4,2) NOT NULL AFTER `work_day`,
+	CHANGE COLUMN `hours_extra` `hours_extra` DECIMAL(4,2) NOT NULL AFTER `id_work_type_extra`,
+	CHANGE COLUMN `hours_absence` `hours_absence` DECIMAL(4,2) NOT NULL AFTER `id_absence_type`,
+	CHANGE COLUMN `hours_other` `hours_other` DECIMAL(4,2) NOT NULL AFTER `id_other_type`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )
