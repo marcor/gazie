@@ -56,7 +56,8 @@ function getLastMonth($sez, $reg) { // Antonio Germani - funzione per recuperare
 function getMovements($vat_section, $vat_reg, $date_ini, $date_fin) {
     global $gTables, $admin_aziend;
     // BEGIN fromthestone: prendo il valore della configurazione per numerazione note credito/debito
-    $num_nc_nd = gaz_dbi_get_row($gTables['company_config'], 'var', 'num_note_separate')['val'];
+    $num_nc_nd_res = gaz_dbi_get_row($gTables['company_config'], 'var', 'num_note_separate');
+    $num_nc_nd=(isset($num_nc_nd_res))?intval($num_nc_nd_res['val']):0;
     // END fromthestone
     $m = array();
     $where = "(datreg BETWEEN $date_ini AND $date_fin OR datliq BETWEEN $date_ini AND $date_fin) AND seziva = $vat_section AND regiva = $vat_reg";
@@ -143,7 +144,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
   $form['hidden_req'] = '';
   $form['ritorno'] = $_SERVER['HTTP_REFERER'];
   require("lang." . $admin_aziend['lang'] . ".php");
-	$last_month_print = getLastMonth(1,2); // Antonio Germani - prendo l'ultimo mese stampato dal DB e propongo nel form il mese successivo
+	$last_month_print = intval(getLastMonth(1,2)); // Antonio Germani - prendo l'ultimo mese stampato dal DB e propongo nel form il mese successivo
   if ($admin_aziend['ivam_t'] == 'M') {
       $utsdatini = mktime(0, 0, 0, $last_month_print + 1, 1, date("Y"));
       $utsdatfin = mktime(0, 0, 0, $last_month_print + 2, 0, date("Y"));
@@ -185,7 +186,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 	$form['lastvatsection']=$_POST['lastvatsection'];
 	// Antonio Germani - se è stato cambiato registro IVA o sezione IVA prendo l'ultimo mese stampato dal DB e propongo nel form il mese successivo
 	if (intval($_POST['vat_reg']) <> intval($_POST['lastvatreg']) OR intval($_POST['vat_section']) <> intval($_POST['lastvatsection'])){
-		$last_month_print = getLastMonth($_POST['vat_section'], $_POST['vat_reg']);
+		$last_month_print = intval(getLastMonth($_POST['vat_section'], $_POST['vat_reg']));
 		if ($admin_aziend['ivam_t'] == 'M') {
 			$utsdatini = mktime(0, 0, 0, $last_month_print + 1, 1, date("Y"));
 			$utsdatfin = mktime(0, 0, 0, $last_month_print + 2, 0, date("Y"));
