@@ -296,7 +296,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 $(document).ready(function(){
 	$('[data-toggle="tooltip"]').tooltip();
 });
-
+</script>
 <script src="../../js/custom/clean_empty_form_fields.js" type="text/javascript"></script>
 <?php
 require("../../library/include/footer.php");

@@ -2602,6 +2602,7 @@ if ($form['tipdoc'] == "DDT") {
     echo "\t </select></td>";
     echo "</tr></table></div>\n";
     echo '<input type="hidden" value="' . $form['id_doc_ritorno'] . '" name="id_doc_ritorno" />';
+    echo "<input type=\"hidden\" value=\"" . $form['id_contract'] . "\" name=\"id_contract\">\n";
 } elseif ($form['tipdoc'] == "RDV") {
     echo "</td></tr>";
     echo "<tr><td align=\"left\"  colspan=\"4\" class=\"FacetFieldCaptionTD\" >" . $script_transl['id_doc_ritorno_title'] . "</td>\n";
@@ -2621,6 +2622,7 @@ if ($form['tipdoc'] == "DDT") {
     echo "<input type=\"hidden\" value=\"" . $form['mesord'] . "\" name=\"mesord\">\n";
     echo "<input type=\"hidden\" value=\"" . $form['annord'] . "\" name=\"annord\">\n";
     echo "<input type=\"hidden\" value=\"" . $form['ragbol'] . "\" name=\"ragbol\">\n";
+    echo "<input type=\"hidden\" value=\"" . $form['id_contract'] . "\" name=\"id_contract\">\n";
 } else {
     echo "</td></tr>";
 echo '<tr><td colspan=2 class="text-right">Contratto: </td><td colspan=2> ';
