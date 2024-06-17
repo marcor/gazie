@@ -450,12 +450,6 @@ $query="SELECT *,".$gTables['rigbro'].".descri AS rigdes, ".$gTables['rigbro']."
   WHERE tipdoc='PR4' AND ".$gTables['rigbro'].".id_mag = 0 AND ".$gTables['rigbro'].".id_orderman =".intval($_GET['id_orderman'])." ORDER BY datemi ASC, ".$gTables['tesbro'].".id_tes ASC";
 $res=gaz_dbi_query($query);
 if ($res){
-  $title = array('luogo_data'=>$luogo_data,
-     'title'=>"RIEPILOGO della produzione n.".intval($_GET['id_orderman']).' - '.$resord['description'],
-     'hile'=>array()
-    );
-  $pdf->setVars($admin_aziend,$title);
-  $pdf->SetFooterMargin(20);
   $pdf->Ln(5);
   $pdf->SetFont('helvetica','',8);
   $ctrlPR4=0;
@@ -573,6 +567,5 @@ if ($totgen>=0.01){
   $pdf->Cell(26,8,'€ '.gaz_format_number($totgen),'RBT', 1, 'R', 1, '', 1);
 }
 // FINE RIEPILOGO
-
-$pdf->Output();
+$pdf->Output($title['title'].'.pdf','I');
 ?>

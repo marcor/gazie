@@ -35,7 +35,7 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 	$upd_mm = new magazzForm;
 	$admin_aziend = checkAdmin();
 	switch ($_POST['type']) {
-        case "orderman":
+    case "orderman":
 			$i=intval($_POST['ref']);
 			$id_tesbro=intval($_POST['ref2']);
 			$res = gaz_dbi_get_row($gTables['tesbro'],"id_tes",$id_tesbro); // prendo il rigo di tesbro interessato
@@ -54,14 +54,13 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 			}
       if (isset($res)){// se il tipo di produzione prevede un ordine
         if (intval($res['clfoco'])==0) { // se NON è un ordine cliente esistente e quindi fu generato automaticamente da orderman
-          $result = gaz_dbi_del_row($gTables['tesbro'], "id_tes", $id_tesbro); // cancello tesbro
-          $result = gaz_dbi_del_row($gTables['orderman'], "id", $i); // cancello orderman/produzione
-          $result = gaz_dbi_del_row($gTables['rigbro'], "id_tes", $id_tesbro); // cancello rigbro
+          gaz_dbi_del_row($gTables['tesbro'], "id_tes", $id_tesbro); // cancello tesbro
+          gaz_dbi_del_row($gTables['rigbro'], "id_tes", $id_tesbro); // cancello rigbro
         } else { // se invece è un ordine cliente devo lasciarlo e solo sganciarlo da orderman
           gaz_dbi_query ("UPDATE " . $gTables['tesbro'] . " SET id_orderman = '' WHERE id_tes ='".$id_tesbro."'") ; // sgancio tesbro da orderman
-          $result = gaz_dbi_del_row($gTables['orderman'], "id", $i); // cancello orderman/produzione
         }
       }
+      gaz_dbi_del_row($gTables['orderman'], "id", $i); // cancello orderman/produzione
 			// in ogni caso riporto l'auto_increment all'ultimo valore disponibile
 			$query="SELECT max(id)+1 AS li FROM ".$gTables['orderman'];
 			$last_autincr=gaz_dbi_query($query);
@@ -77,7 +76,7 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 		case "set_new_stato_lavorazione":
 			$i=intval($_POST['ref']); // id_orderman
 			$s=intval($_POST['new_status']); // id_orderman
-            gaz_dbi_put_row($gTables['orderman'], 'id', $i, 'stato_lavorazione', $s);
+      gaz_dbi_put_row($gTables['orderman'], 'id', $i, 'stato_lavorazione', $s);
 		break;
 	}
 }

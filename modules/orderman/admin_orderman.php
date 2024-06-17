@@ -650,7 +650,13 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ // se NON è il pri
             }
             if (intval($form['order']) <= 0 && isset($id_tesbro)) {// se non c'è l'ordine vero e devo creare quello fittizio
               //inserisco il rigo ordine rigbro
-              $id_rigbro = rigbroInsert(array('id_tes'=>$id_tesbro,'codart'=>$form['codart'],'descri'=>addslashes ($resartico['descri']),'unimis'=>$resartico['unimis'],'quanti'=>$form['quantip'],'id_mag'=>$id_movmag,'status'=>'AUTOGENERA','id_orderman'=>$id_orderman));
+              if (!$resartico) {
+                $resartico = ['descri'=>'','unimis'=>''];
+              }
+              if (!isset($id_movmag)) {
+                $id_movmag=0;
+              }
+              $id_rigbro = rigbroInsert(array('id_tes'=>$id_tesbro,'codart'=>$form['codart'],'descri'=>$resartico['descri'],'unimis'=>$resartico['unimis'],'quanti'=>$form['quantip'],'id_mag'=>$id_movmag,'status'=>'AUTOGENERA','id_orderman'=>$id_orderman));
             }
             if (isset($id_rigbro)&& $form['order_type'] == "IND"){// connetto movmag dell'articolo prodotto al suo rigbro
               movmagUpdate(array('id_mov',$prod_id_movmag), array('id_rif'=>$id_rigbro));
