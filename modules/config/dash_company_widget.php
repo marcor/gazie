@@ -9,7 +9,7 @@ function selectCompany($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg=
         changeEnterprise(intval($val));
         echo "\t<input type=\"hidden\" name=\"$name\" value=\"$val\">\n";
         echo "\t<input type=\"hidden\" name=\"search[$name]\" value=\"%%\">\n";
-        echo "\t<input type=\"submit\" value=\"" . $co['ragso1'] . "\" name=\"change\" onclick=\"this.form.$name.value='0'; this.form.hidden_req.value='change';\" title=\"$mesg[2]\">\n";
+        echo '<input type="submit" value="' . $co['ragso1'] . '" name="change" onclick="this.form.$name.value=\'0\'; this.form.hidden_req.value=\'change\';" title="'.$mesg[2].'" style="white-space:normal;">';
     } else {
         if (strlen($strSearch) >= 2) { //sto ricercando un nuovo partner
 		?>
