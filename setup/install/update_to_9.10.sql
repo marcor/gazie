@@ -20,4 +20,6 @@ ALTER TABLE `gaz_XXXstaff_worked_hours`
 	CHANGE COLUMN `hours_extra` `hours_extra` DECIMAL(4,2) NOT NULL AFTER `id_work_type_extra`,
 	CHANGE COLUMN `hours_absence` `hours_absence` DECIMAL(4,2) NOT NULL AFTER `id_absence_type`,
 	CHANGE COLUMN `hours_other` `hours_other` DECIMAL(4,2) NOT NULL AFTER `id_other_type`;
+ALTER TABLE `gaz_XXXrigdoc`	ADD INDEX (`id_orderman`);
+ALTER TABLE `gaz_XXXmovmag`	ADD INDEX (`id_orderman`);
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )
