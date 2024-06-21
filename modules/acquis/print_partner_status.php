@@ -77,68 +77,68 @@ if (isset($_GET['clfoco'])){
 }
 $paymov->setScheduledPartner($admin_aziend['masfor']);
 if (sizeof($paymov->Partners) > 0) {
-      $anagrafica = new Anagrafica();
-      foreach ($paymov->Partners as $p){
-          $anagrafica = new Anagrafica();
-          $prt = $anagrafica->getPartner($p);
-          $pdf->SetFont('helvetica','B',10);
-		  $pdf->SetFillColor(hexdec(substr($admin_aziend['colore'], 0, 2)), hexdec(substr($admin_aziend['colore'], 2, 2)), hexdec(substr($admin_aziend['colore'], 4, 2)));
-          $pdf->Ln(2);
-          $pdf->Cell(186,5,$prt['ragso1']." ".$prt['ragso2']." tel:".$prt['telefo']." fax:".$prt['fax']." mob:".$prt['cell']." ",1,1,'',1,'',1);
-          $pdf->SetFont('helvetica','',8);
-          $paymov->getPartnerStatus($p,substr($_GET['date'],0,10));
-          foreach ($paymov->PartnerStatus as $k=>$v){
-            $pdf->SetTextColor(255,0,0);
-            $pdf->SetFillColor(230,255,230);
-            $pdf->Cell(56,5,"REF: ".$k,1,0,'',1,'',1);
-            $pdf->SetTextColor(0);
-            $pdf->Cell(130,5,
-            $paymov->docData[$k]['descri'].' n.'.
-            $paymov->docData[$k]['numdoc'].'/'.
-            $paymov->docData[$k]['seziva'].' del '.
-            gaz_format_date($paymov->docData[$k]['datdoc']),1,1,'',1,'',1);
-             foreach ($v as $ki=>$vi){
-                $pdf->SetFillColor(170,255,170);
-                $v_op='';
-                $cl_exp='';
-                if ($vi['op_val']>=0.01){
-                   $v_op=gaz_format_number($vi['op_val']);
-                }
-                $v_cl='';
-                if ($vi['cl_val']>=0.01){
-                    $v_cl=gaz_format_number($vi['cl_val']);
-                    $cl_exp=gaz_format_date($vi['cl_exp']);
-                }
-                $expo='';
-                if ($vi['expo_day']>=1){
-                   $expo=$vi['expo_day'];
-                   if ($vi['cl_val']==$vi['op_val']){
-                      $vi['status']=2; // la partita è chiusa ma è esposta a rischio insolvenza
-                      $pdf->SetFillColor(255,245,185);
-                      $class_paymov='FacetDataTDevidenziaOK';
-                   }
-                } else {
-                   if ($vi['cl_val']==$vi['op_val']){ // chiusa e non esposta
-                      $cl_exp='';
-                      $pdf->SetFillColor(230,255,230);
-                   } elseif($vi['status']==3){ // SCADUTA
-                      $cl_exp='';
-                      $pdf->SetFillColor(255,160,160);
-                   } elseif($vi['status']==9){ // PAGAMENTO ANTICIPATO
-                      $pdf->SetFillColor(190,190,255);
-                      $vi['expiry']=$vi['cl_exp'];
-                   }
-                }
-                $pdf->Cell(28,4,$vi['id'],'LTB',0,'C',0,'',1);
-                $pdf->Cell(28,4,$v_op,1,0,'R');
-                $pdf->Cell(28,4,gaz_format_date($vi['expiry']),1,0,'C',0,'',1);
-                $pdf->Cell(28,4,$v_cl,1,0,'R');
-                $pdf->Cell(28,4,$cl_exp,1,0,'C');
-                $pdf->Cell(28,4,$expo,1,0,'C');
-                $pdf->Cell(18,4,$script_transl['status_value'][$vi['status']],1,1,'C',1);
-             }
+  $anagrafica = new Anagrafica();
+  foreach ($paymov->Partners as $p) {
+    $anagrafica = new Anagrafica();
+    $prt = $anagrafica->getPartner($p);
+    $pdf->SetFont('helvetica','B',10);
+    $pdf->SetFillColor(hexdec(substr($admin_aziend['colore'], 0, 2)), hexdec(substr($admin_aziend['colore'], 2, 2)), hexdec(substr($admin_aziend['colore'], 4, 2)));
+    $pdf->Ln(2);
+    $pdf->Cell(186,5,$prt['ragso1']." ".$prt['ragso2']." tel:".$prt['telefo']." fax:".$prt['fax']." mob:".$prt['cell']." ",1,1,'',1,'',1);
+    $pdf->SetFont('helvetica','',8);
+    $paymov->getPartnerStatus($p,substr($_GET['date'],0,10));
+    foreach ($paymov->PartnerStatus as $k=>$v){
+      $pdf->SetTextColor(255,0,0);
+      $pdf->SetFillColor(230,255,230);
+      $pdf->Cell(56,5,"REF: ".$k,1,0,'',1,'',1);
+      $pdf->SetTextColor(0);
+      $pdf->Cell(130,5,
+      $paymov->docData[$k]['descri'].' n.'.
+      $paymov->docData[$k]['numdoc'].'/'.
+      $paymov->docData[$k]['seziva'].' del '.
+      gaz_format_date($paymov->docData[$k]['datdoc']),1,1,'',1,'',1);
+      foreach ($v as $ki=>$vi){
+        $pdf->SetFillColor(170,255,170);
+        $v_op='';
+        $cl_exp='';
+        if ($vi['op_val']>=0.01){
+          $v_op=gaz_format_number($vi['op_val']);
+        }
+        $v_cl='';
+        if ($vi['cl_val']>=0.01){
+          $v_cl=gaz_format_number($vi['cl_val']);
+          $cl_exp=gaz_format_date($vi['cl_exp']);
+        }
+        $expo='';
+        if ($vi['expo_day']>=1){
+          $expo=$vi['expo_day'];
+          if ($vi['cl_val']==$vi['op_val']){
+            $vi['status']=2; // la partita è chiusa ma è esposta a rischio insolvenza
+            $pdf->SetFillColor(255,245,185);
+            $class_paymov='FacetDataTDevidenziaOK';
           }
+        } else {
+          if ($vi['cl_val']==$vi['op_val']){ // chiusa e non esposta
+            $cl_exp='';
+            $pdf->SetFillColor(230,255,230);
+          } elseif($vi['status']==3){ // SCADUTA
+            $cl_exp='';
+            $pdf->SetFillColor(255,160,160);
+          } elseif($vi['status']==9){ // PAGAMENTO ANTICIPATO
+            $pdf->SetFillColor(190,190,255);
+            $vi['expiry']=$vi['cl_exp'];
+          }
+        }
+        $pdf->Cell(28,4,$vi['id'],'LTB',0,'C',0,'',1);
+        $pdf->Cell(28,4,$v_op,1,0,'R');
+        $pdf->Cell(28,4,gaz_format_date($vi['expiry']),1,0,'C',0,'',1);
+        $pdf->Cell(28,4,$v_cl,1,0,'R');
+        $pdf->Cell(28,4,$cl_exp,1,0,'C');
+        $pdf->Cell(28,4,$expo,1,0,'C');
+        $pdf->Cell(18,4,$script_transl['status_value'][$vi['status']],1,1,'C',1);
       }
+    }
+  }
 }
 $pdf->setRiporti('');
 $pdf->Output();

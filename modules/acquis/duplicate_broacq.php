@@ -36,6 +36,8 @@ if (isset($_GET['id_tes'])) { //	Evitiamo errori se lo script viene chiamato dir
     $fornitore = "`clfoco`";
     $tipdoc='AOR';
     $email="`email`";
+  } elseif (isset($_GET['tipdoc'])){ // devo trasformare un documento in un altro
+    $tipdoc=substr($_GET['tipdoc'],0,3);
   } else { // devo fare una duplicazione
     // prevent direct access
     $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND
@@ -74,8 +76,8 @@ if (isset($_GET['id_tes'])) { //	Evitiamo errori se lo script viene chiamato dir
     }
   }
   $head="Location: ";
-  if ($tipdoc=='APR'){ // ho duplicato un preventivo
-    header($head.="report_broacq.php?flt_tipo=APR");
+  if (isset($_GET['tipdoc'])){ // ho duplicato un preventivo
+    header($head.="report_broacq.php?flt_tipo=".substr($_GET['tipdoc'],0,3));
   } else {
     header($head.="admin_broacq.php?id_tes=".$nuovaChiave."&Update");
   }

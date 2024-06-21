@@ -2873,39 +2873,41 @@ class Schedule {
     }
 
     function setScheduledPartner($partner_type = false,$datref=false) {
-	// false=TUTTI altrimenti passare le prime tre cifre del mastro clienti o fornitori, oppure un partner specifico
-    // in $datref si può passare una data di rifermiento nel formato leggibile GG-MM-AAAA,
-	// in questo caso vengono presi in considerazione solo i movimenti di un anno (sei mesi prima e sei dopo)
-    // restituisce in $this->Partners i codici dei clienti o dei fornitori che hanno almeno un movimento nell'archivio dello scadenzario
-        global $gTables;
-        if (!$partner_type) { // se NON mi è stato passato il mastro dei clienti o dei fornitori
-            $partner_where = '';
-        } elseif ($partner_type>=100000001) { //
-            $partner_where = $gTables['rigmoc'] . ".codcon  = " . $partner_type ;
-        } else  {
-            $partner_where = $gTables['rigmoc'] . ".codcon  BETWEEN " . $partner_type . "000001 AND " . $partner_type . "999999";
+      // false=TUTTI altrimenti passare le prime tre cifre del mastro clienti o fornitori, oppure un partner specifico
+      // in $datref si può passare una data di rifermiento nel formato leggibile GG-MM-AAAA,
+      // in questo caso vengono presi in considerazione solo i movimenti di un anno (sei mesi prima e sei dopo)
+      // restituisce in $this->Partners i codici dei clienti o dei fornitori che hanno almeno un movimento nell'archivio dello scadenzario
+      global $gTables;
+      if (!$partner_type) { // se NON mi è stato passato il mastro dei clienti o dei fornitori
+        $partner_where = '';
+      } elseif ($partner_type>=100000001) { //
+        $partner_where = $gTables['rigmoc'] . ".codcon  = " . $partner_type ;
+      } else  {
+        $partner_where = $gTables['rigmoc'] . ".codcon  BETWEEN " . $partner_type . "000001 AND " . $partner_type . "999999";
+      }
+      if (!$datref) { // se NON mi è stata passata una data di riferimento prendo tutti i movimenti, altrimenti
+        if (!$partner_type) {
+          $partner_where.='1';
         }
-        if (!$datref) { // se NON mi è stata passata una data di riferimento prendo tutti i movimenti, altrimenti
-			if (!$partner_type) {
-				$partner_where.='1';
-			}
-		}else{
-			$partner_where.=" AND ".$gTables["paymov"].".expiry BETWEEN DATE_SUB('".gaz_format_date($datref,true)."',INTERVAL 6 MONTH) AND DATE_ADD('".gaz_format_date($datref,true)."',INTERVAL 6 MONTH)";
-		}
-        $sqlquery = "SELECT " . $gTables['rigmoc'] . ".codcon
-          FROM " . $gTables['paymov'] . " LEFT JOIN " . $gTables['rigmoc'] . " ON (" . $gTables['paymov'] . ".id_rigmoc_pay  + " . $gTables['paymov'] . ".id_rigmoc_doc ) =  " . $gTables['rigmoc'] . ".id_rig WHERE  " . $partner_where . " GROUP BY " . $gTables['rigmoc'] . ".codcon ";
-        $rs = gaz_dbi_query($sqlquery);
-        $acc = array();
-        while ($r = gaz_dbi_fetch_array($rs)) {
-            $partner = gaz_dbi_get_row($gTables['clfoco'], 'codice', $r['codcon']);
-            $acc[$r['codcon']] = $partner['descri'];
+      }else{
+        $partner_where.=" AND ".$gTables["paymov"].".expiry BETWEEN DATE_SUB('".gaz_format_date($datref,true)."',INTERVAL 6 MONTH) AND DATE_ADD('".gaz_format_date($datref,true)."',INTERVAL 6 MONTH)";
+      }
+      $sqlquery = "SELECT " . $gTables['rigmoc'] . ".codcon
+        FROM " . $gTables['paymov'] . " LEFT JOIN " . $gTables['rigmoc'] . " ON (" . $gTables['paymov'] . ".id_rigmoc_pay  + " . $gTables['paymov'] . ".id_rigmoc_doc ) =  " . $gTables['rigmoc'] . ".id_rig WHERE  " . $partner_where . " GROUP BY " . $gTables['rigmoc'] . ".codcon ";
+      $rs = gaz_dbi_query($sqlquery);
+      $acc = [];
+      while ($r = gaz_dbi_fetch_array($rs)) {
+        if ($r['codcon']>=100000000) {
+          $partner = gaz_dbi_get_row($gTables['clfoco'], 'codice', $r['codcon']);
+          $acc[$r['codcon']] = $partner['descri'];
         }
-        asort($acc);
-        $res = array();
-        foreach ($acc as $k => $v) {
-            $res[] = $k;
-        }
-        $this->Partners = $res;
+      }
+      asort($acc);
+      $res = [];
+      foreach ($acc as $k => $v) {
+          $res[] = $k;
+      }
+      $this->Partners = $res;
     }
 
     function getScheduleEntries($ob = 0, $masclifor=0, $date = false) {

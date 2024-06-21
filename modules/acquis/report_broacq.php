@@ -59,7 +59,7 @@ $sortable_headers = array(
     "Fornitore" => "",
     "Stato" => "",
     "Stampa" => "",
-    "Operaz." => "",
+    "Operazioni<br/>Stato" => "",
     "Mail" => "",
     "Cancella" => ""
 );
@@ -181,29 +181,38 @@ function choicePartner(row)
 	$( "#search_partner"+row ).autocomplete({
 		source: "../../modules/root/search.php?opt=supplier",
 		minLength: 2,
-        html: true, // optional (jquery.ui.autocomplete.html.js required)
-      	// optional (if other layers overlap autocomplete list)
-        open: function(event, ui) {
-            $(".ui-autocomplete").css("z-index", 1000);
-        },
+    html: true,
+    open: function(event, ui) {
+      $(".ui-autocomplete").css("z-index", 1000);
+    },
 		select: function(event, ui) {
 			$(".supplier_name").replaceWith(ui.item.value);
 			$("#confirm_duplicate").dialog({
-				modal: true,
-				show: "blind",
+        width: "auto",
+        show: "blind",
 				hide: "explode",
 				buttons: {
 					Annulla: function() {
 						$(this).dialog('destroy');
-						}
-					,
-					Duplica: function() {
-						window.location.href = 'duplicate_broacq.php?id_tes='+row+'&duplicate='+ui.item.codice;
-						}
 					},
+					preventivo: {
+            text:'su Preventivo',
+            'class':'btn btn-info',
+            click:function() {
+              window.location.href = 'duplicate_broacq.php?id_tes='+row+'&duplicate='+ui.item.codice+'&tipdoc=APR';
+            }
+					},
+					ordine: {
+            text:'su Ordine',
+            'class':'btn btn-success',
+            click:function() {
+              window.location.href = 'duplicate_broacq.php?id_tes='+row+'&duplicate='+ui.item.codice+'&tipdoc=AOR';
+            }
+					}
+				},
 				close: function(){}
-				});
-			}
+			});
+		}
 	});
 }
 
@@ -282,78 +291,76 @@ function printPdf(urlPrintDoc){
         <p>Fornitore</p>
         <p class="ui-state-highlight" id="iddescri"></p>
 	</div>
-    <div align="center" class="FacetFormHeaderFont"> <?php echo $script_transl['title_dist'][$flt_tipo]; ?>
-	<input type="hidden" name="flt_tipo" value="<?php echo $flt_tipo; ?>" />
-	<select name="sezione" class="FacetSelect" onchange="this.form.submit()">
-            <?php
-            for ($sez = 1; $sez <= 9; $sez++) {
-                $selected = "";
-                if (substr($sezione, 0, 1) == $sez)
-                    $selected = " selected ";
-                echo "<option value=\"" . $sez . "\"" . $selected . ">" . $sez . "</option>";
-            }
-            ?>
-        </select>
-    </div>
+  <div align="center" class="FacetFormHeaderFont"> <?php echo $script_transl['title_dist'][$flt_tipo]; ?>
+    <input type="hidden" name="flt_tipo" value="<?php echo $flt_tipo; ?>" />
+    <select name="sezione" class="FacetSelect" onchange="this.form.submit()">
+      <?php
+      for ($sez = 1; $sez <= 9; $sez++) {
+          $selected = "";
+          if (substr($sezione, 0, 1) == $sez)
+              $selected = " selected ";
+          echo "<option value=\"" . $sez . "\"" . $selected . ">" . $sez . "</option>";
+      }
+      ?>
+    </select>
+  </div>
 	<?php
-        $ts->output_navbar();
+    $ts->output_navbar();
 	?>
-    <div class="box-primary table-responsive">
-        <table class="Tlarge table table-striped table-bordered table-condensed">
-        <tr>
-            <td class="FacetFieldCaptionTD">
-                    <?php gaz_flt_disp_int("numdoc", "Numero"); ?>
-            </td>
-            <td class="FacetFieldCaptionTD">
-                    <?php gaz_flt_disp_int("id_orderman", "Produzione"); ?>
-            </td>
-            <td  class="FacetFieldCaptionTD">
-                <?php  gaz_flt_disp_select("anno", "YEAR(datemi) as anno", $tesbro_e_partners, $ts->where, "anno DESC"); ?>
-            </td>
-            <td  class="FacetFieldCaptionTD">
-		    <?php
-                    if ($partner_select) {
-                        gaz_flt_disp_select("fornitore", "clfoco AS fornitore, ragso1 as nome", $tesbro_e_partners, $ts->where, "nome ASC", "nome");
-                    } else {
-                        gaz_flt_disp_int("fornitore", "Fornitore");
-                    }
-		    ?>
-
-            <td  class="FacetFieldCaptionTD">
-			<input type="submit" class="btn btn-sm btn-default" name="search" value="<?php echo $script_transl['search'];?>" onClick="javascript:document.report.all.value=1;">
-			<a class="btn btn-sm btn-default" href="?flt_tipo=<?php echo $flt_tipo ?>">Reset</a>
-			<?php  $ts->output_order_form(); ?>
-            </td>
-        </tr>
-
-		            <tr>
-                <?php
-                $ts->output_headers();
-                ?>
-            </tr>
-            <?php
-            $rs_ultimo_documento = gaz_dbi_dyn_query("*", $tesbro_e_partners, $ts->where, "datemi desc, numdoc desc", 0, 1);
-            $ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
-            if ($ultimo_documento)
-                $ultimoddt = $ultimo_documento['numdoc'];
-            else
-                $ultimoddt = 1;
+  <div class="box-primary table-responsive">
+    <table class="Tlarge table table-striped table-bordered table-condensed">
+      <tr>
+        <td class="FacetFieldCaptionTD">
+                <?php gaz_flt_disp_int("numdoc", "Numero"); ?>
+        </td>
+        <td class="FacetFieldCaptionTD">
+                <?php gaz_flt_disp_int("id_orderman", "Produzione"); ?>
+        </td>
+        <td  class="FacetFieldCaptionTD">
+            <?php  gaz_flt_disp_select("anno", "YEAR(datemi) as anno", $tesbro_e_partners, $ts->where, "anno DESC"); ?>
+        </td>
+        <td  class="FacetFieldCaptionTD">
+      <?php
+        if ($partner_select) {
+            gaz_flt_disp_select("fornitore", "clfoco AS fornitore, ragso1 as nome", $tesbro_e_partners, $ts->where, "nome ASC", "nome");
+        } else {
+            gaz_flt_disp_int("fornitore", "Fornitore");
+        }
+      ?>
+        </td>
+        <td  class="FacetFieldCaptionTD">
+          <input type="submit" class="btn btn-sm btn-default" name="search" value="<?php echo $script_transl['search'];?>" onClick="javascript:document.report.all.value=1;">
+          <a class="btn btn-sm btn-default" href="?flt_tipo=<?php echo $flt_tipo ?>">Reset</a>
+          <?php  $ts->output_order_form(); ?>
+        </td>
+      </tr>
+      <tr>
+        <?php
+        $ts->output_headers();
+        ?>
+      </tr>
+      <?php
+      $rs_ultimo_documento = gaz_dbi_dyn_query("*", $tesbro_e_partners, $ts->where, "datemi desc, numdoc desc", 0, 1);
+      $ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
+      if ($ultimo_documento)
+        $ultimoddt = $ultimo_documento['numdoc'];
+      else
+        $ultimoddt = 1;
 			$anagrafica = new Anagrafica();
 			//recupero le testate in base alle scelte impostate
-            //$result = gaz_dbi_dyn_query("*", $what, $where, $orderby, $limit, $passo);
-            $result = gaz_dbi_dyn_query(cols_from($gTables['tesbro'],
-						  "id_tes","tipdoc","clfoco","seziva","datemi","email","id_parent_doc","initra","numdoc","status") . ", " .
-					cols_from($gTables['anagra'],
-						  "pec_email",
-						  "ragso1",
-						  "ragso2",
-						  "e_mail")
-					,$tesbro_e_partners,
-					$ts->where,
-					$ts->orderby,
-                    $ts->getOffset(),
-					$ts->getLimit());
-            while ($r = gaz_dbi_fetch_array($result)) {
+      $result = gaz_dbi_dyn_query(cols_from($gTables['tesbro'],
+        "id_tes","tipdoc","clfoco","seziva","datemi","email","id_parent_doc","initra","numdoc","status") . ", " .
+      cols_from($gTables['anagra'],
+        "pec_email",
+        "ragso1",
+        "ragso2",
+        "e_mail")
+      ,$tesbro_e_partners,
+      $ts->where,
+      $ts->orderby,
+      $ts->getOffset(),
+      $ts->getLimit());
+      while ($r = gaz_dbi_fetch_array($result)) {
 				$linkstatus=false;
 				if ($r["tipdoc"] == 'APR') { // preventivo
 					$rs_parent = gaz_dbi_get_row($gTables["tesbro"],'id_parent_doc',$r['id_tes']);
@@ -369,10 +376,10 @@ function printPdf(urlPrintDoc){
 						$status='Ordinato con n.'.$rs_parent["numdoc"];
 						$linkstatus='stampa_ordfor.php?id_tes='.$rs_parent["id_tes"];
 					}
-                    $tipodoc="Preventivo";
-                    $modulo="stampa_prefor.php?id_tes=".$r['id_tes'];
-                    $modifi="admin_broacq.php?id_tes=".$r['id_tes']."&Update";
-                } elseif ($r["tipdoc"] == 'AOR') {
+          $tipodoc="Preventivo";
+          $modulo="stampa_prefor.php?id_tes=".$r['id_tes'];
+          $modifi="admin_broacq.php?id_tes=".$r['id_tes']."&Update";
+        } elseif ($r["tipdoc"] == 'AOR') {
 					$linkstatus='stampa_ordfor.php?id_tes='.$r['id_tes'];
 					$rs_parent = gaz_dbi_get_row($gTables["tesbro"],'id_tes',$r['id_parent_doc']);
 					if (strlen($r['email'])>8){
@@ -385,42 +392,31 @@ function printPdf(urlPrintDoc){
 					if ($rs_parent && $rs_parent["tipdoc"] == 'APR') { // il genitore è un preventivo
 						$status .= '( da prev.n.'.$rs_parent["numdoc"].')';
 					}
-                    $tipodoc="Ordine";
-                    $modulo="stampa_ordfor.php?id_tes=".$r['id_tes'];
-                    $modifi="admin_broacq.php?id_tes=".$r['id_tes']."&Update";
-                }
-
-
-                echo '<tr class="FacetDataTD text-center">';
-
-				// colonna numero documento
+          $tipodoc="Ordine";
+          $modulo="stampa_ordfor.php?id_tes=".$r['id_tes'];
+          $modifi="admin_broacq.php?id_tes=".$r['id_tes']."&Update";
+        }
+        echo '<tr class="FacetDataTD text-center">';
+// colonna numero documento
 				echo "<td align=\"center\"><a class=\"btn btn-xs btn-edit\" id=\"tipdoc_".$r['id_tes']."\"  value=\"".$r["tipdoc"]."\" href=\"".$modifi."\"><i class=\"glyphicon glyphicon-edit\"></i> ".$tipodoc." n.".$r["numdoc"]." &nbsp;</a></td>\n";
-
-
-				// colonna produzione
+// colonna produzione
 				$orderman_descr='';
-                $rigbro_result = gaz_dbi_dyn_query('*', $gTables['rigbro']." LEFT JOIN ".$gTables['orderman']." ON ".$gTables['rigbro'].".id_orderman = ".$gTables['orderman'].".id", "id_tes = " . $r["id_tes"] , 'id_tes DESC');
-
+        $rigbro_result = gaz_dbi_dyn_query('*', $gTables['rigbro']." LEFT JOIN ".$gTables['orderman']." ON ".$gTables['rigbro'].".id_orderman = ".$gTables['orderman'].".id", "id_tes = " . $r["id_tes"] , 'id_tes DESC');
 				// INIZIO crezione tabella per la visualizzazione sul tootip di tutto il documento
-				$tt = '<p class=\'bg-info text-primary\'><b>' . $tipodoc." n.".$r["numdoc"].' del '. gaz_format_date($r["datemi"]).'</b></p>';
-                while ( $rigbro_r = gaz_dbi_fetch_array($rigbro_result) ) {
+        $tt = '<p class=\'bg-info text-primary\'><b>' . $tipodoc." n.".$r["numdoc"].' del '. gaz_format_date($r["datemi"]).'</b></p>';
+        while ( $rigbro_r = gaz_dbi_fetch_array($rigbro_result) ) {
 					if ($rigbro_r['id_orderman']>0){
 						$orderman_descr=$rigbro_r['id_orderman'].'-'.$rigbro_r['description'];
 					}
 					$tt .= '<p class=\'text-right\'>' . $rigbro_r['codart'] . '  ' . htmlspecialchars( $rigbro_r['descri'] ) . '  ' . $rigbro_r['unimis'] . '  ' . floatval($rigbro_r['quanti']) . '</p>';
 				}
 				// FINE creazione tabella per il tooltip dei righi
-
         echo '<td>'.$orderman_descr." &nbsp;</td>\n";
-
-
-				// colonna data documento
+// colonna data documento
 				echo "<td>".gaz_format_date($r["datemi"])." &nbsp;</td>\n";
-
-				// colonna fornitore
+// colonna fornitore
 				echo '<td><div class="gazie-tooltip" data-type="movcon-thumb" data-id="' . $r["id_tes"] . '" data-title="' . $tt . '" >'."<a id=\"fornitore_".$r['id_tes']."\"  value=\"".$r["ragso1"]."\" href=\"report_fornit.php?nome=" . htmlspecialchars($r["ragso1"]) . "\">".$r["ragso1"]."&nbsp;</a></div></td>";
-
-				// colonna bottone cambia stato
+// colonna bottone cambia stato
 				echo '<td><a class="btn btn-xs btn-'.$clastatus.'"';
 				if ($clastatus=='warning'){ // Ordine non confermato
 					echo ' onclick="confirmemail(\''.$r["clfoco"].'\',\''.$r['id_tes'].'\',true);" title="Invia mail di conferma"';
@@ -435,68 +431,64 @@ function printPdf(urlPrintDoc){
 					echo '<small> cons: '.gaz_format_date($r["initra"]).'</small></a>';
 				}
 				echo '</td>';
-
-                // colonna stampa
+// colonna stampa
                 $targetPrintDoc = ($pdf_to_modal==0)?'href="'.$modulo.'" target="_blank" ':"onclick=\"printPdf('".$modulo."')\"";
 				echo "<td align=\"center\">";
 				echo "<a class=\"btn btn-xs btn-default\" style=\"cursor:pointer;\" ".$targetPrintDoc."><i class=\"glyphicon glyphicon-print\" title=\"Stampa documento PDF\"></i></a>";
-
 				if($r["tipdoc"] == 'AOR') {
 					echo "<a class=\"btn btn-xs btn-default\" style=\"cursor:pointer;\" onclick=\"printPdf('stampa_ordfor.php?id_tes=".$r['id_tes']."&production')\"><i class=\"glyphicon glyphicon-fire\" title=\"Stampa per reparto produzioni PDF\"></i></a>";
 				}
 				echo "</td>";
-
-				// colonna operazioni
-				echo '<td align="center">';
+// colonna operazioni/stato
+				echo '<td class="text-center">';
 				if ($r["tipdoc"] == 'APR'){
 					echo '<button title="Stesso preventivo per altro fornitore" class="btn btn-default btn-xs" type="button" data-toggle="collapse" data-target="#duplicate_'.$r['id_tes'].'" aria-expanded="false" aria-controls="duplicate_'.$r['id_tes'].'"><i class="glyphicon glyphicon-tags">Duplica</i></button>&nbsp;';
-                echo '<div class="collapse" id="duplicate_'.$r['id_tes'].'">Fornitore: <input id="search_partner'.$r['id_tes'].'" onClick="choicePartner(\''.$r['id_tes'].'\');"  value="" rigo="'. $r['id_tes'] .'" type="text" /></div>';
+          echo '<div class="collapse" id="duplicate_'.$r['id_tes'].'">Fornitore: <input id="search_partner'.$r['id_tes'].'" onClick="choicePartner(\''.$r['id_tes'].'\');"  value="" rigo="'. $r['id_tes'] .'" type="text" /></div>';
 				}
 				$st=$gForm->getOrderStatus($r['id_tes']);
 				if ($r["tipdoc"] == 'AOR') {
-					echo '<div><button title="Duplica questo ordine come preventivo per fornitore" class="btn btn-default btn-xs" type="button" data-toggle="collapse" data-target="#duplicate_'.$r['id_tes'].'" aria-expanded="false" aria-controls="duplicate_'.$r['id_tes'].'"><i class="glyphicon glyphicon-tags">crea Preventivo</i></button></div>';
-                echo '<div class="collapse" id="duplicate_'.$r['id_tes'].'">Fornitore: <input id="search_partner'.$r['id_tes'].'" onClick="choicePartner(\''.$r['id_tes'].'\');"  value="" rigo="'. $r['id_tes'] .'" type="text" /></div>';
-				echo '<div>';
-				if ($st[0]==0){ // tutto da ricevere
-					echo '<a title="Il fornitore consegna la merce ordinata" class="btn btn-xs btn-danger" href="order_delivered.php?id_tes=' . $r['id_tes'] . '"><i class="glyphicon glyphicon-save-file">Ricevi</i></a>';
-				}elseif ($st[0]==1){ //  da ricevere in parte
-					foreach($st[2]as$kd=>$vd){
-						echo '<a title="Modifica il documento di acconto" class="btn btn-xs btn-default" href="admin_docacq.php?id_tes=' . $kd . '&Update"><i class="glyphicon glyphicon-edit">IdDoc.'.$kd.'</i></a> - ';
-					}
-					echo '<a title="Il fornitore consegna il saldo della merce" class="btn btn-xs btn-warning pull-right" href="order_delivered.php?id_tes=' . $r['id_tes'] . '"><i class="glyphicon glyphicon-save-file pull-right">Salda</i></a>';
-				}elseif(is_array($st[2])){ // completamente ricevuto
-					foreach($st[2]as$kd=>$vd){
-						echo '<a title="Modifica il documento di acconto" class="btn btn-xs btn-default" href="admin_docacq.php?id_tes=' . $kd . '&Update"><i class="glyphicon glyphicon-edit">IdDoc.'.$kd.'</i></a> - ';
-					}
-					echo '<a title="Il fornitore ha consegnato tutta la merce ordinata" disabled class="btn btn-xs btn-success pull-right" href=""><i class="glyphicon glyphicon-save-file">Saldato</i></a>';
-				} else {
-					echo '<a title="Ordine senza righi normali, es: solo decrittivi" disabled class="btn btn-xs btn-default pull-right" href=""><i class="glyphicon glyphicon-save-file">Descrittivo</i></a>';
+					echo '<div><button title="Duplica questo ordine come altro ordine o preventivo" class="btn btn-default btn-xs" type="button" data-toggle="collapse" data-target="#duplicate_'.$r['id_tes'].'" aria-expanded="false" aria-controls="duplicate_'.$r['id_tes'].'"><i class="glyphicon glyphicon-tags"> Duplica</i></button></div>';
+          echo '<div class="collapse" id="duplicate_'.$r['id_tes'].'">Fornitore: <input id="search_partner'.$r['id_tes'].'" onClick="choicePartner(\''.$r['id_tes'].'\');"  value="" rigo="'. $r['id_tes'] .'" type="text" /></div>';
+          echo '<div>';
+          if ($st[0]===0){ // tutto da ricevere
+            echo '<a title="Il fornitore consegna la merce ordinata" class="btn btn-xs btn-danger" href="order_delivered.php?id_tes=' . $r['id_tes'] . '"><i class="glyphicon glyphicon-save-file">Ricevi</i></a>';
+          }elseif ($st[0]==1){ //  da ricevere in parte
+            foreach($st[2]as$kd=>$vd){
+              echo '<div><a title="Modifica il documento di acconto" class="btn btn-xs btn-default" href="admin_docacq.php?id_tes=' . $kd . '&Update"><i class="glyphicon glyphicon-edit"> Doc.ID:'.$kd.'</i></a><div>';
+            }
+            echo '<a title="Il fornitore consegna il saldo della merce" class="btn btn-xs btn-warning" href="order_delivered.php?id_tes=' . $r['id_tes'] . '"><i class="glyphicon glyphicon-save-file pull-right">Salda</i></a>';
+          }elseif($st[0] != false){ // completamente ricevuto
+            foreach($st[2]as$kd=>$vd){
+              echo '<div><a title="Modifica il documento di acconto" class="btn btn-xs btn-default" href="admin_docacq.php?id_tes=' . $kd . '&Update"><i class="glyphicon glyphicon-edit"> Doc.ID:'.$kd.'</i></a></div>';
+            }
+            echo '<a title="Il fornitore ha consegnato tutta la merce ordinata" disabled class="btn btn-xs btn-success" href=""><i class="glyphicon glyphicon-save-file">Saldato</i></a>';
+          } else {
+//            echo '<a title="Ordine senza righi normali, es: solo decrittivi" disabled class="btn btn-xs btn-default pull-right" href=""><i class="glyphicon glyphicon-save-file">Descrittivo</i></a>';
+          }
+          echo '</div>';
 				}
-				echo '</div>';
-				}
-                echo "	</td>\n";
+        echo "</td>\n";
 				// colonna mail
 				echo '<td align="center">';
-                if (!empty($r["e_mail"])) {
-                  $gaz_custom_field = gaz_dbi_get_single_value( $gTables['tesbro'], 'custom_field', 'id_tes = '.$r['id_tes'] );
-                  if (isset($gaz_custom_field) && $gaz_custom_data = json_decode($gaz_custom_field,true)){
-                    if ( !isset($gaz_custom_data['email']['ord'])) {
-                        $classe_mail = "btn-default";
-                        $title= "Mai inviata. Inviala a ".$r["e_mail"];
-                    } else {
-                        $classe_mail = "btn-success";
-                        $title="Ultimo invio: ".$gaz_custom_data['email']['ord'];
-                    }
-                  }else{
-                    $classe_mail = "btn-default";
-                    $title= "Mai inviata. Inviala a ".$r["e_mail"];
-                  }
-                    echo ' <a class="btn btn-xs btn-default btn-email ',$classe_mail,'" title="',$title,'" onclick="confirmemail(\''.$r["clfoco"].'\',\''.$r['id_tes'].'\',false);" id="doc'.$r["id_tes"].'"><i class="glyphicon glyphicon-envelope"></i></a>';
-                } else {
+        if (!empty($r["e_mail"])) {
+          $gaz_custom_field = gaz_dbi_get_single_value( $gTables['tesbro'], 'custom_field', 'id_tes = '.$r['id_tes'] );
+          if (isset($gaz_custom_field) && $gaz_custom_data = json_decode($gaz_custom_field,true)){
+            if ( !isset($gaz_custom_data['email']['ord'])) {
+              $classe_mail = "btn-default";
+              $title= "Mai inviata. Inviala a ".$r["e_mail"];
+            } else {
+              $classe_mail = "btn-success";
+              $title="Ultimo invio: ".$gaz_custom_data['email']['ord'];
+            }
+          }else{
+            $classe_mail = "btn-default";
+            $title= "Mai inviata. Inviala a ".$r["e_mail"];
+          }
+          echo ' <a class="btn btn-xs btn-default btn-email ',$classe_mail,'" title="',$title,'" onclick="confirmemail(\''.$r["clfoco"].'\',\''.$r['id_tes'].'\',false);" id="doc'.$r["id_tes"].'"><i class="glyphicon glyphicon-envelope"></i></a>';
+        } else {
 					echo '<a title="Non hai memorizzato l\'email per questo fornitore, inseriscila ora" target="_blank" href="admin_fornit.php?codice='.substr($r["clfoco"],3).'&Update"><i class="glyphicon glyphicon-edit"></i></a>';
-				 }
-                echo "	</td>\n";
-
+				}
+        echo "	</td>\n";
 				// colonna elimina
 				echo "<td align=\"center\">";
 				?>
@@ -505,7 +497,7 @@ function printPdf(urlPrintDoc){
 				</a>
 				<?php
 				echo "</td></tr>";
-            }
+      }
             ?>
             <tr><th class="FacetFieldCaptionTD" colspan="12"></th></tr>
         </table>
@@ -521,7 +513,7 @@ function printPdf(urlPrintDoc){
 		</div>
     </fieldset>
 </div>
-<div class="modal" id="confirm_duplicate" title="Duplica su nuovo preventivo">
+<div class="modal" id="confirm_duplicate" title="Duplica documento">
     <fieldset>
         <div>
             <label for="duplicate">a:</label>
