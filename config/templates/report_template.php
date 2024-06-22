@@ -45,36 +45,38 @@ class Report_template extends Fpdi {
   public $intesta_item_group;
   public $descri_cover;
 
-    function setVars($admin_aziend, $altri_dati = '') {
-        global $gazTimeFormatter,$gazTime;
-        $this->logo = $admin_aziend['image'];
-        if (!empty($admin_aziend['web_url'])) {
-            $this->link = $admin_aziend['web_url'];
-        } else {
-            $this->link = '../config/admin_aziend.php';
-        }
-        $this->colore = $admin_aziend['colore'];
-        $this->intesta1 = $admin_aziend['ragso1'] . ' ' . $admin_aziend['ragso2'];
-        $this->intesta2 = $admin_aziend['indspe'] . ' ' . sprintf("%05d", $admin_aziend['capspe']) . ' ' . $admin_aziend['citspe'] . ' (' . $admin_aziend['prospe'] . ')';
-        $this->intesta3 = 'Tel.' . $admin_aziend['telefo'] . ' C.F.:' . $admin_aziend['codfis'] . ' P.I.:' . $admin_aziend['pariva'];
-        $this->intesta4 = $admin_aziend['e_mail'];
-        if (isset($altri_dati['luogo_data'])) { // se viene passata il valore di luogo_data
-          $this->luogo = $altri_dati['luogo_data'];
-        } else {  // altrimenti uso quello di default
-          $gazTimeFormatter->setPattern('dd MMMM yyyy');
-          $this->luogo = $admin_aziend['citspe'] . ", lì " . $gazTimeFormatter->format($gazTime);
-        }
-        $this->SetCreator('GAzie - ' . $this->intesta1);
-        if (isset($altri_dati['title'])) { // se viene passato il titolo
-            $this->SetTitle($altri_dati['title']);
-        }
-        $this->SetAuthor($this->intesta4);
-        $this->SetHeaderMargin(7);
-        $this->SetTopMargin(44);
-        $this->SetFooterMargin(23);
-        $this->StartPageGroup();
-        $this->altri_dati = $altri_dati;
+  function setVars($admin_aziend,$altri_dati = '',$restartHeadFoot=true) {
+    global $gazTimeFormatter,$gazTime;
+    $this->logo = $admin_aziend['image'];
+    if (!empty($admin_aziend['web_url'])) {
+      $this->link = $admin_aziend['web_url'];
+    } else {
+      $this->link = '../config/admin_aziend.php';
     }
+    $this->colore = $admin_aziend['colore'];
+    $this->intesta1 = $admin_aziend['ragso1'] . ' ' . $admin_aziend['ragso2'];
+    $this->intesta2 = $admin_aziend['indspe'] . ' ' . sprintf("%05d", $admin_aziend['capspe']) . ' ' . $admin_aziend['citspe'] . ' (' . $admin_aziend['prospe'] . ')';
+    $this->intesta3 = 'Tel.' . $admin_aziend['telefo'] . ' C.F.:' . $admin_aziend['codfis'] . ' P.I.:' . $admin_aziend['pariva'];
+    $this->intesta4 = $admin_aziend['e_mail'];
+    if (isset($altri_dati['luogo_data'])) { // se viene passata il valore di luogo_data
+      $this->luogo = $altri_dati['luogo_data'];
+    } else {  // altrimenti uso quello di default
+      $gazTimeFormatter->setPattern('dd MMMM yyyy');
+      $this->luogo = $admin_aziend['citspe'] . ", lì " . $gazTimeFormatter->format($gazTime);
+    }
+    $this->SetCreator('GAzie - ' . $this->intesta1);
+    if (isset($altri_dati['title'])) { // se viene passato il titolo
+      $this->SetTitle($altri_dati['title']);
+    }
+    if ($restartHeadFoot) {
+      $this->SetAuthor($this->intesta4);
+      $this->SetHeaderMargin(7);
+      $this->SetTopMargin(44);
+      $this->SetFooterMargin(23);
+      $this->StartPageGroup();
+    }
+    $this->altri_dati = $altri_dati;
+  }
 
     function setRiporti($intesta_riporti = '') {
         $this->intesta_riporti = $intesta_riporti;

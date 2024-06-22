@@ -57,7 +57,7 @@ $aRiportare = array('top' => array(array('lun' => 166, 'nam' => 'da riporto : ')
 $restes = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $resord['id_tesbro']);
 $resrig = gaz_dbi_get_row($gTables['rigbro'], "id_rig", $resord['id_rigbro']);
 $resrig = ($resrig)?$resrig:array('codart'=>'','quanti'=>0);
-$resclfo = gaz_dbi_get_row($gTables['clfoco'], "codice", $restes['clfoco']);
+$resclfo = $restes?gaz_dbi_get_row($gTables['clfoco'], "codice", $restes['clfoco']):false;
 $resclfo = ($resclfo)?$resclfo:array('descri'=>'');
 $reslot = gaz_dbi_get_row($gTables['lotmag'], "id", $resord['id_lotmag']);
 $reslot = ($reslot)?$reslot:array('identifier'=>'','expiry'=>0);
@@ -67,8 +67,6 @@ $rescamp = ($rescamp)?$rescamp:array('descri'=>'');
 
 $pdf = new Report_template('L','mm','A4',true,'UTF-8',false,true);
 $pdf->setVars($admin_aziend,$title);
-$pdf->SetTopMargin(42);
-$pdf->SetFooterMargin(20);
 $pdf->setRiporti('');
 $pdf->AddPage();
 $pdf->SetFillColor(hexdec(substr($admin_aziend['colore'], 0, 2)), hexdec(substr($admin_aziend['colore'], 2, 2)), hexdec(substr($admin_aziend['colore'], 4, 2)));
@@ -76,7 +74,7 @@ $pdf->SetFont('helvetica','',8);
 $pdf->setJPEGQuality(15);
 $n="";
 $pdf->Cell(16,4,$resord['id'],1, 0, 'C', 0, '', 1);
-$pdf->Cell(18,4,gaz_format_date($restes['datemi']),1, 0, 'C', 0, '', 1);
+$pdf->Cell(18,4,($restes?gaz_format_date($restes['datemi']):''),1, 0, 'C', 0, '', 1);
 $pdf->Cell(45,4,substr($resclfo['descri'],0,35),1, 0, 'L', 0, '', 1);
 $pdf->Cell(55,4,substr($resord['description'],0,40),1, 0, 'L', 0, '', 1);
 $pdf->Cell(30,4,substr($resord['add_info'],0,30),1, 0, 'L', 0, '', 1);
@@ -165,8 +163,7 @@ $title = array('luogo_data'=>$luogo_data,
            'hile'=>array()
           );
 
-$pdf->setVars($admin_aziend,$title);
-$pdf->SetFooterMargin(20);
+$pdf->setVars($admin_aziend,$title,false);
 
 $ctrlAOR=0;
 $ctrlAORtot=0.00;
@@ -393,9 +390,7 @@ if ($numrow>=1){
 					array('lun' => 17,'nam'=>'Prezzo')
                       )
         );
-  $pdf->setVars($admin_aziend,$title);
-  $pdf->SetFooterMargin(20);
-  //$pdf->AddPage();
+  $pdf->setVars($admin_aziend,$title,false);
   $pdf->SetFillColor(255,199,199);
   $pdf->Ln(5);
 	$pdf->Cell(277,4,'MOVIMENTI DI MAGAZZINO RELATIVI ALLA PRODUZIONE',1, 1, 'C', 1, '', 1);
