@@ -2600,6 +2600,12 @@ if ($form['tipdoc'] == "DDT") {
         echo "\t\t <option value=\"$counter\"  $selected >$counter</option>\n";
     }
     echo "\t </select></td>";
+    echo '<td class="text-right">Contratto: </td><td colspan=2> ';
+    $select_contract = new selectcontract("id_contract");
+    $select_contract->addSelected($form['id_contract']);
+    $select_contract->output($form['cosecont'],$form['clfoco']);
+    echo '</td>';
+
     echo "</tr></table></div>\n";
     echo '<input type="hidden" value="' . $form['id_doc_ritorno'] . '" name="id_doc_ritorno" />';
     echo "<input type=\"hidden\" value=\"" . $form['id_contract'] . "\" name=\"id_contract\">\n";
