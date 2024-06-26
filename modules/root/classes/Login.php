@@ -84,11 +84,17 @@ class Login
 	/**
 	* @var array $errors Collection of error messages
 	*/
+	private $username_obj_abil = 5;
+	/**
+	* @var array $errors Collection of error messages
+	*/
+
 	public $errors = array();
 	/**
 	* @var array $messages Collection of success / neutral messages
 	*/
 	public $messages = array();
+
 
 	/**
 	* the function "__construct()" automatically starts whenever an object of this class is created,
@@ -134,8 +140,10 @@ class Login
       // un amministratore sta reimpostando un password ad un utente
       if (isset($_GET["un"])) {
 				$this->username_obj=substr($_GET['un'],0,64);
+        $this->username_obj_abil=$this->getUserData($this->username_obj)->Abilit;
 			} elseif (isset($_POST["un"])) {
 				$this->username_obj=substr($_POST['un'],0,64);
+        $this->username_obj_abil=$this->getUserData($this->username_obj)->Abilit;
 			}
 
 			// login with cookie
@@ -1059,6 +1067,11 @@ class Login
 	public function getUsernameObj()
 	{
 		return $this->username_obj;
+	}
+
+	public function getUsernameObjAbilit()
+	{
+		return $this->username_obj_abil;
 	}
 
 

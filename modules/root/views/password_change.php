@@ -1,7 +1,7 @@
 <?php include('_header.php'); ?>
 <script src='../../js/sha256/forge-sha256.min.js'></script>
 <?php
-if($login->getUsernameObj() <> '' && $login->getUsername() <> $login->getUsernameObj() && $_SESSION['Abilit'] >= 9) { // sono un amministratore e sto cambiando la password ad un utente (e rigenero aes_key)
+if($login->getUsernameObj() <> '' && ( ( $login->getUsername() <> $login->getUsernameObj() && $_SESSION['Abilit'] == 9 ) || ( $login->getUsername() <> $login->getUsernameObj() && $_SESSION['Abilit'] == 8 && $login->getUsernameObjAbilit() < 8 ) )) { // sono un amministratore e sto cambiando la password ad un utente di livello inferiore (e rigenero aes_key)
 ?>
     <form method="post" action="login_password_change.php" name="password_change_form" onsubmit="document.getElementById('user_password_new').value=forge_sha256(document.getElementById('user_password_new').value);document.getElementById('user_password_repeat').value=forge_sha256(document.getElementById('user_password_repeat').value);">
         <div class="container">
