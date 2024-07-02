@@ -72,7 +72,7 @@ $pdf->setTopMargin(43);
 $pdf->setRiporti('');
 $pdf->AddPage();
 $paymov = new Schedule;
-if (isset($_GET['clfoco'])){
+if (isset($_GET['clfoco'])&& $_GET['clfoco']>100000000 ){
 	$admin_aziend['masfor']=intval($_GET['clfoco']);
 }
 $paymov->setScheduledPartner($admin_aziend['masfor']);
