@@ -67,7 +67,7 @@ $aRiportare = array('top'=>array(array('lun' => 166,'nam'=>'da riporto : '),
                     );
 $pdf = new Report_template();
 $pdf->setVars($admin_aziend,$title);
-$pdf->setFooterMargin(22);
+$pdf->setFooterMargin(15);
 $pdf->setTopMargin(43);
 $pdf->setRiporti('');
 $pdf->AddPage();
