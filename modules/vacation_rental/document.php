@@ -476,7 +476,7 @@ class DocContabVars {
           $cin='';
           if (isset ($rigo['group_custom_field']) && $data = json_decode($rigo['group_custom_field'], TRUE)) { // se esiste un json nel group custom field posso prendere i dati della struttura
             if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['cin'])){ // se c'è il cin
-              $cin = (strlen($data['vacation_rental']['cin'])>15)?"-CIN:".$data['vacation_rental']['cin']:''; //prendo il deposito cauzionale
+              $cin = (strlen($data['vacation_rental']['cin'])>15)?"-CIN:".$data['vacation_rental']['cin']:''; //lo prendo
             }
           }
           $rigo['codart'] .= $cin;
