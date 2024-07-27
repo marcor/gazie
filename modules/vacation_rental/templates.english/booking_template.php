@@ -4,8 +4,8 @@
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
   Copyright (C) 2004-2022 - Antonio De Vincentiis Montesilvano (PE)
-  (https://www.devincentiis.it)
-  <https://gazie.sourceforge.net>
+  (http://www.devincentiis.it)
+  <http://gazie.sourceforge.net>
   --------------------------------------------------------------------------
   Questo programma e` free software;   e` lecito redistribuirlo  e/o
   modificarlo secondo i  termini della Licenza Pubblica Generica GNU
@@ -23,13 +23,11 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
-
-
-use setasign\Fpdi\Tcpdf\Fpdi;
-
+//*** ENGLISH LANGUAGE ***
+require('../../library/tcpdf/tcpdf.php');
+require('../../library/tcpdf/tcpdi.php');
 #[AllowDynamicProperties]
-
-class Template extends Fpdi {
+class Template extends TCPDI {
 
     function setVars(&$docVars, $Template = '') {
         $this->docVars = & $docVars;
@@ -68,6 +66,7 @@ class Template extends Fpdi {
         $this->agente = $docVars->name_agente;
         $this->status = $docVars->status;
         $this->alloggio = $docVars->alloggio;
+		$this->checkinout = $docVars->checkinout;
         $this->extras = $docVars->extras;
         /*
         if ( $docVars->destinazione == "" && isset($docVars->client['destin'])) {
@@ -131,7 +130,7 @@ class Template extends Fpdi {
             $this->Cell(130, 3, $this->intesta3, 0, 2, 'L');
             if ( $this->sedelegale!="" ) {
               $this->Cell(130, 3, $this->intesta4, 0, 2, 'L');
-              $this->Cell(130, 3, "SEDE LEGALE: ".$this->sedelegale, 0, 0, 'L');
+              $this->Cell(130, 3, "REGISTERED OFFICE: ".$this->sedelegale, 0, 0, 'L');
             } else {
               $this->Cell(130, 3, $this->intesta4, 0, 0, 'L');
             }
@@ -174,6 +173,7 @@ class Template extends Fpdi {
             $add_int=0;$extras="";
 
             $this->SetX(110);$this->Cell(88, 5, $this->alloggio, 1, 1, 'C', 0, '', 1);
+			$this->SetX(110);$this->Cell(88, 5, $this->checkinout, 1, 1, 'C', 0, '', 1);
             $extraDes='';
             foreach ($this->extras as $extra){
               $extraDes .=$extra;
@@ -260,10 +260,10 @@ class Template extends Fpdi {
             }
             $this->SetFont('helvetica', '', 7);
             if ($this->fiscal_rapresentative) {
-                $this->Cell(115, 8, 'Legale Rappresentante ', 0, 0, 'R');
+                $this->Cell(115, 8, 'Legal representative ', 0, 0, 'R');
                 $this->Cell(75, 8, $this->fiscal_rapresentative['ragso1']." ".$this->fiscal_rapresentative['ragso2']." ".$this->fiscal_rapresentative['country'].$this->fiscal_rapresentative['pariva'], 0, 1, 'L', 0, '', 1);
             } elseif (!empty($this->clientSedeLegale)) {
-                $this->Cell(115, 8, 'Sede legale: ', 0, 0, 'R');
+                $this->Cell(115, 8, 'REGISTERED OFFICE: ', 0, 0, 'R');
                 $this->Cell(75, 8, $this->clientSedeLegale, 0, 1, 'L', 0, '', 1);
             } else {
                 $this->Ln(4);
