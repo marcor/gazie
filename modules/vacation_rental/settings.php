@@ -30,7 +30,6 @@
 require("../../library/include/datlib.inc.php");
 //require("lib.function.php");
 $admin_aziend = checkAdmin(8);
-$admin_aziend['id_language'];
 $lang=gaz_dbi_get_row($gTables['languages'], 'lang_id', intval($admin_aziend['id_language']))['sef'];
 $gForm = new GazieForm();
 $genclass="active";
