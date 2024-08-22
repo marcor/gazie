@@ -2,9 +2,9 @@
 /*
 	  --------------------------------------------------------------------------
 	  GAzie - Gestione Azienda
-	  Copyright (C) 2004-present - Antonio De Vincentiis Montesilvano (PE)
-	  (https://www.devincentiis.it)
-	  <https://gazie.sourceforge.net>
+	  Copyright (C) 2004-2024 - Antonio De Vincentiis Montesilvano (PE)
+	  (http://www.devincentiis.it)
+	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
 	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP
 	  Copyright (C) 2018-2023 - Antonio Germani, Massignano (AP)
@@ -113,7 +113,7 @@ document.onreadystatechange = function() {
 if (isset($_POST['update'])) {
 	// creo l'array dal file csv
 	$array = array();$delimiter = ";";
-	$lines = @file('https://www.dati.salute.gov.it/imgs/C_17_dataset_6_download_itemDownload0_upFile.CSV', FILE_IGNORE_NEW_LINES) or die ("Apertura del file fallita. Aspettare 1 minuto e riprovare oppure controllare la connessione ad internet.");
+	$lines = @file('https://www.dati.salute.gov.it/sites/default/files/opendata/PROD_FTS_6_20240819.csv', FILE_IGNORE_NEW_LINES) or die ("Apertura del file fallita. Aspettare 1 minuto e riprovare oppure controllare la connessione ad internet.");
 	//$lines = file('fitofarmaci.CSV', FILE_IGNORE_NEW_LINES); // commentare la riga sopra e togliere il commento a questa se si desidera prelevare i dati da un file scaricato precedentemente nel PC
 	foreach ($lines as $key => $value){
 		$array[$key] = str_getcsv($value,$delimiter);
