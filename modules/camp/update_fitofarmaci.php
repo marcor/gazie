@@ -78,6 +78,10 @@ $admin_aziend=checkAdmin(); $title="Update tabella fitofarmaci dal database del 
 require("../../library/include/header.php");
  $script_transl=HeadMain();
 
+$lines_array=file('https://www.dati.salute.gov.it/it/dataset/fitosanitari/');
+$lines_string=explode('href',$lines_array[78]);
+preg_match('~"(.*?)"~', $lines_string[19], $output);// prendo fra le due "
+$file_name="https://www.dati.salute.gov.it".$output[1];// questo è l'url preso dalla pagina web (speriamo non cambino pure la pagina)
 
 echo "<form method=\"POST\" name=\"myform\">";
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">$title</div>\n";
@@ -113,7 +117,7 @@ document.onreadystatechange = function() {
 if (isset($_POST['update'])) {
 	// creo l'array dal file csv
 	$array = array();$delimiter = ";";
-	$lines = @file('https://www.dati.salute.gov.it/sites/default/files/opendata/PROD_FTS_6_20240819.csv', FILE_IGNORE_NEW_LINES) or die ("Apertura del file fallita. Aspettare 1 minuto e riprovare oppure controllare la connessione ad internet.");
+	$lines = @file($file_name, FILE_IGNORE_NEW_LINES) or die ("Apertura del file fallita. Aspettare 1 minuto e riprovare oppure controllare la connessione ad internet.");
 	//$lines = file('fitofarmaci.CSV', FILE_IGNORE_NEW_LINES); // commentare la riga sopra e togliere il commento a questa se si desidera prelevare i dati da un file scaricato precedentemente nel PC
 	foreach ($lines as $key => $value){
 		$array[$key] = str_getcsv($value,$delimiter);
