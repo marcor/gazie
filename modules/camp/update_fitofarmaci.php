@@ -78,10 +78,13 @@ $admin_aziend=checkAdmin(); $title="Update tabella fitofarmaci dal database del 
 require("../../library/include/header.php");
  $script_transl=HeadMain();
 
-$lines_array=file('https://www.dati.salute.gov.it/it/dataset/fitosanitari/');
-$lines_string=explode('href',$lines_array[78]);
-preg_match('~"(.*?)"~', $lines_string[19], $output);// prendo fra le due "
-$file_name="https://www.dati.salute.gov.it".$output[1];// questo è l'url preso dalla pagina web (speriamo non cambino pure la pagina)
+$lines_array=file('https://www.dati.salute.gov.it/it/dataset/fitosanitari/');// url della pagina
+foreach ($lines_array as $line){
+  if (preg_match('~sites(.*?).csv~', $line, $output)){// cerco l'url del dataset in formato csv
+    break;
+  }
+}
+$file_name="https://www.dati.salute.gov.it/".$output[0];// questo è l'url completo per scaricare il dataset in csv
 
 echo "<form method=\"POST\" name=\"myform\">";
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">$title</div>\n";
