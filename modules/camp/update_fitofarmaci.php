@@ -73,24 +73,21 @@ $admin_aziend=checkAdmin(); $title="Update tabella fitofarmaci dal database del 
 </style>
 <div id="loader" class="center"></div>
 <?php
-
-
 require("../../library/include/header.php");
- $script_transl=HeadMain();
+$script_transl=HeadMain();
 
-$lines_array=file('https://www.dati.salute.gov.it/it/dataset/fitosanitari/');// url della pagina
-foreach ($lines_array as $line){
-  if (preg_match('~sites(.*?).csv~', $line, $output)){// cerco l'url del dataset in formato csv
-    break;
-  }
+$url='https://www.dati.salute.gov.it/it/dataset/fitosanitari/';
+$webpage=file_get_contents($url);
+if (preg_match('~sites(.*?).csv~', $webpage, $output)){
+  $file_name="https://www.dati.salute.gov.it/".$output[0];// questo è l'url completo per scaricare il dataset in csv
+} else {
+  var_dump("Pagina: <a href='".$url."'>".$url."</a> non trovata!");
+  $file_name='';
 }
-$file_name="https://www.dati.salute.gov.it/".$output[0];// questo è l'url completo per scaricare il dataset in csv
 
 echo "<form method=\"POST\" name=\"myform\">";
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">$title</div>\n";
-
 echo "<table class=\"Tmiddle table-striped\" align=\"center\">\n";
-
 echo '<tr><td colspan="5" class="FacetDataTDred" align="center">' . "Procedura di aggiornamento della tabella fitofarmaci" . "</td></tr>\n";
 echo "<tr><td class=\"FacetDataTD\">\n";
 echo "<td class=\"FacetFieldCaptionTD\">" ."Questa procedura popola la tabella fitofarmaci, se è la prima volta che viene attivata; se non è la prima volta la aggiorna.<br> Può durare alcuni minuti e necessita di connessione ad internet. <br> Non cambiare pagina al browser finché non si riceve un messaggio di avvenuto aggiornamento o di errore." . "</td><td class=\"FacetDataTD\">\n";
@@ -98,7 +95,6 @@ if ($msg==""){
 	echo '<button type="submit" class="btn btn-default btn-sm" name="update" title="' . $script_transl['submit'] . '"><i class="glyphicon glyphicon-refresh"></i></button>';
 }
 echo '</td></tr><tr><td></td><td class="FacetDataTD">'.$msg.'</td><td></td></tr>';
-
 ?>
 </div>
 </table>
