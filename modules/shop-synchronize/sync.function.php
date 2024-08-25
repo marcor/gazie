@@ -2,9 +2,9 @@
 /*
 	  --------------------------------------------------------------------------
 	  GAzie - Gestione Azienda
-	  Copyright (C) 2004-present - Antonio De Vincentiis Montesilvano (PE)
-	  (https://www.devincentiis.it)
-	  <https://gazie.sourceforge.net>
+	  Copyright (C) 2004-2024 - Antonio De Vincentiis Montesilvano (PE)
+	  (http://www.devincentiis.it)
+	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
 	  SHOP SYNCHRONIZE è un modulo creato per GAzie da Antonio Germani, Massignano AP
 	  Copyright (C) 2018-2024 - Antonio Germani, Massignano (AP)
@@ -1149,8 +1149,9 @@ class shopsynchronizegazSynchro {
 		$headers = @get_headers($urlinterf.'?access='.$access);
 		$count=0;
 		if ( is_array($headers) AND intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o mi dà accesso
-			$xml=simplexml_load_file($urlinterf.'?access='.$access.'&rnd='.time()) ;
-			if (!$xml){
+			if($xmlStr = file_get_contents($urlinterf.'?access='.$access.'&rnd='.time())) {// se non è vuoto posso procedere
+				$xml=simplexml_load_file($xmlStr) ;
+				if (!$xml){
                     $rawres['title'] = "L'interfaccia non si apre: impossibile scaricare gli ordini dall'e-commerce";
                     $rawres['button'] = 'Avviso eCommerce';
                     $rawres['label'] = "L'interfaccia non si apre o non esiste";
@@ -1411,6 +1412,7 @@ class shopsynchronizegazSynchro {
 					}
 					$numdoc++; //incremento il numero d'ordine GAzie
 				}
+			}
 		} else { // IL FILE INTERFACCIA NON ESISTE > chiudo la connessione ftp
 			if (!is_array($headers)){
             $rawres['title'] = "Impossibile scaricare gli ordini. Controllare le impostazioni nel modulo shop-synchronize.";
