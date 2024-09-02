@@ -39,6 +39,7 @@ if (!isset($_POST['access'])){// primo accesso
   $form['start']=$_POST['start'];
   $form['end']=$_POST['end'];
 }
+
 ?>
 <script>
 $('#closePdf').on( "click", function() {
@@ -211,4 +212,12 @@ function openframe(url,codice){
       </div>
     </form>
   </div>
+  <?php if(file_exists("../../modules/vacation_rental/flot_graph.php")){?>
+  <div>
+   <iframe src="../../modules/vacation_rental/flot_graph.php?start=<?php echo $form['start'];?>&end=<?php echo $form['end'];?>" width="100%" height="800px" title="Grafico statistiche"></iframe>
+  </div>
+  <?php }else{
+    echo "<br>Il grafico interattivo delle statische non è dispobile in questa versione";
+  }
 
+  ?>
