@@ -460,17 +460,30 @@ function get_datasets($startprom,$endprom){// STAT graph
         $year=date("Y",strtotime($start));
         if ($start >= $startprom AND $start <= date ("Y-m-d", strtotime("-1 days", strtotime($endprom)))) {// se il giorno è dentro l'arco di tempo richiesto (tolgo una giorno a endprom perché devo conteggiare le notti)
 		  //echo "<br>",$start," è dentro";
-          if (!isset($retsumdat[$year][substr($resh['codice'], 0, 32)][$month])){
-            $retsumdat[$year][substr($resh['codice'], 0, 32)][$month]=0;
+          if (!isset($retsumdat['IMPORTI'][$year][substr($resh['codice'], 0, 32)][$month])){
+            $retsumdat['IMPORTI'][$year][substr($resh['codice'], 0, 32)][$month]=0;
           }
-          $retsumdat[$year][substr($resh['codice'], 0, 32)][$month]+= ((get_totalprice_booking($row['id_tesbro'],FALSE))/$nights_event);// aggiungo il costo della notte nel mese
+          if (!isset($retsumdat['IMPORTI'][$year]['TUTTI'][$month])){
+            $retsumdat['IMPORTI'][$year]['TUTTI'][$month]=0;
+          }
+          $retsumdat['IMPORTI'][$year][substr($resh['codice'], 0, 32)][$month]+= ((get_totalprice_booking($row['id_tesbro'],FALSE))/$nights_event);// aggiungo il costo della notte nel mese
+          $retsumdat['IMPORTI'][$year]['TUTTI'][$month]+= ((get_totalprice_booking($row['id_tesbro'],FALSE))/$nights_event);// aggiungo il costo della notte nel mese di tutti
           if (!isset($data[$start])){
             $data[$start]=array();
           }
             if (!in_array($row['house_code'],$data[$start])){// escludendo i giorni che hanno già quell'alloggio
-             array_push($data[$start],$row['house_code']);// conteggio il giorno per questo alloggio
-             $tot_nights_booked  ++;
-             $tot_n_event_in_promemo ++;
+              array_push($data[$start],$row['house_code']);// conteggio il giorno per questo alloggio
+              if (!isset($retsumdat['OCCUPAZIONE'][$year][substr($resh['codice'], 0, 32).'-occupazione'][$month])){
+                $retsumdat['OCCUPAZIONE'][$year][substr($resh['codice'], 0, 32).'-occupazione'][$month]=0;
+              }
+              $retsumdat['OCCUPAZIONE'][$year][(substr($resh['codice'], 0, 32)).'-occupazione'][$month] ++;
+              if (!isset($retsumdat['OCCUPAZIONE'][$year]['occup. tutti'][$month])){
+
+                $retsumdat['OCCUPAZIONE'][$year]['occup. tutti'][$month]=0;
+              }
+              $retsumdat['OCCUPAZIONE'][$year]['occup. tutti'][$month] ++;
+              $tot_nights_booked  ++;
+              $tot_n_event_in_promemo ++;
           }
 
         }
@@ -483,10 +496,9 @@ function get_datasets($startprom,$endprom){// STAT graph
   $ret['tot_nights_bookable']= $num_all * $night_promemo;
   $ret['perc_booked'] = ($ret['tot_nights_bookable']>0)?(($tot_nights_booked/$ret['tot_nights_bookable'])*100):0;
   $ret['tot_nights_booked'] = $tot_nights_booked;
-
   // adesso mi creo il dataset
   $datasets="{";
-  foreach($retsumdat as $key => $value){
+  foreach($retsumdat['IMPORTI'] as $key => $value){
 
     foreach($value as $key2 => $value2){// qui ho l'anno e l'alloggio
       $datasets .= '"'.$key.'-'.$key2.'": {label: "'.$key.'-'.$key2.'", data: [';
@@ -499,7 +511,25 @@ function get_datasets($startprom,$endprom){// STAT graph
 
   }
   $datasets.="}";
-  return $datasets;
+  $dataret['IMPORTI']=$datasets;
+  $datasets="{";
+  foreach($retsumdat['OCCUPAZIONE'] as $key => $value){
+
+    foreach($value as $key2 => $value2){// qui ho l'anno e l'alloggio
+      $datasets .= '"'.$key.'-'.$key2.'": {label: "'.$key.'-'.$key2.'", data: [';
+      ksort($value2);// ordino in base al mese
+      foreach ($value2 as $k => $v){// qui ho il mese e il valore
+        $datasets .= '['.$k.', '.$v.'],';
+      }
+      $datasets .= ']},';
+    }
+
+  }
+  $datasets.="}";
+  $dataret['OCCUPAZIONE']=$datasets;
+  //echo "<pre>",print_r($dataret);die;
+
+  return $dataret;
 }
 
 function get_next_check($startprom,$endprom){
