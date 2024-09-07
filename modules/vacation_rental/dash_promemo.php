@@ -165,7 +165,7 @@ function openframe(url,codice){
 						  ?>
 						  <tr <?php echo $style; ?>>
 						  <td><?php echo "<b>",gaz_format_date($row['start']),"</b> ",$row['type']," ",$row['house_code'],"<b> -> </b>",$row['ragso1']," ",$row['ragso2']; ?>
-						  <a href="../vacation_rental/report_booking.php?info=none&id_doc=<?php echo $row['id_tes']; ?>&inevasi=Inevasi"> prenotazione n. <?php echo $row['numdoc']; ?> del <?php echo gaz_format_date($row['datemi']); ?></a></td>
+						  <a href="../vacation_rental/report_booking.php?info=none&id_doc=<?php echo $row['id_tes']; ?>"> prenotazione n. <?php echo $row['numdoc']; ?> del <?php echo gaz_format_date($row['datemi']); ?></a></td>
 						  </tr>
 						  <?php
 					  }
@@ -201,7 +201,7 @@ function openframe(url,codice){
 						  ?>
 						  <tr <?php echo $style; ?>>
 						  <td><?php echo "<b>",gaz_format_date($row['end']),"</b> ",$row['type']," ",$row['house_code'],"<b> -> </b>",$row['ragso1']," ",$row['ragso2']; ?>
-						  <a href="../vacation_rental/report_booking.php?info=none&id_doc=<?php echo $row['id_tes']; ?>&inevasi=Inevasi"> prenotazione n. <?php echo $row['numdoc']; ?> del <?php echo gaz_format_date($row['datemi']); ?></a></td>
+						  <a href="../vacation_rental/report_booking.php?info=none&id_doc=<?php echo $row['id_tes']; ?>"> prenotazione n. <?php echo $row['numdoc']; ?> del <?php echo gaz_format_date($row['datemi']); ?></a></td>
 						  </tr>
 						  <?php
 					  }
