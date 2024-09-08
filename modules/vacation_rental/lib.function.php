@@ -497,35 +497,38 @@ function get_datasets($startprom,$endprom){// STAT graph
   $ret['perc_booked'] = ($ret['tot_nights_bookable']>0)?(($tot_nights_booked/$ret['tot_nights_bookable'])*100):0;
   $ret['tot_nights_booked'] = $tot_nights_booked;
   // adesso mi creo il dataset
-  $datasets="{";
-  foreach($retsumdat['IMPORTI'] as $key => $value){
-
-    foreach($value as $key2 => $value2){// qui ho l'anno e l'alloggio
-      $datasets .= '"'.$key.'-'.$key2.'": {label: "'.$key.'-'.$key2.'", data: [';
-      ksort($value2);// ordino in base al mese
-      foreach ($value2 as $k => $v){// qui ho il mese e il valore
-        $datasets .= '['.$k.', '.$v.'],';
-      }
-      $datasets .= ']},';
-    }
-
+  $datasets="";
+  if (isset($retsumdat['IMPORTI'])){
+	  $datasets="{";
+	  foreach($retsumdat['IMPORTI'] as $key => $value){
+		foreach($value as $key2 => $value2){// qui ho l'anno e l'alloggio
+		  $datasets .= '"'.$key.'-'.$key2.'": {label: "'.$key.'-'.$key2.'", data: [';
+		  ksort($value2);// ordino in base al mese
+		  foreach ($value2 as $k => $v){// qui ho il mese e il valore
+			$datasets .= '['.$k.', '.$v.'],';
+		  }
+		  $datasets .= ']},';
+		}
+	  }
+	  $datasets.="}";
   }
-  $datasets.="}";
   $dataret['IMPORTI']=$datasets;
-  $datasets="{";
-  foreach($retsumdat['OCCUPAZIONE'] as $key => $value){
+  if (isset($retsumdat['OCCUPAZIONE'])){
+	  $datasets="{";
+	  foreach($retsumdat['OCCUPAZIONE'] as $key => $value){
 
-    foreach($value as $key2 => $value2){// qui ho l'anno e l'alloggio
-      $datasets .= '"'.$key.'-'.$key2.'": {label: "'.$key.'-'.$key2.'", data: [';
-      ksort($value2);// ordino in base al mese
-      foreach ($value2 as $k => $v){// qui ho il mese e il valore
-        $datasets .= '['.$k.', '.$v.'],';
-      }
-      $datasets .= ']},';
-    }
+		foreach($value as $key2 => $value2){// qui ho l'anno e l'alloggio
+		  $datasets .= '"'.$key.'-'.$key2.'": {label: "'.$key.'-'.$key2.'", data: [';
+		  ksort($value2);// ordino in base al mese
+		  foreach ($value2 as $k => $v){// qui ho il mese e il valore
+			$datasets .= '['.$k.', '.$v.'],';
+		  }
+		  $datasets .= ']},';
+		}
 
+	  }
+	  $datasets.="}";
   }
-  $datasets.="}";
   $dataret['OCCUPAZIONE']=$datasets;
   //echo "<pre>",print_r($dataret);die;
 
@@ -546,9 +549,9 @@ function get_next_check($startprom,$endprom){
     $tabletes = $gTables['tesbro'];
   }
   $rs_booking = gaz_dbi_dyn_query("id,start,end", $tablerent_ev, "(start >= ".$startprom." OR start <= ".$endprom." OR end >= ".$startprom." OR end <= ".$endprom.")  AND type = 'ALLOGGIO' AND ".$tabletes.".custom_field LIKE '%CONFIRMED%'", "id asc");
-
+echo $startprom;
   while ($booking = gaz_dbi_fetch_assoc($rs_booking)){// ciclo le prenotazioni che interessano arco di tempo richiesto
-    if (intval($booking['id'])>0 && $booking['start']>= $startprom && $booking['start'] <= $endprom){//se la data di check-in è dentro
+    if (intval($booking['id'])>0 && $booking['start']>= date ("Y-m-d", strtotime("-3 days", strtotime($startprom))) && $booking['start'] <= $endprom){//se la data di check-in è dentro ( prendo anche eventuali checkin ritardatari fino a 3 giorni
       $next['in'][]=$booking;
     }
     if (intval($booking['id'])>0 && $booking['end']>= $startprom && $booking['end'] <= $endprom){//se la data di check-out è dentro
