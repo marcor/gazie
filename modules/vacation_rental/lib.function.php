@@ -604,22 +604,28 @@ function get_user_points_level($id_anagra){// determina il livello punti raggiun
     }else{
       $table = $gTables['company_config'];
     }
+    $sql = "SELECT * FROM ". $table ." WHERE var = 'pointenable' ORDER BY id ASC LIMIT 1";
+    if ($result = mysqli_query($link, $sql)) {// prendo il customfield in anagra
+      $row = mysqli_fetch_assoc($result);
+      $pointenable=$row['val'];
+    }
+    
     $sql = "SELECT * FROM ". $table ." WHERE var LIKE 'pointlevel%' ORDER BY id ASC";
     if ($result = mysqli_query($link, $sql)) {// prendo i livelli dalle impostazioni generali
       $levname="";$user_lev="";
-      while ($rigpoint = mysqli_fetch_array($result)){
-        if (substr($rigpoint['description'],0,12)=="Nome livello"){
-          $lev_number=substr($rigpoint['description'],13);
-        }
-        if (substr($rigpoint['description'],0,13)=="Punti livello"){
-          if ($user_point>=$rigpoint['val']){
-            $user_lev=$lev_number;
+      if (intval($pointenable)>0 ){
+        while ($rigpoint = mysqli_fetch_array($result)){
+          if (substr($rigpoint['description'],0,12)=="Nome livello"){
+            $lev_number=substr($rigpoint['description'],13);
+          }
+          if (substr($rigpoint['description'],0,13)=="Punti livello"){
+            if ($user_point>=$rigpoint['val']){
+              $user_lev=$lev_number;
+            }
           }
         }
       }
-
       return $user_lev;// restituisco il numero del livello
-
     }else {
        echo "Error: " . $sql . "<br>" . mysqli_error($link);
     }
