@@ -2641,6 +2641,13 @@ echo '<input type="hidden" value="' . $strArrayDest . '" name="rs_destinazioni">
 									}
 								}
 								$selected_lot = $lm->getLot($v['id_lotmag']);
+								if(!isset($selected_lot['identifier'])){
+									$selected_lot['identifier']="";
+									$selected_lot['id']="";
+									$selected_lot['expiry']="";
+									$selected_lot['desdoc']="";
+									$selected_lot['datdoc']="";
+								}
 								if (!isset($count[$selected_lot['identifier']])){
 									$count[$selected_lot['identifier']]="";
 								}
