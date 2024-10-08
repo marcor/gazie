@@ -2676,7 +2676,7 @@ echo '<input type="hidden" value="' . $strArrayDest . '" name="rs_destinazioni">
 								$lm_acc .='</div>';
 								$lm_acc .='<div id="lm_dialog' . $k . '" class="collapse" >
 										<div class="form-group">';
-								if (count($lm->available) > 1) {
+								if (count($lm->available) > 0) {
 									foreach ($lm->available as $v_lm) {
 										if ($v_lm['id'] <> $v['id_lotmag']) {
 										if ($count[$v_lm['identifier']]>=$v['quanti']){
