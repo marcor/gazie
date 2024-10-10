@@ -98,9 +98,9 @@ if (sizeof($_GET) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti e
 					} else {
 						$country = gaz_dbi_get_row($gTables['country'],"iso",$anagra['country']);
 						if ($country['istat_area']==11){
-							$stato="CE";$iso=$anagra['iso'];$istatpro="";$istatcom="";
+							$stato="CE";$iso=$country['iso'];$istatpro="";$istatcom="";
 						} else {
-							$stato="NE";$iso=$anagra['iso'];$istatpro="";$istatcom="";
+							$stato="NE";$iso=$country['iso'];$istatpro="";$istatcom="";
 						}
 					}
 
