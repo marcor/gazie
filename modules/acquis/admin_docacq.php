@@ -2737,7 +2737,7 @@ echo '<input type="hidden" value="' . $strArrayDest . '" name="rs_destinazioni">
 								<div class="form-group">
 									<label for="recip_stock" class="col-sm-5 control-label"><?php echo "recipiente stoccaggio rigo ",$k+1; ?></label>
 									<?php
-									$gForm->selectFromDB('camp_recip_stocc', 'rows[' . $k . '][recip_stocc]' ,'cod_silos', $form['rows'][$k]['recip_stocc'], 'cod_silos', 1, ' - Capacita kg. ','capacita','TRUE','col-sm-7' , null, '');
+									$gForm->selectFromDB('camp_recip_stocc', 'rows[' . $k . '][recip_stocc]' ,'cod_silos', $form['rows'][$k]['recip_stocc'], 'cod_silos', 1, ' - Capacità kg. ','capacita','TRUE','col-sm-7' , null, '');
 									?>
 								</div>
 							</div>
