@@ -3,8 +3,8 @@
 	  --------------------------------------------------------------------------
 	  GAzie - Gestione Azienda
 	  Copyright (C) 2004-present - Antonio De Vincentiis Montesilvano (PE)
-	  (http://www.devincentiis.it)
-	  <http://gazie.sourceforge.net>
+	  (https://www.devincentiis.it)
+	  <https://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
 	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP
 	  Copyright (C) 2018-present - Antonio Germani, Massignano (AP)
@@ -271,15 +271,16 @@ if (isset($_POST['preview']) and $msg=='') {
         $linkHeaders->output();
         echo "</tr>";
 		$genera="";
-		$legenda_cod_op= array('1'=>'Confezionamento con etichettatura','2'=>'Confezionamento senza etichettatura','3'=>'Etichettatura','4'=>'Svuotamento di olio confezionato','5'=>'Movimentazione interna senza cambio di origine','S7'=>'Scarico di olio destinato ad altri usi','10'=>'Carico olio lampante da recupero','8'=>'Reso olio confezionato da clienti','9'=>'Olio ha ottenuto certificazione DOP');
+		
 
         foreach($m as $key => $mv){
 			if ($mv['id_movmag']>0){ // se è un movimento del SIAN connesso al movimento di magazzino
+			$legenda_cod_op= array('1'=>'Confezionamento con etichettatura','2'=>'Confezionamento senza etichettatura','3'=>'Etichettatura','4'=>'Svuotamento di olio confezionato','5'=>'Movimentazione interna senza cambio di origine','S7'=>'Scarico di olio destinato ad altri usi','10'=>'Carico olio lampante da recupero','8'=>'Reso olio confezionato da clienti','9'=>'Olio ha ottenuto certificazione DOP');
 				if ($form['date_ini_Y'].$form['date_ini_M'].$form['date_ini_D']==str_replace("-", "", $mv['datdoc']) AND strlen($mv['status'])>1) {
 				// escludo i movimenti già inseriti null'ultimo file con stessa data
 				} else if ($mv['id_orderman']>0 AND $mv['operat']==-1 AND $mv['cod_operazione']<>"S7"){
 					// escludo i movimenti di produzione in uscita
-				} else {
+				} else {					
 					if ($mv['id_orderman']==0 AND $mv['operat']==1){
 						$legenda_cod_op['3']='Carico olio da lavorazione/deposito presso terzi';
 						$legenda_cod_op['5']='Carico olio da altro stabilimento/deposito stessa impresa';
@@ -293,7 +294,7 @@ if (isset($_POST['preview']) and $msg=='') {
 						$legenda_cod_op['6']='Omaggio olio confezionato';
 						$legenda_cod_op['8']='Scarico olio autoconsumo';
 						$legenda_cod_op['12']='Perdite, cali, campionamento, analisi';
-
+						$legenda_cod_op['13']='Separazione morchie';
 					}
 					$genera="ok";
 					$datedoc = substr($mv['datdoc'],8,2).'-'.substr($mv['datdoc'],5,2).'-'.substr($mv['datdoc'],0,4);
@@ -309,6 +310,8 @@ if (isset($_POST['preview']) and $msg=='') {
 					echo "</tr>\n";
 					$ctr_mv = $mv['artico'];
 				}
+				
+				
 			}
          }
          echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
