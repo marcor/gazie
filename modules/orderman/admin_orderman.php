@@ -146,13 +146,8 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ // se NON è il pri
 
 		$idlotrecip=$campsilos->getLotRecip($form['recip_stocc'],$form['codart'],intval($excluded_movmag) ); // è un array dove [0] è l'ID lotto e [1] è il numero lotto
 		if ($form['cod_operazione']==5){ // se è una movimentazione interna SIAN limito la quantità a quella disponibile per l'ID lotto
-
-
-
 			$qtaLotId = $lm -> dispLotID ($form['codart'], $idlotrecip[0], $excluded_movmag);
-
 			if ($form['quantip']>$qtaLotId){
-        echo"pippo error";
 				$form['quantip']=$qtaLotId; $warnmsg.="42+";
 			}
 		}
