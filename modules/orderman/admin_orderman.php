@@ -384,7 +384,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ // se NON è il pri
                 $msg.= "28+";
               }
               $get_sil=gaz_dbi_get_row($gTables['camp_recip_stocc'],'cod_silos',$form['recip_stocc_destin']);
-              if ($campsilos -> getCont($form['recip_stocc_destin'])+$form['quantip'] > $get_sil['capacita']){// se non c'è spazio sufficiente nel recipiente di destinazione
+              if ($campsilos -> getCont($form['recip_stocc_destin'],'', $form['id_movmag'])+$form['quantip'] > $get_sil['capacita']){// se non c'è spazio sufficiente nel recipiente di destinazione
                 $msg.= "46+";
               }
             }
@@ -1640,9 +1640,11 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 			</div>
 			<?php if ($rescampbase['confezione']==0){
         if ($form['recip_stocc']==$form['old_recip_stocc'] && $toDo == "update"){// se non è cambiato il contenitore d'origine e stiamo in update
-          $excluded_movmag=$form['id_mov_sian_rif'];// faccio escludere il movimento dal calcolo disponibilità
+          $excluded_movmag=$form['id_mov_sian_rif'];// faccio escludere il movimento dal calcolo disponibilità recipiente di origine
+		  $excluded_movmag_dest=$form['id_movmag'];// faccio escludere il movimento dal calcolo disponibilità recipiente di destinazione
         }else{
-          $excluded_movmag=0;
+          $excluded_movmag=0;          
+		  $excluded_movmag_dest=0;
         }
 
         ?>
@@ -1657,7 +1659,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 					<div class="row">
 					<label for="camp_recip_stocc" class="col-sm-6"><?php echo "Recipiente stoccaggio destinazione"; ?></label>
 					<?php
-					$campsilos->selectSilos('recip_stocc_destin' ,'cod_silos', $form['recip_stocc_destin'], 'cod_silos', 1,'capacita','TRUE','col-sm-6' , null, '');
+					$campsilos->selectSilos('recip_stocc_destin' ,'cod_silos', $form['recip_stocc_destin'], 'cod_silos', 1,'capacita','TRUE','col-sm-6' , null, '', false, false, '', $excluded_movmag_dest);
 					?>
 				</div>
 				<?php
