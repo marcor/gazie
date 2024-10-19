@@ -81,19 +81,20 @@ function getMovements($date_ini,$date_fin)
     {
         global $gTables,$admin_aziend;
         $m=array();
-        $where="datdoc BETWEEN $date_ini AND $date_fin";
+        $where="datdoc BETWEEN $date_ini AND $date_fin AND ".$gTables['camp_mov_sian'].".id_movmag > 0";
         $what=$gTables['movmag'].".*, ".
               $gTables['camp_mov_sian'].".*, ".
 			  $gTables['artico'].".SIAN, ".
 			  $gTables['anagra'].".ragso1, ".$gTables['anagra'].".id_SIAN, ".
 			  $gTables['clfoco'].".id_anagra, ".
-			  $gTables['camp_recip_stocc'].".capacita, ".
+			  $gTables['camp_recip_stocc'].".capacita, "." camp_recip_stocc_destin.capacita as capacita_destin, ".
 			  $gTables['camp_artico'].".or_macro, ".$gTables['camp_artico'].".or_spec, ".$gTables['camp_artico'].".estrazione, ".$gTables['camp_artico'].".biologico, ".$gTables['camp_artico'].".etichetta, ".$gTables['camp_artico'].".categoria ";
         $table=$gTables['movmag']." LEFT JOIN ".$gTables['camp_mov_sian']." ON (".$gTables['movmag'].".id_mov = ".$gTables['camp_mov_sian'].".id_movmag)
                LEFT JOIN ".$gTables['clfoco']." ON (".$gTables['movmag'].".clfoco = ".$gTables['clfoco'].".codice)
 			   LEFT JOIN ".$gTables['camp_artico']." ON (".$gTables['movmag'].".artico = ".$gTables['camp_artico'].".codice)
                LEFT JOIN ".$gTables['artico']." ON (".$gTables['movmag'].".artico = ".$gTables['artico'].".codice)
 			   LEFT JOIN ".$gTables['camp_recip_stocc']." ON (".$gTables['camp_recip_stocc'].".cod_silos = ".$gTables['camp_mov_sian'].".recip_stocc)
+			   LEFT JOIN ".$gTables['camp_recip_stocc']." as camp_recip_stocc_destin ON (camp_recip_stocc_destin.cod_silos = ".$gTables['camp_mov_sian'].".recip_stocc_destin)
 			   LEFT JOIN ".$gTables['anagra']." ON (".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra)";
         $rs=gaz_dbi_dyn_query ($what,$table,$where, 'datreg ASC, id_mov ASC, clfoco ASC, operat DESC,tipdoc ASC ');
         while ($r = gaz_dbi_fetch_array($rs)) {
@@ -303,8 +304,14 @@ if (isset($_POST['preview']) and $msg=='') {
 					echo "<td class=\"FacetDataTD\" align=\"center\">".$mv['artico']." &nbsp;</td>\n";
 					echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($movQuanti,1,3)."</td>\n";
 					echo "<td class=\"FacetDataTD\" align=\"center\">".$mv['id_SIAN']." - ".$mv['ragso1']." &nbsp;</td>\n";
-					echo "<td class=\"FacetDataTD\" align=\"center\">".$mv['recip_stocc']." &nbsp;</td>\n";
-					echo "<td class=\"FacetDataTD\" align=\"center\">".$mv['capacita']." &nbsp;</td>\n";
+					if ($mv['capacita_destin']>0){
+						echo "<td class=\"FacetDataTD\" align=\"center\">".$mv['recip_stocc_destin']." - cap. Kg ".$mv['capacita_destin']." &nbsp;</td>\n";
+					}else{
+						echo "<td class=\"FacetDataTD\" align=\"center\"></td>\n";	
+					}
+					echo "<td class=\"FacetDataTD\" align=\"center\">".$mv['recip_stocc']." - cap. Kg ".$mv['capacita']." &nbsp;</td>\n";
+					
+
 					echo "<td class=\"FacetDataTD\" align=\"center\">".$mv['desdoc']." &nbsp;</td>\n";
 					echo "<td class=\"FacetDataTD\" align=\"center\">".$legenda_cod_op[$mv['cod_operazione']]." &nbsp;</td>\n";
 					echo "</tr>\n";
