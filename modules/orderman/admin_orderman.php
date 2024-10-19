@@ -1639,16 +1639,17 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 				?>
 			</div>
 			<?php if ($rescampbase['confezione']==0){
-        if ($form['recip_stocc']==$form['old_recip_stocc']){// se non è cambiato il contenitore d'origine e stiamo in update
+        if ($form['recip_stocc']==$form['old_recip_stocc'] && $toDo == "update"){// se non è cambiato il contenitore d'origine e stiamo in update
           $excluded_movmag=$form['id_mov_sian_rif'];// faccio escludere il movimento dal calcolo disponibilità
         }else{
           $excluded_movmag=0;
         }
+
         ?>
 				<div class="row">
 					<label for="camp_recip_stocc" class="col-sm-6"><?php echo "Recipiente stoccaggio"; ?></label>
 					<?php
-					$campsilos->selectSilos('recip_stocc' ,'cod_silos', $form['recip_stocc'], 'cod_silos', 1,'capacita','TRUE','col-sm-6' , null, '', $where = false, $echo=false, $codart="", $excluded_movmag);
+					$campsilos->selectSilos('recip_stocc' ,'cod_silos', $form['recip_stocc'], 'cod_silos', 1,'capacita','TRUE','col-sm-6' , null, '', false, false, '', $excluded_movmag);
 					?>
 				</div>
 				<?php
