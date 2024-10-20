@@ -142,9 +142,15 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 } else { // accessi successivi
     $form['hidden_req']=htmlentities($_POST['hidden_req']);
     $form['ritorno']=$_POST['ritorno'];
+	/*
     $form['date_ini_D']=substr($uldtfile,0,2); // impongo la data di inizio partendo da quella dell'ultimo file
     $form['date_ini_M']=substr($uldtfile,2,2);
     $form['date_ini_Y']=substr($uldtfile,4,4);
+	*/
+	$form['date_ini_D']=intval($_POST['date_ini_D']);
+    $form['date_ini_M']=intval($_POST['date_ini_M']);
+    $form['date_ini_Y']=intval($_POST['date_ini_Y']);
+	
     $form['date_fin_D']=intval($_POST['date_fin_D']);
     $form['date_fin_M']=intval($_POST['date_fin_M']);
     $form['date_fin_Y']=intval($_POST['date_fin_Y']);
@@ -182,11 +188,18 @@ if ($utsfin>strtotime('-1 day', strtotime(date("Y-m-d")))) {
 // fine controlli
 
 if (isset($_POST['create']) && $msg=='') {
+	
+	// per creare devo obbligatoriamente impostare la data di inizio partendo da quella dell'ultimo file creato
+	$form['date_ini_D']=substr($uldtfile,0,2); 
+    $form['date_ini_M']=substr($uldtfile,2,2);
+    $form['date_ini_Y']=substr($uldtfile,4,4);	
+	$utsini= mktime(0,0,0,$form['date_ini_M'],$form['date_ini_D'],$form['date_ini_Y']);
 
     $utsini=date("dmY",$utsini);
     $utsfin=date("dmY",$utsfin);
     $utsexe=date("dmY",$utsexe);
 	$uldtfile=$form['date_ini_Y'].$form['date_ini_M'].$form['date_ini_D'];
+
     header("Location: create_sian.php?ri=$utsini&rf=$utsfin&ds=$utsexe&ud=$uldtfile");
     exit;
 }
@@ -271,8 +284,7 @@ if (isset($_POST['preview']) and $msg=='') {
         $linkHeaders=new linkHeaders($script_transl['header']);
         $linkHeaders->output();
         echo "</tr>";
-		$genera="";
-		
+		$genera="";		
 
         foreach($m as $key => $mv){
 			if ($mv['id_movmag']>0){ // se è un movimento del SIAN connesso al movimento di magazzino
@@ -300,7 +312,11 @@ if (isset($_POST['preview']) and $msg=='') {
 					$genera="ok";
 					$datedoc = substr($mv['datdoc'],8,2).'-'.substr($mv['datdoc'],5,2).'-'.substr($mv['datdoc'],0,4);
            			$movQuanti = $mv['quanti']*$mv['operat'];
-					echo "<tr><td class=\"FacetDataTD\">".$datedoc." &nbsp;</td>";
+					$style="";
+					if (strtotime(substr($uldtfile,0,2)."-".substr($uldtfile,2,2)."-".substr($uldtfile,4,4))>=strtotime($datedoc)){
+						$style="style='background-color: #fbd3d3';";
+					}
+					echo "<tr ",$style,"><td class=\"FacetDataTD\">".$datedoc." &nbsp;</td>";
 					echo "<td class=\"FacetDataTD\" align=\"center\">".$mv['artico']." &nbsp;</td>\n";
 					echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($movQuanti,1,3)."</td>\n";
 					echo "<td class=\"FacetDataTD\" align=\"center\">".$mv['id_SIAN']." - ".$mv['ragso1']." &nbsp;</td>\n";
@@ -309,8 +325,11 @@ if (isset($_POST['preview']) and $msg=='') {
 					}else{
 						echo "<td class=\"FacetDataTD\" align=\"center\"></td>\n";	
 					}
-					echo "<td class=\"FacetDataTD\" align=\"center\">".$mv['recip_stocc']." - cap. Kg ".$mv['capacita']." &nbsp;</td>\n";
-					
+					if ($mv['capacita']>0){
+						echo "<td class=\"FacetDataTD\" align=\"center\">".$mv['recip_stocc']." - cap. Kg ".$mv['capacita']." &nbsp;</td>\n";
+					}else{
+						echo "<td class=\"FacetDataTD\" align=\"center\"></td>\n";	
+					}
 
 					echo "<td class=\"FacetDataTD\" align=\"center\">".$mv['desdoc']." &nbsp;</td>\n";
 					echo "<td class=\"FacetDataTD\" align=\"center\">".$legenda_cod_op[$mv['cod_operazione']]." &nbsp;</td>\n";
