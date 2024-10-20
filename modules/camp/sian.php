@@ -333,6 +333,7 @@ if (isset($_POST['preview']) and $msg=='') {
 
 					echo "<td class=\"FacetDataTD\" align=\"center\">".$mv['desdoc']." &nbsp;</td>\n";
 					echo "<td class=\"FacetDataTD\" align=\"center\">".$legenda_cod_op[$mv['cod_operazione']]." &nbsp;</td>\n";
+					echo "<td class=\"FacetDataTD\" align=\"center\">".$mv['varieta']." &nbsp;</td>\n";
 					echo "</tr>\n";
 					$ctr_mv = $mv['artico'];
 				}

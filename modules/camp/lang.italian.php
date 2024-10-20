@@ -92,7 +92,7 @@ $strScript = array("camp_browse_document.php" =>
 			'Incongruenza con la quantità di un contenitore o silos!'
         ),
 		'header' => array('Data' => '', 'Prodotto' => '', 'Quantit&agrave;' => '',
-            'ID SIAN - Fornitore/Cliente' => '', 'Recipiente di origine' => '', 'Recipiente di stoccaggio' => '', 'Descrizione doc.' => '', 'Operazione SIAN' => ''
+            'ID SIAN - Fornitore/Cliente' => '', 'Recipiente di origine' => '', 'Recipiente di stoccaggio' => '', 'Descrizione doc.' => '', 'Operazione SIAN' => '', 'Note su varietà'=>''
 
         )
 	),
