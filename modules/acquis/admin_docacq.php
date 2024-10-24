@@ -560,7 +560,6 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
 					$checkdouble = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "tipdoc IN ('ADT', 'AFT', 'RDL') AND YEAR(datemi) = " . substr($datemi,0,4) . " AND numdoc = " . $form['numdoc'] . " AND seziva = $sezione AND clfoco = ". intval($form['clfoco']), 2,0,1);
 					$check = gaz_dbi_fetch_array($checkdouble);
 					if ($check){
-						echo intval($form['clfoco']),"-DIE";die;
 						$msg['err'][] = "ddtesist";
 					}
 				}
