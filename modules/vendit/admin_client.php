@@ -312,8 +312,10 @@ if (isset($admin_aziend['lang'])){
   $price_list_names = gaz_dbi_dyn_query('*', $gTables['company_data'], "ref = '" . $admin_aziend['lang'] . "_artico_pricelist' && var NOT LIKE 'preacq'", "id_ref ASC");
   if ($price_list_names->num_rows == 5){
     $script_transl['listino_value']=array();
+    $n=0;
     while ($list_name = gaz_dbi_fetch_array($price_list_names)){
-      $script_transl['listino_value'][]=$list_name["description"];
+      $n++;
+      $script_transl['listino_value'][$n]=$list_name["description"];
     }
   }
 }
