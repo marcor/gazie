@@ -123,6 +123,7 @@ $strScript = array("admin_client.php" =>
         'fatt_email' => 'Inviare fattura:',
         'fatt_email_value' => array(0 => 'No, solo stampa PDF', 1 => 'In formato PDF su email', 2=>'In formato XML su PEC',3=>'In formato PDF su email + XML su PEC'),
         'operation_type' => 'Tipo di operazione',
+        'listino_value' => array(1 => ' di Vendita 1', 2 => ' di Vendita 2', 3 => ' di Vendita 3', 4 => ' di Vendita 4', 5 => ' di Vendita Online'),
         'ref_ecommerce_id_customer' => 'Riferimento al codice dell\'e-commerce'
     ),
     "report_docven.php" =>
