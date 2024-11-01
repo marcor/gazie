@@ -135,6 +135,7 @@ $pdf->SetFont('helvetica','B',10);
 $pdf->Cell(50,5);
 $pdf->Cell(100,5,'T O T A L I    R A G G R U P P A T I','LTR',1,'C');
 foreach($totres as $k=>$v){
+  $pdf->SetFont('helvetica','',9);
   if ($k=='noacc'){
     if ($v>=1) {
       $pdf->SetTextColor(200,0,0);
@@ -142,7 +143,6 @@ foreach($totres as $k=>$v){
       $pdf->Cell(50,5);
       $pdf->Cell(100,5,$v.' FATTURE NON CONTABILIZZATE','LR',1);
       $pdf->SetTextColor(0,0,0);
-      $pdf->SetFont('helvetica','',9);
     }
   } else {
     $pagame=gaz_dbi_get_row($gTables['pagame'], 'codice', $k);
@@ -155,5 +155,5 @@ $pdf->Cell(50,5);
 $pdf->SetFont('helvetica','B',9);
 $pdf->Cell(65,5,'TOTALE CONTABILIZZATO','LB');
 $pdf->Cell(35,5,'€ '.gaz_format_number($totale),'RB',1,'R');
-$pdf->Output();
+$pdf->Output('Fatturato per tipo di pagamento');
 ?>
