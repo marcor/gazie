@@ -224,7 +224,7 @@ foreach($movres as $kpag=>$vpag){
 ?>
   </table>
 <?php
-	echo '<div class="text-right col-sm-12 col-md-9"><a class="btn btn-info" title="Stampa documento PDF" style="cursor:pointer;" onclick="printPdf(\'print_report.php?datini='.$form['datini']."&datfin=". $form['datfin'] ."')\">".$script_transl['print']." <i class=\"glyphicon glyphicon-print\" ></i></a></div>";
+	echo '<div class="text-right col-sm-12 col-md-9"><a class="btn btn-info" title="Stampa documento PDF" style="cursor:pointer;" onclick="printPdf(\'stampa_fatturato_pagamenti.php?datini='.$form['datini']."&datfin=". $form['datfin'] ."')\">".$script_transl['print']." <i class=\"glyphicon glyphicon-print\" ></i></a></div>";
   echo '</div>';
 }
 require("../../library/include/footer.php");
