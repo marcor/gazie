@@ -321,6 +321,7 @@ $strScript = array("admin_client.php" =>
         'id_doc_ritorno_alert' => 'Non è stato selezionato il DdT per cessione in c/visione di riferimento',
         'fae_dati' => 'Altri dati Fattura Elettronica',
         'fae_dati_value' => array(2 => 'DatiOrdineAcquisto', 3 => 'DatiContratto', 4 => 'DatiConvenzione', 5 => 'DatiRicezione', 6 => 'DatiFattureCollegate'),
+        'listino_value' => array(1 => ' di Vendita 1', 2 => ' di Vendita 2', 3 => ' di Vendita 3', 4 => ' di Vendita 4', 5 => ' di Vendita Online'),
 		'war' => array (
 			'1' =>'Le quantità richieste per lotto non sono disponibili. NB: se si conferma si creeranno errori che dovranno essere corretti manualmente!',
 			'2' =>'Fra le righe ci sono lotti con lo stesso ID lotto. Controllare che ci sia realmente la disponibilità prima di confermare',
