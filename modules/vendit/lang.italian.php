@@ -491,7 +491,9 @@ $strScript = array("admin_client.php" =>
         'weight' => 'peso',
         'zero_rows' => 'Il documento non contiene righi o prodotti, compila la ricerca articoli nella sezione corpo per aggiungerne, inserisci il valore % per avere una lista completa o per effettuare una ricerca parziale',
         'discount_alert' => 'sconto da anagrafe articoli',
-        'last_row' => 'Ultimo rigo inserito'
+        'last_row' => 'Ultimo rigo inserito',
+        'listino_value' => array(1 => ' di Vendita 1', 2 => ' di Vendita 2', 3 => ' di Vendita 3', 4 => ' di Vendita 4', 5 => ' di Vendita Online'),
+
     ),
     "admin_cmr.php" =>
     array(array("CMR" => "CMR", "VPR" => "Preventivo a Cliente", "VOR" => "Ordine da Cliente", "VOW" => "Ordine dal Web", "VOG" => "Ordine settimanale del giorno"),
