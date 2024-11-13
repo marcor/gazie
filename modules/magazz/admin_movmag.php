@@ -339,7 +339,7 @@ if (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo acces
     if (!checkdate($form['mesdoc'], $form['giodoc'], $form['anndoc'])) $msg .= "15+";
     if ($utsdoc > $utsreg) { $msg .= "17+"; }
     if ($form['lot_or_serial']==1 && $form['caumag']<>99){ // se è un articolo con lotti e non è un movimento inventario
-      if (strlen ($form['identifier'])<= 0 || intval($form['id_lotmag'])==0 ){
+      if (strlen ($form['identifier'])<= 0 ){
         $msg .= "21+"; // manca il lotto
       }else{
 		  $checklot = gaz_dbi_get_row($gTables['lotmag']." LEFT JOIN ".$gTables['movmag']." ON ".$gTables['movmag'].".id_mov = id_movmag", 'id', $form['id_lotmag']);
