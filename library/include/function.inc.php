@@ -1907,7 +1907,7 @@ class GAzieForm {
       }
     }
 
-    function selectFromDB($table, $name, $key, $val, $order = false, $empty = false, $bridge = '', $key2 = '', $val_hiddenReq = '', $class = 'FacetSelect', $addOption = null, $style = '', $where = false, $echo=false, $bridge2 = '', $key3 = '') {
+    function selectFromDB($table, $name, $key, $val, $order = false, $empty = false, $bridge = '', $key2 = '', $val_hiddenReq = '', $class = 'FacetSelect', $addOption = null, $style = '', $where = false, $echo=false, $bridge2 = '', $key3 = '', $sort='') {
         global $gTables;
 		$acc='';
         $refresh = '';
@@ -1918,7 +1918,7 @@ class GAzieForm {
         if ($where) {
             $query .= ' WHERE ' . $where;
         }
-        $query .= ' ORDER BY `' . $order . '`';
+        $query .= ' ORDER BY `' . $order . '` '.strtoupper($sort);
         if (!empty($val_hiddenReq)) {
             $refresh = "onchange=\"this.form.hidden_req.value='$val_hiddenReq'; this.form.submit();\"";
         }
