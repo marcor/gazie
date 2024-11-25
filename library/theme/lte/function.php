@@ -67,63 +67,59 @@ function pastelColors() {
 }
 
 function submenu($array, $index, $sub="") {
+  $numsub = 0;
+  if(!is_array($array)) { return; }
+  foreach($array as $i => $mnu) {
+    if(!is_array($mnu)) {continue;}
+    $scriptname=pathinfo($mnu["link"], PATHINFO_FILENAME);
+    $is_report=(str_contains($scriptname,'report')||str_contains($scriptname,'list'))?true:false;
     global $admin_aziend;
-    if(!is_array($array)) { return ;}
-    $numsub = 0;
-    foreach($array as $i => $mnu) {
-        if(!is_array($mnu)) {continue;}
     $submnu = '';
-    if ($numsub === 0) {
-            echo "<ul class=\"treeview-menu\">";
+    if ($numsub === 0) { echo "<ul class=\"treeview-menu\">"; }
+    if (count($mnu)>6) {
+      if ( $admin_aziend["Abilit"]>=$mnu["m2_ackey"] ) {
+        echo "<li>";
+        if($is_report){
+          $sub = '<a href="'. $mnu["link"] .'">Lista '.$submnu.stripslashes($mnu["name"]);
+        }else{
+          $sub = '<a href="'. $mnu["link"] .'">'.$submnu.stripslashes($mnu["name"]);
         }
-	if (count($mnu)>6) {
-            if ( $admin_aziend["Abilit"]>=$mnu["m2_ackey"] ) {
-            echo "<li>";
-            if ( $mnu["name"]=="Azienda" ) {
-                $sub = '<a href="'. $mnu["link"] .'">Modifica '.$submnu.stripslashes($mnu["name"]);
-            } else if ( $mnu["name"]=="Lista delle produzioni" ) {
-                $sub = '<a href="'. $mnu["link"] .'">'.$submnu.stripslashes($mnu["name"]);
-            } else if ( $mnu["name"]!="Documentazione" ) {
-                $sub = '<a href="'. $mnu["link"] .'">Lista '.$submnu.stripslashes($mnu["name"]);
-            } else {
-                $sub = '<a href="'. $mnu["link"] .'">'.$submnu.stripslashes($mnu["name"]);
-            }
-            echo "  <a href=\"#\" hint=\"".$submnu.stripslashes($mnu["name"])."\">". $submnu.stripslashes($mnu["name"]);
-            echo "      <i class=\"fa fa-angle-left pull-right\"></i>";
-            echo "  </a>";
-            submenu($mnu, 1, $sub);
+        echo "  <a href=\"#\" hint=\"".$submnu.stripslashes($mnu["name"])."\">". $submnu.stripslashes($mnu["name"]);
+        echo "      <i class=\"fa fa-angle-left pull-right\"></i>";
+        echo "  </a>";
+        submenu($mnu, 1, $sub);
+        $sub="";
+        echo "</li>";
+      }
+    } else {
+      if ( isset($mnu["m2_ackey"])  ) {
+        if ( $admin_aziend["Abilit"]>=$mnu["m2_ackey"] ) {
+          if ( $sub!="" ) {
+            echo "<li>$sub</a></li>";
             $sub="";
-            echo "</li>";
-            }
-        } else {
-            if ( isset($mnu["m2_ackey"])  ) {
-                if ( $admin_aziend["Abilit"]>=$mnu["m2_ackey"] ) {
-                    if ( $sub!="" ) {
-                        echo "<li>$sub</a></li>";
-                        $sub="";
-                    }
-                    echo "<li >";
-                    echo "  <a href=\"". $mnu['link'] ."\">". $submnu.stripslashes($mnu['name']) ."</a>";
-                    echo "</li>";
-                }
-            }
-            if ( isset($mnu["m3_ackey"]) ) {
-                if ( $admin_aziend["Abilit"]>=$mnu["m3_ackey"] ) {
-                    if ( $sub!="" ) {
-                        echo "<li>$sub</a></li>";
-                        $sub="";
-                    }
-                    echo "<li >";
-                    echo "  <a href=\"". $mnu['link'] ."\">". $submnu.stripslashes($mnu['name']) ."</a>";
-                    echo "</li>";
-                }
-            }
+          }
+          echo "<li >";
+          echo "  <a href=\"". $mnu['link'] ."\">". $submnu.stripslashes($mnu['name']) ."</a>";
+          echo "</li>";
         }
-	$numsub++;
+      }
+      if ( isset($mnu["m3_ackey"]) ) {
+        if ( $admin_aziend["Abilit"]>=$mnu["m3_ackey"] ) {
+          if ( $sub!="" ) {
+            echo "<li>$sub</a></li>";
+            $sub="";
+          }
+          echo "<li >";
+          echo "  <a href=\"". $mnu['link'] ."\">". $submnu.stripslashes($mnu['name']) ."</a>";
+          echo "</li>";
+        }
+      }
     }
-    if ($numsub > 0) {
-        echo "    </ul>";
-    }
+    $numsub++;
+  }
+  if ($numsub > 0) {
+    echo "    </ul>";
+  }
 }
 
 function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $cssArray = '') {
