@@ -301,6 +301,18 @@ if (isset($_POST['conferma'])) {
               }
 						}
 					}
+					if (isset($create_datadir)&&is_array($create_datadir)) {
+						/*
+						Se il nuovo modulo prevede la creazione di directory specifiche in DATA_DIR
+            */
+            $query = "SELECT codice FROM `".$table_prefix."_aziend`";
+            $result = gaz_dbi_query ($query);
+            while($r=gaz_dbi_fetch_array($result)){
+              foreach($create_datadir as $v){
+                mkdir(DATA_DIR."files/".$r['codice']."/".$v);
+              }
+            }
+          }
 				  }
 				}
 			}
