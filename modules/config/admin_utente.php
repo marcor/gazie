@@ -76,7 +76,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
 	$form["user_active"] = intval($_POST['user_active']);
 	$form['body_text'] = filter_input(INPUT_POST, 'body_text');
   $form['imap_usr'] = filter_input(INPUT_POST,'imap_usr');
-  $form['imap_pwr'] = $_POST['imap_pwr'];// andrà criptata al momento del salvataggio
+  $form['imap_pwr'] = isset($_POST['imap_pwr'])?$_POST['imap_pwr']:'';// andrà criptata al momento del salvataggio
   $form['imap_sent_folder'] = filter_input(INPUT_POST,'imap_sent_folder');
   $form['id_anagra'] = $_POST['id_anagra'];
 	if ($toDo == 'insert') {
