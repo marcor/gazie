@@ -299,32 +299,35 @@ if (isset($_POST['preview']) and $msg=='') {
 				if ($form['date_ini_Y'].$form['date_ini_M'].$form['date_ini_D']==str_replace("-", "", $mv['datdoc']) AND strlen($mv['status'])>1) {
 				// escludo i movimenti già inseriti null'ultimo file con stessa data
 				} else if ($mv['id_orderman']>0 AND $mv['operat']==-1 AND $mv['cod_operazione']<>"S7"){
-					// escludo i movimenti di produzione in uscita
-						if (strtotime($ult_mov) < strtotime($mv['datdoc'])){
-							$totcont[$mv['recip_stocc']] -= $mv['quanti'];
-
-							//echo "<br>PRODUZIONE SCarico fusto ",$mv['recip_stocc']," di:",$mv['quanti'];
-							if ($totcont[$mv['recip_stocc']]<0){
-								//echo $mv['desdoc'],"ERRORE <",$nr;
-								$message = "Al rigo ".$nr." la giacenza del silos ".$mv['recip_stocc']." è negativa";
-								$msg .='5+';$er="style='background-color: red';";
+					
+						if (strtotime($ult_mov) < strtotime($mv['datdoc'])){							
+							if (intval($mv['cod_operazione'])<>3 && intval($mv['cod_operazione'])<>4){// escludo codice operazione 3 4
+								$totcont[$mv['recip_stocc']] -= $mv['quanti'];
+								//echo "<br>PRODUZIONE SCarico fusto ",$mv['recip_stocc']," di:",$mv['quanti'];
+								
+								if ($totcont[$mv['recip_stocc']]<0){
+									//echo $mv['desdoc'],"ERRORE <",$nr;
+									$message = "Al rigo ".$nr." la giacenza del silos ".$mv['recip_stocc']." è negativa";
+									$msg .='5+';$er="style='background-color: red';";
+								}
 							}
-
-							$totcont[$mv['recip_stocc_destin']] += $mv['quanti'];
-							//echo "<br>PRODUZIONE carico fusto ",$mv['recip_stocc_destin']," di:",$mv['quanti'];
-
-							if ($totcont[$mv['recip_stocc_destin']]>$maxcont[$mv['recip_stocc_destin']]){
-								//echo "<br>",$mv['desdoc'],"ERRORE >",$nr," totcont:",$totcont[$mv['recip_stocc_destin']]," - maxcont:",$maxcont[$mv['recip_stocc_destin']];
-								$message = "Al rigo ".$nr." di produzione, la quantità del silos di destinazione ".$mv['recip_stocc_destin']." è ".$totcont[$mv['recip_stocc_destin']]." e supera la sua capacità dichiarata di ".$maxcont[$mv['recip_stocc_destin']];// ricordo l'errore nel prossimo rigo
-								$msg .='5+';$er="style='background-color: red';";
-								?>
-								<script>
-									const note = document.querySelector('.nr<?php echo $nr; ?>');
-									note.style.backgroundColor = 'red';
-								</script>
-								<?php
-							}
-
+							
+							if (intval($mv['cod_operazione'])>3){// non c'è recipiente stoccaggio destinazione fino a codice 3
+								$totcont[$mv['recip_stocc_destin']] += $mv['quanti'];
+								//echo "<br>PRODUZIONE carico fusto ",$mv['recip_stocc_destin']," di:",$mv['quanti'];					
+							
+								if ($totcont[$mv['recip_stocc_destin']]>$maxcont[$mv['recip_stocc_destin']]){
+									echo "<br>",$mv['desdoc'],"ERRORE >",$nr," totcont:",$totcont[$mv['recip_stocc_destin']]," - maxcont:",$maxcont[$mv['recip_stocc_destin']];
+									$message = "Al rigo ".$nr." di produzione, la quantità del silos di destinazione ".$mv['recip_stocc_destin']." è ".$totcont[$mv['recip_stocc_destin']]." e supera la sua capacità dichiarata di ".$maxcont[$mv['recip_stocc_destin']];// ricordo l'errore nel prossimo rigo
+									$msg .='5+';$er="style='background-color: red';";
+									?>
+									<script>
+										const note = document.querySelector('.nr<?php echo $nr; ?>');
+										note.style.backgroundColor = 'red';
+									</script>
+									<?php
+								}
+							}	
 						}
 				} else {
 					$nr++;
