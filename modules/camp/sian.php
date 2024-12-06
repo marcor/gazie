@@ -368,13 +368,15 @@ if (isset($_POST['preview']) and $msg=='') {
 							//echo "<br>recip stocc:",$mv['recip_stocc']," - rec stoc destin:",$mv['recip_stocc_destin'];
 							//$totcont[$mv['recip_stocc']]=(isset($totcont[$mv['recip_stocc']]))?$totcont[$mv['recip_stocc']]:0;
 							//echo "<br>SCarico fusto ",$mv['recip_stocc'],", contenente kg",$totcont[$mv['recip_stocc']],", di kg:",$mv['quanti'];
-							$totcont[$mv['recip_stocc']] -= $mv['quanti'];
-							$totcont[$mv['recip_stocc']]=(number_format($totcont[$mv['recip_stocc']], 5)==0)?0:$totcont[$mv['recip_stocc']];
+							if (intval($mv['recip_stocc'])>0){// se c'è il recipiente di stoccaggio
+								$totcont[$mv['recip_stocc']] -= $mv['quanti'];
+								$totcont[$mv['recip_stocc']]=(number_format($totcont[$mv['recip_stocc']], 5)==0)?0:$totcont[$mv['recip_stocc']];
 
-							if ($totcont[$mv['recip_stocc']]<0){
-								//echo"<br>", $mv['desdoc'],"ERRORE  al rigo ",$nr, " - contenuto kg:",$totcont[$mv['recip_stocc']];
-								$message = "Al rigo ".$nr." la giacenza del silos ".$mv['recip_stocc']." è negativa";
-								$msg .='5+';$er="style='background-color: red';";
+								if ($totcont[$mv['recip_stocc']]<0){
+									//echo"<br>", $mv['desdoc'],"ERRORE  al rigo ",$nr, " - contenuto kg:",$totcont[$mv['recip_stocc']];
+									$message = "Al rigo ".$nr." la giacenza del silos ".$mv['recip_stocc']." è negativa";
+									$msg .='5+';$er="style='background-color: red';";
+								}
 							}
 						}
 					}
