@@ -979,7 +979,7 @@ function printPdf(urlPrintDoc){
 					  <?php
 					  }
 				  }else{
-					  echo "<button title=\"Non &egrave; possibile cancellare un documento inviato o accetato dall'Agenzia delle Entrate\" class=\"btn btn-xs   disabled\"><i class=\"glyphicon glyphicon-trash\"></i></button>";
+					  echo "<button title=\"Non &egrave; possibile cancellare un documento inviato o accettato dall'Agenzia delle Entrate\" class=\"btn btn-xs   disabled\"><i class=\"glyphicon glyphicon-trash\"></i></button>";
 				  }
                 } else {
                   echo "<button title=\"Per garantire la sequenza corretta della numerazione, non &egrave; possibile cancellare un documento diverso dall'ultimo\" class=\"btn btn-xs   disabled\"><i class=\"glyphicon glyphicon-trash\"></i></button>";
