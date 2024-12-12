@@ -48,7 +48,7 @@ if (isset($_POST['return'])) {
 if (!isset($_GET['automatic']) && (($form['do_backup'] != 1 && isset($_GET['external'])) || isset($_GET['internal']))){ // se non è una richiesta automatica
 	require("../../library/include/header.php");// chiamo l'header e creo lo spinner
     $script_transl = HeadMain();
-	
+
 	?>
 	<style>
 		#loader {
@@ -80,7 +80,7 @@ if (!isset($_GET['automatic']) && (($form['do_backup'] != 1 && isset($_GET['exte
 
         document.querySelector("body").style.visibility = "hidden";
         document.querySelector("#loader").style.visibility = "visible";
-   
+
 
 </script>
 	<?php
@@ -88,7 +88,7 @@ if (!isset($_GET['automatic']) && (($form['do_backup'] != 1 && isset($_GET['exte
 if ($form['do_backup'] != 1 && isset($_GET['external'])) {// è il primo accesso e viene richiesto il backup esterno (sul browser)
     //
     // Mostra il modulo form e poi termina la visualizzazione.
-    //   
+    //
     echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['title'];
     echo "</div>\n";
     echo "<form method=\"POST\">";
@@ -104,13 +104,13 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {// è il primo accesso
 	?>
 	<script>
         document.querySelector("body").style.visibility = "visible";
-        document.querySelector("#loader").style.visibility = "hidden";  
+        document.querySelector("#loader").style.visibility = "hidden";
 	</script>
 	<?php
-} else {// non è il primo accesso oppure è il primo accesso ma è richiesto un backup interno (su GAzie)  
+} else {// non è il primo accesso oppure è il primo accesso ma è richiesto un backup interno (su GAzie)
   if (isset($_GET['internal'])){// backup interno (su GAzie)
-	 
-	if (!isset($_GET['automatic'])){ // se non è una richiesta automatica posso inviare l header		
+
+	if (!isset($_GET['automatic'])){ // se non è una richiesta automatica posso inviare l header
 		echo "<div align=\"center\" class=\"FacetFormHeaderFont\">Backup interno dei dati per mettere in sicurezza il lavoro" ;
 		echo "</div>\n";
 		echo "<form method=\"POST\">";
@@ -128,7 +128,7 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {// è il primo accesso
 		if (!isset($_GET['automatic'])){ // se non è una richiesta automatica
 			echo "<tr><td align=\"center\"><strong>Backup correttamente eseguito e salvato in GAzie</strong></td></tr>";
 		}
-    }	
+    }
     catch(Exception $e){
       echo "<tr><td></td><td align=\"right\"><strong>Errore nell'eseguire il backup".$e->getMessage()."</strong></td></tr>";
     }
@@ -154,7 +154,7 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {// è il primo accesso
 		});
 	</script>
 	<?php
-	
+
 
 	if (!isset($_GET['automatic'])){ // se non è una richiesta automatica
 		echo "<tr id='error'></tr>";
@@ -172,16 +172,18 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {// è il primo accesso
     // Esegue il backup sul browser
     //
     if (isset($_GET['external'])) {
-      $dump = new MySQLDump($link);
-      $dump->save(DATA_DIR.'files/tmp/tmp-backup.sql.gz');
+      $gbackup = new gazBackup($link);
+      $gbackup->save(DATA_DIR.'files/tmp/tmp-backup.sql');
+      $zipname=$Database . '-' . date("YmdHi") . '-v' . GAZIE_VERSION ;
+      $gbackup->gazDataDir($zipname);
       // Impostazione degli header per l'opzione "save as"
       header("Pragma: no-cache");
       header("Expires: 0");
       header("Content-Type: application/octet-stream");
-      header("Content-Length: ".filesize(DATA_DIR.'files/tmp/tmp-backup.sql.gz'));
-      header("Content-Disposition: attachment; filename=\"".$Database . '-' . date("YmdHi") . '-v' . GAZIE_VERSION . '.sql.gz'."\"");
-      readfile(DATA_DIR.'files/tmp/tmp-backup.sql.gz');
-	  unlink(DATA_DIR.'files/tmp/tmp-backup.sql.gz');
+      header("Content-Length: ".filesize(DATA_DIR.'files/tmp/'.$zipname.'.zip'));
+      header("Content-Disposition: attachment; filename=\"".$zipname.".zip\"");
+      readfile(DATA_DIR.'files/tmp/'.$zipname.'.zip');
+      unlink(DATA_DIR.'files/tmp/'.$zipname.'.zip');
     }
   }
 }
