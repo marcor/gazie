@@ -145,12 +145,6 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {// è il primo accesso
     }
   } else {// Esegue il backup sul browser
     if (isset($_GET['external'])) {
-      ?>
-      <script>
-        document.querySelector("body").style.visibility = "visible";
-        document.querySelector("#loader").style.visibility = "hidden";
-      </script>
-      <?php
       $gbackup = new gazBackup($link);
       $gbackup->save(DATA_DIR.'files/tmp/tmp-backup.sql'); // lo andrò a cancellare con il metodo gazDataDir dopo averlo aggiunto allo zip
       $zipname=$Database . '-' . date("YmdHi") . '-v' . GAZIE_VERSION ;
