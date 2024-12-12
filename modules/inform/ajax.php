@@ -43,104 +43,16 @@ if (isset($_GET['type'])) {
   $admin_aziend = checkAdmin(9);
 	switch ($_GET['type']) {
 		case "save":
-<<<<<<< .mine
       $gbackup = new gazBackup($link);
 			try {@$gbackup->save(DATA_DIR.'files/tmp/tmp-backup.sql');
         $zipname=$Database . '-' . date("YmdHi") . '-v' . GAZIE_VERSION ;
         $gbackup->gazDataDir($zipname);
         rename(DATA_DIR.'files/tmp/'.$zipname.'.zip', DATA_DIR.'files/backups/'.$zipname.'.zip');
-||||||| .r6805
-			$dump = new MySQLDump($link);
-			try {@$dump->save(DATA_DIR.'files/backups/' . $Database . '-' . date("YmdHi") . '-v' . GAZIE_VERSION . '.sql.gz');
-=======
-      $src_path="../../data/files";
-      $dest_path="../../data/files/backups/backup".date("dmYhis")."/data_files";
-      $zip_src_path="../../data/files/backups/backup".date("dmYhis")."/data_files.zip";
-      if ( !is_dir( $dest_path ) ) {
-          //echo"<br>Creo la nuova direttory di destinazione:",$dest_path;
-          mkdir($dest_path , 0777, true);
-        }
-
-			$dump = new MySQLDump($link);
-			try {@$dump->save('../../data/files/backups/backup'.date("dmYhis").'/' . $Database . '-' . date("YmdHi") . '-v' . GAZIE_VERSION . '.sql.gz');
->>>>>>> .r6945
 				gaz_dbi_put_row($gTables['config'], 'variable', 'last_backup', 'cvalue', date('Y-m-d'));
 			}
 			catch(Exception $e){
 			  echo $e->getMessage();
 			}
-      if (extension_loaded('zip')) {
-        // cartelle di file da escludere dal backup
-        $exclude = array(
-        'backups',
-        $admin_aziend['company_id']-1,
-        $admin_aziend['company_id']-2,
-        $admin_aziend['company_id']-3,
-        $admin_aziend['company_id']+1,
-        $admin_aziend['company_id']+2,
-        $admin_aziend['company_id']+3,
-        'tmp',
-        ''
-        );
-        // files da escludere dal backup
-        $excludeFiles = array(
-        '.htaccess',
-        ''
-        );
-
-        $dirCopy = new dirCopyClass() ;
-        $dirCopy -> dirCopy($exclude, $excludeFiles, $src_path , $dest_path );
-        //echo "<br/> Inizio ZIP del backup file";
-        if (is_dir($dest_path)) {
-          // Initialize archive object
-          $zip = new ZipArchive();
-          if ($zip->open($zip_src_path, ZipArchive::CREATE | ZipArchive::OVERWRITE)){
-            // Create recursive directory iterator
-            /** @var SplFileInfo[] $files */
-            $files = new RecursiveIteratorIterator(
-              new RecursiveDirectoryIterator($dest_path),
-              RecursiveIteratorIterator::LEAVES_ONLY);
-            foreach ($files as $name => $file){
-              // Skip directories (they would be added automatically)
-              if (!$file->isDir())    {
-                // Get real and relative path for current file
-                $filePath = $file->getRealPath();
-                $relativePath = substr($filePath, strlen($dest_path) + 10);
-                //echo"<br>Relative path:",$relativePath," <br> filepath:",$filePath," <br> dest path:",$dest_path;
-                //echo "<br>zipping file path:",$filePath,"<br> relative path:",$relativePath;
-                // Add current file to archive
-                $zip->addFile($filePath, $relativePath);
-              }
-            }
-            // Zip archive will be created only after closing object
-            $zip->close();
-            //echo "<br/> Backup file zippato";
-
-            if ( is_dir( $dest_path ) ) {
-              //echo "<br> Avvio rimozione backup files non zippato";
-              $it = new RecursiveDirectoryIterator($dest_path, RecursiveDirectoryIterator::SKIP_DOTS);
-              $files = new RecursiveIteratorIterator($it,
-              RecursiveIteratorIterator::CHILD_FIRST);
-              foreach($files as $file) {
-                if ($file->isDir()){
-                  rmdir($file->getRealPath());
-                } else {
-                  unlink($file->getRealPath());
-                }
-              }
-              if (rmdir($dest_path)){
-                //echo "<br/> unzip backup files removed";
-              }
-            }
-
-          } else {
-            echo "Non riesco ad aprire in scrittura il file zip";die;
-          }
-        }
-
-      }else{
-        echo "Devi attivare la libreria zip di Php";
-      }
 			break;
 	}
 }
