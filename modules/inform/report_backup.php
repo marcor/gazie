@@ -122,10 +122,19 @@ $freespace = gaz_dbi_get_row($gTables['config'], 'variable', 'freespace_backup')
                 <?php
                 $interval = 0;
                 $files = array();
+                                        //if ($file != "." && $file != ".." && strpos($file, ".gz")) {
+
                 if ($handle = opendir(DATA_DIR.'files/backups/')) {
                     while (false !== ($file = readdir($handle))) {
-                        if ($file != "." && $file != ".." && strpos($file, ".gz")) {
-                            $files[filemtime(DATA_DIR.'files/backups/' . $file)] = $file;
+                        if ("backup" == substr($file,0,6)) {
+                          $handle2 = opendir(DATA_DIR.'files/backups/'.$file);
+                          while (false !== ($file2 = readdir($handle2))) {
+                            if ($file2 != "." && $file2 != ".."){
+                              $add=(substr($file2, -3)=="zip")?"F":"";
+                              $files[filemtime(DATA_DIR.'files/backups/'.$file.'/'.$file2).$add] = $file.'/'.$file2;
+                            }
+                          }
+
                         }
                     }
                     closedir($handle);
@@ -136,13 +145,23 @@ $freespace = gaz_dbi_get_row($gTables['config'], 'variable', 'freespace_backup')
                     foreach ($files as $file) {
 
                         preg_match('/-(.*?)-/',$file, $id);
-
                         if ($index < 30) { // se il modo è manuale visualizzo solo gli ultimi 30 backup, gli eccedenti li cancello
                             ?>
-                            <tr class="FacetDataTD"><td><a class="btn btn-xs btn-default" style="cursor:default;" href="">
-                                        <?php echo (count($id)>0) ? $id[1] : "nd"; ?>
-                                    </a></td>
-                                <td>
+                            <tr class="FacetDataTD">
+                              <td>
+                                <a class="btn btn-xs btn-default" style="cursor:default;" href="">
+                                        <?php
+                                        if(count($id)>0){
+                                          echo $id[1];
+                                          $disable="";
+                                        }else{
+                                          echo "Files";
+                                          $disable="disabled";
+                                        }
+                                        ?>
+                                </a>
+                              </td>
+                              <td>
                                     <?php
                                         if ( preg_match('/-v(.*?).sql/',$file, $versione)>0 )
                                             echo $versione[1];
@@ -160,7 +179,7 @@ $freespace = gaz_dbi_get_row($gTables['config'], 'variable', 'freespace_backup')
                                 <?php
                                 if ( $admin_aziend["Abilit"]=="9") { ?>
                                 <td align="center">
-                                    <a class="btn btn-xs btn-default" href="recover_backup.php?id=<?php echo $file ?>"><i class="glyphicon glyphicon-repeat"></i></a>
+                                    <a class="btn btn-xs btn-default" href="recover_backup.php?id=<?php echo $file ?>" <?php echo $disable; ?>><i class="glyphicon glyphicon-repeat"></i></a>
                                 </td>
                                 <td align="center">
                                     <a class="btn btn-xs btn-default" href="delete_backup.php?id=<?php echo $file ?>"><i class="glyphicon glyphicon-trash"></i></a>
