@@ -365,46 +365,4 @@ class gazBackup extends MySQLDump {
 	  unlink(DATA_DIR.'files/tmp/tmp-backup.sql');
   }
 }
-class dirCopyClass {
-	function dirCopy(array $exclude, array $excludeFiles, $src_path = "" , $dest_path = ""){
-    $g_path = "";
-    $i = 0 ;
-		if (is_dir($src_path)){
-			$dir_name = $dest_path;
-			if(!file_exists($dest_path)){
-				mkdir($dir_name , 0777); // se la directory di destinazione non esiste la creo
-				//echo "<br>CREO la dir destinazione files:",$dir_name;
-			}
-			if ($dir = opendir($src_path)){ // apro la directory di origine e la metto in dir
-				while (($file = readdir($dir)) !== false){	// leggo la directory aperta in dir e ciclo il contenuto in file
-					if ($file != '.' && $file != '..'){
-						if (filetype($src_path.'/'.$file) == 'dir'){ // se è una directory
-							$excl=false;
-              if (in_array($file, $exclude)){// controllo se è da escludere dal backup
-									$excl=true;
-							}
-							if ($excl==false){
-								$this -> dirCopy($exclude, $excludeFiles, $src_path.'/'.$file , $dir_name.'/'.$file) ;//echo "avvio nuovamente la funzione per copiare origine: ",$src_path,'/',$file," destinazione: ",$dir_name,'/',$file,"<br>";
-							}
-						} else { // se è un file
-							$excl=false;
-              if (in_array($file, $excludeFiles)){// controllo se è da escludere dal backup
-									$excl=true;
-              }
-							if ($excl==false){
-								copy($src_path.'/'.$file , $dir_name.'/'.$file);
-								//echo '<strong>'.$src_path.'/'.$file .' ... File Created and copied to ... '. $dir_name.'/'.$file. '</strong><br>';
-							}
-						}
-					}
-				}
-			}
-		} else {
-			echo ' cant copy <br> la sorgente backup indicata non è una cartella o non esiste<br>';die;
-		}
-		if (isset($this -> i))
-			echo "<br>file copiati se attivato mando e-mail";
-			//@mail('lacasettabio@lacasettabio.it','myScript','Hi, \n\r Antonio Germani \n\r Your Daata files has been backuped.');
-	}
-}
 ?>
