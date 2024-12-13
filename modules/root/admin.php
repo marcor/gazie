@@ -55,15 +55,16 @@ if (!isset($_POST['hidden_req'])) {
 
 $checkUpd = new CheckDbAlign;
 $data = $checkUpd->TestDbAlign();
+$backupMode = $checkUpd->backupMode();
+$keep = $checkUpd->keepMode();
+$lastBackup = $checkUpd->testDbBackup($keep[1]); // controllo se sono passati i giorni stabiliti in configurazione dall'ultimo backup
 if (is_array($data)) {
-    // induco l'utente ad aggiornare il db
-    redirect( '../../setup/install/install.php?tp=' . $table_prefix);
-    exit;
+  // induco l'utente ad aggiornare il db
+  redirect( '../../setup/install/install.php?tp=' . $table_prefix);
+  exit;
 }
 
 $folderMissing = controllaEsistenzaCartelle();
-$backupMode = $checkUpd->backupMode();
-$lastBackup = $backupMode=='automatic'?$checkUpd->testDbBackup(3):$checkUpd->testDbBackup(10);
 
 
 require("../../library/include/header.php");
@@ -152,10 +153,9 @@ if ($backupMode == "automatic" && $lastBackup && $admin_aziend['Abilit'] == 9) {
     $percspace = (disk_total_space($sysdisk) / 100) * $freespace["cvalue"];
     $files = glob(DATA_DIR.'files/backups/*.zip');
     array_multisort(array_map('filemtime', $files), SORT_NUMERIC, SORT_ASC, $files);
-    $keep = gaz_dbi_get_row($gTables['config'], 'variable', 'keep_backup');
-    if (count($files) > $keep["cvalue"]) {
-      if (count($files) > $keep["cvalue"] && $keep["cvalue"] > 0) {
-        for ($i = 0; $i < count($files) - ($keep["cvalue"]); $i++)
+    if (count($files) > intval($keep[0])) {
+      if (count($files) > $keep[0] && $keep[0] > 0) {
+        for ($i = 0; $i < count($files) - ($keep[0]); $i++)
         unlink($files[$i]);
       }
     }
@@ -180,7 +180,7 @@ if ($backupMode == "automatic" && $lastBackup && $admin_aziend['Abilit'] == 9) {
       }
     });
   </script>
-  <h1 class="text-center text-warning bg-warning">Attendi la fine del backup automatico (ogni 3 giorni)<h1>
+  <h1 class="text-center text-warning bg-warning">Attendi la fine del backup automatico (ogni <?php echo $keep[1]; ?> giorni)<h1>
 <?php
 } else {
 ?>
@@ -206,9 +206,9 @@ if ($backupMode == "automatic" && $lastBackup && $admin_aziend['Abilit'] == 9) {
             <div class="alert alert-danger text-center" role="alert">
                 <?php
                 if ($admin_aziend['Abilit'] > 8) {
-                    echo $script_transl['errors'][4] . ' : <a href="../inform/backup.php?' . $checkUpd->backupMode() . '">BACKUP!</a>(' . $checkUpd->backupMode() . ')';
+                    echo $script_transl['errors'][4] .' '.$keep[1].' giorni : <a  class="btn btn-md btn-warning" href="../inform/backup.php?' . $checkUpd->backupMode() . '">BACKUP!</a> &nbsp; (' . $checkUpd->backupMode() . ')';
                 } else {
-                    echo $script_transl['errors'][4] . ' o avvisa il tuo amministratore!';
+                    echo $script_transl['errors'][4] .' '.$keep[1].' giorni, avvisa l\'amministratore di sistema';
                 }
                 ?>
             </div>

@@ -59,6 +59,15 @@ class CheckDbAlign {
         }
     }
 
+    function keepMode(){
+      global $gTables;
+      $keep = gaz_dbi_get_row($gTables['config'], 'variable', 'keep_backup');
+      $kvals= preg_split('/([^0-9]{1,})/', $keep['cvalue']);
+      if (!isset($kvals[1])) $kvals[1] = '7';
+      if (intval($kvals[0])<1) $kvals[0] = '1';
+      return $kvals;
+    }
+
     function get_system_disk() {
         $sysdisk = getcwd();
         if(php_uname('s')=='Windows NT'){
