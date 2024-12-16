@@ -2,15 +2,15 @@
 /*
  --------------------------------------------------------------------------
   GAzie - MODULO 'VACATION RENTAL'
-  Copyright (C) 2022-2023 - Antonio Germani, Massignano (AP)
-  (http://www.programmisitiweb.lacasettabio.it)
+  Copyright (C) 2022-present - Antonio Germani, Massignano (AP)
+  (https://www.programmisitiweb.lacasettabio.it)
 
   --------------------------------------------------------------------------
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
-  Copyright (C) 2004-2023 - Antonio De Vincentiis Montesilvano (PE)
-  (http://www.devincentiis.it)
-  <http://gazie.sourceforge.net>
+  Copyright (C) 2004-present - Antonio De Vincentiis Montesilvano (PE)
+  (https://www.devincentiis.it)
+  <https://gazie.sourceforge.net>
   --------------------------------------------------------------------------
   Questo programma e` free software;   e` lecito redistribuirlo  e/o
   modificarlo secondo i  termini della Licenza Pubblica Generica GNU
@@ -132,8 +132,17 @@ if (isset($_GET['term'])) {
               $mail->addReplyTo($admin_aziend['e_mail']); // reply to sender (e-mail dell'account che sta inviando)
               if (filter_var($result['e_mail'], FILTER_VALIDATE_EMAIL)){
                 $mail->addAddress($result['e_mail']);                  // se c'è invio all'email destinatario principale
-              } else{
+                if (filter_var($result['e_mail2'], FILTER_VALIDATE_EMAIL)){
+                  $mail->addCC($result['e_mail2']); //invio per conoscenza al secondo indirizzo
+                }
+              } elseif (filter_var($result['e_mail2'], FILTER_VALIDATE_EMAIL)){
                 $mail->addAddress($result['e_mail2']);                  // altrimenti alla secondaria
+              }else{
+                ?>
+                <script>
+                alert('ERRORE, impossibile inviare: non ci sono indirizzi mail validi a cui inviare');
+                </script>
+                <?php
               }
               if ($imap_usr==''){
                 $mail->addCC($admin_aziend['e_mail']); //invio copia a mittente
@@ -248,12 +257,8 @@ if (isset($_GET['term'])) {
           if($gSync->api_token){
             $gSync->UpsertFeedback($feedback,$toDo,$ref);
             //print_r($feedback);echo" - TODO:",$toDo;
-          }else{
-			  //echo "ERRORE gSync->api_token";
-		  }
-        }else{
-			//echo "ERRORE: synccommerce_classname";
-		}
+          }
+        }
       break;
       case'clone':
         $res = gaz_dbi_dyn_query("*", $gTables['rental_prices'], "year(start) = ". substr($_GET['parent_year'],0,4) ." AND house_code = '".substr($_GET['term'],0,15)."'","id ASC");
@@ -403,8 +408,17 @@ if (isset($_GET['term'])) {
           $mail->addReplyTo($admin_aziend['e_mail']); // reply to sender (e-mail dell'account che sta inviando)
           if (filter_var($result['e_mail'], FILTER_VALIDATE_EMAIL)){
             $mail->addAddress($result['e_mail']);                  // se c'è invio all'email destinatario principale
-          } else{
+            if (filter_var($result['e_mail2'], FILTER_VALIDATE_EMAIL)){
+              $mail->addCC($result['e_mail2']); //invio per conoscenza al secondo indirizzo
+            }
+          } elseif (filter_var($result['e_mail2'], FILTER_VALIDATE_EMAIL)){
             $mail->addAddress($result['e_mail2']);                  // altrimenti alla secondaria
+          }else{
+            ?>
+            <script>
+            alert('ERRORE, impossibile inviare: non ci sono indirizzi mail validi a cui inviare');
+            </script>
+            <?php
           }
           if ($imap_usr==''){
             $mail->addCC($admin_aziend['e_mail']); //invio copia a mittente
@@ -539,12 +553,12 @@ if (isset($_GET['term'])) {
       case 'restore_files':
       $err=0;
         $directory = "prices_backup/".$_GET['ref']."/".$_GET['term'];
-		if (strlen($_GET['year'])<>4 || intval($_GET['year'])==0){
-			echo "Impostare correttamente l'anno in cui importare";
-			$err=1;
-			return;
-			break;
-		}
+        if (strlen($_GET['year'])<>4 || intval($_GET['year'])==0){
+          echo "Impostare correttamente l'anno in cui importare";
+          $err=1;
+          return;
+          break;
+        }
         if (file_exists($directory)){
           $xml = simplexml_load_file($directory);
           //echo "<pre>",print_r($xml);
@@ -557,13 +571,14 @@ if (isset($_GET['term'])) {
               if (((string) $col['name'])=="id"){
                 continue;
               }
-			  if ($col['name']=="start" || $col['name']=="end"){
-				  $col[0]=$_GET['year'].substr($col[0],-6);// modifico la data con l'anno richiesto
-			  }
-               $cols .=$first.((string) $col['name']);
-               $values .= $first."'".$col[0]."'";
-               $first=', ';
+              if ($col['name']=="start" || $col['name']=="end"){
+                $col[0]=$_GET['year'].substr($col[0],-6);// modifico la data con l'anno richiesto
+              }
+              $cols .=$first.((string) $col['name']);
+              $values .= $first."'".$col[0]."'";
+              $first=', ';
             }
+
             $query = "INSERT INTO ".$table." (".$cols.") VALUES (".$values.")";
              if (!gaz_dbi_query($query)){
                echo "ERRORE scrittura data base:",json_encode(error_get_last());

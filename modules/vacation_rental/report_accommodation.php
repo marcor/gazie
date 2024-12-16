@@ -2,14 +2,14 @@
 /*
   --------------------------------------------------------------------------
   GAzie - MODULO 'VACATION RENTAL'
-  Copyright (C) 2022-2023 - Antonio Germani, Massignano (AP)
+  Copyright (C) 2022-present - Antonio Germani, Massignano (AP)
   (http://www.programmisitiweb.lacasettabio.it)
 
   --------------------------------------------------------------------------
 
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
-  Copyright (C) 2004-2024 - Antonio De Vincentiis Montesilvano (PE)
+  Copyright (C) 2004-present - Antonio De Vincentiis Montesilvano (PE)
   (http://www.devincentiis.it)
   <http://gazie.sourceforge.net>
   --------------------------------------------------------------------------
@@ -129,7 +129,7 @@ $(function() {
     });
 		$( function() {
       var rest= $("#restorefile").text();
-	  
+
       var dialog,
       dialog = $("#dialog_import").dialog({
         modal: true,
@@ -150,7 +150,7 @@ $(function() {
                 type: 'GET',
                 url: '../vacation_rental/ajax_request.php',
                 success: function(data){
-					
+
                   alert(data);
                   $("#filebutt div").remove();
                   $("#dialog_import").dialog("close");
@@ -161,8 +161,6 @@ $(function() {
         }
       });
     });
-
-
   });
 
    $("#dialog_export").dialog({ autoOpen: false });
@@ -180,7 +178,6 @@ $(function() {
 					text:'Esporta',
 					'class':'btn btn-danger delete-button',
 					click:function (event, ui) {
-
             	var export_year = $("#export_year").val(); // The value of the selected option parent
             	var child_year = $("#child_year").val(); // The value of the selected option child
               var operat = $("#operat").val(); // The value of the selected option child
@@ -194,7 +191,6 @@ $(function() {
                   window.location.replace("./report_accommodation.php");
                 }
               });
-
 				}},
 				"Annulla": function() {
 					$(this).dialog("close");
