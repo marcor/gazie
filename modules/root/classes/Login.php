@@ -271,6 +271,7 @@ class Login
       $this->table_banned = false;
       return false;
     }
+    $this->table_banned = true;
     $query_ban = $this->db_connection->prepare("SELECT * FROM " . DB_TABLE_PREFIX . "_banned_ip WHERE ipv4 = '".$this->getUserIP()."' AND `reference` ='postlogin';");
     $query_ban->execute();
     $ip_ban = $query_ban->fetchObject();
