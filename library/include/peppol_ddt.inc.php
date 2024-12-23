@@ -34,6 +34,7 @@ class peppolDocument {
   private $banacc;
   private $cliente;
   private $agente;
+  private $vettore;
   private $transchr = ['“'=>'"','‘'=>'\'','€'=>'euro','©'=>'&#169;','®'=>'&#174;','È'=>'&#200;','É'=>'&#201;','Ì'=>'&#204;','À'=>'&#192;','Ò'=>'&#210;','Ù'=>'&#217;',"ø" => "&#248;", "£" => "&#163;"];
   private $doctprefix;
 
@@ -49,6 +50,9 @@ class peppolDocument {
     $this->cliente = $anagrafica->getPartner($this->testata['clfoco']);
     $rs_agente = gaz_dbi_get_row($gTables['agenti'], 'id_agente', $this->testata['id_agente']);
     $this->agente = ($rs_agente)?$anagrafica->getPartner($rs_agente['id_fornitore']):false;
+    $rs_vettore = gaz_dbi_get_row($gTables['vettor'], 'codice', $this->testata['vettor']);
+    $this->vettore = ($rs_vettore)?$anagrafica->getPartnerData($rs_vettore['id_anagra']):false;
+    $this->vettore = ($this->vettore)?$this->vettore:$this->azienda; // se non ho un vettore vuol dire che sarà l'azienda stessa ( in Shipment PartyIdentification )
   }
 
   function getRows() {
@@ -69,7 +73,7 @@ class peppolDocument {
     return $rows;
   }
 
-  function createPeppolDdt($template) {
+  function createPeppolDdt($template,$causali) {
     $domDoc = new DOMDocument;
     $domDoc->preserveWhiteSpace = false;
     $domDoc->formatOutput = true;
@@ -146,6 +150,106 @@ class peppolDocument {
     $rsx->appendChild($el1);
       $el1 = $domDoc->createElement("cac:PartyLegalEntity");
       $el2 = $domDoc->createElement("cbc:RegistrationName", $this->cliente['ragso1'].$this->cliente['ragso2']);
+      $el1->appendChild($el2);
+    $rsx->appendChild($el1);
+// BuyerCustomerParty
+    $rsx = $xpath->query("//cac:BuyerCustomerParty/cac:Party")->item(0);
+      $el1 = $domDoc->createElement("cac:PartyIdentification");
+      $el2 = $domDoc->createElement("cbc:ID", $this->cliente['pariva']);
+      $at2 = $domDoc->createAttribute('schemeID');
+      $at2->value = '0210';
+      $el2->appendChild($at2);
+      $el1->appendChild($el2);
+    $rsx->appendChild($el1);
+      $el1 = $domDoc->createElement("cac:PartyName");
+      $el2 = $domDoc->createElement("cbc:Name", $this->cliente['ragso1'].$this->cliente['ragso2']);
+      $el1->appendChild($el2);
+    $rsx->appendChild($el1);
+      $el1 = $domDoc->createElement("cac:PostalAddress");
+      $el2 = $domDoc->createElement("cbc:StreetName", $this->cliente['indspe']);
+      $el1->appendChild($el2);
+      $el2 = $domDoc->createElement("cbc:CityName", $this->cliente['citspe']);
+      $el1->appendChild($el2);
+      $el2 = $domDoc->createElement("cbc:PostalZone", $this->cliente['capspe']);
+      $el1->appendChild($el2);
+      $el2 = $domDoc->createElement("cbc:CountrySubentity", $this->cliente['prospe']);
+      $el1->appendChild($el2);
+      $el2 = $domDoc->createElement("cac:Country");
+      $el3 = $domDoc->createElement("cbc:IdentificationCode", $this->cliente['country']);
+      $el2->appendChild($el3);
+      $el1->appendChild($el2);
+    $rsx->appendChild($el1);
+// SellerSupplierParty
+    $rsx = $xpath->query("//cac:SellerSupplierParty/cac:Party")->item(0);
+      $el1 = $domDoc->createElement("cac:PartyIdentification");
+      $el2 = $domDoc->createElement("cbc:ID", $this->azienda['country'].$this->azienda['pariva']);
+      $at2 = $domDoc->createAttribute('schemeID');
+      $at2->value = '0211';
+      $el2->appendChild($at2);
+      $el1->appendChild($el2);
+    $rsx->appendChild($el1);
+      $el1 = $domDoc->createElement("cac:PartyName");
+      $el2 = $domDoc->createElement("cbc:Name", $this->azienda['ragso1'].$this->azienda['ragso2']);
+      $el1->appendChild($el2);
+    $rsx->appendChild($el1);
+      $el1 = $domDoc->createElement("cac:PostalAddress");
+      $el2 = $domDoc->createElement("cbc:StreetName", $this->azienda['indspe']);
+      $el1->appendChild($el2);
+      $el2 = $domDoc->createElement("cbc:CityName", $this->azienda['citspe']);
+      $el1->appendChild($el2);
+      $el2 = $domDoc->createElement("cbc:PostalZone", $this->azienda['capspe']);
+      $el1->appendChild($el2);
+      $el2 = $domDoc->createElement("cbc:CountrySubentity", $this->azienda['prospe']);
+      $el1->appendChild($el2);
+      $el2 = $domDoc->createElement("cac:Country");
+      $el3 = $domDoc->createElement("cbc:IdentificationCode", $this->azienda['country']);
+      $el2->appendChild($el3);
+      $el1->appendChild($el2);
+    $rsx->appendChild($el1);
+// Shipment
+    $rsx = $xpath->query("//cac:Shipment")->item(0);
+      $el1 = $domDoc->createElement("cbc:ID", $this->testata['id_tes']);
+    $rsx->appendChild($el1);
+      $el1 = $domDoc->createElement("cbc:Information", $causali[$this->testata['ddt_type']]);
+    $rsx->appendChild($el1);
+      $el1 = $domDoc->createElement("cbc:GrossWeightMeasure", $this->testata['gross_weight']);
+      $at1 = $domDoc->createAttribute('unitCode');
+      $at1->value = 'KGM';
+      $el1->appendChild($at1);
+    $rsx->appendChild($el1);
+      $el1 = $domDoc->createElement("cbc:TotalTransportHandlingUnitQuantity",  $this->testata['units']);
+    $rsx->appendChild($el1);
+      $el1 = $domDoc->createElement("cac:Consignment");
+      $el2 = $domDoc->createElement("cbc:ID", $this->testata['id_tes']);
+      $el1->appendChild($el2);
+      $el2 = $domDoc->createElement("cbc:Information", $this->testata['portos']);
+      $el1->appendChild($el2);
+      $el2 = $domDoc->createElement("cac:CarrierParty");
+      $el3 = $domDoc->createElement("cac:PartyIdentification");
+      $el4 = $domDoc->createElement("cbc:ID", $this->vettore['country'].$this->vettore['pariva']);
+      $at4 = $domDoc->createAttribute('schemeID');
+      $at4->value = '0211';
+      $el4->appendChild($at4);
+      $el3->appendChild($el4);
+      $el2->appendChild($el3);
+      $el3 = $domDoc->createElement("cac:PartyName");
+      $el4 = $domDoc->createElement("cbc:Name", $this->vettore['ragso1'].' '.$this->vettore['ragso2']);
+      $el3->appendChild($el4);
+      $el2->appendChild($el3);
+      $el3 = $domDoc->createElement("cac:PostalAddress");
+      $el4 = $domDoc->createElement("cbc:StreetName", $this->vettore['indspe']);
+      $el3->appendChild($el4);
+      $el4 = $domDoc->createElement("cbc:CityName", $this->vettore['citspe']);
+      $el3->appendChild($el4);
+      $el4 = $domDoc->createElement("cbc:PostalZone", $this->vettore['capspe']);
+      $el3->appendChild($el4);
+      $el4 = $domDoc->createElement("cbc:CountrySubentity", $this->vettore['prospe']);
+      $el3->appendChild($el4);
+      $el4 = $domDoc->createElement("cac:Country");
+      $el5 = $domDoc->createElement("cbc:IdentificationCode", $this->vettore['country']);
+      $el4->appendChild($el5);
+      $el3->appendChild($el4);
+      $el2->appendChild($el3);
       $el1->appendChild($el2);
     $rsx->appendChild($el1);
 

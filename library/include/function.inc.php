@@ -1010,8 +1010,6 @@ class selectPartner extends SelectBox {
           $msg = $mesg[0];
           echo "\t<input type=\"hidden\" name=\"$name\" value=\"$val\">\n";
         }
-//  print_r($partner);print '<br>'.$m.'<br>'.$val.'<br>';
-//  exit;
 
       } else {
         $msg = $mesg[1];
@@ -1071,17 +1069,13 @@ class selectPartner extends SelectBox {
                 }
             } else {
                 $msg = $mesg[1];
-                echo "\t<input type=\"hidden\" name=\"$name\" value=\"$val\">\n";
+                echo '<input type="hidden" name="'.$name.'"  id="'.$name.'" value="'.$val.'">';
             }
-            echo "\t<input type=\"text\"  $tab2  name=\"search[$name]\" value=\"" . $strSearch . "\" maxlength=\"16\" size=\"10\" class=\"FacetInput\">\n";
+            echo '<input type="text" '.$tab2.'  name="search['.$name.']" id="search_'.$name.'" value="'. $strSearch . '" maxlength=16 size=10 class="FacetInput">';
             if (isset($msg)) {
                 echo "<input type=\"text\" style=\"color: red; font-weight: bold;\" size=\"" . strlen($msg) . "\" disabled value=\"$msg\">";
             }
-            //echo "\t<input type=\"image\"  $tab3  align=\"middle\" name=\"search_str\" src=\"../../library/images/cerbut.gif\">\n";
-            /** ENRICO FEDELE */
-            /* Cambio l'aspetto del pulsante per renderlo bootstrap, con glyphicon */
             echo '<button type="submit" class="btn btn-default btn-sm" name="search_str" ' . $tab3 . '><i class="glyphicon glyphicon-search"></i></button>';
-            /** ENRICO FEDELE */
         }
     }
 

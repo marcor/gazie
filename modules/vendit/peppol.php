@@ -27,7 +27,8 @@ $admin_aziend=checkAdmin();
 require("../../library/include/peppol_ddt.inc.php");
 // recupero i dati
 if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo documento attraverso il suo id_tes
+  require_once("./lang.italian.php");
 	$pep = new peppolDocument($gTables,intval($_GET['id_tes']),'doc');
-  $pep->createPeppolDdt('template_peppol_ddt2025.xml');
+  $pep->createPeppolDdt('template_peppol_ddt2025.xml',$strScript ['report_doctra.php']['ddt_type']);
 }
 ?>
