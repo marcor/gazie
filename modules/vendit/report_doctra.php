@@ -524,6 +524,7 @@ if (isset($_SESSION['print_request']) && intval($_SESSION['print_request'])>0){
                             $targetPrintDoc = ($pdf_to_modal==0)?'href="stampa_docven.php?id_tes=' . $r["id_tes"] .'&template=DDT" target="_blank" ':"onclick=\"printPdf('stampa_docven.php?id_tes=" . $r["id_tes"] . "&template=DDT')\"";
                             echo "<td>";
                             echo '<a class="btn btn-xs btn-default" style="cursor:pointer;" '.$targetPrintDoc.' ><i class="glyphicon glyphicon-print" title="'. $script_transl['print_ddt'] . " n. " . $r["numdoc"] .'"></i></a>';
+                            echo ' <a class="btn btn-xs btn-default" title="XML Peppol" href="./peppol.php?id_tes='.$r['id_tes'].'&viewxml" target="_blank"> XML </a>';
                             echo "</td>";
 
                             // Colonna "Mail"
