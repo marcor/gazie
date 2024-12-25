@@ -117,7 +117,7 @@ class peppolDocument {
       $el1->appendChild($el2);
     $rsx->appendChild($el1);
       $el1 = $domDoc->createElement("cac:PartyLegalEntity");
-      $el2 = $domDoc->createElement("cbc:RegistrationName", $this->azienda['ragso1'].$this->azienda['ragso2']);
+      $el2 = $domDoc->createElement("cbc:RegistrationName", $this->azienda['ragso1'].' '.$this->azienda['ragso2']);
       $el1->appendChild($el2);
     $rsx->appendChild($el1);
 // DeliveryCustomerParty
@@ -149,7 +149,7 @@ class peppolDocument {
       $el1->appendChild($el2);
     $rsx->appendChild($el1);
       $el1 = $domDoc->createElement("cac:PartyLegalEntity");
-      $el2 = $domDoc->createElement("cbc:RegistrationName", $this->cliente['ragso1'].$this->cliente['ragso2']);
+      $el2 = $domDoc->createElement("cbc:RegistrationName", $this->cliente['ragso1'].' '.$this->cliente['ragso2']);
       $el1->appendChild($el2);
     $rsx->appendChild($el1);
 // BuyerCustomerParty
@@ -162,7 +162,7 @@ class peppolDocument {
       $el1->appendChild($el2);
     $rsx->appendChild($el1);
       $el1 = $domDoc->createElement("cac:PartyName");
-      $el2 = $domDoc->createElement("cbc:Name", $this->cliente['ragso1'].$this->cliente['ragso2']);
+      $el2 = $domDoc->createElement("cbc:Name", $this->cliente['ragso1'].' '.$this->cliente['ragso2']);
       $el1->appendChild($el2);
     $rsx->appendChild($el1);
       $el1 = $domDoc->createElement("cac:PostalAddress");
@@ -189,7 +189,7 @@ class peppolDocument {
       $el1->appendChild($el2);
     $rsx->appendChild($el1);
       $el1 = $domDoc->createElement("cac:PartyName");
-      $el2 = $domDoc->createElement("cbc:Name", $this->azienda['ragso1'].$this->azienda['ragso2']);
+      $el2 = $domDoc->createElement("cbc:Name", $this->azienda['ragso1'].' '.$this->azienda['ragso2']);
       $el1->appendChild($el2);
     $rsx->appendChild($el1);
       $el1 = $domDoc->createElement("cac:PostalAddress");
