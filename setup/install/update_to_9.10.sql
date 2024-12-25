@@ -187,13 +187,13 @@ INSERT INTO `gaz_calendar` (`day`, `month`, `holiday`, `info`, `iso_country`) VA
 	(22, 4, NULL, 'San Teodoro il Siceota', 'IT'),
 	(23, 4, NULL, 'San Giorgio, Beata Maria Gabriella Sagheddu', 'IT'),
 	(24, 4, NULL, 'San Fedele da Sigmaringen, Santa Maria Eufrasia Pelletier', 'IT'),
-	(25, 4, 1, 'San Marco, San Pietro di Betancour', 'IT'),
+	(25, 4, 1, 'Festa della Liberazione - San Marco, San Pietro di Betancour', 'IT'),
 	(26, 4, NULL, 'San Cleto, San Marcellino', 'IT'),
 	(27, 4, NULL, 'San Simeone di Gerusalemme, Santa Zita', 'IT'),
 	(28, 4, NULL, 'Santa Valeria di Milano, Santa Gianna Beretta Molla', 'IT'),
 	(29, 4, NULL, 'Santa Caterina da Siena', 'IT'),
 	(30, 4, NULL, 'San Pio V', 'IT'),
-	(1, 5, 1, 'San Geremia', 'IT'),
+	(1, 5, 1, 'Festa dei Lavoratori - San Geremia', 'IT'),
 	(2, 5, NULL, 'Sant\'Atanasio', 'IT'),
 	(3, 5, NULL, 'San Giacomo il Minore', 'IT'),
 	(4, 5, NULL, 'San Floriano di Lorch', 'IT'),
@@ -225,7 +225,7 @@ INSERT INTO `gaz_calendar` (`day`, `month`, `holiday`, `info`, `iso_country`) VA
 	(30, 5, NULL, 'Santa Giovanna d\'Arco', 'IT'),
 	(31, 5, NULL, 'la visitazione della Beata Vergine Maria', 'IT'),
 	(1, 6, NULL, 'San Giustino', 'IT'),
-	(2, 6, 1, 'San Guido di Acqui', 'IT'),
+	(2, 6, 1, 'Festa della Repubblica - San Guido di Acqui', 'IT'),
 	(3, 6, NULL, 'Santa Clotilde', 'IT'),
 	(4, 6, NULL, 'San Francesco Caracciolo', 'IT'),
 	(5, 6, NULL, 'San Bonifacio', 'IT'),
@@ -299,7 +299,7 @@ INSERT INTO `gaz_calendar` (`day`, `month`, `holiday`, `info`, `iso_country`) VA
 	(12, 8, NULL, 'Santa Giovanna Francesca del Chantal', 'IT'),
 	(13, 8, NULL, 'Sant\'Ippolito', 'IT'),
 	(14, 8, NULL, 'San Massimiliano Maria Kolbe', 'IT'),
-	(15, 8, 1, 'San Tarcisio di Roma', 'IT'),
+	(15, 8, 1, 'Ferragosto - Assunzione di Maria, San Tarcisio di Roma', 'IT'),
 	(16, 8, NULL, 'San Rocco', 'IT'),
 	(17, 8, NULL, 'Santa Beatrice de Silva Meneses', 'IT'),
 	(18, 8, NULL, 'Sant\'Agapito Martire', 'IT'),
@@ -438,7 +438,7 @@ INSERT INTO `gaz_calendar` (`day`, `month`, `holiday`, `info`, `iso_country`) VA
 	(29, 12, NULL, 'San Davide', 'IT'),
 	(30, 12, NULL, 'San Felice I', 'IT'),
 	(31, 12, NULL, 'San Silvestro I', 'IT');
-
+INSERT INTO `gaz_menu_module` SELECT MAX(id)+1, (SELECT id FROM `gaz_module` WHERE `name`='inform'), 'calendar_select.php', '', '', 9, '', 9  FROM `gaz_menu_module`;
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 ALTER TABLE `gaz_XXXtesdoc`	ADD COLUMN `tipdoc_buf` CHAR(3) NOT NULL DEFAULT '' COMMENT 'Quando tipdoc sarà valorizzato con "BUF", potrò utilizzare questa colonna per indicare il valore che dovrà assumere la colonna tipdoc alla conferma del contenuto del documento che si sta inserendo, questo eviterà in futuro (o a chi personalizza qualche interfaccia utente) di fare il POST di tutti i righi già immessi superando il limite attuale imposto dalla direttiva  max_input_vars del PHP. In sostanza si potrà mettere sempre e subito tutto sul database man mano che vengono inseriti i righi per poi valorizzare con il giusto tipdoc alla conferma. Il tipdoc=BUF dovrà essere uno solo per ogni utente (colonna adminid) e quindi ripulito ad ogni nuovo documento perché potrebbe essere rimasto in sospeso con un precedente documento mai confermato' AFTER `tipdoc`, ADD INDEX `tipdoc_buf` (`tipdoc_buf`);
 ALTER TABLE `gaz_XXXtesbro`	ADD COLUMN `tipdoc_buf` CHAR(3) NOT NULL DEFAULT '' COMMENT 'Quando tipdoc sarà valorizzato con "BUF", potrò utilizzare questa colonna per indicare il valore che dovrà assumere la colonna tipdoc alla conferma del contenuto del documento che si sta inserendo, questo eviterà in futuro (o a chi personalizza qualche interfaccia utente) di fare il POST di tutti i righi già immessi superando il limite attuale imposto dalla direttiva  max_input_vars del PHP. In sostanza si potrà mettere sempre e subito tutto sul database man mano che vengono inseriti i righi per poi valorizzare con il giusto tipdoc alla conferma. Il tipdoc=BUF dovrà essere uno solo per ogni utente (colonna adminid) e quindi ripulito ad ogni nuovo documento perché potrebbe essere rimasto in sospeso con un precedente documento mai confermato' AFTER `tipdoc`, ADD INDEX `tipdoc_buf` (`tipdoc_buf`);
