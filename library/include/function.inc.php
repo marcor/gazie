@@ -2842,7 +2842,7 @@ class Compute {
   }
 
 }
-
+#[AllowDynamicProperties]
 class Schedule {
 	public $target = 0;
 	public $id_target = 0;
