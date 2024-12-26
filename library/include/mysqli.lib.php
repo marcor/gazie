@@ -828,7 +828,7 @@ function rigmocInsert($newValue) {
 
 function paymovInsert($newValue) {
    $table = 'paymov';
-   $columns = array('id', 'id_tesdoc_ref', 'id_rigmoc_pay', 'id_rigmoc_doc', 'amount', 'expiry');
+   $columns = array('id_tesdoc_ref', 'id_rigmoc_pay', 'id_rigmoc_doc', 'amount', 'expiry');
    tableInsert($table, $columns, $newValue);
 }
 
