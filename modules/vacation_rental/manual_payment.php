@@ -115,7 +115,7 @@ if (isset($_POST['type']) && isset($_POST['ref']) && isset($_POST['payment_gross
 
     }
   }
-  if (substr($type,0,21)=="Deposito_cauzionale"){// se è stata inserita una caparra confirmatoria
+  if (substr($type,0,21)=="Deposito_cauzionale"){// se è stato inserito un deposito cauzionale
     $vacation_cauzione_dare=gaz_dbi_get_row($gTables['company_config'], "var", 'vacation_cauzione_dare')['val'];
     $vacation_cauzione_avere=gaz_dbi_get_row($gTables['company_config'], "var", 'vacation_cauzione_avere')['val'];
     if($vacation_cauzione_dare>0 && $vacation_cauzione_avere>0){// se sono stati impostati i conti
