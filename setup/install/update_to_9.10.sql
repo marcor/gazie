@@ -66,7 +66,6 @@ CREATE TABLE IF NOT EXISTS `gaz_calendar` (
   `holiday` tinyint DEFAULT NULL,
   `info` varchar(255) DEFAULT NULL,
   `iso_country` varchar(2) NOT NULL DEFAULT 'IT',
-  UNIQUE KEY `day_month` (`day`,`month`),
   KEY `month` (`month`),
   KEY `day` (`day`),
   KEY `iso_country` (`iso_country`)
