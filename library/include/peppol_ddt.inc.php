@@ -80,8 +80,8 @@ class peppolDocument {
     while ($r = gaz_dbi_fetch_array($rs_rig)) {
       // filtro le descrizioni
       $r['descri'] = strtr ( htmlspecialchars(htmlspecialchars_decode(trim(html_entity_decode($r['descri'], ENT_XML1 | ENT_QUOTES, 'UTF-8'))), ENT_XML1, 'UTF-8'), $this->transchr);
-      $r['codart']=(empty(trim($r['codart'])?'NOCOD_row_'.$r['id_rig']:$r['codart'];
-      $r['codice_fornitore']=(empty(trim($r['codice_fornitore'])?$r['codart']:$r['codice_fornitore'];
+      $r['codart']=(empty(trim($r['codart'])))?'NOCOD_row_'.$r['id_rig']:$r['codart'];
+      $r['codice_fornitore']=(empty(trim($r['codice_fornitore'])))?$r['codart']:$r['codice_fornitore'];
       $rows[$nr] = $r;
       $nr++;
     }
@@ -308,10 +308,10 @@ class peppolDocument {
       $el2->appendChild($at2);
       $el1->appendChild($el2);
       $el2 = $domDoc->createElement("cac:OrderLineReference");
-      $el3 = $domDoc->createElement("cbc:LineID",$r['order']);
+      $el3 = $domDoc->createElement("cbc:LineID",$r['id_order']);
       $el2->appendChild($el3);
       $el3 = $domDoc->createElement("cac:OrderReference");
-      $el4 = $domDoc->createElement("cbc:ID",$r['order']);
+      $el4 = $domDoc->createElement("cbc:ID",'ORD_N_'.$r['id_order']);
       $el3->appendChild($el4);
       $el2->appendChild($el3);
       $el1->appendChild($el2);
