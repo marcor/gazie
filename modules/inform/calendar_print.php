@@ -82,7 +82,7 @@ class calPdf extends Fpdi {
     $this->RoundedRect(2,2,206,36,2);
     $this->SetXY(130,4);
     $this->Cell(75,6,$this->azienda['ragso1'].' '.$this->azienda['ragso2'],0,0,'R',0,'',1);
-    $this->Image('@'.$this->azienda['image'],5,5,$this->logox,$this->logoy,'PNG',$this->imglink);
+    $this->Image('@'.$this->azienda['image'],5,5,$this->logox,$this->logoy,'',$this->imglink);
 		$this->ImageSVG('./calendar_withlove.svg',170,10,0,22,$this->imglink);
     //var_dump($this->clfoco);
     if ($this->clfoco) {
