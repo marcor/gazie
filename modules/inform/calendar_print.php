@@ -207,7 +207,7 @@ class calPdf extends Fpdi {
     }
     $this->Image('@'.$this->azienda['image'],153,270,$logox,$logoy,'',$this->imglink);
     $this->SetFont('helvetica','B',10);
-    $this->SetXY(10,270);
+    $this->SetXY(10,268);
     $this->Cell(160,5,$this->azienda['ragso1'].' '.$this->azienda['ragso2'],0,1);
     $this->SetFont('helvetica','',10);
     $this->SetX(10);
@@ -215,7 +215,10 @@ class calPdf extends Fpdi {
     $this->SetX(10);
     $this->Cell(160,4,$this->azienda['capspe'].' '.$this->azienda['citspe'].' ('.$this->azienda['prospe'].')',0,1,0,0,'',1);
     $this->SetX(10);
-    $this->Cell(160,4,'Tel: '.$this->azienda['telefo'].' - e-mail: '.$this->azienda['e_mail'],0,0,0,0,'',1);
+    $this->Cell(105,4,'Tel: '.$this->azienda['telefo'].' - e-mail: '.$this->azienda['e_mail'],0,1,0,0,'',1);
+    $this->SetFont('helvetica','B',14);
+    $this->SetTextColor(100,100,100);
+    $this->Cell(200,8,$this->imglink,0,0,'C',0,$this->imglink,1);
   }
 
 }
