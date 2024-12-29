@@ -60,10 +60,10 @@ class calPdf extends Fpdi {
     $this->clfoco = $clfoco;
     $im = imagecreatefromstring ($this->azienda['image']);
     $ratio = round(imagesx($im)/imagesy($im),2);
-    $this->logox=50;$this->logoy=0;
-    if ($ratio<1.55){ $this->logox=0; $this->logoy=32.5; }
+    $this->logox=45;$this->logoy=0;
+    if ($ratio<1.50){ $this->logox=0; $this->logoy=30; }
     //var_dump($this->azienda['web_url']);
-    $this->imglink = !empty($this->azienda['web_url']) ? $this->azienda['web_url'] : '../config/admin_aziend.php';
+    $this->imglink = !empty($this->azienda['web_url']) ? $this->azienda['web_url'] : 'https://gazie.sourceforge.io/';
   }
 
   public function Header() {
@@ -83,7 +83,7 @@ class calPdf extends Fpdi {
     $this->SetXY(130,4);
     $this->Cell(75,6,$this->azienda['ragso1'].' '.$this->azienda['ragso2'],0,0,'R',0,'',1);
     $this->Image('@'.$this->azienda['image'],5,5,$this->logox,$this->logoy,'',$this->imglink);
-		$this->ImageSVG('./calendar_withlove.svg',170,10,0,22,$this->imglink);
+		$this->ImageSVG('./img/calendar_withlove.svg',170,10,0,22,$this->imglink);
     //var_dump($this->clfoco);
     if ($this->clfoco) {
       $this->SetXY(120,30);
