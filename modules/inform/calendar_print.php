@@ -53,6 +53,7 @@ class calPdf extends Fpdi {
   private $year = '';
   private $logox = 50;
   private $logoy = 0;
+  private $logoyoffset = 0;
   private $imglink = '';
 
   public function setGlobalData($aziend,$clfoco) {
@@ -60,9 +61,14 @@ class calPdf extends Fpdi {
     $this->clfoco = $clfoco;
     $im = imagecreatefromstring ($this->azienda['image']);
     $ratio = round(imagesx($im)/imagesy($im),2);
-    $this->logox=45;$this->logoy=0;
-    if ($ratio<1.50){ $this->logox=0; $this->logoy=30; }
-    //var_dump($this->azienda['web_url']);
+    $this->logox=48;$this->logoy=0;
+    $iy = $this->logox/$ratio;
+    $this->logoyoffset=round((30-$iy)/2,1);
+    if ($ratio<1.6) {
+      $this->logox=0;
+      $this->logoy=30;
+      $this->logoyoffset=0;
+    }
     $this->imglink = !empty($this->azienda['web_url']) ? $this->azienda['web_url'] : 'https://gazie.sourceforge.io/';
   }
 
@@ -82,7 +88,7 @@ class calPdf extends Fpdi {
     $this->RoundedRect(2,2,206,36,2);
     $this->SetXY(130,4);
     $this->Cell(75,6,$this->azienda['ragso1'].' '.$this->azienda['ragso2'],0,0,'R',0,'',1);
-    $this->Image('@'.$this->azienda['image'],5,5,$this->logox,$this->logoy,'',$this->imglink);
+    $this->Image('@'.$this->azienda['image'],5,5+$this->logoyoffset,$this->logox,$this->logoy,'',$this->imglink);
 		$this->ImageSVG('./img/calendar_withlove.svg',170,10,0,22,$this->imglink);
     //var_dump($this->clfoco);
     if ($this->clfoco) {
@@ -221,14 +227,14 @@ class calPdf extends Fpdi {
     $this->SetDrawColor(hexdec(substr($this->azienda['colore'], 0, 2)), hexdec(substr($this->azienda['colore'], 2, 2)), hexdec(substr($this->azienda['colore'], 4, 2)));
     $this->SetLineStyle(['width'=>3]);
     $this->RoundedRect(2,266,206,29,2);
-    if ($this->logoy>20){
-      $logox=20;
+    if ($this->logoy>25){
+      $logox=25;
       $logoy=0;
     } else {
       $logox=$this->logox;
       $logoy=$this->logoy;
     }
-    $this->Image('@'.$this->azienda['image'],153,270,$logox,$logoy,'',$this->imglink);
+    $this->Image('@'.$this->azienda['image'],153,272,$logox,$logoy,'',$this->imglink);
     $this->SetFont('helvetica','B',10);
     $this->SetXY(10,268);
     $this->Cell(160,5,$this->azienda['ragso1'].' '.$this->azienda['ragso2'],0,1);
