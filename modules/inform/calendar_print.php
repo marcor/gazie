@@ -234,7 +234,8 @@ class calPdf extends Fpdi {
       $logox=$this->logox;
       $logoy=$this->logoy;
     }
-    $this->Image('@'.$this->azienda['image'],153,272,$logox,$logoy,'',$this->imglink);
+    $yofs=($this->logoyoffset>=0.1)?round($this->logoyoffset*0.5,1):0;
+    $this->Image('@'.$this->azienda['image'],153,269+$yofs,$logox,$logoy,'',$this->imglink);
     $this->SetFont('helvetica','B',10);
     $this->SetXY(10,268);
     $this->Cell(160,5,$this->azienda['ragso1'].' '.$this->azienda['ragso2'],0,1);
