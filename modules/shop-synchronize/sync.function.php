@@ -54,6 +54,7 @@ use phpseclib3\Net\SSH2;
 use phpseclib3\Crypt\PublicKeyLoader;
 use phpseclib3\Net\SFTP;
 
+#[AllowDynamicProperties]
 class shopsynchronizegazSynchro {
 
 	function __construct() {
