@@ -2059,6 +2059,31 @@ class GAzieForm {
         $this->variousSelect($name, $script_transl['search_item'], $val, $class, true);
     }
 
+    function selectLanguage($name,$val,$ret_type=false,$class='', $refresh=false) {
+      global $gTables;
+      $query = 'SELECT * FROM ' . $gTables['languages'].' WHERE 1 ORDER BY lang_id';
+      $acc = '<select id="'.$name.'" name="'.$name.'" class="'.$class.'" '.($refresh?'onchange="this.form.submit();"':'').' >';
+      $acc .= '<option value="0"';
+      $acc .= intval($val)==0?' selected ':' ';
+      $acc .= '>- - - - - - - - -';
+      $acc .= '</option>';
+      $rs = gaz_dbi_query($query);
+      while ($r = gaz_dbi_fetch_array($rs)) {
+        $selected = '';
+        if ($r['lang_id'] == intval($val)) {
+          $selected = "selected";
+        }
+        $acc .= '<option value="'.$r['lang_id'] . '" '.$selected.' > '.base64_decode($r['emoji']).' '.$r['title'];
+        $acc .= '</option>';
+      }
+      $acc .='</select>';
+      if ($ret_type){
+        return $acc;
+      } else {
+        echo $acc;
+      }
+    }
+
     function gazHeadMessage($message, $transl, $type = 'err') {
         if (!empty($message)) {
             $m = 'ERROR';
