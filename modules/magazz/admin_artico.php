@@ -107,7 +107,11 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	$form['codice'] = trim($form['codice']);
 	$form['ritorno'] = $_POST['ritorno'];
   $form['tab'] = substr($_POST['tab'],0,20);
+  $form['lang_id'] = intval($_POST['lang_id']);
 	$form['hidden_req'] = $_POST['hidden_req'];
+  if ($form['hidden_req']=='refresh_language') { // se ho cambiato la lingua ricarico dal database i valori di descrizione e descrizione estesa
+
+  }
 	$form['web_public_init'] = $_POST['web_public_init'];
 	$form['var_id'] = (isset($_POST['var_id']))?$_POST['var_id']:'';
 	$form['var_name'] = (isset($_POST['var_name']))?$_POST['var_name']:'';
@@ -382,6 +386,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
       $form['ritorno'] = 'admin_artico.php';
   }
   $form['tab'] = 'home';
+  $form['lang_id'] = 1;
   $form['hidden_req'] = '';
 	$form['web_public_init']=$form['web_public'];
 	if (json_decode($form['ecomm_option_attribute']) != null){ // se esiste un json per attributo della variante dell'e-commerce
@@ -435,6 +440,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
       $form['ritorno'] = 'admin_artico.php';
   }
   $form['tab'] = 'home';
+  $form['lang_id'] = 1;
   $form['hidden_req'] = '';
 	$form['web_public_init'] = 0;
   /** ENRICO FEDELE */
@@ -696,6 +702,7 @@ function choicePosition(idartico)
 .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset { float: unset !important; }
 .ui-dialog { z-index: 1000 !important; font-size: 12px;}
 .btn-conferma {	color: #fff !important; background-color: #f0ad4e !important; border-color: #eea236 !important; }
+.lang-select {	padding:8px; height: 42px; }
 </style>
 
 <form method="POST" name="form" enctype="multipart/form-data" id="add-product">
@@ -775,11 +782,16 @@ if ($modal_ok_insert === true) {
         <div class="panel panel-default gaz-table-form div-bordered">
             <div class="container-fluid">
             <ul class="nav nav-pills">
-                <li class="<?php echo $form['tab']=='home'?'active':''; ?>"><a data-toggle="pill" class="tabtoggle" href="#home">Dati principali</a></li>
-                <li class="<?php echo $form['tab']=='magazz'?'active':''; ?>"><a data-toggle="pill" class="tabtoggle" href="#magazz">Magazzino</a></li>
-                <li class="<?php echo $form['tab']=='contab'?'active':''; ?>"><a data-toggle="pill" class="tabtoggle" href="#contab">Contabilità</a></li>
-                <li class="<?php echo $form['tab']=='chifis'?'active':''; ?>"><a data-toggle="pill" class="tabtoggle" href="#chifis">Chimico-fisiche</a></li>
-                <li style="float: right;"><?php echo '<input name="Confirm" type="submit" class="btn btn-warning" value="' . ucfirst($script_transl[$toDo]) . '" />'; ?></li>
+                <li class="<?= $form['tab']=='home'?'active':''; ?>"><a data-toggle="pill" class="tabtoggle" href="#home">Dati principali</a></li>
+                <li class="<?= $form['tab']=='magazz'?'active':''; ?>"><a data-toggle="pill" class="tabtoggle" href="#magazz">Magazzino</a></li>
+                <li class="<?= $form['tab']=='contab'?'active':''; ?>"><a data-toggle="pill" class="tabtoggle" href="#contab">Contabilità</a></li>
+                <li class="<?= $form['tab']=='chifis'?'active':''; ?>"><a data-toggle="pill" class="tabtoggle" href="#chifis">Chimico-fisiche</a></li>
+                <li class="">
+    <?php
+    $gForm->selectLanguage('lang_id', $form['lang_id'],false,'lang-select','refresh_language');
+    ?>
+                </li>
+                <li style="float: right;"><?= '<input name="Confirm" type="submit" class="btn btn-warning" value="' . ucfirst($script_transl[$toDo]) . '" />'; ?></li>
             </ul>
             <div class="tab-content">
               <div id="home" class="tab-pane fade <?php echo $form['tab']=='home'?'in active':''; ?>">
