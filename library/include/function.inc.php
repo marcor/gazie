@@ -2062,11 +2062,7 @@ class GAzieForm {
     function selectLanguage($name,$val,$ret_type=false,$class='', $refresh=false) {
       global $gTables;
       $query = 'SELECT * FROM ' . $gTables['languages'].' WHERE 1 ORDER BY lang_id';
-      $acc = '<select id="'.$name.'" name="'.$name.'" class="'.$class.'" '.($refresh?'onchange="this.form.hidden_req.value='.$refresh.'; this.form.submit();"':'').' >';
-      $acc .= '<option value="0"';
-      $acc .= intval($val)==0?' selected ':' ';
-      $acc .= '>- - - - - - - - -';
-      $acc .= '</option>';
+      $acc = '<select id="'.$name.'" name="'.$name.'" class="'.$class.'" '.($refresh?'onchange="this.form.hidden_req.value=\''.$refresh.'\'; this.form.submit();"':'').' >';
       $rs = gaz_dbi_query($query);
       while ($r = gaz_dbi_fetch_array($rs)) {
         $selected = '';

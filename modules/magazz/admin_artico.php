@@ -110,7 +110,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
   $form['lang_id'] = intval($_POST['lang_id']);
 	$form['hidden_req'] = $_POST['hidden_req'];
   if ($form['hidden_req']=='refresh_language') { // se ho cambiato la lingua ricarico dal database i valori di descrizione e descrizione estesa
-
+    var_dump('modifica per ricaricare in lingua con lang_id='.$form['lang_id']);
   }
 	$form['web_public_init'] = $_POST['web_public_init'];
 	$form['var_id'] = (isset($_POST['var_id']))?$_POST['var_id']:'';
