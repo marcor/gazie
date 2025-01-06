@@ -733,7 +733,6 @@ function choicePosition(idartico)
 .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset { float: unset !important; }
 .ui-dialog { z-index: 1000 !important; font-size: 12px;}
 .btn-conferma {	color: #fff !important; background-color: #f0ad4e !important; border-color: #eea236 !important; }
-.lang-select {	padding:8px; height: 42px; }
 </style>
 
 <form method="POST" name="form" enctype="multipart/form-data" id="add-product">
