@@ -962,7 +962,7 @@ if ($modal_ok_insert === true) {
                               $addlabel="";
                             }
                             ?>
-                            <div class="col-sm-8"><?php echo $addlabel.$script_transl['image']; ?><input type="file" name="userfile" /></div>
+                            <div class="col-sm-8"><?php echo $addlabel.$script_transl['image']; ?><input type="file" name="userfile" accept=".gif,.jpg,.png" /></div>
                       </div>
                     </div>
                 </div><!-- chiude row  -->
