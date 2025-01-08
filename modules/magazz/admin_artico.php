@@ -317,7 +317,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     if ($toDo == 'insert') {
       gaz_dbi_table_insert('artico', $form);
       if (!empty($tbt)) {
-        bodytextInsert(array('table_name_ref' => 'artico_' . $form['codice'], 'body_text' => $form['body_text'], 'lang_id' => 1));
+        bodytextInsert(['table_name_ref'=>'artico_'.$form['codice'],'code_ref'=>$form['codice'],'body_text'=>$form['body_text'],'lang_id'=>1]);
       }
       if ($form['id_position'] > 0) { // è stata indicata una ubicazione
         $position = gaz_dbi_get_row($gTables['artico_position'], 'id_position', $form['id_position']); // prendo i valori magazzino e scaffale dal principale (senza codart)
@@ -325,27 +325,27 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
       }
       // in inserimento valorizzo tutte le lingue straniere con quella attiva (eventualmente le modificherò in un secondo tempo)
       foreach($langs as $l){
-        bodytextInsert(array('table_name_ref'=>'artico','code_ref'=>$form['codice'],'body_text'=>$form['lang_bodytext'.$l['lang_id']],'descri'=>$form['lang_descri'.$l['lang_id']],'lang_id'=>$l['lang_id']));
+        bodytextInsert(['table_name_ref'=>'artico','code_ref'=>$form['codice'],'body_text'=>$form['lang_bodytext'.$l['lang_id']],'descri'=>$form['lang_descri'.$l['lang_id']],'lang_id'=>$l['lang_id']]);
       }
     } elseif ($toDo == 'update') {
       gaz_dbi_table_update('artico', $form['ref_code'], $form);
-      $bodytext = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", 'artico_' . $form['codice']);
+      $bodytext = gaz_dbi_get_row($gTables['body_text'],"table_name_ref",'artico_'.$form['codice']," OR code_ref='".$form['codice']."'");
       if (empty($tbt) && $bodytext) {
           // è vuoto il nuovo ma non lo era prima, allora lo cancello
           gaz_dbi_del_row($gTables['body_text'], 'id_body', $bodytext['id_body']);
       } elseif (!empty($tbt) && $bodytext) {
           // c'è e c'era quindi faccio l'update
-          bodytextUpdate(array('id_body', $bodytext['id_body']), array('table_name_ref' => 'artico_' . $form['codice'], 'body_text' => $form['body_text'], 'lang_id' => 1));
+          bodytextUpdate(['id_body',$bodytext['id_body']],['table_name_ref' =>'artico_'.$form['codice'],'code_ref'=>$form['codice'],'body_text'=>$form['body_text'],'lang_id' => 1]);
       } elseif (!empty($tbt)) {
           // non c'era lo inserisco
-          bodytextInsert(array('table_name_ref' => 'artico_' . $form['codice'], 'body_text' => $form['body_text'], 'lang_id' => 1));
+          bodytextInsert(['table_name_ref'=>'artico_'.$form['codice'],'code_ref'=>$form['codice'],'body_text'=>$form['body_text'],'lang_id'=>1]);
       }
 
       foreach($langs as $lang){// in aggiornamento modifico comunque tutte le traduzioni
         //per retrocompatibilità devo controllare sempre se esiste la traduzione
         $bodytextol = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", 'artico', " AND code_ref = '" . $form['codice']."' AND lang_id = '".$lang['lang_id']."'");
         if (!$bodytextol) { // non c'è la traduzione in lingua straniera, la creo
-           bodytextInsert(array('table_name_ref'=>'artico','code_ref'=>$form['codice'],'body_text'=>$form['lang_bodytext'.$lang['lang_id']],'descri'=>$form['lang_descri'.$lang['lang_id']],'lang_id'=>$lang['lang_id']));
+           bodytextInsert(['table_name_ref'=>'artico','code_ref'=>$form['codice'],'body_text'=>$form['lang_bodytext'.$lang['lang_id']],'descri'=>$form['lang_descri'.$lang['lang_id']],'lang_id'=>$lang['lang_id']]);
         }else{// altrimenti la aggiorno
           gaz_dbi_query("UPDATE ".$gTables['body_text']." SET body_text='".$form['lang_bodytext'.$lang['lang_id']]."', descri='".$form['lang_descri'.$lang['lang_id']]."' WHERE table_name_ref='artico' AND code_ref='".$form['codice']."' AND lang_id = '".$lang['lang_id']."'");
         }
@@ -1177,7 +1177,7 @@ if ($modal === false && $toDo=='update') {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="web_url" class="col-sm-4 control-label"><?php echo $script_transl['web_url']; ?></label>
-                            <input class="col-sm-8" type="text" value="<?php echo $form['web_url']; ?>" name="web_url" maxlength="255" />
+                            <input class="col-sm-8" type="text" value="<?php echo $form['web_url']; ?>" name="web_url" maxlength="255" placeholder="URL o allinemento su sito statico"/>
                         </div>
                     </div>
                 </div><!-- chiude row  -->
