@@ -3,8 +3,8 @@
  --------------------------------------------------------------------------
                             GAzie - Gestione Azienda
     Copyright (C) 2004-2022 - Antonio De Vincentiis Montesilvano (PE)
-         (https://www.devincentiis.it)
-           <https://gazie.sourceforge.net>
+         (http://www.devincentiis.it)
+           <http://gazie.sourceforge.net>
  --------------------------------------------------------------------------
     Questo programma e` free software;   e` lecito redistribuirlo  e/o
     modificarlo secondo i  termini della Licenza Pubblica Generica GNU
@@ -176,8 +176,10 @@ class BookingSummary extends Template
 		}
 
 		$this->SetY(224);
+		if (isset($payments) && count($payments)>0){
 		$this->Cell(100, 6, 'Payments already made', 'LTR', 0, 'C', 1);
 		$this->Cell(30, 6, 'Amount', 'LTR', 1, 'C', 1);
+		}
 		$payments = $this->docVars->getPag();
 		$payed=0;
 		foreach ($payments AS $key => $pay) {

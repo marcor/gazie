@@ -3,9 +3,9 @@
 /*
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
-  Copyright (C) 2004-present - Antonio De Vincentiis Montesilvano (PE)
-  (https://www.devincentiis.it)
-  <https://gazie.sourceforge.net>
+  Copyright (C) 2004-2023 - Antonio De Vincentiis Montesilvano (PE)
+  (http://www.devincentiis.it)
+  <http://gazie.sourceforge.net>
   --------------------------------------------------------------------------
   Questo programma e` free software;   e` lecito redistribuirlo  e/o
   modificarlo secondo i  termini della Licenza Pubblica Generica GNU
@@ -24,12 +24,10 @@
   --------------------------------------------------------------------------
  */
 
-
-use setasign\Fpdi\Tcpdf\Fpdi;
-
+require('../../library/tcpdf/tcpdf.php');
+require('../../library/tcpdf/tcpdi.php');
 #[AllowDynamicProperties]
-
-class Template extends Fpdi {
+class Template extends TCPDI {
 
     function setVars(&$docVars, $Template = '') {
         $this->docVars = & $docVars;
