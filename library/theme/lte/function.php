@@ -162,11 +162,12 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
                 if ($ctrl_m1 != $row['m1_id']) {
                   require("../../modules/" . $row['name'] . "/menu.".$admin_aziend['lang'].".php");
                   require("../../modules/" . $row['name'] . "/lang.".$admin_aziend['lang'].".php");
+                  $othertransl=$strScript;
                 }
                 if ($ctrl_m2 != $row['m2_id']) {
                   $next_m3_name=false;
-                  if (isset($strScript[$nfr2.'.php'])) { // se è stato indicato il nome specifico per la voce di terzo livello generato dal secondo livello
-                    $trl = $strScript[$nfr2.'.php'];
+                  if (isset($othertransl[$nfr2.'.php'])) { // se è stato indicato il nome specifico per la voce di terzo livello generato dal secondo livello
+                    $trl = $othertransl[$nfr2.'.php'];
                     if (isset($trl['menu'])) {
                       $next_m3_name=$trl['menu'];
                     }
@@ -177,10 +178,11 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
                     if ($row['m3_link'] == $scriptname) {
                         $title_from_menu = $transl[$row['name']]['m3'][$row['m3_trkey']][0];
                     }
-
                     if ($ctrl_m2 != $row['m2_id'] and $ctrl_m1 != $row['m1_id']) {
-                        if (isset($strScript[$scriptname])) { // se Ã¨ stato tradotto lo script lo ritorno al chiamante
-                            $translated_script = $strScript[$scriptname];
+                        require("../../modules/" . $row['name'] . "/lang.".$admin_aziend['lang'].".php");
+                        $mymodtransl=$strScript;
+                        if (isset($mymodtransl[$scriptname])) { // se Ã¨ stato tradotto lo script lo ritorno al chiamante
+                            $translated_script = $mymodtransl[$scriptname];
                             if (isset($translated_script['title'])) {
                                 $title_from_menu = $translated_script['title'];
                             }
@@ -375,7 +377,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
     }
     if (!isset($translated_script)) {
         if ($alternative_transl) { // se e' stato passato il nome dello script sul quale mi devo basare per la traduzione
-            $translated_script = $strScript[$alternative_transl . '.php'];
+            $translated_script = $mymodtransl[$alternative_transl . '.php'];
         } else {
             $translated_script = array($module);
         }
@@ -433,16 +435,16 @@ function get_transl_referer($rlink) {
                         include "../../modules/" . $clink[1] . "/lang.italian.php";
                         // tento di risalire allo script giusto
                         $n_scr = explode('?', end($clink));
-                        if (isset($strScript[$n_scr[0]])) { // ho trovato una traduzione per lo script
-                            if (isset($strScript[$n_scr[0]]['title'])) { // ho trovato una traduzione per lo script con index specifico
-                                if (is_array($strScript[$n_scr[0]]['title'])) {
-                                    return $clink[1] . '-sc-' . $n_scr[0] . '-title-' . array_shift(array_slice($strScript[$n_scr[0]]['title'], 0, 1));
+                        if (isset($mymodtransl[$n_scr[0]])) { // ho trovato una traduzione per lo script
+                            if (isset($mymodtransl[$n_scr[0]]['title'])) { // ho trovato una traduzione per lo script con index specifico
+                                if (is_array($mymodtransl[$n_scr[0]]['title'])) {
+                                    return $clink[1] . '-sc-' . $n_scr[0] . '-title-' . array_shift(array_slice($mymodtransl[$n_scr[0]]['title'], 0, 1));
                                 } else {
                                     return $clink[1] . '-sc-' . $n_scr[0] . '-title';
                                 }
-                            } elseif (isset($strScript[$n_scr[0]][0])) { // ho trovato una traduzione per lo script nel primo elemento
-                                if (is_array($strScript[$n_scr[0]][0])) {
-                                    return $clink[1] . '-sc-' . $n_scr[0] . '-0-' . array_shift(array_slice($strScript[$n_scr[0]][0], 0, 1));
+                            } elseif (isset($mymodtransl[$n_scr[0]][0])) { // ho trovato una traduzione per lo script nel primo elemento
+                                if (is_array($mymodtransl[$n_scr[0]][0])) {
+                                    return $clink[1] . '-sc-' . $n_scr[0] . '-0-' . array_shift(array_slice($mymodtransl[$n_scr[0]][0], 0, 1));
                                 } else {
                                     return $clink[1] . '-sc-' . $n_scr[0] . '-0';
                                 }
