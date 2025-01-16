@@ -66,7 +66,7 @@ function pastelColors() {
     return $r . $g . $b;
 }
 
-function submenu($array,$sub="") {
+function submenu($array,$index, $sub="") {
   $numsub = 0;
   if(!is_array($array)) { return; }
   foreach($array as $i => $mnu) {
@@ -75,7 +75,7 @@ function submenu($array,$sub="") {
     $is_report=(str_contains($scriptname,'report')||str_contains($scriptname,'list'))?true:false;
     global $admin_aziend;
     if ($numsub === 0) { echo "<ul class=\"treeview-menu\">"; }
-    if (count($mnu)>6) { // è un secondo livello con sub (terzo livello)
+    if (count($mnu)>7) { // è un secondo livello con sub (terzo livello)
       if ( $admin_aziend["Abilit"]>=$mnu["m2_ackey"] ) {
         echo "<li>";
         if (isset($mnu["menu"]) && $mnu["menu"]){
@@ -83,13 +83,12 @@ function submenu($array,$sub="") {
         } elseif (str_contains($scriptname,'report')||str_contains($scriptname,'list')) {
           $sub = '<a href="'. $mnu["link"] .'">Lista '.stripslashes($mnu["name"]);
         } else {
-          $sub = '<a href="'. $mnu["link"] .'">'.stripslashes($mnu["name"]);
+          $sub = '<a href="'. $mnu["link"] .'"'.stripslashes($mnu["name"]);
         }
         echo "  <a href=\"#\" hint=\"".stripslashes($mnu["name"])."\">".stripslashes($mnu["name"]);
         echo "      <i class=\"fa fa-angle-left pull-right\"></i>";
         echo "  </a>";
-        submenu($mnu,$sub);
-        $m2name=false;
+        submenu($mnu,1,$sub);
         $sub="";
         echo "</li>";
       }
@@ -292,7 +291,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
         echo "      <span>". $link['name'] ."</span>\n";
         echo "    <i class=\"fa fa-angle-left pull-right\"></i>\n";
         echo "  </a>\n";
-        submenu($link);
+        submenu($link, $i);
         echo "          </li>\n";
       }
       $i++;
