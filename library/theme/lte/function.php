@@ -83,7 +83,7 @@ function submenu($array,$index, $sub="") {
         } elseif (str_contains($scriptname,'report')||str_contains($scriptname,'list')) {
           $sub = '<a href="'. $mnu["link"] .'">Lista '.stripslashes($mnu["name"]);
         } else {
-          $sub = '<a href="'. $mnu["link"] .'"'.stripslashes($mnu["name"]);
+          $sub = '<a href="'. $mnu["link"] .'">'.stripslashes($mnu["name"]);
         }
         echo "  <a href=\"#\" hint=\"".stripslashes($mnu["name"])."\">".stripslashes($mnu["name"]);
         echo "      <i class=\"fa fa-angle-left pull-right\"></i>";

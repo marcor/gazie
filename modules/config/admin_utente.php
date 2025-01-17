@@ -395,7 +395,7 @@ if (isset($_POST['conferma'])) {
           $form['custom_field'] = json_encode($data);
         }
         gaz_dbi_put_row($gTables['anagra'], 'id', $form['id_anagra'], 'custom_field', $form['custom_field']);// aggiorno il DB
-      }elseif (strlen($form['imap_usr'])>2 && strlen($form['imap_pwr'])>4){// se è stato inserito l'utente nelle impostazioni imap creo i dati imap nel custom_field
+      }elseif (strlen($form['imap_usr'].'')>2 && strlen($form['imap_pwr'].'')>4){// se è stato inserito l'utente nelle impostazioni imap creo i dati imap nel custom_field
         $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-128-cbc'));
         $cripted_pwr=base64_encode(openssl_encrypt($form['imap_pwr'], 'aes-128-cbc', $_SESSION['aes_key'], 0, $iv).'::'.$iv);
         $data['config'][$form['company_id']]= array('imap_usr' => $form['imap_usr'],'imap_pwr' => $cripted_pwr,'imap_sent_folder' => $form['imap_sent_folder']);
