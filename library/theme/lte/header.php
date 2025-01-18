@@ -518,6 +518,9 @@ if ($rslen < 18) {
                                     <span class="hidden-xs"><?php echo $admin_aziend['user_firstname'] . ' ' . $admin_aziend['user_lastname']; ?></span>
                                 </a>
                                 <ul class="dropdown-menu">
+<?php
+if($admin_aziend['Abilit']>=8) {
+?>
                                     <!-- User image -->
                                     <li class="user-header"><a href="../config/admin_utente.php?user_name=<?php echo $admin_aziend["user_name"]; ?>&Update">
                                         <img src="<?php echo '../root/view.php?table=admin&field=user_name&value=' . $admin_aziend["user_name"]; ?>" class="img-circle" alt="User" height=80></a>
@@ -539,6 +542,10 @@ if ($rslen < 18) {
                                         </div>
                                       </a>
                                     </li>
+<?php
+}
+?>
+
                                     <!-- Menu Footer-->
                                     <li class="user-footer">
                                         <div class="text-center">
