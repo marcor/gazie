@@ -126,11 +126,11 @@ if (file_exists(DATA_DIR.'files/'.$admin_aziend['codice'].'/favicon.ico')) { // 
             .company-color, .company-color-bright, li.user-header, .company-color-logo, .dropdown-menu > li > a:hover, .dropdown-menu > li.user-body:hover, .navbar-default .navbar-nav > li > a:hover,
             nav.navbar.navbar-static-top.company-color-bright:hover
             {
-              background-color: #<?php echo $admin_aziend['colore']; ?>;
+              background-color: #<?= $admin_aziend['colore'] ?>;
               color: black;
             }
             .adminlte-gazie .main-sidebar {
-              background-color: #<?php echo $admin_aziend['colore']; ?>;
+              background-color: #<?= $admin_aziend['colore'] ?>;
             }
             .company-color-logo:hover {
               filter: brightness(80%);
@@ -153,16 +153,16 @@ if (file_exists(DATA_DIR.'files/'.$admin_aziend['codice'].'/favicon.ico')) { // 
             }
             .sidebar-menu > li:hover > a,
             .sidebar-menu > li.active > a {
-              border-left-color: #<?php echo $admin_aziend['colore']; ?>;
+              border-left-color: #<?= $admin_aziend['colore'] ?>;
             }
             .sidebar a, treeview-menu > li > a {
-              color: #<?php echo $admin_aziend['colore']; ?>;
+              color: #<?= $admin_aziend['colore'] ?>;
             }
             .sidebar-menu .treeview-menu.menu-open > li {
-              border-left: 2px solid #<?php echo $admin_aziend['colore']; ?>;
+              border-left: 2px solid #<?= $admin_aziend['colore'] ?>;
             }
             .content-wrapper {
-              background-image: url("data:image/x-icon;base64,<?php echo $sfondo; ?>");
+              background-image: url("data:image/x-icon;base64,<?= $sfondo; ?>");
             }
             a.logo.company-color-logo span img {
               height: auto;
@@ -170,6 +170,14 @@ if (file_exists(DATA_DIR.'files/'.$admin_aziend['codice'].'/favicon.ico')) { // 
               max-width: 50px;
               max-height: 50px;
               padding: 1px;
+            }
+            th a, .breadcrumb li a, a i.glyphicon-cog {
+              color: #<?= $admin_aziend['colore'] ?>;
+              filter: brightness(0.5);
+            }
+            .nav-pills > li.active > a, .nav-pills > li.active > a:hover, .nav-pills > li.active > a:focus {
+              background-color: #<?= $admin_aziend['colore'] ?>;
+              color: #000;
             }
 
         </style>
