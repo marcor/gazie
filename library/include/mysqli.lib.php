@@ -196,7 +196,7 @@ function gaz_dbi_get_single_value($table, $campo, $where) {
   $query = "SELECT $campo FROM $table WHERE $where";
   $result = gaz_dbi_query($query);
   if (!$result) gaz_die ( $query, "182", __FUNCTION__ );
-  $ris = gaz_dbi_fetch_assoc($result, MYSQLI_NUM);
+  $ris = gaz_dbi_fetch_array($result, MYSQLI_NUM);
   $rn = gaz_dbi_num_rows($result);
   if ($rn == 1) {
     return $ris[0];
