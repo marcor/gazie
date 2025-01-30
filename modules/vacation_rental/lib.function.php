@@ -282,7 +282,7 @@ function get_totalprice_booking($tesbro,$tourist_tax=TRUE,$vat=FALSE,$preeminent
       $tableaz = $gTables['aziend'];
 	  $tableart = $gTables['artico'];
     }
-    $where = " WHERE id_tes = '".$tesbro."'";
+    $where = " WHERE (id_tes = '".$tesbro."'";
     if ($tourist_tax == TRUE && $add_extra==FALSE){// se richiesta la tassa turistica ma esclusi gli extra
       $where .= " AND (codart LIKE 'TASSA-TURISTICA%' OR (".$tableart.".custom_field REGEXP 'accommodation_type'))";
       $on="";
@@ -299,10 +299,13 @@ function get_totalprice_booking($tesbro,$tourist_tax=TRUE,$vat=FALSE,$preeminent
       $where .= " AND codart NOT LIKE 'TASSA-TURISTICA%'";
       $on="AND ".$tablerig.".codart NOT LIKE 'TASSA-TURISTICA'";
     }
+	$where .=")";
     if ($vat==FALSE){// devo restituire l'imponibile
       $sql = "SELECT SUM(quanti * prelis) AS totalprice FROM ".$tablerig." LEFT JOIN ".$tableart." ON (".$tablerig.".codart = ".$tableart.".codice) OR (".$tablerig.".codart = ".$tableart.".codice AND ".$tablerig.".codice_fornitore = ".$tableart.".codice) ".$on." ".$where;
+	  
       if ($result = mysqli_query($link, $sql)) {
          $row = mysqli_fetch_assoc($result);
+		
           $sql = "SELECT speban FROM ".$tabletes.$where." LIMIT 1";
           if ($result = mysqli_query($link, $sql)) {
             $rowtes = mysqli_fetch_assoc($result);
@@ -316,11 +319,14 @@ function get_totalprice_booking($tesbro,$tourist_tax=TRUE,$vat=FALSE,$preeminent
          echo "Error: " . $sql . "<br>" . mysqli_error($link);
       }
     }else{// devo restituire iva compresa
-
+		$where .= " OR (id_tes = '".$tesbro."' AND prelis < 0)";// devo prendere comunque anche tutti i righi sconto
       $sql = "SELECT ".$tablerig.".quanti, ".$tablerig.".prelis, ".$tableiva.".aliquo, ".$tableart.".codice FROM ".$tablerig." LEFT JOIN ".$tableiva." ON ".$tableiva.".codice = ".$tablerig.".codvat "." LEFT JOIN ".$tableart." ON ".$tablerig.".codart = ".$tableart.".codice ".$where;
       $totalprice=0;$totalsecdep=0;
+	  //echo "<br> sql:",$sql;
       if ($result = mysqli_query($link, $sql)) {
+		 
         foreach ($result as $res){
+			//echo"<pre>",print_r($res),"</pre>";  
           $totalprice += ($res['prelis']*$res['quanti'])+((($res['prelis']*$res['quanti'])*$res['aliquo'])/100);
           if ($security_deposit==TRUE){
             $sql = "SELECT custom_field FROM ".$tableart." WHERE ".$tableart.".codice = '".$res['codice']."'";
@@ -613,6 +619,29 @@ function get_secdep_paid($idtesbro){// totale deposito cauzionale pagato per la 
   }else {
      echo "Error: " . $sql . "<br>" . mysqli_error($link);
   }
+}
+
+function get_user_points($id_anagra){// restituisce i punti accumulati dal cliente
+  global $link, $azTables, $gTables, $genTables;// posso chiamare la funzione con entrambi i metodi
+  $user_point=0;
+  if ($azTables){
+    $table = $genTables."anagra";
+  }else{
+    $table = $gTables['anagra'];
+  }
+  $where = " WHERE id = '".$id_anagra."'";
+  $sql = "SELECT custom_field FROM ".$table.$where;
+  if ($result = mysqli_query($link, $sql)) {// prendo il customfield in anagra
+    $row = mysqli_fetch_assoc($result);
+    if (isset($row['custom_field']) && ($data = json_decode($row['custom_field'],true))){// se c'è un json in anagra
+      if (is_array($data['vacation_rental'])){ // se c'è il modulo "vacation rental" lo aggiorno
+        if (isset($data['vacation_rental']['points'])){
+          $user_point = intval($data['vacation_rental']['points']);
+        }
+      }
+    }
+  }
+  return  $user_point;
 }
 
 function get_user_points_level($id_anagra){// determina il livello punti raggiunto dal cliente
