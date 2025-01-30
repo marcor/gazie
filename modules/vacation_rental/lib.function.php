@@ -621,30 +621,7 @@ function get_secdep_paid($idtesbro){// totale deposito cauzionale pagato per la 
   }
 }
 
-function get_user_points($id_anagra){// restituisce i punti accumulati dal cliente
-  global $link, $azTables, $gTables, $genTables;// posso chiamare la funzione con entrambi i metodi
-  $user_point=0;
-  if ($azTables){
-    $table = $genTables."anagra";
-  }else{
-    $table = $gTables['anagra'];
-  }
-  $where = " WHERE id = '".$id_anagra."'";
-  $sql = "SELECT custom_field FROM ".$table.$where;
-  if ($result = mysqli_query($link, $sql)) {// prendo il customfield in anagra
-    $row = mysqli_fetch_assoc($result);
-    if (isset($row['custom_field']) && ($data = json_decode($row['custom_field'],true))){// se c'è un json in anagra
-      if (is_array($data['vacation_rental'])){ // se c'è il modulo "vacation rental" lo aggiorno
-        if (isset($data['vacation_rental']['points'])){
-          $user_point = intval($data['vacation_rental']['points']);
-        }
-      }
-    }
-  }
-  return  $user_point;
-}
-
-function get_user_points_level($id_anagra){// determina il livello punti raggiunto dal cliente
+function get_user_points_level($id_anagra, $point=false){// determina il livello punti raggiunto dal cliente. Restituisce null se il sistema punti è disabilitato o non correttamente impostato. Restituisce array con livello e punti se point=true
   global $link, $azTables, $gTables, $genTables;// posso chiamare la funzione con entrambi i metodi
   if ($azTables){
     $table = $genTables."anagra";
@@ -662,23 +639,22 @@ function get_user_points_level($id_anagra){// determina il livello punti raggiun
           $user_point = intval($data['vacation_rental']['points']);
         }
       }
-    }else{
-      $user_point=0;
     }
     if ($azTables){
       $table = $azTables."company_config";
     }else{
       $table = $gTables['company_config'];
     }
+	$user_lev=null;
     $sql = "SELECT * FROM ". $table ." WHERE var = 'pointenable' ORDER BY id ASC LIMIT 1";
     if ($result = mysqli_query($link, $sql)) {// prendo il customfield in anagra
       $row = mysqli_fetch_assoc($result);
       $pointenable=$row['val'];
     }
-
+	
     $sql = "SELECT * FROM ". $table ." WHERE var LIKE 'pointlevel%' ORDER BY id ASC";
     if ($result = mysqli_query($link, $sql)) {// prendo i livelli dalle impostazioni generali
-      $levname="";$user_lev="";
+      $levname="";
       if (intval($pointenable)>0 ){
         while ($rigpoint = mysqli_fetch_array($result)){
           if (substr($rigpoint['description'],0,12)=="Nome livello"){
@@ -691,7 +667,13 @@ function get_user_points_level($id_anagra){// determina il livello punti raggiun
           }
         }
       }
-      return $user_lev;// restituisco il numero del livello
+	  if ($point == false){
+		return $user_lev;// restituisco il numero del livello
+	  }else{
+		  $ret['user_level']=$user_lev;
+		  $ret['user_point']=$user_point;
+		  return $ret;
+	  }
     }else {
        echo "Error: " . $sql . "<br>" . mysqli_error($link);
     }
