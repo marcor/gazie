@@ -711,27 +711,31 @@ class Login
 		$query_email_smtp_conf->bindValue(':variable', 'admin_mail', PDO::PARAM_STR);
 		$query_email_smtp_conf->execute();
 		$r = $query_email_smtp_conf->fetchAll();
-		$admin_mail = $r[0]['cvalue'];			
-		
+		$admin_mail = $r[0]['cvalue'];
+
 		//$mail->AddEmbeddedImage('../../library/images/gazie.gif', 'gazie');
 		$link = EMAIL_PASSWORDRESET_URL . '?user_name=' . urlencode($user_name) . '&verification_code=' . urlencode($user_password_reset_hash);
 		$Body = EMAIL_PASSWORDRESET_CONTENT . '<br><a href="' . $link . '"> ' . MESSAGE_EMAIL_LINK_FOR_RESET . '</a>';
-		
+
 		$headers = "MIME-Version: 1.0" . "\r\n";
 		$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
 		$headers .= "From: ".$admin_mail. " : your server mail" . "\r\n";
 		if ( function_exists( 'mail' ) ){
-			if (mail($user_email,EMAIL_PASSWORDRESET_SUBJECT,$Body,$headers)){
+			if (@mail($user_email,EMAIL_PASSWORDRESET_SUBJECT,$Body,$headers)){
 				$this->messages[] = MESSAGE_PASSWORD_RESET_MAIL_SUCCESSFULLY_SENT;
 				return true;
-			} else {				
-				$this->errors[] = MESSAGE_PASSWORD_RESET_MAIL_FAILED . error_get_last['message'];
+			} else {
+        $adderr="";
+        if ($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == '127.0.0.1') {
+          $adderr= ' You are accessing the website from localhost.';
+        }
+				$this->errors[] = MESSAGE_PASSWORD_RESET_MAIL_FAILED . "invio non riuscito.".$adderr." Devi usare l'utility: passhash.php";
 				return false;
 			}
 		}else{
 			echo 'la funzione mail() del tuo Php è disabilitata. Se non riesci in altri modi a modificare la password devi usare l\'utility: passhash.php';
 		}
-		
+
 	}
 
 	/**
