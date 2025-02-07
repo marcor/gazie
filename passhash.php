@@ -57,8 +57,9 @@ function makeaeskey(length) {
 }
 
 function changeaeskey(length) {
-  let result =  document.getElementById('aeskey').value;
+  let getaes = document.getElementById('aeskey').value;
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!£$%&/()=?^,.-òàùè+[]@#}{;:_';
+  let result = getaes.split('').filter(c => characters.includes(c)).join('').substr(0,length);
   const charactersLength = characters.length;
   let counter = result.length;
   while (counter < length) {
@@ -79,7 +80,7 @@ function changeaeskey(length) {
 <form method="post" id="myForm">
 <p><input type="text" name="user_name" value="<?= $_POST['user_name'];?>" placeholder="nome utente"></p>
 <p><input type="password" name="password" value="<?= $_POST['password'];?>" placeholder="password in chiaro"></p>
-<p><input type="text" name="aeskey" id="aeskey" value="<?= $_POST['aeskey']; ?>" onchange="changeaeskey(16)" ><input type="submit" value="Conferma" ></p>
+<p><input type="text" name="aeskey" id="aeskey" value="<?= $_POST['aeskey']; ?>" onchange="changeaeskey(16)" maxlength=16 /><input type="submit" value="Conferma" /></p>
 <?php
 if (isset($_POST['password'])) {
   if (strlen($_POST['password']) > 3 ) {
