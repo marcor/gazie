@@ -67,7 +67,7 @@ if(isset($_GET['group_delete'])) {
 	gaz_dbi_table_update ("artico", $art['codice'], array("id_artico_group"=>"") );
 	}
 	gaz_dbi_del_row($gTables['artico_group'], "id_artico_group", $_GET['group_delete']);// cancello la struttura
-  gaz_dbi_del_row($gTables['body_text'], "table_name_ref", "artico_group' AND code_ref = '".$_GET['group_delete']);// cancello il gruppo
+  gaz_dbi_del_row($gTables['body_text'], "table_name_ref", "artico_group' AND code_ref = '".$_GET['group_delete']);// cancello i bodytext in lingua del gruppo
 
 	header("Location: ../vacation_rental/report_accommodation.php");
 	exit;
@@ -169,7 +169,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         }
         foreach($langs as $l){
           if ($l['lang_id']==1){ continue;}
-          bodytextInsert(['table_name_ref'=>'artico_group','code_ref'=>$form['id_artico_group'],'body_text'=>$form['lang_bodytext'.$l['lang_id']],'descri'=>$form['lang_descri'.$l['lang_id']],'lang_id'=>$l['lang_id']]);
+          bodytextInsert(['table_name_ref'=>'artico_group','code_ref'=>strval($form['id_artico_group']),'body_text'=>$form['lang_bodytext'.$l['lang_id']],'descri'=>$form['lang_descri'.$l['lang_id']],'lang_id'=>$l['lang_id']]);
         }
 				// il redirect deve modificare il form in update perché è stato già inserito
 				header("Location: ../vacation_rental/admin_facility.php?Update&id_artico_group=".$form['id_artico_group']."&tab=variant");
