@@ -129,15 +129,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['lang_web_url'.$lang['lang_id']]=filter_var(substr($_POST['lang_web_url'.$lang['lang_id']],0,100), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
   }
 	$form['hidden_req'] = $_POST['hidden_req'];
-  if ($form['hidden_req']=='refresh_language') { // se ho cambiato la lingua ricarico dal database i valori di descrizione e descrizione estesa
-    $bodytextol = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", 'artico', " AND code_ref = '" . $form['codice']."' AND lang_id = '".$form['lang_id']."'");
-    if ($bodytextol && $form['lang_id'] > 1 ) { // riprendo dal db solo se non è italiano ed esiste
-      $form['lang_descri']=$bodytextol['descri'];
-      $form['lang_bodytext']=$bodytextol['body_text'];
-      $form['lang_web_url']=$bodytextol['web_url'];
-    }
-    $form['hidden_req']='';
-  }
+
   if (isset ($_GET['codice'])){
 	$query = "SELECT * FROM " . $gTables['rental_ical'] . " WHERE codice_alloggio = '".substr($_GET['codice'],0,32)."' ORDER BY id ASC";
 	$resical = gaz_dbi_query($query);
@@ -350,11 +342,14 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
       }
       // in inserimento scrivo tutte le lingue straniere
       foreach($langs as $l){
-        bodytextInsert(['table_name_ref'=>'artico','code_ref'=>$form['codice'],'body_text'=>$form['lang_bodytext'.$l['lang_id']],'descri'=>$form['lang_descri'.$l['lang_id']],'lang_id'=>$l['lang_id'],'web_url'=>$form['lang_web_url'.$l['lang_id']]]);
+        $custom_field_url = array('web_url'=>$form['lang_web_url'.$l['lang_id']]);
+        $custom=json_encode($custom_field_url);
+        bodytextInsert(['table_name_ref'=>'artico','code_ref'=>$form['codice'],'body_text'=>$form['lang_bodytext'.$l['lang_id']],'descri'=>$form['lang_descri'.$l['lang_id']],'lang_id'=>$l['lang_id'],'custom_field'=>$custom]);
       }
     } elseif ($toDo == 'update') {
       $artico_row=gaz_dbi_get_row($gTables['artico'], "codice", $form['codice']); // carico il vecchio json custom_field
       $custom_field=(isset($artico_row['custom_field']))?$artico_row['custom_field']:'';
+
       if ($custom_field<>'' && $data = json_decode($custom_field,true)){// se c'è un json
         if (is_array($data['vacation_rental'])){ // se c'è il modulo "vacation rental" lo aggiorno
           $data['vacation_rental']['accommodation_type']=$_POST['accommodation_type'];
@@ -392,11 +387,13 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
       }
       foreach($langs as $lang){// in aggiornamento modifico comunque tutte le traduzioni
         //per retrocompatibilità devo controllare sempre se esiste la traduzione
+        $custom_field_url = array('web_url'=>$form['lang_web_url'.$lang['lang_id']]);
+        $custom=json_encode($custom_field_url);
         $bodytextol = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", 'artico', " AND code_ref = '" . $form['codice']."' AND lang_id = '".$lang['lang_id']."'");
         if (!$bodytextol) { // non c'è la traduzione in lingua straniera, la creo
-           bodytextInsert(['table_name_ref'=>'artico','code_ref'=>$form['codice'],'body_text'=>$form['lang_bodytext'.$lang['lang_id']],'descri'=>$form['lang_descri'.$lang['lang_id']],'lang_id'=>$lang['lang_id'],'web_url'=>$form['lang_web_url'.$lang['lang_id']]]);
+           bodytextInsert(['table_name_ref'=>'artico','code_ref'=>$form['codice'],'body_text'=>$form['lang_bodytext'.$lang['lang_id']],'descri'=>$form['lang_descri'.$lang['lang_id']],'lang_id'=>$lang['lang_id'],'custom_field'=>$custom]);
         }else{// altrimenti la aggiorno
-          gaz_dbi_query("UPDATE ".$gTables['body_text']." SET body_text='".$form['lang_bodytext'.$lang['lang_id']]."', descri='".$form['lang_descri'.$lang['lang_id']]."', web_url='".$form['lang_web_url'.$lang['lang_id']]."' WHERE table_name_ref='artico' AND code_ref='".$form['codice']."' AND lang_id = '".$lang['lang_id']."'");
+          gaz_dbi_query("UPDATE ".$gTables['body_text']." SET body_text='".$form['lang_bodytext'.$lang['lang_id']]."', descri='".$form['lang_descri'.$lang['lang_id']]."', custom_field='".$custom."' WHERE table_name_ref='artico' AND code_ref='".$form['codice']."' AND lang_id = '".$lang['lang_id']."'");
         }
       }
     }
@@ -560,7 +557,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
       $bodytextlang = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", 'artico', " AND code_ref = '".substr($_GET['codice'],0,32)."' AND lang_id = ".$lang['lang_id']);
       $form['lang_descri'.$lang['lang_id']] = (isset($bodytextlang['descri']))?$bodytextlang['descri']:$form['descri'];
       $form['lang_bodytext'.$lang['lang_id']] = (isset($bodytextlang['body_text']))?$bodytextlang['body_text']:filter_var($form['body_text'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-      $form['lang_web_url'.$lang['lang_id']] = (isset($bodytextlang['web_url']))?$bodytextlang['web_url']:$form['web_url'];
+      $obj = json_decode($bodytextlang['custom_field']);
+      $form['lang_web_url'.$lang['lang_id']] = (isset($obj->web_url))?$obj->web_url:$form['web_url'];
     }
 } else { //se e' il primo accesso per INSERT
     $autoincrement_id_ecomm = gaz_dbi_get_row($gTables['company_config'], 'var', 'autoincrement_id_ecomm')['val'];// acquisico impostazione per autoincremento ID ref ecommerce
@@ -1477,68 +1475,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <?php
-                /*
-                if ($toDo == 'update') {
-                ?>
-                    <!--+ DC - 06/02/2019 div class="row" --->
-                    <div id="docCert" class="row IERincludeExcludeRow">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="docCert" class="col-sm-4 control-label"><?php echo $script_transl['document']; ?></label>
-                                  <?php if ($ndoc > 0) { // se ho dei documenti  ?>
-                                    <div>
-                                    <?php foreach ($form['rows'] as $k => $val) { ?>
-                                            <input type="hidden" value="<?php echo $val['id_doc']; ?>" name="rows[<?php echo $k; ?>][id_doc]">
-                                            <input type="hidden" value="<?php echo $val['extension']; ?>" name="rows[<?php echo $k; ?>][extension]">
-                                            <input type="hidden" value="<?php echo $val['title']; ?>" name="rows[<?php echo $k; ?>][title]">
-                                            <?php echo DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/doc/' . $val['id_doc'] . '.' . $val['extension']; ?>
-                                            <a href="../root/retrieve.php?id_doc=<?php echo $val["id_doc"]; ?>" title="<?php echo $script_transl['view']; ?>!" class="btn btn-default btn-sm">
-                                                <i class="glyphicon glyphicon-file"></i>
-                                            </a><?php echo $val['title']; ?>
-                                            <input type="button" value="<?php echo ucfirst($script_transl['update']); ?>" onclick="location.href = 'admin_document.php?id_doc=<?php echo $val['id_doc']; ?>&Update'" />
 
-                                          <?php
-                                          }
-                                          ?>
-                                        <input type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_document.php?item_ref=<?php echo $form['codice']; ?>&Insert'" />
-                                    </div>
-                                    <?php } else { // non ho documenti  ?>
-                                    <input type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_document.php?item_ref=<?php echo $form['codice']; ?>&Insert'">
-                                <?php } ?>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Antonio Germani inserimento/modifica immagini di qualità per e-commerce -->
-                    <div id="qualityImgs" class="row IERincludeExcludeRow">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="annotaUpdate" class="col-sm-4 control-label"><?php echo $script_transl['imageweb']; ?></label>
-                                <?php if ($nimg > 0) { // se ho dei documenti  ?>
-                                    <div>
-                                    <?php foreach ($form['imgrows'] as $k => $val) { ?>
-                                            <input type="hidden" value="<?php echo $val['id_doc']; ?>" name="imgrows[<?php echo $k; ?>][id_doc]">
-                                            <input type="hidden" value="<?php echo $val['extension']; ?>" name="imgrows[<?php echo $k; ?>][extension]">
-                                            <input type="hidden" value="<?php echo $val['title']; ?>" name="imgrows[<?php echo $k; ?>][title]">
-                                            <?php echo DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/images/' . $val['id_doc'] . '.' . $val['extension']; ?>
-                                            <a href="../root/retrieve.php?id_doc=<?php echo $val["id_doc"]; ?>" title="<?php echo $script_transl['view']; ?>!" class="btn btn-default btn-sm">
-                                                <i class="glyphicon glyphicon-file"></i>
-                                            </a><?php echo $val['title']; ?>
-                                            <input type="button" value="<?php echo ucfirst($script_transl['update']); ?>" onclick="location.href = 'admin_image.php?id_doc=<?php echo $val['id_doc']; ?>&Update'" />
-
-                                      <?php } ?>
-                                        <input type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_image.php?item_ref=<?php echo $form['codice']; ?>&Insert'" />
-                                    </div>
-                                    <?php } else { // non ho documenti  ?>
-                                    <input type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_image.php?item_ref=<?php echo $form['codice']; ?>&Insert'">
-                                <?php } ?>
-                            </div>
-                        </div>
-                    </div>
-                <?php
-                }
-                */
-                ?>
             </div><!-- chiude tab-pane  -->
           </div>
         <div class="col-sm-12">
