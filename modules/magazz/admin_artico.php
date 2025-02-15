@@ -416,10 +416,9 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $bodytextlang = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", 'artico', " AND code_ref = '".substr($_GET['codice'],0,32)."' AND lang_id = ".$lang['lang_id']);
     $form['lang_descri'.$lang['lang_id']] = (isset($bodytextlang['descri']))?$bodytextlang['descri']:$form['descri'];
     $form['lang_bodytext'.$lang['lang_id']] = (isset($bodytextlang['body_text']))?$bodytextlang['body_text']:filter_var($form['body_text'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    $obj = json_decode($bodytextlang['custom_field']);
+    $obj = $bodytextlang?json_decode($bodytextlang['custom_field']):false;
     $form['lang_web_url'.$lang['lang_id']] = (isset($obj->web_url))?$obj->web_url:$form['web_url'];
   }
-
   $form['hidden_req'] = '';
 	$form['web_public_init']=$form['web_public'];
 	if (json_decode($form['ecomm_option_attribute']) != null){ // se esiste un json per attributo della variante dell'e-commerce
