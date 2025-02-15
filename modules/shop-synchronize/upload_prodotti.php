@@ -39,15 +39,30 @@ $resuser = gaz_dbi_get_row($gTables['company_config'], "var", "user");
 $ftp_user = $resuser['val'];
 
 $OSftp_pass = gaz_dbi_get_row($gTables['company_config'], "var", "pass")['val'];// vecchio sistema di password non criptata
-$OSaccpass = gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val'];// vecchio sistema di password non criptata
+$OSaccpass_res = gaz_dbi_get_row($gTables['company_config'], "var", "accpass");// vecchio sistema di password non criptata
+$OSaccpass=(isset($OSaccpass_res['val']))?$OSaccpass_res['val']:'';
 $rsdec=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = 'pass'");
 $rdec=gaz_dbi_fetch_row($rsdec);
 $ftp_pass=$rdec[0]?htmlspecialchars_decode($rdec[0]):'';
 $ftp_pass=(strlen($ftp_pass)>0)?$ftp_pass:$OSftp_pass; // se la password decriptata non ha dato risultati provo a vedere se c'è ancora una password non criptata
 $rsdec=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = 'accpass'");
 $rdec=gaz_dbi_fetch_row($rsdec);
+
 $accpass=$rdec[0]?htmlspecialchars_decode($rdec[0]):'';
-$accpass=(strlen($accpass)>0)?$accpass:$OSaccpass; // se la password decriptata non ha dato risultati provo a mettere la password non criptata
+if(strlen($accpass)>0){
+  // ho la password criptata e la uso
+}elseif(strlen($OSaccpass)>0){
+  $accpass=$OSaccpass;// // uso la vecchia password semplice
+}else{
+  // non ho una password, non posso continuare
+  ?>
+  <script>
+  alert("<?php echo "Controllare impostazioni FTP (password) "; ?>");
+  location.replace("./synchronize.php");
+  </script>
+  <?php
+}
+
 
 $test = gaz_dbi_query("SHOW COLUMNS FROM `" . $gTables['admin'] . "` LIKE 'enterprise_id'");
 $exists = (gaz_dbi_num_rows($test)) ? TRUE : FALSE;
