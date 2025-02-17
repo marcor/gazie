@@ -47,6 +47,7 @@ $OSaccpass_res = gaz_dbi_get_row($gTables['company_config'], "var", "accpass");/
 $OSaccpass=(isset($OSaccpass_res['val']))?$OSaccpass_res['val']:'';
 $rsdec=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = 'pass'");
 $rdec=gaz_dbi_fetch_row($rsdec);
+$rdec[0]=$rdec[0]??'';
 $ftp_pass=$rdec?htmlspecialchars_decode($rdec[0]):'';
 $ftp_pass=(strlen($ftp_pass)>0)?$ftp_pass:$OSftp_pass; // se la password decriptata non ha dato risultati provo a vedere se c'è ancora una password non criptata
 $rsdec=gaz_dbi_query("SELECT AES_DECRYPT(FROM_BASE64(val),'".$_SESSION['aes_key']."') FROM ".$gTables['company_config']." WHERE var = 'accpass'");
@@ -275,23 +276,29 @@ if (isset($_POST['conferma'])) { // se confermato
         $xml_output .= "\t<Description>".preg_replace('/[\x00-\x1f]/','',htmlspecialchars($_POST['body_text'.$ord]))."</Description>\n";
       }
 
+      $xml_output .= "\t<Languages>\n";
       foreach($langs as $lang){// carico le traduzioni dal DB e le metto nelle rispettive lingue
+        $xml_output .= "\t\t<Lang>\n";
+        $xml_output .= "\t\t\t<lang_code>".$lang['lang_code']."</lang_code>\n";
         $bodytextlang = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", 'artico', " AND code_ref = '".substr($_POST['codice'.$ord],0,32)."' AND lang_id = ".$lang['lang_id']);
+        $lang_descri = (isset($bodytextlang['descri']))?$bodytextlang['descri']:$_POST['descri'.$ord];
+        $lang_bodytext = (isset($bodytextlang['body_text']))?$bodytextlang['body_text']:filter_var($_POST['body_text'.$ord], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $obj = (isset($bodytextlang['custom_field']))?json_decode($bodytextlang['custom_field']):'';
+        $lang_web_url = (isset($obj->web_url))?$obj->web_url:$artic['web_url'];
+        // invio i testi multilingua
         if (($_GET['name']=="updnam" || $_GET['todo']=="insert") AND strlen($_POST['descri'.$ord])>0){
-          $lang_descri = (isset($bodytextlang['descri']))?$bodytextlang['descri']:$d['descri'];
-          $xml_output .= "\t<Name-".$lang['lang_id'].">".$lang_descri."</Name-".$lang['lang_id'].">\n";
+          $lang_descri = (isset($bodytextlang['descri']))?$bodytextlang['descri']:$_POST['descri'.$ord];
+          $xml_output .= "\t\t\t<Name>".$lang_descri."</Name>\n";
         }
         if (($_GET['descri']=="upddes" || $_GET['todo']=="insert") AND (isset($_POST['body_text'.$ord]) && strlen($_POST['body_text'.$ord])>0)){
-          $lang_bodytext = (isset($bodytextlang['body_text']))?$bodytextlang['body_text']:filter_var($d['body_text'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-          $xml_output .= "\t<Description-".$lang['lang_id'].">".preg_replace('/[\x00-\x1f]/','',htmlspecialchars($lang_bodytext, ENT_QUOTES, 'UTF-8'))."</Description-".$lang['lang_id'].">\n";
+          $lang_bodytext = (isset($bodytextlang['body_text']))?$bodytextlang['body_text']:filter_var($_POST['body_text'.$ord], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+          $xml_output .= "\t\t\t<Description>".preg_replace('/[\x00-\x1f]/','',htmlspecialchars($lang_bodytext, ENT_QUOTES, 'UTF-8'))."</Description>\n";
         }
 
-        $obj = json_decode($bodytextlang['custom_field']);
-        $lang_web_url = (isset($obj->web_url))?$obj->web_url:$d['web_url'];
-
-        $xml_output .= "\t<WebUrl-".$lang['lang_id'].">".$lang_web_url."</WebUrl-".$lang['lang_id'].">\n";
+        $xml_output .= "\t\t\t<WebUrl>".$lang_web_url."</WebUrl>\n";
+        $xml_output .= "\t\t</Lang>\n";
       }
-
+      $xml_output .= "\t</Languages>\n";
 
 			$xml_output .= "\t<WebPublish>".$_POST['web_public'.$ord]."</WebPublish>\n";// 1=attivo su web; 2=attivo e prestabilito; 3=attivo e pubblicato in home; 4=attivo, in home e prestabilito; 5=disattivato su web"
 			if (isset($_POST['imgurl'.$ord]) && ($_GET['img']=="updimg" || $_GET['todo']=="insert") && (strlen($_POST['imgurl'.$ord])>0)){ // se è da aggiornare e c'è un'immagine HQ
@@ -307,7 +314,8 @@ if (isset($_POST['conferma'])) { // se confermato
 				}
 			}elseif (isset($_POST['imgblob'.$ord]) && ($_GET['img']=="updimg" || $_GET['todo']=="insert") && (strlen($_POST['imgblob'.$ord])>0)){// se è da aggiornare e c'è un'immagine blob
 				file_put_contents("../../data/files/tmp/img.jpg", base64_decode($_POST['imgblob'.$ord])); // salvo immagine nella cartella temporanea
-				if (ftp_put($conn_id, $ftp_path_upload."images/".str_replace(' ', '_', $_POST['codice'.$ord]).".jpg", "../../data/files/tmp/img.jpg",  FTP_BINARY)){
+
+				if (@ftp_put($conn_id, $ftp_path_upload."images/".str_replace(' ', '_', $_POST['codice'.$ord]).".jpg", "../../data/files/tmp/img.jpg",  FTP_BINARY)){
 					// scrivo l'immagine web blob nella cartella images dell'e-commerce
 					ftp_chmod($conn_id, 0664, $ftp_path_upload."images/".str_replace(' ', '_', $_POST['codice'.$ord]).".jpg");// fornisco i permessi necessari all'immagine
 					$xml_output .= "\t<ImgUrl>".$web_site_path."images/".str_replace(' ', '_', $_POST['codice'.$ord]).".jpg</ImgUrl>\n"; // ne scrivo l'url nel file xml
@@ -390,7 +398,7 @@ if (isset($_POST['conferma'])) { // se confermato
 
 	// avvio il file di interfaccia presente nel sito web remoto
 
-	$file = fopen ($urlinterf.'?access='.$access, "r");
+	$file = @fopen ($urlinterf.'?access='.$access, "r");
 	if ( $file ){ // controllo se il file esiste o mi dà accesso
 		while (!feof($file)) { // scorro il file generato dall'interfaccia durante la sua eleborazione
 			$line = fgets($file);
