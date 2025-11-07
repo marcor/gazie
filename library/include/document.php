@@ -449,6 +449,7 @@ class DocContabVars {
         while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
           $rigo['translate_descri'] = false;
           $rigo['translate_body_text'] = false;
+          $rigo['translate_custom_field'] = false;
           // Antonio Germani - se c'è un codice a barre valorizzo barcode
           $art = gaz_dbi_get_row( $this->gTables['artico'], 'codice', $rigo['codart']);
           if ($art && intval($art['barcode'])>0){
@@ -500,6 +501,7 @@ class DocContabVars {
               if ($translate_bt){
                 $rigo['translate_descri'] = $translate_bt['descri'];
                 $rigo['translate_body_text'] = $translate_bt['body_text'];
+                $rigo['translate_custom_field'] = $translate_bt['custom_field'];
               }
             } elseif ($rigo['tiprig'] == 1) {
               $rigo['importo'] = CalcolaImportoRigo(1, $rigo['prelis'], 0);
