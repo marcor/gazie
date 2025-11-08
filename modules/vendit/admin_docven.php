@@ -737,6 +737,8 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
         $i = 0;
         $count = count($form['rows']) - 1;
         while ($val_old_row = gaz_dbi_fetch_array($old_rows)) {
+          // elimino sempre e comunque le vecchie traduzioni riferite a righi articoli
+          gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigdoc' AND code_ref = '".$val_old_row['codart']."' AND lang_id = ".$form['partner_lang']." AND id_ref", $val_old_row['id_rig']);
           $form['rows'][$i]['peso_specifico']=$form['rows'][$i]['pesosp'];
           // per evitare problemi qualora siano stati modificati i righi o comunque cambiati di ordine elimino sempre il vecchio movimento di magazzino e sotto ne inserisco un altro attenendomi a questo
           if (intval($val_old_row['id_mag']) > 0) {  //se c'è stato un movimento di magazzino lo azzero
@@ -748,6 +750,10 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$i]['id_tes'] = $form['id_tes'];
             $codice = array('id_rig', $val_old_row['id_rig']);
             rigdocUpdate($codice, $form['rows'][$i]);
+            // reinserisco le eventuali traduzioni cancellate sopra
+            if ($form['partner_lang'] > 1 && !empty(trim($form['rows'][$i]['translate_descri'])) && strlen($form['rows'][$i]['codart']) >=1 ) {
+              bodytextInsert(['table_name_ref' => 'rigdoc', 'id_ref' => $val_old_row['id_rig'], 'code_ref' => $form['rows'][$i]['codart'], 'descri' => $form['rows'][$i]['translate_descri'], 'lang_id' => $form['partner_lang']]);
+            }
             if (isset($form["row_$i"]) && $val_old_row['id_body_text'] > 0) { //se è un rigo testo giè presente lo modifico
                 bodytextUpdate(array('id_body', $val_old_row['id_body_text']), array('table_name_ref' => 'rigdoc', 'id_ref' => $val_old_row['id_rig'], 'body_text' => $form["row_$i"], 'lang_id' => $admin_aziend['id_language']));
                 gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $val_old_row['id_rig'], 'id_body_text', $val_old_row['id_body_text']);
@@ -791,6 +797,10 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
           $form['rows'][$i]['peso_specifico']=$form['rows'][$i]['pesosp'];
           $form['rows'][$i]['id_tes'] = $form['id_tes'];
           $last_rigdoc_id=rigdocInsert($form['rows'][$i]);// inserisco il rig doc
+          // inserisco l'eventuale traduzione in lingua in body_text
+          if ($form['partner_lang'] > 1 && !empty(trim($form['rows'][$i]['translate_descri'])) && strlen($form['rows'][$i]['codart']) >=1 ) {
+            bodytextInsert(['table_name_ref' => 'rigdoc', 'id_ref' => $last_rigdoc_id, 'code_ref' => $form['rows'][$i]['codart'], 'descri' => $form['rows'][$i]['translate_descri'], 'lang_id' => $form['partner_lang']]);
+          }
 					// INIZIO INSERIMENTO DOCUMENTI ALLEGATI
           if  (( $form['rows'][$i]['tiprig']==51 || $form['rows'][$i]['tiprig']==50 ) && !empty($form['rows'][$i]['extdoc'])) {
             if (file_exists(DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/tmp/'.$i.'_rigdoc_'.$form['rows'][$i]['extdoc'] )) {
@@ -963,6 +973,10 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
           $form['rows'][$i]['peso_specifico']=$v['pesosp'];
           $form['rows'][$i]['id_tes'] = $ultimo_id;
           $last_rigdoc_id = rigdocInsert($form['rows'][$i]);
+          // inserisco l'eventuale traduzione in lingua in body_text
+          if ($form['partner_lang'] > 1 && !empty(trim($v['translate_descri'])) && strlen($v['codart']) >=1 ) {
+            bodytextInsert(['table_name_ref' => 'rigdoc', 'id_ref' => $last_rigdoc_id, 'code_ref' => $v['codart'], 'descri' => $v['translate_descri'], 'lang_id' => $form['partner_lang']]);
+          }
 					// INIZIO INSERIMENTO DOCUMENTI ALLEGATI
           if  (( $form['rows'][$i]['tiprig']==51 || $form['rows'][$i]['tiprig']==50 ) && !empty($form['rows'][$i]['extdoc'])) {
             if (file_exists(DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/tmp/'.$i.'_rigdoc_'.$form['rows'][$i]['extdoc'] )) { // se ho scelto un altro file cancello tutti i vecchi e sposto il nuovo
@@ -2162,6 +2176,12 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
           $text = gaz_dbi_get_row($gTables['body_text'], "id_body", $rigo['id_body_text']);
           $form["row_$next_row"] = $text?$text['body_text']:'';
       }
+      // riprendo una eventuale traduzione del rigo
+      $form['rows'][$next_row]['translate_descri'] = '';
+      if ($form['partner_lang'] > 1 && $rigo['tiprig'] == 0  ) {
+        $translate_bt = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", 'rigdoc'," AND code_ref = '".$rigo['codart']."' AND id_ref = ".$rigo['id_rig']." AND lang_id = ".$form['partner_lang']);
+      }
+      if ($translate_bt) { $form['rows'][$next_row]['translate_descri'] = $translate_bt['descri']; }
       $form['rows'][$next_row]['descri'] = $rigo['descri'];
       $form['rows'][$next_row]['tiprig'] = $rigo['tiprig'];
       $form['rows'][$next_row]['codart'] = $rigo['codart'];
