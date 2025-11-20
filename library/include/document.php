@@ -702,13 +702,17 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
 			$templates['DDT']='ddt2xA5';
 		}
 	}
-    $config = new Config;
-    $configTemplate = new configTemplate;
-    if ($lang_template) {
+  $config = new Config;
+  $configTemplate = new configTemplate;
+  if (is_string($template)) {
+    $configTemplate->template=$template;
+  }
+  if ($lang_template) {
 		$ts=$configTemplate->template;
 		$configTemplate->setTemplateLang($lang_template);
 		if (empty($ts)){$configTemplate->template=substr($configTemplate->template, 1);}
-    }
+  }
+  //var_dump($template);
 	$lh=(($dest && $dest == 'H')?'_lh':''); // eventuale scelta di stampare su carta intestata, aggiungo il suffisso "lh";
 	require_once ("../../config/templates" . ($configTemplate->template ? '.' . $configTemplate->template : '') . '/' . $templates[$templateName] .$lh. '.php');
     $pdf = new $templateName();
