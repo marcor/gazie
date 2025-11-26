@@ -1320,7 +1320,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$movmag_prev=array();
 				foreach ($form['rows'] as $i => $v) { // inserisco i righi
           $form['rows'][$i]['status'] = ( substr($v['codric'],0,3) == $admin_aziend['mas_fixed_assets'] ) ? 'ASS10':'';
-					if (abs($v['prelis'])<0.00000001) { // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo
+					if (abs($v['prelis']) < 0.00000001 && abs($v['quanti']) < 0.000000001 ) { // siccome il prezzo e la quantità sono a zero mi trovo di fronte ad un rigo di tipo descrittivo
 						$form['rows'][$i]['tiprig']=2;
 					}
 					if ($form['tipdoc']=="AFC" && $ImportoTotaleDocumento <= -0.01 ) { // capita a volte che dei software malfatti sulle note credito indichino i valori in negativo... allora per renderli compatibili con la contabilizzazione di GAzie invertiamo il segno
@@ -1769,7 +1769,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
 				$codvat_dropdown = $gForm->selectFromDB('aliiva', 'codvat_'.$k, 'codice', $form['codvat_'.$k], 'aliquo', true, '-', 'descri', '', 'col-sm-12 small', null, 'style="max-width: 350px;"', false, true);
 				$codart_select = $gForm->concileArtico('codart_'.$k,(isset($form['search_codart_'.$k]))?$form['search_codart_'.$k]:'',$form['codart_'.$k]);
 				//forzo i valori diversi dalla descrizione a vuoti se è descrittivo
-				if (abs($v['prelis'])<0.00000001){ // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo
+				if (abs($v['prelis'])<0.00000001 && abs($v['quanti']) < 0.000000001 ){ // siccome il prezzo e la quantità sono a zero mi trovo di fronte ad un rigo di tipo descrittivo
 					$v['codice_fornitore'] = '';
 					$v['unimis'] = '';
 					$v['quanti'] = '';
