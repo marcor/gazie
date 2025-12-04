@@ -347,6 +347,7 @@ $("#sbmt-form").submit(function (e) {
         success: function (data) {
             $("#edit-modal .modal-sm").css('width', '100%');
             $("#edit-modal .modal-body").html(data);
+            $('#edit-modal').animate({ scrollTop: 0 }, 'slow');
 		},
         error: function(data){
             alert(data);
@@ -362,6 +363,7 @@ $( "#upsave" ).click(function() {
         success: function (data) {
             $("#edit-modal .modal-sm").css('width', '100%');
             $("#edit-modal .modal-body").html(data);
+            $('#edit-modal').animate({ scrollTop: 0 }, 'slow');
         },
         error: function(data){
             alert(data);

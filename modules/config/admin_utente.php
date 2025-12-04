@@ -1037,7 +1037,5 @@ if ($admin_aziend['Abilit']==9){
 	</div>
 	<?php
 }
-?>
-<?php
 require("../../library/include/footer.php");
 ?>
