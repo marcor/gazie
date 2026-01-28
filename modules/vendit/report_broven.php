@@ -365,33 +365,39 @@ $ts->output_navbar();
         <td class="FacetFieldCaptionTD">
         <?php gaz_flt_disp_int("reforder", "Rif.ordine cliente"); ?>
         </td>
-        <td class=FacetFieldCaptionTD>
+        <td class="FacetFieldCaptionTD"><div class="col-xs-12 row">
+        <div class="col-xs-9">
         <?php
         gaz_flt_disp_select("destinaz","unita_locale1 AS destinaz",$tesbro_e_destina, $where_select . " AND unita_locale1 IS NOT NULL", "destinaz DESC",  "destinaz");
-        ?>
+        ?></div>
+          <input type="submit" class="btn btn-xs btn-default col-xs-3" name="search" value="<?php echo $script_transl['search']; ?>" tabindex="1"></div>
         </td>
         <td class=FacetFieldCaptionTD style="text-align: center;">
+        <div class="col-xs-12">
+          <a class="btn btn-xs btn-default col-xs-3" href="?auxil=<?php echo $tipo; ?>">Reset</a>
+          <div class="col-xs-9">
+
 				<?php
 				if ($form['swStatus']=="" OR $form['swStatus']=="Tutti"){
 				?>
-					<input type="submit" class="btn btn-sm btn-default" name="inevasi" onClick="chkSubmit();" value="Inevasi">
+					<input type="submit" class="btn btn-xs btn-info" name="inevasi" onClick="chkSubmit();" value="Inevasi">
 				<?php
 				} else {
 				?>
-          <input type="submit" class="btn btn-sm btn-default" name="tutti" onClick="chkSubmit();" value="Tutti" style="text-align: center;">
+          <input type="submit" class="btn btn-xs btn-info" name="tutti" onClick="chkSubmit();" value="Tutti" style="text-align: center;">
 				<?php
 				}
 				?>
-          <input type="hidden" name="swStatus" id="preventDuplicate" value="<?php echo $form['swStatus']; ?>">
+          </div>
+        </div>
         </td>
         <td class=FacetFieldCaptionTD>
+          <input type="hidden" name="swStatus" id="preventDuplicate" value="<?php echo $form['swStatus']; ?>">
         </td>
         <td class="FacetFieldCaptionTD">
-          <input type="submit" class="btn btn-sm btn-default" name="search" value="<?php echo $script_transl['search']; ?>" tabindex="1">
           <?php $ts->output_order_form(); ?>
         </td>
         <td class="FacetFieldCaptionTD">
-          <a class="btn btn-sm btn-default" href="?auxil=<?php echo $tipo; ?>">Reset</a>
         </td>
         <td class="FacetFieldCaptionTD">
         </td>
