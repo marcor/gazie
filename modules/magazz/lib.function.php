@@ -591,7 +591,6 @@ class magazzForm extends GAzieForm {
                 $return_val[0] = array('q' => $last_invQuanti, 'v' => $last_invPrice,
                     'q_g' => $giacenza['q_g'], 'v_g' => $giacenza['v_g']);
                 // Fine valorizzazione con ultimo inventario
-                $return_val = array(); //azzero l'accumulatore per il ritorno
                 while ($r = gaz_dbi_fetch_array($rs_movmag)) {
                     // questo e' il prezzo che usero' solo per gli acquisti
                     $row_val = CalcolaImportoRigo(1, $r['prezzo'], array($r['scorig'], $r['scochi']), $decimal_price);
