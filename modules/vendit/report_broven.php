@@ -417,7 +417,7 @@ $ts->output_navbar();
           $totimpdoc_evaso = 0;
           $remains_atleastone = false; // Almeno un rigo e' rimasto da evadere.
           $processed_atleastone = false; // Almeno un rigo e' gia' stato evaso.
-          $rigbro_result = gaz_dbi_dyn_query('*', $gTables['rigbro'], "id_tes = " . $r['id_tes'] . " AND tiprig <=1 ", 'id_tes DESC');
+          $rigbro_result = gaz_dbi_dyn_query('tiprig,quanti,prelis,sconto', $gTables['rigbro'], "id_tes = " . $r['id_tes'] . " AND tiprig <=1 ", 'id_tes DESC');
           $totquanti_da_evadere=0;
           while ( $rigbro_r = gaz_dbi_fetch_array($rigbro_result) ) {
             if ( $rigbro_r['tiprig']==1 ){
@@ -433,7 +433,7 @@ $ts->output_navbar();
           }
           $totquanti_evaso = 0;
           $totimp_evaso = 0;
-          $rigdoc_result = gaz_dbi_dyn_query('*', $gTables['rigdoc'], "id_order=" . $r['id_tes'] . " AND tiprig <=1 ", 'id_tes DESC');
+          $rigdoc_result = gaz_dbi_dyn_query('tiprig,quanti,prelis,sconto', $gTables['rigdoc'], "id_order=" . $r['id_tes'] . " AND tiprig <=1 ", 'id_tes DESC');
           while ($rigdoc_r = gaz_dbi_fetch_array($rigdoc_result)) {
             $totquanti_evaso += $rigdoc_r['quanti'];
             $processed_atleastone = true;
