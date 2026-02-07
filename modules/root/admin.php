@@ -344,7 +344,7 @@ $(function() {
         },{
           text: "Non cambiare",
           click: function() {
-            $(this).dialog("destroy");
+            window.location.replace("./admin.php");
           }
         }
       ],
