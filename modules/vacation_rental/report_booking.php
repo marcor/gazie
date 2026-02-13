@@ -880,7 +880,7 @@ $(function() {
 						  } else {
 							alert('Errore: ' + (res.msg || 'Operazione fallita'));
 						  }
-						},						
+						},
 						error: function(jqXHR, textStatus, errorThrown) {
 						  console.error('AJAX error', textStatus, errorThrown, jqXHR.status, jqXHR.responseText);
 						  alert('Errore: ' + textStatus + (errorThrown ? ' - ' + errorThrown : ''));
@@ -1581,8 +1581,30 @@ $ts->output_navbar();
         $ctrlprotoc = "";
         while ($r = gaz_dbi_fetch_array($result)) {
             if ($datatesbro = json_decode($r['custom_field'], TRUE)) { // se esiste un json nel custom field della testata
+				$device_html='<span title="Unknown device">❓</span>';
+				if (isset($datatesbro['vacation_rental']['device'])){
 
+					switch ($datatesbro['vacation_rental']['device'] ?? 'unknown') {
+						case 'app':
+							$device_html = '<span title="App">📱💎</span>'; // app mobile / webview
+							break;
+						case 'mobile':
+							$device_html = '<span title="Mobile">📱</span>'; // smartphone
+							break;
+						case 'tablet':
+							$device_html = '<span title="Tablet">📲</span>'; // tablet
+							break;
+						case 'desktop':
+							$device_html = '<span title="Desktop">💻</span>'; // computer / laptop
+							break;
+						case 'unknown':
+						default:
+							$device_html = '<span title="Unknown device">❓</span>'; // sconosciuto / bot
+							break;
+					}
+				}
             }
+
             $r['id_agent']=0;
             $row_artico = gaz_dbi_get_row($gTables['artico'], 'codice', $r['house_code']);
             $art_group_custom = gaz_dbi_get_row($gTables['artico_group'], 'id_artico_group', $row_artico['id_artico_group'])['custom_field'];
@@ -1783,7 +1805,7 @@ $ts->output_navbar();
               } else {
                   echo "<td><button class=\"btn btn-xs btn-default disabled\">&nbsp;" . substr($r['tipdoc'], 1, 2) . "&nbsp;" . $r['id_tes'] . " </button></td>";
               }
-              echo "<td>" . $r['numdoc'] . " &nbsp;</td>";
+              echo "<td>" . $r['numdoc'] . " ".$device_html." &nbsp;</td>";
               if ( $tipo=="VOG" ) {
                   echo "<td>". getDayNameFromDayNumber($r['weekday_repeat']). " &nbsp;</td>";
               } else {

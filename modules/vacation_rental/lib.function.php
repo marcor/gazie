@@ -31,6 +31,10 @@
 
  // creo connessione al DB
  function db_connect() {
+    static $link = null;
+    if ($link !== null && $link->ping()) {
+        return $link; // riusa la connessione già aperta
+    }
     $servername = constant("Host");
     $username   = constant("User");
     $pass       = constant("Password");
@@ -936,9 +940,10 @@ function getAvailableExtraBeds($link, $azTables, $house_code, $facility_id, $sta
               AND a.quality = 'BED'
               AND (a.ordinabile IS NULL OR a.ordinabile = '' OR a.ordinabile = 'S')
             LIMIT 1";
-
+  //echo $sql,"<br>";
     if ($result = mysqli_query($link, $sql)) {
         if ($row_beds = mysqli_fetch_assoc($result)) {
+  //print_r($row_beds);
             $num_beds_toAdd = isset($row_beds['max_quantity']) ? intval($row_beds['max_quantity']) : 1;
 
             // Caso max_quantity = 0 → senza limiti, restituisco 10 direttamente (numero forfettario)
@@ -948,7 +953,7 @@ function getAvailableExtraBeds($link, $azTables, $house_code, $facility_id, $sta
 
             // 2. Calcolo quanti BED sono già prenotati nel periodo
             $beds_occupied = 0;
-            $sql_occupied = "SELECT SUM(rb.quanti) AS occupied
+            $sql_occupied = "SELECT IFNULL(SUM(rb.quanti),0) AS occupied
                              FROM ".$azTables."rigbro rb
                              INNER JOIN ".$azTables."rental_events re
                                 ON re.id_rigbro = rb.id_rig
@@ -959,9 +964,10 @@ function getAvailableExtraBeds($link, $azTables, $house_code, $facility_id, $sta
                                AND re.end >= '".$start."'
                                AND JSON_UNQUOTE(JSON_EXTRACT(t.custom_field, '$.vacation_rental.status'))
                                    IN ('PENDING','CONFIRMED','FROZEN')";
-
+  //echo "<br>",$sql_occupied,"<br>";
             if ($res_occ = mysqli_query($link, $sql_occupied)) {
                 $row_occ = mysqli_fetch_assoc($res_occ);
+  // print_r($row_occ);
                 $beds_occupied = intval($row_occ['occupied']);
             }
 
@@ -1315,6 +1321,139 @@ function banIp($ip, $durationMinutes = 60) {
         file_put_contents($file, $entry . PHP_EOL, FILE_APPEND | LOCK_EX);
     }
     chmod($file, 0666); // Mantiene permessi corretti
+}
+
+// restituisce il tipo di dispositivo usato dall'utente.
+/*
+app = App Android “AppGmonamour”
+mobile = Smartphone o cookie mobile
+tablet = Tablet o cookie tablet
+desktop = PC/Laptop o cookie desktop
+unknown = Bot, UA non riconosciuto, UA vuoto
+*/
+function detect_device(): string{
+    $server = $_SERVER;
+
+    if (!empty($server['HTTP_USER_AGENT']) &&
+        stripos($server['HTTP_USER_AGENT'], 'AppGmonamour') !== false) {
+        return 'app';
+    }
+
+    $ua = strtolower($server['HTTP_USER_AGENT'] ?? '');
+    if ($ua === '') return 'unknown';
+
+    if (preg_match('/bot|spider|crawl|slurp|facebookexternalhit|mediapartners-google/', $ua)) {
+        return 'unknown';
+    }
+
+    if (strpos($ua, 'iphone') !== false || strpos($ua, 'ipod') !== false) return 'mobile';
+
+    if (strpos($ua, 'ipad') !== false ||
+        (strpos($ua, 'macintosh') !== false &&
+         strpos($ua, 'mobile') === false &&
+         strpos($ua, 'safari') !== false)) return 'tablet';
+
+    if (strpos($ua, 'android') !== false) return (strpos($ua, 'mobile') !== false) ? 'mobile' : 'tablet';
+
+    if (preg_match('/windows phone|iemobile|blackberry|bb10|opera mini|opera mobi/', $ua)) return 'mobile';
+
+    if (preg_match('/windows nt|macintosh|x11|linux|cros/', $ua)) return 'desktop';
+
+    return 'unknown';
+}
+
+//CANCELLA UNA PRENOTAZIONE totalmente con tutti i suoi annessi
+function delete_booking(int $id_tes, array $admin_aziend, array $gTables) {
+/****  DA FARE  NON USARE - NON FUNZIONA    ******/
+    //procedo all'eliminazione della testata e dei righi...
+    $tesbro = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $id_tes);// la testata che andrò ad eliminare
+    //cancello la testata
+    gaz_dbi_del_row($gTables['tesbro'], "id_tes", $id_tes);
+    //... e i righi
+    $rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes =".$id_tes,"id_tes DESC");
+    while ($a_row = gaz_dbi_fetch_array($rs_righidel)) { // *** nota bene ***  la cancellazione dei documenti pdf va portata fuori dal ciclo altrimenti prova a cancellare per ogni rigo!
+        gaz_dbi_del_row($gTables['rigbro'], "id_rig", $a_row['id_rig']);
+        			
+        gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigbro' AND id_ref ",$a_row['id_rig']);
+    }
+
+    // cancello anche l'evento
+    $rental_events = gaz_dbi_get_row($gTables['rental_events'], "id_tesbro", $id_tes);
+    gaz_dbi_del_row($gTables['rental_events'], "id_tesbro", $id_tes);
+
+    // aggiorno buono sconto se c'è
+    if (isset($rental_events['voucher_id']) && intval($rental_events['voucher_id'])>0){// se era stato usato un buono sconto
+        $rental_discounts  = gaz_dbi_get_row($gTables['rental_discounts'], "id", intval($rental_events['voucher_id']));
+        if ($rental_discounts['reusable']>0 AND $rental_discounts['STATUS']=="CLOSED"){// se lo sconto era stato chiuso
+            $sql = "UPDATE ".$gTables['rental_discounts']." SET STATUS = 'CREATED' WHERE id = ".intval($rental_events['voucher_id']);
+            $result = gaz_dbi_query($sql);// riapro lo sconto
+        }
+    }
+
+    // cancello anche tutti i pagamenti relativi
+    gaz_dbi_del_row($gTables['rental_payments'], "id_tesbro", $id_tes);
+
+    // vedo se la prenotazione proveniva da un preventivo
+    $prev = gaz_dbi_get_row($gTables['tesbro'], "numfat", $id_tes, " AND datfat = '".$tesbro['datemi']."' AND tipdoc = 'VPR'");
+    if ($prev){// se c'è il preventivo lo svincolo
+        if ($data = json_decode($prev['custom_field'],true)){// se c'è un json in anagra
+            if (is_array($data['vacation_rental'])){ // se c'è il modulo "vacation rental" lo aggiorno
+                $data['vacation_rental']['id_booking']='';
+                $custom_field = json_encode($data);
+            }
+        }
+        $sql = "UPDATE ".$gTables['tesbro']." SET custom_field = '".$custom_field."', datfat = '0000-00-00', numfat = '0' WHERE id_tes = ".intval($prev['id_tes']);
+        $result = gaz_dbi_query($sql);// resetto il preventivo
+    }
+
+    // Cancello i PDF della prenotazione e del contratto					
+    $file = DATA_DIR . "files/" . $admin_aziend['codice'] . "/pdf_Lease/" . $id_tes . ".pdf";
+    if (file_exists($file)) {
+        if (is_writable(dirname($file))) {
+            if (!unlink($file)) {
+                // Se volessi log, qui si potrebbe registrare
+            }
+        }
+    }
+
+    // cancellazione multipla addendum
+    $dir = dirname(__DIR__) . '/vacation_rental/files/' . $admin_aziend['codice'] . '/pdf_Lease/';
+    $pattern = $dir . $id_tes . '*.*';
+
+    if (is_dir($dir)) {
+        $files = glob($pattern) ?: [];
+        $errors = [];
+        foreach ($files as $f) {
+            if (is_file($f) && !unlink($f)) $errors[] = $f;
+        }
+        if (!empty($errors)) {
+            // gestione errori, se serve log
+        }
+    }
+
+    // Cancello anche gli eventuali addendum
+    $codice = $admin_aziend['codice'] ?? '';
+    $targetDir =  dirname(__DIR__) . "/vacation_rental/files/" . $codice . "/addendum_pdf/" . $id_tes;
+
+    if (is_dir($targetDir)) {
+        // Funzione di cancellazione ricorsiva con log errori
+        $errors = [];
+        $it = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($targetDir, FilesystemIterator::SKIP_DOTS),
+            RecursiveIteratorIterator::CHILD_FIRST
+        );
+        foreach ($it as $item) {
+            $path = $item->getPathname();
+            if ($item->isDir()) {
+                if (!rmdir($path)) $errors[] = "Impossibile cancellare directory: $path";
+            } else {
+                if (!unlink($path)) $errors[] = "Impossibile cancellare file: $path";
+            }
+        }
+        if (!rmdir($targetDir)) {
+            $errors[] = "Impossibile cancellare la directory principale: $targetDir";
+        }
+    }
 }
 
 ?>
