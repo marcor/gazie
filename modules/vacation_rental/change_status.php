@@ -105,21 +105,47 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 			  }
 			  $script_transl=$strScript['booking_form.php'];
 
+
+
+
 			  if ($data = json_decode($tesbro['custom_field'],true)){// se c'è un json
 
         if (is_array($data['vacation_rental'])){ // se c'è il modulo "vacation rental" lo aggiorno
-          if (substr($_POST['new_status'],0,9)=="CANCELLED"){// se la prenotazione va cancellata azzero anche i reminder
+          $data['vacation_rental']['issue_date']="";
+          if (!empty($_POST['issue_date'])) {
+              $d = DateTime::createFromFormat('d/m/Y', $_POST['issue_date']);
+              if ($d && $d->format('d/m/Y') === $_POST['issue_date']) {// data realmente valida
+                  $data['vacation_rental']['issue_date'] = $d->format('Y-m-d');
+              }
+          }
+
+          if (substr($_POST['new_status'],0,9)=="CANCELLED"){// se la prenotazione va cancellata azzero anche i reminder e issue date
             $data['vacation_rental']['rem_pag']="";
             $data['vacation_rental']['rem_checkin']="";
+            $data['vacation_rental']['issue_date']="";
           }
           $data['vacation_rental']['status']=substr($_POST['new_status'],0,10);
           $custom_json = json_encode($data);
         } else { //se non c'è il modulo "vacation_rental" lo aggiungo
           $data['vacation_rental']= array('status' => substr($_POST['new_status'],0,10));
+          $data['vacation_rental']['issue_date']="";
+          if (!empty($_POST['issue_date'])) {
+              $d = DateTime::createFromFormat('d/m/Y', $_POST['issue_date']);
+              if ($d && $d->format('d/m/Y') === $_POST['issue_date']) {// data realmente valida
+                  $data['vacation_rental']['issue_date'] = $d->format('Y-m-d');
+              }
+          }
           $custom_json = json_encode($data);
         }
       }else { //se non c'è un json creo "vacation_rental"
           $data['vacation_rental']= array('status' => substr($_POST['new_status'],0,10));
+          $data['vacation_rental']['issue_date']="";
+          if (!empty($_POST['issue_date'])) {
+              $d = DateTime::createFromFormat('d/m/Y', $_POST['issue_date']);
+              if ($d && $d->format('d/m/Y') === $_POST['issue_date']) {// data realmente valida
+                  $data['vacation_rental']['issue_date'] = $d->format('Y-m-d');
+              }
+          }
           $custom_json = json_encode($data);
       }
       gaz_dbi_put_row($gTables['tesbro'], 'id_tes', $i, 'custom_field', $custom_json);
@@ -139,10 +165,10 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
         $mail->isHTML(true);
         $mail->Subject = $script_transl['changement']." ".$tesbro['numdoc'].' '.$script_transl['of'].' '.gaz_format_date($tesbro['datemi']);
         $mail->Body    = "<p>".$script_transl['change_status'].": ".$script_transl[$_POST['new_status']]."</p><p><b>".$admin_aziend['ragso1']." ".$admin_aziend['ragso2']."</b></p>";
-        
+
 		$notifTitle = $mail->Subject;
 		$notifBody = $mail->Body;
-		
+
 		if($mail->send()) {
           if ($imap_usr!==''){// se ho un utente imap carico la mail nella sua posta inviata
             if($imap = @imap_open("{".$imap_server.":".$imap_port."/".$imap_secure."}".$imap_sent_folder, $imap_usr, $imap_pwr)){
@@ -168,20 +194,20 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
         }else {
           echo "Errore imprevisto nello spedire la mail di modifica status: " . $mail->ErrorInfo;
         }
-				
+
 		if (function_exists('sendNotificationbyID')) {// invio notifica smartphone se ho la funzione
 		  $notif_res = sendNotificationbyID($anagra['id'], $notifTitle, $notifBody, 'active');
 		  $anySent = is_array($notif_res) && count($notif_res) > 0 && array_reduce($notif_res, fn($carry, $r) => $carry || (isset($r['status']) && $r['status'] === 'SENT'), false);
-		  
+
 		}
 		if (!$anySent && function_exists('send_sms_via_fcm')) {// invio SMS se ho la funzione e se non è partita la notifice
 		  //$notifBody .= "<br>".$script_transl['notif_call_to_app'];
 		  $notifBody = $script_transl['booking_number']." ".$tesbro['numdoc'].' '.$script_transl['of'].' '.gaz_format_date($tesbro['datemi'])."<br>".$notifBody."<br>".$script_transl['notif_call_to_app'];
 		  $SMS_send = send_sms_via_fcm($phone, $notifBody);
 		}
-		
-      }  
-	   	  
+
+      }
+
 		break;
     case "set_new_status_check":
 			$i=intval($_POST['ref']); // id_tesbro
@@ -474,14 +500,14 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
                 }
               }
             }
-			
+
           }
         }
-		
+
 		if (function_exists('sendNotificationbyID')) {// invio notifica smartphone se ho la funzione
 		  $notif_res = sendNotificationbyID($anagra['id'], $mail->Subject, $mail->Body, 'active');
 		  $anySent = is_array($notif_res) && count($notif_res) > 0 && array_reduce($notif_res, fn($carry, $r) => $carry || (isset($r['status']) && $r['status'] === 'SENT'), false);
-		  
+
 		}
 		if (!$anySent && function_exists('send_sms_via_fcm')) {// invio SMS se ho la funzione
 		  //$mail->Body .= "<br>".$script_transl['notif_call_to_app'];
@@ -489,10 +515,10 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 
 		  $SMS_send = send_sms_via_fcm($phone, $mail->Body);
 		}
-		
+
       }
-		
-		
+
+
       if (isset($_POST['email']) && $_POST['email']=='true' && strlen($_POST['cust_mail'])>4 && strlen($vacation_url_user)>4){// se richiesto invio mail di richiesta recensione
 
         $event=gaz_dbi_get_row($gTables['rental_events'], "id_tesbro", $i, " AND type = 'ALLOGGIO'"); // carico l'evento prenotazione
@@ -564,11 +590,11 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
         }else {
           echo "Errore imprevisto nello spedire la mail di modifica status: " . $mail->ErrorInfo;
         }
-		
+
 		if (function_exists('sendNotificationbyID')) {// invio notifica smartphone se ho la funzione
 		  $notif_res = sendNotificationbyID($anagra['id'], $mail->Subject, $mail->Body, 'active');
 		  $anySent = is_array($notif_res) && count($notif_res) > 0 && array_reduce($notif_res, fn($carry, $r) => $carry || (isset($r['status']) && $r['status'] === 'SENT'), false);
-		  
+
 		}
 		if (!$anySent && function_exists('send_sms_via_fcm')) {// invio SMS se ho la funzione
 		  //$mail->Body .= "<br>".$script_transl['notif_call_to_app'];
@@ -576,7 +602,7 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 
 		  $SMS_send = send_sms_via_fcm($phone, $mail->Body);
 		}
-		
+
       }
 		break;
 	}

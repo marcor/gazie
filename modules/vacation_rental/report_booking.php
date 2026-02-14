@@ -947,51 +947,40 @@ $(function() {
 		$("#dialog_feedback" ).dialog( "open" );
 	});
 
-  $("#dialog_stato_lavorazione").dialog({ autoOpen: false });
-	$('.dialog_stato_lavorazione').click(function() {
-		$("p#id_status").html($(this).attr("refsta"));
-		$("p#de_status").html($(this).attr("prodes"));
-		var refsta = $(this).attr('refsta');
-    var new_stato_lavorazione = $(this).attr("prosta");
-    var cust_mail = $(this).attr("cust_mail");
-    var cust_mail2 = $(this).attr("cust_mail2");
-    $("#sel_stato_lavorazione").val(new_stato_lavorazione);
-    $('#sel_stato_lavorazione').on('change', function () {
-        //ways to retrieve selected option and text outside handler
-        new_stato_lavorazione = this.value;
-    });
-		$( "#dialog_stato_lavorazione" ).dialog({
-			minHeight: 1,
-			width: "auto",
-			modal: "true",
-			show: "blind",
-			hide: "explode",
-			buttons: {
-				delete:{
-					text:'Modifica',
-					'class':'btn btn-danger delete-button',
-					click:function (event, ui) {
-            $("#dialog_stato_lavorazione").css("background", "url("+'spinner.gif'+") center no-repeat");
-            var email=$('#checkbox_email').prop('checked');
-            $.ajax({
-              data: {'type':'set_new_stato_lavorazione','ref':refsta,'new_status':new_stato_lavorazione,email:email,cust_mail:cust_mail,cust_mail2:cust_mail2},
-              type: 'POST',
-              url: 'change_status.php',
-              success: function(output) {
-                 // alert('id:'+refsta+' new:'+new_stato_lavorazione+' email:'+email);
-                 // alert(output);
-                window.location.replace("./report_booking.php?auxil=VOR");
-              }
-            });
-          }},
-        "Non cambiare": function() {
-          $(this).dialog("close");
-          $(this).dialog("destroy");
-				}
-			}
-		});
-		$("#dialog_stato_lavorazione" ).dialog( "open" );
-	});
+$('.dialog_stato_lavorazione').click(function () {
+
+    var dialog = $("#dialog_stato_lavorazione");
+
+    // 👉 aggiorno contenuti fissi del modal
+    $("p#id_status").html($(this).attr("refsta"));
+    $("p#de_status").html($(this).attr("prodes"));
+
+    // 👉 salvo dati per AJAX
+    dialog.data("refsta", $(this).attr("refsta"));
+    dialog.data("cust_mail", $(this).attr("cust_mail"));
+    dialog.data("cust_mail2", $(this).attr("cust_mail2"));
+
+    var stato = $(this).attr("prosta");
+    var issue_date = $(this).attr("issue_date");
+
+    // reset iniziale
+    $("#issue_date").val("");
+    $("#box_issue_date").hide();
+
+    $("#sel_stato_lavorazione").val(stato);
+
+    if (stato === "ISSUE") {
+        $("#box_issue_date").show();
+        if (issue_date) {
+            $("#issue_date").val(issue_date);
+        }
+    }
+
+    dialog.dialog("open");
+});
+
+
+
 
   $.datetimepicker.setLocale('it');
   $("#datepicker").datetimepicker({
@@ -1092,9 +1081,6 @@ $('.dialog_selfcheck').click(function() {
     var imgPath = $(this).attr("data-img-path");  // Ottieni il percorso dell'immagine
 
     $("#sel_stato_self").val(new_stato_lavorazione);
-    $('#sel_stato_self').on('change', function () {
-        new_stato_lavorazione = this.value;
-    });
 
     $('#checkbox_email_self').on('change', function () {
 
@@ -1124,7 +1110,6 @@ $('.dialog_selfcheck').click(function() {
                 "max-height": "90vh",
                 "overflow": "auto"
             });
-
             var fileExtension = imgPath.split('.').pop().toLowerCase(); // Estrai l'estensione del file
             var closeButton = $("<button>").text("Chiudi").addClass("btn btn-danger").click(function() {
                 imageModal.remove();
@@ -1388,9 +1373,14 @@ $ts->output_navbar();
           <option value="PENDING">In attesa di pagamento</option>
           <option value="CONFIRMED">Confermato</option>
           <option value="FROZEN">Congelato, date bloccate</option>
-          <option value="ISSUE">Incontrate difficoltà</option>
+          <option value="ISSUE">Problema da risolvere</option>
           <option value="CANCELLED">Annullato</option>
       </select>
+	  <div id="box_issue_date" style="display:none; margin-top:10px;">
+			<label for="issue_date"><b>Data scadenza problema:</b></label><br>
+			<input type="text" id="issue_date" name="issue_date" style="width:200px;">
+		</div>
+
       invia email al cliente<input id="checkbox_email"  type="checkbox" name="checkbox_email" value="1" checked="">
 </div>
 <div style="display:none" id="dialog_check_inout" title="Stato Accettazione">
@@ -1684,6 +1674,7 @@ $ts->output_navbar();
             if ($data = json_decode($r['custom_field'], TRUE)) { // se esiste un json nel custom field della testata
               if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['status'])){
                 $r['status'] = $data['vacation_rental']['status'];
+                $r['issue_date'] = (isset($data['vacation_rental']['issue_date'])?$data['vacation_rental']['issue_date']:"");
               } else {
                  $r['status'] = '';
               }
@@ -1931,7 +1922,7 @@ $ts->output_navbar();
                         echo " style=\"cursor:pointer;\" onclick=\"pay('". $r['id'] ."')\"";
                         echo "><i class=\"glyphicon glyphicon-credit-card\" title=\"Carta di credito\"></i></a>";
                       }
-                      ?><br><a style="white-space:nowrap;" title="Stato della prenotazione" class="btn btn-xs <?php echo $stato_btn; ?> dialog_stato_lavorazione" refsta="<?php echo $r['id_tes']; ?>" prodes="<?php echo $r['ragso1']," ",$r['ragso2']; ?>" prosta="<?php echo $r['status']; ?>" cust_mail="<?php echo $r['base_mail']; ?>" cust_mail2="<?php echo $r['base_mail2']; ?>">
+                      ?><br><a style="white-space:nowrap;" title="Stato della prenotazione" class="btn btn-xs <?php echo $stato_btn; ?> dialog_stato_lavorazione" refsta="<?php echo $r['id_tes']; ?>" prodes="<?php echo $r['ragso1']," ",$r['ragso2']; ?>" prosta="<?php echo $r['status']; ?>" issue_date="<?php echo $r['issue_date']; ?>" cust_mail="<?php echo $r['base_mail']; ?>" cust_mail2="<?php echo $r['base_mail2']; ?>">
                           <i class="glyphicon glyphicon-modal-window">&nbsp;</i><?php echo $r['status']; ?>
                         </a>
                         <?php
@@ -1948,22 +1939,22 @@ $ts->output_navbar();
                           if ($stato_btn_selfcheck!==""){// se c'è il self checkin inserisco icona
                             $prefix = 'self_'.$r['id_tes'];
                             $imagePath = getSelfieImagePath($prefix);
-if (!empty($imagePath) && is_string($imagePath)) {
-                            // Percorso relativo da passare al proxy: senza radix, sempre riferito alla root URL
-                            $relativeForProxy = ltrim($imagePath, '/');
-                            if (strpos($relativeForProxy, 'modules/vacation_rental/') !== 0) {
-                                $relativeForProxy = 'modules/vacation_rental/' . $relativeForProxy;
-                            }
+                            if (!empty($imagePath) && is_string($imagePath)) {
+                              // Percorso relativo da passare al proxy: senza radix, sempre riferito alla root URL
+                              $relativeForProxy = ltrim($imagePath, '/');
+                              if (strpos($relativeForProxy, 'modules/vacation_rental/') !== 0) {
+                                  $relativeForProxy = 'modules/vacation_rental/' . $relativeForProxy;
+                              }
 
-                            // Se siamo in localhost, aggiungiamo radix
-                            if ($_SERVER['HTTP_HOST'] === 'localhost') {
-                                $proxyUrl = '/' . $GLOBALS['radix'] . '/modules/vacation_rental/image_proxy.php?image=' . urlencode($relativeForProxy);
-                            } else {
-                                $proxyUrl = '/modules/vacation_rental/image_proxy.php?image=' . urlencode($relativeForProxy);
-                            }
-}else{
-  $proxyUrl=""; // è stato cancellato al check-out
-}
+                              // Se siamo in localhost, aggiungiamo radix
+                              if ($_SERVER['HTTP_HOST'] === 'localhost') {
+                                  $proxyUrl = '/' . $GLOBALS['radix'] . '/modules/vacation_rental/image_proxy.php?image=' . urlencode($relativeForProxy);
+                              } else {
+                                  $proxyUrl = '/modules/vacation_rental/image_proxy.php?image=' . urlencode($relativeForProxy);
+                              }
+                          }else{
+                            $proxyUrl=""; // è stato cancellato al check-out
+                          }
                             ?>
                             <a title="<?php echo $title_selfcheck; ?>"
                                class="btn btn-xs <?php echo $stato_btn_selfcheck; ?> dialog_selfcheck"
@@ -2170,6 +2161,64 @@ $(document).ready(function() {
             $(this).removeClass('dropup');
         }
     });
+
+	$('#issue_date').datetimepicker({
+    timepicker: false,     // disabilita selezione orario
+    format: 'd/m/Y'        // solo data
+  });
+
+  $("#dialog_stato_lavorazione").dialog({
+      autoOpen: false,
+      minHeight: 1,
+      width: "auto",
+      modal: true,
+      show: "blind",
+      hide: "explode",
+      buttons: {
+          "Modifica": function () {
+
+              var refsta = $(this).data("refsta");
+
+              $("#dialog_stato_lavorazione").css("background", "url(spinner.gif) center no-repeat");
+
+              $.ajax({
+                  type: "POST",
+                  url: "change_status.php",
+                  data: {
+                      type: 'set_new_stato_lavorazione',
+                      ref: refsta,
+                      new_status: $('#sel_stato_lavorazione').val(),
+                      email: $('#checkbox_email').prop('checked'),
+                      cust_mail: $(this).data("cust_mail"),
+                      cust_mail2: $(this).data("cust_mail2"),
+                      issue_date: $('#issue_date').val()
+                  },
+                  success: function () {
+                      window.location.replace("./report_booking.php?auxil=VOR");
+                  }
+              });
+          },
+          "Non cambiare": function () {
+              $(this).dialog("close");
+          }
+      },
+      close: function () {
+          $("#issue_date").val("");
+          $("#box_issue_date").hide();
+      }
+  });
+
+
+	$('#sel_stato_lavorazione').on('change', function() {
+		//alert('change');
+		if ($(this).val() === 'ISSUE') {
+			$('#box_issue_date').slideDown();
+		} else {
+			$('#box_issue_date').slideUp();
+			$('#issue_date').val('');
+		}
+	});
+
 
   });
 </script>
