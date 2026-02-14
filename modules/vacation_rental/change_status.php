@@ -104,10 +104,7 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 				include "lang.english.php";
 			  }
 			  $script_transl=$strScript['booking_form.php'];
-
-
-
-
+        $add_expiry="";
 			  if ($data = json_decode($tesbro['custom_field'],true)){// se c'è un json
 
         if (is_array($data['vacation_rental'])){ // se c'è il modulo "vacation rental" lo aggiorno
@@ -116,6 +113,7 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
               $d = DateTime::createFromFormat('d/m/Y', $_POST['issue_date']);
               if ($d && $d->format('d/m/Y') === $_POST['issue_date']) {// data realmente valida
                   $data['vacation_rental']['issue_date'] = $d->format('Y-m-d');
+                  $add_expiry = " entro ".$d->format('d-m-Y'); // Aggiungo scadenza
               }
           }
 
@@ -133,6 +131,7 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
               $d = DateTime::createFromFormat('d/m/Y', $_POST['issue_date']);
               if ($d && $d->format('d/m/Y') === $_POST['issue_date']) {// data realmente valida
                   $data['vacation_rental']['issue_date'] = $d->format('Y-m-d');
+                  $add_expiry = " entro ".$d->format('d-m-Y'); // Aggiungo scadenza
               }
           }
           $custom_json = json_encode($data);
@@ -144,6 +143,7 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
               $d = DateTime::createFromFormat('d/m/Y', $_POST['issue_date']);
               if ($d && $d->format('d/m/Y') === $_POST['issue_date']) {// data realmente valida
                   $data['vacation_rental']['issue_date'] = $d->format('Y-m-d');
+                  $add_expiry = " entro ".$d->format('d-m-Y'); // Aggiungo scadenza
               }
           }
           $custom_json = json_encode($data);
@@ -164,7 +164,7 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
         }
         $mail->isHTML(true);
         $mail->Subject = $script_transl['changement']." ".$tesbro['numdoc'].' '.$script_transl['of'].' '.gaz_format_date($tesbro['datemi']);
-        $mail->Body    = "<p>".$script_transl['change_status'].": ".$script_transl[$_POST['new_status']]."</p><p><b>".$admin_aziend['ragso1']." ".$admin_aziend['ragso2']."</b></p>";
+        $mail->Body    = "<p>".$script_transl['change_status'].": ".$script_transl[$_POST['new_status']].$add_expiry."</p><p><b>".$admin_aziend['ragso1']." ".$admin_aziend['ragso2']."</b></p>";
 
 		$notifTitle = $mail->Subject;
 		$notifBody = $mail->Body;

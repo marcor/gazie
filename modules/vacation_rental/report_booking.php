@@ -972,7 +972,8 @@ $('.dialog_stato_lavorazione').click(function () {
     if (stato === "ISSUE") {
         $("#box_issue_date").show();
         if (issue_date) {
-            $("#issue_date").val(issue_date);
+           $("#issue_date").val(issue_date);          // imposta input
+          $("#issue_date").datetimepicker('setDate', issue_date);  // imposta picker
         }
     }
 
@@ -1674,7 +1675,10 @@ $ts->output_navbar();
             if ($data = json_decode($r['custom_field'], TRUE)) { // se esiste un json nel custom field della testata
               if (is_array($data['vacation_rental']) && isset($data['vacation_rental']['status'])){
                 $r['status'] = $data['vacation_rental']['status'];
-                $r['issue_date'] = (isset($data['vacation_rental']['issue_date'])?$data['vacation_rental']['issue_date']:"");
+                $r['issue_date'] = isset($data['vacation_rental']['issue_date']) && $data['vacation_rental']['issue_date'] != ""
+                  ? DateTime::createFromFormat('Y-m-d', $data['vacation_rental']['issue_date'])->format('d/m/Y')
+                  : "";
+
               } else {
                  $r['status'] = '';
               }
