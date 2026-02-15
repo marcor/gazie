@@ -637,41 +637,48 @@ function get_datasets($startprom,$endprom){// STAT graph
 		  $tot_n_event_in_promemo=0;
 		  $start=$row['start'];
 		  $end=$row['end'];
-		  // ciclo i giorni dell'evento
-		  while (strtotime($start) < strtotime($end)) {// per ogni giorno dell'evento
-			$month=date("m",strtotime($start));
-			$year=date("Y",strtotime($start));
-			if ($start >= $startprom AND $start <= date ("Y-m-d", strtotime("-1 days", strtotime($endprom)))) {// se il giorno è dentro l'arco di tempo richiesto (tolgo una giorno a endprom perché devo conteggiare le notti)
-			  //echo "<br>",$start," è dentro";
-			  if (!isset($retsumdat['IMPORTI'][$year][substr($resh['codice'], 0, 32)][$month])){
-				$retsumdat['IMPORTI'][$year][substr($resh['codice'], 0, 32)][$month]=0;
-			  }
-			  if (!isset($retsumdat['IMPORTI'][$year]['TUTTI'][$month])){
-				$retsumdat['IMPORTI'][$year]['TUTTI'][$month]=0;
-			  }
-			  $retsumdat['IMPORTI'][$year][substr($resh['codice'], 0, 32)][$month]+= ((get_totalprice_booking($row['id_tesbro'],FALSE))/$nights_event);// aggiungo il costo della notte nel mese
-			  $retsumdat['IMPORTI'][$year]['TUTTI'][$month]+= ((get_totalprice_booking($row['id_tesbro'],FALSE))/$nights_event);// aggiungo il costo della notte nel mese di tutti
-			  if (!isset($data[$start])){
-				$data[$start]=array();
-			  }
-				if (!in_array($row['house_code'],$data[$start])){// escludendo i giorni che hanno già quell'alloggio
-				  array_push($data[$start],$row['house_code']);// conteggio il giorno per questo alloggio
-				  if (!isset($retsumdat['OCCUPAZIONE'][$year][substr($resh['codice'], 0, 32).'-occupazione'][$month])){
-					$retsumdat['OCCUPAZIONE'][$year][substr($resh['codice'], 0, 32).'-occupazione'][$month]=0;
-				  }
-				  $retsumdat['OCCUPAZIONE'][$year][(substr($resh['codice'], 0, 32)).'-occupazione'][$month] ++;
-				  if (!isset($retsumdat['OCCUPAZIONE'][$year]['occup. tutti'][$month])){
+		  while (strtotime($start) < strtotime($end)) { // per ogni giorno dell'evento
+			$week = date("W", strtotime($start));   // numero settimana ISO 01-53
+			$year = date("Y", strtotime($start));
 
-					$retsumdat['OCCUPAZIONE'][$year]['occup. tutti'][$month]=0;
-				  }
-				  $retsumdat['OCCUPAZIONE'][$year]['occup. tutti'][$month] ++;
-				  $tot_nights_booked  ++;
-				  $tot_n_event_in_promemo ++;
-			  }
+			if ($start >= $startprom && $start <= date("Y-m-d", strtotime("-1 days", strtotime($endprom)))) {
+
+				// IMPORTI
+				$house = substr($resh['codice'], 0, 32);
+				if (!isset($retsumdat['IMPORTI'][$year][$house][$week])) {
+					$retsumdat['IMPORTI'][$year][$house][$week] = 0;
+				}
+				if (!isset($retsumdat['IMPORTI'][$year]['TUTTI'][$week])) {
+					$retsumdat['IMPORTI'][$year]['TUTTI'][$week] = 0;
+				}
+				$value = get_totalprice_booking($row['id_tesbro'], FALSE) / $nights_event;
+				$retsumdat['IMPORTI'][$year][$house][$week] += $value;
+				$retsumdat['IMPORTI'][$year]['TUTTI'][$week] += $value;
+
+				// OCCUPAZIONE
+				if (!isset($data[$start])) $data[$start] = array();
+				if (!in_array($row['house_code'], $data[$start])) {
+					array_push($data[$start], $row['house_code']);
+
+					if (!isset($retsumdat['OCCUPAZIONE'][$year][$house . '-occupazione'][$week])) {
+						$retsumdat['OCCUPAZIONE'][$year][$house . '-occupazione'][$week] = 0;
+					}
+					$retsumdat['OCCUPAZIONE'][$year][$house . '-occupazione'][$week]++;
+					
+					if (!isset($retsumdat['OCCUPAZIONE'][$year]['occup. tutti'][$week])) {
+						$retsumdat['OCCUPAZIONE'][$year]['occup. tutti'][$week] = 0;
+					}
+					$retsumdat['OCCUPAZIONE'][$year]['occup. tutti'][$week]++;
+
+					$tot_nights_booked++;
+					$tot_n_event_in_promemo++;
+				}
 
 			}
-			$start = date ("Y-m-d", strtotime("+1 days", strtotime($start)));// aumento di un giorno il ciclo
-		  }
+
+			$start = date("Y-m-d", strtotime("+1 days", strtotime($start))); // aumento di un giorno
+		}
+
 		  $ret['totalprice_booking'] += ((get_totalprice_booking($row['id_tesbro'],false,false,"",false,false))/$nights_event)*$tot_n_event_in_promemo;// aggiungo il costo medio della locazione(evento) calcolata sui giorni che rientrano nell'arco di tempo richiesto
 		  //il prezzo è imponibile e senza tassa turistica
 		}
@@ -681,43 +688,68 @@ function get_datasets($startprom,$endprom){// STAT graph
   $ret['tot_nights_bookable']= $num_all * $night_promemo;
   $ret['perc_booked'] = ($ret['tot_nights_bookable']>0)?(($tot_nights_booked/$ret['tot_nights_bookable'])*100):0;
   $ret['tot_nights_booked'] = $tot_nights_booked;
-  // adesso mi creo il dataset
-  $datasets="";
-  if (isset($retsumdat['IMPORTI'])){
-	  $datasets="{";
-	  foreach($retsumdat['IMPORTI'] as $key => $value){
-		foreach($value as $key2 => $value2){// qui ho l'anno e l'alloggio
-		  $datasets .= '"'.$key.'-'.$key2.'": {label: "'.$key.'-'.$key2.'", data: [';
-		  ksort($value2);// ordino in base al mese
-		  foreach ($value2 as $k => $v){// qui ho il mese e il valore
-			$datasets .= '['.$k.', '.$v.'],';
-		  }
-		  $datasets .= ']},';
+  // Costruisco dataset come ARRAY PHP vero
+	$dataret = [];
+
+	// Funzione helper: ritorna timestamp del lunedì della settimana ISO
+	function week_start_timestamp($year, $week) {
+		$dto = new DateTime();
+		$dto->setISODate($year, $week);
+		$dto->setTime(0,0,0); // inizio giorno
+		return $dto->getTimestamp(); // in secondi
+	}
+
+	// --- IMPORTI ---
+	if (isset($retsumdat['IMPORTI'])) {
+		foreach ($retsumdat['IMPORTI'] as $year => $structures) {
+			foreach ($structures as $name => $weeks) {
+				$label = $year . '-' . $name;
+				$dataret['IMPORTI'][$label]['label'] = $label;
+				$dataret['IMPORTI'][$label]['data'] = [];
+				foreach ($weeks as $week => $value) {
+					$ts = week_start_timestamp($year, $week) * 1000; // -> millisecondi
+					$dataret['IMPORTI'][$label]['data'][] = [$week, round((float)$value, 2)]; // 1,2,3...
+				}
+				// ordina per X (timestamp) crescente
+				usort($dataret['IMPORTI'][$label]['data'], fn($a,$b) => $a[0]-$b[0]);
+			}
 		}
-	  }
-	  $datasets.="}";
-  }
-  $dataret['IMPORTI']=$datasets;
-  if (isset($retsumdat['OCCUPAZIONE'])){
-	  $datasets="{";
-	  foreach($retsumdat['OCCUPAZIONE'] as $key => $value){
+	}
 
-		foreach($value as $key2 => $value2){// qui ho l'anno e l'alloggio
-		  $datasets .= '"'.$key.'-'.$key2.'": {label: "'.$key.'-'.$key2.'", data: [';
-		  ksort($value2);// ordino in base al mese
-		  foreach ($value2 as $k => $v){// qui ho il mese e il valore
-			$datasets .= '['.$k.', '.$v.'],';
-		  }
-		  $datasets .= ']},';
-		}
+	// --- OCCUPAZIONE ---
+	if (isset($retsumdat['OCCUPAZIONE'])) {
+    foreach ($retsumdat['OCCUPAZIONE'] as $year => $structures) {
+        foreach ($structures as $name => $weeks) {
+            $label = $year . '-' . $name;
+            $dataret['OCCUPAZIONE'][$label]['label'] = $label;
+            $dataret['OCCUPAZIONE'][$label]['data'] = [];
 
-	  }
-	  $datasets.="}";
-  }
-  $dataret['OCCUPAZIONE']=$datasets;
-  //echo "<pre>",print_r($dataret);die;
+            foreach ($weeks as $week => $value) {
+                // timestamp del lunedì della settimana
+                $ts = week_start_timestamp($year, $week) * 1000;
 
-  return $dataret;
+                $occup_days = (float)$value; // giorni occupati in quella settimana
+
+                // Se è "occup. tutti", divido per num_all*7, altrimenti per 7 giorni
+                if ($name === 'occup. tutti') {
+                    $percent = ($occup_days / ($num_all * 7)) * 100;
+                } else {
+                    $percent = ($occup_days / 7) * 100; // singolo appartamento
+                }
+				$percent = round($percent, 2); // arrotonda a massimo 2 decimali
+                $dataret['OCCUPAZIONE'][$label]['data'][] = [$week, $percent];
+            }
+
+            // ordina per settimana
+            usort($dataret['OCCUPAZIONE'][$label]['data'], fn($a,$b) => $a[0]-$b[0]);
+        }
+    }
+}
+
+
+	return $dataret;
+
+
 }
 
 function get_next_check($startprom,$endprom){
