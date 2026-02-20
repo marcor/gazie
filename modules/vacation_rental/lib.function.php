@@ -893,7 +893,7 @@ function check_availability($start,$end,$house_code, $open_from="", $open_to="")
     if ((intval($open_from)>0 && strtotime($open_from."-".substr($start,0,4))<=strtotime($start) && strtotime($open_to."-".substr($start,0,4))>=strtotime($start)) || intval($open_from)==0){
       // Controllo disponibilità dopo aver controllato se è aperto qualora è stato passato open from e to
       $what = "title";
-      $where = "(custom_field IS NULL OR custom_field LIKE '%PENDING%' OR custom_field LIKE '%CONFIRMED%' OR custom_field LIKE '%FROZEN%') AND house_code = '".mysqli_real_escape_string($link,$house_code)."' AND start <= '". $start ."' AND end > '". $start."'";
+      $where = "(custom_field IS NULL OR custom_field LIKE '%PENDING%' OR custom_field LIKE '%CONFIRMED%' OR custom_field LIKE '%FROZEN%' OR custom_field LIKE '%ISSUE%') AND house_code = '".mysqli_real_escape_string($link,$house_code)."' AND start <= '". $start ."' AND end > '". $start."'";
       $sql = "SELECT ".$what." FROM ".$table." LEFT JOIN ".$table_ts." ON ".$table.".id_tesbro = ".$table_ts.".id_tes  WHERE ".$where;
       if ($available = mysqli_query($link, $sql)) {
         $available = mysqli_fetch_array($available);

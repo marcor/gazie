@@ -35,17 +35,18 @@ require("../../modules/vacation_rental/lib.data.php");
 if (!isset($_POST['access'])){// primo accesso
   $form['start']=date("Y-m-d");
   $form['end']=date('Y-m-d', strtotime($form['start'] . ' +10 day'));
-
+	$stat_start=date("Y") . "-01-01";
+	$stat_end=date("Y") . "-12-31";
 }else{
-  $form['start']=$_POST['start'];
-  $form['end']=$_POST['end'];
+  $form['start']=$stat_start=$_POST['start'];
+  $form['end']=$stat_end=$_POST['end'];
 }
 $checkimp=(isset($_POST['set']) && $_POST['set']=="IMPORTI")?"checked":'';
 if ((isset($_POST['set']) && $_POST['set']=="IMPORTI") ){// se selezionato
   $checkimp="checked";
 }elseif(!isset($_POST['set'])){ // di default
-  $checkimp="checked";
-  $_POST['set']="IMPORTI";
+  $checkocc="checked";
+  $_POST['set']="OCCUPAZIONE";
 }else{
 
   $checkimp="";
@@ -232,7 +233,7 @@ function openframe(url,codice){
   <div>
   <input type="radio" name="set" onchange="this.form.submit();" value="OCCUPAZIONE" <?php echo $checkocc; ?>>Occupazione
   <input type="radio" name="set" onchange="this.form.submit();" value="IMPORTI" <?php echo $checkimp; ?>>Importi
-   <iframe src="../../modules/vacation_rental/flot_graph.php?start=<?php echo $form['start'];?>&end=<?php echo $form['end'];?>&set=<?php echo $_POST['set'];?>" width="100%" height="800px" title="Grafico statistiche"></iframe>
+   <iframe src="../../modules/vacation_rental/flot_graph.php?start=<?php echo $stat_start;?>&end=<?php echo $stat_end;?>&set=<?php echo $_POST['set'];?>" width="100%" height="800px" title="Grafico statistiche"></iframe>
   </div>
   <?php }else{
     echo "<br>Il grafico interattivo delle statische non è dispobile in questa versione";
