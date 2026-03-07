@@ -47,7 +47,7 @@ function getOrders($dateini,$datefin,$status=3)
       $totimpdoc_evaso = 0;
       $remains_atleastone = false; // Almeno un rigo e' rimasto da evadere.
       $processed_atleastone = false; // Almeno un rigo e' gia' stato evaso.
-      $rigbro_result = gaz_dbi_dyn_query('tiprig,quanti,prelis,sconto,unimis', $gTables['rigbro'], "id_tes = " . $r['id_tes'] . " AND tiprig <=1 ", 'id_tes DESC');
+      $rigbro_result = gaz_dbi_dyn_query('tiprig,quanti,prelis,sconto,LOWER(unimis) AS unimis', $gTables['rigbro'], "id_tes = " . $r['id_tes'] . " AND tiprig <=1 ", 'id_tes DESC');
       $totquanti_da_evadere=0;
       while ( $rigbro_r = gaz_dbi_fetch_array($rigbro_result) ) {
         if ( $rigbro_r['tiprig']==1 ){
@@ -265,11 +265,11 @@ if ( count($msg['err']) == 0) {
       switch($mv['stato_evasione']) { // 0 = Inevaso, 1 = Evasione parziale, 2 = Evaso
         case 0: // 0 = Inevaso
           $colqor = $mv['unimis'].' '.floatval(round($mv['totquanti_da_evadere'],5));
-          $colqev = '';
+          $colqev = '<b class="text-danger"> - - - </b>';
           if ($mv['zerorow']){ // ho un rigo dell'ordine a zero, segnalo e propongo la modifica
-            $colimp = '<span class="text-danger">  <a href="./admin_broven.php?id_tes='.$mv['id_tes'].'&Update" target="_blank" title="Modifica righi con importo a zero" class="text-danger"> <i class="fa fa-exclamation-triangle"></i> </a> € '.gaz_format_number($mv['totimpbro_da_evadere']).' - '.gaz_format_number($mv['totimpdoc_evaso']).'</span>';
+            $colimp = '<span class="text-danger">  <a href="./admin_broven.php?id_tes='.$mv['id_tes'].'&Update" target="_blank" title="Modifica righi con importo a zero" class="text-danger"> <i class="fa fa-exclamation-triangle"></i> </a> € '.gaz_format_number($mv['totimpbro_da_evadere']).' <b class="text-danger"> - '.gaz_format_number($mv['totimpdoc_evaso']).'</b></span>';
           } else {
-            $colimp = '<span  class="text-default"> € '.gaz_format_number($mv['totimpbro_da_evadere']).' - '.gaz_format_number($mv['totimpdoc_evaso']).'</span>';
+            $colimp = '<span  class="text-default"> € '.gaz_format_number($mv['totimpbro_da_evadere']).' <b class="text-danger"> - '.gaz_format_number($mv['totimpdoc_evaso']).'</b></span>';;
           }
           $colsta = '<a class="btn btn-xs btn-danger" href="select_evaord.php?id_tes='.$mv['id_tes'].'"  title="Evadi" target="_blank" > Inevaso </a>';
         break;
@@ -277,9 +277,9 @@ if ( count($msg['err']) == 0) {
           $colqor = $mv['unimis'].' '.floatval(round($mv['totquanti_da_evadere'],5));
           $colqev = $mv['unimis'].' '.floatval(round($mv['totquanti_evaso'],5));
           if ($mv['zerorow']){ // ho un rigo dell'ordine a zero, segnalo e propongo la modifica
-            $colimp = '<span class="text-danger">  <a href="./admin_broven.php?id_tes='.$mv['id_tes'].'&Update" target="_blank" title="Modifica righi con importo a zero" class="text-danger"> <i class="fa fa-exclamation-triangle"></i> </a> € '.gaz_format_number($mv['totimpbro_da_evadere']).' - '.gaz_format_number($mv['totimpdoc_evaso']).'</span>';
+            $colimp = '<span class="text-danger">  <a href="./admin_broven.php?id_tes='.$mv['id_tes'].'&Update" target="_blank" title="Modifica righi con importo a zero" class="text-danger"> <i class="fa fa-exclamation-triangle"></i> </a> € '.gaz_format_number($mv['totimpbro_da_evadere']).' <b class="text-warning">  - '.gaz_format_number($mv['totimpdoc_evaso']).'</b></span>';
           } else {
-            $colimp = '<span  class="text-default"> € '.gaz_format_number($mv['totimpbro_da_evadere']).' - '.gaz_format_number($mv['totimpdoc_evaso']).'</span>';
+            $colimp = '<span  class="text-default"> € '.gaz_format_number($mv['totimpbro_da_evadere']).' <b class="text-warning">  - '.gaz_format_number($mv['totimpdoc_evaso']).'</b></span>';
           }
           $colsta = '<a class="btn btn-xs btn-warning" href="select_evaord.php?id_tes='.$mv['id_tes'].'" title="Evadi saldo" target="_blank" > Parzialmente evaso </a>';
           foreach ($mv['doc'] as $k=>$d){
@@ -287,7 +287,7 @@ if ( count($msg['err']) == 0) {
           }
         break;
         case 2: // 2 = Evaso
-          $colqor = $mv['unimis'].' '.floatval(round($mv['totquanti_da_evadere'],5)).' - '.floatval(round($mv['totquanti_evaso'],5));
+          $colqor = $mv['unimis'].' '.floatval(round($mv['totquanti_da_evadere'],5));
           $colqev = $mv['unimis'].' '.floatval(round($mv['totquanti_evaso'],5));
           if ($mv['zerorow']){ // ho un rigo dell'ordine a zero, segnalo e propongo la modifica
             $colimp = '<span class="text-danger">  <a href="./admin_broven.php?id_tes='.$mv['id_tes'].'&Update" target="_blank" title="Modifica righi con importo a zero" class="text-danger"> <i class="fa fa-exclamation-triangle"></i> </a> € '.gaz_format_number($mv['totimpbro_da_evadere']).' - '.gaz_format_number($mv['totimpdoc_evaso']).'</span>';
@@ -312,11 +312,11 @@ if ( count($msg['err']) == 0) {
       echo '<td class="FacetDataTD text-center">'.$colsta."</td>";
       echo "</tr>\n";
     }
-      echo "<tr>";
+      echo '<tr class="text-bold">';
       echo '<td colspan=4></td>';
       echo '<td class="FacetDataTD text-center">'.$mv['tot']['qtotord']."</td>";
       echo '<td class="FacetDataTD text-center">'.$mv['tot']['qtoteva']."</td>";
-      echo '<td class="FacetDataTD text-center">'.$mv['tot']['vtotord'].' - '.$mv['tot']['vtoteva']."</td>";
+      echo '<td class="FacetDataTD text-center"> € '.gaz_format_number($mv['tot']['vtotord']).' - '.gaz_format_number($mv['tot']['vtoteva'])."</td>";
       echo '<td></td>';
       echo "</tr>\n";
       echo '<tr><td class="FacetFooterTD text-center" colspan=8><input type="submit" class="btn btn-warning" name="print" value="'.$script_transl['print'].'"></td></tr>';
