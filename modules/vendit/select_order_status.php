@@ -66,8 +66,13 @@ function getOrders($dateini,$datefin,$status=3)
       $r['totimpbro_da_evadere'] = $totimpbro_da_evadere;
       $totquanti_evaso = 0;
       $totimp_evaso = 0;
-      $rigdoc_result = gaz_dbi_dyn_query('tiprig,quanti,prelis,'. $gTables['rigdoc'].'.sconto', $gTables['rigdoc'].' LEFT JOIN '.$gTables['tesdoc'].' ON  ('.$gTables['rigdoc'].'.id_tes = '.$gTables['tesdoc'].'.id_tes AND ('.$gTables['tesdoc'].".tipdoc LIKE 'FA_' OR ".$gTables['tesdoc'].".tipdoc LIKE 'DD_' OR ".$gTables['tesdoc'].".tipdoc LIKE 'V__')) ", "id_order=" . $r['id_tes'] . " AND tiprig <=1 ", $gTables['tesdoc'].'.datemi DESC');
+      $r['doc'] = [];
+      $ctrl_id_tes = 0;
+      $rigdoc_result = gaz_dbi_dyn_query('tiprig,quanti,prelis,'. $gTables['rigdoc'].'.sconto,'. $gTables['rigdoc'].'.id_tes,'. $gTables['tesdoc'].'.numdoc,'. $gTables['tesdoc'].'.datemi,'. $gTables['tesdoc'].'.tipdoc', $gTables['rigdoc'].' LEFT JOIN '.$gTables['tesdoc'].' ON  ('.$gTables['rigdoc'].'.id_tes = '.$gTables['tesdoc'].'.id_tes AND ('.$gTables['tesdoc'].".tipdoc LIKE 'FA_' OR ".$gTables['tesdoc'].".tipdoc LIKE 'DD_' OR ".$gTables['tesdoc'].".tipdoc LIKE 'V__')) ", "id_order=" . $r['id_tes'] . " AND tiprig <=1 ", $gTables['tesdoc'].'.datemi DESC');
       while ($rigdoc_r = gaz_dbi_fetch_array($rigdoc_result)) {
+        if ($ctrl_id_tes <> $rigdoc_r['id_tes']){
+          $r['doc'][$rigdoc_r['id_tes']] = ['numdoc'=>$rigdoc_r['numdoc'],'datemi'=>$rigdoc_r['datemi'],'tipdoc'=>$rigdoc_r['tipdoc']];
+        }
         $totquanti_evaso += $rigdoc_r['quanti'];
         $processed_atleastone = true;
         if ( $rigdoc_r['tiprig']==1 ){
@@ -227,15 +232,25 @@ if ( count($msg['err']) == 0) {
       // start prepare column
       $colqua = '';
       $colimp = '';
+      $colsta = '';
       switch($mv['stato_evasione']) { // 0 = Inevaso, 1 = Evasione parziale, 2 = Evaso
         case 0: // 0 = Inevaso
           $colimp = '<a class="btn btn-xs btn-danger" href="select_evaord.php?id_tes='.$mv['id_tes'].'" title="Ordine inevaso per € '.gaz_format_number($mv['totimpbro_da_evadere']).'">Non evaso (€ '.gaz_format_number($mv['totimpbro_da_evadere']).') </a>';
+          $colqor = $mv['unimis'].' '.floatval(round($mv['totquanti_da_evadere'],5));
+          $colqev = $mv['unimis'].' '.floatval(round($mv['totquanti_evaso'],5));
+          $colsta = $mv['stato_evasione'].( $mv['zerorow'] ? '<div class="btn btn-xs btn-danger"> X </div>' : '' );
         break;
         case 1: // 1 = Evasione parziale
           $colimp = '<a class="btn btn-xs btn-warning" href="select_evaord.php?id_tes='.$mv['id_tes'].'" title="Ordine parzialmente evaso € '.gaz_format_number($mv['totimpdoc_evaso']).' su '.gaz_format_number($mv['totimpbro_da_evadere']).'">Saldo da evadere (€ '.gaz_format_number($mv['totimpbro_da_evadere']).') </a>';
+          $colqor = $mv['unimis'].' '.floatval(round($mv['totquanti_da_evadere'],5)).' - '.floatval(round($mv['totquanti_evaso'],5));
+          $colqev = $mv['unimis'].' '.floatval(round($mv['totquanti_evaso'],5));
+          $colsta = $mv['stato_evasione'].( $mv['zerorow'] ? '<div class="btn btn-xs btn-danger"> X </div>' : '' );
         break;
         case 2: // 2 = Evaso
           $colimp = '<a class="btn btn-xs btn-success" href="select_evaord.php?id_tes='.$mv['id_tes'].'" title="Ordine di € '.gaz_format_number($mv['totimpbro_da_evadere']).'">Evaso (€ '.gaz_format_number($mv['totimpdoc_evaso']).') </a>';
+          $colqor = $mv['unimis'].' '.floatval(round($mv['totquanti_da_evadere'],5)).' - '.floatval(round($mv['totquanti_evaso'],5));
+          $colqev = $mv['unimis'].' '.floatval(round($mv['totquanti_evaso'],5));
+          $colsta = $mv['stato_evasione'].( $mv['zerorow'] ? '<div class="btn btn-xs btn-danger"> X </div>' : '' );
         break;
       }
       // end prepare column
@@ -244,9 +259,10 @@ if ( count($msg['err']) == 0) {
       echo '<td class="FacetDataTD text-center">'.$mv['numdoc']."</td>";
       echo '<td class="FacetDataTD text-center">'.gaz_format_date($mv['datemi'])."</td>";
       echo '<td class="FacetDataTD text-center"><a href="./admin_client.php?codice='.substr($mv['clfoco'],-6).'&Update" target="_blank">'.$mv['ragso1'].'</a></td>';
-      echo '<td class="FacetDataTD text-center small">'.floatval(round($mv['totquanti_da_evadere'],5)).'<br/>'.$mv['unimis'].' '.floatval(round($mv['totquanti_da_evadere']-$mv['totquanti_evaso'],5))."</td>";
+      echo '<td class="FacetDataTD text-center small">'.$colqor."</td>";
+      echo '<td class="FacetDataTD text-center small">'.$colqev."</td>";
       echo '<td class="FacetDataTD text-center small">'.$colimp."</td>";
-      echo '<td class="FacetDataTD text-center">'.$mv['stato_evasione'].( $mv['zerorow'] ? '<div class="btn btn-xs btn-danger"> X </div>' : '' )."</td>";
+      echo '<td class="FacetDataTD text-center">'.$colsta."</td>";
       echo "</tr>\n";
     }
     echo '<td class="FacetFooterTD text-center" colspan=7><input type="submit" class="btn btn-warning" name="print" value="';

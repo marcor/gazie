@@ -2070,7 +2070,7 @@ $strScript = array("admin_client.php" =>
         'doc_name' => ["VOR" => "Ordine","VOW" => "Ordine web"],
         'title' => 'Visualizza e stampa situazione ordini',
         'err' =>['norows' => 'Non ci sono righi inevasi','wrongdate' => 'La data di fine non pu&ograve; essere precedente la data di inizio periodo'],
-        'header' => ['ID' => '','Numero' => '', 'Data' => '', 'Cliente/P.I.' => '','Quantità'=>'', 'Valore €' => '', 'Stato' => ''],
+        'header' => ['ID' => '','Numero' => '', 'Data' => '', 'Cliente/P.I.' => '','Quantità<br/>ordinata'=>'','Quantità<br/>evasa'=>'', 'Valore €<br/>ordinato - evaso' => '', 'Stato' => ''],
         'seziva' => 'Sezione IVA',
         'from' => 'da ',
         'del' => ' del ',
