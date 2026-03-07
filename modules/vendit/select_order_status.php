@@ -30,6 +30,10 @@ function getOrders($dateini,$datefin,$status=3)
   {
     global $gTables,$admin_aziend;
     $m = [];
+    $qtotord = 0;
+    $qtoteva = 0;
+    $vtotord = 0.00;
+    $vtoteva = 0.00;
     $sql="SELECT ".$gTables['tesbro'].".*, ".$gTables['anagra'].".ragso1 FROM ".$gTables['tesbro']."
           LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['tesbro'].".clfoco = ".$gTables['clfoco'].".codice
           LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id
@@ -101,26 +105,51 @@ function getOrders($dateini,$datefin,$status=3)
       switch($status) { // 0 = Evasi, 1= Solo con residui, 2 = Inevasi, 3 = Inevasi e residui, 9 = Tutti
         case 0: // Evasi
           if ( $r['stato_evasione'] == 2 ){
+            $qtotord += $totquanti_da_evadere;
+            $qtoteva += $totquanti_evaso;
+            $vtotord += $totimpbro_da_evadere;
+            $vtoteva += $totimpdoc_evaso;
+            $r['tot'] = [ 'qtotord' => $qtotord, 'qtoteva' => $qtoteva, 'vtotord' => $vtotord, 'vtoteva' => $vtoteva ];
             $m[] = $r;
           }
         break;
         case 1: // Solo con residui
           if ( $r['stato_evasione'] == 1 ){
+            $qtotord += $totquanti_da_evadere;
+            $qtoteva += $totquanti_evaso;
+            $vtotord += $totimpbro_da_evadere;
+            $vtoteva += $totimpdoc_evaso;
+            $r['tot'] = [ 'qtotord' => $qtotord, 'qtoteva' => $qtoteva, 'vtotord' => $vtotord, 'vtoteva' => $vtoteva ];
             $m[] = $r;
           }
         break;
         case 2: // Inevasi
           if ( $r['stato_evasione'] == 0 ){
+            $qtotord += $totquanti_da_evadere;
+            $qtoteva += $totquanti_evaso;
+            $vtotord += $totimpbro_da_evadere;
+            $vtoteva += $totimpdoc_evaso;
+            $r['tot'] = [ 'qtotord' => $qtotord, 'qtoteva' => $qtoteva, 'vtotord' => $vtotord, 'vtoteva' => $vtoteva ];
             $m[] = $r;
           }
         break;
         case 3: // Inevasi e residui
           if ( $r['stato_evasione'] <= 1  ) {
+            $qtotord += $totquanti_da_evadere;
+            $qtoteva += $totquanti_evaso;
+            $vtotord += $totimpbro_da_evadere;
+            $vtoteva += $totimpdoc_evaso;
+            $r['tot'] = [ 'qtotord' => $qtotord, 'qtoteva' => $qtoteva, 'vtotord' => $vtotord, 'vtoteva' => $vtoteva ];
             $m[] = $r;
           }
         break;
         default: // Tutti
-          $m[] = $r;
+            $qtotord += $totquanti_da_evadere;
+            $qtoteva += $totquanti_evaso;
+            $vtotord += $totimpbro_da_evadere;
+            $vtoteva += $totimpdoc_evaso;
+            $r['tot'] = [ 'qtotord' => $qtotord, 'qtoteva' => $qtoteva, 'vtotord' => $vtotord, 'vtoteva' => $vtoteva ];
+            $m[] = $r;
       }
     }
     return $m;
@@ -235,41 +264,62 @@ if ( count($msg['err']) == 0) {
       $colsta = '';
       switch($mv['stato_evasione']) { // 0 = Inevaso, 1 = Evasione parziale, 2 = Evaso
         case 0: // 0 = Inevaso
-          $colimp = '<a class="btn btn-xs btn-danger" href="select_evaord.php?id_tes='.$mv['id_tes'].'" title="Ordine inevaso per € '.gaz_format_number($mv['totimpbro_da_evadere']).'">Non evaso (€ '.gaz_format_number($mv['totimpbro_da_evadere']).') </a>';
           $colqor = $mv['unimis'].' '.floatval(round($mv['totquanti_da_evadere'],5));
-          $colqev = $mv['unimis'].' '.floatval(round($mv['totquanti_evaso'],5));
-          $colsta = $mv['stato_evasione'].( $mv['zerorow'] ? '<div class="btn btn-xs btn-danger"> X </div>' : '' );
+          $colqev = '';
+          if ($mv['zerorow']){ // ho un rigo dell'ordine a zero, segnalo e propongo la modifica
+            $colimp = '<span class="text-danger">  <a href="./admin_broven.php?id_tes='.$mv['id_tes'].'&Update" target="_blank" title="Modifica righi con importo a zero" class="text-danger"> <i class="fa fa-exclamation-triangle"></i> </a> € '.gaz_format_number($mv['totimpbro_da_evadere']).' - '.gaz_format_number($mv['totimpdoc_evaso']).'</span>';
+          } else {
+            $colimp = '<span  class="text-default"> € '.gaz_format_number($mv['totimpbro_da_evadere']).' - '.gaz_format_number($mv['totimpdoc_evaso']).'</span>';
+          }
+          $colsta = '<a class="btn btn-xs btn-danger" href="select_evaord.php?id_tes='.$mv['id_tes'].'"  title="Evadi" target="_blank" > Inevaso </a>';
         break;
         case 1: // 1 = Evasione parziale
-          $colimp = '<a class="btn btn-xs btn-warning" href="select_evaord.php?id_tes='.$mv['id_tes'].'" title="Ordine parzialmente evaso € '.gaz_format_number($mv['totimpdoc_evaso']).' su '.gaz_format_number($mv['totimpbro_da_evadere']).'">Saldo da evadere (€ '.gaz_format_number($mv['totimpbro_da_evadere']).') </a>';
-          $colqor = $mv['unimis'].' '.floatval(round($mv['totquanti_da_evadere'],5)).' - '.floatval(round($mv['totquanti_evaso'],5));
+          $colqor = $mv['unimis'].' '.floatval(round($mv['totquanti_da_evadere'],5));
           $colqev = $mv['unimis'].' '.floatval(round($mv['totquanti_evaso'],5));
-          $colsta = $mv['stato_evasione'].( $mv['zerorow'] ? '<div class="btn btn-xs btn-danger"> X </div>' : '' );
+          if ($mv['zerorow']){ // ho un rigo dell'ordine a zero, segnalo e propongo la modifica
+            $colimp = '<span class="text-danger">  <a href="./admin_broven.php?id_tes='.$mv['id_tes'].'&Update" target="_blank" title="Modifica righi con importo a zero" class="text-danger"> <i class="fa fa-exclamation-triangle"></i> </a> € '.gaz_format_number($mv['totimpbro_da_evadere']).' - '.gaz_format_number($mv['totimpdoc_evaso']).'</span>';
+          } else {
+            $colimp = '<span  class="text-default"> € '.gaz_format_number($mv['totimpbro_da_evadere']).' - '.gaz_format_number($mv['totimpdoc_evaso']).'</span>';
+          }
+          $colsta = '<a class="btn btn-xs btn-warning" href="select_evaord.php?id_tes='.$mv['id_tes'].'" title="Evadi saldo" target="_blank" > Parzialmente evaso </a>';
+          foreach ($mv['doc'] as $k=>$d){
+            $colsta .= '<br/><a class="btn btn-xs btn-default" href="stampa_docven.php?id_tes='.$k.'"  target="_blank">Doc. n.'.$d['numdoc'].' del '.gaz_format_date($d['datemi']).'</a>';
+          }
         break;
         case 2: // 2 = Evaso
-          $colimp = '<a class="btn btn-xs btn-success" href="select_evaord.php?id_tes='.$mv['id_tes'].'" title="Ordine di € '.gaz_format_number($mv['totimpbro_da_evadere']).'">Evaso (€ '.gaz_format_number($mv['totimpdoc_evaso']).') </a>';
           $colqor = $mv['unimis'].' '.floatval(round($mv['totquanti_da_evadere'],5)).' - '.floatval(round($mv['totquanti_evaso'],5));
           $colqev = $mv['unimis'].' '.floatval(round($mv['totquanti_evaso'],5));
-          $colsta = $mv['stato_evasione'].( $mv['zerorow'] ? '<div class="btn btn-xs btn-danger"> X </div>' : '' );
+          if ($mv['zerorow']){ // ho un rigo dell'ordine a zero, segnalo e propongo la modifica
+            $colimp = '<span class="text-danger">  <a href="./admin_broven.php?id_tes='.$mv['id_tes'].'&Update" target="_blank" title="Modifica righi con importo a zero" class="text-danger"> <i class="fa fa-exclamation-triangle"></i> </a> € '.gaz_format_number($mv['totimpbro_da_evadere']).' - '.gaz_format_number($mv['totimpdoc_evaso']).'</span>';
+          } else {
+            $colimp = '<span  class="text-default"> € '.gaz_format_number($mv['totimpbro_da_evadere']).' - '.gaz_format_number($mv['totimpdoc_evaso']).'</span>';
+          }
+          $colsta = '<div class="btn btn-xs btn-success" style="cursor: default;">Evaso </div>';
+          foreach ($mv['doc'] as $k=>$d){
+            $colsta .= '<br/><a class="btn btn-xs btn-default" href="stampa_docven.php?id_tes='.$k.'"  target="_blank">Doc. n.'.$d['numdoc'].' del '.gaz_format_date($d['datemi']).'</a>';
+          }
         break;
       }
       // end prepare column
       echo "<tr>";
-      echo '<td class="FacetDataTD text-center"><a href="./admin_broven.php?id_tes='.$mv['id_tes'].'&Update" target="_blank">'.$mv['id_tes']."</a></td>";
+      echo '<td class="FacetDataTD text-center"><a class="btn btn-xs btn-success" href="./admin_broven.php?id_tes='.$mv['id_tes'].'&Update" target="_blank">'.$mv['id_tes']."</a></td>";
       echo '<td class="FacetDataTD text-center">'.$mv['numdoc']."</td>";
       echo '<td class="FacetDataTD text-center">'.gaz_format_date($mv['datemi'])."</td>";
       echo '<td class="FacetDataTD text-center"><a href="./admin_client.php?codice='.substr($mv['clfoco'],-6).'&Update" target="_blank">'.$mv['ragso1'].'</a></td>';
-      echo '<td class="FacetDataTD text-center small">'.$colqor."</td>";
-      echo '<td class="FacetDataTD text-center small">'.$colqev."</td>";
-      echo '<td class="FacetDataTD text-center small">'.$colimp."</td>";
+      echo '<td class="FacetDataTD text-center">'.$colqor."</td>";
+      echo '<td class="FacetDataTD text-center">'.$colqev."</td>";
+      echo '<td class="FacetDataTD text-center">'.$colimp."</td>";
       echo '<td class="FacetDataTD text-center">'.$colsta."</td>";
       echo "</tr>\n";
     }
-    echo '<td class="FacetFooterTD text-center" colspan=7><input type="submit" class="btn btn-warning" name="print" value="';
-    echo $script_transl['print'];
-    echo '">';
-    echo "\t </td>\n";
-    echo "\t </tr>\n";
+      echo "<tr>";
+      echo '<td colspan=4></td>';
+      echo '<td class="FacetDataTD text-center">'.$mv['tot']['qtotord']."</td>";
+      echo '<td class="FacetDataTD text-center">'.$mv['tot']['qtoteva']."</td>";
+      echo '<td class="FacetDataTD text-center">'.$mv['tot']['vtotord'].' - '.$mv['tot']['vtoteva']."</td>";
+      echo '<td></td>';
+      echo "</tr>\n";
+      echo '<tr><td class="FacetFooterTD text-center" colspan=8><input type="submit" class="btn btn-warning" name="print" value="'.$script_transl['print'].'"></td></tr>';
   }
   echo "</table>\n";
 }
