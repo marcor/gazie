@@ -284,7 +284,15 @@ function printPdf(urlPrintDoc){
 	});
 };
 </script>
-<div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['title_value'][substr($tipo,0,2).'R']; ?></div>
+<div class="text-center row">
+  <div class="col-xs-12 col-md-3" style="padding-top: 25px;">
+  <a class="btn btn-default" href="<?= $script_transl['link_value'][substr($tipo,0,2).'R'];?>"><?= $script_transl['link_title'][substr($tipo,0,2).'R']; ?></a>
+  </div>
+  <div class="col-xs-12 col-md-6 text-center"><h1><?= $script_transl['title_value'][substr($tipo,0,2).'R']; ?></h1></div>
+  <div class="col-xs-12 col-md-3">
+  <a class="btn btn-default" href="./select_order_status.php" target="_blank"><?= $script_transl['order_status']; ?></a>
+  </div>
+</div>
 <?php
 $ts->output_navbar();
 ?>
@@ -433,7 +441,7 @@ $ts->output_navbar();
           }
           $totquanti_evaso = 0;
           $totimp_evaso = 0;
-          $rigdoc_result = gaz_dbi_dyn_query('tiprig,quanti,prelis,sconto', $gTables['rigdoc'], "id_order=" . $r['id_tes'] . " AND tiprig <=1 ", 'id_tes DESC');
+          $rigdoc_result = $rigdoc_result = gaz_dbi_dyn_query('tiprig,quanti,prelis,'. $gTables['rigdoc'].'.sconto', $gTables['rigdoc'].' LEFT JOIN '.$gTables['tesdoc'].' ON  ('.$gTables['rigdoc'].'.id_tes = '.$gTables['tesdoc'].'.id_tes AND ('.$gTables['tesdoc'].".tipdoc LIKE 'FA_' OR ".$gTables['tesdoc'].".tipdoc LIKE 'DD_' OR ".$gTables['tesdoc'].".tipdoc LIKE 'V__')) ", "id_order=" . $r['id_tes'] . " AND tiprig <=1 ", $gTables['tesdoc'].'.datemi DESC');
           while ($rigdoc_r = gaz_dbi_fetch_array($rigdoc_result)) {
             $totquanti_evaso += $rigdoc_r['quanti'];
             $processed_atleastone = true;
