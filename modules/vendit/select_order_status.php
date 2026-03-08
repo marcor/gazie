@@ -25,136 +25,6 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 $msg = ['err' => [], 'war' => []];
 
-
-function getOrders($dateini,$datefin,$status=3)
-  {
-    global $gTables,$admin_aziend;
-    $m = [];
-    $qtotord = 0;
-    $qtoteva = 0;
-    $vtotord = 0.00;
-    $vtoteva = 0.00;
-    $sql="SELECT ".$gTables['tesbro'].".*, ".$gTables['anagra'].".ragso1 FROM ".$gTables['tesbro']."
-          LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['tesbro'].".clfoco = ".$gTables['clfoco'].".codice
-          LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id
-          WHERE tipdoc LIKE 'VO_' AND datemi BETWEEN '".gaz_format_date($dateini,true)."' AND '".gaz_format_date($datefin,true)."' ORDER BY datemi DESC, numdoc DESC ";
-    $rs = gaz_dbi_query ($sql);
-    while ($r = gaz_dbi_fetch_array($rs)) { // attraverso ed attribuisco lo stato
-      $r['stato_evasione'] = 0; // 0 = Inevaso, 1 = Evasione parziale, 2 = Evaso
-      $r['unimis'] = '';
-      $zerorow = false;
-      $totimpbro_da_evadere = 0;
-      $totimpdoc_evaso = 0;
-      $remains_atleastone = false; // Almeno un rigo e' rimasto da evadere.
-      $processed_atleastone = false; // Almeno un rigo e' gia' stato evaso.
-      $rigbro_result = gaz_dbi_dyn_query('tiprig,quanti,prelis,sconto,LOWER(unimis) AS unimis', $gTables['rigbro'], "id_tes = " . $r['id_tes'] . " AND tiprig <=1 ", 'id_tes DESC');
-      $totquanti_da_evadere=0;
-      while ( $rigbro_r = gaz_dbi_fetch_array($rigbro_result) ) {
-        if ( $rigbro_r['tiprig']==1 ){
-          $totquanti_da_evadere += 1;
-          $totimp_da_evadere = CalcolaImportoRigo($rigbro_r['quanti'], $rigbro_r['prelis'], $rigbro_r['sconto']);
-        } elseif ($rigbro_r['tiprig']==0) {
-          $r['unimis'] = $rigbro_r['unimis'];
-          $totquanti_da_evadere += $rigbro_r['quanti'];
-          $totimp_da_evadere = CalcolaImportoRigo($rigbro_r['quanti'], $rigbro_r['prelis'], $rigbro_r['sconto']);
-        } else {
-          $totimp_da_evadere = 0;
-        }
-        if ($totimp_da_evadere < 0.01 ) {
-          $zerorow = true;
-        }
-        $totimpbro_da_evadere += $totimp_da_evadere;
-      }
-      $r['zerorow'] = $zerorow;
-      $r['totquanti_da_evadere'] = $totquanti_da_evadere;
-      $r['totimpbro_da_evadere'] = $totimpbro_da_evadere;
-      $totquanti_evaso = 0;
-      $totimp_evaso = 0;
-      $r['doc'] = [];
-      $ctrl_id_tes = 0;
-      $rigdoc_result = gaz_dbi_dyn_query('tiprig,quanti,prelis,'. $gTables['rigdoc'].'.sconto,'. $gTables['rigdoc'].'.id_tes,'. $gTables['tesdoc'].'.numdoc,'. $gTables['tesdoc'].'.datemi,'. $gTables['tesdoc'].'.tipdoc', $gTables['rigdoc'].' LEFT JOIN '.$gTables['tesdoc'].' ON  ('.$gTables['rigdoc'].'.id_tes = '.$gTables['tesdoc'].'.id_tes AND ('.$gTables['tesdoc'].".tipdoc LIKE 'FA_' OR ".$gTables['tesdoc'].".tipdoc LIKE 'DD_' OR ".$gTables['tesdoc'].".tipdoc LIKE 'V__')) ", "id_order=" . $r['id_tes'] . " AND tiprig <=1 ", $gTables['tesdoc'].'.datemi DESC');
-      while ($rigdoc_r = gaz_dbi_fetch_array($rigdoc_result)) {
-        if ($ctrl_id_tes <> $rigdoc_r['id_tes']){
-          $r['doc'][$rigdoc_r['id_tes']] = ['numdoc'=>$rigdoc_r['numdoc'],'datemi'=>$rigdoc_r['datemi'],'tipdoc'=>$rigdoc_r['tipdoc']];
-        }
-        $totquanti_evaso += $rigdoc_r['quanti'];
-        $processed_atleastone = true;
-        if ( $rigdoc_r['tiprig']==1 ){
-          $totimp_evaso = CalcolaImportoRigo($rigdoc_r['quanti'], $rigdoc_r['prelis'], $rigdoc_r['sconto']);
-        } elseif ($rigdoc_r['tiprig']==0) {
-          $totimp_evaso = CalcolaImportoRigo($rigdoc_r['quanti'], $rigdoc_r['prelis'], $rigdoc_r['sconto']);
-        } else {
-          $totimp_evaso = 0;
-        }
-        $totimpdoc_evaso += $totimp_evaso;
-      }
-      $r['totimpdoc_evaso'] = $totimpdoc_evaso;
-      $r['totquanti_evaso'] = $totquanti_evaso;
-      // indico gli stati in array
-      if ( $totquanti_evaso < $totquanti_da_evadere ) {
-        $remains_atleastone = true;
-      }
-      if ($totquanti_evaso >= $totquanti_da_evadere){
-        $r['stato_evasione'] = 2; // 2 = Evaso
-      } else if ($totquanti_evaso <= 0 ) {
-        $r['stato_evasione'] = 0; // 1 = Inevaso
-      } else if ($remains_atleastone) {
-        $r['stato_evasione'] = 1; // 1 = Evasione parziale
-      }
-      // popolo la matrice in base allo stato scelto sulla select
-      switch($status) { // 0 = Evasi, 1= Solo con residui, 2 = Inevasi, 3 = Inevasi e residui, 9 = Tutti
-        case 0: // Evasi
-          if ( $r['stato_evasione'] == 2 ){
-            $qtotord += $totquanti_da_evadere;
-            $qtoteva += $totquanti_evaso;
-            $vtotord += $totimpbro_da_evadere;
-            $vtoteva += $totimpdoc_evaso;
-            $r['tot'] = [ 'qtotord' => $qtotord, 'qtoteva' => $qtoteva, 'vtotord' => $vtotord, 'vtoteva' => $vtoteva ];
-            $m[] = $r;
-          }
-        break;
-        case 1: // Solo con residui
-          if ( $r['stato_evasione'] == 1 ){
-            $qtotord += $totquanti_da_evadere;
-            $qtoteva += $totquanti_evaso;
-            $vtotord += $totimpbro_da_evadere;
-            $vtoteva += $totimpdoc_evaso;
-            $r['tot'] = [ 'qtotord' => $qtotord, 'qtoteva' => $qtoteva, 'vtotord' => $vtotord, 'vtoteva' => $vtoteva ];
-            $m[] = $r;
-          }
-        break;
-        case 2: // Inevasi
-          if ( $r['stato_evasione'] == 0 ){
-            $qtotord += $totquanti_da_evadere;
-            $qtoteva += $totquanti_evaso;
-            $vtotord += $totimpbro_da_evadere;
-            $vtoteva += $totimpdoc_evaso;
-            $r['tot'] = [ 'qtotord' => $qtotord, 'qtoteva' => $qtoteva, 'vtotord' => $vtotord, 'vtoteva' => $vtoteva ];
-            $m[] = $r;
-          }
-        break;
-        case 3: // Inevasi e residui
-          if ( $r['stato_evasione'] <= 1  ) {
-            $qtotord += $totquanti_da_evadere;
-            $qtoteva += $totquanti_evaso;
-            $vtotord += $totimpbro_da_evadere;
-            $vtoteva += $totimpdoc_evaso;
-            $r['tot'] = [ 'qtotord' => $qtotord, 'qtoteva' => $qtoteva, 'vtotord' => $vtotord, 'vtoteva' => $vtoteva ];
-            $m[] = $r;
-          }
-        break;
-        default: // Tutti
-            $qtotord += $totquanti_da_evadere;
-            $qtoteva += $totquanti_evaso;
-            $vtotord += $totimpbro_da_evadere;
-            $vtoteva += $totimpdoc_evaso;
-            $r['tot'] = [ 'qtotord' => $qtotord, 'qtoteva' => $qtoteva, 'vtotord' => $vtotord, 'vtoteva' => $vtoteva ];
-            $m[] = $r;
-      }
-    }
-    return $m;
-}
-
 function getDateLimit($status)
   {
     global $gTables,$admin_aziend;
@@ -225,7 +95,28 @@ $(function () {
     this.form.submit();
   });
 });
+
+function printPdf(urlPrintDoc){
+	$(function(){
+		$('#framePdf').attr('src',urlPrintDoc);
+		$('#framePdf').css({'height': '100%'});
+		$('.framePdf').css({'display': 'block','width': '90%', 'height': '80%', 'z-index':'2000'});
+    $("html, body").delay(100).animate({scrollTop: $('#framePdf').offset().top},200, function() {
+        $("#framePdf").focus();
+    });
+		$('#closePdf').on( "click", function() {
+			$('.framePdf').css({'display': 'none'});
+		});
+	});
+};
 </script>
+<div class="framePdf panel panel-success" style="display: none; position: absolute; left: 5%; top: 100px">
+	<div class="col-lg-12">
+		<div class="col-xs-11"><h4><?php echo $script_transl['print']; ?></h4></div>
+		<div class="col-xs-1"><h4><button type="button" id="closePdf"><i class="glyphicon glyphicon-remove"></i></button></h4></div>
+	</div>
+	<iframe id="framePdf"  style="height: 100%; width: 100%" src=""></iframe>
+</div>
 <form method="POST" name="select">
   <input type="hidden" value="<?= $form['hidden_req'] ?>" name="hidden_req" />
   <input type="hidden" value="<?= $form['ritorno'] ?>" name="ritorno" />
@@ -267,7 +158,7 @@ if ( count($msg['err']) == 0) {
           $colqor = $mv['unimis'].' '.floatval(round($mv['totquanti_da_evadere'],5));
           $colqev = '<b class="text-danger"> - - - </b>';
           if ($mv['zerorow']){ // ho un rigo dell'ordine a zero, segnalo e propongo la modifica
-            $colimp = '<span class="text-danger">  <a href="./admin_broven.php?id_tes='.$mv['id_tes'].'&Update" target="_blank" title="Modifica righi con importo a zero" class="text-danger"> <i class="fa fa-exclamation-triangle"></i> </a> € '.gaz_format_number($mv['totimpbro_da_evadere']).' <b class="text-danger"> - '.gaz_format_number($mv['totimpdoc_evaso']).'</b></span>';
+            $colimp = '<span class="text-danger"><b> <a href="./admin_broven.php?id_tes='.$mv['id_tes'].'&Update" target="_blank" title="Modifica righi con importo a zero" class="text-danger"> <i class="fa fa-exclamation-triangle"></i> </a> € '.gaz_format_number($mv['totimpbro_da_evadere']).' - '.gaz_format_number($mv['totimpdoc_evaso']).'</b></span>';
           } else {
             $colimp = '<span  class="text-default"> € '.gaz_format_number($mv['totimpbro_da_evadere']).' <b class="text-danger"> - '.gaz_format_number($mv['totimpdoc_evaso']).'</b></span>';;
           }
@@ -275,9 +166,9 @@ if ( count($msg['err']) == 0) {
         break;
         case 1: // 1 = Evasione parziale
           $colqor = $mv['unimis'].' '.floatval(round($mv['totquanti_da_evadere'],5));
-          $colqev = $mv['unimis'].' '.floatval(round($mv['totquanti_evaso'],5));
+          $colqev = '<b class="text-warning">'.$mv['unimis'].' '.floatval(round($mv['totquanti_evaso'],5)).'</b>';
           if ($mv['zerorow']){ // ho un rigo dell'ordine a zero, segnalo e propongo la modifica
-            $colimp = '<span class="text-danger">  <a href="./admin_broven.php?id_tes='.$mv['id_tes'].'&Update" target="_blank" title="Modifica righi con importo a zero" class="text-danger"> <i class="fa fa-exclamation-triangle"></i> </a> € '.gaz_format_number($mv['totimpbro_da_evadere']).' <b class="text-warning">  - '.gaz_format_number($mv['totimpdoc_evaso']).'</b></span>';
+            $colimp = '<b class="text-danger"> <a href="./admin_broven.php?id_tes='.$mv['id_tes'].'&Update" target="_blank" title="Modifica righi con importo a zero" class="text-danger"> <i class="fa fa-exclamation-triangle"></i> </a> € '.gaz_format_number($mv['totimpbro_da_evadere']).'</b> <b class="text-warning">  - '.gaz_format_number($mv['totimpdoc_evaso']).'</b>';
           } else {
             $colimp = '<span  class="text-default"> € '.gaz_format_number($mv['totimpbro_da_evadere']).' <b class="text-warning">  - '.gaz_format_number($mv['totimpdoc_evaso']).'</b></span>';
           }
@@ -290,7 +181,7 @@ if ( count($msg['err']) == 0) {
           $colqor = $mv['unimis'].' '.floatval(round($mv['totquanti_da_evadere'],5));
           $colqev = $mv['unimis'].' '.floatval(round($mv['totquanti_evaso'],5));
           if ($mv['zerorow']){ // ho un rigo dell'ordine a zero, segnalo e propongo la modifica
-            $colimp = '<span class="text-danger">  <a href="./admin_broven.php?id_tes='.$mv['id_tes'].'&Update" target="_blank" title="Modifica righi con importo a zero" class="text-danger"> <i class="fa fa-exclamation-triangle"></i> </a> € '.gaz_format_number($mv['totimpbro_da_evadere']).' - '.gaz_format_number($mv['totimpdoc_evaso']).'</span>';
+            $colimp = '<span class="text-danger"> <b> <a href="./admin_broven.php?id_tes='.$mv['id_tes'].'&Update" target="_blank" title="Modifica righi con importo a zero" class="text-danger"> <i class="fa fa-exclamation-triangle"></i> </a> € '.gaz_format_number($mv['totimpbro_da_evadere']).'</b> - '.gaz_format_number($mv['totimpdoc_evaso']).'</span>';
           } else {
             $colimp = '<span  class="text-default"> € '.gaz_format_number($mv['totimpbro_da_evadere']).' - '.gaz_format_number($mv['totimpdoc_evaso']).'</span>';
           }
@@ -312,19 +203,19 @@ if ( count($msg['err']) == 0) {
       echo '<td class="FacetDataTD text-center">'.$colsta."</td>";
       echo "</tr>\n";
     }
-      echo '<tr class="text-bold">';
-      echo '<td colspan=4></td>';
+      echo '<tr class="text-bold text-right">';
+      echo '<td colspan=4>TOTALI:</td>';
       echo '<td class="FacetDataTD text-center">'.$mv['tot']['qtotord']."</td>";
       echo '<td class="FacetDataTD text-center">'.$mv['tot']['qtoteva']."</td>";
       echo '<td class="FacetDataTD text-center"> € '.gaz_format_number($mv['tot']['vtotord']).' - '.gaz_format_number($mv['tot']['vtoteva'])."</td>";
       echo '<td></td>';
       echo "</tr>\n";
-      echo '<tr><td class="FacetFooterTD text-center" colspan=8><input type="submit" class="btn btn-warning" name="print" value="'.$script_transl['print'].'"></td></tr>';
+      echo '<tr><td class="FacetFooterTD text-center" colspan=8>
+      <a class="btn btn-info" title="PDF per stampa" style="cursor:pointer;" onclick="printPdf(\'print_order_status.php?utsini='.$utsini."&utsfin=". $utsfin ."&status=". $form['status'] ."')\">Visualizza PDF <i class=\"glyphicon glyphicon-print\" ></i></a></td></tr>";
   }
   echo "</table>\n";
 }
 ?>
-</div>
 </form>
 <?php
 require("../../library/include/footer.php");
