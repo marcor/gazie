@@ -56,16 +56,28 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         $form['search'][$k] = $v;
     }
     // inizio mandati rid
-    $nd = 0;
+    $n_mandatirid = 0;
     if (isset($_POST['MndtRltdInf'])) {
-      foreach ($_POST['MndtRltdInf'] as $nd => $v) {
-        $form['MndtRltdInf'][$nd]['id_doc'] = intval($v['id_doc']);
-        $form['MndtRltdInf'][$nd]['extension'] = substr($v['extension'], 0, 5);
-        $form['MndtRltdInf'][$nd]['title'] = substr($v['title'], 0, 80);
-        $nd++;
+      foreach ($_POST['MndtRltdInf'] as $n_mandatirid => $v) {
+        $form['MndtRltdInf'][$n_mandatirid]['id_doc'] = intval($v['id_doc']);
+        $form['MndtRltdInf'][$n_mandatirid]['extension'] = substr($v['extension'], 0, 5);
+        $form['MndtRltdInf'][$n_mandatirid]['title'] = substr($v['title'], 0, 80);
+        $n_mandatirid++;
       }
     }
     // fine mandati rid
+
+    // inizio lettere intenti
+    $n_intento = 0;
+    if (isset($_POST['intento'])) {
+      foreach ($_POST['intento'] as $n_intento => $v) {
+        $form['intento'][$n_intento]['id_doc'] = intval($v['id_doc']);
+        $form['intento'][$n_intento]['extension'] = substr($v['extension'], 0, 5);
+        $form['intento'][$n_intento]['title'] = substr($v['title'], 0, 80);
+        $n_intento++;
+      }
+    }
+    // fine lettere intenti
 
     $toDo = 'update';
     if (isset($_POST['Insert'])) {
@@ -262,24 +274,33 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     }
     $form['codice'] = intval(substr($form['codice'], 3));
     $toDo = 'update';
+    $form['tab'] = isset($_GET['tab']) ? substr((string)$_GET['tab'],0,30) : 'home';
     $form['search']['id_des'] = '';
     $form['search']['fiscal_rapresentative_id'] = '';
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
     $form['hidden_req'] = '';
-    $form['tab'] = 'home';
     if($form['datnas']) {
       $form['datnas_Y'] = substr($form['datnas'], 0, 4); $form['datnas_M'] = substr($form['datnas'], 5, 2); $form['datnas_D'] = substr($form['datnas'], 8, 2);
     } else {
       $form['datnas_D'] = $form['datnas_M'] = 1; $form['datnas_Y'] = '1970';
     }
     // inizio mandati rid
-    $nd = 0;
-    $rs_r = gaz_dbi_dyn_query("*", $gTables['files'], "id_ref = '" . intval($admin_aziend['mascli'] * 1000000 + $_GET['codice']) . "' AND table_name_ref = 'clfoco'", "id_doc DESC");
+    $n_mandatirid = 0;
+    $rs_r = gaz_dbi_dyn_query("*", $gTables['files'], "id_ref = '" . intval($admin_aziend['mascli'] * 1000000 + $_GET['codice']) . "' AND table_name_ref = 'clfoco' AND item_ref = 'mndtritdinf'", "id_doc DESC");
     while ($r = gaz_dbi_fetch_array($rs_r)) {
-        $form['MndtRltdInf'][$nd] = $r;
-        $nd++;
+        $form['MndtRltdInf'][$n_mandatirid] = $r;
+        $n_mandatirid++;
     }
     // fine mandati rid
+
+    // inizio lettere intento
+    $n_intento = 0;
+    $rs_r = gaz_dbi_dyn_query("*", $gTables['files'], "id_ref = '" . intval($admin_aziend['mascli'] * 1000000 + $_GET['codice']) . "' AND table_name_ref = 'clfoco' AND item_ref = 'intento'", "id_doc DESC");
+    while ($r = gaz_dbi_fetch_array($rs_r)) {
+        $form['intento'][$n_intento] = $r;
+        $n_intento++;
+    }
+    // fine lettere intento
 
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
   $anagrafica = new Anagrafica();
@@ -307,7 +328,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
   $form['hidden_req'] = '';
   $form['visannota'] = 'N';
 	$form['id_SIAN']="";
-	$nd=0;
+	$n_intento=0;
 }
 
 require("../../library/include/header.php");
@@ -376,12 +397,14 @@ $(function() {
 
 	$("#dialog_delete").dialog({ autoOpen: false });
 	$('.dialog_delete').click(function() {
-		$("p#idcodice").html($(this).attr("mndtid"));
-		$("p#iddescri").html($(this).attr("dtofsgntr"));
-		var id_con = $(this).attr('ref');
+		var codice_cliente = $("#codice").val();
+		$("p#datadocumento").html($(this).attr("datadocumento"));
+		$("p#descridocumento").html($(this).attr("descridocumento"));
+		var id_doc = $(this).attr('id_doc');
+		var item_ref = $(this).attr('item_ref');
 		$( "#dialog_delete" ).dialog({
 			minHeight: 1,
-			width: "auto",
+			minWidth: 350,
 			modal: "true",
 			show: "blind",
 			hide: "explode",
@@ -398,12 +421,12 @@ $(function() {
 					'class':'btn btn-danger',
 					click:function (event, ui) {
 					$.ajax({
-						data: {'type':'mndtritdinf',ref:id_con},
+						data: {'type':item_ref,ref:id_doc},
 						type: 'POST',
 						url: '../vendit/delete.php',
 						success: function(output){
-		                    //alert(output);
-							window.location.replace("./report_client.php");
+		          //alert(output);
+							window.location.replace("./admin_client.php?codice=" + codice_cliente + '&Update&tab=commer');
 						}
 					});
 				}}
@@ -504,12 +527,11 @@ function printDoc(urlPrintDoc,nf){
 };
 </script>
 <form method="POST" name="form" enctype="multipart/form-data" id="myform">
-	<div style="display:none" id="dialog_delete" title="Conferma eliminazione Mandato">
-    <p><b>Mandato RID</b></p>
-    <p>Numero:</p>
-    <p class="ui-state-highlight" id="idcodice"></p>
-    <p>Data firma:</p>
-    <p class="ui-state-highlight" id="iddescri"></p>
+	<div style="display:none" id="dialog_delete" title="Conferma eliminazione documento">
+    <p>Descrizione:</p>
+    <p class="ui-state-highlight" id="descridocumento"></p>
+    <p>Data:</p>
+    <p class="ui-state-highlight" id="datadocumento"></p>
 	</div>
 	<div style="display:none" id="dialog_clfoco_doc_del" title="Conferma eliminazione documento">
     <p><b>DOCUMENTO</b></p>
@@ -548,7 +570,7 @@ if ($toDo == 'insert') {
     echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['ins_this'] . ' con ' . $script_transl['codice'] . " n° <input type=\"text\" name=\"codice\" value=\"" . $form['codice'] . "\" align=\"right\" maxlength=\"6\" /></div>\n";
 } else {
     echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['upd_this'] . " '" . $form['codice'] . "'";
-    echo '<input type="hidden" value="' . $form['codice'] .'" name="codice" /></div>';
+    echo '<input type="hidden" value="' . $form['codice'] .'" name="codice" id="codice"/></div>';
 }
 ?>
 <?php
@@ -878,7 +900,7 @@ $gForm->selectFromDB('customer_group', 'id_customer_group', 'id', $form['id_cust
             <div class="col-md-12">
                 <div class="form-group">
                     <label for="MndtRltdInf" class="col-sm-4 control-label"><?php echo $script_transl['MndtRltdInf']; ?></label>
-<?php if ($nd > 0) { // se ho dei documenti  ?>
+<?php if ($n_mandatirid > 0) { // se ho dei documenti  ?>
                         <div>
                         <?php foreach ($form['MndtRltdInf'] as $k => $val) { ?>
                                 <input type="hidden" value="<?php echo $val['id_doc']; ?>" name="MndtRltdInf[<?php echo $k; ?>][id_doc]">
@@ -889,11 +911,11 @@ $gForm->selectFromDB('customer_group', 'id_customer_group', 'id', $form['id_cust
                                     <i class="glyphicon glyphicon-file"></i>
                                 </a><?php echo $val['title']; ?>
                                 <input type="button" value="<?php echo ucfirst($script_transl['update']); ?>" onclick="location.href = 'admin_mndtritdinf.php?id_doc=<?php echo $val['id_doc']; ?>&Update'" />
-							<a class="btn btn-xs  btn-elimina dialog_delete" title="Cancella il mandato" ref="<?php echo $val['id_doc'];?>"
+							<a class="btn btn-xs  btn-elimina dialog_delete" title="Cancella il mandato" id_doc="<?php echo $val['id_doc'];?>"
                             <?php
                            	if ($data=json_decode($val['custom_field'],true)){// se c'è un json nel custom_field
-                                if (is_array($data['vendit']) && strlen($data['vendit']['dtofsgntr'])>0) { // se è riferito al modulo vendit e contiene la data di firma del RID
-                                    echo ' dtofsgntr="'.$data['vendit']['dtofsgntr'].'" mndtid="'.$data['vendit']['mndtid'].'"';
+                                if (is_array($data['vendit']) && isset($data['vendit']['dtofsgntr'])) { // se è riferito al modulo vendit e contiene la data di firma del RID
+                                    echo ' datadocumento="'.$data['vendit']['dtofsgntr'].'" descridocumento="Mandato RID '.$data['vendit']['mndtid'].'" item_ref="mndtritdinf"';
                                 }
                             }
                             ?>
@@ -1119,6 +1141,42 @@ $gForm->selectFromDB('aliiva', 'aliiva', 'codice', $form['aliiva'], 'codice', 1,
                 </div>
             </div>
         </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="intento" class="col-sm-4 control-label"><?php echo $script_transl['intento']; ?></label>
+<?php if ($n_intento > 0) { // se ho dei documenti  ?>
+                        <div>
+                        <?php foreach ($form['intento'] as $k => $val) { ?>
+                                <input type="hidden" value="<?php echo $val['id_doc']; ?>" name="intento[<?php echo $k; ?>][id_doc]">
+                                <input type="hidden" value="<?php echo $val['extension']; ?>" name="intento[<?php echo $k; ?>][extension]">
+                                <input type="hidden" value="<?php echo $val['title']; ?>" name="intento[<?php echo $k; ?>][title]">
+    <?php echo DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/doc/' . $val['id_doc'] . '.' . $val['extension']; ?>
+                                <a href="../root/retrieve.php?id_doc=<?php echo $val["id_doc"]; ?>" title="<?php echo $script_transl['view']; ?>!" class="btn btn-default btn-sm">
+                                    <i class="glyphicon glyphicon-file"></i>
+                                </a><?php echo $val['title']; ?>
+                                <input type="button" value="<?php echo ucfirst($script_transl['update']); ?>" onclick="location.href = 'admin_intento.php?id_doc=<?php echo $val['id_doc']; ?>&Update'" />
+							<a class="btn btn-xs  btn-elimina dialog_delete" title="Cancella la dichiarazione di intento" id_doc="<?php echo $val['id_doc'];?>"
+                            <?php
+                           	if ($data=json_decode($val['custom_field'],true)){// se c'è un json nel custom_field
+                                if (is_array($data['vendit']) && isset($data['vendit']['dataintento'])) { // se è riferito al modulo vendit e contiene la data della dichiarazione
+                                    echo ' datadocumento="'.$data['vendit']['dataintento'].'" descridocumento="Intento prot: '.$data['vendit']['protocintento'].'" item_ref="intento"';
+                                }
+                            }
+                            ?>
+                            >
+								<i class="glyphicon glyphicon-trash"></i>
+							</a>
+
+<?php } ?>
+                            <input type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_intento.php?id_ref=<?php echo $form['codice']; ?>&Insert'" />
+                        </div>
+                        <?php } else { // non ho documenti  ?>
+                        <input type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_intento.php?id_ref=<?php echo $form['codice']; ?>&Insert'">
+                    <?php } ?>
+                </div>
+            </div>
+        </div>
         <div class="row">
             <div class="col-md-12">
                 <div class="form-group">
