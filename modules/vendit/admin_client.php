@@ -164,6 +164,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
           $msg['err'][]='codpag';
         }
         $aliiva = gaz_dbi_get_row($gTables['aliiva'], 'codice', $form['aliiva']);
+        var_dump($aliiva);
         if ( $aliiva['fae_natura'] == 'N3.5' ) { // qualora l'aliquota IVA preveda un non imponibile per esportatore abituale
           $rs_intento =  gaz_dbi_dyn_query('*', $gTables['files'], " table_name_ref = 'clfoco' AND  item_ref = 'intento' AND id_ref =" .$real_code);
           $data_piu_recente = null;
@@ -172,7 +173,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             $data_corrente = $intento_cf['vendit']['dataintento'] ?? null;
             if ($data_corrente){
               if ($data_piu_recente === null || $data_corrente > $data_piu_recente) {
-                  $data_piu_recente = $data_corrente;
+                $data_piu_recente = $data_corrente;
               }
             }
           }

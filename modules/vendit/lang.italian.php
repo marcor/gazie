@@ -338,7 +338,8 @@ $strScript = array("admin_client.php" =>
 			'aliiva_nosplit' => 'Il rigo appena inserito ha un articolo con una percentuale IVA senza corrispondente aliquota con tipo IVA in split payment (T) ',
 			'lotinsuf' => 'Per questo ID lotto non c\'è la quantità richiesta',
 			'siandate' => 'La data di registrazione è precedente all\'ultimo movimento inviato al SIAN. Se si conferma, questo movimento non sarà inviato al SIAN.',
-			'emptylot' => 'Non è stato inserito il lotto'
+			'emptylot' => 'Non è stato inserito il lotto',
+			'rigointento' => 'Aggiunto in automatico il rigo Tipo 26 - Intento'
 		),
 		'cod_operaz_value' => array(11=>'',0=>'S0-Vendita olio a consumatore finale',1=>'S1-Vendita olio a ditta italiana',2=>'S2-Vendita olio a ditta comunitaria',3=>'S3-Vendita olio a ditta extracomunitaria',4=>'S4-Scarico olio trasferimento stabilimento stessa impresa',5=>'S5-Scarico olio trasferimento a terzista',6=>'S6-Cessione omaggio olio confezionato',7=>'S7-Scarico olio destinato ad altri usi',8=>'S8-Scarico olio autoconsumo',9=>'S9-Trasferimento olio a punti vendita aziendali',10=>'S10-Scarico olio reso al fornitore'),
     'cod_operaz_value_carico' => array(11=>'',7=>'C7->TO DO< Reso di olio sfuso da clienti',8=>'C8-Reso di olio confezionato da clienti'),
@@ -378,7 +379,8 @@ $strScript = array("admin_client.php" =>
 			'forceone' => 'Un articolo prevede la matricola/numero di serie pertanto la quantit&agrave; &egrave; stata forzata ad 1',
 			'filesize' => 'File troppo grande',
 			'filenoload' => 'Il file non è stato caricato',
-			'business_date_cessation' => 'Data successiva alla cessazione'
+			'business_date_cessation' => 'Data successiva alla cessazione',
+			'dataintento' => 'La dichiarazione di intento è scaduta'
 		),
         'consentivisua' => '<center>ATTENZIONE MANCANO I DATI FISCALI</center>'
     ),
@@ -486,6 +488,8 @@ $strScript = array("admin_client.php" =>
         "Questo documento &egrave; gi&agrave; stato contabilizzato!",
         "Non è possibile spostare su un rigo linkato",
         "Data successiva alla cessazione",
+        "La dichiarazione di intento è scaduta o è mancate", // 61
+        "Aggiunto in automatico il rigo Tipo 26 - Intento",
         'speban' => "Spese incasso",
         'speban_title' => 'Spese incasso non documentate/rate',
         'traspo_title' => 'Spese trasporto non documentate',
