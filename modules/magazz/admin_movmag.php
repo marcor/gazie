@@ -440,18 +440,20 @@ if (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo acces
         if ($toDo=="update") {
           $id_movmag=intval($_GET['id_mov']);
         } else {
+          $query = "ANALYZE TABLE " . $gTables['movmag'] ;
+          $result = gaz_dbi_query($query);
           $query = "SHOW TABLE STATUS LIKE '" . $gTables['movmag'] . "'";
-          unset($row);
           $result = gaz_dbi_query($query);
           $row = $result->fetch_assoc();
           $id_movmag = $row['Auto_increment'];
         }
 
         if (($toDo=="insert" && $form['operat']==1) || (intval($form['id_lotmag']) == 0 && $toDo=="update" && $form['operat']==1)) { // se è insert OR se è update ma non c'era il lotto creo il rigo lotto memorizzandolo nella tabella lotmag
+            $query = "ANALYZE TABLE " . $gTables['lotmag'] ;
+            $result = gaz_dbi_query($query);
             $query = "SHOW TABLE STATUS LIKE '" . $gTables['lotmag'] . "'";
-            unset($check_lot);
-            $check_lot = gaz_dbi_query($query);
-            $row = $check_lot->fetch_assoc();
+            $result = gaz_dbi_query($query);
+            $row = $result->fetch_assoc();
             $form['id_lotmag'] = $row['Auto_increment']; // trovo l'ID che avrà il lotto e  salvo il lotto
             gaz_dbi_query("INSERT INTO " . $gTables['lotmag'] . "(codart,id_movmag,identifier,expiry) VALUES ('" . $form['artico'] . "','" . $id_movmag. "','" . $form['identifier'] . "','" . $form['expiry'] . "')");
         }
@@ -477,14 +479,14 @@ if (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo acces
      		$position_warehouse = gaz_dbi_get_row($gTables['artico_position'], "id_position", $form['id_position']);
         $form['id_warehouse'] = $position_warehouse?$position_warehouse['id_warehouse']:0;
         if ($form['caumag']==99){ // nel caso in cui voglio aggiornare un movimento di inventario questo lo porto sempre a fine giornata ovvero con id_mov il più alto possibile, quindi cancello e reinserisco
-			if (isset($_GET['id_mov'])){
-				gaz_dbi_del_row($gTables['movmag'], 'id_mov', intval($_GET['id_mov']));
-			}
-			$id_movmag=$upd_mm->uploadMag($form['id_rif'], $form['tipdoc'],0,0,$form['datdoc'], $form['clfoco'], $form['scochi'], $form['caumag'], $form['artico'], $form['quanti'], $form['prezzo'], $form['scorig'], 0, $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => $form['operat'], 'desdoc' => $form['desdoc']));
-			$query = "UPDATE " . $gTables['movmag'] . " SET id_artico_position=".$form['id_position'].", id_warehouse=".$form['id_warehouse']."  WHERE id_mov =" . $id_movmag ;
-			gaz_dbi_query($query);
-			header("Location: " . $_POST['ritorno']);
-			exit;
+          if (isset($_GET['id_mov'])){
+            gaz_dbi_del_row($gTables['movmag'], 'id_mov', intval($_GET['id_mov']));
+          }
+          $id_movmag=$upd_mm->uploadMag($form['id_rif'], $form['tipdoc'],0,0,$form['datdoc'], $form['clfoco'], $form['scochi'], $form['caumag'], $form['artico'], $form['quanti'], $form['prezzo'], $form['scorig'], 0, $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => $form['operat'], 'desdoc' => $form['desdoc']));
+          $query = "UPDATE " . $gTables['movmag'] . " SET id_artico_position=".$form['id_position'].", id_warehouse=".$form['id_warehouse']."  WHERE id_mov =" . $id_movmag ;
+          gaz_dbi_query($query);
+          header("Location: " . $_POST['ritorno']);
+          exit;
         } else {
           $id_movmag=$upd_mm->uploadMag($form['id_rif'], $form['tipdoc'],0,0,$form['datdoc'], $form['clfoco'], $form['scochi'], $form['caumag'], $form['artico'], $form['quanti'], $form['prezzo'], $form['scorig'], $form['id_mov'], $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => $form['operat'], 'desdoc' => $form['desdoc'], 'id_artico_position' => $form['id_position']));
           if ($form['SIAN']>0 && $toDo=="insert"){
@@ -701,7 +703,7 @@ if ($form['clfoco'] == 0) {
             $clifor = $script_transl[5];
             echo "\t<select name=\"clfoco\" class=\"FacetSelect\" onchange=\"this.form.hidden_req.value='new_price'; this.form.submit();\">\n";
             echo "<option value=\"000000000\"> ---------- </option>";
-			foreach ($partner AS $key => $row) {
+            foreach ($partner AS $key => $row) {
                 $selected = "";
                 if ($row["codice"] == $form['clfoco']) {
                     $selected = "selected";
