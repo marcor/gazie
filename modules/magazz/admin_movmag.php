@@ -440,22 +440,11 @@ if (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo acces
         if ($toDo=="update") {
           $id_movmag=intval($_GET['id_mov']);
         } else {
-          $query = "ANALYZE TABLE " . $gTables['movmag'] ;
-          $result = gaz_dbi_query($query);
-          $query = "SHOW TABLE STATUS LIKE '" . $gTables['movmag'] . "'";
-          $result = gaz_dbi_query($query);
-          $row = $result->fetch_assoc();
-          $id_movmag = $row['Auto_increment'];
+          $id_movmag = 0;
         }
-
-        if (($toDo=="insert" && $form['operat']==1) || (intval($form['id_lotmag']) == 0 && $toDo=="update" && $form['operat']==1)) { // se è insert OR se è update ma non c'era il lotto creo il rigo lotto memorizzandolo nella tabella lotmag
-            $query = "ANALYZE TABLE " . $gTables['lotmag'] ;
-            $result = gaz_dbi_query($query);
-            $query = "SHOW TABLE STATUS LIKE '" . $gTables['lotmag'] . "'";
-            $result = gaz_dbi_query($query);
-            $row = $result->fetch_assoc();
-            $form['id_lotmag'] = $row['Auto_increment']; // trovo l'ID che avrà il lotto e  salvo il lotto
+        if (($toDo=="insert" && $form['operat']==1) || (intval($form['id_lotmag']) == 0 && $toDo=="update" && $form['operat']==1)) { // se è insert o se è update ma non c'era il lotto creo il rigo lotto memorizzandolo nella tabella lotmag
             gaz_dbi_query("INSERT INTO " . $gTables['lotmag'] . "(codart,id_movmag,identifier,expiry) VALUES ('" . $form['artico'] . "','" . $id_movmag. "','" . $form['identifier'] . "','" . $form['expiry'] . "')");
+            $form['id_lotmag'] = gaz_dbi_last_id();
         }
         if (intval($form['id_lotmag']) > 0 && $toDo=="update" && $form['operat']==1 ) { // se esiste il lotto e siamo in update lo modifico
           gaz_dbi_query("UPDATE " . $gTables['lotmag'] . " SET codart = '" . $form['artico'] . "' , identifier = '" . $form['identifier'] . "' , expiry = '" . $form['expiry'] . "' WHERE id = '" . $form['id_lotmag'] . "'");
@@ -507,6 +496,8 @@ if (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo acces
           // aggiorno id_lotmag nel rigo di movmag
           $query = "UPDATE " . $gTables['movmag'] . " SET id_lotmag = " . $form['id_lotmag'] . ", id_orderman=".$form['id_orderman'].", id_artico_position=".$form['id_position'].", id_warehouse=".$form['id_warehouse']."  WHERE id_mov ='" . $id_movmag . "'";
           gaz_dbi_query($query);
+          // aggiorno la tabella lotmag indicandoci l' id_movmag appena inserito
+          gaz_dbi_put_row($gTables['lotmag'],'id',$form['id_lotmag'],'id_movmag',$id_movmag);
         }
       }
 
