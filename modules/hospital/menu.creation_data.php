@@ -24510,7 +24510,7 @@ $update_db[]="INSERT IGNORE INTO `".$table_prefix."_XXXartico` (`ref_ecommerce_i
   $update_db[]="ALTER TABLE `".$table_prefix."_XXXrigbro` ADD COLUMN `adminid` VARCHAR(20) NOT NULL DEFAULT '' AFTER `custom_field`,	ADD COLUMN `last_modified` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP AFTER `adminid`";
   $update_db[]="ALTER TABLE `".$table_prefix."_XXXtesbro`	CHANGE COLUMN `id_con` `id_con` INT NOT NULL COMMENT 'Nel modulo hospital è usato per l\'id_patient' AFTER `id_contract`,
 	CHANGE COLUMN `seziva` `seziva` INT NOT NULL COMMENT 'Nel modulo hospital contiene il letto ' AFTER `id_tes`,
-	CHANGE COLUMN `tipdoc_buf` `tipdoc_buf` CHAR(3) NOT NULL DEFAULT '' COMMENT 'Nel modulo hospital  il regime di ammissione: residenziale, semi-residenziale, day-hospital' COLLATE 'utf8mb4_0900_ai_ci' AFTER `tipdoc`,
+	CHANGE COLUMN `tipdoc_buf` `tipdoc_buf` CHAR(3) NOT NULL DEFAULT '' COMMENT 'Nel modulo hospital  il regime di ammissione: residenziale, semi-residenziale, day-hospital' AFTER `tipdoc`,
 	CHANGE COLUMN `id_orderman` `id_orderman` INT NOT NULL COMMENT 'Nel modulo hospital viene usato per riferire il documento ad id_tes dell\'ammissione(ricovero) ' AFTER `id_con`;";
   $update_db[]="CREATE TABLE IF NOT EXISTS `".$table_prefix."_XXXhospital_pdflog` (
   `id` int NOT NULL AUTO_INCREMENT,
