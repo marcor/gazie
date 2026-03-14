@@ -147,12 +147,15 @@ if (isset($_GET['id_tes'])){   //se viene richiesta la stampa di un solo documen
 			$td = 'AFC';
 			break;      
    }
+    $data_inizio = substr($_GET['di'], 0, 4) . '-' . substr($_GET['di'], 4, 2) . '-' . substr($_GET['di'], 6, 2);
+$data_fine   = substr($_GET['df'], 0, 4)   . '-' . substr($_GET['df'], 4, 2)   . '-' . substr($_GET['df'], 6, 2);
+
     $where = "tipdoc LIKE '". $td ."' AND seziva = "
             . intval($_GET['si'])
             . " AND datfat BETWEEN '"
-            . substr($_GET['di'], 0, 10)
+            . $data_inizio
             . "' AND '"
-            . substr($_GET['df'], 0, 10)           
+            . $data_fine           
             . "' AND protoc BETWEEN "
             . intval($_GET['pi'])
             . " AND "

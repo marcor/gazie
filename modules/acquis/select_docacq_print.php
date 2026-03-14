@@ -78,7 +78,9 @@ function checkDocumentExist($tipo, $sezione, $data_inizio, $data_fine, $protocol
    //esiste almeno un documento nel periodo selezionato
    global $gTables;
    $date_name = 'datfat';
-   
+   $data_inizio = substr($data_inizio, 0, 4) . '-' . substr($data_inizio, 4, 2) . '-' . substr($data_inizio, 6, 2);
+	$data_fine   = substr($data_fine, 0, 4)   . '-' . substr($data_fine, 4, 2)   . '-' . substr($data_fine, 6, 2);
+
    switch ($tipo) {
 		case 0:  //tutti
          $where = "tipdoc LIKE 'AF_' AND template = 'FatturaAcquisto'";
@@ -94,8 +96,9 @@ function checkDocumentExist($tipo, $sezione, $data_inizio, $data_fine, $protocol
          break;      
    }
    $where .= " AND seziva = $sezione
-                AND protoc BETWEEN $protocollo_inizio AND $protocollo_fine
-                AND $date_name BETWEEN $data_inizio AND $data_fine";
+            AND protoc BETWEEN $protocollo_inizio AND $protocollo_fine
+            AND $date_name BETWEEN '$data_inizio' AND '$data_fine'";
+
    if ($cliente > 0) {
       $where .= " AND codcli = $cliente";
    }
@@ -318,7 +321,7 @@ echo "<td class=\"FacetDataTD\">";
 echo "\t <select name=\"gioini\" class=\"FacetSelect\">\n";
 for ($counter = 1; $counter <= 31; $counter++) {
    $selected = "";
-   if ($counter == $form['gioini'])
+   if (isset($form['gioini']) && $counter == $form['gioini'])
       $selected = "selected";
    echo "\t\t <option value=\"$counter\" $selected >$counter</option>\n";
 }
@@ -328,7 +331,7 @@ echo "\t <select name=\"mesini\" class=\"FacetSelect\">\n";
 $gazTimeFormatter->setPattern('MMMM');
 for ($counter = 1; $counter <= 12; $counter++) {
   $selected = "";
-  if ($counter == $form['mesini']) $selected = "selected";
+  if (isset($form['mesini']) && $counter == $form['mesini']) $selected = "selected";
   $nome_mese = $gazTimeFormatter->format(new DateTime("2000-".$counter."-01"));
   echo "\t\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
 }
@@ -337,7 +340,7 @@ echo "\t </select>\n";
 echo "\t <select name=\"annini\" class=\"FacetSelect\">\n";
 for ($counter = date("Y") - 10; $counter <= date("Y") + 10; $counter++) {
    $selected = "";
-   if ($counter == $form['annini'])
+   if (isset($form['annini']) && $counter == $form['annini'])
       $selected = "selected";
    echo "\t\t <option value=\"$counter\"  $selected >$counter</option>\n";
 }
@@ -350,7 +353,7 @@ echo "<td class=\"FacetDataTD\">";
 echo "\t <select name=\"giofin\" class=\"FacetSelect\">\n";
 for ($counter = 1; $counter <= 31; $counter++) {
    $selected = "";
-   if ($counter == $form['giofin'])
+   if (isset($form['giofin']) && $counter == $form['giofin'])
       $selected = "selected";
    echo "\t\t <option value=\"$counter\" $selected >$counter</option>\n";
 }
@@ -359,7 +362,7 @@ echo "\t </select>\n";
 echo "\t <select name=\"mesfin\" class=\"FacetSelect\">\n";
 for ($counter = 1; $counter <= 12; $counter++) {
   $selected = "";
-  if ($counter == $form['mesfin']) $selected = "selected";
+  if (isset($form['mesfin']) && $counter == $form['mesfin']) $selected = "selected";
   $nome_mese = $gazTimeFormatter->format(new DateTime("2000-".$counter."-01"));
   echo "\t\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
 }
@@ -368,7 +371,7 @@ echo "\t </select>\n";
 echo "\t <select name=\"annfin\" class=\"FacetSelect\">\n";
 for ($counter = date("Y") - 10; $counter <= date("Y") + 10; $counter++) {
    $selected = "";
-   if ($counter == $form['annfin'])
+   if (isset($form['annfin']) && $counter == $form['annfin'])
       $selected = "selected";
    echo "\t\t <option value=\"$counter\"  $selected >$counter</option>\n";
 }
