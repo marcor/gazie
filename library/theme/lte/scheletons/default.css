@@ -298,7 +298,6 @@ table.Tmiddle tr>td, table.Tsmall tr>td {
   font-size: clamp(1.2rem, 3vw, 2rem);
   text-align: center;
   font-weight: bold;
-  padding-top: 8px;
 }
 input[id^="search_"].ui-autocomplete-input::placeholder {
 	color: #800;
