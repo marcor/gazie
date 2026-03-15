@@ -123,7 +123,7 @@ $strScript = array("admin_fornit.php" =>
         'id_agente' => 'Agente',
         'operation_type' => 'Tipo di operazione'
     ),
-    "select_docforprint.php" =>
+    "select_docacq_print.php" =>
     array('title' => 'Ristampa documenti',
          array(0 => "Tutti i documenti",
             1 => "Fattura di acquisto",
