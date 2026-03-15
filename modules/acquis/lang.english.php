@@ -247,7 +247,7 @@ $strScript = array("admin_fornit.php" =>
     ),
     "admin_assets.php" =>
     array('title' => 'Acquisto bene ammmortizzabile da fornitore',
-        'mesg' => array('La ricerca non ha dato risultati!', 'Inserire almeno 2 caratteri', 'Cambia cliente/fornitore'),
+        'mesg' => array('La ricerca non ha dato risultati!', 'almeno 2 caratteri', 'Cambia cliente/fornitore'),
         'info' => array('gg_to_year_end_1' => ' giorni mancano alla fine dell\'anno ',
             'gg_to_year_end_2' => ' quando potranno essere ammortizzati € '),
         'err' => array('regdat' => 'La data di registrazione precede quella della fattura',
@@ -343,7 +343,7 @@ $strScript = array("admin_fornit.php" =>
     "select_schedule_debt.php" =>
     array('title' => 'Selezione per la visualizzazione e/o la stampa delle partite aperte',
         'mesg' => array('La ricerca non ha dato risultati!',
-            'Inserire almeno 2 caratteri!',
+            'almeno 2 caratteri!',
             'Cambia fornitore'
         ),
         'errors' => array('La data  non &egrave; corretta!',
@@ -398,7 +398,7 @@ $strScript = array("admin_fornit.php" =>
             , 'Data chiusura' => '', 'Giorni esposizione' => '', 'Stato' => '', 'Paga' => ''
         ),
         'mesg' => array('La ricerca non ha dato risultati!',
-            'Inserire almeno 2 caratteri!',
+            'almeno 2 caratteri!',
             'Cambia fornitore',
             'Il saldo contabile è diverso da quello dello scadenzario,<br> se vuoi registrare la riscossione di un documento presente solo in contabilità fallo da qui:',
             'Nessun importo è stato pagato!',
@@ -412,7 +412,7 @@ $strScript = array("admin_fornit.php" =>
    "prop_ordine.php" =>
 	array('title' => 'Propone un ordine a fornitore calcolato sul venduto',
 	      'mesg' => array('La ricerca non ha dato risultati!',
-		                  'Inserire almeno 2 caratteri!',
+		                  'almeno 2 caratteri!',
 						  'Cambia fornitore',
         ),
 		'includi' => 'Includi tutti',

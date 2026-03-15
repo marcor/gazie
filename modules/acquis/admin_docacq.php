@@ -3253,6 +3253,7 @@ if (count($form['rows']) > 0) {
         });
     });
 </script>
+</div>
 <!-- ENRICO FEDELE - FINE FINESTRA MODALE -->
 <?php
 if (isset($_POST['ins']) && count($msg['err']) == 0 && $pdf_to_modal!==0) {// stampa pdf in popup iframe
@@ -3260,6 +3261,7 @@ if (isset($_POST['ins']) && count($msg['err']) == 0 && $pdf_to_modal!==0) {// st
   <script>
     printPdf('invsta_docacq.php');
   </script>
+
   <?php
 }
 require("../../library/include/footer.php");
