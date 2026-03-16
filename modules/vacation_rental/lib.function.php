@@ -55,11 +55,16 @@ tablet = Tablet o cookie tablet
 desktop = PC/Laptop o cookie desktop
 unknown = Bot, UA non riconosciuto, UA vuoto
 */
-function detect_device(): string{
+function detect_device($app_name=''): string{
     $server = $_SERVER;
-
+    if (!empty($app_name)){
+	
+    }else{
+      $app_name = 'AppGmonamour';
+    }	
+	
     if (!empty($server['HTTP_USER_AGENT']) &&
-        stripos($server['HTTP_USER_AGENT'], 'AppGmonamour') !== false) {
+        stripos($server['HTTP_USER_AGENT'], $app_name) !== false) {			 
         return 'app';
     }
 
@@ -138,7 +143,7 @@ function initTrackingState(array &$data) { // true = possiamo tracciare, false =
 			//file_put_contents($debugFile, date('Y-m-d H:i:s') . " initTrackingState - dispositivo non trovato token: " . $token . PHP_EOL, FILE_APPEND);
 
 		}
-		
+
 		//file_put_contents($debugFile, date('Y-m-d H:i:s') . " - initTrackingState cantrack: " . $canTrack . " -session Andr:". $_SESSION['token_Android'] . PHP_EOL, FILE_APPEND);
     }
     // 🖥 DESKTOP / BROWSER: utente identificato
@@ -247,7 +252,7 @@ function trackUserEvent(array $data){
     $user_agent = $data['user_agent'] ?? $ua;
     $cookie_session = $_COOKIE['tracking_session'] ?? null;
 	$today = date('Y-m-d'); // giorno corrente
-	
+
     if (!$device && !$session && !is_numeric($user_id)) return false;
 
     // 3️⃣ Escape una volta sola
@@ -258,7 +263,7 @@ function trackUserEvent(array $data){
     $tracking_session = $data['tracking_session'] ?? $cookie_session;
     $tracking_session_esc = $tracking_session ? $link->real_escape_string($tracking_session) : null;
 	$data['tracking_session'] = (isset($tracking_session_esc)) ? $tracking_session_esc: $cookie_session;
-	
+
     // 4️⃣ Costruzione WHERE per hard match (versione corretta)
 	$where = [];
 
@@ -283,7 +288,7 @@ function trackUserEvent(array $data){
 
 	// Filtro sulla data di oggi
 	//$where[] = "DATE(created_at) = '$today'";
-	
+
     // 5️⃣ Trova ultima riga
     $last_row = null;
     if (!empty($where)) {
@@ -326,7 +331,7 @@ function trackUserEvent(array $data){
     $app_version = isset($data['app_version']) ? $link->real_escape_string($data['app_version']) : null;
     $platform = detect_device();
     $lang = isset($data['lang']) ? $link->real_escape_string($data['lang']) : null;
-	
+
     $isSearch = $search_start_date && $search_end_date;
 
     // 8️⃣ Costruisci evento figlio
@@ -493,11 +498,11 @@ function searchdiscount($house="",$facility="",$start="",$end="",$stay=0,$anagra
   $where=" ";
   $and=" WHERE (";
   if (strlen($house)>0){
-    $where .= $and." accommodation_code = '".$house."' OR accommodation_code='')";
+    $where .= $and." accommodation_code = '".mysqli_real_escape_string($link,$house)."' OR accommodation_code='')";
     $and=" AND (";
   }
   if (intval($facility)>0){
-    $where .= $and." facility_id = '".$facility."' OR facility_id = 0)";
+    $where .= $and." facility_id = ". intval($facility) ." OR facility_id = 0)";
     $and=" AND (";
   }
   if (intval($start)>0){
@@ -509,15 +514,16 @@ function searchdiscount($house="",$facility="",$start="",$end="",$stay=0,$anagra
     $and=" AND (";
   }
   if (intval($stay)>0){
-    $where .= $and." min_stay <= '".$stay."' OR min_stay = 0)";
+    $where .= $and." min_stay <= ".intval($stay)." OR min_stay = 0)";
     $and=" AND (";
   }
   if (intval($anagra)>0){
-    $where .= $and." id_anagra = '".$anagra."' OR id_anagra = 0)";
+    $where .= $and." id_anagra = ".intval($anagra)." OR id_anagra = 0)";
     $and=" AND (";
   }
-  $where .= $and." status = 'CREATED' AND (discount_voucher_code = '' OR discount_voucher_code = NULL ))";
-  $sql = "SELECT * FROM ".$table.$where." ORDER BY priority DESC, id ASC";
+  $where .= $and." status = 'CREATED' AND (discount_voucher_code = '' OR discount_voucher_code is NULL ))";
+
+  $sql = "SELECT *, JSON_UNQUOTE(JSON_EXTRACT(custom_field, '$.vacation_rental.app_name')) AS app_name FROM ".$table.$where." ORDER BY priority DESC, id ASC";
   //echo "<br>query: ",$sql,"<br>";
   if ($result = mysqli_query($link, $sql)) {
     return ($result);
@@ -1306,15 +1312,15 @@ function check_availability($start, $end, $house_code, $open_from = "", $open_to
 
     if ($check_open) {
         // --- 2) batch query eventi
-        $sql = "SELECT start, end, custom_field 
-                FROM $table 
-                LEFT JOIN $table_ts ON $table.id_tesbro = $table_ts.id_tes 
-                WHERE house_code='" . mysqli_real_escape_string($link, $house_code) . "' 
-                AND ((start <= '$end' AND end > '$start')) 
-                AND (custom_field IS NULL 
-                    OR custom_field LIKE '%PENDING%' 
-                    OR custom_field LIKE '%CONFIRMED%' 
-                    OR custom_field LIKE '%FROZEN%' 
+        $sql = "SELECT start, end, custom_field
+                FROM $table
+                LEFT JOIN $table_ts ON $table.id_tesbro = $table_ts.id_tes
+                WHERE house_code='" . mysqli_real_escape_string($link, $house_code) . "'
+                AND ((start <= '$end' AND end > '$start'))
+                AND (custom_field IS NULL
+                    OR custom_field LIKE '%PENDING%'
+                    OR custom_field LIKE '%CONFIRMED%'
+                    OR custom_field LIKE '%FROZEN%'
                     OR custom_field LIKE '%ISSUE%')";
         $res = mysqli_query($link, $sql);
         if ($res) {
@@ -1336,9 +1342,9 @@ function check_availability($start, $end, $house_code, $open_from = "", $open_to
 
     // --- 3) controllo limitazioni settimanali (artico_group)
     if (!isset($house_cache[$house_code])) {
-        $sql = "SELECT $table_gr.custom_field 
-                FROM $table_gr 
-                LEFT JOIN $table_ar ON $table_gr.id_artico_group = $table_ar.id_artico_group 
+        $sql = "SELECT $table_gr.custom_field
+                FROM $table_gr
+                LEFT JOIN $table_ar ON $table_gr.id_artico_group = $table_ar.id_artico_group
                 WHERE $table_ar.codice='" . mysqli_real_escape_string($link, $house_code) . "'";
         $res = mysqli_query($link, $sql);
         if ($res) {
@@ -1572,7 +1578,7 @@ $prezzi_periodo = [];
 
 $housecode_safe = mysqli_real_escape_string($link,$housecode);
 
-$sql = "SELECT start, end, price, minstay 
+$sql = "SELECT start, end, price, minstay
         FROM ".$azTables."rental_prices
         WHERE house_code = '".$housecode_safe."'
         AND start <= '".$end."'
@@ -1637,6 +1643,23 @@ while (strtotime($startw) < strtotime($end)) {// ciclo il periodo della locazion
 
   if (isset($discounts) && $discounts->num_rows >0){// se c'è almeno uno sconto
     foreach ($discounts as $discount){// li ciclo e applico lo sconto
+      // controllo se riservato ad APP
+		// error_log("Applying discount: ".$discount['title']." priority=".$discount['priority']." stop=".$discount['stop_further_processing']);      if (intval($discount['device_disc']) == 1 && $discount['app_name']){
+		 //error_log("Sono entrato per controllare device! ");
+
+        if (detect_device($discount['app_name']) <> 'app'){
+			//error_log("L'app non ha il nome richiesto: " . $discount['app_name']);
+			continue;
+        }else{
+			//error_log("OK L'app HA il nome richiesto: " . $discount['app_name']);
+		}
+      
+       // controllo desktop solo se device_disc = 2
+      if (intval($discount['device_disc']) == 2 && detect_device("") == 'app') {
+		  //error_log("Atteso desktop ma siamo in app ");
+          continue;
+      }
+
       if (intval($discount['last_min'])>0){// se è un lastmin controllo la validità
         $date=date_create($today);
         date_add($date,date_interval_create_from_date_string($discount['last_min']." days"));
