@@ -1225,7 +1225,7 @@ class selectproduction extends SelectBox {
 class selectcontract extends SelectBox {
   public $selected;
   public $name;
-  function output($cerca,$clfoco,$class = 'FacetSelect') {
+  function output($cerca,$clfoco,$class = 'col-xs-12') {
     global $gTables, $script_transl;
     $msg = "";
     $opera = "%'";
