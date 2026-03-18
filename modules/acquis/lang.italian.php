@@ -33,7 +33,7 @@ $strScript = array("admin_fornit.php" =>
         'ins_this' => 'Inserisci un fornitore',
         'upd_this' => 'Modifica  il fornitore ',
         'mesg' => array('La ricerca non ha dato risultati!',
-            'almeno 2 caratteri!',
+            'almeno 2 caratteri',
             'Cambia anagrafica'),
         'errors' => array('&Egrave; necessario indicare la Ragione Sociale',
             '&Egrave; necessario indicare l\'indirizzo',
@@ -223,7 +223,7 @@ $strScript = array("admin_fornit.php" =>
     array('title' => 'Inserimento/modifica documenti a fornitori',
         array("DDR" => "D.d.T. di Reso a Fornitore", "RDL" => "D.d.T. ritorno da lavorazione", "DDL" => "D.d.T. c/lavorazione", "AFA" => "Fattura d'Acquisto", "AFT" => "Fattura d'Acquisto differita","ADT" => "D.d.T. d'Acquisto", "AFC" => "Nota Credito da Fornitore", "AFD" => "Nota Debito da Fornitore", "AOR" => "Ordine a Fornitore", "APR" => "Richiesta di Preventivo a Fornitore"),
         'mesg' => array('La ricerca non ha dato risultati!',
-            'almeno 2 caratteri!',
+            'almeno 2 caratteri',
             'Cambia cliente/fornitore'),
         "add_article" => "Aggiungi un nuovo articolo di magazzino",
         'art_code' => 'Codice articolo',
@@ -441,7 +441,7 @@ $strScript = array("admin_fornit.php" =>
     "select_schedule_debt.php" =>
     array('title' => 'Selezione per la visualizzazione e/o la stampa delle partite aperte',
         'mesg' => array('La ricerca non ha dato risultati!',
-            'almeno 2 caratteri!',
+            'almeno 2 caratteri',
             'Cambia fornitore'
         ),
         'errors' => array('La data non &egrave; corretta!',
@@ -474,7 +474,7 @@ $strScript = array("admin_fornit.php" =>
             'err' => 'Ci sono degli errori che impediscono la stampa'
         ),
         'mesg' => array('La ricerca non ha dato risultati!',
-            'almeno 2 caratteri!',
+            'almeno 2 caratteri',
             'Cambia fornitore'
         ),
 		'supplier'=>'Tutti o fornitore',
@@ -503,7 +503,7 @@ $strScript = array("admin_fornit.php" =>
             , 'Data chiusura' => '', 'Giorni esposizione' => '', 'Stato' => '', 'Paga' => ''
         ),
         'mesg' => array('La ricerca non ha dato risultati!',
-            'almeno 2 caratteri!',
+            'almeno 2 caratteri',
             'Cambia fornitore',
             'Il saldo contabile &egrave; diverso da quello dello scadenzario,<br> se vuoi registrare la riscossione di un documento presente solo in contabilità fallo da qui:',
             'Nessun importo &egrave; stato pagato!',
@@ -566,7 +566,7 @@ $strScript = array("admin_fornit.php" =>
 	"prop_ordine.php" =>
 	array('title' => 'Propone un ordine a fornitore calcolato sul venduto',
 	      'mesg' => array('La ricerca non ha dato risultati!',
-		                  'almeno 2 caratteri!',
+		                  'almeno 2 caratteri',
 						  'Cambia fornitore',
         ),
 		'includi' => 'Includi tutti',
@@ -712,7 +712,7 @@ $strScript = array("admin_fornit.php" =>
     array('title' => 'Inserimento/modifica documenti a fornitori',
         array("DDR" => "D.d.T. di Reso a Fornitore", "RDL" => "D.d.T. ricevuto per ritorno da lavorazione", "DDL" => "D.d.T. c/lavorazione", "AFA" => "Fattura d'Acquisto", "ADT" => "D.d.T. d'Acquisto", "AFC" => "Nota Credito da Fornitore", "AFD" => "Nota Debito da Fornitore", "AOR" => "Ordine a Fornitore", "APR" => "Richiesta di Preventivo a Fornitore"),
         'mesg' => array('La ricerca non ha dato risultati!',
-            'almeno 2 caratteri!',
+            'almeno 2 caratteri',
             'Cambia cliente/fornitore'),
         " corpo ",
         " piede ",

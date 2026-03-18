@@ -343,7 +343,7 @@ $strScript = [
   "admin_admission.php" =>
   [
     'mesg' => ['La ricerca non ha dato risultati!',
-        'almeno 2 caratteri!',
+        'almeno 2 caratteri',
         'Cambia cliente/fornitore'],
     'err' =>[
         'id_con' => 'paziente non selezionato',

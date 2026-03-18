@@ -293,7 +293,7 @@ $strScript = array("admin_client.php" =>
         " termino",
         "Tipo ",
         "Seleccione Cliente ",
-        "inserte min. 2 caratteri!",
+        "inserte min. 2 caratteri",
         "Todos los clientes!",
         "No se ha encontrado nada!",
         "El n&uacute;mero inicio debe ser mayor que cero!",
@@ -863,7 +863,7 @@ $strScript = array("admin_client.php" =>
             "Y" => ""   //triangolazione"
         ),
         'mesg' => array('La ricerca non ha dato risultati!',
-            'almeno 2 caratteri!',
+            'almeno 2 caratteri',
             'Cambia cliente'
         ),
         'errors' => array('Una data  non &egrave; corretta!',
@@ -913,7 +913,7 @@ $strScript = array("admin_client.php" =>
     "select_schedule.php" =>
     array('title' => 'Selezione per la visualizzazione e/o la stampa delle partite aperte',
         'mesg' => array('La ricerca non ha dato risultati!',
-            'almeno 2 caratteri!',
+            'almeno 2 caratteri',
             'Cambia cliente/fornitore'
         ),
         'errors' => array('La data  non &egrave; corretta!',
@@ -1027,7 +1027,7 @@ $strScript = array("admin_client.php" =>
             , 'Data chiusura' => '', 'Giorni esposizione' => '', 'Stato' => '', 'Riscuoti' => ''
         ),
         'mesg' => array('La ricerca non ha dato risultati!',
-            'almeno 2 caratteri!',
+            'almeno 2 caratteri',
             'Cambia cliente',
             'Il saldo contabile è diverso da quello dello scadenzario,<br> se vuoi registrare la riscossione di un documento presente solo in contabilità fallo da qui:',
             'Nessun importo è stato riscosso!',
@@ -1115,7 +1115,7 @@ $strScript = array("admin_client.php" =>
         'annota' => 'Annotazioni',
         'id_anagra' => 'Destinazione legata a',
         'mesg' => array('La ricerca non ha dato risultati!',
-            'almeno 2 caratteri!',
+            'almeno 2 caratteri',
             'Cambia anagrafica'),
     ),
     "select_sconti_articoli.php" =>
@@ -1217,7 +1217,7 @@ $strScript = array("admin_client.php" =>
         'errors' => array('Inserire il cliente'
         ),
         'mesg' => array('La ricerca non ha dato risultati!',
-            'almeno 2 caratteri!',
+            'almeno 2 caratteri',
             'Cambia cliente',
         ),
         'header' => array('Cod. fornitore' => '', 'Fornitore' => '', 'Acquistato' => '', 'Venduto' => '',
@@ -1241,7 +1241,7 @@ $strScript = array("admin_client.php" =>
         ),
         'customer' => 'Cliente',
         'search_customer' => array('La ricerca non ha dato risultati!',
-            'almeno 2 caratteri!',
+            'almeno 2 caratteri',
             'Cambia cliente',
             'Scegli un cliente',
             ' C.F.:',

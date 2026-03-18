@@ -1187,7 +1187,7 @@ class selectPosition extends SelectBox
 class selectproduction extends SelectBox {
   public $selected;
   public $name;
-     function output($cerca, $without_closed = true, $class = 'FacetSelect',$sele=1, $msg = "") {
+     function output($cerca, $without_closed = true, $class = 'col-xs-12',$sele=1, $msg = "") {
         global $gTables, $script_transl;
         $opera = "%'";
         if (strlen($cerca) >= 1) {
