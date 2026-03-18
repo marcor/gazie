@@ -58,13 +58,13 @@ unknown = Bot, UA non riconosciuto, UA vuoto
 function detect_device($app_name=''): string{
     $server = $_SERVER;
     if (!empty($app_name)){
-	
+
     }else{
       $app_name = 'AppGmonamour';
-    }	
-	
+    }
+
     if (!empty($server['HTTP_USER_AGENT']) &&
-        stripos($server['HTTP_USER_AGENT'], $app_name) !== false) {			 
+        stripos($server['HTTP_USER_AGENT'], $app_name) !== false) {
         return 'app';
     }
 
@@ -490,7 +490,7 @@ function validatecard($cardnumber) {// L' algoritmo di Luhn , noto anche come al
 }
 
 // Ricerca gli sconti applicabili -> vengono esclusi i buoni sconto
-function searchdiscount($house="",$facility="",$start="",$end="",$stay=0,$anagra=0,$table=""){
+function searchdiscount($house="",$facility="",$start="",$end="",$stay=0,$anagra=0,$table="",$booking_start="",$booking_end=""){
   global $link, $azTables;
   if ($table == ""){
 	  $table = $azTables."rental_discounts";
@@ -513,6 +513,17 @@ function searchdiscount($house="",$facility="",$start="",$end="",$stay=0,$anagra
     $where .= $and." valid_to >= '".date("Y-m-d", strtotime($end))."' OR valid_to = '0000-00-00')";
     $and=" AND (";
   }
+  if (!empty($booking_start) && !empty($booking_end)) {
+    $startDate = date("Y-m-d", strtotime($booking_start));
+    $endDate = date("Y-m-d", strtotime($booking_end));
+
+    $where .= $and."
+        (booking_start <= '".$startDate."' OR booking_start = '0000-00-00')
+        AND
+        (booking_end >= '".$endDate."' OR booking_end = '0000-00-00')
+      )";
+    $and = " AND (";
+  }
   if (intval($stay)>0){
     $where .= $and." min_stay <= ".intval($stay)." OR min_stay = 0)";
     $and=" AND (";
@@ -524,7 +535,7 @@ function searchdiscount($house="",$facility="",$start="",$end="",$stay=0,$anagra
   $where .= $and." status = 'CREATED' AND (discount_voucher_code = '' OR discount_voucher_code is NULL ))";
 
   $sql = "SELECT *, JSON_UNQUOTE(JSON_EXTRACT(custom_field, '$.vacation_rental.app_name')) AS app_name FROM ".$table.$where." ORDER BY priority DESC, id ASC";
-  //echo "<br>query: ",$sql,"<br>";
+  //echo "<br>query search discount: ",$sql,"<br>";
   if ($result = mysqli_query($link, $sql)) {
     return ($result);
   }else {
@@ -532,7 +543,7 @@ function searchdiscount($house="",$facility="",$start="",$end="",$stay=0,$anagra
   }
 }
 
-// Ricerca gli sconti più vicini -> vengono esclusi i buoni sconto
+// Ricerca gli sconti più vicini (riferito ai giorni di permanenza) -> vengono esclusi i buoni sconto
 function search_near_discount($house="",$facility="",$start="",$end="",$stay=0,$anagra=0,$table=""){
   global $link, $azTables;
   if ($table == ""){
@@ -1560,75 +1571,79 @@ function set_imap($id_anagra){// restituisce le impostazioni imap in un array
 
 // Calcolo prezzo con sconti e controllo la prenotabilità in base min stay giornaliero del prezzo
 function get_price_bookable($start,$end,$housecode,$aliquo,$ivac,$web_price,$web_url,$descri,$lang,$in_fixquote,$id_artico_group){
+	;
   global $genTables,$azTables,$link,$IDaz,$script_transl,$admin_aziend;
   $minstay_memo=0;
   $accommodations=array();
   $datediff = strtotime($end)-strtotime($start);
 	$nights=round($datediff / (60 * 60 * 24));
+	;
   $accommodations['msg']=[];
   $accommodations['id_artico_group']=$id_artico_group;
   $accommodations['price']=0;
   $accommodations['codice']=$housecode;
+ 
   $accommodations['descri']=$descri;
   $accommodations['web_url']=get_string_lang($web_url, $lang);// se ci sono i tag lingua restituisco l'url nella lingua appropriata
   $accommodations['aliquo']=$aliquo;
   $startw=$start;
  // Recupero tutti i prezzi del periodo con UNA SOLA query
-$prezzi_periodo = [];
+  $prezzi_periodo = [];
 
-$housecode_safe = mysqli_real_escape_string($link,$housecode);
+  $housecode_safe = mysqli_real_escape_string($link,$housecode);
 
-$sql = "SELECT start, end, price, minstay
-        FROM ".$azTables."rental_prices
-        WHERE house_code = '".$housecode_safe."'
-        AND start <= '".$end."'
-        AND end >= '".$start."'";
+  $sql = "SELECT start, end, price, minstay
+          FROM ".$azTables."rental_prices
+          WHERE house_code = '".$housecode_safe."'
+          AND start <= '".$end."'
+          AND end >= '".$start."'";
 
-if ($result = mysqli_query($link,$sql)){
-  while($row = mysqli_fetch_assoc($result)){
-    $prezzi_periodo[] = $row;
-  }
-}
-
-while (strtotime($startw) < strtotime($end)) {// ciclo il periodo della locazione richiesta giorno per giorno
-
-  $prezzo = null;
-
-  // cerco il prezzo valido per il giorno corrente tra quelli caricati
-  foreach($prezzi_periodo as $p){
-    if ($p['start'] <= $startw && $p['end'] >= $startw){
-      $prezzo = $p;
-      break;
+  if ($result = mysqli_query($link,$sql)){
+    while($row = mysqli_fetch_assoc($result)){
+      $prezzi_periodo[] = $row;
     }
   }
 
-  if (isset($prezzo['minstay']) && intval($prezzo['minstay'])>0 && intval($nights) < intval($prezzo['minstay'])){// se richiesto controllo se non si è raggiunto il soggiorno minimo giornaliero del prezzo
-    if (intval($prezzo['minstay'])>$minstay_memo){
-      $minstay_memo=intval($prezzo['minstay']);
-      $accommodations['msg'][]=$script_transl['msg_minstay']." ".$prezzo['minstay']." ".$script_transl['nights'];
-    }
-  }
+  while (strtotime($startw) < strtotime($end)) {// ciclo il periodo della locazione richiesta giorno per giorno
 
-  // NB: il prezzo mostrato al pubblico deve essere sempre IVA compresa
-  if (isset($prezzo)){// se c'è un prezzo nel calendario lo uso
-    if ($ivac=="si"){
-      $accommodations['price'] += floatval($prezzo['price']);
-    }else{
-      $accommodations['price'] += floatval($prezzo['price'])+((floatval($prezzo['price'])*floatval($aliquo))/100);
+    $prezzo = null;
+
+    // cerco il prezzo valido per il giorno corrente tra quelli caricati
+    foreach($prezzi_periodo as $p){
+      if ($p['start'] <= $startw && $p['end'] >= $startw){
+        $prezzo = $p;
+        break;
+      }
     }
 
-  } elseif(floatval($web_price)>0){// altrimenti uso il prezzo base al quale devo sempre aggiungere l'iva
+    if (isset($prezzo['minstay']) && intval($prezzo['minstay'])>0 && intval($nights) < intval($prezzo['minstay'])){// se richiesto controllo se non si è raggiunto il soggiorno minimo giornaliero del prezzo
+      if (intval($prezzo['minstay'])>$minstay_memo){
+        $minstay_memo=intval($prezzo['minstay']);
+        $accommodations['msg'][]=$script_transl['msg_minstay']." ".$prezzo['minstay']." ".$script_transl['nights'];
+      }
+    }
 
-    $accommodations['price'] += floatval($web_price)+((floatval($web_price)*floatval($aliquo))/100);
+    // NB: il prezzo mostrato al pubblico deve essere sempre IVA compresa
+    if (isset($prezzo)){// se c'è un prezzo nel calendario lo uso
+      if ($ivac=="si"){
+        $accommodations['price'] += floatval($prezzo['price']);
+      }else{
+        $accommodations['price'] += floatval($prezzo['price'])+((floatval($prezzo['price'])*floatval($aliquo))/100);
+      }
 
-  }else{// se non c'è alcun prezzo non posso prenotare e metto non prenotabile
+    } elseif(floatval($web_price)>0){// altrimenti uso il prezzo base al quale devo sempre aggiungere l'iva
 
-    unset ($accommodations);
-    return false;
+      $accommodations['price'] += floatval($web_price)+((floatval($web_price)*floatval($aliquo))/100);
 
-  }
+    }else{// se non c'è alcun prezzo non posso prenotare e metto non prenotabile
 
-  $startw = date("Y-m-d", strtotime($startw) + 86400);// aumento di un giorno il ciclo
+      unset ($accommodations);
+      return false;
+
+    }
+
+	// ✅ incremento corretto di un giorno
+    $startw = date("Y-m-d", strtotime($startw . " +1 day"));  
 }
   // Se ho trovato prezzo disponibile procedo con il calcolo sconti
   $accommodations['fixquote'] = floatval($in_fixquote)+((floatval($in_fixquote)*floatval($aliquo))/100);// inizializzo eventuale quota fissa e aggiungo IVA
@@ -1636,24 +1651,28 @@ while (strtotime($startw) < strtotime($end)) {// ciclo il periodo della locazion
 
   // calcolo gli sconti
   $discounts=searchdiscount($housecode,$id_artico_group,$start,$end,$nights,$anagra=0);
+  
+
+  
   $accommodations['discount']=0;
   $accommodations['descri_discount']="";
 
   $today=date('Y-m-d');
-
   if (isset($discounts) && $discounts->num_rows >0){// se c'è almeno uno sconto
     foreach ($discounts as $discount){// li ciclo e applico lo sconto
+	
+	
       // controllo se riservato ad APP
 		// error_log("Applying discount: ".$discount['title']." priority=".$discount['priority']." stop=".$discount['stop_further_processing']);      if (intval($discount['device_disc']) == 1 && $discount['app_name']){
 		 //error_log("Sono entrato per controllare device! ");
 
-        if (detect_device($discount['app_name']) <> 'app'){
+        if (!empty($discount['app_name']) && detect_device($discount['app_name']) <> 'app'){
 			//error_log("L'app non ha il nome richiesto: " . $discount['app_name']);
 			continue;
         }else{
 			//error_log("OK L'app HA il nome richiesto: " . $discount['app_name']);
 		}
-      
+
        // controllo desktop solo se device_disc = 2
       if (intval($discount['device_disc']) == 2 && detect_device("") == 'app') {
 		  //error_log("Atteso desktop ma siamo in app ");
@@ -1682,11 +1701,16 @@ while (strtotime($startw) < strtotime($end)) {// ciclo il periodo della locazion
 
         }
         if ($discount['stop_further_processing']==1){// se questo deve bloccare i successivi eventuali, interrompo il conteggio
-          break;
+          
+		
+		  
+		  break;
         }
       }
     }
   }
+
+  
   return $accommodations;
 }
 
