@@ -2211,6 +2211,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
   $form['round_stamp'] = $tesdoc['round_stamp'];
   $form['cauven'] = $tesdoc['cauven'];
   $form['caucon'] = $tesdoc['caucon'];
+  $form['id_con'] = $tesdoc['id_con'];
   $form['caumag'] = $tesdoc['caumag'];
   $form['caucon'] = $tesdoc['caucon'];
   $form['sconto'] = $tesdoc['sconto'];
