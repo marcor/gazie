@@ -190,10 +190,10 @@ function menu_alerts_check(mod,title,button,label,link,style){
     // faccio append solo se già non esiste
     if (style && style.length >= 2) { // solo se style è valorizzato faccio l'alert sul menu
         $("li.blink").html( '<a mod="'+mod+'" class="btn btn-'+style+' dialog_menu_alerts" title="'+title.replace(/(<([^>]+)>)/ig,"")+'" >'+button+'</a>').click(function() {
-			$("p#diatitle").html(title);
+			$("div#diatitle").html(title);
 			$( "#dialog_menu_alerts" ).dialog({
                 title: button ,
-				minHeight: 210,
+				minHeight: 180,
 				width: "auto",
 				modal: "true",
 				show: "blind",
@@ -326,7 +326,7 @@ setInterval(menu_check_from_modules,<?php echo intval((int)$period*60000);?>);
 
     <form method="POST" name="head_form" action="../../modules/root/admin.php">
 		<div style="display:none" id="dialog_menu_alerts" title="">
-			<p class="ui-state-highlight" id="diatitle"></p>
+			<div class="bg-warning text-bold" id="diatitle"></div>
 		</div>
 		<div id="doc_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 			<div class="modal-dialog modal-sm">
