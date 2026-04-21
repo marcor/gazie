@@ -37,6 +37,7 @@ button, optgroup, select {
 input, textarea {
 	background-color: #121a1a;
 	border: 1px solid #888;
+  color: #fff;
 }
 .FacetColumnTD {
   background-color: #4d121d;
@@ -307,6 +308,10 @@ div.box-body table.dataTable tbody tr:hover {
 	color: #fbfafa;
 	background-color: #151414;
 }
+
+input[id^="search_"].ui-autocomplete-input::placeholder {
+	color: #F88;
+}
 .FacetFooterTD {
 	background-color: #484b77;
 }
@@ -350,6 +355,7 @@ nav.navbar.navbar-static-top.company-color-bright:hover {
 	color: #fdf0f0;
   border: 2px;
 	border-style: solid;
+  background-color: #0673ff08;
 }
 
 .table > tbody > tr.info > td, .table > tbody > tr.info > th, .table > tbody > tr > td.info, .table > tbody > tr > th.info, .table > tfoot > tr.info > td, .table > tfoot > tr.info > th, .table > tfoot > tr > td.info, .table > tfoot > tr > th.info, .table > thead > tr.info > td, .table > thead > tr.info > th, .table > thead > tr > td.info, .table > thead > tr > th.info {

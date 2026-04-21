@@ -233,6 +233,9 @@ td.ui-datepicker-other-month>a.ui-state-default.ui-priority-secondary{
 .input-area {
   background-color: #b9c6db;
 }
+input[id^="search_"].ui-autocomplete-input::placeholder {
+  color: #800; opacity: 0.6;
+}
 .navbar-nav > .user-menu > .dropdown-menu > li.user-header {
 	background-color: #4f4e4e;
 }

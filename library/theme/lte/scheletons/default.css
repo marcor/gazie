@@ -300,9 +300,7 @@ table.Tmiddle tr>td, table.Tsmall tr>td {
   font-weight: bold;
 }
 input[id^="search_"].ui-autocomplete-input::placeholder {
-	color: #800;
 	font-size: clamp(1.1rem, 2.5vw, 1.5rem);
-	opacity: 0.6;
 }
 html body.adminlte-gazie form div.wrapper div.content-wrapper section.content form div.FacetFormHeaderFont input#search_clfoco.ui-autocomplete-input
 

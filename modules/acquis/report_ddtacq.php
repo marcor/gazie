@@ -31,7 +31,6 @@ $tipdoc_filter = "('DDL', 'RDL', 'DDR','ADT', 'AFT')";
 
 $partner_select = !gaz_dbi_get_row($gTables['company_config'], 'var', 'partner_select_mode')['val'];
 
-$tesdoc = "(SELECT * FROM {$gTables['tesdoc']} WHERE tipdoc IN $tipdoc_filter) AS dtesdoc";
 $table_join = $gTables['tesdoc']." AS dtesdoc".
                      " INNER JOIN {$gTables['clfoco']}" .
                      " ON dtesdoc.clfoco = {$gTables['clfoco']}.codice " .
@@ -74,7 +73,7 @@ $sortable_headers = array(
 require("../../library/include/header.php");
 $script_transl = HeadMain();
 
-if (count($_GET)<1) {
+if (!isset($_GET['sezione'])) {
 	$rs_last = gaz_dbi_dyn_query('YEAR(datemi) AS yearde', $gTables['tesdoc'], "tipdoc IN $tipdoc_filter", 'datemi DESC, id_tes DESC', 0, 1);
 	$last = gaz_dbi_fetch_array($rs_last);
 	if ($last) {
@@ -84,7 +83,7 @@ if (count($_GET)<1) {
   }
   $default_where = ['sezione' => 1,'anno'=>$_GET['anno']];
 } else {
-  $default_where = ['sezione'=>1];
+  $default_where = ['sezione'=> intval($_GET['sezione'])];
 }
 
 $ts = new TableSorter(
@@ -95,6 +94,10 @@ $ts = new TableSorter(
     [],
     'tipdoc IN '.$tipdoc_filter
 );
+
+# le <select> spaziano solo tra i documenti di vendita del sezionale corrente
+$where_select = sprintf(" ( tipdoc IN $tipdoc_filter) AND seziva = %d", $sezione);
+
 ?>
 <script>
 $(function() {
@@ -151,7 +154,6 @@ function printPdf(urlPrintDoc){
 };
 </script>
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>"  name="auxil" class="clean_get">
-  <input type="hidden" name="info" value="none" />
 	<div class="framePdf panel panel-success" style="display: none; position: absolute; left: 5%; top: 100px">
 		<div class="col-lg-12">
     <div class="col-xs-11"><h4><?php echo $script_transl['print'];; ?></h4></div>
@@ -191,7 +193,7 @@ function printPdf(urlPrintDoc){
             <?php gaz_flt_disp_int("numdoc", "Numero"); ?>
           </td>
           <td  class="FacetFieldCaptionTD">
-              <?php gaz_flt_disp_select("anno", "YEAR(datemi) as anno", $table_join, $ts->where, "anno DESC"); ?>
+              <?php gaz_flt_disp_select("anno", "YEAR(datemi) as anno", $table_join, $where_select, "anno DESC"); ?>
           </td>
           <td class="FacetFieldCaptionTD">
           <?php
@@ -297,7 +299,7 @@ function printPdf(urlPrintDoc){
           echo '<td class="text-center">'. $r["numdoc"] . ' '.$ddtanomalo.'</td>';
           echo '<td class="text-center">'. gaz_format_date($r["datemi"]). " &nbsp;</td>";
           echo "<td>" . $r["ragso1"] . "&nbsp;</td>";
-          echo "<td>" . $r["omid"].' '.$r["omdescri"] . "&nbsp;</td>";
+          echo "<td>" .substr($r["omid"].' '.$r["omdescri"],0,50) . "&nbsp;</td>";
           if (intval(preg_replace("/[^0-9]/","",$r['numfat']))>=1){
             echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" style=\"cursor:pointer;\" ".($pdf_to_modal==0?'href="stampa_docacq.php?id_tes=' . $r["id_tes"] .'&template=FatturaAcquisto" target="_blank"':"onclick=\"printPdf('stampa_docacq.php?id_tes=" . $r["id_tes"] ."')\"")."><i class=\"glyphicon glyphicon-print\" title=\"Stampa fattura n. " . $r["numfat"] . " PDF\"></i> fatt. n. " . $r["numfat"] . "</a></td>";
           } else {
