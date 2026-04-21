@@ -104,9 +104,8 @@ if (file_exists(DATA_DIR.'files/'.$admin_aziend['codice'].'/favicon.ico')) { // 
         $style = $admin_aziend['style'];
     }
     if (!empty($admin_aziend['skin']) && file_exists("../../library/theme/lte/skins/" . $admin_aziend['skin'])) {
-        $skin = $admin_aziend['skin'];
-        if (strpos($skin,'black')===false){ // non cambio lo sfondo
-        } else { // se è black inverto lo sfondo (negativo)
+        $isblack = strpos($admin_aziend['skin'],'black') === false ? false : true;
+        if ($isblack){ // se è black inverto lo sfondo (negativo)
           $im = @imagecreatefrompng( DATA_DIR . 'files/' . $admin_aziend['codice'] . '/sfondo.png');
           imagefilter($im, IMG_FILTER_NEGATE);
           ob_start ();
@@ -114,14 +113,17 @@ if (file_exists(DATA_DIR.'files/'.$admin_aziend['codice'].'/favicon.ico')) { // 
           $image_data = ob_get_contents ();
           ob_end_clean ();
           $sfondo=base64_encode($image_data);
+          $brightness = '';
+        } else {
+          $brightness = ' filter: brightness(0.5);';
         }
     }
     if ( $debug_active == true ){
       echo '<style> pre.xdebug-var-dump { z-index: 820; position: relative; } </style>';
     } ;
     ?>
-        <link href="../../<?php echo(STATIC_VERSION);?>library/theme/lte/scheletons/<?php echo $style; ?>" rel="stylesheet" type="text/css" />
-        <link href="../../<?php echo(STATIC_VERSION);?>library/theme/lte/skins/<?php echo $skin; ?>" rel="stylesheet" type="text/css" />
+        <link href="../../<?php echo(STATIC_VERSION);?>library/theme/lte/scheletons/<?= $style; ?>" rel="stylesheet" type="text/css" />
+        <link href="../../<?php echo(STATIC_VERSION);?>library/theme/lte/skins/<?= $admin_aziend['skin']; ?>" rel="stylesheet" type="text/css" />
         <style>
             .company-color, .company-color-bright, li.user-header, .company-color-logo, .dropdown-menu > li > a:hover, .dropdown-menu > li.user-body:hover, .navbar-default .navbar-nav > li > a:hover,
             nav.navbar.navbar-static-top.company-color-bright:hover
@@ -173,7 +175,7 @@ if (file_exists(DATA_DIR.'files/'.$admin_aziend['codice'].'/favicon.ico')) { // 
             }
             th a, .breadcrumb li a, a i.glyphicon-cog {
               color: #<?= $admin_aziend['colore'] ?>;
-              filter: brightness(0.5);
+              <?= $brightness ?>;
             }
             .nav-pills > li.active > a, .nav-pills > li.active > a:hover, .nav-pills > li.active > a:focus {
               background-color: #<?= $admin_aziend['colore'] ?>;

@@ -6,7 +6,7 @@ html body.adminlte-gazie.sidebar-mini.sidebar-collapse form div.wrapper header.m
     width: 65px;
 }
 input, select, textarea {
-	border: 1px solid #bbb;
+	border: 1px solid;
   border-radius: 3px;
 }
 input[type="number"] {

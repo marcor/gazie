@@ -6,6 +6,9 @@ body {
 .help {
     margin-bottom: 20px;
 }
+input, select, textarea {
+	border-color: #444;
+}
 .contenuto-help {
    background-color: #001;
 }
@@ -36,7 +39,7 @@ button, optgroup, select {
 }
 input, textarea {
 	background-color: #121a1a;
-	border: 1px solid #888;
+	border: 1px solid #444;
   color: #fff;
 }
 .FacetColumnTD {
@@ -290,7 +293,6 @@ div.table-responsive table.Tlarge tbody tr:hover,
 div.table-responsive table.dataTable tbody tr:hover,
 div.box-body table.dataTable tbody tr:hover {
 	background: linear-gradient(180deg, #ffffff20,#060606,#ffffff20);
-  font-weight: 600;
 }
 .table-striped > tbody > tr:nth-of-type(odd) {
   background-color: #292929;

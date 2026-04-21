@@ -6,6 +6,9 @@ body {
 .help {
     margin-bottom: 20px;
 }
+input, select, textarea {
+	border-color: #bbb;
+}
 .contenuto-help {
    background-color: #fff;
 }
