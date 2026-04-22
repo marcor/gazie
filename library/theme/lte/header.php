@@ -113,7 +113,7 @@ if (file_exists(DATA_DIR.'files/'.$admin_aziend['codice'].'/favicon.ico')) { // 
           $image_data = ob_get_contents ();
           ob_end_clean ();
           $sfondo=base64_encode($image_data);
-          $brightness = '';
+          $brightness = ' text-shadow: 1px 1px 2px black;';
         } else {
           $brightness = ' filter: brightness(0.5);';
         }
