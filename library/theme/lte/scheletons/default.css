@@ -255,7 +255,8 @@ section.content {
   margin-bottom: 5px;
 }
 .FacetFormTABLE,table.Tmiddle,table.Tsmall {
-	border: 1px solid #87b8d0;
+	border-color: #888;
+	border: 1px solid;
 	border-radius: 4px;
 	border-collapse: unset;
   margin-left: auto;
