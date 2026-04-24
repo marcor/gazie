@@ -169,9 +169,6 @@ div.panel.panel-default div.container-fluid div.form-row div.form-group.col-md-6
 .navbar-nav > .notifications-menu > .dropdown-menu > li .menu, .navbar-nav > .messages-menu > .dropdown-menu > li .menu, .navbar-nav > .tasks-menu > .dropdown-menu > li .menu {
     max-height: 500px;
 }
-.navbar-static-top {
-	border-bottom: 1px solid #000 !important;
-}
 .content-wrapper {
     min-width: 300px;
 }
