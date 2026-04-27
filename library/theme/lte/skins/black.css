@@ -19,8 +19,7 @@ input, select, textarea {
     border-color: #fff;
 }
 .FacetFieldCaptionTD, label.control-label {
-    background-color: #1d1c2d99;
-    color: #fff;
+  color: #c7c7c7;
 }
 th {
     background-color: #201e1d;
@@ -77,9 +76,7 @@ div.th {
 }
 .FacetDataTDred
 {
-  color: #f00;
-  font-weight: bold;
-  background-color: #c4c7ca;
+  color: #f88;
   margin-bottom: 10px;
 }
 .adminlte-gazie .main-header {
@@ -125,6 +122,9 @@ div.th {
 .adminlte-gazie .user-panel > .info,
 .adminlte-gazie .user-panel > .info > a {
   color: #fff;
+}
+.adminlte-gazie .main-sidebar {
+	background: linear-gradient(to left,#0b0b0bc4,#060606e6 20%);
 }
 .adminlte-gazie .sidebar-menu > li.header {
   color: #4b646f;
@@ -203,6 +203,9 @@ div.th {
 .gaz-transitori {
   background-color: #0a010d;
   color : #F4D5FF;
+}
+.text-primary, .text-success, .text-info, .text-warning, .text-danger {
+  filter: brightness(2);
 }
 td.ui-datepicker-other-month>a.ui-state-default.ui-priority-secondary{
 	color: #034802;
@@ -306,7 +309,7 @@ a, .panel-info {
 	border-color: #666;
 }
 .tab-content{
-  background-color:#000;
+  background-color:#252525;
 }
 .tab-content > .tab-pane > div.row:nth-of-type(odd),
 .gaz-table-form div.container-fluid div.row:nth-of-type(odd) {

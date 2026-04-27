@@ -103,8 +103,16 @@ if (file_exists(DATA_DIR.'files/'.$admin_aziend['codice'].'/favicon.ico')) { // 
     if (!empty($admin_aziend['style']) && file_exists("../../library/theme/lte/scheletons/" . $admin_aziend['style'])) {
         $style = $admin_aziend['style'];
     }
+    if ( $debug_active == true ){
+      echo '<style> pre.xdebug-var-dump { z-index: 820; position: relative; } </style>';
+    } ;
+    ?>
+        <link href="../../<?php echo(STATIC_VERSION);?>library/theme/lte/scheletons/<?= $style; ?>" rel="stylesheet" type="text/css" />
+        <link href="../../<?php echo(STATIC_VERSION);?>library/theme/lte/skins/<?= $admin_aziend['skin']; ?>" rel="stylesheet" type="text/css" />
+<?php
     if (!empty($admin_aziend['skin']) && file_exists("../../library/theme/lte/skins/" . $admin_aziend['skin'])) {
         $isblack = strpos($admin_aziend['skin'],'black') === false ? false : true;
+        $iswhite = strpos($admin_aziend['skin'],'white') === false ? false : true;
         if ($isblack){ // se è black inverto lo sfondo (negativo)
           $im = @imagecreatefrompng( DATA_DIR . 'files/' . $admin_aziend['codice'] . '/sfondo.png');
           imagefilter($im, IMG_FILTER_NEGATE);
@@ -114,19 +122,8 @@ if (file_exists(DATA_DIR.'files/'.$admin_aziend['codice'].'/favicon.ico')) { // 
           ob_end_clean ();
           $sfondo=base64_encode($image_data);
           $brightness = ' text-shadow: 1px 1px 2px black;';
-        } else {
-          $brightness = ' filter: brightness(0.5);';
-        }
-    }
-    if ( $debug_active == true ){
-      echo '<style> pre.xdebug-var-dump { z-index: 820; position: relative; } </style>';
-    } ;
-    ?>
-        <link href="../../<?php echo(STATIC_VERSION);?>library/theme/lte/scheletons/<?= $style; ?>" rel="stylesheet" type="text/css" />
-        <link href="../../<?php echo(STATIC_VERSION);?>library/theme/lte/skins/<?= $admin_aziend['skin']; ?>" rel="stylesheet" type="text/css" />
-        <style>
-            .company-color, .company-color-bright, li.user-header, .company-color-logo, .dropdown-menu > li > a:hover, .dropdown-menu > li.user-body:hover, .navbar-default .navbar-nav > li > a:hover,
-            nav.navbar.navbar-static-top.company-color-bright:hover
+?>        <style>
+            .company-color, .company-color-bright, li.user-header, .company-color-logo, .dropdown-menu > li > a:hover, .dropdown-menu > li.user-body:hover, .navbar-default .navbar-nav > li > a:hover, nav.navbar.navbar-static-top.company-color-bright:hover
             {
               background-color: #<?= $admin_aziend['colore'] ?>;
               color: black;
@@ -136,22 +133,6 @@ if (file_exists(DATA_DIR.'files/'.$admin_aziend['codice'].'/favicon.ico')) { // 
             }
             .company-color-logo:hover {
               filter: brightness(80%);
-            }
-            li.blink{
-              animation:blink 700ms infinite alternate;
-              padding-top:10px;
-            }
-            li.blink>a.btn{
-              padding:5px;
-            }
-            @keyframes blink {
-              from { opacity:1; } to { opacity:0; }
-            }
-            .ui-dialog-buttonset>button.btn.btn-confirm:first-child {
-                background-color: #f9b54d;
-            }
-            .dropdown-menu > li.user-body > a {
-              white-space: normal;
             }
             .sidebar-menu > li:hover > a,
             .sidebar-menu > li.active > a {
@@ -166,23 +147,94 @@ if (file_exists(DATA_DIR.'files/'.$admin_aziend['codice'].'/favicon.ico')) { // 
             .content-wrapper {
               background-image: url("data:image/x-icon;base64,<?= $sfondo; ?>");
             }
-            a.logo.company-color-logo span img {
-              height: auto;
-              width: auto;
-              max-width: 50px;
-              max-height: 50px;
-              padding: 1px;
-            }
             th a, .breadcrumb li a, a i.glyphicon-cog {
               color: #<?= $admin_aziend['colore'] ?>;
-              <?= $brightness ?>;
             }
             .nav-pills > li.active > a, .nav-pills > li.active > a:hover, .nav-pills > li.active > a:focus {
               background-color: #<?= $admin_aziend['colore'] ?>;
+              border-top-color: color-mix(in srgb, #<?= $admin_aziend['colore'] ?>, black 20%);
               color: #000;
             }
+          </style>
+<?php        } elseif ($iswhite) { // se è bianco modifico i colori del menù
+?>        <style>
+            .company-color, .company-color-bright, li.user-header, .company-color-logo, .dropdown-menu > li > a:hover, .dropdown-menu > li.user-body:hover, .navbar-default .navbar-nav > li > a:hover, nav.navbar.navbar-static-top.company-color-bright:hover
+            {
+              background-color: #<?= $admin_aziend['colore'] ?>;
+              color: black;
+            }
+            .adminlte-gazie .main-sidebar {
+              background-color: #<?= $admin_aziend['colore'] ?>;
+            }
+            .company-color-logo:hover {
+              filter: brightness(80%);
+            }
+            .sidebar-menu > li:hover > a,
+            .sidebar-menu > li.active > a {
+              border-left-color: #<?= $admin_aziend['colore'] ?>;
+            }
+            .sidebar a, treeview-menu > li > a {
+              color: color-mix(in srgb, #<?= $admin_aziend['colore'] ?>, black 70%);
+            }
+            .sidebar-menu .treeview-menu.menu-open > li {
+              border-left: 2px solid #<?= $admin_aziend['colore'] ?>;
+            }
+            .content-wrapper {
+              background-image: url("data:image/x-icon;base64,<?= $sfondo; ?>");
+            }
+            th a, .breadcrumb li a, a i.glyphicon-cog {
+              color: #<?= $admin_aziend['colore'] ?>;
+              filter: brightness(0.5);
+            }
+            .nav-pills > li.active > a, .nav-pills > li.active > a:hover, .nav-pills > li.active > a:focus {
+              background-color: #<?= $admin_aziend['colore'] ?>;
+              border-top-color: color-mix(in srgb, #<?= $admin_aziend['colore'] ?>, black 20%);
+              color: #000;
+            }
+          </style>
+<?php
+          $brightness = ' ';
+        } else {
+?>        <style>
+            .company-color, .company-color-bright, li.user-header, .company-color-logo, .dropdown-menu > li > a:hover, .dropdown-menu > li.user-body:hover, .navbar-default .navbar-nav > li > a:hover, nav.navbar.navbar-static-top.company-color-bright:hover
+            {
+              background-color: #<?= $admin_aziend['colore'] ?>;
+              color: black;
+            }
+            .adminlte-gazie .main-sidebar {
+              background-color: #<?= $admin_aziend['colore'] ?>;
+            }
+            .company-color-logo:hover {
+              filter: brightness(80%);
+            }
+            .sidebar-menu > li:hover > a,
+            .sidebar-menu > li.active > a {
+              border-left-color: #<?= $admin_aziend['colore'] ?>;
+            }
+            .sidebar a, treeview-menu > li > a {
+              color: #<?= $admin_aziend['colore'] ?>;
+            }
+            .sidebar-menu .treeview-menu.menu-open > li {
+              border-left: 2px solid #<?= $admin_aziend['colore'] ?>;
+            }
+            .content-wrapper {
+              background-image: url("data:image/x-icon;base64,<?= $sfondo; ?>");
+            }
+            th a, .breadcrumb li a, a i.glyphicon-cog {
+              color: #<?= $admin_aziend['colore'] ?>;
+              filter: brightness(0.5);
+            }
+            .nav-pills > li.active > a, .nav-pills > li.active > a:hover, .nav-pills > li.active > a:focus {
+              background-color: #<?= $admin_aziend['colore'] ?>;
+              border-top-color: color-mix(in srgb, #<?= $admin_aziend['colore'] ?>, black 20%);
+              color: #000;
+            }
+          </style>
+<?php
+      }
+    }
 
-        </style>
+?>
 <script>
 $(function() {
 	$("#dialog_menu_alerts").dialog({ autoOpen: false });
