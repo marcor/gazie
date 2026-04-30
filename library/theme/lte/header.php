@@ -149,6 +149,7 @@ if (file_exists(DATA_DIR.'files/'.$admin_aziend['codice'].'/favicon.ico')) { // 
             }
             th a, .breadcrumb li a, a i.glyphicon-cog {
               color: #<?= $admin_aziend['colore'] ?>;
+              text-shadow: 1px 1px 2px #000;
             }
             .nav-pills > li.active > a, .nav-pills > li.active > a:hover, .nav-pills > li.active > a:focus {
               background-color: #<?= $admin_aziend['colore'] ?>;
