@@ -19,6 +19,11 @@ input[type="number"] {
 .sidebar-menu .treeview-menu .treeview-menu {
 	padding-left: 2px;
 }
+
+.adminlte-gazie .treeview-menu > li.active > a {
+  font-weight: 600;
+}
+
 .adminlte-gazie .sidebar-form {
   border-radius: 3px;
   border: 1px solid #374850;
@@ -288,7 +293,6 @@ table.Tmiddle tr>td, table.Tsmall tr>td {
 }
 .sidebar-menu .treeview-menu > li > a {
   padding: 3px;
-  font-weight: 600;
 }
 .FacetFormHeaderFont {
   font-size: clamp(1.2rem, 3vw, 2rem);
