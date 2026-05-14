@@ -288,6 +288,7 @@ table.Tmiddle tr>td, table.Tsmall tr>td {
 }
 .sidebar-menu .treeview-menu > li > a {
   padding: 3px;
+  font-weight: 600;
 }
 .FacetFormHeaderFont {
   font-size: clamp(1.2rem, 3vw, 2rem);
