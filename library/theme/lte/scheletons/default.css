@@ -22,6 +22,7 @@ input[type="number"] {
 
 .adminlte-gazie .treeview-menu > li.active > a {
   font-weight: 600;
+  text-decoration: underline;
 }
 
 .adminlte-gazie .sidebar-form {
