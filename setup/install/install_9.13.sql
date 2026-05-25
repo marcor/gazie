@@ -11180,7 +11180,7 @@ CREATE TABLE IF NOT EXISTS `gaz_001bed` (
   `note_other` varchar(50) DEFAULT NULL,
   `status` varchar(10) NOT NULL DEFAULT '',
   `adminid` varchar(20) NOT NULL DEFAULT '',
-  `last_modified` timestamp NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
+  `last_modified` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id_bed`) USING BTREE,
   KEY `id_room` (`id_room`) USING BTREE,
   KEY `status` (`status`) USING BTREE
@@ -12656,7 +12656,7 @@ CREATE TABLE IF NOT EXISTS `gaz_001hospital_pdflog` (
   `id` int NOT NULL AUTO_INCREMENT,
   `url` varchar(255) NOT NULL DEFAULT '',
   `adminid` varchar(20) NOT NULL DEFAULT '',
-  `entrytime` timestamp NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
+  `entrytime` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
   KEY `annota` (`url`(250)),
   KEY `adminid` (`adminid`)
@@ -13321,7 +13321,7 @@ CREATE TABLE IF NOT EXISTS `gaz_001room` (
   `note_other` varchar(50) DEFAULT NULL,
   `status` varchar(10) NOT NULL DEFAULT '',
   `adminid` varchar(20) NOT NULL DEFAULT '',
-  `last_modified` timestamp NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
+  `last_modified` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id_room`) USING BTREE,
   KEY `id_ward` (`id_ward`) USING BTREE,
   KEY `status` (`status`) USING BTREE
@@ -13763,7 +13763,7 @@ CREATE TABLE IF NOT EXISTS `gaz_001ward` (
   `note_other` varchar(50) DEFAULT NULL,
   `status` varchar(10) NOT NULL DEFAULT '',
   `adminid` varchar(20) NOT NULL DEFAULT '',
-  `last_modified` timestamp NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
+  `last_modified` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id_ward`) USING BTREE,
   KEY `status` (`status`) USING BTREE
 ) ENGINE=MyISAM;
@@ -85437,7 +85437,7 @@ CREATE TABLE IF NOT EXISTS `gaz_banned_ip` (
   `ipv6` varchar(45) DEFAULT NULL,
   `last_url` varchar(200) NOT NULL DEFAULT '',
   `attempts` int NOT NULL,
-  `last_attempt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
+  `last_attempt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
   KEY `ipv4` (`ipv4`),
   KEY `ipv6` (`ipv6`),
