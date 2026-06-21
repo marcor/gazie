@@ -232,313 +232,318 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 
 		break;
     case "set_new_status_check":
-			$i=intval($_POST['ref']); // id_tesbro
-      $pointenable = gaz_dbi_get_row($gTables['company_config'], 'var', 'pointenable')['val'];
-      $pointeuro = gaz_dbi_get_row($gTables['company_config'], 'var', 'pointeuro')['val'];
-      $datetime  = date ('Y-m-d H:i:s', strtotime($_POST['datetime']));
-      $tesbro=gaz_dbi_get_row($gTables['tesbro'], "id_tes", $i); // carico la tesbro
-      $clfoco=gaz_dbi_get_row($gTables['clfoco'], "codice", $tesbro['clfoco']);
-      $anagra=gaz_dbi_get_row($gTables['anagra'], "id", $clfoco['id_anagra']); // carico la anagra
-	  $phone=(strlen($anagra['cell'])>5)?$anagra['cell']:$anagra['telefo'];
-      $lan="it";
-      $language=gaz_dbi_get_row($gTables['languages'], "lang_id", $anagra['id_language']); // carico la lingua specifica del cliente
-      $langarr = explode(" ",$language['title_native']);
-      $lang = strtolower($langarr[0]);
-      if (file_exists("lang.".$lang.".php")){// se esiste la lingua richiesta
-        include "lang.".$lang.".php";// carico il file traduzione lingua
-        $lan=$language['sef'];
-      }else{// altrimenti carico di default la lingua inglese
-        include "lang.english.php";
-        $lan="en";
-      }
-      $script_transl=$strScript['booking_form.php'];
-      $res=gaz_dbi_get_row($gTables['company_config'], "var", 'vacation_url_user');
-      $vacation_url_user=$res['val'];// carico l'url per la pagina front-end utente
+		$mailsent=0;
+		$i=intval($_POST['ref']); // id_tesbro
+		$pointenable = gaz_dbi_get_row($gTables['company_config'], 'var', 'pointenable')['val'];
+		$pointeuro = gaz_dbi_get_row($gTables['company_config'], 'var', 'pointeuro')['val'];
+		$datetime  = date ('Y-m-d H:i:s', strtotime($_POST['datetime']));
+		$tesbro=gaz_dbi_get_row($gTables['tesbro'], "id_tes", $i); // carico la tesbro
+		$clfoco=gaz_dbi_get_row($gTables['clfoco'], "codice", $tesbro['clfoco']);
+		$anagra=gaz_dbi_get_row($gTables['anagra'], "id", $clfoco['id_anagra']); // carico la anagra
+		$phone=(strlen($anagra['cell'])>5)?$anagra['cell']:$anagra['telefo'];
+		$lan="it";
+		$language=gaz_dbi_get_row($gTables['languages'], "lang_id", $anagra['id_language']); // carico la lingua specifica del cliente
+		$langarr = explode(" ",$language['title_native']);
+		$lang = strtolower($langarr[0]);
+		if (file_exists("lang.".$lang.".php")){// se esiste la lingua richiesta
+			include "lang.".$lang.".php";// carico il file traduzione lingua
+			$lan=$language['sef'];
+		}else{// altrimenti carico di default la lingua inglese
+			include "lang.english.php";
+			$lan="en";
+		}
+		$script_transl=$strScript['booking_form.php'];
+		$res=gaz_dbi_get_row($gTables['company_config'], "var", 'vacation_url_user');
+		$vacation_url_user=$res['val'];// carico l'url per la pagina front-end utente
 
-      if ($_POST['new_status']=="OUT"){
-        $updt= "checked_out_date = '". $datetime."'";
-      }elseif($_POST['new_status']=="IN"){
-        $updt= "checked_in_date = '". $datetime."', checked_out_date = NULL";
-      }else{
-        $updt= "checked_in_date = NULL, checked_out_date = NULL";
-      }
-      $old_checked_out_date=gaz_dbi_get_row($gTables['rental_events'], "id_tesbro", $i, " AND type = 'ALLOGGIO'")['checked_out_date'];
+		if ($_POST['new_status']=="OUT"){
+			$updt= "checked_out_date = '". $datetime."'";
+		}elseif($_POST['new_status']=="IN"){
+			$updt= "checked_in_date = '". $datetime."', checked_out_date = NULL";
+		}else{
+			$updt= "checked_in_date = NULL, checked_out_date = NULL";
+		}
+		$old_checked_out_date=gaz_dbi_get_row($gTables['rental_events'], "id_tesbro", $i, " AND type = 'ALLOGGIO'")['checked_out_date'];
 
-      gaz_dbi_query ("UPDATE " . $gTables['rental_events'] . " SET ".$updt." WHERE id_tesbro =".$i." AND type= 'ALLOGGIO'");
-      if ($_POST['new_status']=="OUT"){// se è un checkout devo cancellare tutte le eventuali copie dei cocumenti di identita
-        /*
-        Conservazione delle copie: il Garante per la Privacy ha chiarito più volte che gli hotel non sono autorizzati a trattenere copie digitalizzate dei documenti (scannerizzazioni, fotografie, PDF) né cartacee.
-        Dati da conservare: ciò che va mantenuto è il registro delle presenze (schede alloggiati), secondo i termini previsti dalla normativa, ma non la copia del documento di identità.
-        Tutte le eventuali copie vanno distrutte al momento dell'invio telematico ossia dopo l'autenticazione 'de visu' (riferita al documento di identità)
-        */
-        delete_id_cards($i);
-      }
-      if (intval($pointenable)==1 && filter_var($_POST['cust_mail'], FILTER_VALIDATE_EMAIL)){// se è attivato il sistema punti e il destinatario ha un e-mail valida
-        $points_expiry = gaz_dbi_get_row($gTables['company_config'], 'var', 'points_expiry')['val'];
+		gaz_dbi_query ("UPDATE " . $gTables['rental_events'] . " SET ".$updt." WHERE id_tesbro =".$i." AND type= 'ALLOGGIO'");
+		if ($_POST['new_status']=="OUT"){// se è un checkout devo cancellare tutte le eventuali copie dei cocumenti di identita
+			/*
+			Conservazione delle copie: il Garante per la Privacy ha chiarito più volte che gli hotel non sono autorizzati a trattenere copie digitalizzate dei documenti (scannerizzazioni, fotografie, PDF) né cartacee.
+			Dati da conservare: ciò che va mantenuto è il registro delle presenze (schede alloggiati), secondo i termini previsti dalla normativa, ma non la copia del documento di identità.
+			Tutte le eventuali copie vanno distrutte al momento dell'invio telematico ossia dopo l'autenticazione 'de visu' (riferita al documento di identità)
+			*/
+			delete_id_cards($i);
+		}
+		if (intval($pointenable)==1 && filter_var($_POST['cust_mail'], FILTER_VALIDATE_EMAIL)){// se è attivato il sistema punti e il destinatario ha un e-mail valida
+			$points_expiry = gaz_dbi_get_row($gTables['company_config'], 'var', 'points_expiry')['val'];
 
-        // creo e invio email di conferma
-        //Recipients
-        $mail->setFrom($admin_aziend['e_mail'],$admin_aziend['ragso1']." ".$admin_aziend['ragso2']); // sender (e-mail dell'account che sta inviando)
-        $mail->addReplyTo($admin_aziend['e_mail']); // reply to sender (e-mail dell'account che sta inviando)
-        $mail->addAddress($_POST['cust_mail']);                  // email destinatario
-        if (filter_var($_POST['cust_mail2'], FILTER_VALIDATE_EMAIL)){ // se c'è una seconda mail destinatario gliela mando per conoscenza
-           $mail->addCC($_POST['cust_mail2']);
-        }
-        if ($imap_usr==''){
-          $mail->addCC($admin_aziend['e_mail']);             //invio copia a mittente
-        }
-        $mail->isHTML(true);
-        $mail->Subject = "Fidelity Mon Amour ".$script_transl['booking']." ".$tesbro['numdoc'].' '.$script_transl['of'].' '.gaz_format_date($tesbro['datemi']);
-        if (isset($_POST['give_point']) && $_POST['give_point'] === 'true' && (!isset($old_checked_out_date) || intval($old_checked_out_date)==0) && $_POST['new_status']=="OUT" && floatval($pointeuro)>0){// se è abilitato attribuisco i punti al checkout
-          $amount=get_totalprice_booking($i,FALSE,FALSE,"",TRUE);
-          $points=intval($amount/$pointeuro);
-          if (isset($anagra['custom_field']) && $data = json_decode($anagra['custom_field'],true)){// se c'è un json in anagra
-            if (is_array($data['vacation_rental'])){ // se c'è il modulo "vacation rental" nel custom field lo aggiorno
-              if (isset($data['vacation_rental']['points'])){// se ci sono già punti accumulati
-                if (intval($points_expiry)>0){// se i punti hanno una scadenza
-                  $date=(isset($data['vacation_rental']['points_date']))?date_create($data['vacation_rental']['points_date']):date_create("2023-09-01");
-                  date_add($date,date_interval_create_from_date_string(intval($points_expiry)." days"));// aggiungo la durata dei punti
-                  if (strtotime(date_format($date,"Y-m-d")) < strtotime(date("Y-m-d"))){// se i punti sono scaduti
-                    $data['vacation_rental']['points'] = $points;// cancello i vecchi e inserisco i nuovi
-                  }else{// i punti accumulati sono validi
-                    $data['vacation_rental']['points'] = intval($data['vacation_rental']['points'])+$points;// aggiungo i nuovi ai vecchi
-                  }
-                }else{// i punti non hano scadenza
-                  $data['vacation_rental']['points'] = intval($data['vacation_rental']['points'])+$points;// aggiungo i nuovi ai vecchi
-                }
-              }else{
-                $data['vacation_rental']['points'] = $points;
-              }
-              $data['vacation_rental']['points_date']=date("Y-m-d");
-              $custom_json = json_encode($data);
-              gaz_dbi_put_row($gTables['anagra'], 'id', $anagra['id'], 'custom_field', $custom_json);
+			// creo e invio email di conferma
+			//Recipients
+			$mail->setFrom($admin_aziend['e_mail'],$admin_aziend['ragso1']." ".$admin_aziend['ragso2']); // sender (e-mail dell'account che sta inviando)
+			$mail->addReplyTo($admin_aziend['e_mail']); // reply to sender (e-mail dell'account che sta inviando)
+			$mail->addAddress($_POST['cust_mail']);                  // email destinatario
+			if (filter_var($_POST['cust_mail2'], FILTER_VALIDATE_EMAIL)){ // se c'è una seconda mail destinatario gliela mando per conoscenza
+			   $mail->addCC($_POST['cust_mail2']);
+			}
+			if ($imap_usr==''){
+			  $mail->addCC($admin_aziend['e_mail']);             //invio copia a mittente
+			}
+			$mail->isHTML(true);
+			$mail->Subject = "Fidelity Mon Amour ".$script_transl['booking']." ".$tesbro['numdoc'].' '.$script_transl['of'].' '.gaz_format_date($tesbro['datemi']);
+			if (isset($_POST['give_point']) && $_POST['give_point'] === 'true' && (!isset($old_checked_out_date) || intval($old_checked_out_date)==0) && $_POST['new_status']=="OUT" && floatval($pointeuro)>0){// se è abilitato attribuisco i punti al checkout
+			  $amount=get_totalprice_booking($i,FALSE,FALSE,"",TRUE);
+			  $points=intval($amount/$pointeuro);
+			  if (isset($anagra['custom_field']) && $data = json_decode($anagra['custom_field'],true)){// se c'è un json in anagra
+				if (is_array($data['vacation_rental'])){ // se c'è il modulo "vacation rental" nel custom field lo aggiorno
+				  if (isset($data['vacation_rental']['points'])){// se ci sono già punti accumulati
+					if (intval($points_expiry)>0){// se i punti hanno una scadenza
+					  $date=(isset($data['vacation_rental']['points_date']))?date_create($data['vacation_rental']['points_date']):date_create("2023-09-01");
+					  date_add($date,date_interval_create_from_date_string(intval($points_expiry)." days"));// aggiungo la durata dei punti
+					  if (strtotime(date_format($date,"Y-m-d")) < strtotime(date("Y-m-d"))){// se i punti sono scaduti
+						$data['vacation_rental']['points'] = $points;// cancello i vecchi e inserisco i nuovi
+					  }else{// i punti accumulati sono validi
+						$data['vacation_rental']['points'] = intval($data['vacation_rental']['points'])+$points;// aggiungo i nuovi ai vecchi
+					  }
+					}else{// i punti non hano scadenza
+					  $data['vacation_rental']['points'] = intval($data['vacation_rental']['points'])+$points;// aggiungo i nuovi ai vecchi
+					}
+				  }else{
+					$data['vacation_rental']['points'] = $points;
+				  }
+				  $data['vacation_rental']['points_date']=date("Y-m-d");
+				  $custom_json = json_encode($data);
+				  gaz_dbi_put_row($gTables['anagra'], 'id', $anagra['id'], 'custom_field', $custom_json);
 
-              $pointarr['operat']="+1";
-              $pointarr['id_anagra']=$anagra['id'];
-              $pointarr['points']=$points;
-              $pointarr['id_tesbro']=$i;
-              gaz_dbi_table_insert('rental_points_mov', $pointarr);
+				  $pointarr['operat']="+1";
+				  $pointarr['id_anagra']=$anagra['id'];
+				  $pointarr['points']=$points;
+				  $pointarr['id_tesbro']=$i;
+				  gaz_dbi_table_insert('rental_points_mov', $pointarr);
 
-              $level=get_user_points_level($anagra['id']);
-              if(intval($level)>0){
-                $sql = "SELECT val FROM ".$gTables['company_config']." WHERE var = 'pointlevel".$level."name' LIMIT 1";
-                if ($result = mysqli_query($link, $sql)) {
-                  $val = mysqli_fetch_assoc($result);
-                  $level_name=$val['val'];
-                }
-              }else{
-                $level_name="nessun livello raggiunto";
-              }
-              $mail->Body    = "<p>".$script_transl['give_point']." ".$points." punti per un totale di ".$data['vacation_rental']['points']." ".$script_transl['give_point1']." ".$level_name."</p>";
-              $mail->Body    .="<p><a href='https://www.gmonamour.it/".$lan."/service/fidelity-mon-amour'>Scopri i vantaggi del programma punti <b>Fidelity Mon Amour</b></a></p>";
-              $mail->Body    .= "<p>".$script_transl['regards']."</p><p><b>".$admin_aziend['ragso1']." ".$admin_aziend['ragso2']."</b></p>";
-              if($mail->send()) {
-                if ($imap_usr!==''){// se ho un utente imap carico la mail nella sua posta inviata
-                  if($imap = @imap_open("{".$imap_server.":".$imap_port."/".$imap_secure."}".$imap_sent_folder, $imap_usr, $imap_pwr)){
-                    if ($append=@imap_append($imap, "{".$imap_server."}".$imap_sent_folder, $mail->getSentMIMEMessage(),"\\seen")){
-                            // inserimento avvenuto
-                    }else{
-                      $errors = @imap_errors();
-                      ?>
-                      <script>
-                      alert('carico mail inviata in posta inviata NON riuscito <?php echo implode ('; ', $errors ); ?>');
-                      </script>
-                      <?php
-                    }
-                  }else{
-                    $errors = @imap_errors();
-                      ?>
-                       <script>
-                      alert('carico mail inviata in posta inviata NON riuscito <?php echo implode ('; ', $errors ); ?>');
-                      </script>
-                      <?php
-                  }
-                }
-              }else {
-                echo "Errore imprevisto nello spedire la mail di notifica attribuzione punti: " . $mail->ErrorInfo;
-              }
-            }else{// altrimenti lo creo
-              $data['vacation_rental']['points'] = $points;
-              $data['vacation_rental']['points_date']=date("Y-m-d");
-              $custom_json = json_encode($data);
-              gaz_dbi_put_row($gTables['anagra'], 'id', $anagra['id'], 'custom_field', $custom_json);
+				  $level=get_user_points_level($anagra['id']);
+				  if(intval($level)>0){
+					$sql = "SELECT val FROM ".$gTables['company_config']." WHERE var = 'pointlevel".$level."name' LIMIT 1";
+					if ($result = mysqli_query($link, $sql)) {
+					  $val = mysqli_fetch_assoc($result);
+					  $level_name=$val['val'];
+					}
+				  }else{
+					$level_name="nessun livello raggiunto";
+				  }
+				  $mail->Body    = "<p>".$script_transl['give_point']." ".$points." punti per un totale di ".$data['vacation_rental']['points']." ".$script_transl['give_point1']." ".$level_name."</p>";
+				  $mail->Body    .="<p><a href='https://www.gmonamour.it/".$lan."/service/fidelity-mon-amour'>Scopri i vantaggi del programma punti <b>Fidelity Mon Amour</b></a></p>";
+				  $mail->Body    .= "<p>".$script_transl['regards']."</p><p><b>".$admin_aziend['ragso1']." ".$admin_aziend['ragso2']."</b></p>";
+				  if($mail->send()) {
+					  $mailsent=1;
+					if ($imap_usr!==''){// se ho un utente imap carico la mail nella sua posta inviata
+					  if($imap = @imap_open("{".$imap_server.":".$imap_port."/".$imap_secure."}".$imap_sent_folder, $imap_usr, $imap_pwr)){
+						if ($append=@imap_append($imap, "{".$imap_server."}".$imap_sent_folder, $mail->getSentMIMEMessage(),"\\seen")){
+								// inserimento avvenuto
+						}else{
+						  $errors = @imap_errors();
+						  ?>
+						  <script>
+						  alert('carico mail inviata in posta inviata NON riuscito <?php echo implode ('; ', $errors ); ?>');
+						  </script>
+						  <?php
+						}
+					  }else{
+						$errors = @imap_errors();
+						  ?>
+						   <script>
+						  alert('carico mail inviata in posta inviata NON riuscito <?php echo implode ('; ', $errors ); ?>');
+						  </script>
+						  <?php
+					  }
+					}
+				  }else {
+					echo "Errore imprevisto nello spedire la mail di notifica attribuzione punti: " . $mail->ErrorInfo;
+				  }
+				}else{// altrimenti lo creo
+				  $data['vacation_rental']['points'] = $points;
+				  $data['vacation_rental']['points_date']=date("Y-m-d");
+				  $custom_json = json_encode($data);
+				  gaz_dbi_put_row($gTables['anagra'], 'id', $anagra['id'], 'custom_field', $custom_json);
 
-              $pointarr['operat']="+1";
-              $pointarr['id_anagra']=$anagra['id'];
-              $pointarr['points']=$points;
-              $pointarr['id_tesbro']=$i;
-              gaz_dbi_table_insert('rental_points_mov', $pointarr);
+				  $pointarr['operat']="+1";
+				  $pointarr['id_anagra']=$anagra['id'];
+				  $pointarr['points']=$points;
+				  $pointarr['id_tesbro']=$i;
+				  gaz_dbi_table_insert('rental_points_mov', $pointarr);
 
-              $level=get_user_points_level($anagra['id']);
-              if(intval($level)>0){
-              $sql = "SELECT val FROM ".$gTables['company_config']." WHERE var = 'pointlevel".$level."name' LIMIT 1";
-              if ($result = mysqli_query($link, $sql)) {
-                $val = mysqli_fetch_assoc($result);
-                $level_name=$val['val'];
-              }
-              }else{
-                $level_name="nessun livello raggiunto";
-              }
-              $mail->Body    = "<p>".$script_transl['give_point']." ".$data['vacation_rental']['points']." ".$script_transl['give_point1']." ".$level_name."</p>";
-              $mail->Body    .="<p><a href='https://www.gmonamour.it/".$lan."/service/fidelity-mon-amour'>Scopri i vantaggi del programma punti <b>Fidelity Mon Amour</b></a></p>";
-              $mail->Body    .= "<p>".$script_transl['regards']."</p><p><b>".$admin_aziend['ragso1']." ".$admin_aziend['ragso2']."</b></p>";
-              if($mail->send()) {
-                if ($imap_usr!==''){// se ho un utente imap carico la mail nella sua posta inviata
-                  if($imap = @imap_open("{".$imap_server.":".$imap_port."/".$imap_secure."}".$imap_sent_folder, $imap_usr, $imap_pwr)){
-                    if ($append=@imap_append($imap, "{".$imap_server."}".$imap_sent_folder, $mail->getSentMIMEMessage(),"\\seen")){
-                            // inserimento avvenuto
-                    }else{
-                      $errors = @imap_errors();
-                      ?>
-                      <script>
-                      alert('carico mail inviata in posta inviata NON riuscito <?php echo implode ('; ', $errors ); ?>');
-                      </script>
-                      <?php
-                    }
-                  }else{
-                    $errors = @imap_errors();
-                      ?>
-                       <script>
-                      alert('carico mail inviata in posta inviata NON riuscito <?php echo implode ('; ', $errors ); ?>');
-                      </script>
-                      <?php
-                  }
-                }
-              }else {
-              echo "Errore imprevisto nello spedire la mail di notifica attribuzione punti: " . $mail->ErrorInfo;
-              }
-            }
-          }else{// se NON c'è un json in anagra
-            $data['vacation_rental']['points'] = $points;
-            $data['vacation_rental']['points_date']=date("Y-m-d");
-            $custom_json = json_encode($data);
-            gaz_dbi_put_row($gTables['anagra'], 'id', $anagra['id'], 'custom_field', $custom_json);
+				  $level=get_user_points_level($anagra['id']);
+				  if(intval($level)>0){
+				  $sql = "SELECT val FROM ".$gTables['company_config']." WHERE var = 'pointlevel".$level."name' LIMIT 1";
+				  if ($result = mysqli_query($link, $sql)) {
+					$val = mysqli_fetch_assoc($result);
+					$level_name=$val['val'];
+				  }
+				  }else{
+					$level_name="nessun livello raggiunto";
+				  }
+				  $mail->Body    = "<p>".$script_transl['give_point']." ".$data['vacation_rental']['points']." ".$script_transl['give_point1']." ".$level_name."</p>";
+				  $mail->Body    .="<p><a href='https://www.gmonamour.it/".$lan."/service/fidelity-mon-amour'>Scopri i vantaggi del programma punti <b>Fidelity Mon Amour</b></a></p>";
+				  $mail->Body    .= "<p>".$script_transl['regards']."</p><p><b>".$admin_aziend['ragso1']." ".$admin_aziend['ragso2']."</b></p>";
+				  if($mail->send()) {
+					  $mailsent=1;
+					if ($imap_usr!==''){// se ho un utente imap carico la mail nella sua posta inviata
+					  if($imap = @imap_open("{".$imap_server.":".$imap_port."/".$imap_secure."}".$imap_sent_folder, $imap_usr, $imap_pwr)){
+						if ($append=@imap_append($imap, "{".$imap_server."}".$imap_sent_folder, $mail->getSentMIMEMessage(),"\\seen")){
+								// inserimento avvenuto
+						}else{
+						  $errors = @imap_errors();
+						  ?>
+						  <script>
+						  alert('carico mail inviata in posta inviata NON riuscito <?php echo implode ('; ', $errors ); ?>');
+						  </script>
+						  <?php
+						}
+					  }else{
+						$errors = @imap_errors();
+						  ?>
+						   <script>
+						  alert('carico mail inviata in posta inviata NON riuscito <?php echo implode ('; ', $errors ); ?>');
+						  </script>
+						  <?php
+					  }
+					}
+				  }else {
+					echo "Errore imprevisto nello spedire la mail di notifica attribuzione punti: " . $mail->ErrorInfo;
+				  }
+				}
+			  }else{// se NON c'è un json in anagra
+				$data['vacation_rental']['points'] = $points;
+				$data['vacation_rental']['points_date']=date("Y-m-d");
+				$custom_json = json_encode($data);
+				gaz_dbi_put_row($gTables['anagra'], 'id', $anagra['id'], 'custom_field', $custom_json);
 
-            $pointarr['operat']="+1";
-            $pointarr['id_anagra']=$anagra['id'];
-            $pointarr['points']=$points;
-            $pointarr['id_tesbro']=$i;
-            gaz_dbi_table_insert('rental_points_mov', $pointarr);
+				$pointarr['operat']="+1";
+				$pointarr['id_anagra']=$anagra['id'];
+				$pointarr['points']=$points;
+				$pointarr['id_tesbro']=$i;
+				gaz_dbi_table_insert('rental_points_mov', $pointarr);
 
-            $level=get_user_points_level($anagra['id']);
-            if(intval($level)>0){
-            $sql = "SELECT val FROM ".$gTables['company_config']." WHERE var = 'pointlevel".$level."name' LIMIT 1";
-            if ($result = mysqli_query($link, $sql)) {
-              $val = mysqli_fetch_assoc($result);
-              $level_name=$val['val'];
-            }
-            }else{
-              $level_name="nessun livello raggiunto";
-            }
-            $mail->Body = "<p>".$script_transl['give_point']." ".$data['vacation_rental']['points']." ".$script_transl['give_point1']." ".$level_name."</p>";
-            $mail->Body .= "<p><a href='https://www.gmonamour.it/".$lan."/service/fidelity-mon-amour'>Scopri i vantaggi del programma punti <b>Fidelity Mon Amour</b></a></p>";
-            $mail->Body .= "<p>".$script_transl['regards']."</p><p><b>".$admin_aziend['ragso1']." ".$admin_aziend['ragso2']."</b></p>";
-            if($mail->send()) {
-              if ($imap_usr!==''){// se ho un utente imap carico la mail nella sua posta inviata
-                if($imap = @imap_open("{".$imap_server.":".$imap_port."/".$imap_secure."}".$imap_sent_folder, $imap_usr, $imap_pwr)){
-                  if ($append=@imap_append($imap, "{".$imap_server."}".$imap_sent_folder, $mail->getSentMIMEMessage(),"\\seen")){
-                          // inserimento avvenuto
-                  }else{
-                    $errors = @imap_errors();
-                    ?>
-                    <script>
-                    alert('carico mail inviata in posta inviata NON riuscito <?php echo implode ('; ', $errors ); ?>');
-                    </script>
-                    <?php
-                  }
-                }else{
-                  $errors = @imap_errors();
-                    ?>
-                     <script>
-                    alert('carico mail inviata in posta inviata NON riuscito <?php echo implode ('; ', $errors ); ?>');
-                    </script>
-                    <?php
-                }
-              }
-            }else {
-            echo "Errore imprevisto nello spedire la mail di notifica attribuzione punti: " . $mail->ErrorInfo;
-            }
-          }
-        }
-        if (intval($old_checked_out_date)>0 && $_POST['new_status']!=="OUT" && floatval($pointeuro)>0){// se è abilitato e si sta regredendo dal check-out tolgo i punti
-          $checkpoint=gaz_dbi_get_row($gTables['rental_points_mov'], "id_tesbro", $i, " AND operat = 1 AND id_anagra = ".intval($anagra['id'])); // controllo se i punti gli erano stati attribuiti
-          if($checkpoint['points'] && floatval($checkpoint['points'])>0){// se gli erano stati attribuiti posso procedere a toglierli
+				$level=get_user_points_level($anagra['id']);
+				if(intval($level)>0){
+				$sql = "SELECT val FROM ".$gTables['company_config']." WHERE var = 'pointlevel".$level."name' LIMIT 1";
+				if ($result = mysqli_query($link, $sql)) {
+				  $val = mysqli_fetch_assoc($result);
+				  $level_name=$val['val'];
+				}
+				}else{
+				  $level_name="nessun livello raggiunto";
+				}
+				$mail->Body = "<p>".$script_transl['give_point']." ".$data['vacation_rental']['points']." ".$script_transl['give_point1']." ".$level_name."</p>";
+				$mail->Body .= "<p><a href='https://www.gmonamour.it/".$lan."/service/fidelity-mon-amour'>Scopri i vantaggi del programma punti <b>Fidelity Mon Amour</b></a></p>";
+				$mail->Body .= "<p>".$script_transl['regards']."</p><p><b>".$admin_aziend['ragso1']." ".$admin_aziend['ragso2']."</b></p>";
+				if($mail->send()) {
+					$mailsent=1;
+				  if ($imap_usr!==''){// se ho un utente imap carico la mail nella sua posta inviata
+					if($imap = @imap_open("{".$imap_server.":".$imap_port."/".$imap_secure."}".$imap_sent_folder, $imap_usr, $imap_pwr)){
+					  if ($append=@imap_append($imap, "{".$imap_server."}".$imap_sent_folder, $mail->getSentMIMEMessage(),"\\seen")){
+							  // inserimento avvenuto
+					  }else{
+						$errors = @imap_errors();
+						?>
+						<script>
+						alert('carico mail inviata in posta inviata NON riuscito <?php echo implode ('; ', $errors ); ?>');
+						</script>
+						<?php
+					  }
+					}else{
+					  $errors = @imap_errors();
+						?>
+						 <script>
+						alert('carico mail inviata in posta inviata NON riuscito <?php echo implode ('; ', $errors ); ?>');
+						</script>
+						<?php
+					}
+				  }
+				}else {
+					echo "Errore imprevisto nello spedire la mail di notifica attribuzione punti: " . $mail->ErrorInfo;
+				}
+			  }
+			}
+			if (intval($old_checked_out_date)>0 && $_POST['new_status']!=="OUT" && floatval($pointeuro)>0){// se è abilitato e si sta regredendo dal check-out tolgo i punti
+			  $checkpoint=gaz_dbi_get_row($gTables['rental_points_mov'], "id_tesbro", $i, " AND operat = 1 AND id_anagra = ".intval($anagra['id'])); // controllo se i punti gli erano stati attribuiti
+			  if($checkpoint['points'] && floatval($checkpoint['points'])>0){// se gli erano stati attribuiti posso procedere a toglierli
 
-            $amount=get_totalprice_booking($i,FALSE,FALSE,"",TRUE);
-            $points=intval($amount/$pointeuro);
-            if ($data = json_decode($anagra['custom_field'],true)){// se c'è un json in anagra
-              if (is_array($data['vacation_rental'])){ // se c'è il modulo "vacation rental" lo aggiorno
-                if (isset($data['vacation_rental']['points']) && intval($data['vacation_rental']['points'])>0){
-                  $data['vacation_rental']['points'] = intval($data['vacation_rental']['points'])-$points;
-                  $data['vacation_rental']['points'] = ($data['vacation_rental']['points']>=0)?$data['vacation_rental']['points']:0;
-                }else{
-                  $data['vacation_rental']['points'] = 0;
-                }
-                $custom_json = json_encode($data);
-                gaz_dbi_put_row($gTables['anagra'], 'id', $anagra['id'], 'custom_field', $custom_json);
+				$amount=get_totalprice_booking($i,FALSE,FALSE,"",TRUE);
+				$points=intval($amount/$pointeuro);
+				if ($data = json_decode($anagra['custom_field'],true)){// se c'è un json in anagra
+				  if (is_array($data['vacation_rental'])){ // se c'è il modulo "vacation rental" lo aggiorno
+					if (isset($data['vacation_rental']['points']) && intval($data['vacation_rental']['points'])>0){
+					  $data['vacation_rental']['points'] = intval($data['vacation_rental']['points'])-$points;
+					  $data['vacation_rental']['points'] = ($data['vacation_rental']['points']>=0)?$data['vacation_rental']['points']:0;
+					}else{
+					  $data['vacation_rental']['points'] = 0;
+					}
+					$custom_json = json_encode($data);
+					gaz_dbi_put_row($gTables['anagra'], 'id', $anagra['id'], 'custom_field', $custom_json);
 
-                $pointarr['operat']="-1";
-                $pointarr['id_anagra']=$anagra['id'];
-                $pointarr['points']=$points;
-                $pointarr['id_tesbro']=$i;
-                gaz_dbi_table_insert('rental_points_mov', $pointarr);
+					$pointarr['operat']="-1";
+					$pointarr['id_anagra']=$anagra['id'];
+					$pointarr['points']=$points;
+					$pointarr['id_tesbro']=$i;
+					gaz_dbi_table_insert('rental_points_mov', $pointarr);
 
-                $level=get_user_points_level($anagra['id']);
-                if(intval($level)>0){
-                  $sql = "SELECT val FROM ".$gTables['company_config']." WHERE var = 'pointlevel".$level."name' LIMIT 1";
-                  if ($result = mysqli_query($link, $sql)) {
-                    $val = mysqli_fetch_assoc($result);
-                    $level_name=$val['val'];
-                  }
-                }else{
-                  $level_name="nessun livello raggiunto";
-                }
-                $mail->Body    = "<p>".$script_transl['delete_point']." ".$points." ".$script_transl['give_point1']." ".$level_name."</p><p>".$script_transl['regards']."</p><p><b>".$admin_aziend['ragso1']." ".$admin_aziend['ragso2']."</b></p>";
+					$level=get_user_points_level($anagra['id']);
+					if(intval($level)>0){
+					  $sql = "SELECT val FROM ".$gTables['company_config']." WHERE var = 'pointlevel".$level."name' LIMIT 1";
+					  if ($result = mysqli_query($link, $sql)) {
+						$val = mysqli_fetch_assoc($result);
+						$level_name=$val['val'];
+					  }
+					}else{
+					  $level_name="nessun livello raggiunto";
+					}
+					$mail->Body    = "<p>".$script_transl['delete_point']." ".$points." ".$script_transl['give_point1']." ".$level_name."</p><p>".$script_transl['regards']."</p><p><b>".$admin_aziend['ragso1']." ".$admin_aziend['ragso2']."</b></p>";
 
-                if($mail->send()) {
-                  if ($imap_usr!==''){// se ho un utente imap carico la mail nella sua posta inviata
-                    if($imap = @imap_open("{".$imap_server.":".$imap_port."/".$imap_secure."}".$imap_sent_folder, $imap_usr, $imap_pwr)){
-                      if ($append=@imap_append($imap, "{".$imap_server."}".$imap_sent_folder, $mail->getSentMIMEMessage(),"\\seen")){
-                              // inserimento avvenuto
-                      }else{
-                        $errors = @imap_errors();
-                        ?>
-                        <script>
-                        alert('carico mail inviata in posta inviata NON riuscito <?php echo implode ('; ', $errors ); ?>');
-                        </script>
-                        <?php
-                      }
-                    }else{
-                      $errors = @imap_errors();
-                        ?>
-                         <script>
-                        alert('carico mail inviata in posta inviata NON riuscito <?php echo implode ('; ', $errors ); ?>');
-                        </script>
-                        <?php
-                    }
-                  }
-                }else {
-                  echo "Errore imprevisto nello spedire la mail di notifica di cancellazione punti: " . $mail->ErrorInfo;
-                }
-              }
-            }
+					if($mail->send()) {
+						$mailsent=1;
+					  if ($imap_usr!==''){// se ho un utente imap carico la mail nella sua posta inviata
+						if($imap = @imap_open("{".$imap_server.":".$imap_port."/".$imap_secure."}".$imap_sent_folder, $imap_usr, $imap_pwr)){
+						  if ($append=@imap_append($imap, "{".$imap_server."}".$imap_sent_folder, $mail->getSentMIMEMessage(),"\\seen")){
+								  // inserimento avvenuto
+						  }else{
+							$errors = @imap_errors();
+							?>
+							<script>
+							alert('carico mail inviata in posta inviata NON riuscito <?php echo implode ('; ', $errors ); ?>');
+							</script>
+							<?php
+						  }
+						}else{
+						  $errors = @imap_errors();
+							?>
+							 <script>
+							alert('carico mail inviata in posta inviata NON riuscito <?php echo implode ('; ', $errors ); ?>');
+							</script>
+							<?php
+						}
+					  }
+					}else {
+					  echo "Errore imprevisto nello spedire la mail di notifica di cancellazione punti: " . $mail->ErrorInfo;
+					}
+				  }
+				}
 
-          }
-        }
+			  }
+			}
 
-		if (function_exists('sendNotificationbyID')) {// invio notifica smartphone se ho la funzione
-		  $notif_res = sendNotificationbyID($anagra['id'], $mail->Subject, $mail->Body, 'active');
-		  $anySent = is_array($notif_res) && count($notif_res) > 0 && array_reduce($notif_res, fn($carry, $r) => $carry || (isset($r['status']) && $r['status'] === 'SENT'), false);
+			if ($mailsent==1 && function_exists('sendNotificationbyID')) {// invio notifica smartphone se ho la funzione
+			  $notif_res = sendNotificationbyID($anagra['id'], $mail->Subject, $mail->Body, 'active');
+			  $anySent = is_array($notif_res) && count($notif_res) > 0 && array_reduce($notif_res, fn($carry, $r) => $carry || (isset($r['status']) && $r['status'] === 'SENT'), false);
+
+			}
+			if ($mailsent==1 && !$anySent && function_exists('send_sms_via_fcm')) {// invio SMS se ho la funzione
+			  //$mail->Body .= "<br>".$script_transl['notif_call_to_app'];
+			  $mail->Body = $script_transl['booking_number']." ".$tesbro['numdoc'].' '.$script_transl['of'].' '.gaz_format_date($tesbro['datemi'])."<br>".$mail->Body."<br>".$script_transl['notif_call_to_app'];
+
+			  $SMS_send = send_sms_via_fcm($phone, $mail->Body);
+			}
 
 		}
-		if (!$anySent && function_exists('send_sms_via_fcm')) {// invio SMS se ho la funzione
-		  //$mail->Body .= "<br>".$script_transl['notif_call_to_app'];
-		  $mail->Body = $script_transl['booking_number']." ".$tesbro['numdoc'].' '.$script_transl['of'].' '.gaz_format_date($tesbro['datemi'])."<br>".$mail->Body."<br>".$script_transl['notif_call_to_app'];
-
-		  $SMS_send = send_sms_via_fcm($phone, $mail->Body);
-		}
-
-      }
 
 
       if (isset($_POST['email']) && $_POST['email']=='true' && strlen($_POST['cust_mail'])>4 && strlen($vacation_url_user)>4){// se richiesto invio mail di richiesta recensione

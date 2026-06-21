@@ -144,13 +144,13 @@ function mostra_addendum($id_tes, $IDaz) {
 
 // visualizza i bottoni dei documenti di evasione associati all'ordine
 function mostra_documenti_associati($ordine, $paid) {
-    global $gTables;
+    global $gTables, $seziva;
     $admin_aziend = checkAdmin();
     $config = dirname(__DIR__, 3) . '/config/vacation_rental_settings.php';
-if (!file_exists($config)) {
-    $config = __DIR__ . '/manual_settings.php';
-}
-require_once $config;
+	if (!file_exists($config)) {
+		$config = __DIR__ . '/manual_settings.php';
+	}
+	require_once $config;
     // seleziono i documenti evasi che contengono gli articoli di questo ordine
     $rigdoc_result = gaz_dbi_dyn_query('DISTINCT id_tes', $gTables['rigdoc'], "id_order = " . $ordine, 'id_tes ASC');
     while ( $rigdoc = gaz_dbi_fetch_array($rigdoc_result) ) {
@@ -183,7 +183,7 @@ require_once $config;
             echo "<a class=\"btn btn-xs ",$btn,"\" title=\"visualizza il documento di trasporto\" href=\"../vendit/stampa_docven.php?id_tes=" . $tesdoc_r['id_tes'] . "&template=DDT\">";
             echo "ddt " . $tesdoc_r["numdoc"];
             echo "</a> ";
-        } elseif ($tesdoc_r["tipdoc"] == "CMR" || ($tesdoc_r["tipdoc"] == "FAD" && $tesdoc_r["ddt_type"]='R')) {
+        } elseif ($tesdoc_r["tipdoc"] == "CMR" || ($tesdoc_r["tipdoc"] == "FAD" && $tesdoc_r["ddt_type"]=='R')) {
             // documento cmr
             echo "<a class=\"btn btn-xs ",$btn,"\" title=\"visualizza il cmr\" href=\"../vendit/stampa_docven.php?id_tes=" . $tesdoc_r['id_tes'] . "&template=CMR\">";
             echo "cmr " . $tesdoc_r["numdoc"];
@@ -1843,8 +1843,33 @@ $ts->output_navbar();
                 }
                 echo "&nbsp;&nbsp;<a class=\"btn btn-xs ",$stato_gift_btn," \"";
                 echo " style=\"cursor:pointer;\" onclick=\"point('". $r['id'] ."','".$r['user_points']."','".addslashes($r['ragso1'])." ".addslashes($r['ragso2'])."','".$r['id_tes']."','".$r['expired']."','".$r['expiry_points_date']."')\"";
-                echo ">".$pointlevelname[$lev]." <i class=\"glyphicon glyphicon-gift\" title=\"Punti: ".$r['user_points']." - Scadenza: ".$r['expiry_points_date']."\"></i></a></td>";
+                echo ">".$pointlevelname[$lev]." <i class=\"glyphicon glyphicon-gift\" title=\"Punti: ".$r['user_points']." - Scadenza: ".$r['expiry_points_date']."\"></i></a>";
               }
+			 
+				$chatStatus = user_has_app($r['id']);
+				if ($chatStatus !== null) {
+					$btnClass = ($chatStatus > 0)
+						? 'btn-danger'
+						: 'btn-success';
+				?>
+					<button type="button"
+							class="btn btn-xs <?php echo $btnClass; ?>"
+							onclick="$('#chatFrame').attr(
+								'src',
+								'./admin_chat.php?status=&user_id=<?php echo (int)$r['id']; ?>'
+							); $('#chatModal').modal('show');">
+
+						<i class="fa fa-commenting"></i>
+
+						<?php if ($chatStatus > 0) { ?>
+							<span class="badge">
+								<?php echo (int)$chatStatus; ?>
+							</span>
+						<?php } ?>
+
+					</button>
+				<?php }
+			  echo "</td>";
               echo "<td>".$r['citspe']."</td>";
 
               // Colonna importo
@@ -2090,6 +2115,24 @@ $ts->output_navbar();
     </table>
     </div>
 	<div class="modal" id="confirm_print" title="Scegli la carta dove stampare"></div>
+	<div class="modal fade" id="chatModal">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						&times;
+					</button>
+					<h4 class="modal-title">
+						<i class="fa fa-commenting"></i> Chat
+					</h4>
+				</div>
+
+				<div class="modal-body" style="padding:0">
+					<iframe id="chatFrame" style="width:100%;height:600px;border:0"></iframe>
+				</div>
+			</div>
+		</div>
+	</div>
 </form>
 <a href="https://programmisitiweb.lacasettabio.it/gazie/vacation-rental-il-gestionale-per-case-vacanza-residence-bb-e-agriturismi/" target="_blank" class="navbar-fixed-bottom" style="max-width:350px; left:10%; z-index:2000;"> Vacation rental è un modulo di Antonio Germani</a>
 
@@ -2104,6 +2147,10 @@ if (isset($_SESSION['print_queue']['idDoc']) && !empty($_SESSION['print_queue'][
 ?>
 <script>
   $(document).ready(function() {
+	  
+	$('#chatModal').on('hidden.bs.modal', function () {// svuota la modal chat in chiusura
+		$('#chatFrame').attr('src', '');
+	});
 
     fileLoad('<?php echo $target;?>', false);
 

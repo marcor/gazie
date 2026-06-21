@@ -33,7 +33,7 @@ $strScript = array(
     "user_login.php"=>
       array('warning_sess'=>'ATTENZIONE: Nel tuo browser sono state disabilitate le sessioni. Devi abilitarle oppure cambiare browser',
         'login'=>'Accesso',
-		'notifications' => 'Notifiche',
+		'notifications' => 'Centro messaggi',
         'log_instr'=>'Si prega di inserire e-mail e password',
         'forgot'=>'Password dimenticata?',
 		'first_access'=>'Primo accesso?',
@@ -505,7 +505,7 @@ $strScript = array(
 			'extra_thanks' => 'Grazie, l\'extra è stato correttamente aggiunto.'
 		),
 		'print'=>'Stampa',
-		'notifications' => 'Notifiche',
+		'notifications' => 'Centro messaggi',
     'minors' => 'Minori',
     'how_age' => "Si deve considerare l'età al momento del check-in.",
     'minor_rule' => "I minori di anni 18 devono sempre essere accompagnati da un adulto. Qualora l'adulto non sia un genitore, esso dovrà essere munito dell'assenso scritto dei soggetti esercenti la responsabilità genitoriale del minore. NOTA BENE: Ogni minore, anche neonato, dovrà avere un proprio documento di identità, in ogni caso.",

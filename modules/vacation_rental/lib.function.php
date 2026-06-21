@@ -47,6 +47,48 @@
     return $link;
 }
 
+function user_has_app($user_id)
+{
+    global $link;
+
+    $user_id = (int)$user_id;
+
+    // 1) verifica se l'utente usa l'app
+    $sql = "
+        SELECT 1
+        FROM gaz_android_device_tokens
+        WHERE user_id = $user_id
+        LIMIT 1
+    ";
+
+    $res = @mysqli_query($link, $sql); // @ sta per retrocompatibilità o per chi non ha la versione PRO
+
+    if (!$res || mysqli_num_rows($res) === 0) {
+        return null; // non ha app
+    }
+
+    // 2) conteggio messaggi non letti (utente -> admin)
+    $sql = "
+        SELECT COUNT(*) AS unread_count
+        FROM gaz_android_messages m
+        INNER JOIN gaz_android_conversations c
+            ON c.id = m.conversation_id
+        WHERE c.user_id = $user_id
+          AND m.sender_type = 'user'
+          AND m.read_at IS NULL
+    ";
+
+    $res = @mysqli_query($link, $sql); // @ sta per retrocompatibilità o per chi non ha la versione PRO
+
+    if (!$res) {
+        return 0; // fallback sicuro
+    }
+
+    $row = mysqli_fetch_assoc($res);
+
+    return (int)($row['unread_count'] ?? 0);
+}
+
 function user_has_booked($id_anagra){
     global $link;
 
