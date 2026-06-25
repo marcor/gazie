@@ -55,35 +55,50 @@ $day_start = str_pad($day_start, 2, "0", STR_PAD_LEFT);
 $month_start = str_pad($month_start, 2, "0", STR_PAD_LEFT);
 
 //procedura per la creazione dell'array dei conti con saldo diverso da 0 e ordinati per nome...
-$sqlquery= "SELECT codcon, SUM(import) AS somma, darave FROM ".$gTables['rigmoc'].
-           " LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes LEFT JOIN ".
-            $gTables['clfoco']." ON ".$gTables['rigmoc'].".codcon = ".$gTables['clfoco'].".codice LEFT JOIN ".
-            $gTables['anagra']." ON ".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra WHERE ".(intval($_GET['idg']) >= 1 ? $gTables['clfoco'] . ".id_customer_group = ".intval($_GET['idg'])." AND " : '' )."datreg BETWEEN ".
-            $year_start.$month_start.$day_start." AND ".$year_end.$month_end.$day_end." AND codcon LIKE '".$admin_aziend['mascli']."%' AND caucon <> 'CHI' AND caucon <> 'APE' OR (caucon = 'APE' AND codcon LIKE '".$admin_aziend['mascli']."%' AND datreg LIKE '".$year_start.
-            "%') GROUP BY codcon, darave ORDER BY ragso1, codcon, darave";
-$rs_castel = gaz_dbi_query($sqlquery);
+$sqlquery= "SELECT COUNT(DISTINCT ".$gTables['rigmoc'].".id_tes) AS nummov, codcon, id_customer_group, SUM(import*(darave='D') - import*(darave='A')) AS saldo FROM ".$gTables['rigmoc'].
+           " LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes
+             LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['rigmoc'].".codcon = ".$gTables['clfoco'].".codice
+             LEFT JOIN ".$gTables['anagra']." ON ".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra
+             WHERE datreg BETWEEN ".$year_start.$month_start.$day_start." AND ".$year_end.$month_end.$day_end."
+                   AND codcon LIKE '".$admin_aziend['mascli']."%' AND caucon <> 'CHI' AND caucon <> 'APE' OR (caucon = 'APE' AND codcon LIKE '".$admin_aziend['mascli']."%' AND datreg LIKE '".$year_start."%')
+            GROUP BY codcon ORDER BY ragso1, darave";
+            //var_dump($sqlquery);
+$rs_r = gaz_dbi_query($sqlquery);
 $ctrlcodcon = 0;
 $ctrlsaldo = 0;
 $rigo = 1;
-$conti=array();
-while($castel = gaz_dbi_fetch_array($rs_castel)) {
-        if ($castel["codcon"] != $ctrlcodcon and $ctrlcodcon > 0) {
-            if ($ctrlsaldo != 0) {
-               $conti[$rigo]=$ctrlcodcon;
-               $rigo++;
-               $ctrlsaldo=0;
-            }
-        }
-        if ($castel["darave"] == 'D') {
-            $ctrlsaldo += $castel["somma"];
-        } else {
-            $ctrlsaldo -= $castel["somma"];
-        }
-        $ctrlcodcon = $castel["codcon"];
+$conti= [];
+$ctrl_customer_group=0;
+$idg=intval($_GET['idg']);
+
+while($r = gaz_dbi_fetch_array($rs_r)) {
+//
+
+/*  if ($castel["codcon"] != $ctrlcodcon && $ctrlcodcon > 0 ) {
+    if ($ctrlsaldo != 0 && ($idg < 1 || $idg == $castel["id_customer_group"]) ) {
+      $conti[$rigo]=$ctrlcodcon;
+      $rigo++;
+      $ctrlsaldo=0;
+    }
+  }
+  if ($castel["darave"] == 'D') {
+      $ctrlsaldo += $castel["somma"];
+  } else {
+      $ctrlsaldo -= $castel["somma"];
+  }
+  $ctrlcodcon = $castel["codcon"];
+  $ctrl_customer_group = $castel["id_customer_group"];
+*/
+  if (abs($r['saldo']) >= 0.001  && ($idg < 1 || $idg == $r["id_customer_group"]) ) {
+    $conti[$rigo]=$r['codcon'];
+    $rigo++;
+  }
 }
-if ($ctrlsaldo != 0) {
-           $conti[$rigo]=$ctrlcodcon;
+/*
+if ($ctrlsaldo != 0 && ($idg < 1 || $idg == $ctrl_customer_group) ) {
+  $conti[$rigo]=$ctrlcodcon;
 }
+*/
 //fine creazione array conti diversi da zero
 
 $emissione = 'Crediti verso i Clienti per il periodo '.$day_start.'/'.$month_start.'/'.$year_start.' - '.$day_end.'/'.$month_end.'/'.$year_end;
@@ -121,8 +136,8 @@ foreach ($conti as $value) {
                                ON '.$gTables['rigmoc'].'.codcon='.$gTables['clfoco'].'.codice
                                LEFT JOIN '.$gTables['anagra'].'
                                ON '.$gTables['anagra'].'.id='.$gTables['clfoco'].'.id_anagra',
-                               "datreg BETWEEN '".$year_start.$month_start.$day_start."' AND '".
-                               $year_end.$month_end.$day_end."' AND codcon=".$value.
+                               "datreg BETWEEN ".$year_start.$month_start.$day_start." AND ".
+                               $year_end.$month_end.$day_end." AND codcon=".$value.
                                " AND caucon <> 'CHI' AND caucon <> 'APE'  OR
                                (caucon = 'APE' AND codcon=".$value." AND YEAR(datreg)=".$year_start.")",
                                "datreg");

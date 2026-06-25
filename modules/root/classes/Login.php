@@ -246,7 +246,7 @@ class Login
     } elseif (getenv('HTTP_FORWARDED_FOR')) { $ip = getenv('HTTP_FORWARDED_FOR');
     } elseif (getenv('HTTP_FORWARDED')) { $ip = getenv('HTTP_FORWARDED');
     } else { $ip = $_SERVER['REMOTE_ADDR']; }
-    return $ip;
+    return substr($ip,0,15); // per il momento controllo solo se ipv4
   }
 
 	// store failed IP

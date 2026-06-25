@@ -79,7 +79,15 @@ if (isset($_GET['stampa']) and $message == "") {
   exit;
 }
 
-$sqlquery= "SELECT COUNT(DISTINCT ".$gTables['rigmoc'].".id_tes) as nummov,codcon, ragso1, e_mail, telefo,".$gTables['clfoco'].".codice, sum(import*(darave='D')) as dare,sum(import*(darave='A')) as avere, sum(import*(darave='D') - import*(darave='A')) as saldo, darave FROM ".$gTables['rigmoc']." LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['rigmoc'].".codcon = ".$gTables['clfoco'].".codice LEFT JOIN ".$gTables['anagra']." ON ".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra WHERE ".($form['id_customer_group'] >= 1 ? $gTables['clfoco'] . ".id_customer_group = ".$form['id_customer_group']." AND " : '' )." datreg between ".$annini.$mesini.$giornini." and ".$annfin.$mesfin.$giornfin." and codcon like '".$admin_aziend['mascli']."%' and caucon <> 'CHI' and caucon <> 'APE' or (caucon = 'APE' and codcon like '".$admin_aziend['mascli']."%' and datreg like '".$annini."%') GROUP BY codcon ORDER BY ragso1, darave";
+$sqlquery= "SELECT COUNT(DISTINCT ".$gTables['rigmoc'].".id_tes) AS nummov,codcon, id_customer_group, ragso1, e_mail, telefo,".$gTables['clfoco'].".codice, SUM(import*(darave='D')) AS dare,SUM(import*(darave='A')) AS avere,
+                   SUM(import*(darave='D') - import*(darave='A')) AS saldo, darave FROM ".$gTables['rigmoc']."
+            LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes
+            LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['rigmoc'].".codcon = ".$gTables['clfoco'].".codice
+            LEFT JOIN ".$gTables['anagra']." ON ".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra
+            WHERE datreg BETWEEN ".$annini.$mesini.$giornini." AND ".$annfin.$mesfin.$giornfin."
+                  AND codcon LIKE '".$admin_aziend['mascli']."%' AND caucon <> 'CHI' AND caucon <> 'APE' OR (caucon = 'APE' AND codcon LIKE '".$admin_aziend['mascli']."%' AND datreg LIKE '".$annini."%')
+            GROUP BY codcon ORDER BY ragso1, darave";
+
 $rs_castel = gaz_dbi_query($sqlquery);
 require("../../library/include/header.php");
 $script_transl=HeadMain(0,array('custom/modal_form'));
@@ -242,7 +250,7 @@ $linkHeaders -> output();
 <?php
 $tot=0;
 while ($r = gaz_dbi_fetch_array($rs_castel)) {
-      if (abs($r['saldo']) >= 0.001) {
+  if (abs($r['saldo']) >= 0.001  && ($form["id_customer_group"] < 1 || $form["id_customer_group"] == $r["id_customer_group"]) ) {
          echo "<tr class=\"FacetDataTD\">";
          echo "<td>".$r['codcon']."&nbsp;</td>";
          echo "<td><a title=\"Dettagli cliente\" href=\"report_client.php?nome=".$r["ragso1"]."\">".$r["ragso1"]."</a> &nbsp;</td>";
@@ -269,7 +277,7 @@ while ($r = gaz_dbi_fetch_array($rs_castel)) {
 		 }
 		 echo "</tr>";
          $tot += $r['saldo'];
-      }
+  }
 }
 echo "<tr><td colspan=\"6\"></td><td class='FacetDataTD' style='border: 2px solid #666; text-align: center;'>".gaz_format_number($tot)."</td><td></td><td></td><td></td><td></td></tr>\n";
 ?>
