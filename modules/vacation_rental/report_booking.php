@@ -340,30 +340,46 @@ function confirMail(link, cod_partner, dest=''){
     $.get("search_email_address.php",
 		  {clfoco: cod_partner},
 		  function (data) {
-        var size = Object.keys(data).length;
-        var j=0;
-        var c=0
-        const mails = [];
-        $.each(data, function (i, value) {
-          if (size>1 && !mails.includes(value.email)){
-            if (j==0){
-              $("#mailbutt").append("<div>Indirizzi archiviati:</div>");
-            }
-            $("#mailbutt").append("<div id='rowmail_"+j+"' align='center'><button id='fillmail_" + j+"'>" + value.email + "</button></div>");
-            $("#fillmail_" + j).click(function () {
-              $("#mailaddress").val(value.email);
-            });
-            c=j+1;
+			  // 1) input popolato SUBITO con la default passata dall'onclick
+			  $("#mailaddress").val(dest);
 
-            mails[j]=value.email;
-            j++;
-          }else{// se non ci sono indirizzi da scegliere valorizzo di default
-            $("#mailaddress").val(dest);
-          }
+			  // 2) crea elenco univoco di email trovate
+			  const uniqueMails = [];
+			  $.each(data, function (i, value) {
+				if (value && value.email && !uniqueMails.includes(value.email)) {
+				  uniqueMails.push(value.email);
+				}
+			  });
 
-        });
+			  // se ci sono più scelte, metti dest PRIMA (se presente) e crea i bottoni
+			  if (uniqueMails.length > 0) {
+				// ordina mettendo dest al primo posto
+				uniqueMails.sort(function (a, b) {
+				  if (a === dest) return -1;
+				  if (b === dest) return 1;
+				  return 0;
+				});
 
-		  }, "json"
+				$("#mailbutt").append("<div>Indirizzi archiviati:</div>");
+
+				let j = 0;
+				uniqueMails.forEach(function (mail) {
+				  $("#mailbutt").append(
+					"<div id='rowmail_" + j + "' align='center'>" +
+					  "<button id='fillmail_" + j + "'>" + mail + "</button>" +
+					"</div>"
+				  );
+
+				  $("#fillmail_" + j).click(function () {
+					$("#mailaddress").val(mail);
+				  });
+
+				  j++;
+				});
+			  }
+			  // se invece c'è 0 o 1 mail trovata, l'input resta già valorizzato con dest (come vuoi tu)
+			}
+			, "json"
     );
 
     tes_id = link.id.replace("doc", "");
@@ -1967,7 +1983,7 @@ $ts->output_navbar();
 
 				// colonna stato prenotazione
 				// Se la prenotazione e' da evadere , verifica lo status ed eventualmente lo aggiorna.
-				echo "<td style='text-align: left;'>";
+				echo "<td style='text-align: left; min-width: 60px;'>";
 				if(isset($datatesbro['vacation_rental']['man_checkin_status']) && intval($datatesbro['vacation_rental']['man_checkin_status'])==1){
 					$class_man="btn btn-success";$title_man="title = 'Accettazione effettuata'";
 				}elseif(isset($datatesbro['vacation_rental']['pre_checkin_status']) && intval($datatesbro['vacation_rental']['pre_checkin_status'])==1){
