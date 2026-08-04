@@ -30,7 +30,7 @@
 
 if (!file_exists('../../library/tcpdf/tcpdf.php')) {
     // controllo rapido se c'è ancora la libreria tCpdf
-    echo "<script>alert('Attenzione probabilmente la libreria TCPDF è mancante e la creazione di documenti in PDF non potrà funzionare!');</script>";
+    //echo "<script>alert('Attenzione probabilmente la libreria TCPDF è mancante e la creazione di documenti in PDF non potrà funzionare!');</script>";
 }
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
@@ -248,6 +248,22 @@ $vacation_url_user=$res['val'];// carico l'url per la pagina front-end utente
     max-height: 250px;   /* puoi modificare */
     overflow-y: auto;
 }
+.Tlarge td {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.Tlarge td .btn,
+.Tlarge td a { 
+  max-width: 100%;
+  white-space: normal;
+  box-sizing: border-box;
+  margin: 2px 0;
+  font-size: 11px;
+  line-height: 1.1;
+  padding: 2px 6px;
+}
+
 </style>
 <?php
 $script_transl = HeadMain(0, array('custom/modal_form'));
@@ -1461,7 +1477,7 @@ $ts->output_navbar();
 <!-- fine div dialog -->
 
     <div class="box-primary table-responsive">
-    <table class="Tlarge table-striped table-bordered table-condensed table-responsive">
+    <table class="Tlarge table-striped table-bordered table-condensed" >
         <tr>
             <td class="FacetFieldCaptionTD">
                 <?php gaz_flt_disp_int("id_doc", "Numero Prot."); ?>
@@ -1558,9 +1574,7 @@ $ts->output_navbar();
                 &nbsp;
             </td>
             <td class="FacetFieldCaptionTD">
-              <button type = "button">
-                <a class="class1" href="stat.php">Statistiche</a>
-              </button>
+              <a class="class1 btn btn-default" href="stat.php">Statistiche</a>
             </td>
              <td class="FacetFieldCaptionTD">
               <a href="tour_mov.php" class="class1">
@@ -1822,9 +1836,12 @@ $ts->output_navbar();
               } else {
                   echo "<td>" . gaz_format_date($r['datemi']) . " &nbsp;</td>";
               }
+			  //colonna alloggio
               echo "<td>" . $r['house_code'] . " &nbsp;</td>";
-              echo "<td>" . gaz_format_date($r['start']) . " &nbsp;</td>";
-              echo "<td>" . gaz_format_date($r['end']) . " &nbsp;</td>";
+			  //colonna checkin
+              echo "<td style='min-width:80px'>" . gaz_format_date($r['start']) . " &nbsp;</td>";
+			  //colonna checkout
+              echo "<td style='min-width:80px'>" . gaz_format_date($r['end']) . " &nbsp;</td>";
               echo "<td>" . $interval->days ."</td>";
               echo "<td> adulti:".$r['adult'];
               if (intval($r['child'])>0){
@@ -1975,18 +1992,22 @@ $ts->output_navbar();
 							$add_emoji= '<span title="' . $datatesbro['vacation_rental']['rem_issue'] . '">🔔</span>';
 						}
 					}
-					?><br><a style="white-space:nowrap;" title="Stato della prenotazione" class="btn btn-xs <?php echo $stato_btn; ?> dialog_stato_lavorazione" refsta="<?php echo $r['id_tes']; ?>" prodes="<?php echo $r['ragso1']," ",$r['ragso2']; ?>" prosta="<?php echo $r['status']; ?>" issue_date="<?php echo $r['issue_date']; ?>" issue_des="<?php echo $r['issue_des']; ?>" cust_mail="<?php echo $r['base_mail']; ?>" cust_mail2="<?php echo $r['base_mail2']; ?>">
+					?><br><a style="" title="Stato della prenotazione" class="btn btn-xs <?php echo $stato_btn; ?> dialog_stato_lavorazione" refsta="<?php echo $r['id_tes']; ?>" prodes="<?php echo $r['ragso1']," ",$r['ragso2']; ?>" prosta="<?php echo $r['status']; ?>" issue_date="<?php echo $r['issue_date']; ?>" issue_des="<?php echo $r['issue_des']; ?>" cust_mail="<?php echo $r['base_mail']; ?>" cust_mail2="<?php echo $r['base_mail2']; ?>">
 					  <i class="glyphicon glyphicon-modal-window">&nbsp;</i><?php echo $r['status']; ?>
 					</a><? echo $add_emoji; ?>
 					<?php
 					if ($r['status']=='CONFIRMED'){
 					  ?>
-					  <br><a style="white-space:nowrap;" title="Accettazione: <?php echo $title; ?>" class="btn btn-xs <?php echo $stato_check_btn; ?> dialog_check_inout" refcheck="<?php echo $r['id_tes']; ?>" prodes="<?php echo $r['ragso1']," ",$r['ragso2']; ?>" prostacheck="<?php echo $check_inout; ?>" cust_mail="<?php echo $r['base_mail']; ?>" cust_mail2="<?php echo $r['base_mail2']; ?>" ckdate="<?php echo $ckdate; ?>">
+					  <br>
+					  <a style="" title="Accettazione: <?php echo $title; ?>" class="btn btn-xs <?php echo $stato_check_btn; ?> dialog_check_inout" refcheck="<?php echo $r['id_tes']; ?>" prodes="<?php echo $r['ragso1']," ",$r['ragso2']; ?>" prostacheck="<?php echo $check_inout; ?>" cust_mail="<?php echo $r['base_mail']; ?>" cust_mail2="<?php echo $r['base_mail2']; ?>" ckdate="<?php echo $ckdate; ?>">
 						<i class="glyphicon glyphicon-<?php echo $check_icon; ?>">&nbsp;</i><?php echo "CHECK ",$check_inout; ?>
 					  </a>
-					  <button type = "button">
-						<a class="class1 <?php echo $class_man; ?>" href="MANUAL_checkin.php?tes=<?php echo $r['id_tes']; ?>" <?php echo $title_man; ?> onclick="checkFileExistence(event); return false;">accettazione</a>
-					  </button>
+					  <a class="class1 <?php echo $class_man; ?>"
+						   href="MANUAL_checkin.php?tes=<?php echo $r['id_tes']; ?>"
+						   <?php echo $title_man; ?>
+						   onclick="checkFileExistence(event); return false;">
+						  accettazione
+						</a>
 					  <?php
 
 					  if ($stato_btn_selfcheck!==""){// se c'è il self checkin inserisco icona
@@ -2055,6 +2076,7 @@ $ts->output_navbar();
                 echo " style=\"cursor:pointer;\" onclick=\"printPdf('".$modulo."')\"";
               }
               echo "><i class=\"glyphicon glyphicon-print\" title=\"Stampa ".$what." PDF\"></i></a>";
+			  echo '<br>';
               $PDFurl = (dirname(__DIR__, 2).'/data/' . 'files/' . $admin_aziend['company_id'] .'/pdf_Lease/'.$r['id_tes'].'.pdf');
               if ( $tipo !== "VPR" && file_exists($PDFurl)) {
 

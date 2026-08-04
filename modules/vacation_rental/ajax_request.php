@@ -686,6 +686,14 @@ if (isset($_GET['term'])) {
         }
         return;
       break;
+	  
+	  case 'segnala_problema':
+        // implementazione qui
+		echo json_encode([
+            'status' => 'error',
+            'message' => 'Opzione ancora da sviluppare'
+        ]);
+        break;
 
       default:
       return false;

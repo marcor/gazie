@@ -315,7 +315,7 @@ function initTrackingState(array &$data) { // true = possiamo tracciare, false =
 }
 
 /**
- * Traccia evento utente per app o sito
+ * Traccia evento utente per app o sito (salva nel DB)
  */
 function trackUserEvent(array $data){
     global $link, $azTables;
@@ -328,31 +328,55 @@ function trackUserEvent(array $data){
         $data['user_id'] = null;
         $data['device_uuid'] = null;
         $data['session_id'] = session_id();
-    }
-    file_put_contents($debugFile, date('Y-m-d H:i:s') . " - trackUserEvent dopo initTrackingState: " . json_encode($data) . PHP_EOL, FILE_APPEND);
+		 file_put_contents($debugFile, date('Y-m-d H:i:s') . " - trackUserEvent dopo initTrackingState ANONIMIZZATO: " . json_encode($data) . PHP_EOL, FILE_APPEND);
+
+    }else{
+    file_put_contents($debugFile, date('Y-m-d H:i:s') . " - trackUserEvent dopo initTrackingState PERMESSO CONCESSO: " . json_encode($data) . PHP_EOL, FILE_APPEND);
+	}
 
     // 2️⃣ Identificazione device / sessione
     $ua = strtolower($_SERVER['HTTP_USER_AGENT'] ?? '');
-    $device = $data['device_uuid'] ?? 'unknown';
-    $session = $data['session_id'] ?? '';
+    $device = !empty($data['device_uuid']) ? $data['device_uuid'] : '';
+    $session = $data['session_id'] ?? '';  // la sessione di GAzie
     $user_id = isset($data['user_id']) ? intval($data['user_id']) : null;
     $ip_hash = sha1($_SERVER['REMOTE_ADDR']);
     $user_agent = $data['user_agent'] ?? $ua;
-    $cookie_session = $_COOKIE['tracking_session'] ?? null;
+    $cookie_session = $_COOKIE['tracking_session'] ?? null; // vedo se ho un trackin_session (clone) dentro GAzie
+	$tracking_session = $data['tracking_session'] ?? $cookie_session; // me caso si fosse perso il trackin_session passato dal plugin joomla, ci metto il suo clone
 	$today = date('Y-m-d'); // giorno corrente
 
-    if (!$device && !$session && !is_numeric($user_id)) return false;
+    if (!$device && !$session && !is_numeric($user_id)) {
+		file_put_contents($debugFile, date('Y-m-d H:i:s') . " - trackUserEvent NON HO DEVICE, SESSION E USER ID, ESCO: " .  PHP_EOL, FILE_APPEND);
+
+		return false;
+	}
+
 
     // 3️⃣ Escape una volta sola
     $device_esc = $link->real_escape_string($device);
-    $session_esc = $link->real_escape_string($session);
+    $session_esc = $link->real_escape_string($session); // la sessione di GAzie
     $user_agent_esc = $link->real_escape_string($user_agent);
-    $ip_hash_esc = $link->real_escape_string($ip_hash);
-    $tracking_session = $data['tracking_session'] ?? $cookie_session;
-    $tracking_session_esc = $tracking_session ? $link->real_escape_string($tracking_session) : null;
-	$data['tracking_session'] = (isset($tracking_session_esc)) ? $tracking_session_esc: $cookie_session;
+    $ip_hash_esc = $link->real_escape_string($ip_hash);     
+    $tracking_session_esc = $tracking_session ? $link->real_escape_string($tracking_session) : null;// il cookie di tracciamento del sito joomla
+	
+	$data['tracking_session'] = (isset($tracking_session_esc)) ? $tracking_session_esc: $cookie_session; // ricostruisco il data trackin_session (utile nel coso non fosse stato passato alla funzione)
 
-    // 4️⃣ Costruzione WHERE per hard match (versione corretta)
+    // 4️⃣ Costruzione WHERE per hard match 
+	/*
+	 * PRIORITÀ DI AGGREGAZIONE
+	 *
+	 * 1) device_uuid (App)
+	 * 2) user_id
+	 * 3) session_id
+	 * 4) tracking_session
+	 * 5) Login bridge (login_start → logged_in)
+	 *    tramite IP + User-Agent entro 2 minuti
+	 * 6) Soft match anonimo
+	 *    tramite IP + User-Agent entro 5 minuti
+	 *
+	 * Il logout chiude definitivamente il journey corrente.
+	 * Gli eventi successivi appartengono a una nuova riga.
+	 */
 	$where = [];
 
 	// Match su device_uuid, se presente
@@ -382,12 +406,24 @@ function trackUserEvent(array $data){
         $where_sql = implode(' OR ', $where); // OR perché basta che una condizione coincida
 		//file_put_contents($debugFile, date('Y-m-d H:i:s') . " - trackUserEvent trova se riga esistente WHERE: " . $where_sql . PHP_EOL, FILE_APPEND);
 
-        $res = $link->query("SELECT * FROM gaz_track_events WHERE $where_sql ORDER BY created_at DESC LIMIT 1");
+		$res = $link->query("
+			SELECT *
+			FROM gaz_track_events
+			WHERE ($where_sql)
+			  AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+			ORDER BY created_at DESC
+			LIMIT 1
+		");
         if ($res && $res->num_rows) $last_row = $res->fetch_assoc();
     }
 
     // 6️⃣ Soft match (solo se non device_uuid)
-    if (!$last_row && empty($device_esc)) {
+    if (
+			!$last_row &&
+			empty($device_esc) &&
+			empty($session_esc) &&
+			empty($tracking_session_esc)
+		) {
         $time_window = date('Y-m-d H:i:s', strtotime('-5 minutes'));
         $query = "
             SELECT *
@@ -402,6 +438,35 @@ function trackUserEvent(array $data){
         $res = $link->query($query);
         if ($res && $res->num_rows) $last_row = $res->fetch_assoc();
     }
+	
+	// 6.5️⃣ Login match (login_start → logged_in)
+	if (
+		!$last_row &&
+		isset($data['type'], $data['action']) &&
+		$data['type'] === 'auth' &&
+		in_array($data['action'], ['logged_in', 'logged_in_2fa'])
+	) {
+
+		$time_window = date('Y-m-d H:i:s', strtotime('-180 seconds'));
+
+		$query = "
+			SELECT *
+			FROM gaz_track_events
+			WHERE user_id IS NULL
+			  AND ip_hash='$ip_hash_esc'
+			  AND user_agent='$user_agent_esc'
+			  AND created_at >= '$time_window'
+			  AND event_payload LIKE '%\"action\":\"login_start\"%'
+			ORDER BY created_at DESC
+			LIMIT 1
+		";
+
+		$res = $link->query($query);
+
+		if ($res && $res->num_rows) {
+			$last_row = $res->fetch_assoc();
+		}
+	}
 
     // 7️⃣ Prepara valori SQL
     $search_location = isset($data['search_location']) ? $link->real_escape_string($data['search_location']) : null;
@@ -433,6 +498,39 @@ function trackUserEvent(array $data){
         $child_event[$k]=$v;
     }
     $child_event['timestamp'] = date('Y-m-d H:i:s');
+	
+	// 8.5️⃣ Evita eventi duplicati ravvicinati (es. refresh pagina)
+	if ($last_row && !empty($last_row['event_payload'])) {
+
+		$existing = json_decode($last_row['event_payload'], true);
+
+		if (!empty($existing)) {
+
+			$last_event = end($existing);
+
+			// confronto senza timestamp
+			$current = $child_event;
+			$previous = $last_event;
+
+			unset($current['timestamp']);
+			unset($previous['timestamp']);
+
+			if ($current == $previous) {
+
+				$diff = time() - strtotime($last_event['timestamp']);
+
+				if ($diff <= 30) {
+					file_put_contents(
+						$debugFile,
+						date('Y-m-d H:i:s') .
+						" - Evento duplicato ignorato ({$diff}s)\n",
+						FILE_APPEND
+					);
+					return true;
+				}
+			}
+		}
+	}
 
     // Funzione helper per merge payload
     $mergePayload = function($last_row, $child_event) use($link){
@@ -460,7 +558,16 @@ function trackUserEvent(array $data){
 
         $merged_payload_json = $mergePayload($last_row, $child_event);
         $update_user = ($last_row['user_id']===null && is_numeric($user_id)) ? ", user_id=$user_id" : "";
-
+		$update_session = ( !empty($session_esc) && $last_row['session_id'] !== $session) ? ", session_id='$session_esc'" : "";
+		/*
+		file_put_contents(
+			$debugFile,
+			date('Y-m-d H:i:s') .
+			" - update_session = " . ($update_session ?: 'NO') .
+			PHP_EOL,
+			FILE_APPEND
+		);
+		*/
         $sql = "
             UPDATE gaz_track_events SET
                 tracking_session = ".($tracking_session_esc ? "'$tracking_session_esc'" : 'NULL').",
@@ -483,8 +590,11 @@ function trackUserEvent(array $data){
                 event_payload = '$merged_payload_json',
                 last_event_at = NOW()
                 $update_user
+				$update_session
             WHERE id=".$last_row['id']."
         ";
+		//file_put_contents($debugFile, date('Y-m-d H:i:s') . " - trackUserEvent ultima riga esiste → UPDATE: " . $sql . PHP_EOL, FILE_APPEND);
+
         return $link->query($sql);
     }
 
@@ -526,6 +636,8 @@ function trackUserEvent(array $data){
             ".($lang?"'$lang'":'NULL')."
         )
     ";
+	//file_put_contents($debugFile, date('Y-m-d H:i:s') . " - trackUserEvent Nessuna riga → INSERT: " . $sql . PHP_EOL, FILE_APPEND);
+
     return $link->query($sql);
 }
 
@@ -1425,21 +1537,22 @@ function check_availability($start, $end, $house_code, $open_from = "", $open_to
 			return 0;
 		}
 	}
-
     if ($check_open) {
         // --- 2) batch query eventi
        $sql = "SELECT start, end, custom_field
-				FROM $table
-				LEFT JOIN $table_ts ON $table.id_tesbro = $table_ts.id_tes
-				WHERE house_code='" . mysqli_real_escape_string($link, $house_code) . "'
-				  AND ((start <= '$end' AND end > '$start'))
-				  AND (custom_field IS NULL
-					   OR custom_field LIKE '%PENDING%'
-					   OR custom_field LIKE '%CONFIRMED%'
-					   OR custom_field LIKE '%FROZEN%'
-					   OR custom_field LIKE '%ISSUE%')
-				ORDER BY start ASC
-				LIMIT 1";
+        FROM $table
+        LEFT JOIN $table_ts ON $table.id_tesbro = $table_ts.id_tes
+        WHERE house_code='" . mysqli_real_escape_string($link, $house_code) . "'
+          AND ((start <= '$end' AND end > '$start'))
+          AND (
+				$table_ts.custom_field IS NULL
+				OR $table_ts.custom_field LIKE '%\"status\":\"PENDING\"%'
+				OR $table_ts.custom_field LIKE '%\"status\":\"CONFIRMED\"%'
+				OR $table_ts.custom_field LIKE '%\"status\":\"FROZEN\"%'
+				OR $table_ts.custom_field LIKE '%\"status\":\"ISSUE\"%'
+			)
+        ORDER BY start ASC
+        LIMIT 1";
 		$res = mysqli_query($link, $sql);
 		if ($res) {
 			while ($row = mysqli_fetch_assoc($res)) {

@@ -305,6 +305,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             if (isset($_POST["row_$next_row"])) { //se ho un rigo testo
                 $form["row_$next_row"] = $_POST["row_$next_row"];
             }
+			//echo "<br>",substr($v['codart'], 0, 32);
             $form['rows'][$next_row]['descri'] = substr($v['descri'], 0, 100);
             $form['rows'][$next_row]['tiprig'] = intval($v['tiprig']);
             $form['rows'][$next_row]['id_doc'] = intval($v['id_doc']);
@@ -326,6 +327,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['quanti'] = (isset($v['quanti']))?gaz_format_quantity($v['quanti'], 0, $admin_aziend['decimal_quantity']):0;
             $form['rows'][$next_row]['codvat'] = intval($v['codvat']);
             $form['rows'][$next_row]['codric'] = intval($v['codric']);
+			if (substr($v['codart'], 0, 22) == 'Capienza_supplementare'){
+				$add_total_guests=intval($v['quanti']);// memorizzo se c'è da aggiungere capienza extra
+			}else{
+				$add_total_guests=0;
+			}
+			
             if (isset($form['in_provvigione']) && $_POST['id_tourOp'] > 0){// NB: PIù SOTTO AVVERRà UNO SCAMBIO FRA AGENTE E TOUROP
               $form['rows'][$next_row]['provvigione'] = $provvigione->getPercent($form['id_tourOp'], substr($v['codart'], 0, 32));
             }else{
@@ -487,7 +494,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         foreach ($form['rows'] as $i => $v) {
           // controllo capienza ospiti
           if ($v['accommodation_type']>2){// se è un alloggio (1=extra)
-            if (intval($v['total_guests']) < (intval($form['adult'])+intval($form['child']))){
+            if ( (intval($v['total_guests'])+intval($add_total_guests)) < (intval($form['adult'])+intval($form['child']))){
               $msg .= "59+";
             }
             if ($v['adult'] < $form['adult']){
