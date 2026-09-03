@@ -2343,7 +2343,7 @@ class TableSorter {
     const ord_prefix = "ord_";
 
     # header ordinabili
-    protected $arrows = ["desc" => "&#9660;", "asc" => "&#9650;", null => ""];
+    protected $arrows = ["desc" => "&#9660;", "asc" => "&#9650;", "" => ""];
     protected $align = false;                   # TODO
     protected $style = 'FacetFieldCaptionTD text-center';   # TODO
 
