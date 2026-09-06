@@ -498,28 +498,143 @@ function openframe(url,codice){
 		$('.framePdf').css({'display': 'none'}); $('#framePdf').attr('src','../../library/images/wait_spinner.html');
 	});
 };
-function openframesync(url){
-  var response = jQuery.ajax({
-		url: url,
-		type: 'HEAD',
-		async: false
-	}).status;
-	if(response == "200") {
-    $(function(){
-      $('#framePdf').attr('src',url);
-      $('#framePdf').css({'height': '100%'});
-      $('.framePdf').css({'display': 'block','width': '90%', 'height': '100%', 'z-index':'2000'});
-      $("html, body").delay(100).animate({scrollTop: $('#framePdf').offset().top},200, function() {
-          $("#framePdf").focus();
+function openframesync(url) {
+
+  // Tempo di permanenza del risultato finale (millisecondi)
+  var syncMessageDuration = 6000;
+
+  // Chiude automaticamente il pannello dopo il risultato
+  function chiudiSyncSpinner() {
+    setTimeout(function() {
+      $('#icalSyncSpinner').fadeOut(300, function() {
+        $(this).remove();
       });
-    });
-  }else{
-    alert('Il file richiesto fa parte della versione PRO di questo modulo: contattare lo sviluppatore');
-  };
-	$('#closePdf').on( "click", function() {
-		$('.framePdf').css({'display': 'none'}); $('#framePdf').attr('src','../../library/images/wait_spinner.html');
-	});
-};
+    }, syncMessageDuration);
+  }
+
+  // Crea e mostra il pannello con lo spinner
+  var spinner = $(
+    '<div id="icalSyncSpinner" style="' +
+      'position:fixed;' +
+      'top:50%;' +
+      'left:50%;' +
+      'transform:translate(-50%,-50%);' +
+      'z-index:99999;' +
+      'background:#fff;' +
+      'padding:25px 35px;' +
+      'border-radius:6px;' +
+      'box-shadow:0 2px 10px rgba(0,0,0,.25);' +
+      'text-align:center;' +
+      'min-width:320px;' +
+    '">' +
+      '<style>' +
+		'@keyframes spin { from { transform:rotate(0deg); } to { transform:rotate(360deg); } }' +
+		'</style>' +
+		'<span class="glyphicon glyphicon-refresh" ' +
+      'style="font-size:28px; display:inline-block; animation:spin 1s linear infinite;"></span>' +
+      '<br><br>' +
+      '<span id="icalSyncMessage">Sincronizzazione calendari in corso...</span>' +
+    '</div>'
+  );
+
+  $('body').append(spinner);
+
+  // Una sola richiesta GET: esegue realmente la sincronizzazione
+  jQuery.ajax({
+    url: url,
+    type: 'GET',
+    async: true,
+
+    success: function(data) {
+
+      var resultMatch = data.match(
+        /__SYNC_RESULT__\|aggiornati=(\d+)\|non_funz=(\d+)\|vuoti=(\d+)\|eventi=(\d+)/
+      );
+
+      if (!resultMatch) {
+        $('#icalSyncSpinner').html(
+          '<span class="glyphicon glyphicon-warning-sign" ' +
+                'style="font-size:28px;"></span>' +
+          '<br><br>' +
+          '<strong>Sincronizzazione terminata</strong><br><br>' +
+          'Non è stato possibile determinare il risultato.'
+        );
+        chiudiSyncSpinner();
+        return;
+      }
+
+      var aggiornati = parseInt(resultMatch[1], 10);
+      var nonFunz = parseInt(resultMatch[2], 10);
+      var vuoti = parseInt(resultMatch[3], 10);
+      var eventi = parseInt(resultMatch[4], 10);
+      var messaggio =
+        '<strong>Sincronizzazione completata</strong><br><br>' +
+        'Calendari aggiornati: ' + aggiornati + '<br>' +
+        'Eventi sincronizzati: ' + eventi;
+
+      if (nonFunz > 0) {
+        messaggio += '<br>Calendari non disponibili: ' + nonFunz;
+      }
+      if (vuoti > 0) {
+        messaggio += '<br>Calendari vuoti o senza eventi validi: ' + vuoti;
+      }
+
+      // Trasforma lo spinner nel risultato finale
+      $('#icalSyncSpinner').html(
+        '<span class="glyphicon glyphicon-ok" ' +
+              'style="font-size:28px;"></span>' +
+        '<br><br>' +
+        messaggio
+      );
+      chiudiSyncSpinner();
+    },
+
+    error: function(xhr) {
+
+      var messaggio;
+      switch (xhr.status) {
+        case 404:
+          messaggio =
+            '<strong>Funzione non disponibile</strong><br><br>' +
+            'Il file richiesto fa parte della versione PRO di questo modulo: ' +
+            'contattare lo sviluppatore';
+          break;
+
+        case 403:
+          messaggio =
+            '<strong>Accesso negato</strong><br><br>' +
+            'Il server ha rifiutato l\'accesso al file richiesto ' +
+            '(errore HTTP 403).';
+          break;
+
+        case 500:
+          messaggio =
+            '<strong>Errore di sincronizzazione</strong><br><br>' +
+            'Si è verificato un errore interno nel file di sincronizzazione ' +
+            '(errore HTTP 500).';
+          break;
+        case 0:
+          messaggio =
+            '<strong>Impossibile raggiungere il server</strong><br><br>' +
+            'La sincronizzazione non può essere avviata.';
+          break;
+        default:
+          messaggio =
+            '<strong>Errore di sincronizzazione</strong><br><br>' +
+            'Il file di sincronizzazione ha restituito l\'errore HTTP ' +
+            xhr.status + '.';
+      }
+      // Trasforma lo spinner nel messaggio di errore
+      $('#icalSyncSpinner').html(
+        '<span class="glyphicon glyphicon-warning-sign" ' +
+              'style="font-size:28px;"></span>' +
+        '<br><br>' +
+        messaggio
+      );
+      chiudiSyncSpinner();
+    }
+  });
+}
 
 
 function Copy(id) {
@@ -655,7 +770,12 @@ $ts->output_navbar();
 			<a class="btn btn-sm btn-default" href="?">Reset</a>
 			<?php  $ts->output_order_form(); ?>
 
-			<a class="btn btn-sm btn-default glyphicon glyphicon-refresh" href="?" style="float:right;" onclick="openframesync('sync_event_ical.php')" data-toggle="modal" data-target="#iframe">Sincronizza ICal</a>
+			<a class="btn btn-sm btn-default glyphicon glyphicon-refresh"
+			   href="?"
+			   style="float:right;"
+			   onclick="openframesync('sync_event_ical.php'); return false;">
+			   Sincronizza ICal
+			</a>
 			<?php  $ts->output_order_form(); ?>
 		</td>
 	</tr>

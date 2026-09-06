@@ -32,7 +32,7 @@
  // creo connessione al DB
  function db_connect() {
     static $link = null;
-    if ($link !== null && $link->ping()) {
+    if ($link !== null && $link->query('DO 1') !== false){
         return $link; // riusa la connessione già aperta
     }
     $servername = constant("Host");
@@ -50,44 +50,63 @@
 function user_has_app($user_id)
 {
     global $link;
+    
+    // Variabile statica per ricordare se le tabelle esistono ed evitare controlli ripetuti
+    static $tables_exist = null;
+
+    if (!isset($link) || !($link instanceof mysqli)) {
+        return null;
+    }
+
+    // Se abbiamo già verificato che le tabelle NON esistono, esci subito (0 microsecondi)
+    if ($tables_exist === false) {
+        return 0;
+    }
+
+    // Se è la prima volta che eseguiamo la funzione, controlliamo se la tabella principale esiste
+    if ($tables_exist === null) {
+        $check = mysqli_query($link, "SHOW TABLES LIKE 'gaz_android_messages'");
+        if (!$check || mysqli_num_rows($check) === 0) {
+            $tables_exist = false; // La tabella non esiste, ce lo ricordiamo per i prossimi cicli
+            return 0;
+        }
+        $tables_exist = true; // Le tabelle esistono, possiamo procedere liberamente
+    }
 
     $user_id = (int)$user_id;
 
-    // 1) verifica se l'utente usa l'app
-    $sql = "
-        SELECT 1
-        FROM gaz_android_device_tokens
-        WHERE user_id = $user_id
-        LIMIT 1
-    ";
+    try {
+        // 1) Verifica token
+        $sql = "SELECT 1 FROM gaz_android_device_tokens WHERE user_id = $user_id LIMIT 1";
+        $res = mysqli_query($link, $sql);
 
-    $res = @mysqli_query($link, $sql); // @ sta per retrocompatibilità o per chi non ha la versione PRO
+        if (!$res || mysqli_num_rows($res) === 0) {
+            return null; 
+        }
 
-    if (!$res || mysqli_num_rows($res) === 0) {
-        return null; // non ha app
+        // 2) Conteggio messaggi
+        $sql = "
+            SELECT COUNT(*) AS unread_count
+            FROM gaz_android_messages m
+            INNER JOIN gaz_android_conversations c ON c.id = m.conversation_id
+            WHERE c.user_id = $user_id
+              AND m.sender_type = 'user'
+              AND m.read_at IS NULL
+        ";
+        $res = mysqli_query($link, $sql);
+        if (!$res) return 0;
+
+        $row = mysqli_fetch_assoc($res);
+        return (int)($row['unread_count'] ?? 0);
+
+    } catch (Exception $e) {
+        return 0;
+    } catch (Error $e) {
+        return 0;
     }
-
-    // 2) conteggio messaggi non letti (utente -> admin)
-    $sql = "
-        SELECT COUNT(*) AS unread_count
-        FROM gaz_android_messages m
-        INNER JOIN gaz_android_conversations c
-            ON c.id = m.conversation_id
-        WHERE c.user_id = $user_id
-          AND m.sender_type = 'user'
-          AND m.read_at IS NULL
-    ";
-
-    $res = @mysqli_query($link, $sql); // @ sta per retrocompatibilità o per chi non ha la versione PRO
-
-    if (!$res) {
-        return 0; // fallback sicuro
-    }
-
-    $row = mysqli_fetch_assoc($res);
-
-    return (int)($row['unread_count'] ?? 0);
 }
+
+
 
 function user_has_booked($id_anagra){
     global $link;
