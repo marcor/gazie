@@ -256,9 +256,9 @@ echo "</div>\n";
 echo "<table class=\"Tsmall\" align=\"center\">\n";
 if (!empty($msg)) {
     echo '<tr><td colspan="2" class="FacetDataTDred">'.$gForm->outputErrors($msg,$script_transl['errors'])."</td></tr>\n";
-	if (!empty($message)){
-		echo "<script type='text/javascript'>alert('$message');</script>";
-	}
+	if (!empty($message)) {
+      echo "<script type='text/javascript'>alert(" . json_encode($message) . ");</script>";
+  }
 }
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['date']."</td><td  class=\"FacetDataTD\">\n";
