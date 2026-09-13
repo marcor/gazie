@@ -677,9 +677,9 @@ function iCalDecoder($file) {
         if (substr($item,0,5)=="DTEND"){
             $majorarray['end']=substr($item,17,10);
         }
-        if (substr($item,0,3)=="UID"){
-            $majorarray['uid']=substr($item,3);
-        }
+        if (strpos($item, 'UID:') === 0) {
+			$majorarray['uid'] = substr($item, 4);
+		}
       }
       $icalarray[] = $majorarray;
       unset($majorarray);
