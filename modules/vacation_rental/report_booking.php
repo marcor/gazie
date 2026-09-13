@@ -242,6 +242,8 @@ $vacation_url_user=$res['val'];// carico l'url per la pagina front-end utente
 ?>
 <link rel="stylesheet" type="text/css" href="jquery/jquery.datetimepicker.min.css"/ >
 <script src="jquery/jquery.datetimepicker.full.min.js" type="text/javascript"></script>
+<script src="../../js/custom/fix_select.js" type="text/javascript"></script>
+<script src="../../js/custom/clean_empty_form_fields.js" type="text/javascript"></script>
 <style>
 /* Limita altezza dropdown e abilita scroll */
 .dropdown-menu {
@@ -1945,6 +1947,7 @@ $ts->output_navbar();
               // colonna fiscale
               if ( $tipo !== "VPR" ){//  se non è preventivo
                 echo "<td style='text-align: left;'>";
+				$agent = $agent ?? '';
                 if ( intval($agent)==0){// se non c'è un proprietario/agente
                   if ($remains_atleastone && !$processed_atleastone && $r['status']!=='CANCELLED' && $r['status']!=='ISSUE') {
                     // L'ordine e'  da evadere.
@@ -1983,7 +1986,7 @@ $ts->output_navbar();
 
 				// colonna stato prenotazione
 				// Se la prenotazione e' da evadere , verifica lo status ed eventualmente lo aggiorna.
-				echo "<td style='text-align: left; min-width: 60px;'>";
+				echo "<td style='text-align: left; min-width: 90px;'>";
 				if(isset($datatesbro['vacation_rental']['man_checkin_status']) && intval($datatesbro['vacation_rental']['man_checkin_status'])==1){
 					$class_man="btn btn-success";$title_man="title = 'Accettazione effettuata'";
 				}elseif(isset($datatesbro['vacation_rental']['pre_checkin_status']) && intval($datatesbro['vacation_rental']['pre_checkin_status'])==1){
@@ -2209,8 +2212,7 @@ if (isset($_SESSION['print_queue']['idDoc']) && !empty($_SESSION['print_queue'][
 }
 ?>
 
-<script src="../../js/custom/fix_select.js" type="text/javascript"></script>
-<script src="../../js/custom/clean_empty_form_fields.js" type="text/javascript"></script>
+
 <?php
 require("../../library/include/footer.php");
 ?>

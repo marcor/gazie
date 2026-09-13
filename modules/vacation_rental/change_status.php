@@ -89,9 +89,13 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 			  // ricarico il json custom field tesbro e controllo
 			  $tesbro=gaz_dbi_get_row($gTables['tesbro'], "id_tes", $i); // carico la tesbro
 			  $clfoco=gaz_dbi_get_row($gTables['clfoco'], "codice", $tesbro['clfoco']);
-			  $anagra=gaz_dbi_get_row($gTables['anagra'], "id", $clfoco['id_anagra']); // carico la anagra
-			  $phone=(strlen($anagra['cell'])>5)?$anagra['cell']:$anagra['telefo'];
-			  $language=gaz_dbi_get_row($gTables['languages'], "lang_id", $anagra['id_language']); // carico la lingua
+			  if (!empty($clfoco['id_anagra'])){
+				  $anagra=gaz_dbi_get_row($gTables['anagra'], "id", $clfoco['id_anagra']); // carico la anagra
+				  $phone=(strlen($anagra['cell'])>5)?$anagra['cell']:$anagra['telefo'];
+				  $language=gaz_dbi_get_row($gTables['languages'], "lang_id", $anagra['id_language']); // carico la lingua
+			  }else{
+				  $phone="";
+			  }
 			  if (isset($language['title_native'])){
 				$langarr = explode(" ",$language['title_native']);
 				$lang = strtolower($langarr[0]);
@@ -217,7 +221,7 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
           echo "Errore imprevisto nello spedire la mail di modifica status: " . $mail->ErrorInfo;
         }
 
-        if (function_exists('sendNotificationbyID')) {// invio notifica smartphone se ho la funzione
+        if (function_exists('sendNotificationbyID') && isset($anagra['id'])) {// invio notifica smartphone se ho la funzione
           $notif_res = sendNotificationbyID($anagra['id'], $notifTitle, $notifBody, 'active');
           $anySent = is_array($notif_res) && count($notif_res) > 0 && array_reduce($notif_res, fn($carry, $r) => $carry || (isset($r['status']) && $r['status'] === 'SENT'), false);
 
