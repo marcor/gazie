@@ -56,7 +56,9 @@ if (isset($_GET['dest'])&& $_GET['dest']=='E' ){ // se l'utente vuole inviare un
   createDocument($tesbro, 'PreventivoCliente',$gTables,'rigbro','E', $lang, false);
 } elseif (isset($_GET['lh'])){ // se l'utente vuole che venga stampata su una carta intestata
   createDocument($tesbro, 'PreventivoCliente',$gTables,'rigbro','H', $lang, false);
-} else { // se ho scelto un template set personalizzato
+} elseif (strlen(trim($tesbro['template'])) > 4 )  { // se ho scelto un template set personalizzato
   createDocument($tesbro, 'PreventivoCliente',$gTables,'rigbro',false, $lang, $tesbro['template']);
+} else {
+  createDocument($tesbro, 'PreventivoCliente',$gTables,'rigbro');
 }
 ?>
