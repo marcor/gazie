@@ -680,6 +680,9 @@ function iCalDecoder($file) {
         if (strpos($item, 'UID:') === 0) {
 			$majorarray['uid'] = substr($item, 4);
 		}
+		if (strpos($item, 'SUMMARY:') === 0) {
+			$majorarray['summary'] = substr($item, 8);
+		}
       }
       $icalarray[] = $majorarray;
       unset($majorarray);
