@@ -954,6 +954,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
                   $form['codart_'.($kr-1)]=$krddt;
                   $form['rows'][$kr]['codart']=$krddt;
                   unset($ddt_accln['rigddt'][$krddt]); // quello utilizzato lo tolgo dalla matrice
+                  break; // interrompo il ciclo foreach ed esce immediatamente per evitare di usare altri righi con la stessa quantità
                 }
               }
             }
